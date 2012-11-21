@@ -1,6 +1,7 @@
 /* general */
 
-p {font-size:160%;}
+p,li,code {font-size:160%;line-height:160%;}
+li p {font-size:100%;}
 ul {margin-left:2em;}
 
 /* header */
@@ -9,11 +10,54 @@ header h1 {border-bottom: 1px dashed #999;}
 
 /* article */
 
-article h2, article h3, article h4, article h5 { border-bottom: 1px dashed #999;}
+article h1, article h2, article h3, article h4, article h5 { border-bottom: 1px dashed #999;margin-bottom:0.5em;margin-top:0.5em;}
 
 /* footer */
 
 footer p {text-align:right;font-size:85%;border-top:1px dashed #999;}
+
+/* toc */
+
+#toc {
+    background: #333;
+    box-shadow: inset -5px 0 5px 0px #000;
+    padding-top: 20px;
+    color: #fff;
+	margin-bottom:2em;
+}
+
+#toc ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+#toc li {
+    padding: 5px 10px;
+}
+
+#toc a {
+    color: #fff;
+    text-decoration: none;
+    display: block;
+}
+
+#toc li:hover {
+    background: #336699;
+    box-shadow: inset -5px 0px 10px -5px #000;
+}
+
+#toc .toc-h2 {
+   padding-left:2em ;
+}
+
+#toc .toc-h3 {
+    padding-left: 4em;
+}
+
+#toc .toc-h4 {
+	padding-left: 6em;
+}
 
 /* highlight */
 
@@ -77,3 +121,16 @@ footer p {text-align:right;font-size:85%;border-top:1px dashed #999;}
 .highlight .vg { color: #008080 } /* Name.Variable.Global */
 .highlight .vi { color: #008080 } /* Name.Variable.Instance */
 .highlight .il { color: #009999 } /* Literal.Number.Integer.Long */
+
+code {
+
+display:block;
+margin:1em;
+padding:1em;
+        border:1px dashed #E1E1E1;
+        color:#333344;
+        background:#FAFAFA;
+        font-family:monospace;
+        overflow:auto;
+}
+
