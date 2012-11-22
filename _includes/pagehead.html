@@ -10,7 +10,7 @@
   <!-- Set the viewport width to device width for mobile -->
   <meta name="viewport" content="width=device-width" />
 
-  <title>{{ page.title }}</title>
+  <title>{{ page.title }}{% if page.url !='/index.html' %} -- {{ site.sitename }}{% endif %}</title>
   
   <!-- Included CSS Files (Uncompressed) -->
   <!--
