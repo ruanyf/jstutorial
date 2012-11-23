@@ -51,18 +51,9 @@ function getHiddenProp(){
 
 {% highlight javascript %}
 
-document.addEventListener('visibilitychage', visChange);
-
-function visChange() {
-   var txtFld = document.getElementById('visChangeText');
-
-   if (txtFld) {
-      if (isHidden())
-         txtFld.value += "Tab Hidden!\n";
-      else
-         txtFld.value += "Tab Visible!\n";
-   }
-}
+document.addEventListener("visibilitychange", function() {
+  console.log( document.visibilityState );
+});
 
 {% endhighlight %}
 
