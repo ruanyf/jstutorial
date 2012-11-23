@@ -21,7 +21,55 @@ document.visibilityState属性表示页面当前的状态，它可以取三个�
 * hidden： 页面不可见。
 * prerender： 页面正处于渲染之中，不可见。
 
+### 浏览器前缀
+
+上面两个属性都带有浏览器前缀。使用的时候，必须进行前缀识别。
+
+{% highlight javascript %}
+
+function getHiddenProp(){
+    var prefixes = ['webkit','moz','ms','o'];
+    
+    // if 'hidden' is natively supported just return it
+    if ('hidden' in document) return 'hidden';
+    
+    // otherwise loop over all the known prefixes until we find one
+    for (var i = 0; i < prefixes.length; i++){
+        if ((prefixes[i] + 'Hidden') in document) 
+            return prefixes[i] + 'Hidden';
+    }
+
+    // otherwise it's not supported
+    return null;
+}
+
+{% endhighlight %}
+
+## VisibilityChange事件
+
+当页面的可见状态发生变化时，会触发VisibilityChange事件（带有浏览器前缀）。
+
+{% highlight javascript %}
+
+document.addEventListener('visibilitychage', visChange);
+
+function visChange() {
+   var txtFld = document.getElementById('visChangeText');
+
+   if (txtFld) {
+      if (isHidden())
+         txtFld.value += "Tab Hidden!\n";
+      else
+         txtFld.value += "Tab Visible!\n";
+   }
+}
+
+{% endhighlight %}
+
 ## 参考链接
 
 * W3草案：[http://www.w3.org/TR/page-visibility/](http://www.w3.org/TR/page-visibility/)
-* David Walsh, [Page Visibility API](http://davidwalsh.name/page-visibility) 
+* David Walsh, [Page Visibility API](http://davidwalsh.name/page-visibility)
+* Joe Marini, [Using the pageVisbility API](http://www.html5rocks.com/en/tutorials/pagevisibility/intro/)
+
+
