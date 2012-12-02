@@ -18,7 +18,7 @@ date: 2012-11-18
 
 ## 算法（algorithm）
 
-* [排序（sorting](algorithm/sorting.html)
+* [排序（sorting）](algorithm/sorting.html)
 
 {% if site.posts.size != 0 %}
 
