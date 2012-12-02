@@ -16,6 +16,10 @@ date: 2012-11-18
 * [Page Visiblity](htmlapi/pagevisibility.html)
 * [FullScreen](htmlapi/fullscreen.html)
 
+## 算法（algorithm）
+
+* [排序（sorting](algorithm/sorting.html)
+
 {% if site.posts.size != 0 %}
 
 ## 最新文章
