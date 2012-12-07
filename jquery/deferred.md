@@ -122,7 +122,7 @@ $.when()接受多个deferred对象作为参数，当它们全部运行成功后�
 $.when(
     $.ajax( "/main.php" ),
     $.ajax( "/modules.php" ),
-    $.ajax( “/lists.php” )
+    $.ajax( "/lists.php" )
 ).then( successFunc, failureFunc );
 
 {% endhighlight %}
