@@ -20,6 +20,10 @@ date: 2012-11-18
 
 * [排序（sorting）](algorithm/sorting.html)
 
+## jQuery
+
++ [deferred对象](jquery/deferred.html)
+
 {% if site.posts.size != 0 %}
 
 ## 最新文章
