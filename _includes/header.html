@@ -1,9 +1,35 @@
-<header>
-
-  <div class="row">
-    <div class="twelve columns">
-<h1> <a href="/">{{ site.sitename }} </a></h1>
-    </div>
-  </div>
-
+<header class="top-bar">
+<div class="fixed">
+ <nav class="top-bar">
+<ul>
+        <!-- Title Area -->
+        <li class="name">
+          <h1>
+            <a href="/">{{ site.sitename }} </a>
+          </h1>
+        </li>
+{% if page.category == nil %}
+</ul>
+{% else %}
+    <li class="toggle-topbar"><a href="#"></a></li>
+  </ul>
+<section>
+<ul class="left">
+<li class="divider"></li>
+<li class="has-dropdown"><a class="active" href="#"> {{ site.[page.category] }} </a><ul class="dropdown">
+{% for article in site.pages %}
+{% if article.category == page.category %}
+{% if article.url == page.url %}
+<li class="active"><a href="#">{{ article.title }}</a></li>
+{% else %}
+<li><a href="{{article.url}}">{{ article.title }}</a></li>
+{% endif %}
+{% endif %}
+{% endfor %}
+</ul></li>
+</ul>
+  </section>
+{% endif %}
+</nav>  
+</div>
 </header>

@@ -8,14 +8,11 @@
 
 <h1> {{ page.title }} </h1>
 
-<div id="toc">[目录]</div>
+{% include toc.html %}
 
 {{ content }}
-    </div>
-  </div>
+
 </article>
 
 {% include footer.html %}
 
-</body>
-</html>

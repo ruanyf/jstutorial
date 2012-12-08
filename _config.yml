@@ -1,4 +1,9 @@
 markdown: rdiscount
 pygments: true
 permalink: none
-sitename: Javascript教程
+sitename: Javascript标准教程
+
+dom: DOM
+htmlapi: HTML5 API
+algorithm: 算法（algorithm）
+jquery: jQuery
