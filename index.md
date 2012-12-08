@@ -38,7 +38,7 @@ date: 2012-11-18
 
 ## 最新页面
 
-{% for page in site.pages %}
+{% for page in site.pages limit:5 %}
 {% if page.url !='/index.html' %}
 * [{{ page.title }}]( {{ page.url }})（{{ page.date }}）
 {% endif %}
