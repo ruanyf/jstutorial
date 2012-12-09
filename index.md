@@ -26,6 +26,7 @@ date: 2012-11-18
 
 <h2 id="tool">开发工具</h2>
 
+- [性能测试（Benchmark）](tool/benchmark.html)
 - [PhantomJS](tool/phantomjs.html)
 
 {% if site.posts.size != 0 %}

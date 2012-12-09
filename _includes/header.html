@@ -16,20 +16,10 @@
 
 </ul>
         </li>
-{% if page.category == nil %}
 </ul>
 <section>
-<ul class="right">
-          <li >
-            <a href="#">TOP &#8679;</a>
-          </li>
-</ul>
 
-</section>
-{% else %}
-    <li class="toggle-topbar"><a href="#"></a></li>
-  </ul>
-<section>
+{% if page.category != nil %}
 <ul class="left">
 <li class="divider"></li>
 <li class="has-dropdown"><a class="active" href="#"> {{ site.[page.category] }} </a><ul class="dropdown">
@@ -44,6 +34,7 @@
 {% endfor %}
 </ul></li>
 </ul>
+{% endif %}
 
 <ul class="right">
           <li >
@@ -52,7 +43,7 @@
 </ul>
 
 </section>
-{% endif %}
+
 </nav>  
 </div>
 </header>
