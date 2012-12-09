@@ -62,16 +62,16 @@ hz = 1 / period;
 
 ## 测试工具
 
-# [jsPerf](http://jsperf.com/)，一个比较不同代码片段的性能的网站。
-# [benchmark.js](https://github.com/bestiejs/benchmark.js)，一个用于测试性能的Javascript库。
-# <a href="https://github.com/kamicane/slickspeed/">SlickSpeed</a>
-# <a href="https://github.com/phiggins42/taskspeed">Taskspeed</a>
-# <a href="http://www2.webkit.org/perf/sunspider/sunspider.html">SunSpider</a>
-# <a href="http://krakenbenchmark.mozilla.org/">Kraken</a>
-# <a href="http://dromaeo.com/">Dromaeo</a>
-# <a href="http://code.google.com/apis/v8/benchmarks.html">V8 Benchmark Suite</a>
-# <a href="http://www.broofa.com/Tools/JSLitmus/">JSLitmus</a>
+- [jsPerf](http://jsperf.com/)，一个比较不同代码片段的性能的网站。
+- [benchmark.js](https://github.com/bestiejs/benchmark.js)，一个用于测试性能的Javascript库。
+- <a href="https://github.com/kamicane/slickspeed/">SlickSpeed</a>
+- <a href="https://github.com/phiggins42/taskspeed">Taskspeed</a>
+- <a href="http://www2.webkit.org/perf/sunspider/sunspider.html">SunSpider</a>
+- <a href="http://krakenbenchmark.mozilla.org/">Kraken</a>
+- <a href="http://dromaeo.com/">Dromaeo</a>
+- <a href="http://code.google.com/apis/v8/benchmarks.html">V8 Benchmark Suite</a>
+- <a href="http://www.broofa.com/Tools/JSLitmus/">JSLitmus</a>
 
 ## 参考链接
 
-# [Bulletproof JavaScript benchmarks](http://calendar.perfplanet.com/2010/bulletproof-javascript-benchmarks/)
+- [Bulletproof JavaScript benchmarks](http://calendar.perfplanet.com/2010/bulletproof-javascript-benchmarks/)
