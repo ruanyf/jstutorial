@@ -3,7 +3,9 @@ pygments: true
 permalink: none
 sitename: Javascript 标准教程
 
+chapters: [dom,htmlapi,algorithm,jquery]
+
 dom: DOM
 htmlapi: HTML5 API
-algorithm: 算法（algorithm）
+algorithm: 算法（Algorithm）
 jquery: jQuery

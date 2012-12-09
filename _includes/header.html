@@ -3,13 +3,29 @@
  <nav class="top-bar">
 <ul>
         <!-- Title Area -->
-        <li class="name">
+        <li class="name has-dropdown">
           <h1>
             <a href="/">{{ site.sitename }} </a>
           </h1>
+		  <ul class="dropdown">
+{% for chapter in site.chapters %}
+
+<li><a href="/#{{chapter}}">{{site.[chapter]}}</a></li>
+
+{% endfor %}
+
+</ul>
         </li>
 {% if page.category == nil %}
 </ul>
+<section>
+<ul class="right">
+          <li >
+            <a href="#">TOP &#8679;</a>
+          </li>
+</ul>
+
+</section>
 {% else %}
     <li class="toggle-topbar"><a href="#"></a></li>
   </ul>
@@ -28,7 +44,14 @@
 {% endfor %}
 </ul></li>
 </ul>
-  </section>
+
+<ul class="right">
+          <li >
+            <a href="#">TOP &#8679;</a>
+          </li>
+</ul>
+
+</section>
 {% endif %}
 </nav>  
 </div>

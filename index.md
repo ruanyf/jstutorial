@@ -4,23 +4,23 @@ title: Javascript 标准教程
 date: 2012-11-18
 ---
 
-## DOM
+<h2 id="dom">DOM</h2>
 
 * [dataset](dom/dataset.html)
 * [classList](dom/classlist.html)
 
-## HTML5 API
+<h2 id="htmlapi">HTML5 API</h2>
 
 * [Canvas](htmlapi/canvas.html)
 * [File](htmlapi/file.html)
 * [Page Visiblity](htmlapi/pagevisibility.html)
 * [FullScreen](htmlapi/fullscreen.html)
 
-## 算法（algorithm）
+<h2 id="algorithm">算法（Algorithm）</h2>
 
 * [排序（sorting）](algorithm/sorting.html)
 
-## jQuery
+<h2 id="jquery">jQuery</h2>
 
 + [deferred对象](jquery/deferred.html)
 
