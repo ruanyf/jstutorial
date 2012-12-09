@@ -8,8 +8,10 @@ chapters:
 - htmlapi
 - algorithm
 - jquery
+- tool
 
 dom: DOM
 htmlapi: HTML5 API
 algorithm: 算法（Algorithm）
 jquery: jQuery
+tool: 开发工具

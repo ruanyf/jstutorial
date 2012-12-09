@@ -29,11 +29,11 @@ jQuery(window).load(function(){
 
 		if (window.location.hash !== '') {
 
-			var positionTop = ($(window.location.hash).position().top || -50);
+			var positionTop = ($(window.location.hash).position().top || -100);
 
 			// console.info(positionTop);			
 
-			$(window).scrollTop(positionTop+50);
+			$(window).scrollTop(positionTop+100);
 
 		}
 
