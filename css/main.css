@@ -32,7 +32,7 @@ background: -webkit-linear-gradient(top, rgba(64,150,238,1) 0%,rgba(64,150,238,1
 background: -o-linear-gradient(top, rgba(64,150,238,1) 0%,rgba(64,150,238,1) 100%); /* Opera 11.10+ */
 background: -ms-linear-gradient(top, rgba(64,150,238,1) 0%,rgba(64,150,238,1) 100%); /* IE10+ */
 background: linear-gradient(to bottom, rgba(64,150,238,1) 0%,rgba(64,150,238,1) 100%); /* W3C */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4096ee', endColorstr='#4096ee',GradientType=0 ); /* IE6-9 */
+/* filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4096ee', endColorstr='#4096ee',GradientType=0 ); */ /* IE6-9 */ 
 }
 
 nav.top-bar ul > li.has-dropdown .dropdown li.active a:hover,
