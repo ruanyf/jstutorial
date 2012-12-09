@@ -8,10 +8,6 @@ ul {margin-left:2em;}
 
 /* header {position:fixed;z-index:101;top: 0;left: 0;} */
 
-nav.top-bar ul > li.name > .dropdown {visiblity:hidden;} 
-
-nav.top-bar ul > li.name:hover > .dropdown{	visibility:visible;}
-
 .top-bar, 
 nav.top-bar li.name,
 nav.top-bar ul > li.has-dropdown a,

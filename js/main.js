@@ -31,9 +31,10 @@ jQuery(window).load(function(){
 
 			var positionTop = ($(window.location.hash).position().top || -50);
 
-			console.info(positionTop);			
+			// console.info(positionTop);			
 
 			$(window).scrollTop(positionTop+50);
 
 		}
+
 	});
