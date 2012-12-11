@@ -4,6 +4,10 @@ title: Javascript 标准教程
 date: 2012-11-18
 ---
 
+<h2 id="grammar">基本语法</h2>
+
+- [数组](grammar/array.html)
+
 <h2 id="dom">DOM</h2>
 
 * [dataset](dom/dataset.html)
@@ -16,10 +20,6 @@ date: 2012-11-18
 * [Page Visiblity](htmlapi/pagevisibility.html)
 * [FullScreen](htmlapi/fullscreen.html)
 
-<h2 id="algorithm">算法（Algorithm）</h2>
-
-* [排序（sorting）](algorithm/sorting.html)
-
 <h2 id="jquery">jQuery</h2>
 
 + [deferred对象](jquery/deferred.html)
@@ -28,6 +28,12 @@ date: 2012-11-18
 
 - [性能测试（Benchmark）](tool/benchmark.html)
 - [PhantomJS](tool/phantomjs.html)
+
+<h2 id="algorithm">算法（Algorithm）</h2>
+
+* [排序（sorting）](algorithm/sorting.html)
+
+{% comment %}
 
 {% if site.posts.size != 0 %}
 
@@ -50,3 +56,5 @@ date: 2012-11-18
 {% endfor %}
 
 {% endif %}
+
+{% endcomment %}
