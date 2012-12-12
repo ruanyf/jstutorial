@@ -3,6 +3,7 @@ layout: page
 title: dataset API
 date: 2012-11-22
 category: dom
+modifiedOn: 2012-11-22
 ---
 
 这个API用于操作网页元素的data-属性。

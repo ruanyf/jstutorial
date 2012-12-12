@@ -3,6 +3,7 @@ title: Javascript 性能测试
 date: 2012-12-09
 layout: page
 category: tool
+modifiedOn: 2012-12-09
 ---
 
 ## 第一种做法

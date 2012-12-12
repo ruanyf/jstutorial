@@ -5,6 +5,7 @@ sitename: Javascript 标准教程
 
 chapters:
 - grammar
+- oop
 - dom 
 - htmlapi
 - jquery
@@ -12,8 +13,9 @@ chapters:
 - algorithm
 
 grammar: 基本语法
+oop: 面向对象编程
 dom: DOM
 htmlapi: HTML5 API
-algorithm: 算法（Algorithm）
+algorithm: 算法
 jquery: jQuery
 tool: 开发工具

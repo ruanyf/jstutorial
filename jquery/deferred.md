@@ -3,6 +3,7 @@ title: jQuery.Deferred对象
 category: jquery
 date: 2012-12-07
 layout: page
+modifiedOn: 2012-12-07
 ---
 
 ## 概述

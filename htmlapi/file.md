@@ -3,6 +3,7 @@ title: File API
 date: 2012-11-30
 layout: page
 category: htmlapi
+modifiedOn: 2012-11-30
 ---
 
 这个API用于操作用户通过表单选取的本地文件。

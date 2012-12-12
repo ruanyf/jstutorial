@@ -3,6 +3,7 @@ title: Canvas API
 layout: page
 date: 2012-11-21
 category: htmlapi
+modifiedOn: 2012-11-21
 ---
 
 ## 转化图像文件到Canvas

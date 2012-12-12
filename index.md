@@ -2,11 +2,17 @@
 layout: homepage
 title: Javascript 标准教程
 date: 2012-11-18
+modifiedOn: 2012-12-12
 ---
 
 <h2 id="grammar">基本语法</h2>
 
+- [对象（Object）](grammar/object.html)
 - [数组](grammar/array.html)
+
+<h2 id="oop">面向对象编程</h2>
+
+- [对象的继承](oop/inheritance.html)
 
 <h2 id="dom">DOM</h2>
 
@@ -29,7 +35,7 @@ date: 2012-11-18
 - [性能测试（Benchmark）](tool/benchmark.html)
 - [PhantomJS](tool/phantomjs.html)
 
-<h2 id="algorithm">算法（Algorithm）</h2>
+<h2 id="algorithm">算法</h2>
 
 * [排序（sorting）](algorithm/sorting.html)
 

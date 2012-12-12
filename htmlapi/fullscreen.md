@@ -3,6 +3,7 @@ layout: page
 title: Fullscreen API
 category: htmlapi
 date: 2012-11-22
+modifiedOn: 2012-11-22
 ---
 
 这个API可以控制浏览器的全屏显示。

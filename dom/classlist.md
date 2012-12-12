@@ -3,6 +3,7 @@ title: classList API
 category: dom
 layout: page
 date: 2012-11-22
+modifiedOn: 2012-11-22
 ---
 
 这个API是操作网页元素的class属性的接口。
