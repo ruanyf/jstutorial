@@ -12,7 +12,7 @@ modifiedOn: 2012-12-12
 
 <h2 id="oop">面向对象编程</h2>
 
-- [对象的继承](oop/inheritance.html)
+- [继承](oop/inheritance.html)
 
 <h2 id="dom">DOM</h2>
 

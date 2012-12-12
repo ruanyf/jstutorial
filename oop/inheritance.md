@@ -1,5 +1,5 @@
 ---
-title: 对象的继承
+title: 继承
 layout: page
 date: 2012-12-12
 modifiedOn: 2012-12-12
