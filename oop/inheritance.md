@@ -6,11 +6,32 @@ modifiedOn: 2012-12-12
 category: oop
 ---
 
+## Object.create方法
+
+该方法可以从原型创造出一个新的对象。它可以接受两个参数，第一个是对象的原型，第二个是描述属性的attributes对象。
+
+{% highlight javascript %}
+
+Object.create(proto, propDescObj）
+
+{% endhighlight %}
+
+用法如下：
+
+{% highlight javascript %}
+
+var o = Object.create(Object.prototype, {
+        p1: { value: 123, enumerable: true },
+        p2: { value: "abc", enumerable: true }
+});
+
+{% endhighlight %}
+
 ## 属性的继承
 
-属性分成两种。一种是对象自身的属性，另一种是继承自原型的属性。
+属性分成两种。一种是对象自身的原生属性，另一种是继承自原型的继承属性。
 
-### 对象本身的属性
+### 对象的原生属性
 
 对象本身可枚举的属性，可以用Object.keys方法取得。
 
@@ -36,6 +57,48 @@ object.hasOwnProperty(property)
 {% highlight javascript %}
 
 for (property in object)
+
+{% endhighlight %}
+
+不管是否可枚举，都可以用下面的方法判断，对象是否包括某个属性
+
+{% highlight javascript %}
+
+property in object
+
+{% endhighlight %}
+
+用法如下
+
+{% highlight javascript %}
+
+> "valueOf" in {}
+true
+
+> "toString" in {}
+true
+
+{% endhighlight %}
+
+用Object.create方法创造的对象，它会继承所有原型对象的属性。
+
+{% highlight javascript %}
+
+> var proto = { p1: 123 };
+> var o = Object.create(proto);
+> o.hasOwnProperty("p1")
+  false
+
+{% endhighlight %}
+
+所有的继承属性，默认都是不可枚举的。
+
+{% highlight javascript %}
+
+> var proto = { p1: 123 };
+> var o = Object.create(proto);
+> 'p1' in Object.keys(o)
+  false
 
 {% endhighlight %}
 
