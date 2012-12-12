@@ -97,38 +97,11 @@ page.open('http://slashdot.org', function (s) {
 
 第二行open()方法，接受两个参数。第一个参数是网页的网址，这里我们打开的是著名新闻网站[Slashdot](http://slashdot.org)，第二个参数是回调函数，当网页打开后，该函数将会运行，它的参数是状态提示（status），如果打开成功，该参数的值就是success。运行page.js，屏幕将会显示success。
 
-### 截图
+### 接受参数
 
-我们修改page.js，使它可以抓取网页截图。
+修改page.js，使得它可以从命令行调用。
 
-{% highlight javascript %}
-
-// page.js
-
-var page = require('webpage').create();
-
-page.open('http://slashdot.org', function () {
-		var title = page.evaluate(function () {
-        var posts = document.getElementsByClassName("article");
-        posts[0].style.backgroundColor = "#FFF";
-        return document.title;
-    });
-    page.clipRect = { top: 0, left: 0, width: 600, height: 700 };
-    page.render(title + ".png");
-    phantom.exit();
-});
-
-{% endhighlight %}
-
-上面代码中的几个属性和方法解释如下：
-
-- evaluate()：用来在网页上运行Javascript代码。在这里，我们抓取第一条新闻，然后修改背景颜色，并返回该条新闻的标题。
-- clipRect：用来指定网页截图的大小，这里的截图左上角从网页的(0. 0)坐标开始，宽600像素，高700像素。如果不指定这个值，就表示对整张网页截图。
-- render()：根据clipRect的范围，在当前目录下生成以第一条新闻的名字命名的截图。
-
-### 命令行调用
-
-进一步修改page.js，使得它可以从命令行调用。
+system模块可以加载操作系统变量，system.args就是以数组形式保存输入的命令。
 
 {% highlight javascript %}
 
@@ -163,6 +136,38 @@ page.open(address, function (status) {
 phantomjs page.js http://www.google.com
 
 {% endhighlight %}
+
+### 截图
+
+我们修改page.js，使它可以完成网页截图。
+
+{% highlight javascript %}
+
+// page.js
+
+var page = require('webpage').create();
+
+page.viewportSize = { width: 1024, height: 768 };	
+
+page.open('http://slashdot.org', function () {
+		var title = page.evaluate(function () {
+        var posts = document.getElementsByClassName("article");
+        posts[0].style.backgroundColor = "#FFF";
+        return document.title;
+    });
+    page.clipRect = { top: 0, left: 0, width: 600, height: 700 };
+    page.render(title + ".png");
+    phantom.exit();
+});
+
+{% endhighlight %}
+
+上面代码中的几个属性和方法解释如下：
+
+- viewportSize：指定浏览器窗口的大小，这里是1024x768。
+- evaluate()：用来在网页上运行Javascript代码。在这里，我们抓取第一条新闻，然后修改背景颜色，并返回该条新闻的标题。
+- clipRect：用来指定网页截图的大小，这里的截图左上角从网页的(0. 0)坐标开始，宽600像素，高700像素。如果不指定这个值，就表示对整张网页截图。
+- render()：根据clipRect的范围，在当前目录下生成以第一条新闻的名字命名的截图。
 
 ### 抓取图片
 
