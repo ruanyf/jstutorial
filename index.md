@@ -2,16 +2,18 @@
 layout: homepage
 title: Javascript 标准教程
 date: 2012-11-18
-modifiedOn: 2012-12-12
+modifiedOn: 2012-12-14
 ---
 
 <h2 id="grammar">基本语法</h2>
 
+- [概述](grammar/basic.html)
 - [对象（Object）](grammar/object.html)
 - [数组](grammar/array.html)
 
 <h2 id="oop">面向对象编程</h2>
 
+- [封装](oop/encapsulation.html)
 - [继承](oop/inheritance.html)
 
 <h2 id="dom">DOM</h2>

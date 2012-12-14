@@ -2,30 +2,9 @@
 title: 继承
 layout: page
 date: 2012-12-12
-modifiedOn: 2012-12-12
+modifiedOn: 2012-12-14
 category: oop
 ---
-
-## Object.create方法
-
-该方法可以从原型创造出一个新的对象。它可以接受两个参数，第一个是对象的原型，第二个是描述属性的attributes对象。
-
-{% highlight javascript %}
-
-Object.create(proto, propDescObj）
-
-{% endhighlight %}
-
-用法如下：
-
-{% highlight javascript %}
-
-var o = Object.create(Object.prototype, {
-        p1: { value: 123, enumerable: true },
-        p2: { value: "abc", enumerable: true }
-});
-
-{% endhighlight %}
 
 ## 属性的继承
 
