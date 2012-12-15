@@ -1,5 +1,5 @@
 ---
-title: 对象（Object）
+title: 对象
 layout: page
 category: grammar
 date: 2012-12-12

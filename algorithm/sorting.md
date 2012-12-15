@@ -1,5 +1,5 @@
 ---
-title: 排序算法（Sorting）
+title: 排序算法
 date: 2012-12-02
 category: algorithm
 layout: page

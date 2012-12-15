@@ -2,14 +2,15 @@
 layout: homepage
 title: Javascript 标准教程
 date: 2012-11-18
-modifiedOn: 2012-12-14
+modifiedOn: 2012-12-15
 ---
 
 <h2 id="grammar">基本语法</h2>
 
 - [概述](grammar/basic.html)
-- [对象（Object）](grammar/object.html)
+- [对象](grammar/object.html)
 - [数组](grammar/array.html)
+- [函数](grammar/function.html)
 
 <h2 id="oop">面向对象编程</h2>
 
@@ -24,6 +25,7 @@ modifiedOn: 2012-12-14
 <h2 id="htmlapi">HTML5 API</h2>
 
 * [Canvas](htmlapi/canvas.html)
+* [Blob对象](htmlapi/blob.html)
 * [File](htmlapi/file.html)
 * [Page Visiblity](htmlapi/pagevisibility.html)
 * [FullScreen](htmlapi/fullscreen.html)
@@ -39,7 +41,7 @@ modifiedOn: 2012-12-14
 
 <h2 id="algorithm">算法</h2>
 
-* [排序（sorting）](algorithm/sorting.html)
+* [排序](algorithm/sorting.html)
 
 {% comment %}
 
