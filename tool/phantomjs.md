@@ -99,7 +99,7 @@ page.open('http://slashdot.org', function (s) {
 
 ### 接受参数
 
-修改page.js，使得它可以从命令行调用。
+修改page.js，使得它可以从命令行接受参数。
 
 system模块可以加载操作系统变量，system.args就是以数组形式保存输入的命令。
 

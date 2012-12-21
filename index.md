@@ -2,7 +2,7 @@
 layout: homepage
 title: Javascript 标准教程
 date: 2012-11-18
-modifiedOn: 2012-12-15
+modifiedOn: 2012-12-22
 ---
 
 <h2 id="grammar">基本语法</h2>
@@ -38,6 +38,10 @@ modifiedOn: 2012-12-15
 
 - [性能测试（Benchmark）](tool/benchmark.html)
 - [PhantomJS](tool/phantomjs.html)
+
+<h2 id="pattern">模式</h2>
+
+- [异步编程](pattern/asynchronous.html)
 
 <h2 id="algorithm">算法</h2>
 

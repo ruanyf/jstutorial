@@ -10,6 +10,7 @@ chapters:
 - htmlapi
 - jquery
 - tool
+- pattern
 - algorithm
 
 grammar: 基本语法
@@ -18,4 +19,5 @@ dom: DOM
 htmlapi: HTML5 API
 algorithm: 算法
 jquery: jQuery
+pattern: 模式
 tool: 开发工具
