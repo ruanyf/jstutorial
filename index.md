@@ -24,6 +24,7 @@ modifiedOn: 2012-12-22
 
 <h2 id="htmlapi">HTML5 API</h2>
 
+- [浏览历史管理](htmlapi/history.html)
 * [Canvas](htmlapi/canvas.html)
 * [Blob对象](htmlapi/blob.html)
 * [File](htmlapi/file.html)
