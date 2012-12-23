@@ -1,5 +1,5 @@
 ---
-title: 浏览历史管理
+title: history对象
 layout: page
 category: htmlapi
 date: 2012-12-22
