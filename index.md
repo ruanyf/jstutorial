@@ -2,7 +2,7 @@
 layout: homepage
 title: Javascript 标准教程
 date: 2012-11-18
-modifiedOn: 2012-12-23
+modifiedOn: 2012-12-27
 ---
 
 <h2 id="grammar">基本语法</h2>
@@ -35,6 +35,10 @@ modifiedOn: 2012-12-23
 <h2 id="jquery">jQuery</h2>
 
 + [deferred对象](jquery/deferred.html)
+
+<h2 id="library">函数库</h2>
+
+- [Underscore.js](library/underscore.html)
 
 <h2 id="tool">开发工具</h2>
 

@@ -9,6 +9,7 @@ chapters:
 - dom 
 - htmlapi
 - jquery
+- library
 - tool
 - pattern
 - algorithm
@@ -19,5 +20,6 @@ dom: DOM
 htmlapi: HTML5 API
 algorithm: 算法
 jquery: jQuery
+library: 函数库
 pattern: 模式
 tool: 开发工具
