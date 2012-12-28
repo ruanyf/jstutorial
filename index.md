@@ -2,7 +2,7 @@
 layout: homepage
 title: Javascript 标准教程
 date: 2012-11-18
-modifiedOn: 2012-12-27
+modifiedOn: 2012-12-28
 ---
 
 <h2 id="grammar">基本语法</h2>
@@ -14,6 +14,7 @@ modifiedOn: 2012-12-27
 
 <h2 id="oop">面向对象编程</h2>
 
+- [概述](oop/basic.html)
 - [封装](oop/encapsulation.html)
 - [继承](oop/inheritance.html)
 
@@ -22,13 +23,16 @@ modifiedOn: 2012-12-27
 * [dataset](dom/dataset.html)
 * [classList](dom/classlist.html)
 
-<h2 id="htmlapi">HTML5 API</h2>
+<h2 id="bom">浏览器对象</h2>
 
-- [History对象](htmlapi/history.html)
+- [History对象](bom/history.html)
+- [WebSocket](bom/websocket.html)	
+
+<h2 id="htmlapi">HTML网页的API</h2>
+
 * [Canvas](htmlapi/canvas.html)
 * [Blob对象](htmlapi/blob.html)
 * [File](htmlapi/file.html)
-- [WebSocket](htmlapi/websocket.html)		
 * [Page Visiblity](htmlapi/pagevisibility.html)
 * [FullScreen](htmlapi/fullscreen.html)
 

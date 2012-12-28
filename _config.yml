@@ -7,6 +7,7 @@ chapters:
 - grammar
 - oop
 - dom 
+- bom
 - htmlapi
 - jquery
 - library
@@ -17,7 +18,8 @@ chapters:
 grammar: 基本语法
 oop: 面向对象编程
 dom: DOM
-htmlapi: HTML5 API
+bom: 浏览器对象
+htmlapi: HTML网页的API
 algorithm: 算法
 jquery: jQuery
 library: 函数库
