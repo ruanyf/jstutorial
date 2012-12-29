@@ -25,9 +25,10 @@ modifiedOn: 2012-12-28
 
 <h2 id="bom">浏览器对象</h2>
 
-- [sessionStorage和localStorage](bom/storage.html)
+- [Web Storage](bom/webstorage.html)
 - [History对象](bom/history.html)
 - [WebSocket](bom/websocket.html)	
+- [Geolocation](bom/geolocation.html)
 
 <h2 id="htmlapi">HTML网页的API</h2>
 
