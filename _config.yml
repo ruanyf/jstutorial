@@ -4,6 +4,7 @@ permalink: none
 sitename: Javascript 标准教程
 
 chapters:
+- introduction
 - grammar
 - oop
 - dom 
@@ -15,6 +16,7 @@ chapters:
 - pattern
 - algorithm
 
+introduction: 导论
 grammar: 基本语法
 oop: 面向对象编程
 dom: DOM
