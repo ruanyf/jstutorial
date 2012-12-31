@@ -3,7 +3,7 @@ title: 对象
 layout: page
 category: grammar
 date: 2012-12-12
-modifiedOn: 2012-12-12
+modifiedOn: 2012-12-31
 ---
 
 ## 概述
@@ -24,7 +24,7 @@ var o = {
 
 上面代码中的o被定义为对象，里面包含一个键值对，这个键值对就是对象o的成员。其中，p是“键”（成员的名称），“Hello World”是“值”（成员的值）。
 
-“键”又称为“属性”（property）。属性的值可以是数值、字符串，也可以是函数或其他对象。
+“键”又称为“属性”（property）。它的“值”可以是数值、字符串，也可以是函数或其他对象。
 
 ### 生成方法
 
@@ -73,11 +73,17 @@ o["p"] = "abc";
 
 {% endhighlight %}
 
-Object.keys方法可以返回对象本身的属性。
+查看一个对象本身的所有属性，可以使用Object.keys方法。
 
 {% highlight javascript %}
 
-Object.keys(object)
+var o = {
+	key1: 1,
+	key2: 2
+};
+
+Object.keys(o);
+// ["key1", "key2"]
 
 {% endhighlight %}
 
@@ -170,6 +176,69 @@ var o = Object.defineProperty({}, {
 
 {% endhighlight %}
 
+### 控制对象的可写性
+
+Object.preventExtensions方法，可以使得一个对象无法再添加新的方法。
+
+{% highlight javascript %}
+
+var o = new Object();
+
+Object.preventExtensions(o);
+
+Object.defineProperty(o, "t", { value: "hello" });
+
+// TypeError: Cannot define property:t, object is not extensible.
+
+{% endhighlight %}
+
+Object.seal方法，可以使得一个对象即无法添加新方法，也无法删除旧方法，处于被封闭状态。
+
+{% highlight javascript %}
+
+var o = {t:"hello"};
+
+Object.seal(o);
+
+delete o.t;
+// false
+
+{% endhighlight %}
+
+Object.freeze方法，可以使得一个对象无法添加新方法、无法删除旧方法、也无法改变值，即使得这个对象实际上变成了常量。
+
+{% highlight javascript %}
+
+var o = {t:"hello"};
+
+Object.freeze(o);
+
+o.t = "world";
+
+console.info(o.t);
+// hello
+
+{% endhighlight %}
+
+你可以使用Object.isSealed、Object.isFrozen、Object.isExtensible检查某个对象目前的状态。
+
+需要注意的是，即使使用上面这些方法锁定对象的可写性，我们依然可以通过改变该对象的原型对象，来为它增加属性。
+
+{% highlight javascript %}
+
+var o = new Object();
+
+Object.preventExtensions(o);
+
+var proto = Object.getPrototypeOf(o);
+
+proto.t = "hello";
+
+o.t
+// hello
+
+{% endhighlight %}
+
 ### Object.getOwnPropertyDescriptor方法
 
 该方法返回属性的attributes对象，格式如下
@@ -201,7 +270,7 @@ Object.getOwnPropertyDescriptor(object, property)
 
 ### 可枚举性
 
-可枚举性与两个操作有关：for-in和Object.keys。如果可枚举性为true，则前面两个操作的返回结果都包括该属性；如果为false，就不包括。
+可枚举性（enumerable）与两个操作有关：for-in和Object.keys。如果某个属性的可枚举性为true，则前面两个操作的返回结果都包括该属性；如果为false，就不包括。
 
 假定，对象o有两个属性p1和p2，可枚举性分别为true和false。
 
@@ -235,7 +304,7 @@ var o = Object.defineProperties({}, {
 
 {% endhighlight %}
 
-一般来说，系统原生的属性都是不可枚举的。
+一般来说，系统原生的属性（即非用户自定义的属性）都是不可枚举的。
 
 {% highlight javascript %}
 
@@ -259,6 +328,27 @@ var o = Object.defineProperties({}, {
 
 {% endhighlight %}
 
+for...in循环会列出对象自身的可枚举属性，以及对象继承的可枚举属性。
+
+{% highlight javascript %}
+
+for (name in object) { 
+	if (object.hasOwnProperty(name)) { .... } 
+}
+
+{% endhighlight %}
+
+Object.keys则只会列出对象自身的可枚举属性。
+
+{% highlight javascript %}
+
+Object.keys(obj).forEach( function(key) {
+    console.log(key);
+});
+
+{% endhighlight %}
+
 ## 参考链接
 
 - Dr. Axel Rauschmayer，[Object properties in JavaScript](http://www.2ality.com/2012/10/javascript-properties.html)
+- Lakshan Perera, [Revisiting JavaScript Objects](http://www.laktek.com/2012/12/29/revisiting-javascript-objects/)
