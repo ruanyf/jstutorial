@@ -178,7 +178,7 @@ var o = Object.defineProperty({}, {
 
 ### 控制对象的可写性
 
-Object.preventExtensions方法，可以使得一个对象无法再添加新的方法。
+Object.preventExtensions方法，可以使得一个对象无法再添加新的属性。
 
 {% highlight javascript %}
 
@@ -192,7 +192,7 @@ Object.defineProperty(o, "t", { value: "hello" });
 
 {% endhighlight %}
 
-Object.seal方法，可以使得一个对象即无法添加新方法，也无法删除旧方法，处于被封闭状态。
+Object.seal方法，可以使得一个对象即无法添加新属性，也无法删除旧属性，处于被封闭状态。
 
 {% highlight javascript %}
 
@@ -205,7 +205,7 @@ delete o.t;
 
 {% endhighlight %}
 
-Object.freeze方法，可以使得一个对象无法添加新方法、无法删除旧方法、也无法改变值，即使得这个对象实际上变成了常量。
+Object.freeze方法，可以使得一个对象无法添加新属性、无法删除旧属性、也无法改变属性的值，使得这个对象实际上变成了常量。
 
 {% highlight javascript %}
 
