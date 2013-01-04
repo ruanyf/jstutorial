@@ -3,14 +3,44 @@ title: 封装
 layout: page
 category: oop
 date: 2012-12-14
-modifiedOn: 2012-12-14
+modifiedOn: 2013-01-04
 ---
+
+## Object.getPrototypeOf方法
+
+该方法返回一个对象的原型。
+
+{% highlight javascript %}
+
+Object.getPrototypeOf({}) === Object.prototype
+// true
+
+function F() {}
+Object.getPrototypeOf(F) === Function.prototype
+// true
+
+var f = new F();
+Object.getPrototypeOf(f) === F.prototype
+// true
+	
+{% endhighlight %}
 
 ## Object.create方法
 
-EMCAScript 5引入了一个创造对象的新方法：Object.create。
+Object.create的作用是，以一个对象为原型，新建另一个对象。后者完全继承前者的属性。
 
-该方法可以从原型创造出一个新的对象。它的主要功能，等同于下面的代码：
+{% highlight javascript %}
+
+var o = { k: 1 };
+
+var o1 = Object.create(o);
+
+o1.p
+// 1 
+
+{% endhighlight %}
+
+该方法的基本等同于下面的代码：
 
 {% highlight javascript %}
 
