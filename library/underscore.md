@@ -57,7 +57,7 @@ _.reduce([1, 2, 3], function(memo, num){ return memo + num; }, 0);
 
 reduce方法的第二个参数是操作函数，它本身又接受两个参数，第一个是累计用的变量，第二个是集合每个成员的值。
 
-### filter和reject
+### filter 和 reject
 
 filter方法依次对集合的每个成员进行某种操作，只返回操作结果为true的成员。
 
@@ -77,7 +77,7 @@ _.reject([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
 
 {% endhighlight %}
 
-### every和some
+### every 和 some
 
 every方法依次对集合的每个成员进行某种操作，如果所有成员的操作结果都为true，则返回true，否则返回false。
 
