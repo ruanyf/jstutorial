@@ -56,14 +56,14 @@ var result = window.matchMedia("(min-width: 600px)");
 
 result.addListener(sizeChange);
 
-function sizeChange(mql) {
+function sizeChange(result) {
 
 	v = document.getElementById("myDiv");
 
-    if (mql.matches) {
-        v.innerHTML = "getting big" + "<br/>" + mql.media;
+    if (result.matches) {
+        v.innerHTML = "getting big" + "<br/>" + result.media;
     } else {
-        v.innerHTML = "getting small" + "<br/>"+ mql.media;
+        v.innerHTML = "getting small" + "<br/>"+ result.media;
     }
 
 }

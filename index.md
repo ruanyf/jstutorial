@@ -2,7 +2,7 @@
 layout: homepage
 title: Javascript 标准教程
 date: 2012-11-18
-modifiedOn: 2013-1-5
+modifiedOn: 2013-1-7
 ---
 
 <h2 id="introduction">导论</h2>
@@ -40,6 +40,7 @@ modifiedOn: 2013-1-5
 * [Canvas](htmlapi/canvas.html)
 * [Blob对象](htmlapi/blob.html)
 * [File](htmlapi/file.html)
+- [服务器端发送事件](htmlapi/eventsource.html)		
 * [Page Visiblity](htmlapi/pagevisibility.html)
 * [FullScreen](htmlapi/fullscreen.html)
 
