@@ -168,7 +168,7 @@ source.addEventListener("error", function(event) {
 
 服务器端发送的数据的HTTP头信息如下：
 
-{% highlight http %}
+{% highlight html %}
 
 Content-Type: text/event-stream
 Cache-Control: no-cache
@@ -178,7 +178,7 @@ Connection: keep-alive
 
 后面的行都是如下格式：
 
-{% highlight http %}
+{% highlight html %}
 
 field: value\n
 
@@ -188,7 +188,7 @@ field可以取四个值：“data”, “event”, “id”, or “retry”，�
 
 以冒号开头的行，表示注释。通常，服务器每隔一段时间就会向浏览器发送一个注释，保持连接不中断。
 
-{% highlight http %}
+{% highlight html %}
 
 : This is a comment\n
 
@@ -198,7 +198,7 @@ field可以取四个值：“data”, “event”, “id”, or “retry”，�
 
 数据内容用data表示，可以占用一行或多行。
 
-{% highlight http %}
+{% highlight html %}
 
 data:  message\n\n
 
@@ -206,7 +206,7 @@ data:  message\n\n
 
 或者
 
-{% highlight http %}
+{% highlight html %}
 
 data: begin message\n
 data: continue message\n\n
@@ -217,7 +217,7 @@ data: continue message\n\n
 
 发送JSON格式的方法如下：
 
-{% highlight http %}
+{% highlight html %}
 
 data: {\n
 data: "foo": "bar",\n
@@ -230,7 +230,7 @@ data: }\n\n
 
 数据标识符用id表示，相当于每一条数据的编号。
 
-{% highlight http %}
+{% highlight html %}
 
 id: msg1\n
 data: message\n\n
@@ -243,7 +243,7 @@ data: message\n\n
 
 event头信息表示自定义的数据类型，或者说数据的名字。
 
-{% highlight http %}
+{% highlight html %}
 
 event: foo\n
 data: a foo event\n\n
@@ -259,7 +259,7 @@ data: a bar event\n\n
 
 浏览器默认的是，如果服务器端三秒内没有发送任何信息，则开始重连。服务器端可以用retry头信息，指定通信的最大间隔时间。
 
-{% highlight http %}
+{% highlight html %}
 
 retry: 10000\n
 
