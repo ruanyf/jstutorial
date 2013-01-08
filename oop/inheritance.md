@@ -6,9 +6,9 @@ modifiedOn: 2013-01-08
 category: oop
 ---
 
-## __proto__属性
+## \__proto__属性
 
-每个对象都有一个内部属性__proto__（注意，前后各两个下划线），指向这个对象的原型对象。通过这个内部属性，可以从实例对象读取原型对象的属性。
+每个对象都有一个内部属性\__proto__（注意，前后各两个下划线），指向这个对象的原型对象。通过这个内部属性，可以从实例对象读取原型对象的属性。
 
 {% highlight javascript %}
 
@@ -21,9 +21,9 @@ b.x
 
 {% endhighlight %}
 
-上面的代码中，b对象本身并没有x属性，但是解释器通过__proto__属性，找到它的原型对象a，然后读取a的x属性。
+上面的代码中，b对象本身并没有x属性，但是解释器通过\__proto__属性，找到它的原型对象a，然后读取a的x属性。
 
-原型对象自己的__proto__属性，也可以指向其他对象，从而一级一级地形成“原型链”（prototype chain）。
+原型对象自己的\__proto__属性，也可以指向其他对象，从而一级一级地形成“原型链”（prototype chain）。
 
 {% highlight javascript %}
 
@@ -38,7 +38,7 @@ c.x
 
 {% endhighlight %}
 
-空对象的__proto__属性，默认指向Object.prototype。
+空对象的\__proto__属性，默认指向Object.prototype。
 
 {% highlight javascript %}
 
@@ -49,7 +49,7 @@ a.__proto__ === Object.prototype
 
 {% endhighlight %}
 
-通过构造函数生成实例对象时，实例对象的__proto__属性自动指向构造函数的prototype对象。
+通过构造函数生成实例对象时，实例对象的\__proto__属性自动指向构造函数的prototype对象。
 
 {% highlight javascript %}
 
