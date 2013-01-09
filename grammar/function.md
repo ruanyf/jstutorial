@@ -3,8 +3,35 @@ title: 函数
 layout: page
 category: grammar
 date: 2012-12-15
-modifiedOn: 2012-12-15
+modifiedOn: 2013-01-10
 ---
+
+## 变量提升（hoisting）
+
+Javascript解释器的工作方式是，先读取全部代码，再进行解释。这样的结果就是，函数体内部的var命令声明的变量，不管在什么位置，都会被提升到函数开始处声明，这就叫做“变量提升”。
+
+{% highlight javascript %}
+
+   function foo(x) {
+        if (x > 100) {
+            var tmp = x - 100;
+        }
+    }
+
+{% endhighlight %}
+
+上面的代码等同于
+
+{% highlight javascript %}
+
+   function foo(x) {
+	   var tmp;
+       if (x > 100) {
+           tmp = x - 100;
+       }
+    }
+
+{% endhighlight %}
 
 ## 立即调用的函数表达式（IIFE）
 

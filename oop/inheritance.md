@@ -66,6 +66,26 @@ o.__proto__ === a
 
 {% endhighlight %}
 
+## instanceof运算符
+
+该运算符用来确定一个对象是否是另一个对象的实例。
+
+{% highlight javascript %}
+
+123 instanceof Object
+// false
+
+{} instanceof Object
+// true
+
+var f = function (){};
+var o = new f();
+
+o instanceof f
+// true
+
+{% endhighlight %}
+
 ## 属性的继承
 
 属性分成两种。一种是对象自身的原生属性，另一种是继承自原型的继承属性。
