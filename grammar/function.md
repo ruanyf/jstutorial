@@ -6,6 +6,63 @@ date: 2012-12-15
 modifiedOn: 2013-01-10
 ---
 
+## 函数作用域
+
+作用域（scope）指的是变量存在的范围。Javascript只有两种作用域：一种是全局作用域，变量在整个程序中一直存在；另一种是函数作用域，变量只在函数内部存在。
+
+首先，在函数外部声明的变量就是全局变量，它可以在函数内部读取。
+
+{% highlight javascript %}
+
+   var v = 1;
+
+   function f(){
+	   console.log(v);
+   }
+
+   f()
+   // 1
+
+{% endhighlight %}
+
+上面的代码表明，函数f内部可以读取全局变量v。
+
+其次，在函数内部定义的变量，外部无法读取。
+
+{% highlight javascript %}
+
+   function f(){
+
+	   var v = 1;	   
+   }
+
+   console.log(v);
+   // 显示错误，v未定义
+
+{% endhighlight %}
+
+函数内部定义的变量，会覆盖同名全局变量。
+
+{% highlight javascript %}
+
+   var v = 1; 
+
+   function f(){
+
+	   var v = 2;
+
+	   console.log(v);
+
+   }
+
+   f();
+   // 2
+
+   console.log(v);
+   // 1
+
+{% endhighlight %}
+
 ## 变量提升（hoisting）
 
 Javascript解释器的工作方式是，先读取全部代码，再进行解释。这样的结果就是，函数体内部的var命令声明的变量，不管在什么位置，都会被提升到函数开始处声明，这就叫做“变量提升”。
@@ -32,6 +89,47 @@ Javascript解释器的工作方式是，先读取全部代码，再进行解释�
     }
 
 {% endhighlight %}
+
+## 闭包
+
+闭包（closure）就是定义在函数体内部的函数。
+
+{% highlight javascript %}
+
+   function f() {
+	   
+       var c = function (){}; 
+
+    }
+
+{% endhighlight %}
+
+上面的代码中，c是定义在函数f内部的函数，就是闭包。
+
+闭包的特点在于，c可以读取函数f的内部变量。
+
+{% highlight javascript %}
+
+   function f() {
+
+	   var v = 1;
+	   
+       var c = function (){
+		   return v;
+	   }; 
+
+	   return c;
+
+    }
+
+    var o = f();
+
+	o();
+	// 1
+
+{% endhighlight %}
+
+原来，在函数f外部，我们是没有办法读取内部变量v的。但是，借助闭包c，可以读到这个变量。
 
 ## 立即调用的函数表达式（IIFE）
 

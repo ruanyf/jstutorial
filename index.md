@@ -2,7 +2,7 @@
 layout: homepage
 title: Javascript 标准教程
 date: 2012-11-18
-modifiedOn: 2013-1-7
+modifiedOn: 2013-1-10
 ---
 
 <h2 id="introduction">导论</h2>
@@ -33,7 +33,8 @@ modifiedOn: 2013-1-7
 - [History对象](bom/history.html)
 - [WebSocket](bom/websocket.html)	
 - [Geolocation](bom/geolocation.html)
-- [window.matchMedia](bom/matchmedia.html)
+- [MatchMedia](bom/matchmedia.html)
+- [WebRTC](bom/webrtc.html)
 
 <h2 id="htmlapi">HTML网页的API</h2>
 
