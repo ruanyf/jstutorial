@@ -3,7 +3,7 @@ title: 面向对象编程概述
 layout: page
 category: oop
 date: 2012-12-28
-modifiedOn: 2012-12-28
+modifiedOn: 2013-01-10
 ---
 
 ## 构造函数
@@ -37,4 +37,18 @@ console.info(v.price);
 
 上面代码的v变量，就是新生成的实例对象。它从构造函数Vehicle继承了price属性。
 
+## this关键字
 
+this关键字指的是变量所处的上下文环境（context）。举例来说，如果变量处于全局环境，this指的就是顶层对象。
+
+{% highlight javascript %}
+
+var a = 1;
+
+window.a = 1;
+
+this.a = 1;
+
+{% highlight javascript %}
+
+上面三行代码是等同的，因为在浏览器全局环境中，变量的顶层对象默认是window，这时this就表示window。
