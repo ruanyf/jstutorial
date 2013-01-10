@@ -49,6 +49,6 @@ window.a = 1;
 
 this.a = 1;
 
-{% highlight javascript %}
+{% endhighlight %}
 
 上面三行代码是等同的，因为在浏览器全局环境中，变量的顶层对象默认是window，这时this就表示window。
