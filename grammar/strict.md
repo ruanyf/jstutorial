@@ -28,7 +28,7 @@ modifiedOn: 2013-01-11
 
 {% endhighlight %}
 
-老版本的Javascript解释器，会把“use strict;”当作一个普通字符串，而忽略它。
+老版本的Javascript解释器，会把“use strict”当作一个普通字符串，而忽略它。
 
 ## 调用
 
@@ -95,6 +95,9 @@ function notStrict() {
 
 v = 1; // 报错，v未声明
 
+for(i = 0; i < 2; i++) { // 报错，i未声明
+}
+
 {% endhighlight %}
 
 因此，严格模式下，变量都必须先用var命令声明，然后再使用。
@@ -143,7 +146,7 @@ eval = 17; // 语法错误
 
 {% endhighlight %}
 
-最后，严格模式禁止删除变量。
+最后，严格模式禁止删除变量，除非configurable设定为true的对象属性，才能被删除。
 
 {% highlight javascript %}
 
@@ -152,6 +155,17 @@ eval = 17; // 语法错误
 var x;
 
 delete x; // 语法错误
+
+var o = Object.create(null, {
+        v: {
+            value: 1,
+            configurable: true,
+            writable: false,
+            enumerable: true
+        }
+});
+
+delete o.x; // 删除成功
 
 {% endhighlight %}
 
@@ -194,6 +208,7 @@ f();// 报错，this未定义
 function f1(){
 
   "use strict";
+
   f1.caller;    // 报错
   f1.arguments; // 报错
 
@@ -345,7 +360,7 @@ f(1); // 严格模式为[2,1]
 
 {% endhighlight %}
 
-再次，禁止使用arguments.callee。
+再次，禁止使用arguments.callee。这意味着，你无法在匿名函数内部调用自身了。
 
 {% highlight javascript %}
 
@@ -403,3 +418,4 @@ for (var i = 0; i < 5; i++) {
 - Dr. Axel Rauschmayer, [JavaScript: Why the hatred for strict mode?](http://www.2ality.com/2011/10/strict-mode-hatred.html)
 - Dr. Axel Rauschmayer，[JavaScript’s strict mode: a summary](http://www.2ality.com/2011/01/javascripts-strict-mode-summary.html)
 - Douglas Crockford, [Strict Mode Is Coming To Town](http://www.yuiblog.com/blog/2010/12/14/strict-mode-is-coming-to-town/)
+- [JavaScript Strict Mode Support](http://java-script.limewebs.com/strictMode/test_hosted.html)

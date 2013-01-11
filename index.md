@@ -16,6 +16,7 @@ modifiedOn: 2013-1-11
 - [对象](grammar/object.html)
 - [数组](grammar/array.html)
 - [函数](grammar/function.html)
+- [JSON格式](grammar/json.html)
 - [严格模式](grammar/strict.html)
 
 <h2 id="oop">面向对象编程</h2>
