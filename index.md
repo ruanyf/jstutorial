@@ -2,7 +2,7 @@
 layout: homepage
 title: Javascript 标准教程
 date: 2012-11-18
-modifiedOn: 2013-1-10
+modifiedOn: 2013-1-11
 ---
 
 <h2 id="introduction">导论</h2>
@@ -16,6 +16,7 @@ modifiedOn: 2013-1-10
 - [对象](grammar/object.html)
 - [数组](grammar/array.html)
 - [函数](grammar/function.html)
+- [严格模式](grammar/strict.html)
 
 <h2 id="oop">面向对象编程</h2>
 
