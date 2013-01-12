@@ -16,9 +16,9 @@ ECMAScript第五版新增了JSON对象，用来处理JSON格式数据。
 
 {% highlight javascript %}
 
-var str = JSON.stringify({ name: "张三" });
+var s = JSON.stringify({ name: "张三" });
 
-str
+s
 // {"name":"张三"}
 
 {% endhighlight %}
@@ -27,9 +27,9 @@ str
 
 {% highlight javascript %}
 
-var str = JSON.stringify({ a:1, b:2 }, ['a']);
+var s = JSON.stringify({ a:1, b:2 }, ['a']);
 
-str
+s
 // "{"a":1}"
 
 {% endhighlight %}
@@ -51,9 +51,9 @@ function f(key, value) {
   }
 }
 
-var str = JSON.stringify({ a:1, b:2 }, f);
+var s = JSON.stringify({ a:1, b:2 }, f);
 
-str
+s
 // "{"a":11}"
 
 {% endhighlight %}
@@ -62,21 +62,21 @@ JSON.stringify还可以接受第三个参数，表示添加空格或制表符。
 
 {% highlight javascript %}
 
-var str = JSON.stringify({ name: "张三" }, null, 2);
+var s = JSON.stringify({ name: "张三" }, null, 2);
 
-str
+s
 // {
 //   "name": "John"
 // }
 
-var str = JSON.stringify({ name: "John" }, null, "\t");
+var s = JSON.stringify({ name: "John" }, null, "\t");
 
-str
+s
 // {\n\t"name": "John"\n}
 
 {% endhighlight %}
 
-### JSON.parse()
+## JSON.parse()
 
 该方法用于将JSON字符串转化成对象。
 

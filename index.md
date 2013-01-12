@@ -2,7 +2,7 @@
 layout: homepage
 title: Javascript 标准教程
 date: 2012-11-18
-modifiedOn: 2013-1-11
+modifiedOn: 2013-1-12
 ---
 
 <h2 id="introduction">导论</h2>
@@ -60,6 +60,7 @@ modifiedOn: 2013-1-11
 
 - [性能测试（Benchmark）](tool/benchmark.html)
 - [PhantomJS](tool/phantomjs.html)
+- [移动端除错](tool/mobiledebugging.html)
 
 <h2 id="pattern">模式</h2>
 
