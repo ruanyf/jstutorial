@@ -3,7 +3,7 @@ title: 对象
 layout: page
 category: grammar
 date: 2012-12-12
-modifiedOn: 2013-01-08
+modifiedOn: 2013-01-13
 ---
 
 ## 概述
@@ -41,8 +41,6 @@ var o = {};
 var o = new Object();
 
 {% endhighlight %}
-
-## 属性（property）
 
 ### 引用方法
 
@@ -87,6 +85,255 @@ Object.keys(o);
 
 {% endhighlight %}
 
+### 变量名是对象的引用
+
+如果不同的变量名指向同一个对象，那么它们都是这个对象的引用。修改其中一个变量，会影响到其他所有变量。
+
+{% highlight javascript %}
+
+var v1 = {};
+
+var v2 = v1;
+
+v1.a = 1;
+
+v2.a
+// 1
+
+{% endhighlight %}
+
+## 原始类型的包装对象
+
+Javascript的三种原始类型的值（数字、字符串、布尔值），都有对应的包装对象。也就是说，可以用对象形式获得这些值。它们对应的对象名分别是Number、String、Boolean。
+
+以下分别用原始类型和包装对象两种形式，获取同一个值。
+
+{% highlight javascript %}
+
+var v = 123;
+var v = new Number(123);
+
+var v = "abc";
+var v = new String("abc");
+
+var v = true;
+var v = new Boolean(true);
+
+{% endhighlight %}
+
+这两种类型的变量，虽然都对应同一个值，但是类型不一样。包装对象属于Object类型，用typeof运算符就可以看出来。
+
+{% highlight javascript %}
+
+typeof "abc"
+//  'string'
+ 
+typeof new String("abc")
+// 'object'
+
+{% endhighlight %}
+
+原始类型的值不是Object对象的实例，但是包装对象是Object对象的实例。
+
+{% highlight javascript %}
+
+"abc" instanceof Object
+// false
+ 
+new String("abc") instanceof Object
+// true
+
+{% endhighlight %}
+
+### 包装对象的目的
+
+它提供了一系列方法，使得Javascript可以使用同样的一套规范，描述所有的值。
+
+首先，包装对象有一些原生方法可以使用。
+
+valueOf方法，返回该对象对应的原始类型的值。
+
+{% highlight javascript %}
+
+new Number(123).valueOf()
+// 123
+
+new String("abc").valueOf()
+// "abc"
+
+new Boolean("true").valueOf()
+// true
+
+{% endhighlight %}
+
+toString方法，返回该对象的值的字符串形式。
+
+{% highlight javascript %}
+
+new Number(123).toString()
+// "123"
+
+new String("abc").toString()
+// "abc"
+
+new Boolean("true").toString()
+// "true"
+
+{% endhighlight %}
+
+如果不加new关键字，直接调用包装对象，则相当于生成实例后再调用valueOf方法。
+
+{% highlight javascript %}
+
+Number(123)
+// 123
+
+String("abc")
+// "abc"
+
+Boolean(true)
+// true
+
+{% endhighlight %}
+
+除了valueOf和toString方法，字符串对象还有length属性，返回字符串的长度。
+
+{% highlight javascript %}
+
+var v = new String("abc");
+
+v.length
+// 3
+
+"abc".length
+// 3
+
+{% endhighlight %}
+
+其次，可以包装对象的原型上添加自定义方法。比如，我们可以新增一个double方法，使得字符串和数字翻倍。
+
+{% highlight javascript %}
+
+String.prototype.double = function (){
+
+	return this.valueOf() + this.valueOf();
+
+};
+
+"abc".double()
+// abcabc
+
+Number.prototype.double = function (){
+
+	return this.valueOf() + this.valueOf();
+
+};
+
+(123).double()
+// 246
+
+{% endhighlight %}
+
+### 自动转化
+
+如果对原始类型的值使用原生方法或自定义方法，原始类型会自动转化成包装对象。
+
+{% highlight javascript %}
+
+var v = 123;
+
+v.valueOf()
+// 123
+
+{% endhighlight %}
+
+如果使用的是未定义的方法或属性，原始类型不会自动转化。
+
+{% highlight javascript %}
+
+var v = 123;
+
+v.x = 246;
+
+v.x
+// undefined
+
+v.x = function (){};
+
+v.x()
+// 报错
+
+{% endhighlight %}
+
+如果包装对象与原始类型进行混合运算，包装对象会转化为原始类型（实际是调用自身的valueOf方法）。
+
+{% highlight javascript %}
+
+new Number(123) + 123
+// 246
+
+new String("abc") + "abc"
+// "abcabc"
+
+{% endhighlight %}
+
+特别要注意的是，如果要获取布尔对象的值，必须显式引用。
+
+{% highlight javascript %}
+
+if (new Boolean(false)) {
+
+    console.info("true"); 
+
+}
+// true
+
+if (new Boolean(false).valueOf()) {
+
+    console.info("true"); 
+
+}
+// 无输出
+
+{% endhighlight %}
+
+如果要求一个变量对应的布尔值，规范的写法如下：
+
+{% highlight javascript %}
+
+var a = "";
+
+new Boolean(a).valueOf()
+//false
+
+{% endhighlight %}
+
+简洁的写法是：
+
+{% highlight javascript %}
+
+var a = "";
+
+Boolean(a)
+//false
+
+{% endhighlight %}
+
+还有更简洁的写法：
+
+{% highlight javascript %}
+
+var a = "";
+
+!!a
+//false
+
+{% endhighlight %}
+
+## 属性模型
+
+ECMAScript 5对于对象的属性，提出了一个更精确的模型。
+
 ### 存取函数（accessor）
 
 属性还可以用存取函数（accessor）定义。存值函数称为setter，使用set关键字；取值函数称为getter，使用getter关键字。
@@ -96,11 +343,11 @@ Object.keys(o);
 var o = {
 
 	get p() {
-		return "Getter";
+		return "getter";
     },
 
     set p(value) {
-        console.log("Setter: "+value);
+        console.log("setter: "+value);
     }
 }
 
@@ -110,11 +357,11 @@ var o = {
 
 {% highlight javascript %}
 
-> o.p
-'Getter'
+o.p
+// getter
 
-> o.p = 123;
-Setter: 123
+o.p = 123;
+// setter: 123
 
 {% endhighlight %}
 
@@ -352,3 +599,4 @@ Object.keys(obj).forEach( function(key) {
 
 - Dr. Axel Rauschmayer，[Object properties in JavaScript](http://www.2ality.com/2012/10/javascript-properties.html)
 - Lakshan Perera, [Revisiting JavaScript Objects](http://www.laktek.com/2012/12/29/revisiting-javascript-objects/)
+- Angus Croll, [The Secret Life of JavaScript Primitives](http://javascriptweblog.wordpress.com/2010/09/27/the-secret-life-of-javascript-primitives/)

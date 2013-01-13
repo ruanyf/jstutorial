@@ -3,7 +3,7 @@ title: 语法概述
 layout: page
 category: grammar
 date: 2012-12-14
-modifiedOn: 2013-01-10
+modifiedOn: 2013-01-13
 ---
 
 ## 注释
@@ -78,12 +78,24 @@ v
 
 {% endhighlight %}
 
+typeof可以用来检查一个没有声明的变量，而不报错。其他语法结构都没有这个功能。
+
+{% highlight javascript %}
+
+v
+// ReferenceError: v is not defined
+
+typeof v
+// undefined
+
+{% endhighlight %}
+
 - 如果值的类型是null，返回object。
 
 {% highlight javascript %}
 
-> typeof null
-  "object"
+typeof null
+// object
 
 {% endhighlight %}
 
@@ -91,8 +103,8 @@ v
 
 {% highlight javascript %}
 
-> typeof false
-  "boolean"
+typeof false
+// boolean
 
 {% endhighlight %}
 
@@ -100,8 +112,8 @@ v
 
 {% highlight javascript %}
 
-> typeof 123
-  "number"
+typeof 123
+// number
 
 {% endhighlight %}
 
@@ -109,8 +121,8 @@ v
 
 {% highlight javascript %}
 
-> typeof "123"
-  "string"
+typeof "123"
+// string
 
 {% endhighlight %}
 
@@ -118,8 +130,8 @@ v
 
 {% highlight javascript %}
 
-> typeof print
-  "function"
+typeof print
+// function
 
 {% endhighlight %}
 
@@ -127,11 +139,17 @@ v
 
 {% highlight javascript %}
 
-typeof window // object
+typeof window 
+// object
 
-typeof {}; // object
+typeof {}; 
+// object
 
-typeof []; // object
+typeof []; 
+// object
+
+typeof null;
+// object
 
 {% endhighlight %}
 
@@ -176,6 +194,80 @@ if ({}){ console.info(true);}
 - <= 小于或等于
 - \> 大于
 - \>= 大于或等于
+
+### 相等运算符与严格相等运算符
+
+相等运算符（==）比较“值”是否相等，严格相等运算符（===）比较是否为“同一个值”。
+
+如果两个值不是同一个类型，严格相等运算符会直接返回false，而相等运算符会将它们转化成同一个类型，再进行比较。
+
+由于这种行为会返回一些违反直觉的结果，因此不推荐使用相等运算符，建议只使用严格相等运算符。
+
+比较两个原始类型的量是否相等，是看它们的值是否相等。
+
+{% highlight javascript %}
+
+123 === 123
+// true
+
+{% endhighlight %}
+
+比较两个复合类型的量是否相等，不是比较它们的值是否相等，而是比较它们是否指向同一个对象。
+
+{% highlight javascript %}
+
+{} === {}
+// false
+
+[] === []
+// false
+
+(function (){}) === (function (){})
+// false
+
+{% endhighlight %}
+
+如果两个变量指向同一个复合类型的值，则它们相等。
+
+{% highlight javascript %}
+
+var v1 = {};
+var v2 = v1;
+
+v1 === v2
+// true
+
+{% endhighlight %}
+
+需要注意的是，如果两个变量的值都是undefined或null，它们是相等的。
+
+{% highlight javascript %}
+
+var v1 = undefined;
+var v2 = undefined;
+
+v1 === v2
+// true
+
+var v1 = null;
+var v2 = null;
+
+v1 === v2
+// true
+
+{% endhighlight %}
+
+因为变量声明后默认类型是undefined，因此两个只声明未赋值的变量是相等的。
+
+{% highlight javascript %}
+
+var v1;
+var v2;
+
+v1 === v2
+// true
+
+{% endhighlight %}
 
 ### 布尔运算符
 
