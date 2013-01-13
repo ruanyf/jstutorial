@@ -12,6 +12,12 @@ Javascript是唯一一种通用的浏览器脚本语言，所有主流浏览器�
 
 而且，它的使用范围还在不断扩大。Node.js项目使得Javascript可以广泛用于服务器端编程。越来越多的桌面程序和移动设备程序，使用Javascript作为它们的脚本语言。Javascript不再局限于某个特定领域，正在成为一种通用目的语言。（当然，Javascript最擅长的领域还是网页开发。）
 
+下面是几个非网页领域Javascript应用的例子：
+
+- PhoneGap可以用来编写支持多种移动平台的应用程序。
+- Mozilla的Open Web Apps项目，可以用来编写运行于Windows、Mac OS和Android等多个桌面平台的程序，不依赖浏览器。
+- webOS、Chromium OS、Windows 8等操作系统直接支持Javascript编写应用程序。
+
 如果你的程序想同时在桌面端、服务器端、手机端都能运行，Javascript将是你的一种选择。
 
 ## 易学性

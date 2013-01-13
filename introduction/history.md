@@ -33,7 +33,7 @@ Netscape公司雇佣了Brendan Eich开发这种语言。1995年5月，Brendan Ei
 
 1996年3月，Navigator 2.0浏览器正式内置了Javascript脚本语言。
 
-## Javascript的标准化
+## 标准化
 
 1996年8月，微软模仿Javascript，在IE 3.0内置了JScript。网景公司面临丧失浏览器脚本语言的主导权的局面。
 
@@ -49,9 +49,9 @@ Netscape公司雇佣了Brendan Eich开发这种语言。1995年5月，Brendan Ei
 
 2011年6月，ECMAscript 5.1发布，并且成为ISO国际标准（ISO/IEC 16262:2011）。
 
-2013年（预计），Javascript.next完成，发布成为ECMAScript第六版。
+目前，ECMA的第39号技术专家委员会（Technical Committee 39，简称TC39）负责制订该标准，成员包括Michosoft、Mozilla、Google等。TC39的计划是，ECMAScript第五版与第三版基本保持兼容，较大的语法修正和新功能加入，将由Javascript.next完成。预计在2013年的年底，Javascript.next将完成，发布成为ECMAScript第六版。 
 
-目前，ECMA的第39号技术专家委员会（Technical Committee 39，简称TC39）负责制订该标准，成员包括Michosoft、Mozilla、Google等。
+同时，TC39也预计，ECMAScript第五版将在2013年的年中成为Javascript开发的主流标准，并在今后五年中一直保持这个位置。
 
 ## 大事记
 
