@@ -1,22 +1,20 @@
 <header class="top-bar">
+
 <div class="fixed">
- <nav class="top-bar">
+
+<nav class="top-bar">
 <ul>
-        <!-- Title Area -->
-        <li class="name has-dropdown">
-          <h1>
-            <a href="/">{{ site.sitename }} </a>
-          </h1>
-		  <ul class="dropdown">
-{% for chapter in site.chapters %}
-
-<li><a href="/#{{chapter}}">{{site.[chapter]}}</a></li>
-
-{% endfor %}
-
+<!-- Title Area -->
+	<li class="name has-dropdown">
+	<h1><a href="/">{{ site.sitename }} </a></h1>
+		<ul class="dropdown">
+			{% for chapter in site.chapters %}
+			<li><a href="/#{{chapter}}">{{site.[chapter]}}</a></li>
+			{% endfor %}
+		</ul>
+	</li>
 </ul>
-        </li>
-</ul>
+
 <section>
 
 {% if page.category != nil %}
@@ -37,9 +35,9 @@
 {% endif %}
 
 <ul class="right">
-          <li >
-            <a href="#">TOP <i class="foundicon-up-arrow"></i></a>
-          </li>
+	<li >
+		<a href="#">TOP <i class="foundicon-up-arrow"></i></a>
+	</li>
 </ul>
 
 </section>
