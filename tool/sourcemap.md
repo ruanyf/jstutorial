@@ -62,3 +62,29 @@ java -jar compiler.jar \
 {% endhighlight %}
 
 map文件可以放在网络上，也可以放在本地文件系统。
+
+## 格式
+
+打开Source map文件，它大概是这个样子：
+
+{% highlight javascript %}
+
+　　{
+　　　　version : 3,
+　　　　file: "out.js",
+　　　　sourceRoot : "",
+　　　　sources: ["foo.js", "bar.js"],
+　　　　names: ["src", "maps", "are", "fun"],
+　　　　mappings: "AAgBC,SAAQ,CAAEA"
+　　}
+
+{% endhighlight %}
+
+整个文件就是一个JavaScript对象，可以被解释器读取。它主要有以下几个属性：
+
+- version：Source map的版本，目前为3。
+- file：转换后的文件名。
+- sourceRoot：转换前的文件所在的目录。如果与转换前的文件在同一目录，该项为空。
+- sources：转换前的文件。该项是一个数组，表示可能存在多个文件合并。
+- names：转换前的所有变量名和属性名。
+- mappings：记录位置信息的字符串。
