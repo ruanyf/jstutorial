@@ -2,7 +2,7 @@
 layout: homepage
 title: Javascript 标准教程
 date: 2012-11-18
-modifiedOn: 2013-1-23
+modifiedOn: 2013-01-23
 ---
 
 <h2 id="introduction">导论</h2>

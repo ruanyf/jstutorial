@@ -36,11 +36,11 @@ modifiedOn: 2013-01-23
 
 {% highlight java %}
 
-　　java -jar compiler.jar \ 
-　　　　--js script.js \
-　　　　--create_source_map ./script-min.js.map \
-　　　　--source_map_format=V3 \
-　　　　--js_output_file script-min.js
+java -jar compiler.jar \ 
+　　--js script.js \
+　　--create_source_map ./script-min.js.map \
+　　--source_map_format=V3 \
+　　--js_output_file script-min.js
 
 {% endhighlight %}
 
@@ -119,7 +119,7 @@ mappings:"AAAAA,BBBBB;CCCCC"
 
 有几点需要说明。首先，所有的值都是以0作为基数的。其次，第五位不是必需的，如果该位置没有对应names属性中的变量，可以省略第五位。再次，每一位都采用VLQ编码表示；由于VLQ编码是变长的，所以每一位可以由多个字符构成。
 
-举例来说，如果某个位置是AAAAA，由于A在VLQ编码中表示0，因此这个位置的五个位实际上都是0。它的意思是，该位置在转换后代码的第0列，对应sources属性中第0个文件，属于转换前代码的第0行第0列，对应names属性中的第0个变量。
+如果某个位置是AAAAA，由于A在VLQ编码中表示0，因此这个位置的五个位实际上都是0。它的意思是，该位置在转换后代码的第0列，对应sources属性中第0个文件，属于转换前代码的第0行第0列，对应names属性中的第0个变量。
 
 ## VLQ编码
 
