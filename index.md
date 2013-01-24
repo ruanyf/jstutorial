@@ -45,6 +45,7 @@ modifiedOn: 2013-01-24
 * [Canvas](htmlapi/canvas.html)
 * [Blob对象](htmlapi/blob.html)
 * [File](htmlapi/file.html)
+- [Web Worker](htmlapi/webworker.html)
 - [服务器端发送事件](htmlapi/eventsource.html)		
 * [Page Visiblity](htmlapi/pagevisibility.html)
 * [FullScreen](htmlapi/fullscreen.html)
