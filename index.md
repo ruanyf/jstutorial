@@ -2,7 +2,7 @@
 layout: homepage
 title: Javascript 标准教程
 date: 2012-11-18
-modifiedOn: 2013-01-23
+modifiedOn: 2013-01-24
 ---
 
 <h2 id="introduction">导论</h2>
@@ -48,6 +48,7 @@ modifiedOn: 2013-01-23
 - [服务器端发送事件](htmlapi/eventsource.html)		
 * [Page Visiblity](htmlapi/pagevisibility.html)
 * [FullScreen](htmlapi/fullscreen.html)
+- [Web Speech](htmlapi/webspeech.html)
 
 <h2 id="jquery">jQuery</h2>
 
