@@ -184,6 +184,52 @@ if ({}){ console.info(true);}
 
 ## 运算符
 
+### void运算符
+
+void运算符的作用是执行一个表达式，然后返回undefined。
+
+它可以写成
+
+{% highlight javascript %}
+
+void  expr
+
+{% endhighlight %}
+
+或者
+
+{% highlight javascript %}
+
+void(expr)
+
+{% endhighlight %}
+
+建议采用后一种形式，即总是使用括号。因为void运算符的优先性很高，如果不使用括号，容易造成错误的结果。比如，void 4+7 实际上等同于 (void 4) +7 。
+
+这个运算符号主要是用于书签工具（bookmarklet）或者用于在超级链接中插入代码，目的是返回undefined可以防止网页跳转。以书签工具为例，下面的代码会导致直接在当前窗口打开新链接。
+
+{% highlight javascript %}
+
+javascript:window.open("http://www.whitehouse.gov/");
+
+{% endhighlight %}
+
+使用void运算符后，就会跳出一个新窗口打开链接。
+
+{% highlight javascript %}
+
+javascript:void(window.open("http://www.whitehouse.gov/"));
+
+{% endhighlight %}
+
+写入超级链接，就是下面这样：
+
+{% highlight html %}
+
+ <a href="javascript:void(doSomething());">Compute</a>
+
+{% endhighlight %}
+
 ### 比较运算符
 
 - == 相等
