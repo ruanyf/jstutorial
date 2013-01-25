@@ -3,7 +3,7 @@ title: 严格模式
 layout: page
 category: grammar
 date: 2013-01-11
-modifiedOn: 2013-01-15
+modifiedOn: 2013-01-25
 ---
 
 ## 概述
@@ -40,6 +40,8 @@ modifiedOn: 2013-01-15
 （1） 针对整个脚本文件
 
 将"use strict"放在脚本文件的第一行，则整个脚本都将以“严格模式”运行。如果这行语句不在第一行，则无效，整个脚本以“正常模式”运行。如果不同模式的代码文件合并成一个文件，这一点需要特别注意。
+
+(严格地说，只要前面不是产生实际运行结果的语句，"use strict"可以不在第一行，比如直接跟在一个空的分号后面。)
 
 {% highlight html %}
 
@@ -435,7 +437,7 @@ function package(protected) { // 语法错误
 
 {% endhighlight %}
 
-此外，ECMAscript第五版本身还规定了另一些保留字：class, enum, export, extends, import, super。它们也是不能使用的。
+此外，ECMAscript第五版本身还规定了另一些保留字（class, enum, export, extends, import, super），以及各大浏览器自行增加的const保留字，也是不能作为变量名的。
 
 ## 参考链接
 
