@@ -3,7 +3,7 @@ title: Web Storage
 layout: page
 category: bom
 date: 2012-12-28
-modifiedOn: 2012-12-28
+modifiedOn: 2013-01-25
 ---
 
 ## 概述
@@ -45,9 +45,9 @@ sessionStorage和localStorage保存的数据，都以“键值对”的形式存
 
 {% highlight javascript %}
 
-window.sessionStorage.setItem("key","value");
+sessionStorage.setItem("key","value");
 
-window.localStorage.setItem("key","value");
+localStorage.setItem("key","value");
 
 {% endhighlight %}
 
@@ -55,9 +55,21 @@ window.localStorage.setItem("key","value");
 
 {% highlight javascript %}
 
-var valueSession = window.sessionStorage.getItem("key");
+var valueSession = sessionStorage.getItem("key");
 
-var valueLocal = window.localStorage.getItem("key");
+var valueLocal = localStorage.getItem("key");
+
+{% endhighlight %}
+
+## 清除数据
+
+removeItem方法用于清除某个键名对应的数据。
+
+{% highlight javascript %}
+
+sessionStorage.removeItem('key');
+
+localStorage.removeItem('key');
 
 {% endhighlight %}
 
@@ -65,9 +77,29 @@ clear方法用于清除所有保存的数据。
 
 {% highlight javascript %}
 
-window.sessionStorage.clear();
+sessionStorage.clear();
 
-window.localStorage.clear(); 
+localStorage.clear(); 
+
+{% endhighlight %}
+
+## 遍历
+
+利用length属性和key方法，可以遍历所有的键。
+
+{% highlight javascript %}
+
+for(var i = 0; i < localStorage.length; i++){
+    console.log(localStorage.key(i));
+}
+
+{% endhighlight %}
+
+其中的key方法，根据位置（从0开始）获得键值。
+
+{% highlight javascript %}
+
+localStorage.key(1);
 
 {% endhighlight %}
 
@@ -102,4 +134,5 @@ event对象的属性还有：
 
 ## 参考链接
 
--  Ryan Stewart，[Introducing the HTML5 storage APIs](http://www.adobe.com/devnet/html5/articles/html5-storage-apis.html)
+- Ryan Stewart，[Introducing the HTML5 storage APIs](http://www.adobe.com/devnet/html5/articles/html5-storage-apis.html)
+- [Getting Started with LocalStorage](http://codular.com/localstorage)
