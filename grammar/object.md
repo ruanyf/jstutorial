@@ -3,7 +3,7 @@ title: 对象
 layout: page
 category: grammar
 date: 2012-12-12
-modifiedOn: 2013-01-13
+modifiedOn: 2013-01-25
 ---
 
 ## 概述
@@ -24,7 +24,18 @@ var o = {
 
 上面代码中的o被定义为对象，里面包含一个键值对，这个键值对就是对象o的成员。其中，p是“键”（成员的名称），“Hello World”是“值”（成员的值）。
 
-“键”又称为“属性”（property）。它的“值”可以是数值、字符串，也可以是函数或其他对象。
+“键”又称为“属性”（property）。它的“值”可以是数值、字符串，也可以是函数或其他对象。属性之间用逗号分隔，最后一个属性后面可以加逗号（trailing comma），也可以不加。
+
+{% highlight javascript %}
+
+   var obj = {
+        foo: 123,
+        bar: function () { ... },
+    }
+
+{% endhighlight %}
+
+上面的代码中bar属性后面的那个逗号，有或没有都不算错。
 
 ### 生成方法
 

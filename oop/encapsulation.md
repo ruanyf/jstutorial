@@ -3,8 +3,14 @@ title: 封装
 layout: page
 category: oop
 date: 2012-12-14
-modifiedOn: 2013-01-04
+modifiedOn: 2013-01-24i
 ---
+
+## 原型
+
+每个对象都有一个原型（prototype），原型的方法可以这个对象继承。
+
+由于原型本身也是对象，所以形成了一条原型链（prototype chain），直到Object.prototype为止。当读取对象的某个属性时，解释器先寻找对象本身的属性，如果找不到，就到它的原型去找，以此类推，如果直到Object.prototype还是找不到，则返回null。
 
 ## Object.getPrototypeOf方法
 
