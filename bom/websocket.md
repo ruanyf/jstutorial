@@ -3,7 +3,7 @@ title: WebSocket
 layout: page
 category: bom 
 date: 2012-12-23
-modifiedOn: 2012-12-23
+modifiedOn: 2013-01-26
 ---
 
 ## 概述
@@ -26,7 +26,9 @@ Sec-WebSocket-Version: 13
 
 {% endhighlight %}
 
-服务器端的Websocket相映则是
+“Connection: Upgrade”表示浏览器通知服务器，如果可以，就升级到webSocket链接。Origin用于验证浏览器域名是否在服务器许可的范围内。Sec-WebSocket-Key则是用于握手协议的密钥，是base64编码的16字节随机字符串。
+
+服务器端的Websocket相应则是
 
 {% highlight http %}
 
@@ -38,6 +40,8 @@ Sec-WebSocket-Origin: null
 Sec-WebSocket-Location: ws://example.com/
 
 {% endhighlight %}
+
+Sec-WebSocket-Accept是服务器在浏览器提供的Sec-WebSocket-Key字符串后面，添加“258EAFA5-E914-47DA-95CA-C5AB0DC85B11” 字符串，然后再取sha-1的hash值。浏览器将对这个值进行验证，以证明确实是目标服务器回应了webSocket请求。
 
 WebSocket服务器需要安装，目前比较流行是基于node.js的[socket.io](http://socket.io/)，更多的实现可参阅[Wikipedia](http://en.wikipedia.org/wiki/WebSocket#Server_side)。
 
@@ -74,17 +78,35 @@ if(window.WebSocket != undefined) {
 - 2： 正在关闭
 - 3： 连接关闭
 
+当握手协议成功以后，readyState就从0变为1,并触发open事件，这时就可以向服务器发送要传递的信息了。
+
 ## open事件
 
 WebSocket连接成功后，浏览器会触发实例对象的open事件，我们可以指定它的回调函数。
 
 {% highlight javascript	%}
 
-connection.onopen = onopen;
+connection.onopen = onOpen;
 
-function onopen (event) {
+function onOpen (event) {
 
 	document.getElementById('connection').innerHTML = "Connected";
+
+}
+
+{% endhighlight %}
+
+## close事件
+
+WebSocket关闭时，触发close事件。
+
+{% highlight javascript	%}
+
+connection.onclose = onClose;
+
+function onClose () {
+
+	document.getElementById('connection').innerHTML = "Closed";
 
 }
 
@@ -97,6 +119,24 @@ function onopen (event) {
 {% highlight javascript	%}
 
 connection.send(messagetext);
+
+{% endhighlight %}
+
+除了发送字符串，也可以使用 Blob 或 ArrayBuffer 对象发送二进制数据。
+
+{% highlight javascript	%}
+
+// 使用ArrayBuffer发送canvas图像数据
+var img = canvas_context.getImageData(0, 0, 400, 320);
+var binary = new Uint8Array(img.data.length);
+for (var i = 0; i < img.data.length; i++) {
+	binary[i] = img.data[i];
+}
+connection.send(binary.buffer);
+
+// 使用Blob发送文件
+var file = document.querySelector('input[type="file"]').files[0];
+connection.send(file);
 
 {% endhighlight %}
 
@@ -131,4 +171,5 @@ function onerror(event) {
 ## 参考链接
 
 - Ryan Stewart, [Real-time data exchange in HTML5 with WebSockets](http://www.adobe.com/devnet/html5/articles/real-time-data-exchange-in-html5-with-websockets.html)
-
+- Malte Ubl & Eiji Kitamura，[WEBSOCKETS 简介：将套接字引入网络](http://www.html5rocks.com/zh/tutorials/websockets/basics/)
+- Jack Lawson, [WebSockets: A Guide](http://buildnewgames.com/websockets/)
