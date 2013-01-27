@@ -3,7 +3,7 @@ title: Canvas API
 layout: page
 date: 2012-11-21
 category: htmlapi
-modifiedOn: 2013-01-25
+modifiedOn: 2013-01-26
 ---
 
 ## 概述
@@ -162,7 +162,9 @@ ctx.textAlign = "left"; // 设置对齐方式
 
 ctx.fillStyle = "#008600"; // 设置填充颜色
 
-ctx.fillText("Treehouse Rocks!", 10, 50); // 设置字体内容，以及在画布上的位置
+ctx.fillText("Hello!", 10, 50); // 设置字体内容，以及在画布上的位置
+
+ctx.strokeText('Hello!", 10, 100); // 绘制空心字
 
 {% endhighlight %}
 

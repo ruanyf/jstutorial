@@ -2,7 +2,7 @@
 title: 继承
 layout: page
 date: 2012-12-12
-modifiedOn: 2013-01-08
+modifiedOn: 2013-01-27
 category: oop
 ---
 
@@ -92,72 +92,106 @@ o instanceof f
 
 ### 对象的原生属性
 
-对象本身可枚举的属性，可以用Object.keys方法取得。
+对象本身的所有属性，可以用Object.getOwnPropertyNames方法获得。
 
 {% highlight javascript %}
 
-Object.keys(obj)
+Object.getOwnPropertyNames(Date)
+// ["parse", "arguments", "UTC", "caller", "name", "prototype", "now", "length"]
 
 {% endhighlight %}
 
-对象本身的所有属性，不管是否可枚举，可以用下面的方法取得
+对象本身的属性之中，有的是可以枚举的（enumerable），有的是不可以枚举的。只获取那些可以枚举的属性，使用Object.keys方法。
 
 {% highlight javascript %}
 
-Object.getOwnPropertyNames(object)
-object.hasOwnProperty(property)
+Object.keys(Date)
+// []
+
+{% endhighlight %}
+
+判断对象是否具有某个属性，使用hasOwnProperty方法。
+
+{% highlight javascript %}
+
+Date.hasOwnProperty('length')
+// true
+
+Date.hasOwnProperty('toString')
+// false
 
 {% endhighlight %}
 
 ### 对象的继承属性
 
-对象所有可枚举的属性，可以用for-in循环得到。
+用Object.create方法创造的对象，会继承所有原型对象的属性。
 
 {% highlight javascript %}
 
-for (property in object)
+var proto = { p1: 123 };
+var o = Object.create(proto);
+
+o.p1
+// 123
+
+o.hasOwnProperty("p1")
+// false
 
 {% endhighlight %}
 
-不管是否可枚举，都可以用下面的方法判断，对象是否包括某个属性
+### 获取所有属性
+
+判断一个对象是否具有某个属性（不管是自身的还是继承的），使用in运算符。
 
 {% highlight javascript %}
 
-property in object
+"length" in Date
+// true
+
+"toString" in Date
+// true
 
 {% endhighlight %}
 
-用法如下
+获得对象的所有可枚举属性（不管是自身的还是继承的），可以使用for-in循环。
 
 {% highlight javascript %}
 
-> "valueOf" in {}
-true
+var o1 = {p1:123};
 
-> "toString" in {}
-true
+var o2 = Object.create(o1,{
+        p2: { value: "abc", enumerable: true }
+});
+
+for (p in o2) {console.info(p);}
+// p2
+// p1
 
 {% endhighlight %}
 
-用Object.create方法创造的对象，它会继承所有原型对象的属性。
+获得对象的所有属性（不管是自身的还是继承的），可以使用下面的函数。
 
 {% highlight javascript %}
 
-> var proto = { p1: 123 };
-> var o = Object.create(proto);
-> o.hasOwnProperty("p1")
-  false
+ function inheritedPropertyNames(obj) {
+        var props = {};
+        while(obj) {
+            Object.getOwnPropertyNames(obj).forEach(function(p) {
+                props[p] = true;
+            });
+            obj = Object.getPrototypeOf(obj);
+        }
+        return Object.getOwnPropertyNames(props);
+ }
 
 {% endhighlight %}
 
-所有的继承属性，默认都是不可枚举的。
+用法如下：
 
 {% highlight javascript %}
 
-> var proto = { p1: 123 };
-> var o = Object.create(proto);
-> 'p1' in Object.keys(o)
-  false
+inheritedPropertyNames(Date)
+// ["caller", "constructor", "toString", "UTC", "call", "parse", "prototype", "__defineSetter__", "__lookupSetter__", "length", "arguments", "bind", "__lookupGetter__", "isPrototypeOf", "toLocaleString", "propertyIsEnumerable", "valueOf", "apply", "__defineGetter__", "name", "now", "hasOwnProperty"]
 
 {% endhighlight %}
 

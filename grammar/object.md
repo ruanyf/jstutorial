@@ -3,7 +3,7 @@ title: 对象
 layout: page
 category: grammar
 date: 2012-12-12
-modifiedOn: 2013-01-25
+modifiedOn: 2013-01-27
 ---
 
 ## 概述
@@ -347,7 +347,7 @@ ECMAScript 5对于对象的属性，提出了一个更精确的模型。
 
 ### 存取函数（accessor）
 
-属性还可以用存取函数（accessor）定义。存值函数称为setter，使用set关键字；取值函数称为getter，使用getter关键字。
+除了直接定义值以外，属性还可以用存取函数（accessor）定义。其中，存值函数称为setter，使用set关键字；取值函数称为getter，使用getter关键字。
 
 {% highlight javascript %}
 
@@ -378,16 +378,16 @@ o.p = 123;
 
 ### 属性的attributes对象
 
-系统内部，每个属性都有一个对应的attributes对象，保存该属性的一些元信息。
+在JavaScript内部，每个属性都有一个对应的attributes对象，保存该属性的一些元信息。
 
 attributes对象包含如下属性：
 
-- Value：表示该属性的值，默认为undefined。
-- Writable：表示该属性的值（value）是否可以改变，默认为false。
-- Get：表示该属性的取值函数（getter），默认为undefined。
-- Set：表示该属性的存值函数（setter），默认为undefined。
-- Enumerable： 该属性是否可枚举，默认为false。
-- Configurable：该属性是否可配置，false。当为false时，你无法删除该属性，除了value，无法改变该属性的其他性质。Configurable控制该属性元数据的可写状态。
+- value：表示该属性的值，默认为undefined。
+- writable：表示该属性的值（value）是否可以改变，默认为false。
+- enumerable： 该属性是否可枚举，默认为false。
+- configurable：该属性是否可配置，false。当为false时，你无法删除该属性，除了value，无法改变该属性的其他性质。Configurable控制该属性元数据的可写状态。
+- get：表示该属性的取值函数（getter），默认为undefined。
+- set：表示该属性的存值函数（setter），默认为undefined。
 
 有了attributes对象，就可以描述其对应的属性。
 
@@ -408,29 +408,40 @@ attributes对象包含如下属性：
 
 {% highlight javascript %}
 
-Object.defineProperty(object, propertye, attributes)
+Object.defineProperty(object, propertyName, attributesObject)
 
 {% endhighlight %}
 
-比如，前面的例子可以改写成
+比如，定义o对象的p属性可以这样写：
 
 {% highlight javascript %}
 
 var o = Object.defineProperty({}, "p", {
         value: 123,
-        enumerable: true
+        writable: false,
+        enumerable: true,
+        configurable: false
 });
+
+o.p
+// 123
 
 {% endhighlight %}
 
-如果一次性定义多个属性，可以使用下面的写法。
+如果一次性定义多个属性，可以使用Object.defineProperties方法。
 
 {% highlight javascript %}
 
-var o = Object.defineProperty({}, {
+var o = Object.defineProperties({}, {
 		p1: { value: 123, enumerable: true },
         p2: { value: "abc", enumerable: true }
 });
+
+o.p1
+// 123
+
+o.p2
+// "abc"
 
 {% endhighlight %}
 
