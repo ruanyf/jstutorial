@@ -4,7 +4,8 @@ p,li {font-size:160%;line-height:160%;}
 code {font-size:150%;line-height:150%;}
 li p {font-size:100%;}
 ul {margin-left:2em;}
-ol {margin-left:6em;margin-right:4em;line-height:1.6;}
+ol {margin-left:6em;margin-right:4em;}
+ol li {margin-bottom:1.6;}
 
 /* header */
 

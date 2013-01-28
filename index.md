@@ -2,13 +2,14 @@
 layout: homepage
 title: Javascript 标准教程
 date: 2012-11-18
-modifiedOn: 2013-01-24
+modifiedOn: 2013-01-28
 ---
 
 <h2 id="introduction">导论</h2>
 
 - [为什么学习Javascript？](introduction/why.html)
 - [Javascript的历史](introduction/history.html)
+- [使用说明](introduction/instruction.html)
 
 <h2 id="grammar">基本语法</h2>
 
