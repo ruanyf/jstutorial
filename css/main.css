@@ -3,7 +3,7 @@
 p,li {font-size:160%;line-height:160%;}
 code {font-size:150%;line-height:150%;}
 li p {font-size:100%;}
-ul {margin-left:2em;}
+ul,ol {margin-left:2em;}
 
 /* header */
 
