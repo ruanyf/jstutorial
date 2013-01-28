@@ -3,7 +3,7 @@ title: 语法概述
 layout: page
 category: grammar
 date: 2012-12-14
-modifiedOn: 2013-01-17
+modifiedOn: 2013-01-28
 ---
 
 ## 注释
@@ -150,6 +150,20 @@ typeof [];
 
 typeof null;
 // object
+
+{% endhighlight %}
+
+## 数值
+
+JavaScript内部，所有数字都是以浮点数形式储存。由于浮点数不是精确的值，所以涉及浮点数的比较和运算要特别小心。
+
+{% highlight javascript %}
+
+0.1 + 0.2 === 0.3
+// false
+
+0.3 / 0.1
+// 2.9999999999999996
 
 {% endhighlight %}
 
