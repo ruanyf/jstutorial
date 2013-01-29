@@ -24,7 +24,7 @@ JSON格式的语法规定有如下几点：
 
 ECMAScript第五版新增了JSON对象，用来处理JSON格式数据。
 
-## JSON.stringify()
+### JSON.stringify()
 
 该方法用于将对象转为JSON字符串。
 
@@ -100,7 +100,7 @@ s
   "p2": 2
 }"
 
-var s = JSON.stringify({ p1:1, p2:2 }, null, "\-");
+var s = JSON.stringify({ p1:1, p2:2 }, null, "|-");
 
 s
 // "{
@@ -128,7 +128,7 @@ JSON.stringify(new Date("2011-07-29"))
 
 {% endhighlight %}
 
-## JSON.parse()
+### JSON.parse()
 
 该方法用于将JSON字符串转化成对象。
 

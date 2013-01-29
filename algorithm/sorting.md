@@ -114,6 +114,50 @@ function selectionSort(myArray){
 
 {% endhighlight %}
 
+## 插入排序
+
+插入排序（Selection sort）比前面两种排序方法都更有效率。它将数组分成“已排序”和“未排序”两部分，一开始的时候，“已排序”的部分只有一个元素，然后将它后面一个元素从“未排序”部分插入“已排序”部分，从而“已排序”部分增加一个元素，“未排序”部分减少一个元素。以此类推，完成全部排序。
+
+以对数组[3, 2, 4, 5, 1] 进行从小到大排序为例，步骤如下：
+
+1. 将数组分成[3]和[2, 4, 5, 1]两部分，前者是已排序的，后者是未排序的。
+2. 取出未排序部分的第一个元素“2”，与已排序部分最后一个元素“3”比较，因为2小于3，所以2排在3前面，整个数组变成[2, 3]和[4, 5, 1]两部分。
+3. 取出未排序部分的第一个元素“4”，与已排序部分最后一个元素“3”比较，因为4大于3，所以4排在3后面，整个数组变成[2, 3, 4]和[5, 1]两部分。
+4. 取出未排序部分的第一个元素“5”，与已排序部分最后一个元素“4”比较，因为5大于4，所以4排在5后面，整个数组变成[2, 3, 4, 5]和[1]两部分。
+5. 取出未排序部分的第一个元素“1”，与已排序部分最后一个元素“5”比较，因为1小于5，所以再与前一个元素“4”比较；因为1小于4，再与前一个元素“3”比较；因为1小于3，再与前一个元素“2”比较；因为小于1小于2，所以“1”排在2的前面，整个数组变成[1, 2, 3, 4, 5]。
+
+算法的实现如下：
+
+{% highlight javascript %}
+
+function insertionSort(myArray) {
+
+    var len     = myArray.length,     // 数组的长度
+        value,                      // 当前比较的值
+        i,                          // 未排序部分的当前位置
+        j;                          // 已排序部分的当前位置
+    
+    for (i=0; i < len; i++) {
+    
+        // 储存当前位置的值
+        value = myArray[i];
+        
+        /*
+         * 当已排序部分的当前元素大于value，
+         * 就将当前元素向后移一位，再将前一位与value比较
+         */
+        for (j=i-1; j > -1 && myArray[j] > value; j--) {
+            myArray[j+1] = myArray[j];
+        }
+
+        myArray[j+1] = value;
+    }
+    
+    return myArray;
+}
+
 ## 参考链接
 
-* [Computer science in JavaScript: Bubble sort](http://www.nczonline.net/blog/2009/05/26/computer-science-in-javascript-bubble-sort/), Nicholas C. Zakas
+* Nicholas C. Zakas, [Computer science in JavaScript: Bubble sort](http://www.nczonline.net/blog/2009/05/26/computer-science-in-javascript-bubble-sort/) 
+- Nicholas C. Zakas, [Computer science in JavaScript: Selection sort](http://www.nczonline.net/blog/2012/09/17/computer-science-in-javascript-insertion-sort/)
+- Nicholas C. Zakas, [Computer science in JavaScript: Insertion sort](http://www.nczonline.net/blog/2012/09/17/computer-science-in-javascript-insertion-sort/)
