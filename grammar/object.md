@@ -3,7 +3,7 @@ title: 对象
 layout: page
 category: grammar
 date: 2012-12-12
-modifiedOn: 2013-01-27
+modifiedOn: 2013-01-30
 ---
 
 ## 概述
@@ -110,6 +110,76 @@ v1.a = 1;
 
 v2.a
 // 1
+
+{% endhighlight %}
+
+## with语句
+
+它的格式如下，其中的括号不是必需的：
+
+{% highlight javascript %}
+
+ with (object)
+        statement
+
+{% endhighlight %}
+
+作用是当操作同一个对象的多个属性时，提供一些书写的方便。
+
+{% highlight javascript %}
+
+o.p1 = 1;
+o.p2 = 2;
+
+// 等同于
+
+with (o){
+	p1 = 1;
+	p2 = 2;
+}
+	
+{% endhighlight %}
+
+这里需要注意的是，在with区块内部依然是全局作用域。
+
+{% highlight javascript %}
+
+with ({}){
+	var x = "abc";
+}
+
+x
+// "abc"
+	
+{% endhighlight %}
+
+with语句有很大的弊病，主要问题是绑定对象不明确，会产生意想不到的结果，并且在浏览器编译时无法优化。
+
+{% highlight javascript %}
+
+var x = 1;
+
+var o = {};
+
+with (o) {
+	console.log(x);
+}
+// 1
+
+{% endhighlight %}
+
+上面代码的with区块中的x，表面上应该属于o对象，但是实际上属于全局对象，这非常不利于代码的除错和模块化。因此，建议不要使用with语句，可以考虑用一个临时变量代替。
+
+{% highlight javascript %}
+
+with(o1.o2.o3) {
+        console.log(p1 + p2);
+    }
+
+// 可以写成
+
+var b = o1.o2.o3;
+console.log(p1 + p2);
 
 {% endhighlight %}
 
@@ -621,4 +691,5 @@ Object.keys(obj).forEach( function(key) {
 
 - Dr. Axel Rauschmayer，[Object properties in JavaScript](http://www.2ality.com/2012/10/javascript-properties.html)
 - Lakshan Perera, [Revisiting JavaScript Objects](http://www.laktek.com/2012/12/29/revisiting-javascript-objects/)
-- Angus Croll, [The Secret Life of JavaScript Primitives](http://javascriptweblog.wordpress.com/2010/09/27/the-secret-life-of-javascript-primitives/)
+- Angus Croll, [The Secret Life of JavaScript Primitives](http://javascriptweblog.wordpress.com/2010/09/27/the-secret-life-of-javascript-primitives/)i
+- Dr. Axel Rauschmayer, [JavaScript’s with statement and why it’s deprecated](http://www.2ality.com/2011/06/with-statement.html)
