@@ -3,12 +3,12 @@ title: jQuery.Deferred对象
 category: jquery
 date: 2012-12-07
 layout: page
-modifiedOn: 2012-12-07
+modifiedOn: 2013-01-30
 ---
 
 ## 概述
 
-deferred对象是jQuery非同步操作的接口。你可以将它看作一个代理（proxy），用来沟通那些还未完成或者已经完成的非同步操作，典型例子就是Ajax操作、网页动画、web worker等等。
+deferred对象是jQuery非同步操作的接口，你可以将它看作一个将来完成的任务。事实上，它扮演代理人（proxy）的角色，用来沟通那些还未完成或者已经完成的非同步操作，典型例子就是Ajax操作、网页动画、web worker等等。
 
 deferred对象最简单的应用是，指定非同步操作成功或失败后的回调函数（callback）。根据deferred的术语，成功叫做resolve，失败叫做reject。
 
@@ -95,7 +95,7 @@ always()也是指定回调函数，不管是resolve或reject都要调用。
 
 ## promise对象
 
-大多数情况下，我们不想让用户从外部更改deferred对象的状态。这时，你可以在deferred对象的基础上，返回一个针对它的promise对象。我们可以把后者理解成，promise是deferred的只读版。
+大多数情况下，我们不想让用户从外部更改deferred对象的状态。这时，你可以在deferred对象的基础上，返回一个针对它的promise对象。我们可以把后者理解成，promise是deferred的只读版，或者更通俗地理解成promise是一个对将要完成的任务的承诺。
 
 你可以通过promise对象，为原始的deferred对象添加回调函数，查询它的状态，但是无法改变它的状态，也就是说promise对象不允许你调用resolve和reject方法。jQuery的ajax() 方法返回的就是一个promise对象。
 
@@ -111,6 +111,36 @@ try{
 catch(err){
     alert(err);
 }
+
+{% endhighlight %}
+
+promise对象有一个then方法，允许指定当任务成功或失败后的回调函数。一般来说，如果我们要为一个任务指定回调函数，往往需要把回调函数直接传入这个任务。
+
+{% highlight javascript %}
+
+task(param, {
+  success: function() {},
+  error: function() {}
+});
+
+{% endhighlight %}
+
+但是，如果这个任务返回的是promise对象，我们就可以用then方法指定回调函数。
+
+{% highlight javascript %}
+
+task(param).then(
+  successFunc() {},
+  errorFunc() {}
+);
+
+{% endhighlight %}
+
+有了这个接口，可以方便地为多个操作连续指定回调函数，当调用第一个回调函数成功后，再依次调用第二个回调函数。
+
+{% highlight javascript %}
+
+task(param).then(f1).then(f2).then(f3);
 
 {% endhighlight %}
 
@@ -262,3 +292,4 @@ doSomething("uh oh").done(function() {
 
 + [jQuery.Deferred is the most important client-side tool you have](http://eng.wealthfront.com/2012/12/jquerydeferred-is-most-important-client.html)
 + [Fun With jQuery Deferred](http://www.intridea.com/blog/2011/2/8/fun-with-jquery-deferred)
+- Bryan Klimt, [What’s so great about JavaScript Promises?](http://blog.parse.com/2013/01/29/whats-so-great-about-javascript-promises/)
