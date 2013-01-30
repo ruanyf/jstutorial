@@ -3,7 +3,7 @@ title: 排序算法
 date: 2012-12-02
 category: algorithm
 layout: page
-modifiedOn: 2013-01-29
+modifiedOn: 2013-01-30
 ---
 
 ## 冒泡排序
@@ -246,9 +246,109 @@ function mergeSort(myArray){
 
 {% endhighlight %}
 
+## 快速排序
+
+快速排序（quick sort）是公认最快的排序算法之一，有着广泛的应用。
+
+它的基本思想很简单：先确定一个“支点”（pivot），将所有小于“支点”的值都放在该点的左侧，大于“支点”的值都放在该点的右侧，然后对左右两侧不断重复这个过程，直到所有排序完成。
+
+具体做法是：
+
+1. 确定“支点”（pivot）。虽然数组中任意一个值都能作为“支点”，但通常是取数组的中间值。
+2. 建立两端的指针。左侧的指针指向数组的第一个元素，右侧的指针指向数组的最后一个元素。
+3. 左侧指针的当前值与“支点”进行比较，如果小于“支点”则指针向后移动一位，否则指针停在原地。
+4. 右侧指针的当前值与“支点”进行比较，如果大于“支点”则指针向前移动一位，否则指针停在原地。
+5. 左侧指针的位置与右侧指针的位置进行比较，如果前者大于等于后者，则本次排序结束；否则，左侧指针的值与右侧指针的值相交换。
+6. 对左右两侧重复第2至5步。
+
+以对数组[3, 2, 4, 5, 1] 进行从小到大排序为例，步骤如下：
+
+1. 选择中间值“4”作为“支点”。
+2. 第一个元素3小于4，左侧指针向后移动一位；第二个元素2小于4，左侧指针向后移动一位；第三个元素4等于4，左侧指针停在这个位置（数组的第2位）。
+3. 倒数第一个元素1小于4，右侧指针停在这个位置（数组的第4位）。
+4. 左侧指针的位置（2）小于右侧指针的位置（4），两个位置的值互换，数组变成[3, 2, 1, 5, 4]。
+5. 左侧指针向后移动一位，第四个元素5大于4，左侧指针停在这个位置（数组的第3位）。
+6. 右侧指针向前移动一位，第四个元素5大于4，右侧指针移动向前移动一位，第三个元素1小于4，右侧指针停在这个位置（数组的第3位）。
+7. 左侧指针的位置（3）大于右侧指针的位置（2），本次排序结束。
+8. 对 [3, 2, 1]和[5, 4]两部分各自不断重复上述步骤，直到排序完成。
+
+代码实现如下，首先部署一个swap函数，用于互换两个位置的值。
+
+{% highlight javascript %}
+
+function swap(myArray, firstIndex, secondIndex){
+    var temp = myArray[firstIndex];
+    myArray[firstIndex] = myArray[secondIndex];
+    myArray[secondIndex] = temp;
+}
+
+{% endhighlight %}
+
+然后，部署一个partition函数，用于完成一轮排序。
+
+{% highlight javascript %}
+
+function partition(myArray, left, right) {
+
+    var pivot   = myArray[Math.floor((right + left) / 2)],
+        i       = left,
+        j       = right;
+
+
+    while (i <= j) {
+
+        while (myArray[i] < pivot) {
+            i++;
+        }
+
+        while (myArray[j] > pivot) {
+            j--;
+        }
+
+        if (i <= j) {
+            swap(myArray, i, j);
+            i++;
+            j--;
+        }
+    }
+
+    return i;
+}
+
+{% endhighlight %}
+
+接下来，就是递归上面的过程，完成整个排序。
+
+{% highlight javascript %}
+
+function quickSort(myArray, left, right) {
+
+	if (myArray.length < 2) return myArray;
+
+	left = (typeof left !== "number" ? 0 : left);
+
+	right = (typeof right !== "number" ? myArray.length - 1 : right);
+
+	var index  = partition(myArray, left, right);
+
+	 if (left < index - 1) {
+            quickSort(myArray, left, index - 1);
+     }
+
+	 if (index < right) {
+            quickSort(myArray, index, right);
+      }
+
+	 return myArray;
+
+}
+
+{% endhighlight %}
+
 ## 参考链接
 
 * Nicholas C. Zakas, [Computer science in JavaScript: Bubble sort](http://www.nczonline.net/blog/2009/05/26/computer-science-in-javascript-bubble-sort/) 
 - Nicholas C. Zakas, [Computer science in JavaScript: Selection sort](http://www.nczonline.net/blog/2012/09/17/computer-science-in-javascript-insertion-sort/)
 - Nicholas C. Zakas, [Computer science in JavaScript: Insertion sort](http://www.nczonline.net/blog/2012/09/17/computer-science-in-javascript-insertion-sort/)
 - Nicholas C. Zakas, [Computer science in JavaScript: Merge sort](http://www.nczonline.net/blog/2012/10/02/computer-science-and-javascript-merge-sort/)
+- Nicholas C. Zakas, [Computer science in JavaScript: Quicksort](http://www.nczonline.net/blog/2012/11/27/computer-science-in-javascript-quicksort/)
