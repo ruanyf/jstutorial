@@ -179,7 +179,7 @@ with(o1.o2.o3) {
 // 可以写成
 
 var b = o1.o2.o3;
-console.log(p1 + p2);
+console.log(b.p1 + b.p2);
 
 {% endhighlight %}
 

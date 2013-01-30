@@ -3,7 +3,7 @@ title: JSON格式
 layout: page
 category: grammar
 date: 2013-01-11
-modifiedOn: 2013-01-28
+modifiedOn: 2013-01-30
 ---
 
 ## 格式规定
@@ -30,12 +30,27 @@ ECMAScript第五版新增了JSON对象，用来处理JSON格式数据。
 
 {% highlight javascript %}
 
-var s = JSON.stringify({ name: "张三" });
+JSON.stringify("abc");
+// ""abc""
 
+var s = JSON.stringify({ name: "张三" });
 s
 // {"name":"张三"}
 
 {% endhighlight %}
+
+如果一个值是undefined、函数或XML对象，这个值会被省略，除非该值是数组的成员，则返回null。
+
+{% highlight javascript %}
+
+JSON.stringify({
+    f: function() { },
+    a: [ function() {}, undefined ]
+});
+// "{"a":[null,null]}"
+
+{% endhighlight %}
+
 
 该方法还可以接受一个数组参数，表示需要转化的属性。
 
@@ -188,3 +203,4 @@ o.b
 
 - MDN, [JSON.parse](https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/JSON/parse)
 - Dr. Axel Rauschmayer, [JavaScript’s JSON API](http://www.2ality.com/2011/08/json-api.html)
+- Jim Cowart, [What You Might Not Know About JSON.stringify()](http://freshbrewedcode.com/jimcowart/2013/01/29/what-you-might-not-know-about-json-stringify/)
