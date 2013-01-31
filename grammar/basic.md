@@ -3,8 +3,54 @@ title: 语法概述
 layout: page
 category: grammar
 date: 2012-12-14
-modifiedOn: 2013-01-28
+modifiedOn: 2013-01-31
 ---
+
+## 表达式和语句
+
+JavaScript程序的执行单位为行（line），也就是一行一行地执行。每行由表达式或语句组成。
+
+表达式（expression）是一种以返回值为目的的操作，比如 1+3 就是一个表达式，它的目的就是得到返回值4。
+
+语句（statement）则是以完成某种任务为主要目的的操作，不一定有返回值。比如下面就是一个赋值语句：
+
+{% highlight javascript %}
+
+var a = 1 + 3 ;
+
+{% endhighlight %}
+
+这条语句将 1+3 的运算结果赋值给变量a。它是没有返回值的，因为主要目的不是为了得到返回值。
+
+语句以分号结尾，一个分号就表示一个语句结束。多个语句可以写在一行内。
+
+{% highlight javascript %}
+
+var a = 1 + 3 ; var b = "abc";
+
+{% endhighlight %}
+
+分号前面可以没有任何内容，解释器将其视为空语句。
+
+{% highlight javascript %}
+
+;;;
+
+{% endhighlight %}
+
+上面的代码就表示3个空语句。（关于分号的更多介绍，请看后文《结尾的分号》一节。）
+
+表达式不需要分号结尾。一旦在表达式后面添加分号，则解释器就将表达式视为语句，这样会产生一些没有任何意义的语句。
+
+{% highlight javascript %}
+
+1 + 3;
+
+"abc";
+
+{% endhighlight %}
+
+上面两行语句有返回值，但是没有任何意义，因为没有使用这个返回值，也没有任何其他操作。
 
 ## 注释
 
@@ -540,7 +586,131 @@ Object.prototype.toString.call(123)
 
 {% endhighlight %}
 
+## 结尾的分号
+
+分号表示一条语句的结尾。
+
+### 不使用分号结尾的语句 
+
+以下三种情况的语句，不使用分号结尾。
+
+（1）for和while循环。
+
+{% highlight javascript %}
+
+for(;;){} // 没有分号
+
+while(true){} // 没有分号
+
+{% endhighlight %}
+
+需要注意的是do...while循环是有分号的。
+
+{% highlight javascript %}
+
+do {
+        a--;
+    } while(a > 0); // 分号不能省略
+
+{% endhighlight %}
+
+（2）分支语句：if， switch， try。
+
+{% highlight javascript %}
+
+if (true) {} // 没有分号
+
+switch () {} // 没有分号
+
+try {} catch {} // 没有分号
+
+{% endhighlight %}
+
+（3）函数的声明语句
+
+{% highlight javascript %}
+
+function f() {} // 没有分号
+
+{% endhighlight %}
+
+但是函数表达式仍然要使用分号。
+
+{% highlight javascript %}
+
+var f = function f() {};
+
+{% endhighlight %}
+
+在以上三种不使用分号结尾的情况下，如果使用了分号，并不会出错。因为，解释器会把这个分号解释为空语句。
+
+### 分号的自动添加
+
+在一行的结尾，有时没有写分号，解释器会自动添加。
+
+{% highlight javascript %}
+
+var a = b + c
+
+{% endhighlight %}
+
+解释器会自动在 b+c的后面添加分号。
+
+但是，如果下一行的开始可以与本行的结尾连在一起解释，解释器就不会自动添加分号。
+
+{% highlight javascript %}
+
+"abc"
+.length
+
+{% endhighlight %}
+
+解释器会把上面两行解释为
+
+{% highlight javascript %}
+
+"abc".length
+
+{% endhighlight %}
+
+以下例子都不会自动添加分号。
+
+{% highlight javascript %}
+
+var a = b + c
+(d+e).toString();
+// 解释为c(d+e)，即先进行乘法运算
+
+a = b
+/hi/g.exec(c).map(d);
+// 解释为 a = b / hi / g.exec(c).map(d)，即把正则表达式的斜杠当作除法运算符   
+
+var  = "b"
+[ "red", "green" ].foreach(function(c) { console.log(c) })
+// 解释为"b"["red", "green"]，即把字符串当作一个数组，按索引取值 
+
+var a = 0;
+var f = function(x) { return x }
+(a++)
+// f等于0，因为(a++)被视为匿名函数的调用
+
+{% endhighlight %}
+
+只有下一行的开始与本行的结尾，无法放在一起解释，解释器才会自动添加分号。
+
+{% highlight javascript %}
+
+if (a < 0) a = 0
+console.log(a)
+
+// 等同于下面的代码，因为0console没有意义
+
+{% endhighlight %}
+
+由于解释器自动添加分号的行为难以预测，因此编写代码的时候不应该省略行尾的分号。
+
 ## 参考链接
 
 - Dr. Axel Rauschmayer, [A quick overview of JavaScript](http://www.2ality.com/2011/10/javascript-overview.html)
 - Dr. Axel Rauschmayer, [Improving the JavaScript typeof operator](http://www.2ality.com/2011/11/improving-typeof.html)
+- Dr. Axel Rauschmayer, [Automatic semicolon insertion in JavaScript](http://www.2ality.com/2011/05/semicolon-insertion.html)
