@@ -3,7 +3,7 @@ title: JSON格式
 layout: page
 category: grammar
 date: 2013-01-11
-modifiedOn: 2013-01-30
+modifiedOn: 2013-01-31
 ---
 
 ## 格式规定
@@ -51,7 +51,6 @@ JSON.stringify({
 
 {% endhighlight %}
 
-
 该方法还可以接受一个数组参数，表示需要转化的属性。
 
 {% highlight javascript %}
@@ -63,25 +62,56 @@ s
 
 {% endhighlight %}
 
-该方法还可以接受一个过滤函数作为参数，只有经过该函数返回的值，才会被转成字符串。如果返回undefined或没有返回值，则对应属性会被忽略。
+该方法还可以接受一个函数作为参数，用来更改默认的串行化的行为。
 
 {% highlight javascript %}
 
- function f(key, value) {
+function f(key, value) {
         if (typeof value === "number") {
             value = 2 * value;
         }
         return value;
     }
 
-var s = JSON.stringify({ a:1, b:2 }, f);
-
-s
+JSON.stringify({ a:1, b:2 }, f)
 // "{"a":2,"b":4}"
 
 {% endhighlight %}
 
-这里需要注意的是，如果某个属性的值是一个对象，则会展开这个对象，先处理它的属性，然后再处理顶层对象的属性。另外一个特殊之处是，最后一个过滤的键是空键，对应的值就是整个处理后的字符串，实际上需要返回的就是这个字符串。
+上面代码中的f函数，接受两个参数，分别是被转化对象的键和值。这里需要特别注意的是，被处理的除了原有的键，还会新增一个空白的键，对应整个被转化的对象，所以处理之前，必需对键或值做一个判断。
+
+{% highlight javascript %}
+
+function f(key, value) {
+        console.log("["+ key +"]:" + value);
+		return value;
+    }
+
+JSON.stringify({ a:1, b:2 }, f)
+// []:[object Object]
+// [a]:1
+// [b]:2
+// "{"a":1,"b":2}"
+
+{% endhighlight %}
+
+如果经过处理，某个属性返回undefined或没有返回值，则该属性会被忽略。
+
+{% highlight javascript %}
+
+function f(key, value) {
+  if (typeof(value) == "string") {
+    return undefined;
+  }
+  return value;
+}
+
+JSON.stringify({ a:"abc", b:123 }, f)
+// "{"b":123}"
+
+{% endhighlight %}
+
+这里需要注意的是，如果某个属性的值是一个对象，则会展开这个对象，先处理它的内部属性。另外，前面说过，有一个键是空键，对应整个被转化的对象。最后真正进行串行化的，实际上就是空键对应的那个值，其他的键都是用来帮助空键完成那个值。
 
 {% highlight javascript %}
 
@@ -96,14 +126,12 @@ function f(key, value) {
   }
 }
 
-var s = JSON.stringify({ a:1, b:2 }, f);
-
-s
+JSON.stringify({ a:1, b:2 }, f)
 // "{"a":11}"
 
 {% endhighlight %}
 
-JSON.stringify还可以接受第三个参数，用于添加额外符号。
+JSON.stringify还可以接受第三个参数，用于增加返回的JSON字符串的可读性。如果是数字，表示每个属性前面添加的空格（最多不超过10个）；如果是字符串（不超过10个字符），则该字符串会添加在每行前面。
 
 {% highlight javascript %}
 
@@ -201,6 +229,7 @@ o.b
 
 ## 参考链接
 
+- MDN，[Using native JSON](https://developer.mozilla.org/en-US/docs/Using_native_JSON)
 - MDN, [JSON.parse](https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/JSON/parse)
 - Dr. Axel Rauschmayer, [JavaScript’s JSON API](http://www.2ality.com/2011/08/json-api.html)
 - Jim Cowart, [What You Might Not Know About JSON.stringify()](http://freshbrewedcode.com/jimcowart/2013/01/29/what-you-might-not-know-about-json-stringify/)
