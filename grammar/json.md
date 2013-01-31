@@ -33,8 +33,7 @@ ECMAScript第五版新增了JSON对象，用来处理JSON格式数据。
 JSON.stringify("abc");
 // ""abc""
 
-var s = JSON.stringify({ name: "张三" });
-s
+JSON.stringify({ name: "张三" });
 // {"name":"张三"}
 
 {% endhighlight %}
@@ -55,9 +54,7 @@ JSON.stringify({
 
 {% highlight javascript %}
 
-var s = JSON.stringify({ a:1, b:2 }, ['a']);
-
-s
+JSON.stringify({ a:1, b:2 }, ['a']);
 // "{"a":1}"
 
 {% endhighlight %}
@@ -135,17 +132,13 @@ JSON.stringify还可以接受第三个参数，用于增加返回的JSON字符�
 
 {% highlight javascript %}
 
-var s = JSON.stringify({ p1:1, p2:2 }, null, 2);
-
-s
+JSON.stringify({ p1:1, p2:2 }, null, 2);
 // "{
   "p1": 1,
   "p2": 2
 }"
 
-var s = JSON.stringify({ p1:1, p2:2 }, null, "|-");
-
-s
+JSON.stringify({ p1:1, p2:2 }, null, "|-");
 // "{
 |-"p1": 1,
 |-"p2": 2
@@ -229,7 +222,7 @@ o.b
 
 ## 参考链接
 
-- MDN，[Using native JSON](https://developer.mozilla.org/en-US/docs/Using_native_JSON)
+- MDN, [Using native JSON](https://developer.mozilla.org/en-US/docs/Using_native_JSON)
 - MDN, [JSON.parse](https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/JSON/parse)
 - Dr. Axel Rauschmayer, [JavaScript’s JSON API](http://www.2ality.com/2011/08/json-api.html)
 - Jim Cowart, [What You Might Not Know About JSON.stringify()](http://freshbrewedcode.com/jimcowart/2013/01/29/what-you-might-not-know-about-json-stringify/)
