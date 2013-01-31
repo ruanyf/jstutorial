@@ -1,9 +1,9 @@
 ---
-title: Javascript的历史
+title: JavaScript的历史
 layout: page
 category: introduction
 date: 2013-01-10
-modifiedOn: 2013-01-13
+modifiedOn: 2013-01-31
 ---
 
 ## 诞生
@@ -23,37 +23,37 @@ Netscape公司雇佣了Brendan Eich开发这种语言。1995年5月，Brendan Ei
 
 ## 起名
 
-它的最初名字叫做Mocha，9月份的时候改为LiveScript。12月，Netscape公司与Sun公司（Java语言的发明者和所有者）签署授权协议，后者同意将这种语言叫做Javascript。
+它的最初名字叫做Mocha，9月份的时候改为LiveScript。12月，Netscape公司与Sun公司（Java语言的发明者和所有者）签署授权协议，后者同意将这种语言叫做JavaScript。
 
-之所以起这个名字，并不是因为Javascript本身与Java语言有多么深的关系（事实上，两者关系并不深），而是因为Netscape公司已经决定，使用Java语言开发网络应用程序，Javascript可以像胶水一样，将各个部分连接起来。当然，后来的历史是Java语言的浏览器插件（applet）失败了，Javascript反而发扬光大。
+之所以起这个名字，并不是因为JavaScript本身与Java语言有多么深的关系（事实上，两者关系并不深），而是因为Netscape公司已经决定，使用Java语言开发网络应用程序，JavaScript可以像胶水一样，将各个部分连接起来。当然，后来的历史是Java语言的浏览器插件（applet）失败了，JavaScript反而发扬光大。
 
 ## 发布
 
 1995年12月，Netscape公司与Sun公司一起发布了JavaScript。
 
-1996年3月，Navigator 2.0浏览器正式内置了Javascript脚本语言。
+1996年3月，Navigator 2.0浏览器正式内置了JavaScript脚本语言。
 
 ## 标准化
 
-1996年8月，微软模仿Javascript，在IE 3.0内置了JScript。网景公司面临丧失浏览器脚本语言的主导权的局面。
+1996年8月，微软模仿JavaScript开发了一种相近的语言，取名为JScript（JavaScript是Netscape的注册商标，微软不能用），首先内置于IE 3.0。网景公司面临丧失浏览器脚本语言的主导权的局面。
 
-1996年11月，网景公司决定将Javascript提交给国际标准化组织ECMA，希望Javascript能够成为国际标准，以此抵抗微软。
+1996年11月，网景公司决定将JavaScript提交给国际标准化组织ECMA，希望JavaScript能够成为国际标准，以此抵抗微软。
 
-1997年7月，ECMA组织发布262号标准文件（ECMA-262），规定了浏览器脚本语言的标准，并将这种语言称为ECMAScript。因此，ECMAScript和Javascript的关系是，前者是后者的规格，后者是前者的一种实现。
+1997年7月，ECMA组织发布262号标准文件（ECMA-262），规定了浏览器脚本语言的标准，并将这种语言称为ECMAScript。之所以不叫JavaScript，一方面是由于商标的关系，另一方面也是想体现这门语言的制定者是ECMA，也不是网景公司。因此，ECMAScript和Javascript的关系是，前者是后者的规格，后者是前者的一种实现。日常的场合，这两个词是可以互换的。
 
-1999年12月，ECMAScript第3版推出，成为Javascript的通行标准，得到了广泛支持。
+1999年12月，ECMAScript第3版推出，成为JavaScript的通行标准，得到了广泛支持。
 
-2008年7月，由于太过激进，ECMA开会决定，中止ECMAScript第4版的开发，将其中一些比较温和的设想扩大范围，放入ECMAScript第五版，而其他激进的设想放入更以后的Javascript版本。由于会议的气氛，新项目代号起名为Harmony（和谐）。
+2008年7月，由于太过激进，ECMA开会决定，中止ECMAScript第4版的开发，将其中一些比较温和的设想扩大范围，放入ECMAScript第五版，而其他激进的设想放入更以后的JavaScript版本，由于会议的气氛，新项目代号起名为Harmony（和谐）。
 
-2009年9月，Harmony项目中比较成熟的部分，作为ECMAScript第5版正式发布。剩下的没有完成的部分，定名为Javascript.next继续开发。
+2009年9月，ECMAScript第5版正式发布。Harmony项目则一分为二，一些较为可行的设想定名为Javascript.next继续开发，可能将会演变成ECMAScript第6版；一些不是很成熟的设想，则被视为JavaScript.next.next，在更远的将来再考虑推出。
 
 2011年6月，ECMAscript 5.1发布，并且成为ISO国际标准（ISO/IEC 16262:2011）。
 
-目前，ECMA的第39号技术专家委员会（Technical Committee 39，简称TC39）负责制订该标准，成员包括Michosoft、Mozilla、Google等。TC39的计划是，ECMAScript第五版与第三版基本保持兼容，较大的语法修正和新功能加入，将由Javascript.next完成。预计在2013年的年底，Javascript.next将完成，发布成为ECMAScript第六版。 
+目前，ECMA的第39号技术专家委员会（Technical Committee 39，简称TC39）负责制订该标准，成员包括Michosoft、Mozilla、Google等。TC39的计划是，ECMAScript第五版与ECMAScript第三版基本保持兼容，较大的语法修正和新功能加入，将由Javascript.next完成。预计在2013年的年底，Javascript.next将完成，发布成为ECMAScript第六版，而Harmony将是next的超集，包含更多的功能。 
 
 同时，TC39也预计，ECMAScript第五版将在2013年的年中成为Javascript开发的主流标准，并在今后五年中一直保持这个位置。
 
-## 大事记
+## 周边大事记
 
 1997年，DHTML（Dynamic HTML，动态HTML）发布，允许动态改变网页内容。这标志着DOM模式（Document Object Model，文档对象模型）正式应用。
 

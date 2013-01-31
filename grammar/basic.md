@@ -705,6 +705,9 @@ console.log(a)
 
 // 等同于下面的代码，因为0console没有意义
 
+if (a < 0) a = 0;
+console.log(a)
+
 {% endhighlight %}
 
 由于解释器自动添加分号的行为难以预测，因此编写代码的时候不应该省略行尾的分号。
