@@ -2,7 +2,7 @@
 layout: homepage
 title: Javascript 标准教程
 date: 2012-11-18
-modifiedOn: 2013-01-28
+modifiedOn: 2013-02-01
 ---
 
 <h2 id="introduction">导论</h2>
@@ -54,7 +54,8 @@ modifiedOn: 2013-01-28
 
 <h2 id="jquery">jQuery</h2>
 
-+ [deferred对象](jquery/deferred.html)
+- [选择器](jquery/selector.html)
+- [deferred对象](jquery/deferred.html)
 
 <h2 id="library">函数库</h2>
 

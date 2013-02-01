@@ -1,7 +1,7 @@
 markdown: rdiscount
 pygments: true
 permalink: none
-sitename: Javascript 标准教程
+sitename: JavaScript 标准教程
 
 chapters:
 - introduction
