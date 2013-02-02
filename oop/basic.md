@@ -70,3 +70,30 @@ this.a = 1;
 {% endhighlight %}
 
 上面三行代码是等同的，因为在浏览器全局环境中，变量的顶层对象默认是window，这时this就表示window。
+
+## call方法和apply方法
+
+这两个方法的作用是指定函数运行的上下文对象。
+
+如果指定的对象是null或undefined，则等同于指定全局对象。
+
+{% highlight javascript %}
+
+function a() {
+    alert(this);
+}
+a.call(null);
+
+{% endhighlight %}
+
+在浏览器环境中，全局对象就是window，因此上面的代码等同于下面的形式，运行结果就是window。
+
+{% highlight javascript %}
+
+function a() {
+    alert(this);
+}
+a.call(window);
+
+{% endhighlight %}
+

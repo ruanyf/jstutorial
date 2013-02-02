@@ -69,6 +69,57 @@ Javascript提供两种注释：一种是单行注释，用//起头；另一种�
 
 {% endhighlight %}
 
+## 变量
+
+变量是对“值”的引用，可以将值储存在变量中。每一个变量都有一个变量名。
+
+{% highlight javascript %}
+
+var a = 1;
+
+{% endhighlight %}
+
+上面的代码将数值1储存在变量a。引用a，就会得到数值1。最前面var是变量声明命令，表示通知解释器，要创建一个变量a。变量的声明和赋值，是分开的两个步骤，上面的代码将它们合在了一起，实际的步骤是下面这样。
+
+{% highlight javascript %}
+
+var a;
+
+a = 1;
+
+{% endhighlight %}
+
+JavaScript允许省略var，也就是说，省略上面的第一行命令，直接对未声明的变量赋值，效果完全相同。由于这样的做法很容易不知不觉地创建全局变量（尤其是在函数内部），所以建议总是使用var命令声明变量。
+
+可以在同一条var命令中声明多个变量。
+
+{% highlight javascript %}
+
+var a,b;
+
+{% endhighlight %}
+
+### 变量提升
+
+JavaScript解释器的工作方式是，先解析代码，获取所有被声明的变量，然后再一行一行地运行。这造成的结果，就是所有的变量的声明语句，都会被提升到代码的头部，这就叫做变量提升。
+
+{% highlight javascript %}
+
+alert(a);
+var a = 1;
+
+{% endhighlight %}
+
+上面的代码等同于下面的写法，所以解释器不会报错，但是结果不会得到1，而是undefined。
+
+{% highlight javascript %}
+
+var a;
+alert(a);
+a = 1;
+
+{% endhighlight %}
+
 ## 数据类型
 
 Javascript的值的类型分成两大类：原始类型（primitive types）和复合类型（object types）。
