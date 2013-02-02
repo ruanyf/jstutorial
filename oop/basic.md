@@ -3,7 +3,7 @@ title: 面向对象编程概述
 layout: page
 category: oop
 date: 2012-12-28
-modifiedOn: 2013-01-10
+modifiedOn: 2013-02-02
 ---
 
 ## 构造函数
@@ -36,6 +36,24 @@ console.info(v.price);
 {% endhighlight %}
 
 上面代码的v变量，就是新生成的实例对象。它从构造函数Vehicle继承了price属性。
+
+new命令后面的构造函数可以带括号，也可以不带括号。下面两行代码是等价的。
+
+{% highlight javascript %}
+
+var v = new Vehicle();
+
+var v = new Vehicle;
+
+{% endhighlight %}
+
+但是，如果要向构造函数传入参数，就只有使用第一种表示法了。
+
+{% highlight javascript %}
+
+var v = new Vehicle(1000);
+
+{% endhighlight %}
 
 ## this关键字
 

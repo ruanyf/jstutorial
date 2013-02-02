@@ -3,8 +3,139 @@ title: 函数
 layout: page
 category: grammar
 date: 2012-12-15
-modifiedOn: 2013-01-10
+modifiedOn: 2013-02-02
 ---
+
+## 参数
+
+函数运行的时候，有时需要提供外部数据，不同的数据会得到不同的结果，这就叫参数。
+
+{% highlight javascript %}
+
+function square(x){
+	return x*x;
+}
+
+{% endhighlight %}
+
+上式的x就是square函数的参数。每次运行的时候，需要提供这个值，否则得不到结果。
+
+但是，参数不是必需的，Javascript语言允许省略函数。
+
+{% highlight javascript %}
+
+function f(a,b){
+	return a;
+}
+
+{% endhighlight %}
+
+上面的函数定义了两个参数，但是运行时无论提供多少个参数，JavaScript都不会报错。
+
+{% highlight javascript %}
+
+function f(a,b){
+	return a;
+}
+
+f(1,2,3)
+// 1
+
+f(1)
+// 1
+
+f()
+// undefined
+
+{% endhighlight %}
+
+但是没有办法只省略前面的参数，不省略后面的参数。
+
+{% highlight javascript %}
+
+function f(a,b){
+	return a;
+}
+
+f(,1)
+// error
+
+{% endhighlight %}
+
+可以通过下面的方法，为参数设置默认值。
+
+{% highlight javascript %}
+
+function f(a){
+	a = a || 1;
+	return a;
+}
+
+{% endhighlight %}
+
+上面代码的||表示“或运算”，如果前一个表达式的布尔值为true，就直接返回前一个值，否则返回后一个值。以下几个表达式的布尔运算都为false，会使得a取到后一个值。
+
+- undefined, null
+- false
+- +0, -0, NaN
+- ""
+
+因此，上面的函数中，你不可能让a等于0或空字符串。
+
+{% highlight javascript %}
+
+function f(a){
+	a = a || 1;
+	return a;
+}
+
+f('')
+// 1
+
+f(0)
+// 1
+
+{% endhighlight %}
+
+为了避免这个问题，可以采用下面更精确的写法。
+
+{% highlight javascript %}
+
+function f(a){
+	(a !== undefined && a != null)?(a = a):(a = 1);
+	return a;
+}
+
+f('')
+// ""
+
+f(0)
+// 0
+
+{% endhighlight %}
+
+## arguments对象
+
+JavaScript语言定义了一个arguments对象，用来指代函数运行时的所有参数，arguments[0]就是第一个参数，arguments[1]就是第二个参数，依次类推。这个对象只有在函数体内部，才可以使用。
+
+它的一个用途，就是通过length属性，判断函数调用时到底带几个参数。
+
+{% highlight javascript %}
+
+function f(){
+	return arguments.length;
+}
+
+f(1,2,3)
+// 3
+
+f(1)
+// 1
+
+f()
+// 0
+
+{% endhighlight %}
 
 ## 函数作用域
 

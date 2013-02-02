@@ -2,7 +2,7 @@
 title: 继承
 layout: page
 date: 2012-12-12
-modifiedOn: 2013-01-27
+modifiedOn: 2013-02-02
 category: oop
 ---
 
@@ -72,8 +72,11 @@ o.__proto__ === a
 
 {% highlight javascript %}
 
-123 instanceof Object
+123 instanceof Object 
 // false
+
+[1, 2, 3] instanceof Array
+// true
 
 {} instanceof Object
 // true

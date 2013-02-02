@@ -429,12 +429,13 @@ v1 === v2
 
 (1) ! 取反运算
 
-以下五个值取反后为true，其他都为false。
+以下六个值取反后为true，其他都为false。
 
 - undefined
 - null
 - false
-- 0
+- 0（包括+0和-0）
+- NaN
 - ""
 
 (2) && 且运算
