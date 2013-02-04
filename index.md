@@ -14,6 +14,7 @@ modifiedOn: 2013-02-04
 <h2 id="grammar">基本语法</h2>
 
 - [概述](grammar/basic.html)
+- [运算符](grammar/operator.html)
 - [对象](grammar/object.html)
 - [数组](grammar/array.html)
 - [函数](grammar/function.html)
