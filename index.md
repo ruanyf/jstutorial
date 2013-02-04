@@ -2,7 +2,7 @@
 layout: homepage
 title: Javascript 标准教程
 date: 2012-11-18
-modifiedOn: 2013-02-01
+modifiedOn: 2013-02-04
 ---
 
 <h2 id="introduction">导论</h2>
@@ -74,6 +74,7 @@ modifiedOn: 2013-02-01
 
 <h2 id="pattern">模式</h2>
 
+- [设计模式](pattern/designpattern.html)
 - [异步编程](pattern/asynchronous.html)
 
 <h2 id="algorithm">算法</h2>
