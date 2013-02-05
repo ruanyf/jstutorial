@@ -52,7 +52,7 @@ true + "1"
 
 {% endhighlight %}
 
-（3）特殊情况：两个空数组相加
+（3）实例一：两个空数组相加
 
 首先调用valueOf方法。数组的valueOf方法返回的依然是本身，因此再调用toString方法，生成空字符串。因此，最后的结果是空字符串。
 
@@ -63,7 +63,7 @@ true + "1"
 
 {% endhighlight %}
 
-（4）特殊情况：空数组+空对象
+（4）实例二：空数组+空对象
 
 这等同于空字符串与字符串“[object Object]”相加。因此，结果就是“[object Object]”。
 
@@ -74,33 +74,37 @@ true + "1"
 
 {% endhighlight %}
 
-（5）特殊情况：空对象+空数组
+（5）实例三：空对象+空数组
 
 JavaScript引擎将空对象视为一个空代码加以忽略。因此，整个表达式就变成“+ []”，等于对空数组求正值，因此结果就是0。
 
 {% highlight javascript %}
 
 {} + []
+// 0
+// 转化过程如下
 // + []
 // Number([])
 // Number([].toString())
 // Number("")
-// 0
+
 
 {% endhighlight %}
 
-（6）特殊情况：空对象与空对象相加
+（6）实例四：空对象与空对象相加
 
 JavaScript同样将第一个空对象视为一个空代码块，整个表达式就变成“+ {}”。这时，后一个空对象的ValueOf方法得到本身，再调用toSting方法，得到字符串“[object Object]”，然后再将这个字符串转成数值，得到NaN。所以，最后的结果就是NaN。
 
 {% highlight javascript %}
 
 {} + {}
+// NaN
+// 转化过程如下
 // + {}
 // Number({})
 // Number({}.toString())
 // Number("[object Object]")
-// NaN
+
 
 {% endhighlight %}
 

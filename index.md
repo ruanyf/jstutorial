@@ -7,7 +7,7 @@ modifiedOn: 2013-02-04
 
 <h2 id="introduction">导论</h2>
 
-- [为什么学习Javascript？](introduction/why.html)
+- [为什么学习JavaScript？](introduction/why.html)
 - [Javascript的历史](introduction/history.html)
 - [使用说明](introduction/instruction.html)
 
@@ -64,6 +64,7 @@ modifiedOn: 2013-02-04
 
 <h2 id="tool">开发工具</h2>
 
+- [Chrome开发工具](tool/chrome.html)
 - [性能测试（Benchmark）](tool/benchmark.html)
 - [PhantomJS](tool/phantomjs.html)
 - [移动端除错](tool/mobiledebugging.html)
