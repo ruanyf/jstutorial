@@ -162,6 +162,120 @@ v
 
 这里需要明确的是，Javascript中的所有数据，都可以视为对象，数组和函数只不过是特殊的对象而已，就连数值、字符串、布尔值都可以用对象方式调用。
 
+## 类型转化
+
+各种类型的值可以都可以转换成数字或字符串。
+
+### 转化成数字
+
+使用Number方法，可以将任意类型的值转化成数字。规则如下：
+
+- 数值转化后还是原来的值
+- 字符串如果可以被解析为数值，则转化为相应的数值，否则得到NaN
+- 布尔值true转化成1，false转化成0
+- undefined转化成NaN
+- null转化成0
+
+{% highlight javascript %}
+
+Number("324")
+// 324
+
+Number("324abc")
+// NaN
+
+Number(null)
+// 0
+
+{% endhighlight %}
+
+对于对象，则是先调用valueOf方法，如果该方法返回的不是数值，则再调用toString方法。如果toString方法返回的不是字符串，则报错。
+
+{% highlight javascript %}
+
+    var obj = {
+        valueOf: function () {
+            console.log("valueOf");
+            return {}; // not a primitive
+        },
+        toString: function () {
+            console.log("toString");
+            return {}; // not a primitive
+        }
+    }
+
+
+Number(obj)
+// valueOf
+// toString
+// TypeError: Cannot convert object to primitive value
+
+Number({a:1})
+// 等同于Number(({a:1}).toString())
+// NaN
+
+Number({valueOf:function (){return 2;}})
+// 2
+
+Number({valueOf:function (){return 2;},toString:function(){return 3;}})
+// 2
+
+Number({toString:function(){return 3;}})
+// 3
+
+{% endhighlight %}
+
+### 转化成字符串
+
+使用String方法，可以将任意类型的值转化成字符串。规则如下：
+
+- 数值转化为相应的字符串
+- 字符串转化后还是原来的值
+- 布尔值true转化为“true”，false转化为“false”
+- undefined转化为“undefined”
+- null转化为“null”
+
+{% highlight javascript %}
+
+String(123)
+// "123"
+
+Number(true)
+// "true"
+
+String(null)
+// "null"
+
+{% endhighlight %}
+
+对于对象，则是调用toString方法；如果toString方法返回的不是对象，再调用valueOf方法；如果返回的还不是对象，则报错。
+
+{% highlight javascript %}
+
+    var obj = {
+        valueOf: function () {
+            console.log("valueOf");
+            return {}; // not a primitive
+        },
+        toString: function () {
+            console.log("toString");
+            return {}; // not a primitive
+        }
+    }
+
+String(obj)
+// toString
+// valueOf
+// TypeError: Cannot convert object to primitive value
+
+String({a:1})
+// "[object Object]"
+
+String({toString:function(){return 3;}})
+// "3"
+
+{% endhighlight %}
+
 ## typeof 运算符
 
 该运算符用来确定一个值的数据类型，可能有以下结果：
