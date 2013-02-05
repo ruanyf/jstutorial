@@ -3,7 +3,7 @@ title: jQuery.Deferred对象
 category: jquery
 date: 2012-12-07
 layout: page
-modifiedOn: 2013-01-30
+modifiedOn: 2013-02-04
 ---
 
 ## 概述
@@ -146,7 +146,7 @@ task(param).then(f1).then(f2).then(f3);
 
 ## $.when()方法
 
-$.when()接受多个deferred对象作为参数，当它们全部运行成功后，才调用回调函数。它相当于将多个非同步操作，合并成一个。
+$.when()接受多个deferred对象作为参数，当它们全部运行成功后，才调用resolved状态的回调函数，但只要其中有一个失败，就调用rejected状态的回调函数。它相当于将多个非同步操作，合并成一个。
 
 {% highlight javascript %}
 
@@ -293,3 +293,4 @@ doSomething("uh oh").done(function() {
 + [jQuery.Deferred is the most important client-side tool you have](http://eng.wealthfront.com/2012/12/jquerydeferred-is-most-important-client.html)
 + [Fun With jQuery Deferred](http://www.intridea.com/blog/2011/2/8/fun-with-jquery-deferred)
 - Bryan Klimt, [What’s so great about JavaScript Promises?](http://blog.parse.com/2013/01/29/whats-so-great-about-javascript-promises/)
+- José F. Romaniello, [Understanding JQuery.Deferred and Promise](http://joseoncode.com/2011/09/26/a-walkthrough-jquery-deferred-and-promise/)

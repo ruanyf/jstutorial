@@ -3,7 +3,7 @@ title: 数组
 date: 2012-12-11
 category: grammar
 layout: page
-modifiedOn: 2013-01-09
+modifiedOn: 2013-02-04
 ---
 
 ## 数组与字典
@@ -187,17 +187,15 @@ a.forEach(function (x, i) { console.log(i+". "+x) });
 
 {% endhighlight %}
 
+## 数组的方法
+
+- push 添加一个元素
+- pop 删除一个元素
+- join 将所有元素组成一个字符串
+
 ## EcmaScript 5 新加入的数组方法
 
-EcmaScript 5在数组原型（Array.prototype）上，新增了9个方法，其中有7个与函数式（functional）操作有关。
-
-- [map](https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/map)
-- [forEach](https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/forEach)
-- [filter](https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/filter)
-- [every](https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/every)
-- [some](https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/some)
-- [reduce](https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/reduce)
-- [reduceRight](https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/reduceRight)
+EcmaScript 5在数组原型（Array.prototype）上，新增了9个方法，其中有7个与函数式（functional）操作有关：map、forEach、filter、every、some、reduce、reduceRight。
 
 这7个方法可以直接在数组上使用，它们的参数是一个函数。这个作为参数的函数本身又接受三个参数，分别是数组的当前元素elem、该元素的位置index和整个数组arr。
 

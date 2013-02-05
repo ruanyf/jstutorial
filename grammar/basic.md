@@ -3,7 +3,7 @@ title: 语法概述
 layout: page
 category: grammar
 date: 2012-12-14
-modifiedOn: 2013-02-04
+modifiedOn: 2013-02-05
 ---
 
 ## 表达式和语句
@@ -261,6 +261,84 @@ JavaScript内部，所有数字都是以浮点数形式储存。由于浮点数�
 
 0.3 / 0.1
 // 2.9999999999999996
+
+{% endhighlight %}
+
+## 字符串
+
+字符串就是若干个排在一起的字符。每个字符在JavaScript内部都是以16位的UTF-16格式储存，可以用"\uxxxx"的内码形式表示，xxxx代表该字符的Unicode编码。
+
+### 字符串连接
+
+字符串的连接，可以使用加号（+）运算符。
+
+{% highlight javascript %}
+
+"a" + "b"
+// "ab"
+
+{% endhighlight %}
+
+在一个字符串的结尾添加一个字符串，可以使用+=运算符。
+
+{% highlight javascript %}
+
+a += b;
+
+// 等同于
+
+a = a + b;
+
+{% endhighlight %}
+
+另一种方法是使用数组的连接方法。
+
+{% highlight javascript %}
+
+var arr = [];
+
+arr.push("Hello");
+
+arr.push(" ");
+
+arr.push("World");
+
+arr.join("")
+// "Hello World"
+
+{% endhighlight %}
+
+JavaScript引擎对“+”运算做过优化，所以上面两种方法，在速度方面没有太大区别。
+
+### Base64转码
+
+在浏览器环境中，JavaScript原生提供btoa方法，将字符串或二进制值转化为Base64编码；以及atob方法，将Base64编码转化为原来的编码。
+
+{% highlight javascript %}
+
+window.btoa("Hello World")
+// "SGVsbG8gV29ybGQ="
+
+window.atob("SGVsbG8gV29ybGQ=")
+// "Hello World"
+
+{% endhighlight %}
+
+这两个方法不适合Unicode字符串，浏览器会报错。必须中间插入一个浏览器转码的环节，再使用这两个方法。
+
+{% highlight javascript %}
+
+function utf8_to_b64( str ) {
+    return window.btoa(unescape(encodeURIComponent( str )));
+}
+ 
+function b64_to_utf8( str ) {
+    return decodeURIComponent(escape(window.atob( str )));
+}
+
+// 使用方法
+utf8_to_b64('你好'); // "5L2g5aW9"
+b64_to_utf8('4pyTIMOgIGxhIG1vZGU='); // "你好"
 
 {% endhighlight %}
 
@@ -569,3 +647,4 @@ console.log(a)
 - Dr. Axel Rauschmayer, [A quick overview of JavaScript](http://www.2ality.com/2011/10/javascript-overview.html)
 - Dr. Axel Rauschmayer, [Improving the JavaScript typeof operator](http://www.2ality.com/2011/11/improving-typeof.html)
 - Dr. Axel Rauschmayer, [Automatic semicolon insertion in JavaScript](http://www.2ality.com/2011/05/semicolon-insertion.html)
+- MDN, [window.btoa](https://developer.mozilla.org/en-US/docs/DOM/window.btoa)
