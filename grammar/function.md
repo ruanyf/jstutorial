@@ -3,7 +3,7 @@ title: 函数
 layout: page
 category: grammar
 date: 2012-12-15
-modifiedOn: 2013-02-02
+modifiedOn: 2013-02-06
 ---
 
 ## 参数
@@ -191,6 +191,104 @@ f()
 
    console.log(v);
    // 1
+
+{% endhighlight %}
+
+## apply方法
+
+apply方法用来指定函数运行的上下文。
+
+{% highlight javascript %}
+
+func.apply(context, [arg1, arg2, ...])
+
+{% endhighlight %}
+
+上面的context参数就是func函数运行的上下文，它可以是全局环境，也可以是一个具体的对象。后者是一个参数数组，用来传入函数运行所需的参数。
+
+{% highlight javascript %}
+
+var x = 1 ;
+
+var o = { x: 2 };
+
+function f(){ console.log(this.x);}
+
+f.apply(window)
+// 1
+
+f.apply(o)
+// 2
+
+{% endhighlight %}
+
+上面代码的f函数，如果上下文环境绑定全局环境，x的值就是1；如果绑定对象o，x的值就是2。
+
+如果绑定的上下文环境是undefined或null，JavaScript引擎当作绑定全局环境处理。
+
+{% highlight javascript %}
+
+var x = 1 ;
+
+function f(){ console.log(this.x);}
+
+f.apply(null)
+// 1
+
+f.apply()
+// 1
+
+{% endhighlight %}
+
+下面的例子是一个参数数组的例子。
+
+{% highlight javascript %}
+
+function f(x,y){ console.log(x+y);}
+
+f.apply(null,[1,1])
+// 2
+
+{% endhighlight %}
+
+f函数本来接受两个参数，使用apply方法以后，就变成可以接受一个数组作为参数。利用这一点，可以做一些有趣的应用。比如，JavaScript不提供找出数组最大元素的函数，Math.max方法只能返回它的所有参数的最大值，使用apply方法，就可以返回数组的最大元素。
+
+{% highlight javascript %}
+
+Math.max.apply(null, [10, 2, 4, 15, 9])
+// 15
+
+{% endhighlight %}
+
+apply还有一个特点，可以把数组的空元素变成undefined。
+
+{% highlight javascript %}
+
+Array.apply(null, ["a",,"b"])
+// [ 'a', undefined, 'b' ]
+
+{% endhighlight %}
+
+这里的差别就是，数组的foreach方法会逃过空元素，但是不会跳过undefined。因此，遍历内部元素的时候，会体现出差别。
+
+使用apply方法的另一个场合是，如果数组的成员也是数组，那么数组对象的concat方法会返回被展开的数组。
+
+{% highlight javascript %}
+
+Array.prototype.concat.apply([], [[1], [2]])
+// [1, 2]
+
+Array.prototype.concat.apply([], [[1], 2])
+// [1, 2]
+
+{% endhighlight %}
+
+concat方法是定义数组对象上的，所以apply方法的第一个参数必须是数组。另外，这个方法只能展开一层数组。
+
+{% highlight javascript %}
+
+Array.prototype.concat.apply([], [[[1]], [2]])
+// [[1], 2]
 
 {% endhighlight %}
 
