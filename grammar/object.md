@@ -3,7 +3,7 @@ title: 对象
 layout: page
 category: grammar
 date: 2012-12-12
-modifiedOn: 2013-01-30
+modifiedOn: 2013-02-08
 ---
 
 ## 概述
@@ -410,6 +410,10 @@ var a = "";
 //false
 
 {% endhighlight %}
+
+## 类似数组的对象
+
+在JavaScript中，有些对象被称为“类似数组的对象”（array-like object）。意思是，它们看上去很像数组，可以使用length属性，但是它们并不是数组，所以无法使用一些数组的方法。典型的例子是arguments对象，以及大多数DOM元素集。
 
 ## 属性模型
 

@@ -194,17 +194,17 @@ f()
 
 {% endhighlight %}
 
-## apply方法
+## call方法
 
-apply方法用来指定函数运行的上下文。
+call方法用来指定函数运行的上下文。
 
 {% highlight javascript %}
 
-func.apply(context, [arg1, arg2, ...])
+func.call(context, [arg1], [arg2], ...)
 
 {% endhighlight %}
 
-上面的context参数就是func函数运行的上下文，它可以是全局环境，也可以是一个具体的对象。后者是一个参数数组，用来传入函数运行所需的参数。
+context参数就是func函数运行的上下文，它可以是全局环境，也可以是一个具体的对象。跟在它后面的参数，就是func运行所需的参数。
 
 {% highlight javascript %}
 
@@ -214,10 +214,10 @@ var o = { x: 2 };
 
 function f(){ console.log(this.x);}
 
-f.apply(window)
+f.call(window)
 // 1
 
-f.apply(o)
+f.call(o)
 // 2
 
 {% endhighlight %}
@@ -232,19 +232,34 @@ var x = 1 ;
 
 function f(){ console.log(this.x);}
 
-f.apply(null)
+f.call(null)
 // 1
 
-f.apply()
+f.call()
 // 1
 
 {% endhighlight %}
 
-下面的例子是一个参数数组的例子。
+## apply方法
+
+apply方法与call方法类似，唯一的区别就是除了context参数，它还接受一个数组参数。
+
+{% highlight javascript %}
+
+func.apply(context, [arg1, arg2, ...])
+
+{% endhighlight %}
+
+后面的数组参数，就是func函数运行所需的参数。在call方法中，这些参数必须一个个添加，但是在apply方法中，必须以数组形式添加。下面的例子是一个参数数组的例子。
 
 {% highlight javascript %}
 
 function f(x,y){ console.log(x+y);}
+
+f.call(null,1,1)
+// 2
+
+// 改写为apply方法
 
 f.apply(null,[1,1])
 // 2
