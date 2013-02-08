@@ -37,6 +37,7 @@ modifiedOn: 2013-02-04
 
 - [Web Storage](bom/webstorage.html)
 - [History对象](bom/history.html)
+- [CSS](bom/css.html)
 - [WebSocket](bom/websocket.html)	
 - [Geolocation](bom/geolocation.html)
 - [MatchMedia](bom/matchmedia.html)

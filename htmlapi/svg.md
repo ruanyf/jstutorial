@@ -10,7 +10,7 @@ SVG是一种描述矢量图像的XML格式。也就是说，它是文本文件�
 
 ## 插入SVG文件
 
-SVG插入HTML网页，可以用在<img>标签、<embed>标签、CSS的background-image属性，也可以插在其他DOM元素中。
+SVG插入HTML网页，可以用在img标签、embed标签、CSS的background-image属性，也可以插在其他DOM元素中。
 
 {% highlight html %}
 
