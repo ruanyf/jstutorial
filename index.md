@@ -45,6 +45,7 @@ modifiedOn: 2013-02-04
 <h2 id="htmlapi">HTML网页的API</h2>
 
 * [Canvas](htmlapi/canvas.html)
+- [SVG图像](htmlapi/svg.html)
 * [Blob对象](htmlapi/blob.html)
 * [File](htmlapi/file.html)
 - [Web Worker](htmlapi/webworker.html)
