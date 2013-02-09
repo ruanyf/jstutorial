@@ -309,7 +309,7 @@ Array.prototype.concat.apply([], [[[1]], [2]])
 
 ## 变量提升（hoisting）
 
-Javascript解释器的工作方式是，先读取全部代码，再进行解释。这样的结果就是，函数体内部的var命令声明的变量，如同在全局作用域下一样，会产生“变量提升”现象：不管在什么位置，变量都会被提升到函数开始处声明。
+与全局作用域一样，函数作用域内部也会产生“变量提升”现象。var命令声明的变量，不管在什么位置，变量都会被提升到函数开始处声明。
 
 {% highlight javascript %}
 
@@ -333,6 +333,44 @@ Javascript解释器的工作方式是，先读取全部代码，再进行解释�
     }
 
 {% endhighlight %}
+
+另一个需要特别注意的地方是，JavaScript引擎将function声明，视作var命令，因此函数声明也会被提升到代码头部。所以，下面的代码不会报错。
+
+{% highlight javascript %}
+
+f1();
+
+function f1(){}
+
+{% endhighlight %}
+
+表面上，好像在声明之前就调用了函数f1。但是实际上，由于“变量提升”，函数f1的定义被提升到了代码头部。
+
+但是，如果采用赋值语句定义函数，JavaScript就会报错。
+
+{% highlight javascript %}
+
+f2();
+
+var f2 = function (){};
+
+// TypeError: undefined is not a function
+
+{% endhighlight %}
+
+上面的代码等同于
+
+{% highlight javascript %}
+
+var f2;
+
+f2();
+
+f2 = function (){};
+
+{% endhighlight %}
+
+当调用f2的时候，f2只是被声明，还没有被赋值，等于undefined，所以会报错。
 
 ## 闭包
 
