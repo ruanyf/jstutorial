@@ -56,6 +56,25 @@ deferred.resolve("hello world");
 
 {% endhighlight %}
 
+### state方法
+
+该方法用来返回deferred对象目前的状态。
+
+{% highlight javascript %}
+
+var deferred = new $.Deferred();
+deferred.state();  // "pending"
+deferred.resolve();
+deferred.state();  // "resolved"
+
+{% endhighlight %}
+
+该方法的返回值有三个：
+
+- pending：表示操作还没有完成。
+- resolved：表示操作成功。
+- rejected：表示操作失败。
+
 ### notify() 和 progress()
 
 progress()用来指定一个回调函数，当调用notify()方法时，该回调函数将执行。它的用意是提供一个接口，使得在非同步操作执行过程中，可以执行某些操作，比如定期返回进度条的进度。
@@ -88,6 +107,12 @@ progress()用来指定一个回调函数，当调用notify()方法时，该回�
 ### then()
 
 then()的作用也是指定回调函数，它可以接受三个参数，也就是三个回调函数。第一个参数是resolve时调用的回调函数，第二个参数是reject时调用的回调函数，第三个参数是progress()方法调用的回调函数。
+
+{% highlight javascript %}
+
+deferred.then( doneFilter [, failFilter ] [, progressFilter ] )
+
+{% endhighlight %}
 
 ### always()
 
@@ -141,6 +166,14 @@ task(param).then(
 {% highlight javascript %}
 
 task(param).then(f1).then(f2).then(f3);
+
+{% endhighlight %}
+
+除了Ajax操作，Animation类操作也可以使用promise对象。
+
+{% highlight javascript %}
+
+var promise = $('div.alert').fadeIn().promise();
 
 {% endhighlight %}
 
