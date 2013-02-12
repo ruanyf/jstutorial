@@ -3,7 +3,7 @@ title: 对象
 layout: page
 category: grammar
 date: 2012-12-12
-modifiedOn: 2013-02-08
+modifiedOn: 2013-02-12
 ---
 
 ## 概述
@@ -458,8 +458,8 @@ attributes对象包含如下属性：
 
 - value：表示该属性的值，默认为undefined。
 - writable：表示该属性的值（value）是否可以改变，默认为false。
-- enumerable： 该属性是否可枚举，默认为false。
-- configurable：该属性是否可配置，false。当为false时，你无法删除该属性，除了value，无法改变该属性的其他性质。Configurable控制该属性元数据的可写状态。
+- enumerable： 表示该属性是否可枚举，默认为false，也就是该属性不会出现在for...in和Object.keys()等操作中。
+- configurable：该属性是否可配置，默认为false，也就是你无法删除该属性，而且除了value这一项，你无法改变该属性的其他项的性质（比如writable和enumerable）。configurable控制该属性“元数据”的可写状态。
 - get：表示该属性的取值函数（getter），默认为undefined。
 - set：表示该属性的存值函数（setter），默认为undefined。
 
@@ -499,6 +499,11 @@ var o = Object.defineProperty({}, "p", {
 
 o.p
 // 123
+
+o.p = 246;
+o.p
+// 123
+// 因为writable为false，所以无法改变该属性的值
 
 {% endhighlight %}
 
@@ -688,6 +693,15 @@ Object.keys则只会列出对象自身的可枚举属性。
 Object.keys(obj).forEach( function(key) {
     console.log(key);
 });
+
+{% endhighlight %}
+
+propertyIsEnumerable方法用来判断一个属性是否可枚举。
+
+{% highlight javascript %}
+
+Object.prototype.propertyIsEnumerable("toString")
+// false
 
 {% endhighlight %}
 

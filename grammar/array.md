@@ -3,7 +3,7 @@ title: 数组
 date: 2012-12-11
 category: grammar
 layout: page
-modifiedOn: 2013-02-04
+modifiedOn: 2013-02-10
 ---
 
 ## 数组与字典
@@ -189,9 +189,48 @@ a.forEach(function (x, i) { console.log(i+". "+x) });
 
 ## 数组的方法
 
-- push 添加一个元素
 - pop 删除一个元素
 - join 将所有元素组成一个字符串
+
+## concat方法
+
+该方法用于连接多个数组，返回连接后的数组。
+
+{% highlight javascript %}
+
+["hello"].concat(["world"])
+// ["hello", "world"]
+
+{% endhighlight %}
+
+对于对象，也可以使用这个方法。
+
+{% highlight javascript %}
+
+[].concat.call({ a: 1 }, [2])
+// [{a:1}, 2]
+
+{% endhighlight %}
+
+### push方法
+
+该方法用于在数组的末端添加一个元素。
+
+它还可以向对象添加元素，添加后的对象变成“类似数组的”对象，即新加入元素的键对应数组的索引，并且对象有一个length属性。
+
+{% highlight javascript %}
+
+var a = { a: 1 };
+
+[].push.call(a, 2);
+a
+// {a:1, 0:2, length: 1}
+
+[].push.call(a, [3]);
+a
+// {a:1, 0:2, 1:[3], length: 2}
+
+{% endhighlight %}
 
 ## EcmaScript 5 新加入的数组方法
 

@@ -390,6 +390,70 @@ JavaScript内部，所有数字都是以浮点数形式储存。由于浮点数�
 
 {% endhighlight %}
 
+Javascript
+
+### NaN
+
+NaN不等于任何值，包括它本身。
+
+{% highlight javascript %}
+
+NaN === NaN
+// false
+
+{% endhighlight %}
+
+isNaN方法可以用来判断一个值是否为NaN。
+
+{% highlight javascript %}
+
+isNaN(NaN)
+// true
+
+{% endhighlight %}
+
+但是，这个方法只对数值有效，如果传入其他值，会被先转成数值。传入字符串的时候，就会被转成NaN，这一点要特别引起注意。
+
+{% highlight javascript %}
+
+isNaN("Hello")
+// true
+
+{% endhighlight %}
+
+由于NaN是唯一不等于自身的值，可以利用这一点判断一个值是否为NaN。
+
+{% highlight javascript %}
+
+function myIsNaN(value) {
+        return value !== value;
+}
+
+// or
+
+function myIsNaN2(value) {
+	return typeof value === 'number' && isNaN(value);
+}
+
+{% endhighlight %}
+
+### Infinity
+
+任意数除以0，会得到Infinity。它有正负之分。
+
+{% highlight javascript %}
+
+1 / -0
+// -Infinity
+
+1 / +0
+// Infinity
+
+Infinity === -Infinity
+// false
+
+{% endhighlight %}
+
 ## 字符串
 
 字符串就是若干个排在一起的字符。每个字符在JavaScript内部都是以16位的UTF-16格式储存，可以用"\uxxxx"的内码形式表示，xxxx代表该字符的Unicode编码。

@@ -3,7 +3,7 @@ title: CSS
 layout: page
 category: bom
 date: 2013-02-08
-modifiedOn: 2013-02-08
+modifiedOn: 2013-02-12
 ---
 
 ## 动画（animation）
@@ -60,6 +60,19 @@ Started: elapsed time is 0
 New loop started at time 3.01200008392334
 New loop started at time 6.00600004196167
 Ended: elapsed time is 9.234000205993652
+
+{% endhighlight %}
+
+## 过渡（transition）
+
+过渡结束的时候，会触发transitionend事件。
+
+{% highlight javascript %}
+
+ $("body").on("webkitTransitionEnd transitionend msTransitionEnd oTransitionEnd", function(){
+      // Remove the transition property
+      $("body").css("transition", "none");
+    });
 
 {% endhighlight %}
 
