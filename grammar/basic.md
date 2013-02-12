@@ -102,7 +102,6 @@ console.log(x)
 
 {% endhighlight %}
 
-
 可以在同一条var命令中声明多个变量。
 
 {% highlight javascript %}
@@ -394,12 +393,21 @@ Javascript
 
 ### NaN
 
-NaN不等于任何值，包括它本身。
+NaN表示无法表示的数值。它不等于任何值，包括它本身。
 
 {% highlight javascript %}
 
 NaN === NaN
 // false
+
+{% endhighlight %}
+
+0除以0会得到NaN。
+
+{% highlight javascript %}
+
+0 / 0
+// NaN
 
 {% endhighlight %}
 
@@ -451,6 +459,12 @@ function myIsNaN2(value) {
 
 Infinity === -Infinity
 // false
+
+Math.pow(+0, -1)
+// Infinity
+
+Math.pow(-0, -1)
+// -Infinity
 
 {% endhighlight %}
 

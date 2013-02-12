@@ -18,6 +18,7 @@ modifiedOn: 2013-02-12
 - [对象](grammar/object.html)
 - [数组](grammar/array.html)
 - [函数](grammar/function.html)
+- [Math对象](grammar/math.html)
 - [Regex对象](grammar/regex.html)
 - [JSON格式](grammar/json.html)
 - [严格模式](grammar/strict.html)
@@ -53,8 +54,8 @@ modifiedOn: 2013-02-12
 - [服务器端发送事件](htmlapi/eventsource.html)		
 * [Page Visiblity](htmlapi/pagevisibility.html)
 * [FullScreen](htmlapi/fullscreen.html)
-- [Web Speech](htmlapi/webspeech.html)-
-- [requestAnimationFrame](htmlapi/reuestanimationframe.html)
+- [Web Speech](htmlapi/webspeech.html)
+- [requestAnimationFrame](htmlapi/requestanimationframe.html)
 
 <h2 id="jquery">jQuery</h2>
 
