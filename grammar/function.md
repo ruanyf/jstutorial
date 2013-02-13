@@ -3,7 +3,7 @@ title: 函数
 layout: page
 category: grammar
 date: 2012-12-15
-modifiedOn: 2013-02-06
+modifiedOn: 2013-02-13
 ---
 
 ## 参数
@@ -49,7 +49,7 @@ f()
 
 {% endhighlight %}
 
-但是没有办法只省略前面的参数，不省略后面的参数。
+但是没有办法只省略靠前的参数，而保留靠后的参数。
 
 {% highlight javascript %}
 
