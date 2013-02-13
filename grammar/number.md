@@ -8,7 +8,7 @@ modifiedOn: 2013-02-13
 
 ## 概述
 
-JavaScript内部，所有数字都是以浮点数形式储存。由于浮点数不是精确的值，所以涉及浮点数的比较和运算要特别小心。
+JavaScript内部，所有数字都是以64位浮点数形式储存。由于浮点数不是精确的值，所以涉及浮点数的比较和运算要特别小心。
 
 {% highlight javascript %}
 
@@ -20,14 +20,42 @@ JavaScript内部，所有数字都是以浮点数形式储存。由于浮点数�
 
 {% endhighlight %}
 
-JavaScript提供的有效数字的精度为16位。
+根据国际标准IEEE 754，储存数值的64个二进制位中，第0位到第51位储存有效数字部分，第52到第62位储存指数部分，第63位是符号位，0表示整数，1表示负数。
+
+因此，JavaScript提供的有效数字的精度为53个二进制位（IEEE 754规定有效数字第一位默认为1，再加上后面的52位），也就是说，小于2的53次方的整数都可以精确表示。
 
 {% highlight javascript %}
 
-1234567890123456789
-// 1234567890123456800
+Math.pow(2, 53)  // 54个二进制位
+// 9007199254740992
+
+Math.pow(2, 53) + 1
+// 9007199254740992
+
+Math.pow(2, 53) + 2
+// 9007199254740994
+
+Math.pow(2, 53) + 3
+// 9007199254740996
+
+Math.pow(2, 53) + 4
+// 9007199254740996
 
 {% endhighlight %}
+
+大于等于2的53次方的数值，都无法保持精度。
+
+{% highlight javascript %}
+
+Math.pow(2, 53) 
+// 9007199254740992
+
+9007199254740992111
+// 9007199254740992000
+
+{% endhighlight %}
+
+另一方面，指数部分的长度是11，意味着指数部分的最大值是2047（2的11次方减1）。所以，JavaScript能够表示的数值范围为(-2^2048, 2^2048)，超出这个范围的数无法表示。
 
 ## 数值的表示法
 
@@ -45,7 +73,7 @@ JavaScript提供的有效数字的精度为16位。
 
 除了以下两种情况，所有数值都采用直接表示。
 
-（1）小数点前的数字多于16位。
+（1）小数点前的数字多于21位。
 
 {% highlight javascript %}
 
@@ -71,7 +99,25 @@ JavaScript提供的有效数字的精度为16位。
 
 ## NaN
 
-NaN表示无法表示的数值。它不等于任何值，包括它本身。
+NaN表示“非数字”（not a number），主要用于将字符串解析成数字出错的场合。
+
+{% highlight javascript %}
+
+Number("xyz")
+// NaN
+
+{% endhighlight %}
+
+它数据类型属于Number。
+
+{% highlight javascript %}
+
+typeof NaN
+// 'number'
+
+{% endhighlight %}
+
+它不等于任何值，包括它本身。
 
 {% highlight javascript %}
 
@@ -98,12 +144,25 @@ isNaN(NaN)
 
 {% endhighlight %}
 
-但是，这个方法只对数值有效，如果传入其他值，会被先转成数值。传入字符串的时候，就会被转成NaN，这一点要特别引起注意。
+但是，这个方法只对数值有效，如果传入其他值，会被先转成数值。传入字符串的时候，字符串会被先转成NaN，所以最后返回true，这一点要特别引起注意。
 
 {% highlight javascript %}
 
 isNaN("Hello")
 // true
+
+// 相当于
+isNaN(Number("Hello"))
+// true
+
+{% endhighlight %}
+
+出于同样的原因，对于数组和对象，isNaN也会返回true。
+
+{% highlight javascript %}
+
+isNaN({}) // true
+isNaN(["xzy"]) // true
 
 {% endhighlight %}
 
@@ -125,7 +184,7 @@ function myIsNaN2(value) {
 
 ## Infinity
 
-任意数除以0，会得到Infinity。它有正负之分。
+Infinity表示“无穷”。任意数除以0（0本身除外），会得到Infinity。它有正负之分。
 
 {% highlight javascript %}
 
@@ -143,6 +202,39 @@ Math.pow(+0, -1)
 
 Math.pow(-0, -1)
 // -Infinity
+
+{% endhighlight %}
+
+超出JavaScript表示范围的数值，也会得到无穷。
+
+{% highlight javascript %}
+
+Math.pow(2, 2048)
+// Infinity
+
+-Math.pow(2, 2048)
+// -Infinity
+
+{% endhighlight %}
+
+Infinity的四则运算，符合无穷的数学计算规则。
+
+{% highlight javascript %}
+
+Infinity + Infinity // Infinity
+5 * Infinity // Infinity
+5 - Infinity // -Infinity
+Infinity / 5 // Infinity
+5 / Infinity // 0
+
+{% endhighlight %}
+
+Infinity减去或除以Infinity，得到NaN。
+
+{% highlight javascript %}
+
+Infinity - Infinity // NaN
+Infinity / Infinity // NaN
 
 {% endhighlight %}
 
@@ -198,3 +290,7 @@ parseInt(1000, 8)
 // 512
 
 {% endhighlight %}
+
+## 参考链接
+
+- Dr. Axel Rauschmayer, [How numbers are encoded in JavaScript](http://www.2ality.com/2012/04/number-encoding.html)

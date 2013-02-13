@@ -17,7 +17,7 @@ Math.round(0.5) // 1
 
 {% endhighlight %}
 
-它对于负值的运算结果与正值略有不同，主要对.5的处理。
+它对于负值的运算结果与正值略有不同，主要体现在对.5的处理。
 
 {% highlight javascript %}
 
@@ -67,5 +67,16 @@ Math.ceil(-3.2) // -3
 
 Math.pow(2, 2) // 4
 Math.pow(2, 3) // 8
+
+{% endhighlight %}
+
+## sqrt方法
+
+该方法返回参数值的平方根。如果参数是一个负值，则返回NaN。
+
+{% highlight javascript %}
+
+Math.sqrt(4) // 4
+Math.sqrt(-4) // NaN
 
 {% endhighlight %}
