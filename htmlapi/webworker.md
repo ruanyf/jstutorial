@@ -3,7 +3,7 @@ title: Web Worker
 layout: page
 category: htmlapi
 date: 2013-01-25
-modifiedOn: 2013-01-25
+modifiedOn: 2013-02-14
 ---
 
 ## 概述
@@ -17,6 +17,18 @@ Web Worker有以下几个特点：
 - 同域限制，即子线程加载的脚本文件，必须与主线程的脚本文件在同一个域。
 - 子线程无法读取网页的DOM对象，即document、window、parent这些对象，子线程都无法得到。
 - 子线程无法读取本地文件，即子线程无法打开本机的文件系统（file://），它所加载的脚本，必须来自网络。
+
+使用之前，检查浏览器是否支持这个API。
+
+{% highlight javascript %}
+
+if (window.Worker) {
+  // ...
+} else {
+  // ...
+}
+
+{% endhighlight %}
 
 ## 新建和启动子线程
 
@@ -38,7 +50,13 @@ worker.postMessage("Hello World");
 
 {% endhighlight %}
 
-postMessage的参数，就是主线程传给子线程的信号。
+postMessage的参数，就是主线程传给子线程的信号。它可以是一个字符串，也可以是一个对象。
+
+{% highlight javascript %}
+
+worker.postMessage({method: 'echo', args: ['Work']});
+
+{% endhighlight %}
 
 ## 子线程的事件监听
 
@@ -58,6 +76,22 @@ self.addEventListener('message', function(e) {
 
 self代表子线程自身，对它的message事件指定回调函数。该函数的参数是一个事件对象，该事件对象的data属性包含主线程发来的信号。self.postMessage则表示，子线程反过来向主线程也发送一个信号。
 
+通过主线程发来信号的属性，子线程可以调用不同的方法。
+
+{% highlight javascript %}
+
+/* File: work.js */
+
+self.onmessage = function(event) {
+  var method = event.data.method;
+  var args = event.data.args;
+
+  var reply = doSomething(args);
+  self.postMessage({method: method, reply: reply});
+};
+
+{% endhighlight %}
+
 ## 主线程的事件监听
 
 主线程也必须指定message事件的回调函数，监听子线程发来的信号。
@@ -71,6 +105,24 @@ worker.addEventListener('message', function(e) {
 			console.log(e.data);
 			
 }, false);
+
+{% endhighlight %}
+
+## 错误处理
+
+主线程可以监听子线程是否发生错误。如果发生错误，会触发主线程的error事件。
+
+{% highlight javascript %}
+
+worker.onerror(function(event) {
+  console.log(event);
+});
+
+// or
+
+worker.addEventListener('error', function(event) {
+  console.log(event);
+});
 
 {% endhighlight %}
 

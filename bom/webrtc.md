@@ -3,7 +3,7 @@ title: WebRTC
 layout: page
 category: bom
 date: 2013-01-10
-modifiedOn: 2013-01-10
+modifiedOn: 2013-02-15
 ---
 
 ## 概述
@@ -14,6 +14,10 @@ WebRTC是“网络实时通信”（Web Real Time Communication）的缩写，�
 
 {% highlight javascript %}
 
+navigator.getUserMedia ||
+  (navigator.getUserMedia = navigator.mozGetUserMedia ||
+  navigator.webkitGetUserMedia || navigator.msGetUserMedia);
+
 if (navigator.getUserMedia) {
     // do something
 } else {
@@ -22,17 +26,7 @@ if (navigator.getUserMedia) {
 
 {% endhighlight %}
 
-这个方法前面，还要加上浏览器前缀。
-
-{% highlight javascript %}
-
-navigator.getUserMedia ||
-  (navigator.getUserMedia = navigator.mozGetUserMedia ||
-  navigator.webkitGetUserMedia || navigator.msGetUserMedia);
-
-{% endhighlight %}
-
-需要注意的是，IE还不支持这个API，所以上面代码中最后一个msGetUserMedia，只是为了确保将来的兼容。
+需要注意的是，IE还不支持这个API，所以上面代码中的msGetUserMedia，只是为了确保将来的兼容。
 
 ## getUserMedia方法
 

@@ -3,7 +3,7 @@ title: 语法概述
 layout: page
 category: grammar
 date: 2012-12-14
-modifiedOn: 2013-02-09
+modifiedOn: 2013-02-14
 ---
 
 ## 表达式和语句
@@ -735,6 +735,15 @@ var f = function(x) { return x }
 (a++)
 // f等于0，因为(a++)被视为匿名函数的调用
 
+return a +
+b;
+
+return (a
++ b)
+ 
+obj.foo(arg1,
+arg2)
+
 {% endhighlight %}
 
 只有下一行的开始与本行的结尾，无法放在一起解释，解释器才会自动添加分号。
@@ -748,6 +757,19 @@ console.log(a)
 
 if (a < 0) a = 0;
 console.log(a)
+
+{% endhighlight %}
+
+尤其要注意的是，如果return语句返回的是一个对象的字面量，起首的大括号一定要写在同一行，否则得不到预期结果。
+
+{% highlight javascript %}
+
+    return
+    { first: "Jane" }
+    
+    // 解释成
+    return;
+    { first: "Jane" }
 
 {% endhighlight %}
 

@@ -3,7 +3,7 @@ title: 函数
 layout: page
 category: grammar
 date: 2012-12-15
-modifiedOn: 2013-02-13
+modifiedOn: 2013-02-14
 ---
 
 ## 参数
@@ -304,6 +304,29 @@ concat方法是定义数组对象上的，所以apply方法的第一个参数必
 
 Array.prototype.concat.apply([], [[[1]], [2]])
 // [[1], 2]
+
+{% endhighlight %}
+
+## bind方法
+
+该方法允许一个函数绑定运行时的上下文和参数。
+
+{% highlight javascript %}
+
+func.bind(thisValue, [arg1], [arg2], ...)
+
+{% endhighlight %}
+
+如果第一个参数是null或undefined，则函数运行时绑定全局环境的上下文。
+
+{% highlight javascript %}
+
+function add(x,y) { return x+y;}
+
+var plus5 = add.bind(null, 5);
+
+plus5(10)
+// 15
 
 {% endhighlight %}
 
