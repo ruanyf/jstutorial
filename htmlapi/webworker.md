@@ -23,9 +23,9 @@ Web Worker有以下几个特点：
 {% highlight javascript %}
 
 if (window.Worker) {
-  // ...
+  // 支持
 } else {
-  // ...
+  // 不支持
 }
 
 {% endhighlight %}

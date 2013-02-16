@@ -2,7 +2,7 @@
 layout: homepage
 title: Javascript 标准教程
 date: 2012-11-18
-modifiedOn: 2013-02-13
+modifiedOn: 2013-02-16
 ---
 
 <h2 id="introduction">导论</h2>
@@ -37,9 +37,10 @@ modifiedOn: 2013-02-13
 
 <h2 id="bom">浏览器对象</h2>
 
-- [Web Storage](bom/webstorage.html)
 - [History对象](bom/history.html)
 - [CSS](bom/css.html)
+- [Ajax](bom/ajax.html)
+- [Web Storage](bom/webstorage.html)
 - [WebSocket](bom/websocket.html)	
 - [Geolocation](bom/geolocation.html)
 - [MatchMedia](bom/matchmedia.html)
