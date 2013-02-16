@@ -309,13 +309,37 @@ Array.prototype.concat.apply([], [[[1]], [2]])
 
 ## bind方法
 
-该方法允许一个函数绑定运行时的上下文和参数。
+该方法将一个函数绑定运行时的上下文和参数，然后作为新函数返回。
 
 {% highlight javascript %}
 
 func.bind(thisValue, [arg1], [arg2], ...)
 
 {% endhighlight %}
+
+请看下面的例子。
+
+{% highlight javascript %}
+
+var o1 = {
+	p: 123,
+	m: function(){ console.log(this.p);}
+};
+
+// 不绑定上下文
+var o2 = { p: 246};
+o2.m = o1.m;
+o2.m()
+// 246
+
+// 绑定上下文
+o2.m = o1.m.bind(o1);
+o2.m()
+// 123
+
+{% endhighlight %}
+
+当上下文绑定之后，o1对象的m方法就不再读取o2对象的属性了。
 
 如果第一个参数是null或undefined，则函数运行时绑定全局环境的上下文。
 

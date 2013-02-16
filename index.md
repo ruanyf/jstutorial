@@ -62,6 +62,7 @@ modifiedOn: 2013-02-16
 <h2 id="jquery">jQuery</h2>
 
 - [选择器](jquery/selector.html)
+- [Utility方法](jquery/utility.html)
 - [deferred对象](jquery/deferred.html)
 
 <h2 id="library">函数库</h2>

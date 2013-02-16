@@ -3,7 +3,7 @@ title: Underscore.js
 layout: page
 category: library
 date: 2012-12-27
-modifiedOn: 2013-01-04
+modifiedOn: 2013-02-16
 ---
 
 ## 概述
@@ -182,6 +182,101 @@ _.pluck(stooges, 'name');
 
 ## 与函数相关的方法
 
+### bind
+
+该方法绑定函数运行时的上下文，作为一个新函数返回。
+
+{% highlight javascript %}
+
+_.bind(function, object, [*arguments]) 
+
+{% endhighlight %}
+
+请看下面的实例。
+
+{% highlight javascript %}
+
+var o = {
+	p: 2,
+	m: function (){console.log(p);}
+};
+
+o.m()
+// 2
+
+_.bind(o.m,{p:1})()
+// 1
+
+{% endhighlight %}
+
+### bindAll
+
+该方法将某个对象的所有方法（除非特别声明），全部绑定在该对象上面。
+
+{% highlight javascript %}
+
+var buttonView = {
+  label   : 'underscore',
+  onClick : function(){ alert('clicked: ' + this.label); },
+  onHover : function(){ console.log('hovering: ' + this.label); }
+};
+
+_.bindAll(buttonView);
+
+{% endhighlight %}
+
+### partial
+
+该方法绑定将某个函数与参数绑定，然后作为一个新函数返回。
+
+{% highlight javascript %}
+
+var add = function(a, b) { return a + b; };
+
+add5 = _.partial(add, 5);
+
+add5(10);
+// 15
+
+{% endhighlight %}
+
+### memoize
+
+该方法缓存一个函数针对某个参数的运行结果。
+
+{% highlight javascript %}
+
+var fibonacci = _.memoize(function(n) {
+  return n < 2 ? n : fibonacci(n - 1) + fibonacci(n - 2);
+});
+
+{% endhighlight %}
+
+如果一个函数有多个参数，则需要提供一个hashFunction，用来生成标识缓存的哈希值。
+
+### delay
+
+该方法可以将函数推迟指定的时间再运行。
+
+{% highlight javascript %}
+
+var log = _.bind(console.log, console);
+
+_.delay(log, 1000, 'logged later');
+// 'logged later'
+
+{% endhighlight %}
+
+## defer
+
+该方法可以将函数推迟到待运行的任务数为0时再运行，类似于setTimeout推迟0秒运行的效果。
+
+{% highlight javascript %}
+
+_.defer(function(){ alert('deferred'); });
+
+{% endhighlight %}
+
 ### throttle
 
 该方法返回一个函数的新版本。连续调用这个新版本的函数时，必须等待一定时间才会触发下一次执行。
@@ -191,7 +286,7 @@ _.pluck(stooges, 'name');
 // 返回updatePosition函数的新版本
 var throttled = _.throttle(updatePosition, 100);
 
-// 连续触发这个新版本的函数，但是每过100毫秒才会触发一次
+// 新版本的函数每过100毫秒才会触发一次
 $(window).scroll(throttled);
 
 {% endhighlight %}
@@ -203,6 +298,62 @@ $(window).scroll(throttled);
 {% highlight javascript %}
 
 $("button").on("click", _.debounce(submitForm, 1000));
+
+{% endhighlight %}
+
+### once
+
+该方法返回一个新版本的函数，使得这个函数只能被运行一次。主要用于对象的初始化。
+
+{% highlight javascript %}
+
+var initialize = _.once(createApplication);
+initialize();
+initialize();
+// Application只被创造一次
+
+{% endhighlight %}
+
+### after
+
+该方法返回一个新版本的函数，这个函数只有在被调用一定次数后才会运行，主要用于确认一组操作全部完成后，再做出反应。
+
+{% highlight javascript %}
+
+var renderNotes = _.after(notes.length, render);
+_.each(notes, function(note) {
+  note.asyncSave({success: renderNotes});
+});
+// 所有的note都被保存以后，renderNote才会运行一次
+
+{% endhighlight %}
+
+### wrap
+
+该方法将一个函数作为参数，传入另一个函数，最终返回前者的一个新版本。
+
+{% highlight javascript %}
+
+var hello = function(name) { return "hello: " + name; };
+hello = _.wrap(hello, function(func) {
+  return "before, " + func("moe") + ", after";
+});
+hello();
+// 'before, hello: moe, after'
+
+{% endhighlight %}
+
+### compose
+
+该方法接受一系列函数作为参数，由后向前依次运行，上一个函数的运行结果，作为后一个函数的运行参数。也就是说，将f(g(),h())的形式转化为f(g(h()))。
+
+{% highlight javascript %}
+
+var greet    = function(name){ return "hi: " + name; };
+var exclaim  = function(statement){ return statement + "!"; };
+var welcome = _.compose(exclaim, greet);
+welcome('moe');
+// 'hi: moe!'
 
 {% endhighlight %}
 
