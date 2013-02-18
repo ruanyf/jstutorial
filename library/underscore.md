@@ -3,7 +3,7 @@ title: Underscore.js
 layout: page
 category: library
 date: 2012-12-27
-modifiedOn: 2013-02-16
+modifiedOn: 2013-02-18
 ---
 
 ## 概述
@@ -11,6 +11,24 @@ modifiedOn: 2013-02-16
 [Underscore.js](http://underscorejs.org/)是一个很精干的库，压缩后只有4KB。它提供了几十种函数式编程的方法，大大方便了Javascript的编程。MVC框架backbone.js就是基于这个库。
 
 它定义了一个下划线（_）对象，函数库的所有方法都属于这个对象。这些方法大致上可以分成：集合（collection）、数组（array）、函数（function）、对象（object）和工具（utility）五大类。
+
+## 在node.js下安装
+
+Underscore.js不仅可以用于浏览器环境，还可以用于node.js。安装命令如下：
+
+{% highlight javascript %}
+
+npm install underscore
+
+{% endhighlight %}
+
+但是，node.js不能直接使用_作为变量名，因此要用下面的方法使用underscore.js。
+
+{% highlight javascript %}
+
+var u = require("underscore");
+
+{% endhighlight %}
 
 ## 与集合有关的方法
 
@@ -150,7 +168,7 @@ _.shuffle([1, 2, 3, 4, 5, 6]);
 {% highlight javascript %}
 
 _.size({one : 1, two : 2, three : 3});
-=> 3
+// 3
 
 {% endhighlight %}
 
@@ -267,7 +285,7 @@ _.delay(log, 1000, 'logged later');
 
 {% endhighlight %}
 
-## defer
+### defer
 
 该方法可以将函数推迟到待运行的任务数为0时再运行，类似于setTimeout推迟0秒运行的效果。
 
@@ -357,6 +375,106 @@ welcome('moe');
 
 {% endhighlight %}
 
+## 工具方法
+
+### template
+
+该方法用于编译HTML模板。它接受三个参数。
+
+{% highlight javascript %}
+
+_.template(templateString, [data], [settings]) 
+
+{% endhighlight %}
+
+三个参数的含义如下：
+
+- templateString：模板字符串
+- data：输入模板的数据
+- settings：设置
+
+#### templateString
+
+模板字符串templateString就是普通的HTML语言，其中的变量使用<%= … %>的形式插入；data对象负责提供变量的值。
+
+{% highlight javascript %}
+
+var txt = "<h2><%= word %></h2>";
+
+_.template(txt, {word : "Hello World"})
+// "<h2>Hello World</h2>"
+
+{% endhighlight %}
+
+如果变量的值包含五个特殊字符（& < > " ' /），就需要用<%- ... %>转义。
+
+{% highlight javascript %}
+
+var txt = "<h2><%- word %></h2>";
+
+_.template(txt, {word : "H & W"})
+// <h2>H &amp; W</h2>
+
+{% endhighlight %}
+
+JavaScript命令可以采用<% … %>的形式插入。下面是判断语句的例子。
+
+{% highlight javascript %}
+
+var txt = "<% var i = 0; if (i<1){ %>"
+		+ "<%= word %>"
+		+ "<% } %>";
+
+_.template(txt, {word : "Hello World"})
+// Hello World
+
+{% endhighlight %}
+
+常见的用法还有循环语句。
+
+{% highlight javascript %}
+
+var list = "<% _.each(people, function(name) { %> <li><%= name %></li> <% }); %>";
+
+_.template(list, {people : ['moe', 'curly', 'larry']});
+// "<li>moe</li><li>curly</li><li>larry</li>"
+
+{% endhighlight %}
+
+如果template方法只有第一个参数templateString，省略第二个参数，那么会返回一个函数，以后可以向这个函数输入数据。
+
+{% highlight javascript %}
+
+var t1 = _.template("Hello <%=user%>!");  
+
+t1({ user: "<Jane>" }) 
+// 'Hello <Jane>!'
+
+{% endhighlight %}
+
+#### data
+
+templateString中的所有变量，在内部都是obj对象的属性，而obj对象就是指第二个参数data对象。下面两句语句是等同的。
+
+{% highlight javascript %}
+
+_.template("Hello <%=user%>!", { user: "<Jane>" })
+_.template("Hello <%=obj.user%>!", { user: "<Jane>" })
+
+{% endhighlight %}
+
+如果要改变obj这个对象的名字，需要在第三个参数中设定。
+
+{% highlight javascript %}
+
+_.template("<%if (data.title) {%>Title: <%=title%><%}%>", null,
+                { variable: "data" });
+
+{% endhighlight %}
+
+因为template在变量替换时，内部使用with语句，所以上面这样的做法，运行速度会比较快。
+
 ## 参考链接
 
-- [Using Underscore.js's debounce() to filter double-clicks](http://eng.wealthfront.com/2012/12/using-underscorejss-debounce-to-filter.html)
+- [Using Underscore.js's debounce() to filter double-clicks](http://eng.wealthfront.com/2012/12/using-underscorejss-debounce-to-filter.html)i
+- Dr. Axel Rauschmayer, [A closer look at Underscore templates](http://www.2ality.com/2012/06/underscore-templates.html)
