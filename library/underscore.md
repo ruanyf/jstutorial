@@ -467,7 +467,7 @@ _.template("Hello <%=obj.user%>!", { user: "<Jane>" })
 
 {% highlight javascript %}
 
-_.template("<%if (data.title) {%>Title: <%=title%><%}%>", null,
+_.template("<%if (data.title) { %>Title: <%= title %><% } %>", null,
                 { variable: "data" });
 
 {% endhighlight %}
