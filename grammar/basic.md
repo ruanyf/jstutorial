@@ -3,7 +3,7 @@ title: 语法概述
 layout: page
 category: grammar
 date: 2012-12-14
-modifiedOn: 2013-02-14
+modifiedOn: 2013-02-23
 ---
 
 ## 表达式和语句
@@ -131,17 +131,36 @@ a = 1;
 
 {% endhighlight %}
 
+## 区块
+
+JavaScript使用大括号，将相关的语句组合在一起，称为“区块”（block）。
+
+与大多数编程语言不一样，JavaScript的区块不构成单独的作用域（scope）。也就是说，区块中的变量就是全局变量。
+
+{% highlight javascript %}
+
+{ 
+	var a;
+	a = 1;
+
+}
+
+a
+// 1
+
+{% endhighlight %}
+
 ## 数据类型
 
-Javascript的值的类型分成两大类：原始类型（primitive types）和复合类型（object types）。
+Javascript的值的类型分成两大类：原始类型（primitive type）和合成类型（complex type）。
 
-原始类型分成三种。
+原始类型又分成三种。
 
 - 数值（number）
 - 字符串（string）
 - 布尔值（boolean）
 
-复合类型也分成三种。
+合成类型也分成三种。
 
 - 对象（object）
 - 数组（array）
@@ -171,7 +190,7 @@ v
 
 {% endhighlight %}
 
-这里需要明确的是，Javascript中的所有数据，都可以视为对象，数组和函数只不过是特殊的对象而已，就连数值、字符串、布尔值都可以用对象方式调用。
+这里需要明确的是，Javascript的所有数据，都可以视为对象，数组和函数只不过是特殊的对象而已，就连数值、字符串、布尔值都可以用对象方式调用。
 
 ## 类型转化
 

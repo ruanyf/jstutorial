@@ -3,12 +3,56 @@ title: 函数
 layout: page
 category: grammar
 date: 2012-12-15
-modifiedOn: 2013-02-14
+modifiedOn: 2013-02-23
 ---
+
+## 函数的定义
+
+函数就是有名字的区块，便于反复调用。
+
+函数使用function关键字进行命名。
+
+{% highlight javascript %}
+
+function print(){
+	// some code here
+}
+
+{% endhighlight %}
+
+上面的代码命名了一个print函数。这叫做函数的声明（Function Declaration）。除此之外，还可以采用另一种写法。
+
+{% highlight javascript %}
+
+var print = function (){
+	// some code here
+};
+
+{% endhighlight %}
+
+这种方法将一个变量定义为函数，称为函数的表达式（Function Expression），因为函数是赋值语句的表达式的一部分。这时，function关键字的后面不带有函数名。如果加上函数名，由于作用域的原因（参阅后文《函数的作用域》一节），该函数名只在函数体内部有效，在函数体外部无效。
+
+{% highlight javascript %}
+
+var print = function x(){
+	console.log(typeof x);
+};
+
+x
+// ReferenceError: x is not defined
+
+print()
+// function
+
+{% endhighlight %}
+
+还有一个地方需要注意，函数的表达式需要在语句的结尾加上分号，表示语句结束。而函数的声明在结尾的大括号后面不用加分号。
+
+总的来说，这两种定义函数的方式，差别很细微（参阅后文《变量提升》一节），这里可以近似认为是等价的。
 
 ## 参数
 
-函数运行的时候，有时需要提供外部数据，不同的数据会得到不同的结果，这就叫参数。
+函数运行的时候，有时需要提供外部数据，不同的外部数据会得到不同的结果，这种外部数据就叫参数。
 
 {% highlight javascript %}
 
@@ -19,6 +63,8 @@ function square(x){
 {% endhighlight %}
 
 上式的x就是square函数的参数。每次运行的时候，需要提供这个值，否则得不到结果。
+
+### 参数的省略
 
 但是，参数不是必需的，Javascript语言允许省略函数。
 
@@ -62,6 +108,8 @@ f(,1)
 
 {% endhighlight %}
 
+### 默认值
+
 可以通过下面的方法，为参数设置默认值。
 
 {% highlight javascript %}
@@ -73,14 +121,16 @@ function f(a){
 
 {% endhighlight %}
 
-上面代码的||表示“或运算”，如果前一个表达式的布尔值为true，就直接返回前一个值，否则返回后一个值。以下几个表达式的布尔运算都为false，会使得a取到后一个值。
+上面代码的||表示“或运算”。如果a有值，则返回a，否则返回事先设定的值（此例为1），因此达到设置默认值的目的。
+
+但是，这种写法有一个问题。就是只有a的布尔值为true，才会返回a。也就是说，会先对a进行布尔运算，如果a明明是有值的，但是布尔运算的结果为false，就会返回a后面的那个值。以下几个表达式的布尔运算都为false，会使得a取到后一个值。
 
 - undefined, null
 - false
 - +0, -0, NaN
 - ""
 
-因此，上面的函数中，你不可能让a等于0或空字符串。
+因此，上面的函数中，你不能让a等于0或空字符串。
 
 {% highlight javascript %}
 
@@ -114,6 +164,84 @@ f(0)
 
 {% endhighlight %}
 
+### 传递方式
+
+原始类型的参数以传值（passes by value）的方式传递，复合类型的参数以传址（passes by reference）的方式传递。因此，在函数的内部修改复合类型的参数值，会影响到函数的外部。
+
+{% highlight javascript %}
+
+var o = {
+	p:1
+};
+
+function f(obj){
+	obj.p = 2;
+}
+
+f(o);
+
+o.p
+// 2
+
+{% endhighlight %}
+
+## 函数作用域
+
+作用域（scope）指的是变量存在的范围。Javascript只有两种作用域：一种是全局作用域，变量在整个程序中一直存在；另一种是函数作用域，变量只在函数内部存在。
+
+在函数外部声明的变量就是全局变量，它可以在函数内部读取。
+
+{% highlight javascript %}
+
+   var v = 1;
+
+   function f(){
+	   console.log(v);
+   }
+
+   f()
+   // 1
+
+{% endhighlight %}
+
+上面的代码表明，函数f内部可以读取全局变量v。
+
+在函数内部定义的变量，外部无法读取。
+
+{% highlight javascript %}
+
+   function f(){
+
+	   var v = 1;	   
+   }
+
+   console.log(v);
+   // 显示错误，v未定义
+
+{% endhighlight %}
+
+函数内部定义的变量，会在该作用域内覆盖同名全局变量。
+
+{% highlight javascript %}
+
+   var v = 1; 
+
+   function f(){
+
+	   var v = 2;
+
+	   console.log(v);
+
+   }
+
+   f();
+   // 2
+
+   console.log(v);
+   // 1
+
+{% endhighlight %}
+
 ## arguments对象
 
 JavaScript语言定义了一个arguments对象，用来指代函数运行时的所有参数，arguments[0]就是第一个参数，arguments[1]就是第二个参数，依次类推。这个对象只有在函数体内部，才可以使用。
@@ -134,63 +262,6 @@ f(1)
 
 f()
 // 0
-
-{% endhighlight %}
-
-## 函数作用域
-
-作用域（scope）指的是变量存在的范围。Javascript只有两种作用域：一种是全局作用域，变量在整个程序中一直存在；另一种是函数作用域，变量只在函数内部存在。
-
-首先，在函数外部声明的变量就是全局变量，它可以在函数内部读取。
-
-{% highlight javascript %}
-
-   var v = 1;
-
-   function f(){
-	   console.log(v);
-   }
-
-   f()
-   // 1
-
-{% endhighlight %}
-
-上面的代码表明，函数f内部可以读取全局变量v。
-
-其次，在函数内部定义的变量，外部无法读取。
-
-{% highlight javascript %}
-
-   function f(){
-
-	   var v = 1;	   
-   }
-
-   console.log(v);
-   // 显示错误，v未定义
-
-{% endhighlight %}
-
-函数内部定义的变量，会覆盖同名全局变量。
-
-{% highlight javascript %}
-
-   var v = 1; 
-
-   function f(){
-
-	   var v = 2;
-
-	   console.log(v);
-
-   }
-
-   f();
-   // 2
-
-   console.log(v);
-   // 1
 
 {% endhighlight %}
 
@@ -356,6 +427,8 @@ plus5(10)
 
 ## 变量提升（hoisting）
 
+### 函数内部的变量提升
+
 与全局作用域一样，函数作用域内部也会产生“变量提升”现象。var命令声明的变量，不管在什么位置，变量都会被提升到函数开始处声明。
 
 {% highlight javascript %}
@@ -381,25 +454,27 @@ plus5(10)
 
 {% endhighlight %}
 
-另一个需要特别注意的地方是，JavaScript引擎将function声明，视作var命令，因此函数声明也会被提升到代码头部。所以，下面的代码不会报错。
+### 函数名的提升
+
+JavaScript引擎将function声明，视作var命令，因此函数声明也会被提升到代码头部。所以，下面的代码不会报错。
 
 {% highlight javascript %}
 
-f1();
+f();
 
-function f1(){}
+function f(){}
 
 {% endhighlight %}
 
-表面上，好像在声明之前就调用了函数f1。但是实际上，由于“变量提升”，函数f1的定义被提升到了代码头部。
+表面上，好像在声明之前就调用了函数f。但是实际上，由于“变量提升”，函数f的定义被提升到了代码头部。
 
 但是，如果采用赋值语句定义函数，JavaScript就会报错。
 
 {% highlight javascript %}
 
-f2();
+f();
 
-var f2 = function (){};
+var f = function (){};
 
 // TypeError: undefined is not a function
 
@@ -409,15 +484,62 @@ var f2 = function (){};
 
 {% highlight javascript %}
 
-var f2;
+var f;
 
-f2();
+f();
 
-f2 = function (){};
+f = function (){};
 
 {% endhighlight %}
 
-当调用f2的时候，f2只是被声明，还没有被赋值，等于undefined，所以会报错。
+当调用f的时候，f只是被声明，还没有被赋值，等于undefined，所以会报错。
+
+### 函数的重复定义
+
+由于函数的声明会被提升到头部，如果重复定义同一个函数名，则后一个定义会覆盖前一个定义。
+
+{% highlight javascript %}
+
+function f(){ 
+	console.log(1);
+}
+
+function f(){
+	console.log(2);
+}
+
+f()
+// 2
+
+{% endhighlight %}
+
+### 不能在条件语句中声明函数
+
+同样由于函数声明的提升，所以在条件语句中声明函数是无效的。
+
+{% highlight javascript %}
+
+if (false){
+	function f(){}
+}
+
+f
+// 不报错
+
+{% endhighlight %}
+
+由于函数f的声明被提升到了if语句的前面，导致if语句无效，所以上面的代码不会报错。要达到在条件语句中定义函数的目的，只有使用函数表达式。
+
+{% highlight javascript %}
+
+if (false){
+	f = function (){};
+}
+
+f
+// ReferenceError: f is not defined
+
+{% endhighlight %}
 
 ## 闭包
 
@@ -534,4 +656,4 @@ new function(){ /* code */ }() // 只有传递参数时，才需要最后那个�
 ## 参考链接
 
 - [Immediately-Invoked Function Expression (IIFE)](http://benalman.com/news/2010/11/immediately-invoked-function-expression/)
-
+- Mark Daggett, [Functions Explained](http://markdaggett.com/blog/2013/02/15/functions-explained/)
