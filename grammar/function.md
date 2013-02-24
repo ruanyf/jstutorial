@@ -3,7 +3,7 @@ title: 函数
 layout: page
 category: grammar
 date: 2012-12-15
-modifiedOn: 2013-02-23
+modifiedOn: 2013-02-25
 ---
 
 ## 函数的定义
@@ -30,7 +30,7 @@ var print = function (){
 
 {% endhighlight %}
 
-这种方法将一个变量定义为函数，称为函数的表达式（Function Expression），因为函数是赋值语句的表达式的一部分。这时，function关键字的后面不带有函数名。如果加上函数名，由于作用域的原因（参阅后文《函数的作用域》一节），该函数名只在函数体内部有效，在函数体外部无效。
+这种方法将一个变量定义为函数，称为函数的表达式（Function Expression），因为函数是赋值表达式的一部分。这时，function关键字的后面不带有函数名。如果加上函数名，由于作用域的原因（参阅后文《函数的作用域》一节），该函数名只在函数体内部有效，在函数体外部无效。
 
 {% highlight javascript %}
 
@@ -43,6 +43,14 @@ x
 
 print()
 // function
+
+{% endhighlight %}
+
+除了调用自身，在函数表达式中加上函数名，还可以方便除错（否则调用栈将“函数表达式”显示匿名函数）。因此，推荐在函数表达式中加上函数名。
+
+{% highlight javascript %}
+
+var f = function f(){};
 
 {% endhighlight %}
 
@@ -182,6 +190,47 @@ f(o);
 
 o.p
 // 2
+
+{% endhighlight %}
+
+### 同名参数
+
+如果有同名的参数，则取最后出现的那个值。
+
+{% highlight javascript %}
+
+function f(a, a){
+	console.log(a);
+}
+
+f(1,2)
+// 2
+
+{% endhighlight %}
+
+上面的函数f有两个参数，且参数名都是a。取值的时候，以后面的a为准。即使后面的a没有值或被省略，也是以其为准。
+
+{% highlight javascript %}
+
+function f(a, a){
+	console.log(a);
+}
+
+f(1)
+// undefined
+
+{% endhighlight %}
+
+调用函数f的时候，没有提供第二个参数，a的取值就变成了undefined。这时，如果要获得第一个a的值，可以使用arguments对象。
+
+{% highlight javascript %}
+
+function f(a, a){
+	console.log(arguments[0]);
+}
+
+f(1)
+// 1
 
 {% endhighlight %}
 
@@ -657,3 +706,4 @@ new function(){ /* code */ }() // 只有传递参数时，才需要最后那个�
 
 - [Immediately-Invoked Function Expression (IIFE)](http://benalman.com/news/2010/11/immediately-invoked-function-expression/)
 - Mark Daggett, [Functions Explained](http://markdaggett.com/blog/2013/02/15/functions-explained/)
+- Juriy "kangax" Zaytsev, [Named function expressions demystified](http://kangax.github.com/nfe/)

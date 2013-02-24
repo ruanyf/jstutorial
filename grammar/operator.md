@@ -3,7 +3,7 @@ title: 运算符
 layout: page
 category: grammar
 date: 2013-02-04
-modifiedOn: 2013-02-13
+modifiedOn: 2013-02-25
 ---
 
 ## 算术运算符
@@ -132,6 +132,59 @@ console.log({} + {})
 
 {} + []
 // "[object Object]"
+
+{% endhighlight %}
+
+## 括号运算符
+
+在JavaScript中，括号是一种运算符，作用是求值。
+
+对表达式使用括号，返回表达式的值。
+
+{% highlight javascript %}
+
+(1)
+// 1
+
+('a')
+// a
+
+(1+2)
+// 3
+
+{% endhighlight %}
+
+如果对某个对象使用括号，则等同于调用该对象的valueOf方法。
+
+{% highlight javascript %}
+
+var o = {p:1};
+
+(o)
+// 等同于o.valueof()
+
+{% endhighlight %}
+
+调用函数的时候，在尾部添加一对括号，就表示对函数求值。如果将函数放在括号中，则会返回整个函数，因为这相当于调用函数对象的valueOf方法。
+
+{% highlight javascript %}
+
+function f(){return 1;}
+
+f()
+// 1
+
+(f)
+// function f(){return 1;}
+
+{% endhighlight %}
+
+由于括号的作用是求值，如果对语句使用括号，就会报错，因为语句没有返回值。
+
+{% highlight javascript %}
+
+(var a =1)
+// SyntaxError: Unexpected token var
 
 {% endhighlight %}
 
