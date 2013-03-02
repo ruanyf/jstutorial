@@ -2,13 +2,15 @@
 title: 继承
 layout: page
 date: 2012-12-12
-modifiedOn: 2013-02-02
+modifiedOn: 2013-03-02
 category: oop
 ---
 
 ## \__proto__属性
 
 每个对象都有一个内部属性\__proto__（注意，前后各两个下划线），指向这个对象的原型对象。通过这个内部属性，可以从实例对象读取原型对象的属性。
+
+必须说明的是，这个属性目前还不是标准，所以不应该在生产代码中使用。我们这里用它，只是因为它可以帮助理解继承。
 
 {% highlight javascript %}
 
@@ -21,7 +23,7 @@ b.x
 
 {% endhighlight %}
 
-上面的代码中，b对象本身并没有x属性，但是解释器通过\__proto__属性，找到它的原型对象a，然后读取a的x属性。
+上面的代码中，b对象本身并没有x属性，但是JavaScript引擎通过\__proto__属性，找到它的原型对象a，然后读取a的x属性。
 
 原型对象自己的\__proto__属性，也可以指向其他对象，从而一级一级地形成“原型链”（prototype chain）。
 
@@ -62,29 +64,6 @@ f.prototype = a;
 var o = new f();
 
 o.__proto__ === a
-// true
-
-{% endhighlight %}
-
-## instanceof运算符
-
-该运算符用来确定一个对象是否是另一个对象的实例。
-
-{% highlight javascript %}
-
-123 instanceof Object 
-// false
-
-[1, 2, 3] instanceof Array
-// true
-
-{} instanceof Object
-// true
-
-var f = function (){};
-var o = new f();
-
-o instanceof f
 // true
 
 {% endhighlight %}

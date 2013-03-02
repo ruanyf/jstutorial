@@ -3,24 +3,26 @@ title: 面向对象编程概述
 layout: page
 category: oop
 date: 2012-12-28
-modifiedOn: 2013-02-02
+modifiedOn: 2013-03-02
 ---
 
 ## 构造函数
 
-在C++和Java等面向对象编程的语言中，存在“类”（class）这样一个概念。所谓“类”就是对象的模板，对象就是“类”的实例。Javascript语言中没有“类”，以构造函数（constructor）作为对象的模板。
+在C++和Java等面向对象编程的语言中，存在“类”（class）这样一个概念。所谓“类”就是对象的模板，对象就是“类”的实例。JavaScript语言中没有“类”，以构造函数（constructor）作为对象的模板。也就是说，可以用构造函数生成多个相同结构的对象。
 
-因此，只要一个函数的作用是作为对象的模板，我们就可以把它视为构造函数。它的最大特点就是，函数体内部使用了this关键字。
+所以，什么叫“构造函数”，就是可以作为对象的模板的函数。
+
+它的最大特点就是，函数体内部使用了this关键字。
 
 {% highlight javascript %}
 
 var Vehicle = function() {
-  this.price = 1000;
+	this.price = 1000;
 }
 
 {% endhighlight %}
 
-上面代码中的Vehicle就是一个构造函数，代表车辆对象的模板。函数体内部的this关键字，代表实例对象，this.price表示实例对象有一个price属性，它的值是1000。
+上面代码中的Vehicle就是一个构造函数，代表“车辆”对象的模板。函数体内部的this关键字，代表实例对象。this.price表示实例对象有一个price属性，它的值是1000。
 
 ## new命令
 
@@ -35,7 +37,7 @@ console.info(v.price);
 
 {% endhighlight %}
 
-上面代码的v变量，就是新生成的实例对象。它从构造函数Vehicle继承了price属性。
+上面代码的变量v，就是新生成的实例对象。它从构造函数Vehicle继承了price属性。
 
 new命令后面的构造函数可以带括号，也可以不带括号。下面两行代码是等价的。
 
@@ -55,9 +57,36 @@ var v = new Vehicle(1000);
 
 {% endhighlight %}
 
+## instanceof运算符
+
+该运算符用来确定一个对象是否是另一个对象的实例。
+
+{% highlight javascript %}
+
+123 instanceof Object 
+// false
+
+[1, 2, 3] instanceof Array
+// true
+
+{} instanceof Object
+// true
+
+var f = function (){};
+var o = new f();
+
+o instanceof f
+// true
+
+{% endhighlight %}
+
 ## this关键字
 
-this关键字指的是变量所处的上下文环境（context）。举例来说，如果变量处于全局环境，this指的就是顶层对象。
+上面说到，this关键字在构造函数中指的是实例对象。但是，this关键字有多种含义，实例对象只是其中一种。严格地说，this关键字指的是变量所处的上下文环境（context）。我们分成几种情况来讨论。
+
+（1）在全局环境使用this，它指的就是顶层对象（浏览器环境中就是window）。
+
+因此，下面三行命令是等价的。
 
 {% highlight javascript %}
 
@@ -69,7 +98,9 @@ this.a = 1;
 
 {% endhighlight %}
 
-上面三行代码是等同的，因为在浏览器全局环境中，变量的顶层对象默认是window，这时this就表示window。
+在浏览器全局环境中，变量的顶层对象默认是window，这时this就表示window。
+
+（2）在构造函数中使用this，它指的就是实例对象。
 
 ## call方法和apply方法
 

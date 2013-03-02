@@ -3,14 +3,16 @@ title: 封装
 layout: page
 category: oop
 date: 2012-12-14
-modifiedOn: 2013-01-24i
+modifiedOn: 2013-03-02
 ---
 
 ## 原型
 
-每个对象都有一个原型（prototype），原型的方法可以这个对象继承。
+JavaScript的每个对象都有一个原型（prototype），原型的方法可以被这个对象继承。也就是说，每个对象都可以视作从它的原型衍生出来的。
 
-由于原型本身也是对象，所以形成了一条原型链（prototype chain），直到Object.prototype为止。当读取对象的某个属性时，解释器先寻找对象本身的属性，如果找不到，就到它的原型去找，以此类推，如果直到Object.prototype还是找不到，则返回null。
+由于原型本身也是对象，所以形成了一条原型链（prototype chain）。比如，a对象是b对象的原型，b对象是c对象的原型，以此类推。因为追根溯源，最底层的对象都是从Object构造函数生成（使用new Object()命令），所以如果一层层地上溯，所有对象的原型最终都可以上溯到Object.prototype。
+
+“原型链”的作用在于，当读取对象的某个属性时，JavaScript引擎先寻找对象本身的属性，如果找不到，就到它的原型去找，以此类推，如果直到Object.prototype还是找不到，则返回null。
 
 ## Object.getPrototypeOf方法
 
