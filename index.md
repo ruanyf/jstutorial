@@ -2,7 +2,7 @@
 layout: homepage
 title: Javascript 标准教程
 date: 2012-11-18
-modifiedOn: 2013-02-16
+modifiedOn: 2013-03-02
 ---
 
 <h2 id="introduction">导论</h2>
@@ -68,6 +68,7 @@ modifiedOn: 2013-02-16
 <h2 id="library">函数库</h2>
 
 - [Underscore.js](library/underscore.html)
+- [Modernizr](library/modernizr.html)
 
 <h2 id="tool">开发工具</h2>
 
