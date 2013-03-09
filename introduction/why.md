@@ -10,7 +10,9 @@ modifiedOn: 2013-03-10
 
 JavaScript目前的主要用途是浏览器的网页编程。它是唯一一种通用的浏览器脚本语言，所有主流浏览器全部支持。
 
-它的使用范围正在快速扩大。Node.js项目使得JavaScript可以用于开放服务器端的大型项目；越来越多的应用程序，使用JavaScript作为它们的脚本语言。JavaScript正在成为一种通用目的语言。（当然，JavaScript最擅长的领域还是网页开发。）
+随着浏览器的功能越来越强、越来越平台化，尤其是html 5的出现，JavaScript得以调用许多系统功能，比如操作本地文件、操作图片、调用摄像头和麦克风等等。这使得JavaScript可以完成许多以前无法想象的事情。
+
+除此之外，Node.js项目使得JavaScript可以用于开放服务器端的大型项目；越来越多的应用程序，使用JavaScript作为它们的脚本语言。JavaScript正在成为一种通用目的语言。（当然，JavaScript最擅长的领域还是网页开发。）
 
 在程序员中流传这样一句话，“所有可以用JavaScript编写的程序，最终都会出现JavaScript的版本。”
 
