@@ -41,6 +41,7 @@ modifiedOn: 2013-03-02
 
 <h2 id="bom">浏览器对象</h2>
 
+- [JavaScript运行原理](bom/engine.html)
 - [History对象](bom/history.html)
 - [CSS](bom/css.html)
 - [Ajax](bom/ajax.html)
