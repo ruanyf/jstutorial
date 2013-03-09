@@ -1,9 +1,9 @@
 ---
 title: JavaScript 运行原理
-category: bom
 layout: page
+category: bom
 date: 2013-03-10
-category: 2013-03-10
+modifiedOn: 2013-03-10
 ---
 
 ## 概述
