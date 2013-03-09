@@ -73,6 +73,7 @@ modifiedOn: 2013-03-02
 
 - [Underscore.js](library/underscore.html)
 - [Modernizr](library/modernizr.html)
+- [Datejs](library/datejs.html)
 
 <h2 id="tool">开发工具</h2>
 

@@ -109,9 +109,22 @@ v2.a
 
 {% endhighlight %}
 
-### 删除属性
+### 属性的增加与删除
 
-delete命令可以删除一个属性。
+JavaScript允许属性的“后绑定”，也就是说，你可以在任意时刻新增属性，没必要在定义对象的时候，就定义好属性。
+
+{% highlight javascript %}
+
+var o = { p:1 };
+
+// 等价于
+
+var o = {};
+o.p = 1;
+
+{% endhighlight %}
+
+delete命令可以删除属性。
 
 {% highlight javascript %}
 
