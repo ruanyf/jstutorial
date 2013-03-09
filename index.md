@@ -78,10 +78,11 @@ modifiedOn: 2013-03-02
 
 <h2 id="tool">开发工具</h2>
 
+- [console对象](tool/console.html)
 - [Chrome开发工具](tool/chrome.html)
 - [性能测试（Benchmark）](tool/benchmark.html)
 - [PhantomJS](tool/phantomjs.html)
-- [移动端除错](tool/mobiledebugging.html)
+- [移动端开发](tool/mobile.html)
 - [Source map](tool/sourcemap.html)
 
 <h2 id="nodejs">Node.js</h2>
