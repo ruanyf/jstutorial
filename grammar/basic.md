@@ -3,7 +3,7 @@ title: 语法概述
 layout: page
 category: grammar
 date: 2012-12-14
-modifiedOn: 2013-02-23
+modifiedOn: 2013-03-09
 ---
 
 ## 表达式和语句
@@ -609,7 +609,7 @@ Object对象的原型的toString方法，会返回对象的详细类型，比typ
 
 Object.prototype.toString.call([1,2,3])
 // '[object Array]'
-    
+
 Object.prototype.toString.call(/xyz/)
 // '[object RegExp]'
 
@@ -765,7 +765,7 @@ arg2)
 
 {% endhighlight %}
 
-只有下一行的开始与本行的结尾，无法放在一起解释，解释器才会自动添加分号。
+只有下一行的开始与本行的结尾，无法放在一起解释，JavaScript引擎才会自动添加分号。
 
 {% highlight javascript %}
 
@@ -779,16 +779,43 @@ console.log(a)
 
 {% endhighlight %}
 
-尤其要注意的是，如果return语句返回的是一个对象的字面量，起首的大括号一定要写在同一行，否则得不到预期结果。
+另外，如果一行的起首是“自增”（++）或“自减”（--）运算符，则它们的前面会自动添加分号。
+
+{% highlight javascript %}
+
+a = b = c = 1
+a
+++
+b
+--
+c
+
+console.log(a, b, c)
+// 1 2 0
+
+{% endhighlight %}
+
+之所以会得到“1 2 0”的结果，原因是自增和自减运算符前，自动被加上了分号。上面的代码实际上等同于下面的形式：
+
+{% highlight javascript %}
+
+a = b = c = 1;
+a;
+++b;
+--c;
+
+{% endhighlight %}
+
+如果continue、break、return和throw这四个语句后面，直接跟换行符，则会自动添加分号。这意味着，如果return语句返回的是一个对象的字面量，起首的大括号一定要写在同一行，否则得不到预期结果。
 
 {% highlight javascript %}
 
     return
-    { first: "Jane" }
+    { first: "Jane" };
     
     // 解释成
     return;
-    { first: "Jane" }
+    { first: "Jane" };
 
 {% endhighlight %}
 
@@ -800,3 +827,4 @@ console.log(a)
 - Dr. Axel Rauschmayer, [Improving the JavaScript typeof operator](http://www.2ality.com/2011/11/improving-typeof.html)
 - Dr. Axel Rauschmayer, [Automatic semicolon insertion in JavaScript](http://www.2ality.com/2011/05/semicolon-insertion.html)
 - MDN, [window.btoa](https://developer.mozilla.org/en-US/docs/DOM/window.btoa)
+- Rod Vagg, [JavaScript and Semicolons](http://dailyjs.com/2012/04/19/semicolons/)
