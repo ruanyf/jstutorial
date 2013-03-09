@@ -19,10 +19,14 @@ modifiedOn: 2013-03-02
 - [对象](grammar/object.html)
 - [数组](grammar/array.html)
 - [函数](grammar/function.html)
-- [Math对象](grammar/math.html)
-- [Regex对象](grammar/regex.html)
-- [JSON格式](grammar/json.html)
 - [严格模式](grammar/strict.html)
+
+<h2 id="stdlib">标准库</h2>
+
+- [Math对象](stdlib/math.html)
+- [Date对象](stdlib/date.html)
+- [Regex对象](stdlib/regex.html)
+- [JSON格式](stdlib/json.html)
 
 <h2 id="oop">面向对象编程</h2>
 

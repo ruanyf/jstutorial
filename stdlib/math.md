@@ -1,7 +1,7 @@
 ---
 title: Math对象
 layout: page
-category: grammar
+category: stdlib
 date: 2013-02-12
 modifiedOn: 2013-02-12
 ---

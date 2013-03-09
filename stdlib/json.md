@@ -1,7 +1,7 @@
 ---
 title: JSON格式
 layout: page
-category: grammar
+category: stdlib
 date: 2013-01-11
 modifiedOn: 2013-01-31
 ---

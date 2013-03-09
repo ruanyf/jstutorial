@@ -1,11 +1,12 @@
 markdown: rdiscount
 pygments: true
 permalink: none
-sitename: JavaScript 标准教程
+sitename: JavaScript 标准教程（alpha）
 
 chapters:
 - introduction
 - grammar
+- stdlib
 - oop
 - dom 
 - bom
@@ -19,6 +20,7 @@ chapters:
 
 introduction: 导论
 grammar: 基本语法
+stdlib: 标准库
 oop: 面向对象编程
 dom: DOM
 bom: 浏览器对象

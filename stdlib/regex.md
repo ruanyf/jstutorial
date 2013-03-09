@@ -1,7 +1,7 @@
 ---
 title: Regex对象
 layout: page
-category: grammar
+category: stdlib
 date: 2013-01-17
 modifiedOn: 2013-01-28
 ---
