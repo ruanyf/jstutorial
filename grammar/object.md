@@ -3,14 +3,12 @@ title: 对象
 layout: page
 category: grammar
 date: 2012-12-12
-modifiedOn: 2013-02-12
+modifiedOn: 2013-03-09
 ---
 
 ## 概述
 
-### 字典结构
-
-对象（object）是Javascript语言对字典结构（dictionary）的实现，由若干个“键值对”（key-value）构成。
+对象（object）是一种数据结构，由若干个“键值对”（key-value）构成。
 
 {% highlight javascript %}
 
@@ -22,9 +20,9 @@ var o = {
 
 {% endhighlight %}
 
-上面代码中的o被定义为对象，里面包含一个键值对，这个键值对就是对象o的成员。其中，p是“键”（成员的名称），“Hello World”是“值”（成员的值）。
+上面代码中，大括号就代表一个对象，被赋值给变量o。这个对象内部包含一个键值对（又称为“成员”），p是“键”（成员的名称），“Hello World”是“值”（成员的值）。
 
-“键”又称为“属性”（property）。它的“值”可以是数值、字符串，也可以是函数或其他对象。属性之间用逗号分隔，最后一个属性后面可以加逗号（trailing comma），也可以不加。
+“键”又称为“属性”（property），它的“值”可以是任何数据类型。如果一个属性的值为函数，通常把这个属性称为“方法”。属性之间用逗号分隔，最后一个属性后面可以加逗号（trailing comma），也可以不加。
 
 {% highlight javascript %}
 
@@ -39,9 +37,7 @@ var o = {
 
 ### 生成方法
 
-对象用大括号{}表示。
-
-生成一个对象，可以直接用{}，可以用new Object()命令。
+对象用大括号{}表示。生成一个对象，可以直接用{}，可以用new Object()命令。
 
 {% highlight javascript %}
 
@@ -96,7 +92,7 @@ Object.keys(o);
 
 {% endhighlight %}
 
-### 变量名是对象的引用
+### 对象的引用
 
 如果不同的变量名指向同一个对象，那么它们都是这个对象的引用。修改其中一个变量，会影响到其他所有变量。
 
@@ -110,6 +106,21 @@ v1.a = 1;
 
 v2.a
 // 1
+
+{% endhighlight %}
+
+### 删除属性
+
+delete命令可以删除一个属性。
+
+{% highlight javascript %}
+
+var o = { p:1 };
+
+delete o.p
+
+o.p
+// undefined
 
 {% endhighlight %}
 
