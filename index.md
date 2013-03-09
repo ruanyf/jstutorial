@@ -1,6 +1,6 @@
 ---
 layout: homepage
-title: Javascript 标准教程
+title: JavaScript 标准教程（alpha）
 date: 2012-11-18
 modifiedOn: 2013-03-02
 ---
