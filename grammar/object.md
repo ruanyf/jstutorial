@@ -22,7 +22,22 @@ var o = {
 
 上面代码中，大括号就代表一个对象，被赋值给变量o。这个对象内部包含一个键值对（又称为“成员”），p是“键”（成员的名称），“Hello World”是“值”（成员的值）。
 
-“键”又称为“属性”（property），它的“值”可以是任何数据类型。如果一个属性的值为函数，通常把这个属性称为“方法”。属性之间用逗号分隔，最后一个属性后面可以加逗号（trailing comma），也可以不加。
+“键”又称为“属性”（property），它的“值”可以是任何数据类型。如果一个属性的值为函数，通常把这个属性称为“方法”。
+
+{% highlight javascript %}
+
+var o = {
+
+	p: function(x) {return 2*x;}
+
+};
+
+o.p(1)
+// 2
+
+{% endhighlight %}
+
+属性之间用逗号分隔，最后一个属性后面可以加逗号（trailing comma），也可以不加。
 
 {% highlight javascript %}
 
@@ -49,9 +64,9 @@ var o = new Object();
 
 {% endhighlight %}
 
-### 引用方法
+### 读取属性
 
-引用一个属性，有两种方法，一种是点结构，还有一种是方括号。
+读取一个属性，有两种方法，一种是点结构，还有一种是方括号。
 
 {% highlight javascript %}
 
@@ -92,23 +107,6 @@ Object.keys(o);
 
 {% endhighlight %}
 
-### 对象的引用
-
-如果不同的变量名指向同一个对象，那么它们都是这个对象的引用。修改其中一个变量，会影响到其他所有变量。
-
-{% highlight javascript %}
-
-var v1 = {};
-
-var v2 = v1;
-
-v1.a = 1;
-
-v2.a
-// 1
-
-{% endhighlight %}
-
 ### 属性的增加与删除
 
 JavaScript允许属性的“后绑定”，也就是说，你可以在任意时刻新增属性，没必要在定义对象的时候，就定义好属性。
@@ -136,6 +134,275 @@ o.p
 // undefined
 
 {% endhighlight %}
+
+### 对象的引用
+
+如果不同的变量名指向同一个对象，那么它们都是这个对象的引用。修改其中一个变量，会影响到其他所有变量。
+
+{% highlight javascript %}
+
+var v1 = {};
+
+var v2 = v1;
+
+v1.a = 1;
+
+v2.a
+// 1
+
+{% endhighlight %}
+
+## 对象的转化
+
+JavaScript原生提供一个Object对象（注意起首的O是大写），所有其他对象都以这个对象为原型（详细介绍见《面向对象编程》一章）。所谓“原型”，也就是说，定义在Object对象上面的一些方法，所有其他对象都具有，可以直接调用。
+
+其中，最主要的两种方法是valueOf()和toString()。前者将一个对象转化为原始类型的值，后者将一个对象转化为字符串。在没有规定这两种方法传回的值之前，调用valueOf方法，返回Object对象本身；调用toString方法，返回“[object Object]”字符串。
+
+{% highlight javascript %}
+
+var o = {};
+
+o.valueOf()
+// Object
+
+o.toString()
+// "[object Object]"
+
+{% endhighlight %}
+
+这两种方法的意义在于，某些场合JavaScript会自动将对象转化为原始类型，转化的结果就取决于这两个方法。
+
+## 原始类型的包装对象
+
+在JavaScript中，“一切皆对象”，数组和函数本质上都是对象，就连三种原始类型的值——数字、字符串、布尔值——也有自己对应的包装对象。所谓“包装对象”，就是说可以通过原生的Number、String、Boolean对象，获得相应的原始类型的值。
+
+以下分别用原始类型和包装对象两种形式，获取同一个值。
+
+{% highlight javascript %}
+
+var v = 123;
+var v = new Number(123);
+
+var v = "abc";
+var v = new String("abc");
+
+var v = true;
+var v = new Boolean(true);
+
+{% endhighlight %}
+
+这两种定义值的方法，虽然都对应同一个值，但是值的类型不一样。包装对象的值属于Object类型，用typeof运算符就可以看出来。
+
+{% highlight javascript %}
+
+typeof "abc"
+//  'string'
+ 
+typeof new String("abc")
+// 'object'
+
+{% endhighlight %}
+
+而且，包装对象的值都是Object对象的实例（即Object对象是它们的原型），原始类型则不是。（instanceof是判断一个对象是否为另一个对象的实例的运算符，详见《面向对象编程》一章。）
+
+{% highlight javascript %}
+
+"abc" instanceof Object
+// false
+ 
+new String("abc") instanceof Object
+// true
+
+{% endhighlight %}
+
+### 包装对象的目的
+
+JavaScript设计包装对象的最大目的，就是使得JavaScript可以使用同样一套关于“对象”的规范，描述所有的值。
+
+首先，包装对象可以使用Object对象的原生方法，主要是valueOf和toString方法。
+
+valueOf方法，返回该对象对应的原始类型的值。
+
+{% highlight javascript %}
+
+new Number(123).valueOf()
+// 123
+
+new String("abc").valueOf()
+// "abc"
+
+new Boolean("true").valueOf()
+// true
+
+{% endhighlight %}
+
+toString方法，返回该对象的值的字符串形式。
+
+{% highlight javascript %}
+
+new Number(123).toString()
+// "123"
+
+new String("abc").toString()
+// "abc"
+
+new Boolean("true").toString()
+// "true"
+
+{% endhighlight %}
+
+如果不加new关键字，直接调用包装对象，则相当于生成实例后再调用valueOf方法。
+
+{% highlight javascript %}
+
+Number(123)
+// 123
+
+String("abc")
+// "abc"
+
+Boolean(true)
+// true
+
+{% endhighlight %}
+
+除了valueOf和toString方法，字符串对象还有length属性，返回字符串的长度。
+
+{% highlight javascript %}
+
+var v = new String("abc");
+
+v.length
+// 3
+
+"abc".length
+// 3
+
+{% endhighlight %}
+
+其次，三种包装对象还可以在原型上添加自定义方法（prototype的含义详见《面向对象编程》一章）。比如，我们可以新增一个double方法，使得字符串和数字翻倍。
+
+{% highlight javascript %}
+
+String.prototype.double = function (){
+
+	return this.valueOf() + this.valueOf();
+
+};
+
+"abc".double()
+// abcabc
+
+Number.prototype.double = function (){
+
+	return this.valueOf() + this.valueOf();
+
+};
+
+(123).double()
+// 246
+
+{% endhighlight %}
+
+### 自动转化
+
+可以直接在原始类型的值上使用包装对象的方法，这时原始类型的值会自动转化成包装对象。
+
+{% highlight javascript %}
+
+var v = 123;
+
+v.valueOf()
+// 123
+
+{% endhighlight %}
+
+如果使用的是未定义的方法或属性，原始类型不会自动转化。
+
+{% highlight javascript %}
+
+var v = 123;
+
+v.x = 246;
+
+v.x
+// undefined
+
+v.x = function (){};
+
+v.x()
+// 报错
+
+{% endhighlight %}
+
+如果包装对象与原始类型进行混合运算，包装对象会转化为原始类型（实际是调用自身的valueOf方法）。
+
+{% highlight javascript %}
+
+new Number(123) + 123
+// 246
+
+new String("abc") + "abc"
+// "abcabc"
+
+{% endhighlight %}
+
+特别要注意的是，除了null以外，所有对象的布尔运算结果都是true，所以false的包装对象的布尔运算结果也是true。
+
+{% highlight javascript %}
+
+if (new Boolean(false)) {
+
+    console.log("true"); 
+
+}
+// true
+
+if (new Boolean(false).valueOf()) {
+
+    console.log("true"); 
+
+}
+// 无输出
+
+{% endhighlight %}
+
+如果要获得一个变量对应的布尔值，规范的写法如下：
+
+{% highlight javascript %}
+
+var a = "";
+
+new Boolean(a).valueOf()
+//false
+
+{% endhighlight %}
+
+简洁的写法是：
+
+{% highlight javascript %}
+
+var a = "";
+
+Boolean(a)
+//false
+
+{% endhighlight %}
+
+还有更简洁的写法：
+
+{% highlight javascript %}
+
+var a = "";
+
+!!a
+//false
+
+{% endhighlight %}
+
+## 类似数组的对象
+
+在JavaScript中，有些对象被称为“类似数组的对象”（array-like object）。意思是，它们看上去很像数组，可以使用length属性，但是它们并不是数组，所以无法使用一些数组的方法。典型的例子是arguments对象，以及大多数DOM元素集。
 
 ## with语句
 
@@ -206,238 +473,6 @@ var b = o1.o2.o3;
 console.log(b.p1 + b.p2);
 
 {% endhighlight %}
-
-## 原始类型的包装对象
-
-Javascript的三种原始类型的值（数字、字符串、布尔值），都有对应的包装对象。也就是说，可以用对象形式获得这些值。它们对应的对象名分别是Number、String、Boolean。
-
-以下分别用原始类型和包装对象两种形式，获取同一个值。
-
-{% highlight javascript %}
-
-var v = 123;
-var v = new Number(123);
-
-var v = "abc";
-var v = new String("abc");
-
-var v = true;
-var v = new Boolean(true);
-
-{% endhighlight %}
-
-这两种类型的变量，虽然都对应同一个值，但是类型不一样。包装对象属于Object类型，用typeof运算符就可以看出来。
-
-{% highlight javascript %}
-
-typeof "abc"
-//  'string'
- 
-typeof new String("abc")
-// 'object'
-
-{% endhighlight %}
-
-原始类型的值不是Object对象的实例，但是包装对象是Object对象的实例。
-
-{% highlight javascript %}
-
-"abc" instanceof Object
-// false
- 
-new String("abc") instanceof Object
-// true
-
-{% endhighlight %}
-
-### 包装对象的目的
-
-它提供了一系列方法，使得Javascript可以使用同样的一套规范，描述所有的值。
-
-首先，包装对象有一些原生方法可以使用。
-
-valueOf方法，返回该对象对应的原始类型的值。
-
-{% highlight javascript %}
-
-new Number(123).valueOf()
-// 123
-
-new String("abc").valueOf()
-// "abc"
-
-new Boolean("true").valueOf()
-// true
-
-{% endhighlight %}
-
-toString方法，返回该对象的值的字符串形式。
-
-{% highlight javascript %}
-
-new Number(123).toString()
-// "123"
-
-new String("abc").toString()
-// "abc"
-
-new Boolean("true").toString()
-// "true"
-
-{% endhighlight %}
-
-如果不加new关键字，直接调用包装对象，则相当于生成实例后再调用valueOf方法。
-
-{% highlight javascript %}
-
-Number(123)
-// 123
-
-String("abc")
-// "abc"
-
-Boolean(true)
-// true
-
-{% endhighlight %}
-
-除了valueOf和toString方法，字符串对象还有length属性，返回字符串的长度。
-
-{% highlight javascript %}
-
-var v = new String("abc");
-
-v.length
-// 3
-
-"abc".length
-// 3
-
-{% endhighlight %}
-
-其次，可以包装对象的原型上添加自定义方法。比如，我们可以新增一个double方法，使得字符串和数字翻倍。
-
-{% highlight javascript %}
-
-String.prototype.double = function (){
-
-	return this.valueOf() + this.valueOf();
-
-};
-
-"abc".double()
-// abcabc
-
-Number.prototype.double = function (){
-
-	return this.valueOf() + this.valueOf();
-
-};
-
-(123).double()
-// 246
-
-{% endhighlight %}
-
-### 自动转化
-
-如果对原始类型的值使用原生方法或自定义方法，原始类型会自动转化成包装对象。
-
-{% highlight javascript %}
-
-var v = 123;
-
-v.valueOf()
-// 123
-
-{% endhighlight %}
-
-如果使用的是未定义的方法或属性，原始类型不会自动转化。
-
-{% highlight javascript %}
-
-var v = 123;
-
-v.x = 246;
-
-v.x
-// undefined
-
-v.x = function (){};
-
-v.x()
-// 报错
-
-{% endhighlight %}
-
-如果包装对象与原始类型进行混合运算，包装对象会转化为原始类型（实际是调用自身的valueOf方法）。
-
-{% highlight javascript %}
-
-new Number(123) + 123
-// 246
-
-new String("abc") + "abc"
-// "abcabc"
-
-{% endhighlight %}
-
-特别要注意的是，如果要获取布尔对象的值，必须显式引用。
-
-{% highlight javascript %}
-
-if (new Boolean(false)) {
-
-    console.info("true"); 
-
-}
-// true
-
-if (new Boolean(false).valueOf()) {
-
-    console.info("true"); 
-
-}
-// 无输出
-
-{% endhighlight %}
-
-如果要求一个变量对应的布尔值，规范的写法如下：
-
-{% highlight javascript %}
-
-var a = "";
-
-new Boolean(a).valueOf()
-//false
-
-{% endhighlight %}
-
-简洁的写法是：
-
-{% highlight javascript %}
-
-var a = "";
-
-Boolean(a)
-//false
-
-{% endhighlight %}
-
-还有更简洁的写法：
-
-{% highlight javascript %}
-
-var a = "";
-
-!!a
-//false
-
-{% endhighlight %}
-
-## 类似数组的对象
-
-在JavaScript中，有些对象被称为“类似数组的对象”（array-like object）。意思是，它们看上去很像数组，可以使用length属性，但是它们并不是数组，所以无法使用一些数组的方法。典型的例子是arguments对象，以及大多数DOM元素集。
 
 ## 属性模型
 

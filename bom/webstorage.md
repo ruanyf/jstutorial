@@ -3,31 +3,31 @@ title: Web Storage
 layout: page
 category: bom
 date: 2012-12-28
-modifiedOn: 2013-01-25
+modifiedOn: 2013-03-15
 ---
 
 ## 概述
 
-这个API使得网页可以在浏览器端储存数据，在多个网页之间分享。它分成两类：sessionStorage和localStorage。
+这个API的作用是，使得网页可以在浏览器端储存数据。它分成两类：sessionStorage和localStorage。
 
-sessionStorage保存的数据用于浏览器的一次会话，当会话结束（通常是该窗口关闭），数据被清空；localStorage允许浏览器长期保存网页数据，下一次访问的时候，网页可以直接读取以前保存的数据。这两个API很像cookie机制的强化版。
+sessionStorage保存的数据用于浏览器的一次会话，当会话结束（通常是该窗口关闭），数据被清空；localStorage保存的数据长期存在，下一次访问该网站的时候，网页可以直接读取以前保存的数据。除了保存期限的长短不同，这两个对象的属性和方法完全一样。
 
-与cookie一样，它们也受同域限制。某个网页存入的数据，只有同域下的网页才能读取。它们能够动用的存储空间的下限是5MB，上限视浏览器而定，通常大大高于5MB。
+它们很像cookie机制的强化版，能够动用大得多的存储空间。目前，每个域名的存储上限视浏览器而定，Chrome是2.5MB，Firefox和Opera是5MB，IE是10MB。其中，Firefox的存储空间由一级域名决定，而其他浏览器没有这个限制。也就是说，在Firefox中，a.example.com和b.example.com共享5MB的存储空间。另外，与cookie一样，它们也受同域限制。某个网页存入的数据，只有同域下的网页才能读取。
 
-通过检查window对象是否包含sessionStorage和localStorage属性，可以确定浏览器是否支持这两个API。
+通过检查window对象是否包含sessionStorage和localStorage属性，可以确定浏览器是否支持这两个对象。
 
 {% highlight javascript %}
 
 function checkStorageSupport() {
  
-  //sessionStorage
+  // sessionStorage
   if (window.sessionStorage) {
     return true;
   } else {
     return false;
   }
    
-  //localStorage
+  // localStorage
   if (window.localStorage) {
     return true;
   } else {
@@ -37,9 +37,11 @@ function checkStorageSupport() {
 
 {% endhighlight %}
 
-## 存入/读取数据
+## 操作方法
 
-sessionStorage和localStorage保存的数据，都以“键值对”的形式存在。每一项都有一个键名，以及相对应的数据。这里需要注意，所有的数据都是以文本格式保存。
+### 存入/读取数据
+
+sessionStorage和localStorage保存的数据，都以“键值对”的形式存在。也就是说，每一项数据都有一个键名和对应的值。所有的数据都是以文本格式保存。
 
 存入数据使用setItem方法。它接受两个参数，第一个是键名，第二个是保存的数据。
 
@@ -51,7 +53,7 @@ localStorage.setItem("key","value");
 
 {% endhighlight %}
 
-读取数据使用getItem方法。它只有一个参数就是键名。
+读取数据使用getItem方法。它只有一个参数，就是键名。
 
 {% highlight javascript %}
 
@@ -61,7 +63,7 @@ var valueLocal = localStorage.getItem("key");
 
 {% endhighlight %}
 
-## 清除数据
+### 清除数据
 
 removeItem方法用于清除某个键名对应的数据。
 
@@ -83,7 +85,7 @@ localStorage.clear();
 
 {% endhighlight %}
 
-## 遍历
+### 遍历操作
 
 利用length属性和key方法，可以遍历所有的键。
 
@@ -119,7 +121,7 @@ window.addEventListener("storage",onStorageChange);
 
 function onStorageChange(e) {
 
-     if(e.key == "key") {
+     if(e.key === "key") {
           alert(e.key);    
      }
     
@@ -132,7 +134,11 @@ event对象的属性还有：
 - oldValue：更新前的值。如果该键为新增加，则这个属性为null。
 - newValue：更新后的值。如果该键被删除，则这个属性为null。
 
+值得注意的是，如果浏览器同时打开一个域名下面的多个页面，当其中的一个页面改变sessionStorage或localStorage的数据时，所有页面的storage事件都会被触发。因此，可以通过这种机制，实现多个窗口之间的通信。
+
 ## 参考链接
 
 - Ryan Stewart，[Introducing the HTML5 storage APIs](http://www.adobe.com/devnet/html5/articles/html5-storage-apis.html)
 - [Getting Started with LocalStorage](http://codular.com/localstorage)
+- Feross Aboukhadijeh, [Introducing the HTML5 Hard Disk Filler™ API](http://feross.org/fill-disk/)
+- Ben Summers, [Inter-window messaging using localStorage](http://bens.me.uk/2013/localstorage-inter-window-messaging)
