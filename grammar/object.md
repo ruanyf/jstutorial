@@ -3,7 +3,7 @@ title: 对象
 layout: page
 category: grammar
 date: 2012-12-12
-modifiedOn: 2013-03-09
+modifiedOn: 2013-03-16
 ---
 
 ## 概述
@@ -167,6 +167,18 @@ o.valueOf()
 
 o.toString()
 // "[object Object]"
+
+{% endhighlight %}
+
+toString方法可以接受一个参数，表示将一个数字转化成某个进制的字符串。
+
+{% highlight javascript %}
+
+(10).toString(2) // "1010"
+
+(10).toString(8) // "12"
+
+(10).toString(16) // "a"
 
 {% endhighlight %}
 

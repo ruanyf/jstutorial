@@ -3,7 +3,7 @@ title: Math对象
 layout: page
 category: stdlib
 date: 2013-02-12
-modifiedOn: 2013-02-12
+modifiedOn: 2013-03-16
 ---
 
 ## round方法
@@ -78,5 +78,25 @@ Math.pow(2, 3) // 8
 
 Math.sqrt(4) // 4
 Math.sqrt(-4) // NaN
+
+{% endhighlight %}
+
+## random方法
+
+该方法返回0到1之间的一个伪随机数，可能等于0，但是一定小于1。
+
+{% highlight javascript %}
+
+Math.random() // 0.7151307314634323
+
+// 返回给定范围内的随机数
+function getRandomArbitrary(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+// 返回给定范围内的随机整数
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 {% endhighlight %}
