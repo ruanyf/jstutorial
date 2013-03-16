@@ -170,18 +170,6 @@ o.toString()
 
 {% endhighlight %}
 
-toString方法可以接受一个参数，表示将一个数字转化成某个进制的字符串。
-
-{% highlight javascript %}
-
-(10).toString(2) // "1010"
-
-(10).toString(8) // "12"
-
-(10).toString(16) // "a"
-
-{% endhighlight %}
-
 这两种方法的意义在于，某些场合JavaScript会自动将对象转化为原始类型，转化的结果就取决于这两个方法。
 
 ## 原始类型的包装对象

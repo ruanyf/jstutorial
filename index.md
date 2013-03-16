@@ -2,7 +2,7 @@
 layout: homepage
 title: JavaScript 标准教程（alpha）
 date: 2012-11-18
-modifiedOn: 2013-03-02
+modifiedOn: 2013-03-16
 ---
 
 <h2 id="introduction">导论</h2>
@@ -23,6 +23,7 @@ modifiedOn: 2013-03-02
 
 <h2 id="stdlib">标准库</h2>
 
+- [Number对象](stdlib/number.html)
 - [Math对象](stdlib/math.html)
 - [Date对象](stdlib/date.html)
 - [Regex对象](stdlib/regex.html)
