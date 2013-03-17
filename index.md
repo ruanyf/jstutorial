@@ -2,7 +2,7 @@
 layout: homepage
 title: JavaScript 标准教程（alpha）
 date: 2012-11-18
-modifiedOn: 2013-03-16
+modifiedOn: 2013-03-17
 ---
 
 <h2 id="introduction">导论</h2>
@@ -84,6 +84,7 @@ modifiedOn: 2013-03-16
 - [性能测试（Benchmark）](tool/benchmark.html)
 - [PhantomJS](tool/phantomjs.html)
 - [移动端开发](tool/mobile.html)
+- [Google Closure](tool/closure.html)
 - [Source map](tool/sourcemap.html)
 
 <h2 id="nodejs">Node.js</h2>
