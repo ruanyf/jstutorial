@@ -3,7 +3,7 @@ title: 语法概述
 layout: page
 category: grammar
 date: 2012-12-14
-modifiedOn: 2013-03-09
+modifiedOn: 2013-03-17
 ---
 
 ## 表达式和语句
@@ -391,6 +391,22 @@ typeof [];
 
 typeof null;
 // object
+
+{% endhighlight %}
+
+考虑到typeof对数组（array）和对象（object）的显示结果，都是object。因此，可以使用instanceof运算符进行判断。
+
+{% highlight javascript %}
+
+var o = {};
+
+var a = [];
+
+o instanceof Array
+// false
+
+a instanceof Array
+// true
 
 {% endhighlight %}
 
