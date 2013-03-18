@@ -3,7 +3,7 @@ title: 函数
 layout: page
 category: grammar
 date: 2012-12-15
-modifiedOn: 2013-03-18
+modifiedOn: 2013-03-19
 ---
 
 ## 函数的定义
@@ -303,7 +303,42 @@ f(1)
 
 ## 第一等公民
 
-JavaScript语言中，函数与其他数据类型处于同等地位，可以被赋值给一个变量，也可以当作参数传入其他函数，还可以作为函数的结果返回。因此，函数在JavaScript中是“第一等公民”。
+在JavaScript语言中，函数与其他数据类型处于同等地位，可以被赋值给一个变量、或者赋值给对象的属性，也可以当作参数传入其他函数，或者作为函数的结果返回。
+
+{% highlight javascript %}
+
+function add(x,y){
+	return x+y;
+}
+
+// 将函数赋值给一个变量
+var a = add;
+a(1,1)
+// 2
+
+// 将函数赋值给对象的属性
+var o = new Object();
+o.a = add;
+o.a(1,1)
+// 2
+
+// 将函数作为另一个函数的参数
+function a(op){
+	return op(1,1);
+}
+a(add)
+// 2
+
+// 将函数作为另一个函数的返回值
+function a(op){
+	return op;
+}
+a(add)(1,1)
+// 2
+
+{% endhighlight %}
+
+由于函数的使用与其他数据类型处于同等地位，不是第二等公民。所以我们说，函数在JavaScript中属于“第一等公民”。
 
 ## arguments对象
 
