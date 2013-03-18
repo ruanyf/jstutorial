@@ -3,7 +3,7 @@ title: 函数
 layout: page
 category: grammar
 date: 2012-12-15
-modifiedOn: 2013-02-25
+modifiedOn: 2013-03-18
 ---
 
 ## 函数的定义
@@ -57,6 +57,16 @@ var f = function f(){};
 还有一个地方需要注意，函数的表达式需要在语句的结尾加上分号，表示语句结束。而函数的声明在结尾的大括号后面不用加分号。
 
 总的来说，这两种定义函数的方式，差别很细微（参阅后文《变量提升》一节），这里可以近似认为是等价的。
+
+除此之外，函数还可以通过Function对象定义，但是几乎很少有人使用。
+
+{% highlight javascript %}
+
+var add = new Function("x","y","return (x+y)");
+
+{% endhighlight %}
+
+Function对象接受若干个参数，除了最后一个参数是add函数的“函数体”，其他都是add函数的参数。
 
 ## 参数
 
@@ -290,6 +300,10 @@ f(1)
    // 1
 
 {% endhighlight %}
+
+## 第一等公民
+
+JavaScript语言中，函数与其他数据类型处于同等地位，可以被赋值给一个变量，也可以当作参数传入其他函数，还可以作为函数的结果返回。因此，函数在JavaScript中是“第一等公民”。
 
 ## arguments对象
 
