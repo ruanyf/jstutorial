@@ -3,10 +3,10 @@ title: 数组
 date: 2012-12-11
 category: grammar
 layout: page
-modifiedOn: 2013-02-10
+modifiedOn: 2013-03-21
 ---
 
-## 数组与字典
+## 定义
 
 数组（array）是按次序排列的一组值。
 
@@ -61,7 +61,77 @@ arr [2]
 
 {% endhighlight %}
 
+使用for-in循环，可以遍历数组的所有元素。
+
+{% highlight javascript %}
+
+var a = [1,2,3,4];
+
+for (var i in a){
+	console.log(a[i]);
+}
+// 1
+// 2
+// 3
+// 4
+
+{% endhighlight %}
+
+另一种遍历的做法是for循环结合length属性。
+
+{% highlight javascript %}
+
+var a = [1,2,3,4];
+
+for (var i = 0;i < a.length;i++){
+	console.log(a[i]);
+}
+// 1
+// 2
+// 3
+// 4
+
+{% endhighlight %}
+
 字典成员的引用可以使用“点”结构（object.key），也可以用方括号表示。但是数组成员不能使用点结构表示，arr.0不合法，因为数字不是标识符（identifier）。所以，数组成员只能用方括号表示。
+
+除了直接使用方括号创建，数组还是使用JavaScript内置的Array对象创建。
+
+{% highlight javascript %}
+
+var a = new Array();
+a
+// []
+
+a.length
+// 0
+
+var a = new Array(1);
+a
+// [undefined × 1]
+
+a.length
+// 1
+
+var a = new Array(2);
+a
+// [undefined × 2]
+
+a.length
+// 2
+
+var a = new Array(1,2);
+a
+// [1,2]
+
+a.length
+// 2
+
+var a = new Array ("a","b","c");
+a
+// ["a", "b", "c"]
+
+{% endhighlight %}
 
 ## length属性
 
@@ -70,7 +140,6 @@ arr [2]
 {% highlight javascript %}
 
 var arr = ['a', 'b', 'c'];
-
 arr.length
 // 3
 
@@ -142,9 +211,62 @@ arr
 
 {% endhighlight %}
 
+值得注意的是，由于数组本质上是对象的一种，所以我们可以为数组添加属性，但是这不影响length属性的值。
+
+{% highlight javascript %}
+
+var a = new Array();
+
+a["p"] = "abc";
+
+a.p
+// "abc"
+
+a.length
+// 0
+
+{% endhighlight %}
+
+另外，如果使用delete命令删除一个值，不影响length属性的值。
+
+var a = [1,2,3];
+a.length
+// 3
+
+delete a[1]
+// true
+
+a.length
+// [1, undefined × 1, 3]
+
+{% endhighlight %}
+
 ## 数组的空位
 
 当数组的某个位置是空元素，我们称该数组存在空位（hole）。
+
+{% highlight javascript %}
+
+var a = [1,,1];
+
+a
+// [1, undefined × 1, 1]
+
+{% endhighlight %}
+
+另一种情况是使用delete命令删除一个值。
+
+{% highlight javascript %}
+
+var a = [1,2,3];
+
+delete a[1]
+// true
+
+a
+// [1, undefined × 1, 3]
+
+{% endhighlight %}
 
 空位会被计入length属性，值为undefined。
 
@@ -189,10 +311,12 @@ a.forEach(function (x, i) { console.log(i+". "+x) });
 
 ## 数组的方法
 
-- pop 删除一个元素
-- join 将所有元素组成一个字符串
+- pop 删除并返回数组的最后一个元素
+- reverse 颠倒数组中元素的顺序
+- unshift 向数组的开头添加一个或多个元素，并返回添加后的数组长度
+- valueOf 返回数组对象的原始值
 
-## concat方法
+### concat方法
 
 该方法用于连接多个数组，返回连接后的数组。
 
@@ -214,7 +338,22 @@ a.forEach(function (x, i) { console.log(i+". "+x) });
 
 ### push方法
 
-该方法用于在数组的末端添加一个元素。
+该方法用于在数组的末端添加一个或多个元素，并返回添加后的数组的长度。
+
+{% highlight javascript %}
+
+var a = new Array();
+
+a.push(1);
+// 1
+
+a.push("a");
+// 2
+
+a
+// [1,"a"]
+
+{% endhighlight %}
 
 它还可以向对象添加元素，添加后的对象变成“类似数组的”对象，即新加入元素的键对应数组的索引，并且对象有一个length属性。
 
@@ -229,6 +368,119 @@ a
 [].push.call(a, [3]);
 a
 // {a:1, 0:2, 1:[3], length: 2}
+
+{% endhighlight %}
+
+### join方法
+
+该方法将所有数组元素组成一个字符串返回，默认用逗号分隔。
+
+{% highlight javascript %}
+
+var a = [1,2,3,4];
+
+a.join()
+// "1,2,3,4"
+
+a.join("|")
+// "1|2|3|4"
+
+{% endhighlight %}
+
+### slice方法
+
+该方法用于从数组中返回指定位置的元素，原数组不变。它的第一个参数为起始位置，第二个参数为终止位置。
+
+{% highlight javascript %}
+
+var a = ["a","b","c","d","e","f","g","h","i"];
+
+a.slice(5,9)
+// ["f", "g", "h", "i"]
+
+a
+// ["a","b","c","d","e","f","g","h","i"];
+
+{% endhighlight %}
+
+### splice方法
+
+该方法用于删除元素，并可以在被删除的位置添加入新的数组元素。它的返回值是被删除的元素。
+
+{% highlight javascript %}
+
+var a = ["a","b","c","d","e","f","g","h","i"];
+
+a.splice(5,2)
+// ["f", "g"]
+
+a
+["a", "b", "c", "d", "e", "h", "i"]
+
+{% endhighlight %}
+
+它的第一个参数是删除的起始位置，第二个参数是被删除的元素个数。如果后面还有更多的参数，则表示这些就是要被插入数组的新元素。
+
+{% highlight javascript %}
+
+var a = ["a","b","c","d","e","f","g","h","i"];
+
+a.splice(5,2,1,2)
+// ["f", "g"]
+
+a
+// ["a", "b", "c", "d", "e", 1, 2, "h", "i"]
+
+{% endhighlight %}
+
+如果是单纯地插入元素，splice方法的第二个参数可以设为0。
+
+{% highlight javascript %}
+
+var a = [1,1,1];
+
+a.splice(1,0,2)
+// []
+
+a
+// [1, 2, 1, 1]
+
+{% endhighlight %}
+
+### sort方法
+
+该方法对数组元素进行排序，默认是按照字典顺序排序。排序后，原数组将被改变。
+
+{% highlight javascript %}
+
+var a = ["d","c","b","a"];
+a.sort()
+// ["a", "b", "c", "d"]
+
+var a = [4,3,2,1];
+a.sort()
+// [1, 2, 3, 4]
+
+var a = [11,101];
+a.sort()
+// [101, 11]
+
+{% endhighlight %}
+
+sort方法可以接受一个参数，表示按照自定义方法进行排序。该参数是一个函数，本身又接受两个参数，表示进行比较的两个元素。如果返回值大于0，表示第一个元素排在第二个元素后面；其他情况下，都是第一个元素排在第二个元素前面。
+
+{% highlight javascript %}
+
+var a = [10111,1101,111];
+a.sort()
+// [10111, 1101, 111]
+
+function f(a,b){
+	return a-b;
+}
+
+a.sort(f)
+// [111, 1101, 10111]
 
 {% endhighlight %}
 
