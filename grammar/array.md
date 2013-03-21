@@ -82,8 +82,7 @@ for (var i in a){
 {% highlight javascript %}
 
 var a = [1,2,3,4];
-
-for (var i = 0;i < a.length;i++){
+for(var i = 0; i < a.length; i++){
 	console.log(a[i]);
 }
 // 1
@@ -228,6 +227,8 @@ a.length
 {% endhighlight %}
 
 另外，如果使用delete命令删除一个值，不影响length属性的值。
+
+{% highlight javascript %}
 
 var a = [1,2,3];
 a.length
