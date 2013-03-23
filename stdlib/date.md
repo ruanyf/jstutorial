@@ -3,7 +3,7 @@ title: Date对象
 layout: page
 category: stdlib
 date: 2013-03-09
-modifiedOn: 2013-03-09
+modifiedOn: 2013-03-23
 ---
 
 ## 概述
@@ -62,6 +62,26 @@ new Date ( "2013-FEB-15" )
 // Fri Feb 15 2013 08:00:00 GMT+0800 (CST)
 
 {% endhighlight %}
+
+## Date对象的方法
+
+now方法返回当前的Unix时间戳。
+
+{% highlight javascript %}
+
+Date.now()
+// 1364026285194
+
+{% endhighlight %}
+
+如果需要更精确的时间，可以使用window.performance.now()。它提供页面加载到命令运行时的已经过去的时间，单位是浮点数形式的毫秒。
+
+{% highlight javascript %}
+
+window.performance.now()
+// 21311140.415
+
+{% endhighlight %}		
 
 ## 实例对象的方法
 

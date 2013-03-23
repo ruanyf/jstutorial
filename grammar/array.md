@@ -3,7 +3,7 @@ title: 数组
 date: 2012-12-11
 category: grammar
 layout: page
-modifiedOn: 2013-03-21
+modifiedOn: 2013-03-23
 ---
 
 ## 定义
@@ -183,12 +183,20 @@ arr.length = 2;
 
 {% highlight javascript %}
 
-var arr = ['a'];
+var a = ['a'];
 
-arr.length = 3;
+a.length = 3;
 
-arr
-// [ 'a', , ,]
+a
+// ["a", undefined × 2]
+
+a[6] = "b";
+
+a.length
+// 7
+
+a
+["a", undefined × 5, "b"]
 
 {% endhighlight %}
 

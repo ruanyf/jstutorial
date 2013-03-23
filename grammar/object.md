@@ -3,7 +3,7 @@ title: 对象
 layout: page
 category: grammar
 date: 2012-12-12
-modifiedOn: 2013-03-17
+modifiedOn: 2013-03-23
 ---
 
 ## 概述
@@ -110,7 +110,7 @@ Object.keys(o);
 ### 属性的增加与删除
 
 JavaScript允许属性的“后绑定”，也就是说，你可以在任意时刻新增属性，没必要在定义对象的时候，就定义好属性。
-
+isExtensible
 {% highlight javascript %}
 
 var o = { p:1 };
@@ -535,9 +535,9 @@ o.p = 123;
 attributes对象包含如下属性：
 
 - value：表示该属性的值，默认为undefined。
-- writable：表示该属性的值（value）是否可以改变，默认为false。
-- enumerable： 表示该属性是否可枚举，默认为false，也就是该属性不会出现在for...in和Object.keys()等操作中。
-- configurable：该属性是否可配置，默认为false，也就是你无法删除该属性，而且除了value这一项，你无法改变该属性的其他项的性质（比如writable和enumerable）。configurable控制该属性“元数据”的可写状态。
+- writable：表示该属性的值（value）是否可以改变，默认为true。
+- enumerable： 表示该属性是否可枚举，默认为true，也就是该属性会出现在for...in和Object.keys()等操作中。
+- configurable：该属性是否可配置，默认为true，也就是你可以删除该属性，可以改变该属性的各种性质（比如writable和enumerable）。configurable控制该属性“元数据”的可写状态。
 - get：表示该属性的取值函数（getter），默认为undefined。
 - set：表示该属性的存值函数（setter），默认为undefined。
 
@@ -604,7 +604,7 @@ o.p2
 
 ### 控制对象的可写性
 
-Object.preventExtensions方法，可以使得一个对象无法再添加新的属性。
+(1) Object.preventExtensions方法，可以使得一个对象无法再添加新的属性。
 
 {% highlight javascript %}
 
@@ -618,7 +618,20 @@ Object.defineProperty(o, "t", { value: "hello" });
 
 {% endhighlight %}
 
-Object.seal方法，可以使得一个对象即无法添加新属性，也无法删除旧属性，处于被封闭状态。
+Object.isExtensible方法用于检查一个对象是否使用了preventExtensions方法。
+
+{% highlight javascript %}
+
+var o = new Object();
+
+Object.preventExtensions(o);
+
+Object.isExtensible(o)
+// false
+
+{% endhighlight %}
+
+(2) Object.seal方法，可以使得一个对象即无法添加新属性，也无法删除旧属性，处于被封闭状态。
 
 {% highlight javascript %}
 
@@ -631,7 +644,9 @@ delete o.t;
 
 {% endhighlight %}
 
-Object.freeze方法，可以使得一个对象无法添加新属性、无法删除旧属性、也无法改变属性的值，使得这个对象实际上变成了常量。
+Object.isSealed()用于检查一个对象是否使用了Object.seal方法。
+
+(3) Object.freeze方法，可以使得一个对象无法添加新属性、无法删除旧属性、也无法改变属性的值，使得这个对象实际上变成了常量。
 
 {% highlight javascript %}
 
@@ -646,7 +661,7 @@ console.info(o.t);
 
 {% endhighlight %}
 
-你可以使用Object.isSealed、Object.isFrozen、Object.isExtensible检查某个对象目前的状态。
+Object.isFrozen方法用于检查一个对象是否使用了Object.freeze()方法。
 
 需要注意的是，即使使用上面这些方法锁定对象的可写性，我们依然可以通过改变该对象的原型对象，来为它增加属性。
 

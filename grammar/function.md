@@ -3,7 +3,7 @@ title: 函数
 layout: page
 category: grammar
 date: 2012-12-15
-modifiedOn: 2013-03-19
+modifiedOn: 2013-03-23
 ---
 
 ## 函数的定义
@@ -590,7 +590,22 @@ f = function (){};
 
 {% endhighlight %}
 
-当调用f的时候，f只是被声明，还没有被赋值，等于undefined，所以会报错。
+当调用f的时候，f只是被声明，还没有被赋值，等于undefined，所以会报错。因为这个原因，如果同时采用function关键字和赋值语句声明一个函数，最后总是采用赋值语句的定义。
+
+{% highlight javascript %}
+
+var f = function() {
+  console.log ('1');
+}
+ 
+function f() {
+  console.log('2');
+}
+ 
+f()
+// 1
+
+{% endhighlight %}
 
 ### 函数的重复定义
 
