@@ -1,6 +1,6 @@
 ---
 title: Error对象
-layout: Page
+layout: page
 category: stdlib
 date: 2013-03-23
 modifiedOn: 2013-03-23
