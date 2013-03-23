@@ -3,7 +3,7 @@ title: 运算符
 layout: page
 category: grammar
 date: 2013-02-04
-modifiedOn: 2013-03-17
+modifiedOn: 2013-03-23
 ---
 
 ## 算术运算符
@@ -132,6 +132,22 @@ console.log({} + {})
 
 {} + []
 // "[object Object]"
+
+{% endhighlight %}
+
+### 其他算术运算符
+
+如果一个运算子是数值类型，另一个是其他类型，那么除了加法运算符，在其他运算符的情况下，另一个运算子都会被转化成数值类型。
+
+{% highlight javascript %}
+
+// 加法运算符的情况
+1 + "1"
+// "11"
+
+// 减法运算符的情况
+1 - "1"
+// 0
 
 {% endhighlight %}
 
@@ -281,15 +297,27 @@ javascript:void(window.open("http://www.whitehouse.gov/"));
 
 ### 相等运算符的比较规则
 
-（1） undefined和null两者，与自身或互相比较时，结果为true，与其他类型的值比较时，结果都为false。
+不同类型的数据互相比较时，会先进行内部的类型转换。
 
-（2）字符串与数值比较时，字符串转化成数值。
+（1）undefined和null两者，与自身或互相比较时，结果为true，与其他类型的值比较时，结果都为false。
 
-（3）布尔值与非布尔值比较时，布尔值转化成数值，再进行比较。
+{% highlight javascript %}
 
-（4）对象与字符串或数值比较时，对象转化成原始类型的值，再进行比较。
+null == null
+// true
 
-由于这种转化会返回一些违反直觉的结果，因此不推荐使用==，建议只使用===。
+undefined == null
+// true
+
+false == null
+// false
+
+0 == null
+// false
+
+{% endhighlight %}
+
+（2）其他类型的数据会转换成数值类型再进行比较。
 
 {% highlight javascript %}
 
@@ -308,19 +336,11 @@ javascript:void(window.open("http://www.whitehouse.gov/"));
 "true" == true
 // false
 
-null == null
-// true
-
-undefined == null
-// true
-
-false == null
-// false
-
-0 == null
-// false
-
 {% endhighlight %}
+
+（3）对象与字符串或数值比较时，对象转化成原始类型的值，再进行比较。
+
+由于这种转化会返回一些违反直觉的结果，因此不推荐使用==，建议只使用===。
 
 ### 严格相等运算符的比较规则
 
