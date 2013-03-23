@@ -3,7 +3,7 @@ title: 使用说明
 layout: page
 category: introduction
 date: 2013-01-28
-modified: 2013-02-16
+modified: 2013-03-23
 ---
 
 ## 特点
@@ -26,5 +26,7 @@ modified: 2013-02-16
 ## 试验环境
 
 Chrome浏览器附带开发者工具，它的console控制台可以作为本教程的实验环境。在Chrome浏览器安装后，使用菜单或直接按F12，打开开发者工具，点击console选项卡即可。
+
+在console控制台中，按Enter键，代码就会执行；按Shift+Enter键，则是代码换行，不会触发执行。
 
 建议读者阅读本教程时，随时将代码复制到console进行实验，查看结果，这样有利于更好地理解和掌握JavaScript。
