@@ -21,3 +21,25 @@ JavaScript实际上运行在一个虚拟机（Virtual Machine）之上，我们�
 - [Carakan](http://dev.opera.com/articles/view/labs-carakan/) (Opera)
 - [SpiderMonkey](https://developer.mozilla.org/en-US/docs/SpiderMonkey) (Firefox)
 - [V8](http://en.wikipedia.org/wiki/V8_(JavaScript_engine\)) (Chrome, Chromium)
+
+## 插入网页的方法
+
+可以使用script标签，直接将代码嵌入网页。
+
+{% highlight html %}
+
+<script>
+// some JavaScript code
+</script>
+
+{% endhighlight %}
+
+也可以指定脚本文件，让script标签读取。
+
+{% highlight html %}
+
+<script src="example.js"></script>
+
+{% endhighlight %}
+
+JavaScript代码按照插入网页的顺序执行。如果有脚本文件没有下载完成，页面就会停止渲染，等待下载完成。为了避免这种“浏览器假死”，较好的做法是将script标签放在页面底部，而不是头部。

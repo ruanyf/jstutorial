@@ -2,7 +2,7 @@
 layout: homepage
 title: JavaScript 标准教程（alpha）
 date: 2012-11-18
-modifiedOn: 2013-03-17
+modifiedOn: 2013-03-23
 ---
 
 <h2 id="introduction">导论</h2>
@@ -28,6 +28,7 @@ modifiedOn: 2013-03-17
 - [Date对象](stdlib/date.html)
 - [Regex对象](stdlib/regex.html)
 - [JSON格式](stdlib/json.html)
+- [Error对象](stdlib/error.html)
 
 <h2 id="oop">面向对象编程</h2>
 
