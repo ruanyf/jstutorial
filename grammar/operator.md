@@ -3,7 +3,7 @@ title: 运算符
 layout: page
 category: grammar
 date: 2013-02-04
-modifiedOn: 2013-03-23
+modifiedOn: 2013-03-31
 ---
 
 ## 算术运算符
@@ -436,7 +436,61 @@ v1 === v2
 
 ## 位运算符
 
-### 带符号位的左移<<
+位运算符用于直接对二进制位进行计算。
+
+- 或运算（or），符号为|，表示两个二进制位中有一个为1，则结果为1，否则为0。
+- 与运算（and），符号为&，表示两个二进制位都为1，则结果为1，否则为0。
+- 否运算（not），符号为～，表示将一个二进制位变成相反值。
+- 异或运算（xor），符号为^，表示两个二进制位中有且仅有一个为1，则结果为1，否则为0。
+- 左移运算（left shift），符号为<<，详见下文解释。
+- 右移运算（right shift），符号为>>，详见下文解释。
+- 不带符号位的右移运算（zero filled right shift），符号为>>>，详见下文解释。
+
+位运算有一些特殊运用。比如，连续对a和b进行三次异或运算，a^=b, b^=a, a^=b，可以互换两个变量的值（详见[维基百科](http://en.wikipedia.org/wiki/XOR_swap_algorithm)），因此使用位运算可以在不引入临时变量的前提下，互换两个变量的值。
+
+{% highlight javascript %}
+
+var a = 10;
+var b = 99;
+
+a^=b, b^=a, a^=b;
+
+a // 99
+b // 10
+
+{% endhighlight %}
+
+又比如，由于位运算只对整数有效，会将运算子先转成32位整数，所以将一个数与0进行或运算，等同于对该数调用Math.floor方法。
+
+{% highlight javascript %}
+
+2.2352524535 | 0
+// 2
+
+{% endhighlight %}
+
+连续进行两次否运算，也能达到同样效果。
+
+{% highlight javascript %}
+
+~~2.2352524535
+// 2
+
+{% endhighlight %}
+
+但是，一般来说，这些位运算的例子只对正数有效，且运算子不能超过32位整数的最大值2147483647。
+
+{% highlight javascript %}
+
+Math.floor(2147483647.4); // 2147483647
+2147483647.4 | 0; // 2147483647
+
+Math.floor(2147483648.4); // 2147483648
+2147483648.4 | 0; // -2147483648
+
+{% endhighlight %}
+
+### 左移运算<<
 
 该运算符表示将一个数的二进制形式向前移动，尾部补0。
 
@@ -444,13 +498,14 @@ v1 === v2
 
 4 << 1
 // 8
+// 因为4的二进制形式为100，左移一位为1000（即十进制的8）
 
 -4 << 1
 // -8
 
 {% endhighlight %}
 
-### 带符号位的右移>>
+### 右移运算>>
 
 该运算符表示将一个数的二进制形式向后移动，头部补0。
 
@@ -458,13 +513,14 @@ v1 === v2
 
 4 >> 1
 // 2
+// 因为4的二进制形式为100，右移一位得到10（即十进制的2）
 
 -4 >> 1
 // -2
 
 {% endhighlight %}
 
-### 不带符号位的右移>>>
+### 不带符号位的右移运算>>>
 
 该运算符表示将一个数的二进制形式向后移动(连同头部的符号位)，头部补0。
 
@@ -485,3 +541,4 @@ v1 === v2
 ## 参考链接
 
 - Dr. Axel Rauschmayer, [What is {} + {} in JavaScript?](http://www.2ality.com/2012/01/object-plus-object.html)
+- Michal Budzynski, [JavaScript: The less known parts. Bitwise Operators](http://michalbe.blogspot.co.uk/2013/03/javascript-less-known-parts-bitwise.html)
