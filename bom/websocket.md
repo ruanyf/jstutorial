@@ -3,7 +3,7 @@ title: WebSocket
 layout: page
 category: bom 
 date: 2012-12-23
-modifiedOn: 2013-01-26
+modifiedOn: 2013-04-05
 ---
 
 ## 概述
@@ -45,7 +45,9 @@ Sec-WebSocket-Accept是服务器在浏览器提供的Sec-WebSocket-Key字符串�
 
 WebSocket服务器需要安装，目前比较流行是基于node.js的[socket.io](http://socket.io/)，更多的实现可参阅[Wikipedia](http://en.wikipedia.org/wiki/WebSocket#Server_side)。
 
-## 连接WebSocket服务器
+## 客户端
+
+### 连接WebSocket服务器
 
 首先，客户端要检查浏览器是否支持WebSocket，使用的方法是查看window对象是否具有WebSocket属性。
 
@@ -59,7 +61,7 @@ if(window.WebSocket != undefined) {
 
 {% endhighlight %}
 
-然后，开始与服务器建立连接（这里假定服务器就是本机）。
+然后，开始与服务器建立连接（这里假定服务器就是本机）。这里需要使用ws协议。
 
 {% highlight javascript	%}
 
@@ -80,7 +82,7 @@ if(window.WebSocket != undefined) {
 
 当握手协议成功以后，readyState就从0变为1,并触发open事件，这时就可以向服务器发送要传递的信息了。
 
-## open事件
+### open事件
 
 WebSocket连接成功后，浏览器会触发实例对象的open事件，我们可以指定它的回调函数。
 
@@ -96,7 +98,7 @@ function onOpen (event) {
 
 {% endhighlight %}
 
-## close事件
+### close事件
 
 WebSocket关闭时，触发close事件。
 
@@ -112,7 +114,7 @@ function onClose () {
 
 {% endhighlight %}
 
-## 数据交换
+### 数据交换
 
 连接建立后，客户端通过send方法向服务器端发送数据。
 
@@ -153,7 +155,7 @@ function onmessage (event) {
 
 {% endhighlight %}
 
-## error事件
+### error事件
 
 如果出现错误，浏览器会触发WebSocket实例对象的error事件。
 
@@ -168,8 +170,86 @@ function onerror(event) {
 
 {% endhighlight %}
 
+## 服务器端
+
+下面用node.js搭建一个服务器环境。
+
+{% highlight javascript	%}
+
+var http = require('http');
+var server = http.createServer(function(request, response) {});
+
+{% endhighlight %}
+
+假设监听1234端口。
+
+{% highlight javascript	%}
+
+server.listen(1234, function() {
+    console.log((new Date()) + ' Server is listening on port 1234');
+});
+
+{% endhighlight %}
+
+接着启动Web Socket服务器。这需要加载websocket库，如果没有安装，可以先使用npm命令安装。
+
+{% highlight javascript	%}
+
+var WebSocketServer = require('websocket').server;
+wsServer = new WebSocketServer({
+    httpServer: server
+});
+
+{% endhighlight %}
+
+Web Socket服务器建立request事件的回调函数。
+
+{% highlight javascript	%}
+
+wsServer.on('request', function(r){
+    // Code here to run on connection
+});
+
+{% endhighlight %}
+
+在回调函数中，参数r表示request对象。第一步，建立Web Socket连接。
+
+{% highlight javascript	%}
+
+var connection = r.accept('echo-protocol', r.origin);
+
+{% endhighlight %}
+
+然后，监听message事件。
+
+{% highlight javascript	%}
+
+// Create event listener
+connection.on('message', function(message) {
+
+    // The string message that was sent to us
+    var msgString = message.utf8Data;
+
+    // Send a message to the client with the message
+    connection.sendUTF(msgString);
+
+});
+
+{% endhighlight %}
+
+最后，监听用户的disconnect事件。
+
+{% highlight javascript	%}
+
+connection.on('close', function(reasonCode, description) {
+    console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
+});
+
+{% endhighlight %}
+
 ## 参考链接
 
 - Ryan Stewart, [Real-time data exchange in HTML5 with WebSockets](http://www.adobe.com/devnet/html5/articles/real-time-data-exchange-in-html5-with-websockets.html)
 - Malte Ubl & Eiji Kitamura，[WEBSOCKETS 简介：将套接字引入网络](http://www.html5rocks.com/zh/tutorials/websockets/basics/)
 - Jack Lawson, [WebSockets: A Guide](http://buildnewgames.com/websockets/)
+- [Starting with Node and Web Sockets](http://codular.com/node-web-sockets)
