@@ -245,6 +245,8 @@ $( "#button" ).on( "click", $.prox（o.f，o) );
 
 另一种常见的技巧，则是事先在函数体内部将this的值固定。
 
+{% highlight javascript %
+
 var o = {
 	p : 1,
 	self : this,
