@@ -3,16 +3,14 @@ title: Canvas API
 layout: page
 date: 2012-11-21
 category: htmlapi
-modifiedOn: 2013-01-26
+modifiedOn: 2013-04-12
 ---
 
 ## 概述
 
-Canvas API用于网页实时生成图像。
+Canvas API用于网页实时生成图像，使得JavaScript可以操作图像内容。这样做的优点是：减少HTTP请求数，减少下载的数据，加快网页载入时间，可以对图像进行实时处理。
 
-它的优点是：减少HTTP请求数，减少下载的数据，加快网页载入时间，可以对图像进行实时处理。
-
-它建立在canvas网页元素的基础上。
+使用前，首先需要新建一个canvas网页元素。
 
 {% highlight html %}
 
@@ -22,9 +20,9 @@ Canvas API用于网页实时生成图像。
 
 {% endhighlight %}
 
-## 新建canvas
+如果浏览器不支持这个API，则就会显示canvas标签中间的文字——“您的浏览器不支持canvas！”。
 
-首先获取canvas的DOM对象。
+然后，使用JavaScript获取canvas的DOM对象。
 
 {% highlight javascript %}
 
@@ -32,17 +30,17 @@ var canvas = document.getElementById('myCanvas');
 
 {% endhighlight %}
 
-然后，检查浏览器是否支持Canvas API，方法是看有没有部署getContext方法。
+接着，检查浏览器是否支持Canvas API，方法是看有没有部署getContext方法。
 
 {% highlight javascript %}
 
 if (canvas.getContext) {
-
+	// some code here
 }
 
 {% endhighlight %}
 
-接下来，使用getContext('2d')方法，初始化2D图像上下文环境。
+使用getContext('2d')方法，初始化平面图像的上下文环境。
 
 {% highlight javascript %}
 
@@ -50,11 +48,11 @@ var ctx = canvas.getContext('2d');
 
 {% endhighlight %}
 
-这样就可以生成平面图像了。
+现在就在canvas中间生成平面图像了。
 
-## 绘图
+## 绘图方法
 
-### 颜色
+（1）填充颜色
 
 设置填充颜色。
 
@@ -64,7 +62,7 @@ ctx.fillStyle = "#000000"; // 设置填充色为黑色
 
 {% endhighlight %}
 
-### 矩形
+（2）绘制矩形
 
 绘制实心矩形。
 
@@ -90,7 +88,7 @@ ctx.clearRect(100,50,50,50);
 
 {% endhighlight %}
 
-### 路径
+（3）绘制路径
 
 {% highlight javascript %}
 
@@ -110,7 +108,7 @@ ctx.stroke(); // 进行线的着色，这时整条线才变得可见
 
 moveto和lineto方法可以多次使用。最后，还可以使用closePath方法，自动绘制一条当前点到起点的直线，形成一个封闭图形，省却使用以此lineto方法。
 
-### 圆形和扇形
+（4）绘制圆形和扇形
 
 绘制扇形的方法。
 
@@ -152,7 +150,9 @@ ctx.stroke();
 
 {% endhighlight %}
 
-### 文本
+（5）绘制文本
+
+fillText方法用于添加文本，strokeText方法用于添加空心字。使用之前，需设定字体、对齐方向、颜色等属性。
 
 {% highlight javascript %}
 
@@ -169,34 +169,6 @@ ctx.strokeText('Hello!", 10, 100); // 绘制空心字
 {% endhighlight %}
 
 fillText方法不支持文本断行，即所有文本出现在一行内。所以，如果你要生成多行文本，只有调用多次fillText方法。
-
-### 插入图像
-
-可以在画布内插入图像文件。
-
-{% highlight javascript %}
-
-var img = new Image();
-
-img.src = "image.png";
-
-ctx.drawImage(img, 0, 0); // 设置对应的图像对象，以及它在画布上的位置
-
-{% endhighlight %}
-
-由于图像的载入需要时间，drawImage方法只能在图像完全载入后才能调用，因此上面的代码需要改写。
-
-{% highlight javascript %}
-
-var img = new Image(); 
-
-img.onload = function() { 
-	ctx.drawImage(img, 10, 10); 
-} 
-
-img.src = "image.png";
-
-{% endhighlight %}
 
 ### 渐变
 
@@ -240,6 +212,216 @@ ctx.fillRect(10,10,200,100);
 
 {% endhighlight %}
 
+## 图像处理方法
+
+### 插入图像
+
+canvas允许将图像文件插入画布，做法是读取图片后，使用drawImage方法在画布内进行重绘。
+
+{% highlight javascript %}
+
+var img = new Image();
+
+img.src = "image.png";
+
+ctx.drawImage(img, 0, 0); // 设置对应的图像对象，以及它在画布上的位置
+
+{% endhighlight %}
+
+由于图像的载入需要时间，drawImage方法只能在图像完全载入后才能调用，因此上面的代码需要改写。
+
+{% highlight javascript %}
+
+var image = new Image(); 
+
+image.onload = function() { 
+
+	if (image.width != canvas.width)
+        canvas.width = image.width;
+    if (image.height != canvas.height)
+        canvas.height = image.height;
+
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(image, 0, 0);
+
+} 
+
+image.src = "image.png";
+
+{% endhighlight %}
+
+drawImage()方法接受三个参数，第一个参数是图像文件的DOM元素（即img标签），第二个和第三个参数是图像左上角在Canvas元素中的坐标，上例中的（0, 0）就表示将图像左上角放置在Canvas元素的左上角。
+
+### 读取Canvas的内容
+
+getImageData方法可以用来读取Canvas的内容，返回一个对象，包含了每个像素的信息。
+
+{% highlight javascript %}
+
+var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+
+{% endhighlight %}
+
+imageData对象有一个data属性，它的值是一个一维数组。该数组的值，依次是每个像素的红、绿、蓝、alpha通道值，因此该数组的长度等于 图像的像素宽度 x 图像的像素高度 x 4，每个值的范围是0–255。这个数组不仅可读，而且可写，因此通过操作这个数组的值，就可以达到操作图像的目的。修改这个数组以后，使用putImageData方法将数组内容重新回Canvas。
+
+{% highlight javascript %}
+
+context.putImageData(imageData, 0, 0);
+
+{% endhighlight %}
+
+### 像素处理
+
+假定filter是一个处理像素的函数，那么整个对Canvas的处理流程，可以用下面的代码表示。
+
+{% highlight javascript %}
+
+if (canvas.width > 0 && canvas.height > 0) {
+
+	var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+
+    filter(imageData);
+
+    context.putImageData(imageData, 0, 0);
+
+}
+
+{% endhighlight %}
+
+以下是几种常见的处理方法。
+
+（1）灰度效果
+
+灰度图（grayscale）就是取红、绿、蓝三个像素值的算术平均值，这实际上将图像转成了黑白形式。假定d[i]是像素数组中一个象素的红色值，则d[i+1]为绿色值，d[i+2]为蓝色值，d[i+3]就是alpha通道值。转成灰度的算法，就是将红、绿、蓝三个值相加后除以3，再将结果写回数组。
+
+{% highlight javascript %}
+
+grayscale = function (pixels) {
+
+	var d = pixels.data;
+
+    for (var i = 0; i < d.length; i += 4) {
+      var r = d[i];
+      var g = d[i + 1];
+      var b = d[i + 2];
+      d[i] = d[i + 1] = d[i + 2] = (r+g+b)/3;
+    }
+
+    return pixels;
+
+};
+
+{% endhighlight %}
+
+（2）复古效果
+
+复古效果（sepia）则是将红、绿、蓝三个像素，分别取这三个值的某种加权平均值，使得图像有一种古旧的效果。
+
+{% highlight javascript %}
+
+sepia = function (pixels) {
+
+    var d = pixels.data;
+
+    for (var i = 0; i < d.length; i += 4) {
+      var r = d[i];
+      var g = d[i + 1];
+      var b = d[i + 2];
+      d[i]     = (r * 0.393)+(g * 0.769)+(b * 0.189); // red
+      d[i + 1] = (r * 0.349)+(g * 0.686)+(b * 0.168); // green
+      d[i + 2] = (r * 0.272)+(g * 0.534)+(b * 0.131); // blue
+    }
+
+    return pixels;
+
+};
+
+{% endhighlight %}
+
+（3）红色蒙版效果
+
+红色蒙版指的是，让图像呈现一种偏红的效果。算法是将红色通道设为红、绿、蓝三个值的平均值，而将绿色通道和蓝色通道都设为0。
+
+{% highlight javascript %}
+
+red = function (pixels) {
+	
+    var d = pixels.data;
+
+    for (var i = 0; i < d.length; i += 4) {
+      var r = d[i];
+      var g = d[i + 1];
+      var b = d[i + 2];
+      d[i] = (r+g+b)/3;        // 红色通道取平均值
+      d[i + 1] = d[i + 2] = 0; // 绿色通道和蓝色通道都设为0
+    }
+
+    return pixels;
+
+};
+
+{% endhighlight %}
+
+（4）亮度效果
+
+亮度效果（brightness）是指让图像变得更亮或更暗。算法将红色通道、绿色通道、蓝色通道，同时加上一个正值或负值。
+
+{% highlight javascript %}
+
+brightness = function (pixels, delta) {
+
+    var d = pixels.data;
+
+    for (var i = 0; i < d.length; i += 4) {
+          d[i] += delta;     // red
+          d[i + 1] += delta; // green
+          d[i + 2] += delta; // blue   
+    }
+
+	return pixels;
+
+};
+
+{% endhighlight %}
+
+（5）反转效果
+
+反转效果（invert）是值图片呈现一种色彩颠倒的效果。算法为红、绿、蓝通道都取各自的相反值（255-原值）。
+
+{% highlight javascript %}
+
+invert = function (pixels) {
+
+	var d = pixels.data;
+
+	for (var i = 0; i < d.length; i += 4) {
+		d[i] = 255 - d[i];
+		d[i+1] = 255 - d[i + 1];
+		d[i+2] = 255 - d[i + 2];
+	}
+
+	return pixels;
+
+};
+
+{% endhighlight %}
+
+### 将Canvas转化为图像文件
+
+对图像数据做出修改以后，可以使用toDataURL方法，将Canvas数据重新转化成一般的图像文件形式。
+
+{% highlight javascript %}
+
+function convertCanvasToImage(canvas) {
+  var image = new Image();
+  image.src = canvas.toDataURL("image/png");
+  return image;
+}
+
+{% endhighlight %}
+
+上面的代码将Canvas数据，转化成PNG data URI。
+
 ## 保存和恢复上下文
 
 save方法用于保存上下文环境，restore方法用于恢复到上一次保存的上下文环境。
@@ -265,39 +447,8 @@ ctx.fillRect(180,10,150,100);
 
 上面的代码一共绘制了两个矩形，前一个有阴影，后一个没有。
 
-## 转化图像文件到Canvas
-
-将图像文件转化到Canvas，可以使用Canvas元素的drawImage()方法。
-
-{% highlight javascript %}
-
-function convertCanvasToImage(canvas) {
-  var image = new Image();
-  image.src = canvas.toDataURL("image/png");
-  return image;
-}
-
-{% endhighlight %}
-
-drawImage()方法接受三个参数，第一个参数是图像文件的DOM元素（即img标签），第二个和第三个参数是图像左上角在Canvas元素中的坐标，上例中的（0, 0）就表示将图像左上角放置在Canvas元素的左上角。
-
-## 转化Canvas到图像文件
-
-对图像数据做出修改以后，可以将Canvas数据重新转化成Image数据。
-
-{% highlight javascript %}
-
-function convertCanvasToImage(canvas) {
-  var image = new Image();
-  image.src = canvas.toDataURL("image/png");
-  return image;
-}
-
-{% endhighlight %}
-
-上面的代码将Canvas数据，转化成PNG data URI。
-
 ## 参考链接
 
-* David Walsh, [JavaScript Canvas Image Conversion](http://davidwalsh.name/convert-canvas-image)
+- David Walsh, [JavaScript Canvas Image Conversion](http://davidwalsh.name/convert-canvas-image)
 - Matt West, [Getting Started With The Canvas API](http://blog.teamtreehouse.com/getting-started-with-the-canvas-api)
+- John Robinson, [How You Can Do Cool Image Effects Using HTML5 Canvas](http://www.storminthecastle.com/2013/04/06/how-you-can-do-cool-image-effects-using-html5-canvas/)
