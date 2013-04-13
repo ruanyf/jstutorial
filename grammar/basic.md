@@ -3,7 +3,7 @@ title: 语法概述
 layout: page
 category: grammar
 date: 2012-12-14
-modifiedOn: 2013-03-17
+modifiedOn: 2013-04-13
 ---
 
 ## 表达式和语句
@@ -192,125 +192,47 @@ v
 
 这里需要明确的是，Javascript的所有数据，都可以视为对象，数组和函数只不过是特殊的对象而已，就连数值、字符串、布尔值都可以用对象方式调用。
 
-## 类型转化
-
-各种类型的值可以都可以转换成数字或字符串。
-
-### 转化成数字
-
-使用Number方法，可以将任意类型的值转化成数字。规则如下：
-
-- 数值转化后还是原来的值
-- 字符串如果可以被解析为数值，则转化为相应的数值，否则得到NaN
-- 布尔值true转化成1，false转化成0
-- undefined转化成NaN
-- null转化成0
-
-{% highlight javascript %}
-
-Number("324")
-// 324
-
-Number("324abc")
-// NaN
-
-Number(null)
-// 0
-
-{% endhighlight %}
-
-对于对象，则是先调用valueOf方法，如果该方法返回的不是数值，则再调用toString方法。如果toString方法返回的不是字符串，则报错。
-
-{% highlight javascript %}
-
-    var obj = {
-        valueOf: function () {
-            console.log("valueOf");
-            return {}; // not a primitive
-        },
-        toString: function () {
-            console.log("toString");
-            return {}; // not a primitive
-        }
-    }
-
-
-Number(obj)
-// valueOf
-// toString
-// TypeError: Cannot convert object to primitive value
-
-Number({a:1})
-// 等同于Number(({a:1}).toString())
-// NaN
-
-Number({valueOf:function (){return 2;}})
-// 2
-
-Number({valueOf:function (){return 2;},toString:function(){return 3;}})
-// 2
-
-Number({toString:function(){return 3;}})
-// 3
-
-{% endhighlight %}
-
-### 转化成字符串
-
-使用String方法，可以将任意类型的值转化成字符串。规则如下：
-
-- 数值转化为相应的字符串
-- 字符串转化后还是原来的值
-- 布尔值true转化为“true”，false转化为“false”
-- undefined转化为“undefined”
-- null转化为“null”
-
-{% highlight javascript %}
-
-String(123)
-// "123"
-
-Number(true)
-// "true"
-
-String(null)
-// "null"
-
-{% endhighlight %}
-
-对于对象，则是调用toString方法；如果toString方法返回的不是对象，再调用valueOf方法；如果返回的还不是对象，则报错。
-
-{% highlight javascript %}
-
-    var obj = {
-        valueOf: function () {
-            console.log("valueOf");
-            return {}; // not a primitive
-        },
-        toString: function () {
-            console.log("toString");
-            return {}; // not a primitive
-        }
-    }
-
-String(obj)
-// toString
-// valueOf
-// TypeError: Cannot convert object to primitive value
-
-String({a:1})
-// "[object Object]"
-
-String({toString:function(){return 3;}})
-// "3"
-
-{% endhighlight %}
-
 ## typeof 运算符
 
 该运算符用来确定一个值的数据类型，可能有以下结果：
 
-- 如果值的类型是undefined: 返回undefined。
+（1）如果值的类型是布尔值，返回boolean。
+
+{% highlight javascript %}
+
+typeof false
+// boolean
+
+{% endhighlight %}
+
+（2）如果值的类型是数值，返回number。
+
+{% highlight javascript %}
+
+typeof 123
+// number
+
+{% endhighlight %}
+
+（3）如果值的类型是字符串，返回string。
+
+{% highlight javascript %}
+
+typeof "123"
+// string
+
+{% endhighlight %}
+
+（4）如果值的类型是函数，返回function。
+
+{% highlight javascript %}
+
+typeof print
+// function
+
+{% endhighlight %}
+
+（5） 如果值的类型是undefined: 返回undefined。
 
 {% highlight javascript %}
 
@@ -319,7 +241,7 @@ String({toString:function(){return 3;}})
 
 {% endhighlight %}
 
-typeof可以用来检查一个没有声明的变量，而不报错。其他语法结构都没有这个功能。
+利用这一点，typeof可以用来检查一个没有声明的变量，而不报错。其他语法结构都没有这个功能。
 
 {% highlight javascript %}
 
@@ -331,7 +253,7 @@ typeof v
 
 {% endhighlight %}
 
-- 如果值的类型是null，返回object。
+（6）如果值的类型是null，返回object。
 
 {% highlight javascript %}
 
@@ -340,43 +262,7 @@ typeof null
 
 {% endhighlight %}
 
-- 如果值的类型是布尔值，返回boolean。
-
-{% highlight javascript %}
-
-typeof false
-// boolean
-
-{% endhighlight %}
-
-- 如果值的类型是数值，返回number。
-
-{% highlight javascript %}
-
-typeof 123
-// number
-
-{% endhighlight %}
-
-- 如果值的类型是字符串，返回string。
-
-{% highlight javascript %}
-
-typeof "123"
-// string
-
-{% endhighlight %}
-
-- 如果值的类型是函数，返回function。
-
-{% highlight javascript %}
-
-typeof print
-// function
-
-{% endhighlight %}
-
-- 如果值的类型不属于上面任何一种情况，返回object。
+（7）如果值的类型不属于上面任何一种情况，返回object。
 
 {% highlight javascript %}
 
@@ -394,7 +280,7 @@ typeof null;
 
 {% endhighlight %}
 
-考虑到typeof对数组（array）和对象（object）的显示结果，都是object。因此，可以使用instanceof运算符进行判断。
+考虑到typeof对数组（array）和对象（object）的显示结果，都是object。因此，可以使用instanceof运算符进一步区分。
 
 {% highlight javascript %}
 

@@ -2,7 +2,7 @@
 layout: homepage
 title: JavaScript 标准教程（alpha）
 date: 2012-11-18
-modifiedOn: 2013-03-23
+modifiedOn: 2013-04-13
 ---
 
 <h2 id="introduction">导论</h2>
@@ -19,6 +19,7 @@ modifiedOn: 2013-03-23
 - [对象](grammar/object.html)
 - [数组](grammar/array.html)
 - [函数](grammar/function.html)
+- [数据类型的自动转换](grammar/conversion.html)
 - [严格模式](grammar/strict.html)
 
 <h2 id="stdlib">标准库</h2>
