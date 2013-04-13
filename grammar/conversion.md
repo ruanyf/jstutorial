@@ -1,5 +1,5 @@
 ---
-title: 数据类型的转换
+title: 数据类型转换
 layout: page
 category: grammar
 date: 2013-04-13

@@ -19,7 +19,7 @@ modifiedOn: 2013-04-13
 - [对象](grammar/object.html)
 - [数组](grammar/array.html)
 - [函数](grammar/function.html)
-- [数据类型的自动转换](grammar/conversion.html)
+- [数据类型转换](grammar/conversion.html)
 - [严格模式](grammar/strict.html)
 
 <h2 id="stdlib">标准库</h2>
