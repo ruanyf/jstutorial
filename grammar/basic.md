@@ -3,7 +3,7 @@ title: 语法概述
 layout: page
 category: grammar
 date: 2012-12-14
-modifiedOn: 2013-04-13
+modifiedOn: 2013-04-15
 ---
 
 ## 表达式和语句
@@ -667,7 +667,7 @@ arg2)
 
 {% endhighlight %}
 
-只有下一行的开始与本行的结尾，无法放在一起解释，JavaScript引擎才会自动添加分号。
+一般来说，在没有分号结尾的情况下，如果下一行起首的是(、 [ 、+、-、/这五个字符中的一个，分号不会被自动添加。只有下一行的开始与本行的结尾，无法放在一起解释，JavaScript引擎才会自动添加分号。
 
 {% highlight javascript %}
 

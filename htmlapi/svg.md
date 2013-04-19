@@ -3,10 +3,10 @@ title: SVG 图像
 layout: page
 category: htmlapi
 date: 2013-02-08
-modifiedOn: 2013-02-08
+modifiedOn: 2013-04-19
 ---
 
-SVG是一种描述矢量图像的XML格式。也就是说，它是文本文件，但是可以在浏览器中显示出图像。由于它的XML格式的结构，使得我们可以用JavaScript和CSS操作它。
+SVG是Scalable Vector Graphics（可缩放向量图形）的缩写，是一种描述向量图形的XML格式。也就是说，它本质上是文本文件，格式采用XML，但是可以在浏览器中显示出图像。由于结构是XML格式，使得它可以HTML文档，成为DOM的一部分，可以用JavaScript和CSS操作它。
 
 ## 插入SVG文件
 

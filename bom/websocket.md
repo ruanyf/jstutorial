@@ -3,7 +3,7 @@ title: WebSocket
 layout: page
 category: bom 
 date: 2012-12-23
-modifiedOn: 2013-04-05
+modifiedOn: 2013-04-19
 ---
 
 ## 概述
@@ -26,7 +26,7 @@ Sec-WebSocket-Version: 13
 
 {% endhighlight %}
 
-“Connection: Upgrade”表示浏览器通知服务器，如果可以，就升级到webSocket链接。Origin用于验证浏览器域名是否在服务器许可的范围内。Sec-WebSocket-Key则是用于握手协议的密钥，是base64编码的16字节随机字符串。
+上面的头信息显示，有一个HTTP头是Upgrade。HTTP1.1协议规定，Upgrade头信息表示将通信协议从HTTP/1.1转向该项所指定的协议。“Connection: Upgrade”就表示浏览器通知服务器，如果可以，就升级到webSocket协议。Origin用于验证浏览器域名是否在服务器许可的范围内。Sec-WebSocket-Key则是用于握手协议的密钥，是base64编码的16字节随机字符串。
 
 服务器端的Websocket相应则是
 
@@ -41,7 +41,7 @@ Sec-WebSocket-Location: ws://example.com/
 
 {% endhighlight %}
 
-Sec-WebSocket-Accept是服务器在浏览器提供的Sec-WebSocket-Key字符串后面，添加“258EAFA5-E914-47DA-95CA-C5AB0DC85B11” 字符串，然后再取sha-1的hash值。浏览器将对这个值进行验证，以证明确实是目标服务器回应了webSocket请求。
+服务器端同样用“Connection: Upgrade”通知浏览器，需要改变协议。Sec-WebSocket-Accept是服务器在浏览器提供的Sec-WebSocket-Key字符串后面，添加“258EAFA5-E914-47DA-95CA-C5AB0DC85B11” 字符串，然后再取sha-1的hash值。浏览器将对这个值进行验证，以证明确实是目标服务器回应了webSocket请求。
 
 WebSocket服务器需要安装，目前比较流行是基于node.js的[socket.io](http://socket.io/)，更多的实现可参阅[Wikipedia](http://en.wikipedia.org/wiki/WebSocket#Server_side)。
 
@@ -111,6 +111,8 @@ function onClose () {
 	document.getElementById('connection').innerHTML = "Closed";
 
 }
+
+connection.close();
 
 {% endhighlight %}
 
@@ -253,3 +255,4 @@ connection.on('close', function(reasonCode, description) {
 - Malte Ubl & Eiji Kitamura，[WEBSOCKETS 简介：将套接字引入网络](http://www.html5rocks.com/zh/tutorials/websockets/basics/)
 - Jack Lawson, [WebSockets: A Guide](http://buildnewgames.com/websockets/)
 - [Starting with Node and Web Sockets](http://codular.com/node-web-sockets)
+- Jesse Cravens, [Introduction to WebSockets](http://tech.pro/tutorial/1167/introduction-to-websockets)
