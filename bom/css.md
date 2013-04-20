@@ -3,8 +3,39 @@ title: CSS
 layout: page
 category: bom
 date: 2013-02-08
-modifiedOn: 2013-02-12
+modifiedOn: 2013-04-18
 ---
+
+## CSS生成内容
+
+“CSS生成内容”指的是通过CSS，向DOM树添加的元素。主要的方法是通过“:before”和“:after”生成伪元素，然后用content属性指定伪元素的内容。
+
+假定HTML代码如下：
+
+{% highlight HTML %}
+
+<div id="test">Test content</div>
+
+{% endhighlight %}
+
+相应的CSS：
+
+{% highlight CSS %}
+
+#test:before {
+    content: 'Before ';
+}
+
+{% endhighlight %}
+
+JavaScript获取获取伪元素的content内容，可以使用下面的方法。
+
+{% highlight javascript %}
+
+var test = document.querySelector('#test');
+var result   = getComputedStyle(test, ':before').content;
+
+{% endhighlight %}
 
 ## 动画（animation）
 

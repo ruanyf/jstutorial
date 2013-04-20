@@ -68,6 +68,49 @@ article h3,articl3 h4, article h5{padding-top:0.4em;}
 
 footer p {text-align:right;font-size:85%;border-top:1px dashed #999;}
 
+/* counter */
+
+article, nav h1+ul{
+    counter-reset: chapter;
+}
+
+#toc{
+    counter-reset: h2;
+}
+
+#toc li.toc-h2{
+    counter-reset: h3;
+}
+
+
+#toc li.toc-h2 a:before{
+   counter-increment: h2;
+   content: counter(h2) ". ";
+}
+
+#toc li.toc-h2~li.toc-h3 a:before{
+       counter-increment: h3;
+       content: counter(h2) "."counter(h3) "\3000";
+}
+
+article.bookIndex div.chapter+ul, article div.chapter{
+    counter-reset: section;
+}
+
+article.bookIndex ul{
+    list-style: none;
+}
+   
+article div.chapter h2:before, nav h1+ul li a:before{
+   counter-increment: chapter;
+   content: counter(chapter) ". ";
+}
+
+article.bookIndex div.chapter+ul li a:before, article div.chapter~h3:before{
+   counter-increment: section;
+   content: counter(chapter) "." counter(section) "\3000";
+}
+
 /* toc */
 
 #toc {

@@ -17,11 +17,15 @@ jQuery(document).ready(function(){
 			
 		$('#toc').before('<h2>目录</h2>');	
 
-		$('#toc li.toc-h2 a').each(function (i){
+/*
+        $('#toc li.toc-h2 a').each(function (i){
 			
 			$(this).html((i+1)+'. '+$(this).html());
 			
-			});
+			}); 
+			
+*/
+		$('#toc~h2').wrap('<div class="chapter" />');
 
 	});
 
