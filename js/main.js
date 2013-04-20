@@ -59,7 +59,11 @@ jQuery(window).load(function(){
 
 jQuery(window).hashchange(function(){
 
-	var positionTop = ($(window.location.hash).position().top || 0);
+	if (window.location.hash !== '') {
+		var positionTop = ($(window.location.hash).position().top || 0);
+	} else {
+		var positionTop = 0;
+	}
 	
 	$(window).scrollTop(positionTop>0?positionTop-30:0);
 
