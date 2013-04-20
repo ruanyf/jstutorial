@@ -12,7 +12,7 @@ modifiedOn: 2013-04-18
 
 假定HTML代码如下：
 
-{% highlight HTML %}
+{% highlight html %}
 
 <div id="test">Test content</div>
 
@@ -20,7 +20,7 @@ modifiedOn: 2013-04-18
 
 相应的CSS：
 
-{% highlight CSS %}
+{% highlight css %}
 
 #test:before {
     content: 'Before ';
