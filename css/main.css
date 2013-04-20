@@ -70,7 +70,7 @@ footer p {text-align:right;font-size:85%;border-top:1px dashed #999;}
 
 /* counter */
 
-article, nav h1+ul{
+article, nav h1+ul,nav section li.nav-3 ul{
     counter-reset: chapter;
 }
 
@@ -101,7 +101,7 @@ article.bookIndex ul{
     list-style: none;
 }
    
-article div.chapter h2:before, nav h1+ul li a:before{
+article div.chapter h2:before, nav h1+ul li a:before,nav section li.nav-3 ul li a:before{
    counter-increment: chapter;
    content: counter(chapter) ". ";
 }
