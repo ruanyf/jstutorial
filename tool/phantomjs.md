@@ -3,7 +3,7 @@ layout: page
 title: PhantomJS
 date: 2012-12-08
 category: tool
-modifiedOn: 2012-12-12
+modifiedOn: 2013-04-21
 ---
 
 ## 概述
@@ -101,7 +101,7 @@ page.open('http://slashdot.org', function (s) {
 
 修改page.js，使得它可以从命令行接受参数。
 
-system模块可以加载操作系统变量，system.args就是以数组形式保存输入的命令。
+system模块可以加载操作系统变量，system.args就是参数数组。
 
 {% highlight javascript %}
 
@@ -111,7 +111,7 @@ var page = require('webpage').create(),
 
 // 如果命令行没有给出网址
 if (system.args.length === 1) {
-    console.log('Usage: loadspeed.js <some URL>');
+    console.log('Usage: page.js <some URL>');
     phantom.exit();
 }
 
@@ -122,7 +122,7 @@ page.open(address, function (status) {
         console.log('FAIL to load the address');
     } else {
         t = Date.now() - t;
-        console.log('Loading time ' + t + ' msec');
+        console.log('Loading time ' + t + ' ms');
     }
     phantom.exit();
 });
@@ -139,7 +139,36 @@ phantomjs page.js http://www.google.com
 
 ### 截图
 
-我们修改page.js，使它可以完成网页截图。
+最简单的生成网页截图的方法如下：
+
+{% highlight javascript %}
+
+var page = require('webpage').create();
+page.open('http://google.com', function () {
+    page.render('google.png');
+    phantom.exit();
+});
+
+{% endhighlight %}
+
+page对象代表一个网页实例；open方法表示打开某个网址，它的第一个参数是目标网址，第二个参数是网页载入成功后，运行的回调函数;render方法则是渲染页面，然后以图片格式输出，该方法的参数就是输出的图片文件名。
+
+除了简单截图以外，还可以设置各种截图参数。
+
+{% highlight javascript %}
+
+var page = require('webpage').create();
+page.open('http://google.com', function () {
+    page.zoomFactor = 0.25;
+    console.log(page.renderBase64());
+    phantom.exit();
+});
+
+{% endhighlight %}
+
+zoomFactor表示将截图缩小至原图的25%大小；renderBase64方法则是表示将截图（PNG格式）编码成Base64格式的字符串输出。
+
+下面的例子则是使用了更多参数。
 
 {% highlight javascript %}
 
@@ -147,24 +176,39 @@ phantomjs page.js http://www.google.com
 
 var page = require('webpage').create();
 
-page.viewportSize = { width: 1024, height: 768 };	
+page.settings.userAgent = 'WebKit/534.46 Mobile/9A405 Safari/7534.48.3';
 
-page.open('http://slashdot.org', function () {
+page.settings.viewportSize = { width: 400, height: 600 };
+
+page.open('http://slashdot.org', function (status) {
+
+	if (status !== 'success') {
+        console.log('Unable to load!');
+        phantom.exit();
+    } else {
+
 		var title = page.evaluate(function () {
-        var posts = document.getElementsByClassName("article");
-        posts[0].style.backgroundColor = "#FFF";
-        return document.title;
-    });
-    page.clipRect = { top: 0, left: 0, width: 600, height: 700 };
-    page.render(title + ".png");
-    phantom.exit();
+			var posts = document.getElementsByClassName("article");
+			posts[0].style.backgroundColor = "#FFF";
+			return document.title;
+		});
+
+		page.clipRect = { top: 0, left: 0, width: 600, height: 700 };
+		page.render(title + "1.png");
+		page.clipRect = { left: 0, top: 600, width: 400, height: 600 };
+        page.render(title + '2.png');
+		phantom.exit();
+
+	}
+
 });
 
 {% endhighlight %}
 
 上面代码中的几个属性和方法解释如下：
 
-- viewportSize：指定浏览器窗口的大小，这里是1024x768。
+- settings.userAgent：指定HTTP请求的userAgent头信息，上面例子是手机浏览器的userAgent。
+- settings.viewportSize：指定浏览器窗口的大小，这里是400x600。
 - evaluate()：用来在网页上运行Javascript代码。在这里，我们抓取第一条新闻，然后修改背景颜色，并返回该条新闻的标题。
 - clipRect：用来指定网页截图的大小，这里的截图左上角从网页的(0. 0)坐标开始，宽600像素，高700像素。如果不指定这个值，就表示对整张网页截图。
 - render()：根据clipRect的范围，在当前目录下生成以第一条新闻的名字命名的截图。
@@ -208,3 +252,4 @@ phantom.exit();
 
 - [Testing JavaScript with PhantomJS](http://net.tutsplus.com/tutorials/javascript-ajax/testing-javascript-with-phantomjs/)
 - [Phantom Quick Start](https://github.com/ariya/phantomjs/wiki/Quick-Start)
+- Ariya Hidayat, [Web Page Clipping with PhantomJS](http://ariya.ofilabs.com/2013/04/web-page-clipping-with-phantomjs.html)

@@ -3,7 +3,7 @@ title: 函数
 layout: page
 category: grammar
 date: 2012-12-15
-modifiedOn: 2013-03-23
+modifiedOn: 2013-04-20
 ---
 
 ## 函数的定义
@@ -94,7 +94,7 @@ function f(a,b){
 
 {% endhighlight %}
 
-上面的函数定义了两个参数，但是运行时无论提供多少个参数，JavaScript都不会报错。
+上面的函数定义了两个参数，但是运行时无论提供多少个参数，JavaScript都不会报错。被省略的参数的值就变为undefined。
 
 {% highlight javascript %}
 
