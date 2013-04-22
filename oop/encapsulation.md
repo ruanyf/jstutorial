@@ -3,10 +3,32 @@ title: 封装
 layout: page
 category: oop
 date: 2012-12-14
-modifiedOn: 2013-03-02
+modifiedOn: 2013-04-22
 ---
 
 ## 原型
+
+上一节提到，构造函数可以用作对象的模板。
+
+{% highlight javascript %}
+
+function Animal (name) {
+  this.name = name;
+}
+
+var myAnimal = new Animal('大毛');
+
+{% endhighlight %}
+
+构造函数有一个prototype属性，用来指向实例对象的“原型”对象。可以在原型对象上定义，所有实例对象共同拥有的属性或方法。
+
+{% highlight javascript %}
+
+Animal.prototype.walk = function () {
+  console.log(this.name + ' is walking.');
+};
+
+{% endhighlight %}
 
 JavaScript的每个对象都有一个原型（prototype），原型的方法可以被这个对象继承。也就是说，每个对象都可以视作从它的原型衍生出来的。
 
