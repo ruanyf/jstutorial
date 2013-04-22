@@ -6,38 +6,60 @@ date: 2012-12-28
 modifiedOn: 2013-04-06
 ---
 
+## 什么是“面向对象编程”
+
+“面向对象编程”（Object Oriented Programming，缩写为OOP）是目前主流的编程方法。它的核心思想是将复杂的编程关系，抽象为一个个对象，程序就是对象之间的互动。
+
+每个对象是“属性”（property）与“方法”（method）的封装。所谓“属性”，就是对象的内部变量，保存某种状态；所谓“方法”就是对象的行为，用来完成某种任务。比如，我们可以把动物抽象为animal对象，它的属性记录具体是那一种动物，它的方法表示动物的某种行为（奔跑、捕猎、休息等等）。
+
+“面向对象编程”最大的优点，就是使得程序模块化，容易维护和开发。
+
+本章介绍JavaScript如何进行“面向对象编程”。
+
 ## 构造函数
 
-在C++和Java等面向对象编程的语言中，存在“类”（class）这样一个概念。所谓“类”就是对象的模板，对象就是“类”的实例。JavaScript语言中没有“类”，以构造函数（constructor）作为对象的模板。也就是说，可以用构造函数生成多个相同结构的对象。
+“面向对象编程”的第一步，就是要生成对象。
 
-所以，什么叫“构造函数”，就是可以作为对象的模板的函数。
+通常，需要一个模板，对象按照模板的设置进行生成。比如，每一个动物都是一个animal对象，那么就需要有一个模板，规定一些共同的属性和特征，方便animal对象的生成。
 
-它的最大特点就是，函数体内部使用了this关键字。
+在典型的面向对象编程的语言中（比如C++和Java），存在“类”（class）这样一个概念。所谓“类”就是对象的模板，对象就是“类”的实例。JavaScript语言中没有“类”，以构造函数（constructor）作为对象的模板。也就是说，可以用构造函数生成多个相同结构的对象。
+
+所谓“构造函数”，就是可以作为对象模板的函数。它的作用就是生成对象的实例。下面就是一个构造函数：
 
 {% highlight javascript %}
 
 var Vehicle = function() {
 	this.price = 1000;
-}
+};
 
 {% endhighlight %}
 
-上面代码中的Vehicle就是一个构造函数，代表“车辆”对象的模板。函数体内部的this关键字，代表实例对象。this.price表示实例对象有一个price属性，它的值是1000。
-
-## new命令
-
-根据构造函数生成实例对象，需要使用new命令。
+Vehicle是一个函数，提供模板，用来生成车辆对象。它的最大特点就是，函数体内部使用了this关键字。生成对象的时候，必需用new关键字，调用Vehicle函数。
 
 {% highlight javascript %}
 
 var v = new Vehicle();
 
-console.info(v.price);
+{% endhighlight %}
+
+new命令的作用，就是让构造函数生成一个对象的实例。此时，构造函数内部的this关键字，就代表被生成的实例对象。this.price表示实例对象有一个price属性，它的值是1000。
+
+以上只是展示，利用构造函数生成对象的简单步骤。下面是详细介绍。
+
+## new命令
+
+使用new命令以后，构造函数会返回一个实例对象。我们可以将其保存在一个变量中。
+
+{% highlight javascript %}
+
+var v = new Vehicle();
+
+v.price
 // 1000
 
 {% endhighlight %}
 
-上面代码的变量v，就是新生成的实例对象。它从构造函数Vehicle继承了price属性。
+上面的变量v，就是新生成的实例对象。它从构造函数Vehicle继承了price属性。
 
 new命令后面的构造函数可以带括号，也可以不带括号。下面两行代码是等价的。
 
@@ -49,22 +71,34 @@ var v = new Vehicle;
 
 {% endhighlight %}
 
-但是，如果要向构造函数传入参数，就只有使用第一种表示法了。
+构造函数可以带有参数。如果要传入参数，就只有使用第一种表示法了。
 
 {% highlight javascript %}
 
-var v = new Vehicle(1000);
+var Vehicle = function(p) {
+	this.price = p;
+};
+
+var v = new Vehicle(500);
 
 {% endhighlight %}
 
 ## instanceof运算符
 
-该运算符用来确定一个对象是否是另一个对象的实例。
+instanceof运算符用来确定一个对象是否为某个构造函数的实例。
 
 {% highlight javascript %}
 
-123 instanceof Object 
-// false
+var v = new Vehicle();
+
+v instanceof Vehicle
+// true
+
+{% endhighlight %}
+
+前面章节说过，JavaScript的所有值，都是某种对象。只要是对象，就有对应的构造函数。因此，instanceof运算符可以用来判断值的类型。
+
+{% highlight javascript %}
 
 [1, 2, 3] instanceof Array
 // true
@@ -72,13 +106,9 @@ var v = new Vehicle(1000);
 {} instanceof Object
 // true
 
-var f = function (){};
-var o = new f();
-
-o instanceof f
-// true
-
 {% endhighlight %}
+
+上面的Array和Object，就是JavaScript原生提供的构造函数。
 
 ## this关键字
 
