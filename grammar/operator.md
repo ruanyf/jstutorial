@@ -3,7 +3,7 @@ title: 运算符
 layout: page
 category: grammar
 date: 2013-02-04
-modifiedOn: 2013-03-31
+modifiedOn: 2013-04-28
 ---
 
 ## 算术运算符
@@ -303,38 +303,36 @@ javascript:void(window.open("http://www.whitehouse.gov/"));
 
 {% highlight javascript %}
 
-null == null
-// true
+null == null // true
+undefined == undefined // true
 
-undefined == null
-// true
+undefined == null // true
 
-false == null
-// false
-
-0 == null
-// false
+false == null // false
+0 == null // false
 
 {% endhighlight %}
 
-（2）其他类型的数据会转换成数值类型再进行比较。
+（2）原始类型的数据会转换成数值类型再进行比较。
 
 {% highlight javascript %}
 
-1 == true
-// true
+1 == true // true
+0 == false // true
 
-"2" == true
-// false
+"true" == true // false
 
-2 == true
-// false
+'' == 0 // true
 
-2 == false
-// false
+'' == false  // OK
+'1' == true  // OK
 
-"true" == true
-// false
+"2" == true // false
+2 == true // false
+2 == false // false
+
+'\n  123  \t' == 123 // true
+// 因为字符串转为数字时，省略前置和后置的空格
 
 {% endhighlight %}
 
