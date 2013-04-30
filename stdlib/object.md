@@ -27,9 +27,11 @@ typeof o
 
 JavaScript的所有其他对象，都是继承自Object对象。也就是说，所有其他对象都是从Object衍生出来的（详细介绍见《面向对象编程》一章）。因此，Object对象有一些自带的方法，可以传递到衍生对象上面，即所有其他对象都可以直接调用某些Object对象提供的方法。
 
-## valueOf 和 toString
+## valueOf方法 和 toString方法
 
-Object对象提供的两种最主要的方法是valueOf()和toString()。前者将一个对象转化为原始类型的值，后者将一个对象转化为字符串。在没有规定这两种方法传回的值之前，调用valueOf方法，返回Object对象本身；调用toString方法，返回“[object Object]”字符串。
+Object对象提供的两种最主要的方法是valueOf()和toString()。前者将一个对象转化为原始类型的值，后者将一个对象转化为字符串。
+
+除非自定义这两种方法，否则，调用valueOf方法，返回Object对象本身；调用toString方法，返回“[object Object]”字符串。
 
 {% highlight javascript %}
 
@@ -43,4 +45,4 @@ o.toString()
 
 {% endhighlight %}
 
-这两种方法的意义在于，某些场合JavaScript会自动将对象转化为原始类型，转化的结果就取决于这两个方法。
+这两种方法的意义在于，某些场合JavaScript需要自动将对象转化为原始类型，转化的结果就取决于这两个方法。
