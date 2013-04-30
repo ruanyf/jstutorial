@@ -12,6 +12,11 @@ jQuery(document).on('click',"#toc a",function(){
 
 jQuery(document).ready(function(){
 
+	        if ($('article h2').length === 0) {
+				$('#toc').remove();
+				return 0;
+			}
+
 			$('#toc').toc({
 				'selectors': 'h2,h3,h4', //elements to use as headings
 				'container': 'article'
