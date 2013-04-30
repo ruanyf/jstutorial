@@ -24,6 +24,7 @@ modifiedOn: 2013-04-21
 
 <h2 id="stdlib">标准库</h2>
 
+- [Object对象](stdlib/object.html)
 - [Number对象](stdlib/number.html)
 - [Math对象](stdlib/math.html)
 - [Date对象](stdlib/date.html)
