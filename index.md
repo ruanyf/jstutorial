@@ -28,6 +28,7 @@ modifiedOn: 2013-04-30
 - [原始类型的包装对象](stdlib/wrapper.html)
 - [Boolean对象](stdlib/boolean.html)
 - [Number对象](stdlib/number.html)
+- [String对象](stdlib/string.html)
 - [Math对象](stdlib/math.html)
 - [Date对象](stdlib/date.html)
 - [Regex对象](stdlib/regex.html)
