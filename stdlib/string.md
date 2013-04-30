@@ -18,22 +18,7 @@ var s = new String("abc");
 
 ## String对象的方法
 
-（1）length方法
-
-该方法返回字符串的长度。
-
-{% highlight javascript %}
-
-var s = new String("abc");
-
-s.length()
-// 3
-
-{% endhighlight %}
-
-（2） fromCharCode方法
-
-该方法根据Unicode编码，生成一个字符串。
+String对象直接提供的方法，主要是fromCharCode。该方法根据Unicode编码，生成一个字符串。
 
 {% highlight javascript %}
 
@@ -42,7 +27,18 @@ String.fromCharCode(104, 101, 108, 108, 111)
 
 {% endhighlight %}
 
-## 实例对象的方法
+## 实例对象的属性和方法
+
+### length属性
+
+该属性返回字符串的长度。
+
+{% highlight javascript %}
+
+"abc".length
+// 3
+
+{% endhighlight %}
 
 ### charAt 和 charCodeAt 方法
 
