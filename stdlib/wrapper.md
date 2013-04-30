@@ -49,13 +49,15 @@ new String("abc") instanceof Object
 
 {% endhighlight %}
 
-### 包装对象的目的
+## 包装对象的目的
 
-JavaScript设计包装对象的最大目的，就是使得JavaScript可以使用同样一套关于“对象”的规范，描述所有的值。
+JavaScript设计包装对象的最大目的，首先是使得JavaScript的“对象”涵盖所有的值。其次，使得原始类型的值可以方便地调用特定方法。
 
-首先，包装对象可以使用Object对象的原生方法，主要是valueOf和toString方法。
+### Object对象提供的原生方法
 
-valueOf方法，返回该对象对应的原始类型的值。
+包装对象可以使用Object对象提供的原生方法，主要是 valueOf 方法和 toString 方法。
+
+valueOf 方法，返回该对象对应的原始类型的值。
 
 {% highlight javascript %}
 
@@ -70,7 +72,7 @@ new Boolean("true").valueOf()
 
 {% endhighlight %}
 
-toString方法，返回该对象的值的字符串形式。
+toString 方法，返回该对象的原始类型值的字符串形式。
 
 {% highlight javascript %}
 
@@ -114,7 +116,38 @@ v.length
 
 {% endhighlight %}
 
-其次，三种包装对象还可以在原型上添加自定义方法（prototype的含义详见《面向对象编程》一章）。比如，我们可以新增一个double方法，使得字符串和数字翻倍。
+### 包装对象提供的原生方法
+
+三种包装对象自身还带有一些原生方法，可以直接调用。
+
+{% highlight javascript %}
+
+var s1 = "some text";
+
+s1.substring(2)
+// "me text"
+
+{% endhighlight %}
+
+上面代码的s1是一个字符串，属于原始类型，本身不能调用任何方法。当对s1调用substring方法时，JavaScript引擎自动将s
+1转化为一个包装对象实例，然后再对这个实例调用substring方法。在将得到的值返回后，再自动销毁这个临时生成的包装对象实例。
+
+但是，这种自动生成包装对象实例的机制，只对原型方法有效。如果直接对原始类型的变量添加属性，则无效。
+
+{% highlight javascript %}
+
+var s1 = "some text";
+
+s1.p = 123;
+
+s1.p
+// undefined
+
+{% endhighlight %}
+
+### 自定义方法
+
+三种包装对象还可以在原型上添加自定义方法（prototype的含义详见《面向对象编程》一章）。比如，我们可以新增一个double方法，使得字符串和数字翻倍。
 
 {% highlight javascript %}
 
@@ -138,7 +171,7 @@ Number.prototype.double = function (){
 
 {% endhighlight %}
 
-### 自动转化
+## 自动转化
 
 可以直接在原始类型的值上使用包装对象的方法，这时原始类型的值会自动转化成包装对象。
 
