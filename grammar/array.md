@@ -3,7 +3,7 @@ title: 数组
 date: 2012-12-11
 category: grammar
 layout: page
-modifiedOn: 2013-03-23
+modifiedOn: 2013-05-04
 ---
 
 ## 定义
@@ -196,7 +196,7 @@ a.length
 // 7
 
 a
-["a", undefined × 5, "b"]
+// ["a", undefined × 5, "b"]
 
 {% endhighlight %}
 
@@ -246,9 +246,24 @@ delete a[1]
 // true
 
 a.length
+// 3
+
+a
 // [1, undefined × 1, 3]
 
 {% endhighlight %}
+
+由于length属性存在上面两个特点，使用它进行数组遍历，一定要非常小心。
+
+{% highlight javascript %}
+
+for (var i=0; i<a.length; i++){
+	// 遍历操作
+}
+
+{% endhighlight %}
+
+上面的写法会遗漏非数字键的属性，并且会包括undefined的值。
 
 ## 数组的空位
 
@@ -263,7 +278,7 @@ a
 
 {% endhighlight %}
 
-另一种情况是使用delete命令删除一个值。
+另一种“空位”的情况是使用delete命令删除一个值。
 
 {% highlight javascript %}
 
@@ -277,31 +292,34 @@ a
 
 {% endhighlight %}
 
-空位会被计入length属性，值为undefined。
+前面说过，空位会被计入length属性，值为undefined。
 
 {% highlight javascript %}
 
 var a = new Array(3);
 
-a
-// [ , ,  ]
-
 a.length
 // 3
+
+a
+// [undefined × 3]
 
 a[0]
 // undefined
 
 {% endhighlight %}
 
-但是，执行循环操作时，空位会被跳过。
+使用length属性进行遍历，空位不会被跳过。但是，使用数组的forEach方法或者for...in结构进行遍历，空位就会被跳过。
 
 {% highlight javascript %}
 
 var a = new Array(3);
 
-a.forEach(function (x, i) { console.log(i+". "+x) });
+a.forEach(function (x, i) { console.log(i+". "+x) })
 // 不产生任何输出 
+
+for (var i in a){console.log(i)}
+// 不产生任何输出
 
 {% endhighlight %}
 
@@ -315,6 +333,10 @@ a.forEach(function (x, i) { console.log(i+". "+x) });
 // 0. undefined
 // 1. undefined
 // 2. undefined
+
+for (var i in a){console.log(i)}
+// 0
+// 2
 
 {% endhighlight %}
 
