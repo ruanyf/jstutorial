@@ -32,7 +32,7 @@ a3
 - reverse 颠倒数组中元素的顺序
 - unshift 向数组的开头添加一个或多个元素，并返回添加后的数组长度
 
-## valueOf 方法和 toString 方法
+### valueOf 方法和 toString 方法
 
 valueOf 方法返回数组本身。
 
