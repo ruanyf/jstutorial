@@ -2,7 +2,7 @@
 layout: homepage
 title: JavaScript 标准教程（alpha）
 date: 2012-11-18
-modifiedOn: 2013-04-30
+modifiedOn: 2013-05-04
 ---
 
 <h2 id="introduction">导论</h2>
@@ -26,6 +26,7 @@ modifiedOn: 2013-04-30
 <h2 id="stdlib">标准库</h2>
 
 - [Object对象](stdlib/object.html)
+- [Array 对象](stdlib/array.html)
 - [原始类型的包装对象](stdlib/wrapper.html)
 - [Boolean对象](stdlib/boolean.html)
 - [Number对象](stdlib/number.html)
