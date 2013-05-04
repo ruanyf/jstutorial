@@ -25,6 +25,32 @@ typeof o
 
 通过 var o = new Object() 的写法来生成新对象，与字面量的写法 var o = {} 是等价的。建议采用前者，因为这能更清楚地显示一行语句的目的。
 
+与Object对象相关的方法，分成两种。一种是Object对象本身的方法，比如我在Object对象上面定义一个print方法，显示其他对象的内容。
+
+{% highlight javascript %}
+
+Object.print = function(o){ console.log(o)};
+
+var o = {p:"abc"};
+
+Object.print(o)
+// Object {p: "abc"}
+
+{% endhighlight %}
+
+还有一种是Object实例的方法。因为Object也是一个构造函数，有些方法是定义在构造函数里面的，或者定义在Object的原型上面（详细解释参见后面的《面向对象编程》一章）。这时，Object本身不能使用这些方法，但是它的实例可以使用。
+
+{% highlight javascript %}
+
+Object.prototype.print = function(){ console.log(this)};
+
+var o = {p:"abc"};
+
+o.print()
+// Object {p: "abc", print: function}
+
+{% endhighlight %}
+
 JavaScript的所有其他对象，都是继承自Object对象。也就是说，所有其他对象都是从Object衍生出来的（详细介绍见《面向对象编程》一章）。因此，Object对象有一些自带的方法，可以传递到衍生对象上面，即所有其他对象都可以直接调用某些Object对象提供的方法。
 
 ## Object 对象实例的方法

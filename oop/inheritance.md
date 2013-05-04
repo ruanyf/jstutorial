@@ -2,7 +2,7 @@
 title: 继承
 layout: page
 date: 2012-12-12
-modifiedOn: 2013-03-02
+modifiedOn: 2013-05-04
 category: oop
 ---
 
@@ -151,7 +151,19 @@ for (p in o2) {console.info(p);}
 
 {% endhighlight %}
 
-获得对象的所有属性（不管是自身的还是继承的），可以使用下面的函数。
+为了在for...in循环中获得对象自身的属性，可以采用hasOwnProperty方法判断一下。
+
+{% highlight javascript %}
+
+for ( var name in object ) {
+    if ( object.hasOwnProperty(name) ) {
+        /* loop code */
+    }
+}
+
+{% endhighlight %}
+
+获得对象的所有属性（不管是自身的还是继承的，以及是否可枚举），可以使用下面的函数。
 
 {% highlight javascript %}
 
