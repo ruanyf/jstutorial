@@ -2,7 +2,7 @@
 layout: homepage
 title: JavaScript 标准教程（alpha）
 date: 2012-11-18
-modifiedOn: 2013-05-04
+modifiedOn: 2013-05-09
 ---
 
 <h2 id="introduction">导论</h2>
@@ -42,6 +42,7 @@ modifiedOn: 2013-05-04
 - [概述](oop/basic.html)
 - [封装](oop/encapsulation.html)
 - [继承](oop/inheritance.html)
+- [ECMAscript 6 介绍](oop/ecmascript6.html)
 
 <h2 id="dom">DOM</h2>
 

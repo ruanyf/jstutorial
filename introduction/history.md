@@ -3,7 +3,7 @@ title: JavaScript的历史
 layout: page
 category: introduction
 date: 2013-01-10
-modifiedOn: 2013-03-23
+modifiedOn: 2013-05-09
 ---
 
 ## 诞生
@@ -63,7 +63,27 @@ modifiedOn: 2013-03-23
 
 ## 浏览器支持
 
-Netscape公司将JavaScript标准化的同时，在内部依然使用自己的版本号。JavaScript 1.1版对应ECMAScript 1.0版，但是直到JavaScript 1.4版才完全兼容ECMAScript 1.0版，JavaScript 1.5版完全兼容ECMAScript 3.0版。目前的版本是JavaScript 1.8版，完全兼容ECMAScript 第五版。
+Netscape公司将JavaScript标准化的同时，在内部依然使用自己的版本号。
+
+1996年3月，Navigator 2.0内置了JavaScript 1.0。
+
+1996年8月，Navigator 3.0内置了JavaScript 1.1。
+
+1997年6月，Navigator 4.0内置了JavaScript 1.2。
+
+1998年10月，Navigator 4.06内置了JavaScript 1.3。
+
+1999年，Netscape服务器版提供JavaScript 1.4。
+
+2000年11月，Navigator 6.0内置了JavaScript 1.5。
+
+2005年11月，Firefox 1.5内置了JavaScript 1.6。
+
+2006年10月，Firfox 2.0内置了JavaScript 1.7。
+
+2008年6月，Firefox 3.0内置了JavaScript 1.8。
+
+JavaScript 1.1版对应ECMAScript 1.0版，但是直到JavaScript 1.4版才完全兼容ECMAScript 1.0版，JavaScript 1.5版完全兼容ECMAScript 3.0版。目前的版本是JavaScript 1.8版，完全兼容ECMAScript 第五版。
 
 截止2013年初，所有浏览器的最新版本——Chrome 24，Firefox 19，IE 10.0，Opera 12，Safari 6——都支持ECMAScript 5.1版。
 
