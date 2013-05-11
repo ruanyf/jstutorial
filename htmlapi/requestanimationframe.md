@@ -3,7 +3,7 @@ title: requestAnimationFrame
 layout: page
 category: htmlapi
 date: 2013-02-12
-modifiedOn: 2013-05-08
+modifiedOn: 2013-05-10
 ---
 
 ## 概述
@@ -13,6 +13,8 @@ requestAnimationFrame是浏览器用于定时循环操作的一个接口，类�
 因为显示器有固定的刷新频率（60Hz或75Hz），也就是说，每秒最多只能重绘60次或75次，所以requestAnimationFrame的基本思想就是，与这个刷新频率保持同步，利用这个刷新频率进行页面重绘。
 
 此外，使用这个API，一旦页面不处于浏览器的当前标签，就会自动停止刷新。这就节省了CPU、GPU和电力。
+
+不过有一点需要注意，requestAnimationFrame是在主线程上完成。这意味着，如果主线程非常繁忙，requestAnimationFrame的动画效果会大打折扣。
 
 可以用下面的方法，检查浏览器是否支持这个API。如果不支持，则部署代码模拟它的效果。
 

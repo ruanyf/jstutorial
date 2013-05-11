@@ -79,6 +79,7 @@ modifiedOn: 2013-05-09
 - [选择器](jquery/selector.html)
 - [Utility方法](jquery/utility.html)
 - [deferred对象](jquery/deferred.html)
+- [如何做到jQuery-free？](jquery/jquery-free.html)
 
 <h2 id="library">函数库</h2>
 
