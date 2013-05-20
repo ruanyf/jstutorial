@@ -273,19 +273,13 @@ function request(type, url, opts, callback) {
 	var fd = new FormData();
 
 	if (type === 'POST' && opts) {
-    
 		for (var key in opts) {
-      
 			fd.append(key, JSON.stringify(opts[key]));
-    
 		}
-  
 	}
 
 	xhr.onload = function () {
-    
 		callback(JSON.parse(xhr.response));
-
 	};
  
 	xhr.send(opts ? fd : null);

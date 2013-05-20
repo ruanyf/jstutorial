@@ -3,7 +3,7 @@ title: Node.js 概述
 layout: page
 category: nodejs
 date: 2013-01-14
-modifiedOn: 2013-04-22
+modifiedOn: 2013-05-20
 ---
 
 ## 简介
@@ -23,6 +23,34 @@ node --version
 {% highlight bash %}
 
 node file.js
+
+{% endhighlight %}
+
+## 加载模块
+
+node.js采用模块化结构，按照[CommonJS规范](http://wiki.commonjs.org/wiki/CommonJS)定义和使用模块。
+
+require命令用于指定加载模块。
+
+{% highlight javascript %}
+
+var otherModule = require('otherModule');
+
+{% endhighlight %}
+
+require接受的参数不是模块的名称，而是模块的路径。
+
+{% highlight javascript %}
+
+require('../otherModule');
+
+{% endhighlight %}
+
+然后，就可以调用模块中定义的方法了。
+
+{% highlight javascript %}
+
+otherModule.someFunction();
 
 {% endhighlight %}
 
