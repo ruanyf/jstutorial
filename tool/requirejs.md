@@ -3,14 +3,42 @@ title: RequireJS
 layout: page
 category: tool
 date: 2013-05-05
-modifiedOn: 2013-05-05
+modifiedOn: 2013-05-20
 ---
 
-## define()和require()
+## 概述
 
-RequireJS提供了两个主要的方法：define()和require()。两者格式接近，都可以用来加载所依赖的模块，然后执行回调函数。
+RequireJS是一个工具库，主要用于客户端的模块管理，它遵守[AMD规范](https://github.com/amdjs/amdjs-api/wiki/AMD)（Asynchronous Module Definition）。
 
-两者的区别主要是，define()主要用来定义一个新模块，而require()则用来执行一段代码。所以，define()必须有返回值，而且应该遵守[AMD](http://requirejs.org/docs/whyamd.html)规范（异步模块定义，Asynchronous Module Definition）。
+它主要提供define和require两个方法，前者用于定义模块，后者用于调用模块。
+
+## 定义模块
+
+define方法用于定义模块。
+
+{% highlight javascript %}
+
+define(['module1', 'module2'], function(m1, m2) {
+   ...
+});
+
+{% endhighlight %}
+
+define方法的第一个参数是一个数组，用于定义当前模块所依赖的模块。
+
+## 调用模块
+
+require方法用于调用模块。
+
+在define方法内部，也可以调用模块。
+
+{% highlight javascript %}
+
+define(function(require) {
+   var otherModule = require('otherModule');
+});
+
+{% endhighlight %}
 
 ## 优化器
 
