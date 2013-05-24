@@ -3,7 +3,7 @@ title: Web Worker
 layout: page
 category: htmlapi
 date: 2013-01-25
-modifiedOn: 2013-02-14
+modifiedOn: 2013-05-21
 ---
 
 ## 概述
@@ -18,7 +18,7 @@ Web Worker有以下几个特点：
 - 子线程无法读取网页的DOM对象，即document、window、parent这些对象，子线程都无法得到。
 - 子线程无法读取本地文件，即子线程无法打开本机的文件系统（file://），它所加载的脚本，必须来自网络。
 
-使用之前，检查浏览器是否支持这个API。
+使用之前，检查浏览器是否支持这个API。支持的浏览器包括IE10、Firefox (从3.6版本开始)、Safari (从4.0版本开始)、Chrome 和 Opera 11，但是手机浏览器还不支持。
 
 {% highlight javascript %}
 
@@ -26,6 +26,18 @@ if (window.Worker) {
   // 支持
 } else {
   // 不支持
+}
+
+{% endhighlight %}
+
+如果使用Modernizr库，则判断方法为：
+
+{% highlight javascript %}
+
+if (Modernizr.webworkers) {
+    // 支持
+} else {
+    // 不支持
 }
 
 {% endhighlight %}

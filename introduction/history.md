@@ -3,12 +3,22 @@ title: JavaScript的历史
 layout: page
 category: introduction
 date: 2013-01-10
-modifiedOn: 2013-05-09
+modifiedOn: 2013-05-24
 ---
 
-## 诞生
+## 互联网的起源
 
-1994年，Netscape公司成立，开发了第一代面向普通用户的网络浏览器Navigator，市场份额超过90%。他们很快发现，需要一种可以嵌入网页的脚本语言，用来控制浏览器行为。
+1990年底，欧洲核能研究组织（CERN）科学家Tim Berners-Lee，在互联网的基础上，发明了万维网（World Wide Web），从此可以在网上浏览网页。
+
+最早的网页只能在操作系统的终端里面浏览，不是很方便。1992年底，美国国家超级电脑应用中心（NCSA）开始开发一个独立的浏览器，叫做Mosaic。这是人类历史上第一个浏览器。
+
+1994年10月，NCSA的一个主要程序员Marc Andreessen联合风险投资家Jim Clark，成立了Mosaic通信公司（Mosaic Communications），不久后改名为Netscape。这家公司的目的，就是在Mosaic的基础上，开发面向普通用户的新一代的浏览器Netscape Navigator。
+
+1994年12月，Navigator发布了1.0版，市场份额超过90%。
+
+## JavaScript的诞生
+
+Netscape公司很快发现，Navigator浏览器需要一种可以嵌入网页的脚本语言，用来控制浏览器行为。
 
 当时，网速很慢而且上网费很贵，有些操作不宜在服务器端完成。比如，如果用户忘记填写“用户名”，就点了“发送”按钮，到服务器再发现这一点就有点太晚了，最好能在用户发出数据之前，就告诉用户“请填写xx栏”。这就需要网页中嵌入小程序，让浏览器检查每一栏是否都填写了。
 
