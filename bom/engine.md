@@ -3,7 +3,7 @@ title: JavaScript 运行原理
 layout: page
 category: bom
 date: 2013-03-10
-modifiedOn: 2013-05-21
+modifiedOn: 2013-05-27
 ---
 
 ## 概述
@@ -80,6 +80,48 @@ JavaScript在浏览器中以单线程运行，也就是说，所有的操作都�
 - 30-32ms，运行timerTask函数。
 - 40-42ms，运行timerTask函数。
 
-可见单线程的特点就是一个时间只有一个任务运行，后面的任务必须排队等待。
+可见单线程的特点就是一个时间只有一个任务运行，后面的任务必须排队等待。有时，为了将耗时的任务移到当前栈的结尾，可以使用setTimeout(function, 0)方法。
+
+{% highlight javascript %}
+
+console.log("栈开始");
+
+setTimeout(function() { console.log("当前栈结束后运行");}, 0);
+
+function a(x) { 
+	console.log("a() 开始运行");
+	b(x);
+	console.log("a() 结束运行");
+}
+
+function b(y) { 
+	console.log("b() 开始运行");
+	console.log("传入的值为" + y);
+	console.log("b() 结束运行");
+}
+
+console.log("当前任务开始");
+a(42);
+console.log("栈结束");
+
+{% endhighlight %}
+
+上面代码的运行结果如下：
+
+{% highlight bash %}
+
+栈开始
+当前任务开始
+a() 开始运行
+b() 开始运行
+传入的值为42
+b() 结束运行
+a() 结束运行
+栈结束
+当前栈结束后运行
+
+{% endhighlight %}
+
+可以看到，setTimeout(function, 0)将任务移到当前栈结束后运行。
 
 现在的计算机CPU普遍是多核的，单线程就意味着只使用一核。这当然没有充分利用资源，所以HTML5提供了Web Worker，允许通过这个API实现多线程操作。
