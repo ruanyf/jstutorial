@@ -3,7 +3,7 @@ title: Node.js 概述
 layout: page
 category: nodejs
 date: 2013-01-14
-modifiedOn: 2013-05-20
+modifiedOn: 2013-05-26
 ---
 
 ## 简介
@@ -51,6 +51,24 @@ require('../otherModule');
 {% highlight javascript %}
 
 otherModule.someFunction();
+
+{% endhighlight %}
+
+## 定义模块
+
+模块的定义也是采用CommonJS规范。
+
+在一个单独文件中，用require命令调用所依赖的模块，然后在exports对象上输出对外接口。
+
+{% highlight javascript %}
+
+var M1 = require( "module1" );
+var M2 = require( "module2" );    
+
+exports.newModule = function() {
+    M1.methodA();
+    M2.methodB();
+};
 
 {% endhighlight %}
 

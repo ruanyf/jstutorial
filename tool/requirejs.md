@@ -3,7 +3,7 @@ title: RequireJS
 layout: page
 category: tool
 date: 2013-05-05
-modifiedOn: 2013-05-20
+modifiedOn: 2013-05-26
 ---
 
 ## 概述
@@ -16,6 +16,20 @@ RequireJS是一个工具库，主要用于客户端的模块管理，它遵守[A
 
 define方法用于定义模块。
 
+如果被定义的模块是一个独立模块，不需要依赖任何其他模块，则可以直接用define方法生成。
+
+{% highlight javascript %}
+
+define({
+    method1: function() {},
+    method2: function() {},
+    method3: function() {}    
+});
+
+{% endhighlight %}
+
+如果被定义的模块需要依赖其他模块，则define方法必须采用下面的格式。
+
 {% highlight javascript %}
 
 define(['module1', 'module2'], function(m1, m2) {
@@ -24,7 +38,43 @@ define(['module1', 'module2'], function(m1, m2) {
 
 {% endhighlight %}
 
-define方法的第一个参数是一个数组，用于定义当前模块所依赖的模块。
+define方法的第一个参数是一个数组，它的成员是当前模块所依赖的模块。比如，['module1', 'module2']表示我们定义的这个新模块依赖于module1模块和module2模块，只有先加载这两个模块，新模块才能正常运行。一般情况下，module1模块和module2模块指的是，当前目录下的module1.js文件和module2.js文件。
+
+define方法的第二个参数是一个函数，当前面数组的所有成员加载成功后，它将被调用。它的参数与数组的成员一一对应，比如function(m1, m2)就表示，这个函数的第一个参数m1对应module1模块，第二个参数m2对应module2模块。这个函数必须返回一个对象，供其他模块调用。
+
+{% highlight javascript %}
+
+define(['module1', 'module2'], function(m1, m2) {
+
+    return {
+        method: function() {
+            m1.methodA();
+			m2.methodB();
+        }
+    };
+
+});
+
+{% endhighlight %}
+
+AMD规范允许输出的模块兼容CommonJS规范，这时define方法需要写成下面这样：
+
+{% highlight javascript %}
+
+define(function( require, exports, module )
+    var someModule = require( "someModule" );
+    var anotherModule = require( "anotherModule" );    
+
+    someModule.doTehAwesome();
+    anotherModule.doMoarAwesome();
+
+    exports.asplode = function() {
+        someModule.doTehAwesome();
+        anotherModule.doMoarAwesome();
+    };
+});
+
+{% endhighlight %}
 
 ## 调用模块
 
@@ -39,6 +89,67 @@ define(function(require) {
 });
 
 {% endhighlight %}
+
+如果服务器端采用JSONP模式，则可以直接在require中调用，方法是指定回调函数为define。
+
+{% highlight javascript %}
+
+require( [ 
+    "http://someapi.com/foo?callback=define"
+], function (data) {
+    console.log(data);
+});
+
+{% endhighlight %}
+
+## config方法
+
+require对象有一个config方法，用来配置require.js运行参数。
+
+config方法接受一个对象参数。
+
+{% highlight javascript %}
+
+require.config({
+    paths: {
+        jquery: [
+            '//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.0/jquery.min.js',
+            'lib/jquery'
+        ]
+    }
+});
+
+{% endhighlight %}
+
+这个对象参数的主要成员如下：
+
+path：用来指定各个模块的位置。这个位置可以是相对位置，也可以是第三方网站上的位置。可以定义多个位置，如果第一个位置加载失败，则加载第二个位置，上面的示例就表示如果CDN加载失败，则加载服务器上的备用脚本。
+
+baseUrl：模块位置的基准目录，通常由require.js加载时的data-main属性指定。
+
+shim：有些库不是AMD兼容的，这时就需要指定shim属性的值。shim可以理解成“垫片”，用来帮助require.js加载非AMD规范的库。
+
+{% highlight javascript %}
+
+require.config({
+    paths: {
+        "backbone": "vendor/backbone",
+        "underscore": "vendor/underscore"
+    },
+    shim: {
+        "backbone": {
+            deps: [ "underscore" ],
+            exports: "Backbone"
+        },
+        "underscore": {
+            exports: "_"
+        }
+    }
+});
+
+{% endhighlight %}
+
+上面代码中的backbone和underscore就是非AMD规范的库。shim指定它们的依赖关系（backbone依赖于underscore），以及输出符号（backbone为“Backbone”，underscore为“_”）。
 
 ## 优化器
 
@@ -150,3 +261,4 @@ node r.js -o build.js
 ## 参考链接
 
 - NaorYe, [Optimize (Concatenate and Minify) RequireJS Projects](http://www.webdeveasy.com/optimize-requirejs-projects/)
+- Jonathan Creamer, [Deep dive into Require.js](http://tech.pro/tutorial/1300/deep-dive-into-requirejs)
