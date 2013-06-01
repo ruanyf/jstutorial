@@ -3,7 +3,7 @@ title: Chrome Developer Tools
 layout: page
 category: tool
 date: 2013-02-06
-modifiedOn: 2013-02-06
+modifiedOn: 2013-05-28
 ---
 
 ## 打开方法
@@ -28,3 +28,26 @@ modifiedOn: 2013-02-06
 
 1. 网页加载的各种外部资源，比如CSS文件、JavaScript文件、图片、字体等等。
 2. 网页创建的各种内容，比如本地缓存、Cookie、Local Storage等等。
+
+## Sources面板
+
+该面板主要用来调试JavaScript源码。
+
+它分成左右两部分。左面显示源码文件本身，右面显示各种调试信息，分成8个部分。
+
+（1）Watch Expressions：查看各种表达式的值。它的右上角有一个加号（+），用来添加表达式。
+
+（2）Call Stack：显示函数的调用栈。
+
+（3）Scope Variables：显示各个作用域中的变量。
+
+（4）Breakpoints
+
+（5）DOM Breakpoints
+
+（6）XHR Breakpoints
+
+（7）Event Listener Breakpoints
+
+（8）Workers
+
