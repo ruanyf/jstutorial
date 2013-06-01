@@ -3,10 +3,10 @@ title: 为什么学习JavaScript？
 layout: page
 category: introduction
 date: 2012-12-29
-modifiedOn: 2013-04-22
+modifiedOn: 2013-06-01
 ---
 
-JavaScript有一些显著特点，使得它非常值得学习。
+JavaScript语言有一些显著特点，使得它非常值得学习。
 
 ## 广泛的使用
 
@@ -31,17 +31,35 @@ JavaScript正在变成一种通用目的语言，不再仅仅局限于网页编�
 
 相比学习其他语言，学习JavaScript有一些有利条件。
 
-- 学习环境无处不在。只要你有浏览器，就有一个JavaScript引擎，就可以用来编写网页程序。几乎所有可以上网的操作系统，都原生提供浏览器，因此也就意味着，几乎每一台计算机都有JavaScript引擎。
-- 简单性。相比其他脚本语言（比如Python或Ruby），JavaScript的语法相对简单一些。
-- 与主流语言的相似性。JavaScript的语法很类似C语言（或C++）和Java语言，如果你学过这些语言，JavaScript入门会非常容易。
+(1) 学习环境无处不在。
 
-## 灵活的语法
+只要有浏览器，就能运行JavaScript程序；只要有文本编辑器，就能编写JavaScript程序。这意味着，几乎所有电脑都原生提供JavaScript学习环境，不用另行安装复杂的IDE（集成开发环境）和编译器。
+
+（2）简单性。
+
+相比其他脚本语言（比如Python或Ruby），JavaScript的语法相对简单一些。
+
+（3）与主流语言的相似性。
+
+JavaScript的语法很类似C/C++和Java，如果学过这些语言，JavaScript的入门会非常容易。
+
+## 强大的性能
+
+JavaScript的性能优势体现在以下方面。
+
+（1）灵活的语法，表达力强。
 
 JavaScript既支持类似C语言清晰的过程式编程，也支持灵活的函数式编程。可以用来写并发处理（concorrent）。这些语法特性已经被证明非常强大，可以用于许多场合，尤其适用非同步编程。
 
 JavaScript的标准还是快速进化中，并不断合理化，并添加更适用的语法结构。
 
-JavaScript的编译器也在快速发展，它的性能将越来越好。在不久的将来，浏览器很可能会内置已编译好的JavaScript程序。
+（2）支持编译运行。
+
+JavaScript语言本身，虽然是一种解释型语言，但是在现代浏览器中，JavaScript都是编译后运行。程序会被高度优化，运行效率接近二进制程序。而且，JavaScript引擎正在快速发展，性能将越来越好。
+
+（3）事件驱动和非阻塞式设计。
+
+JavaScript程序可以采用事件驱动（event-driven）和非阻塞式（non-blocking）设计，在服务器端适合高并发环境，普通的硬件就可以承受很大的访问量。
 
 ## 开放性
 
