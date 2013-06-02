@@ -3,7 +3,7 @@ title: RequireJS
 layout: page
 category: tool
 date: 2013-05-05
-modifiedOn: 2013-05-26
+modifiedOn: 2013-06-02
 ---
 
 ## 概述
@@ -124,6 +124,23 @@ require.config({
 这个对象参数的主要成员如下：
 
 path：用来指定各个模块的位置。这个位置可以是相对位置，也可以是第三方网站上的位置。可以定义多个位置，如果第一个位置加载失败，则加载第二个位置，上面的示例就表示如果CDN加载失败，则加载服务器上的备用脚本。
+
+{% highlight javascript %}
+
+require.config({
+  paths: {
+      jquery: [
+	  '//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.0/jquery.min.js',
+	  'lib/jquery'
+	  ]
+  }
+});
+
+require(["mylibs/moduleX"], function(jquery, moduleX) {
+    // ...
+});
+
+{% endhighlight %}
 
 baseUrl：模块位置的基准目录，通常由require.js加载时的data-main属性指定。
 
