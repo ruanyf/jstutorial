@@ -92,27 +92,6 @@ define(['math', 'graph'],
 
 {% endhighlight %}
 
-（3）第三种情况：CommonJS兼容模块。
-
-AMD规范允许输出的模块兼容CommonJS规范，这时define方法需要写成下面这样：
-
-{% highlight javascript %}
-
-define(function( require, exports, module )
-    var someModule = require( "someModule" );
-    var anotherModule = require( "anotherModule" );    
-
-    someModule.doTehAwesome();
-    anotherModule.doMoarAwesome();
-
-    exports.asplode = function() {
-        someModule.doTehAwesome();
-        anotherModule.doMoarAwesome();
-    };
-});
-
-{% endhighlight %}
-
 ## require方法：调用模块
 
 require方法用于调用模块。它的参数与define方法类似。

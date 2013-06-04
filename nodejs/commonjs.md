@@ -85,3 +85,22 @@ define(['package/lib'], function(lib){
 });
 
 {% endhighlight %}
+
+AMD规范允许输出的模块兼容CommonJS规范，这时define方法需要写成下面这样：
+
+{% highlight javascript %}
+
+define(function( require, exports, module )
+    var someModule = require( "someModule" );
+    var anotherModule = require( "anotherModule" );    
+
+    someModule.doTehAwesome();
+    anotherModule.doMoarAwesome();
+
+    exports.asplode = function() {
+        someModule.doTehAwesome();
+        anotherModule.doMoarAwesome();
+    };
+});
+
+{% endhighlight %}
