@@ -1,9 +1,9 @@
 ---
-title: RequireJS
+title: RequireJS和AMD规范
 layout: page
 category: tool
 date: 2013-05-05
-modifiedOn: 2013-06-02
+modifiedOn: 2013-06-04
 ---
 
 ## 概述
@@ -12,9 +12,11 @@ RequireJS是一个工具库，主要用于客户端的模块管理，它遵守[A
 
 它主要提供define和require两个方法，前者用于定义模块，后者用于调用模块。
 
-## 定义模块
+## define方法：定义模块
 
 define方法用于定义模块。
+
+（1）第一种情况：独立模块。
 
 如果被定义的模块是一个独立模块，不需要依赖任何其他模块，则可以直接用define方法生成。
 
@@ -27,6 +29,21 @@ define({
 });
 
 {% endhighlight %}
+
+也可以把对象写成一个函数，该函数的返回值就是输出的模块。
+
+{% highlight javascript %}
+
+define(function () {
+	return {
+	    method1: function() {},
+		method2: function() {},
+    };
+});
+ 
+{% endhighlight %}
+
+（2）第二种情况：非独立模块。
 
 如果被定义的模块需要依赖其他模块，则define方法必须采用下面的格式。
 
@@ -57,6 +74,26 @@ define(['module1', 'module2'], function(m1, m2) {
 
 {% endhighlight %}
 
+需要注意的是，回调函数必须返回一个对象。这个对象就是你定义的模块，这个对象的方法就是模块的外部调用接口。
+
+下面是一个实际的例子。
+
+{% highlight javascript %}
+
+define(['math', 'graph'], 
+    function ( math, graph ) {
+		return {
+            plot: function(x, y){
+                return graph.drawPie(math.randomGrid(x,y));
+            }
+        }
+    };
+);
+
+{% endhighlight %}
+
+（3）第三种情况：CommonJS兼容模块。
+
 AMD规范允许输出的模块兼容CommonJS规范，这时define方法需要写成下面这样：
 
 {% highlight javascript %}
@@ -76,9 +113,19 @@ define(function( require, exports, module )
 
 {% endhighlight %}
 
-## 调用模块
+## require方法：调用模块
 
-require方法用于调用模块。
+require方法用于调用模块。它的参数与define方法类似。
+
+{% highlight javascript %}
+
+require(['foo', 'bar'], function ( foo, bar ) {
+        foo.doSomething();
+});
+
+{% endhighlight %}
+
+require方法的回调函数，就是执行具体任务的部分。
 
 在define方法内部，也可以调用模块。
 
@@ -86,6 +133,42 @@ require方法用于调用模块。
 
 define(function(require) {
    var otherModule = require('otherModule');
+});
+
+{% endhighlight %}
+
+下面的例子显示了如何动态加载模块。
+
+{% highlight javascript %}
+
+define(function ( require ) {
+    var isReady = false, foobar;
+ 
+    require(['foo', 'bar'], function (foo, bar) {
+        isReady = true;
+        foobar = foo() + bar();
+    });
+ 
+    return {
+        isReady: isReady,
+        foobar: foobar
+    };
+});
+ 
+{% endhighlight %}
+
+下面的例子是模块的输出结果是一个promise对象。
+
+{% highlight javascript %}
+
+define(['lib/Deferred'], function( Deferred ){
+    var defer = new Deferred(); 
+    require(['lib/templates/?index.html','lib/data/?stats'],
+        function( template, data ){
+            defer.resolve({ template: template, data:data });
+        }
+    );
+    return defer.promise();
 });
 
 {% endhighlight %}
@@ -102,9 +185,17 @@ require( [
 
 {% endhighlight %}
 
-## config方法
+## AMD模式的优点
 
-require对象有一个config方法，用来配置require.js运行参数。
+定义模块的方法更清晰，更少污染全局环境，能够清楚地显示依赖关系。
+
+直接支持客户端的浏览器环境。
+
+允许非同步加载模块，也可以根据需要动态加载模块。
+
+## config方法：配置require.js
+
+require方法本身也是一个对象，它带有一个config方法，用来配置require.js运行参数。
 
 config方法接受一个对象参数。
 

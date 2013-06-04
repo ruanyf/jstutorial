@@ -2,7 +2,7 @@
 layout: homepage
 title: JavaScript 标准教程（alpha）
 date: 2012-11-18
-modifiedOn: 2013-06-02
+modifiedOn: 2013-06-04
 ---
 
 <h2 id="introduction">导论</h2>
@@ -95,7 +95,7 @@ modifiedOn: 2013-06-02
 - [性能测试（Benchmark）](tool/benchmark.html)
 - [PhantomJS](tool/phantomjs.html)
 - [Grunt任务管理工具](tool/grunt.html)
-- [RequireJS](tool/requirejs.html)
+- [RequireJS和AMD规范](tool/requirejs.html)
 - [移动端开发](tool/mobile.html)
 - [Google Closure](tool/closure.html)
 - [Source map](tool/sourcemap.html)
