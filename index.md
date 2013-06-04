@@ -103,6 +103,7 @@ modifiedOn: 2013-06-04
 <h2 id="nodejs">Node.js</h2>
 
 - [概述](nodejs/basic.html)
+- [CommonJS规范](nodejs/commonjs.html)
 
 <h2 id="pattern">模式</h2>
 
