@@ -104,3 +104,7 @@ define(function( require, exports, module )
 });
 
 {% endhighlight %}
+
+## 参考链接
+
+- Addy Osmani, [Writing Modular JavaScript With AMD, CommonJS & ES Harmony](http://addyosmani.com/writing-modular-js/)

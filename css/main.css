@@ -60,6 +60,13 @@ article h2 {padding-top:0.4em;}
 
 article h3,articl3 h4, article h5{padding-top:0.4em;}
 
+article a[href^="http"]:after {
+	content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAVklEQVR4Xn3PgQkAMQhDUXfqTu7kTtkpd5RA8AInfArtQ2iRXFWT2QedAfttj2FsPIOE1eCOlEuoWWjgzYaB/IkeGOrxXhqB+uA9Bfcm0lAZuh+YIeAD+cAqSz4kCMUAAAAASUVORK5CYII=);
+	margin-left:0.2em;
+	position:relative;
+	top:-0.2em;
+}
+
 /* feature section */
 
 #feature h2{border-bottom: 1px dashed #999;margin-bottom:0.5em;margin-top:0.5em;}
