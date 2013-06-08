@@ -3,7 +3,7 @@ title: Node.js 概述
 layout: page
 category: nodejs
 date: 2013-01-14
-modifiedOn: 2013-05-26
+modifiedOn: 2013-06-08
 ---
 
 ## 简介
@@ -25,6 +25,35 @@ node --version
 node file.js
 
 {% endhighlight %}
+
+## 非同步操作
+
+Node.js采用V8引擎处理JavaScript脚本，最大特征就是单线程运行，即一次只能运行一个任务。这导致Node.js大量采用非同步操作（asynchronous opertion），任务不是马上执行，而是插在队列的尾部，等到前面的任务运行完后再执行。
+
+由于这种特性，某一个任务的后续操作，往往采用回调函数（callback）的形式进行定义，即指定任务完成时，执行某个函数。Node.js的任务通常是下面的写法。
+
+{% highlight javascript %}
+
+doSomething(aThing, function (err, newThing) {
+  // . . .
+});
+
+{% endhighlight %}
+
+doSomething表示某个任务，aThing就是运行这个任务所需的参数，function(err, newThing)则是任务完成后的回调函数。值得注意是，回调函数的格式也有约定，即第一个参数err是表示错误的对象，第二个参数newThing才是回调函数的真正参数。
+
+如果doSomething运行出现错误，则抛出err对象，回调函数必须做相应处理。
+
+{% highlight javascript %}
+
+doSomething(aThing, function (err, newThing) {
+			if (err) return handleError(err);
+			// . . .
+});
+
+{% endhighlight %}
+
+如果没有发生错误，err对象的值就是null。
 
 ## 加载模块
 
