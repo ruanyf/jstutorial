@@ -3,7 +3,7 @@ title: JavaScript 运行原理
 layout: page
 category: bom
 date: 2013-03-10
-modifiedOn: 2013-06-02
+modifiedOn: 2013-06-10
 ---
 
 ## 插入网页的方法
@@ -30,9 +30,20 @@ JavaScript代码按照插入网页的顺序执行。如果有脚本文件没有�
 
 ## JavaScript虚拟机
 
-JavaScript是一种解释型语言，也就是说，它不需要编译，可以由解释器实时运行。这样的好处是运行和修改都比较方便，刷新页面就可以重新解释；缺点是每次运行都要调用解释器，系统开销较大，运行速度慢于编译型语言。目前的浏览器都将JavaScript进行一定程度的编译，生成类似字节码的中间代码，以提高运行速度。
+JavaScript是一种解释型语言，也就是说，它不需要编译，可以由解释器实时运行。这样的好处是运行和修改都比较方便，刷新页面就可以重新解释；缺点是每次运行都要调用解释器，系统开销较大，运行速度慢于编译型语言。为了提高运行速度，目前的浏览器都将JavaScript进行一定程度的编译，生成类似字节码（bytecode）的中间代码，以提高运行速度。
 
-由于存在编译，JavaScript实际上运行在一个虚拟机（Virtual Machine）之上，我们一般也把虚拟机称为JavaScript引擎。与其他语言的虚拟机不同的是，JavaScript虚拟机并不基于字节码，而是基于源码的。只要有可能，就通过JIT（just in time）编译器直接编译运行。这样做的目的，是优化代码、提供性能，因为编译执行比一行行地解释执行要快得多。下面是目前最常见的一些JavaScript虚拟机：
+早期，浏览器内部对JavaScript的处理过程如下：
+
+1. 读取代码，进行词法分析（Lexical analysis），将代码分解成词元（token）。
+2. 对词元进行语法分析（parsing），将代码整理成“语法树”（syntax tree）。
+3. 使用“翻译器”（translator），将代码转为字节码（bytecode）。
+4. 使用“字节码解释器”（bytecode interpreter），将字节码转为机器码。
+
+逐行解释将字节码转为机器码，是很低效的。为了提高运行速度，现代浏览器改为采用“即时编译”（Just In Time compiler，缩写JIT），即字节码只在运行时编译，用到哪一行就编译哪一行，并且把编译结果缓存（inline cache）。通常，一个程序被经常用到的，只是其中一小部分代码，有了缓存的编译结果，整个程序的运行速度就会显著提升。
+
+不同的浏览器有不同的编译策略。有的浏览器只编译最经常用到的部分，比如循环的部分；有的浏览器索性省略了字节码的翻译步骤，直接编译成机器码，比如chrome浏览器的V8引擎。
+
+字节码不能直接运行，而是运行在一个虚拟机（Virtual Machine）之上，一般也把虚拟机称为JavaScript引擎。因为JavaScript运行时未必有字节码，所以JavaScript虚拟机并不完全基于字节码，而是部分基于源码，即只要有可能，就通过JIT（just in time）编译器直接把源码编译成机器码运行，省略字节码步骤。这一点与其他采用虚拟机（比如Java）的语言不尽相同。这样做的目的，是为了尽可能地优化代码、提高性能。下面是目前最常见的一些JavaScript虚拟机：
 
 - [Chakra](http://en.wikipedia.org/wiki/Chakra_(JScript_engine\))(Microsoft Internet Explorer)
 - [Nitro/JavaScript Core](http://en.wikipedia.org/wiki/WebKit#JavaScriptCore) (Safari)
@@ -133,3 +144,7 @@ a() 结束运行
 可以看到，setTimeout(function, 0)将任务移到当前栈结束后运行。
 
 现在的计算机CPU普遍是多核的，单线程就意味着只使用一核。这当然没有充分利用资源，所以HTML5提供了Web Worker，允许通过这个API实现多线程操作。
+
+## 参考链接
+
+- John Dalziel, [The race for speed part 2: How JavaScript compilers work](http://creativejs.com/2013/06/the-race-for-speed-part-2-how-javascript-compilers-work/)

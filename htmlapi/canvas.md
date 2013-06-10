@@ -3,12 +3,14 @@ title: Canvas API
 layout: page
 date: 2012-11-21
 category: htmlapi
-modifiedOn: 2013-04-12
+modifiedOn: 2013-06-10
 ---
 
 ## 概述
 
-Canvas API用于网页实时生成图像，使得JavaScript可以操作图像内容。这样做的优点是：减少HTTP请求数，减少下载的数据，加快网页载入时间，可以对图像进行实时处理。
+Canvas用于在网页展示图像，并且可以定制内容，基本上它是一个可以用JavaScript操作的位图（bitmap）。
+
+Canvas API用于网页实时生成图像，JavaScript通过API来操作图像内容。这样做的优点是：减少HTTP请求数，减少下载的数据，加快网页载入时间，可以对图像进行实时处理。
 
 使用前，首先需要新建一个canvas网页元素。
 
