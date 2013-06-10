@@ -3,12 +3,12 @@ title: Node.js 概述
 layout: page
 category: nodejs
 date: 2013-01-14
-modifiedOn: 2013-06-08
+modifiedOn: 2013-06-10
 ---
 
 ## 简介
 
-Node.js既是Javascript在服务器端的一个运行环境，又是一个工具库，用来与服务器端其他软件互动。
+Node.js是JavaScript在服务器端的一个运行环境，也是一个工具库，用来与服务器端其他软件互动。
 
 访问官方网站[nodejs.org](http://nodejs.org)了解安装细节。安装完成以后，运行下面的命令，查看是否能正常运行。
 
@@ -98,6 +98,72 @@ exports.newModule = function() {
     M1.methodA();
     M2.methodB();
 };
+
+{% endhighlight %}
+
+## 实例：搭建一个HTTP服务器
+
+使用Node.js搭建HTTP服务器非常简单。
+
+{% highlight javascript %}
+
+var http = require("http");
+
+var app = http.createServer(function(request, response) {
+  response.writeHead(200, {
+    "Content-Type": "text/plain"
+  });
+  response.end("Hello world!\n");
+});
+
+app.listen(1337, "localhost");
+console.log("Server running at http://localhost:1337/");
+
+{% endhighlight %}
+
+第一行 var http = require("http")，表示加载http模块。然后，调用http模块的createServer方法，创造一个服务器实例，将它赋给变量app。
+
+ceateServer方法接受一个函数作为参数，该函数的request参数是一个对象，表示客户端的HTTP请求；response参数也是一个对象，表示服务器端的HTTP回应。response.writeHead方法表示，服务器端回应一个HTTP头信息；response.end方法表示，服务器端回应的具体内容，以及回应完成后关闭本次对话。
+
+最后的app.listen(1337, "localhost")，表示启动服务器实例，监听本机的1337端口。然后，使用console.log在控制台输出一行提示信息。
+
+将上面这几行代码保存成文件app.js，然后用node调用这个文件，服务器就开始运行了。
+
+{% highlight bash %}
+
+node app.js
+
+{% endhighlight %}
+
+这时命令行窗口将显示一行提示“Server running at http://localhost:1337/”。打开浏览器，访问http://localhost:1337，网页显示“Hello world!”。
+
+将app.js稍加修改，就可以做出一个网站的雏形，请求不同的网址，会显示不同的内容。
+
+{% highlight javascript %}
+
+var http = require("http");
+
+http.createServer(function(req, res) {
+
+  // Homepage
+  if (req.url == "/") {
+    res.writeHead(200, { "Content-Type": "text/html" });
+    res.end("Welcome to the homepage!");
+  }
+
+  // About page
+  else if (req.url == "/about") {
+    res.writeHead(200, { "Content-Type": "text/html" });
+    res.end("Welcome to the about page!");
+  }
+
+  // 404'd!
+  else {
+    res.writeHead(404, { "Content-Type": "text/plain" });
+    res.end("404 error! File not found.");
+  }
+
+}).listen(1337, "localhost");
 
 {% endhighlight %}
 

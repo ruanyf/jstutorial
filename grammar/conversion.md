@@ -443,7 +443,7 @@ a
 
 {% highlight javascript %}
 
-(function(){return {} + {}}).call(this)
+eval.call(this,"(function(){return {} + {}}).call(this)")
 
 {% endhighlight %}
 
