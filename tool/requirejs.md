@@ -3,7 +3,7 @@ title: RequireJS和AMD规范
 layout: page
 category: tool
 date: 2013-05-05
-modifiedOn: 2013-06-04
+modifiedOn: 2013-06-10
 ---
 
 ## 概述
@@ -105,6 +105,20 @@ require(['foo', 'bar'], function ( foo, bar ) {
 {% endhighlight %}
 
 require方法的回调函数，就是执行具体任务的部分。
+
+指定依赖关系的数组，可以灵活应用，请看下面的例子。
+
+{% highlight javascript %}
+
+require( [ window.JSON ? undefined : 'util/json2' ], function ( JSON ) {
+  JSON = JSON || window.JSON;
+ 
+  console.log( JSON.parse( '{ "JSON" : "HERE" }' ) );
+});
+
+{% endhighlight %}
+
+上面代码加载JSON模块时，首先判断浏览器是否原生支持JSON对象。如果是的，则将undefined传入回调函数，否则加载util目录下的json2模块。
 
 在define方法内部，也可以调用模块。
 

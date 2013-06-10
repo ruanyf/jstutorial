@@ -132,5 +132,5 @@ JavaScript 1.1版对应ECMAScript 1.0版，但是直到JavaScript 1.4版才完�
 ## 参考链接
 
 - Axel Rauschmayer, [The Past, Present, and Future of JavaScript](http://oreilly.com/javascript/radarreports/past-present-future-javascript.csp)
-
+- John Dalziel, [The race for speed part 4: The future for JavaScript](http://creativejs.com/2013/06/the-race-for-speed-part-4-the-future-for-javascript/)
 
