@@ -28,6 +28,9 @@ Number("324")
 Number("324abc")
 // NaN
 
+Number("")
+// 0
+
 Number(null)
 // 0
 
@@ -201,10 +204,250 @@ false/'5' // 0
 
 {% endhighlight %}
 
-## 结论
+### 小结
 
 由于自动转换有很大的不确定性，而且不易除错，建议在预期为布尔值、数值、字符串的地方，全部使用Boolean()、Number()和String()进行显式转换。
+
+## 加法运算中的类型转化
+
+加法运算符（+）可以用于两个数字的相加，也可以用于两个字符串的连接。除了数值和字符串，其他类型的值必须先转化成这两种类型，然后才能进行计算。
+
+转化规则分成三种情况：
+
+1. 同类型的原始类型值相加
+2. 不同类型的原始类型值相加
+3. 运算子中存在对象
+
+### 同类型的原始类型值相加
+
+所谓“原始类型”，指的就是数值、字符串和布尔值这三种类型。
+
+{% highlight javascript %}
+
+1 + 1 // 2
+
+"1" + "1" // "11"
+
+true + true // 2
+
+false + false  // 0
+
+false + true // 1
+
+{% endhighlight %}
+
+如果两个运算子都是数值，则返回它们的和；如果两个运算子都是字符，则返回连接后的字符串；如果两个运算子都是布尔值，则true转为数值1，false转为数值0，再进行相加。
+
+### 不同类型的原始类型值相加
+
+如果两个运算子之中有一个是字符串，则将另一个也转成字符串，返回两者连接的结果；否则就将两个运算子都转为数值，返回两者的和。
+
+{% highlight javascript %}
+
+true + 1
+// 2
+
+true + "1"
+// "true1"
+
+{% endhighlight %}
+
+布尔值转为字符串时，就是它们的字面值，true转为”true“，false转为”false“。
+
+### 运算子中存在对象
+
+先调用该对象的valueOf方法，如果结果为原始类型的值，则运用上面两条规则；如果结果不是原始类型的值，则继续调用该对象的toString方法，再运用上面两条规则。
+
+{% highlight javascript %}
+
+1 + [1,2]
+// "11,2"
+
+{% endhighlight %}
+
+[1,2].valueOf()的结果为字符串“1,2”，所以最终结果为字符串“11,2”。
+
+{% highlight javascript %}
+
+1 + {a:1}
+// "1[object Object]"
+
+{% endhighlight %}
+
+对象{a:1}的valueOf方法，返回的就是这个对象的本身，因此接着对它调用toString方法。({a:1}).toString()默认返回字符串"[object Object]"，所以最终结果就是字符串“1[object Object]”
+
+{% highlight javascript %}
+
+{a:1} + 1
+// 1
+
+{% endhighlight %}
+
+为什么更换前后次序，就会得到与上一段代码不同的值？原来此时，JavaScript引擎不将{a:1}视为对象，而是视为一个代码块，这个代码块没有返回值，所以被忽略。因此上面的代码，实际上等同于 {a:1};+1 ，所以最终结果就是1。
+
+{% highlight javascript %}
+
+({a:1})+1
+"[object Object]1"
+
+{% endhighlight %}
+
+将{a:1}放置在括号之中，由于JavaScript引擎预期括号之中是一个值，所以不把它当作代码块处理，而是当作对象处理，所以最终结果为“[object Object]1”。
+
+{% highlight javascript %}
+
+1 + {valueOf:function(){return 2;}}
+// 3
+
+{% endhighlight %}
+
+我们自定义一个对象的valueOf方法，返回数值2，所以最终结果为3。
+
+{% highlight javascript %}
+
+1 + {valueOf:function(){return {};}}
+// "1[object Object]"
+
+{% endhighlight %}
+
+如果自定义的valueOf方法返回一个空对象，则继续调用toString方法，所以最终结果是“1[object Object]”。
+
+{% highlight javascript %}
+
+1 + {valueOf:function(){return {};}, toString:function(){return 2;}}
+// 3
+
+{% endhighlight %}
+
+如果自定义的toString方法返回数值2（注意返回的不是字符串），则最终结果就是数值3。
+
+{% highlight javascript %}
+
+1 + {valueOf:function(){return {};}, toString:function(){return {};}}
+// TypeError: Cannot convert object to primitive value
+
+{% endhighlight %}
+
+如果自定义的toString方法返回一个空对象，JavaScript就会报错，表示无法将对象转为原始类型的值。
+
+### 四个特殊的实例
+
+有了上面这些例子，我们再进一步来看四个特殊的实例。
+
+（1）空数组 + 空数组
+
+{% highlight javascript %}
+
+[] + []
+// ""
+
+{% endhighlight %}
+
+首先，对空数组调用valueOf方法，返回的是数组本身；因此再对空数组调用toString方法，生成空字符串；所以，最终结果就是空字符串。
+
+（2）空数组 + 空对象
+
+{% highlight javascript %}
+
+[] + {}
+// "[object Object]"
+
+{% endhighlight %}
+
+这等同于空字符串与字符串“[object Object]”相加。因此，结果就是“[object Object]”。
+
+（3）空对象 + 空数组
+
+{% highlight javascript %}
+
+{} + []
+// 0
+
+{% endhighlight %}
+
+JavaScript引擎将空对象视为一个空的代码块，加以忽略。因此，整个表达式就变成“+ []”，等于对空数组求正值，因此结果就是0。转化过程如下：
+
+{% highlight javascript %}
+
++ []
+// Number([])
+// Number([].toString())
+// Number("")
+// 0
+
+{% endhighlight %}
+
+对空字符串使用Number方法，则结果为0。
+
+如果JavaScript不把前面的空对象视为代码块，则结果为字符串“[object Object]”。
+
+{% highlight javascript %}
+
+({}) + []
+// "[object Object]"
+
+{% endhighlight %}
+
+（4）空对象 + 空对象
+
+{% highlight javascript %}
+
+{} + {}
+// NaN
+
+{% endhighlight %}
+
+JavaScript同样将第一个空对象视为一个空代码块，整个表达式就变成“+ {}”。这时，后一个空对象的ValueOf方法得到本身，再调用toSting方法，得到字符串“[object Object]”，然后再将这个字符串转成数值，得到NaN。所以，最后的结果就是NaN。转化过程如下：
+
+{% highlight javascript %}
+
++ {}
+// Number({})
+// Number({}.toString())
+// Number("[object Object]")
+
+{% endhighlight %}
+
+如果，第一个空对象不被JavaScript视为空代码块，就会得到“[object Object][object Object]”的结果。
+
+{% highlight javascript %}
+
+({}) + {}
+// "[object Object][object Object]"
+
+({} + {})
+// "[object Object][object Object]"	
+
+console.log({} + {})
+// "[object Object][object Object]"
+
+var a = {} + {};
+a
+// "[object Object][object Object]"	
+
+{% endhighlight %}
+
+有意思的是，对于上面第三和第四个例子，Node.js环境的运行结果不同于浏览器环境。
+
+{% highlight javascript %}
+
+{} + {}
+// "[object Object][object Object]"
+
+{} + []
+// "[object Object]"
+
+{% endhighlight %}
+
+可以看到，Node.js没有把第一个空对象视为代码块。原因是Node.js的命令行环境，内部执行机制大概是下面的样子：
+
+{% highlight javascript %}
+
+(function(){return {} + {}}).call(this)
+
+{% endhighlight %}
 
 ## 参考链接
 
 - Dr. Axel Rauschmayer, [JavaScript quirk 1: implicit conversion of values](http://www.2ality.com/2013/04/quirk-implicit-conversion.html)
+- Benjie Gillam, [Quantum JavaScript?](http://www.benjiegillam.com/2013/06/quantum-javascript/)

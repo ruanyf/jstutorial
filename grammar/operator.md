@@ -10,13 +10,17 @@ modifiedOn: 2013-04-28
 
 ### 加法运算
 
-加法运算符（+）只能用于数值或字符串，其他类型的值必须先转化成数值或字符串，然后才能进行计算。
+加法运算符（+）用于数字的相加或者字符串的连接。如果两个运算子都是数值，则返回它们的和；如果两个运算子都是字符，则返回连接后的字符串。
 
-转化规则如下：
+{% highlight javascript %}
 
-（1）两个运算子都是原始类型
+1 + 1 // 2
 
-如果两个运算子之中有一个是字符串，则将另一个也转成字符串，返回两者连接的结果；否则就将两者都转成数字，返回两者的和。
+"1" + "1" // "11"
+
+{% endhighlight %}
+
+其他情况下，则需要将运算子转为数值或字符串类型。转化的基本规则是，如果有一个运算子是字符串，则将另一个也转成字符串，返回两者连接的结果；否则就将两个运算子都转为数值，返回两者的和。
 
 {% highlight javascript %}
 
@@ -28,112 +32,7 @@ true + "1"
 
 {% endhighlight %}
 
-（2）运算子是对象
-
-先调用该对象的valueOf方法，如果结果还不是原始类型的值，则继续调用toString方法。
-
-{% highlight javascript %}
-
-1 + [1,2]
-// "11,2"
-
-1 + {a:1}
-// "1[object Object]"
-
-{a:1} + 1
-// JavaScript引擎将前面的对象视为代码块，加以忽略
-// 1
-
-1 + {valueOf:function(){return 2;}}
-// 3
-
-1 + {valueOf:function(){return {};}}
-// "1[object Object]"
-
-{% endhighlight %}
-
-（3）实例一：两个空数组相加
-
-首先调用valueOf方法。数组的valueOf方法返回的依然是本身，因此再调用toString方法，生成空字符串。因此，最后的结果是空字符串。
-
-{% highlight javascript %}
-
-[] + []
-// ""
-
-{% endhighlight %}
-
-（4）实例二：空数组+空对象
-
-这等同于空字符串与字符串“[object Object]”相加。因此，结果就是“[object Object]”。
-
-{% highlight javascript %}
-
-[] + {}
-// "[object Object]"
-
-{% endhighlight %}
-
-（5）实例三：空对象+空数组
-
-JavaScript引擎将空对象视为一个空代码加以忽略。因此，整个表达式就变成“+ []”，等于对空数组求正值，因此结果就是0。
-
-{% highlight javascript %}
-
-{} + []
-// 0
-// 转化过程如下
-// + []
-// Number([])
-// Number([].toString())
-// Number("")
-
-
-{% endhighlight %}
-
-（6）实例四：空对象与空对象相加
-
-JavaScript同样将第一个空对象视为一个空代码块，整个表达式就变成“+ {}”。这时，后一个空对象的ValueOf方法得到本身，再调用toSting方法，得到字符串“[object Object]”，然后再将这个字符串转成数值，得到NaN。所以，最后的结果就是NaN。
-
-{% highlight javascript %}
-
-{} + {}
-// NaN
-// 转化过程如下
-// + {}
-// Number({})
-// Number({}.toString())
-// Number("[object Object]")
-
-
-{% endhighlight %}
-
-如果，第一个空对象不被JavaScript视为空代码块，就会得到“[object Object][object Object]”的结果。
-
-{% highlight javascript %}
-
-({}) + {}
-// "[object Object][object Object]"
-
-({} + {})
-// "[object Object][object Object]"	
-
-console.log({} + {})
-// "[object Object][object Object]"
-
-{% endhighlight %}
-
-有意思的是，Node.js的运行结果不同于浏览器环境。
-
-{% highlight javascript %}
-
-{} + {}
-// "[object Object][object Object]"
-
-{} + []
-// "[object Object]"
-
-{% endhighlight %}
+更详尽的转化规则参见《数据类型转化》一节。
 
 ### 其他算术运算符
 
