@@ -145,6 +145,8 @@ JavaScript是一种解释型语言，也就是说，它不需要编译，可以�
 
 ## 单线程模型
 
+### 含义
+
 JavaScript在浏览器中以单线程运行，也就是说，所有的操作都在一个线程里按照某种顺序运行。
 
 一个线程意味一次只能运行一个操作，其他操作都必须在后面排队等待。这被叫做JavaScript的“事件循环”模型（event loop），也就是说，JavaScript有一个运行队列，新的事件触发的操作，按照顺序插入队列，排队运行。
@@ -161,7 +163,59 @@ button.onclick = function() {
 
 如果有一个操作特别耗时，后面的操作都会停在那里等待，造成浏览器堵塞，又称“假死”，使得用户体验变得非常差。浏览器为了避免这种情况，当某个操作迟迟无法结束时，会跳出提示框，询问用户是否要停止脚本运行。而JavaScript本身也提供了一些解决方法，最常见的就是用 setTimeout 和 setInterval 方法，将某个耗时的操作放到较晚的时间运行。另外，XMLHttpRequest对象提供了异步操作，使得Ajax操作（非常耗时的操作）可以在另一个线程上完成，不影响主线程。
 
-为了理解JavaScript对象的单线程模型，请看下面这段代码。
+### setTimeout 和 setInterval 方法
+
+这两个方法的作用，就是改变JavaScript的正常执行顺序，推迟某些操作的执行。
+
+{% highlight javascript %}
+
+console.log(1);
+
+console.log(2);
+
+console.log(3);
+
+{% endhighlight %}
+
+正常情况下，上面三行语句按照顺序执行，输出1--2--3。现在，我们用setTimeout改变执行顺序。
+
+{% highlight javascript %}
+
+console.log(1);
+
+setTimeout(function(){console.log(2);},1000);
+
+console.log(3);
+
+{% endhighlight %}
+
+上面三行语句的输出结果就是1--3--2，其中第二行语句被推迟了1000毫秒执行，所以就变成了最后输出。
+
+setTimout方法接收两个参数，第一个参数必须是函数，所以上面的代码将语句放在一个匿名函数里面；第二个参数是推迟执行的时间，以毫秒作为单位。setIntervel的格式与setTimeout完全一致，区别在于它不仅推迟一个操作，而且让这个操作反复执行。
+
+{% highlight javascript %}
+
+setTimeout(function(){console.log(2);},1000);
+
+setInterval(function(){console.log(2);},1000);
+
+{% endhighlight %}
+
+上面的第一行语句是1000毫秒后输出2，第二行语句则是从现在开始，每隔1000毫秒就输出一个2。
+
+在本质上，这两个方法都是把相应操作添加到“运行队列”的尾部，等到前面的操作都执行完，再开始执行。由于前面的操作到底需要多少时间执行完，是不确定的，所以我们没有办法保证，被推迟的操作一定会按照预定时间执行。这一点对于setInterval影响尤其大。
+
+{% highlight javascript %}
+
+setInterval(function(){console.log(2);},1000);
+
+(function (){ sleeping(3000);})();
+
+{% endhighlight %}
+
+上面的第一行语句要求每隔1000毫秒，就输出一个2。但是，第二行语句需要3000毫秒才能完成，请问会发生什么结果？
+
+结果就是等到第二行语句运行完成以后，立刻连续输出三个2，然后开始每隔1000毫秒，输出一个2。为了进一步理解JavaScript的单线程模型，请看下面这段代码。
 
 {% highlight javascript %}
 
@@ -169,7 +223,7 @@ button.onclick = function() {
         { 耗时5ms的某个操作 } 
         触发mouseClickEvent事件
         { 耗时5ms的某个操作 }
-        setInterval(timerTask,"10");
+        setInterval(timerTask,10);
         { 耗时5ms的某个操作 }
     }
 
@@ -183,13 +237,71 @@ button.onclick = function() {
 
 {% endhighlight %}
 
-请问这段代码的运行顺序是怎样的？
+请问调用init函数后，这段代码的运行顺序是怎样的？
 
 - 0-15ms，运行init函数。
 - 15-23ms，运行handleMouseClick函数。请注意，这个函数是在5ms时触发的，应该在那个时候就立即运行，但是由于单线程的关系，必须等到init函数完成之后再运行。
 - 23-25ms，运行timerTask函数。这个函数是在10ms时触发的，规定每10ms运行一次，即在20ms、30ms、40ms等时候运行。由于20ms时，JavaScript线程还有任务在运行，因此必须延迟到前面任务完成时再运行。
 - 30-32ms，运行timerTask函数。
 - 40-42ms，运行timerTask函数。
+
+由于setInterval无法保证每次操作之间的间隔，为了避免这种情况，可以用setTimeout替代setInterval。
+
+{% highlight javascript %}
+
+var recursive = function () {
+    console.log("It has been one second!");
+    setTimeout(recursive,1000);
+}
+
+recursive();
+
+{% endhighlight %}
+
+上面这样的写法，就能保证两次recursive之间的运行间隔，一定是1000毫秒。
+
+clearTimeout 和 clearInterval 方法，用于取消 setTimeout 和 setInterval 指定的操作。
+
+{% highlight javascript %}
+
+var id1 = setTimeout(f,1000);
+var id2 = setInterval(f,1000);
+
+clearTimeout(id1);
+clearInterval(id2);
+
+{% endhighlight %}
+
+除了前两个参数，setTimeout 和 setInterval 方法还可以接受更多的参数，它们会传入这两个方法指定的回调函数。
+
+{% highlight javascript %}
+
+function f(){
+	for (var i=0;i<arguments.length;i++){
+		console.log(arguments[i]);
+	}
+}
+
+setTimeout(f, 1000, "a", "b", "c");
+setInterval(f, 1000, "Hello World");
+
+{% endhighlight %}
+
+上面代码的运行结果如下：
+
+{% highlight bash %}
+
+a
+b
+c
+Hello World
+Hello World
+Hello World
+...
+
+{% endhighlight %}
+
+### setTimeout(f,0)的作用
 
 可见单线程的特点就是一个时间只有一个任务运行，后面的任务必须排队等待。有时，为了将耗时的任务移到当前栈的结尾，可以使用setTimeout(function, 0)方法。
 
