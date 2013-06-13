@@ -3,10 +3,12 @@ title: JavaScript 运行原理
 layout: page
 category: bom
 date: 2013-03-10
-modifiedOn: 2013-06-10
+modifiedOn: 2013-06-13
 ---
 
-## 插入网页的方法
+## 嵌入网页的方法
+
+### 静态嵌入
 
 在网页中使用script标签，可以直接将JavaScript代码嵌入网页。
 
@@ -18,7 +20,7 @@ modifiedOn: 2013-06-10
 
 {% endhighlight %}
 
-也可以指定脚本文件，让script标签读取。
+也可以指定外部的脚本文件，让script标签读取。
 
 {% highlight html %}
 
@@ -26,7 +28,97 @@ modifiedOn: 2013-06-10
 
 {% endhighlight %}
 
-JavaScript代码按照插入网页的顺序执行。如果有脚本文件没有下载完成，页面就会停止渲染，等待下载完成。为了避免这种“浏览器假死”，较好的做法是将script标签放在页面底部，而不是头部。
+下载和执行JavaScript代码时，浏览器会暂停页面渲染，等待执行完成，这是因为JavaScript代码可能会修改页面。由于这个原因，如果某段代码的下载或执行时间特别长，浏览器就会呈现“假死”状态，失去响应。为了避免这种情况，较好的做法是将script标签都放在页面底部，而不是头部。
+
+如果有多个script标签，比如下面这样：
+
+{% highlight html %}
+
+<script src="1.js"></script>
+<script src="2.js"></script>
+
+{% endhighlight %}
+
+浏览器会同时平行下载1.js和2.js，但是执行时会保证先执行1.js，然后再执行2.js，即使后者先下载完成，也是如此。也就是说，脚本的执行顺序由它们在页面中的出现顺序决定，这是为了保证脚本之间的依赖关系不受到破坏。
+
+一个解决方法是加入defer属性。
+
+{% highlight html %}
+
+<script src="1.js" defer></script>
+<script src="2.js" defer></script>
+
+{% endhighlight %}
+
+有了defer属性，浏览器下载脚本文件的时候，不会阻塞页面渲染。下载的脚本文件在DOMContentLoaded事件触发前执行，而且可以保证执行顺序就是它们在页面上出现的顺序。但是，浏览器对这个属性的支持不够理想，IE（<=9）还有一个bug，无法保证执行顺序（一旦1.js修改了页面的DOM结构，会引发2.js立即执行）。此外，对于没有src属性的script标签，以及动态生成的script标签，defer不起作用。
+
+另一个解决方法是加入async属性。
+
+{% highlight html %}
+
+<script src="1.js" async></script>
+<script src="2.js" async></script>
+
+{% endhighlight %}
+
+async属性可以保证脚本下载的同时，浏览器继续渲染。一旦渲染完成，再执行脚本文件，这就是“非同步执行”的意思。需要注意的是，一旦采用这个属性，就无法保证脚本的执行顺序。先下载完成的脚本，就会排在最前面执行。
+
+对于来自同一个域名的资源，比如脚本文件、样式表文件、图片文件等，浏览器一般最多同时下载六个。如果是来自不同域名的资源，就没有这个限制。所以，通常把静态文件放在不同的域名之下，以加快下载速度。
+
+另外，如果不指定协议，浏览器默认采用HTTP协议下载。
+
+{% highlight html %}
+
+<script src="example.js"></script>
+
+{% endhighlight %}
+
+上面的example.js默认就是采用http协议下载，如果要采用HTTPs协议下载，必需写明（假定服务器支持）。
+
+{% highlight html %}
+
+<script src="https://example.js"></script>
+
+{% endhighlight %}
+
+但是有时我们会希望，根据页面本身的协议来决定加载协议，这时可以采用下面的写法。
+
+{% highlight html %}
+
+<script src="//example.js"></script>
+
+{% endhighlight %}
+
+### 动态嵌入
+
+除了用静态的script标签，将JavaScript代码插入网页，还可以动态生成script标签。
+
+{% highlight javascript %}
+
+['1.js', '2.js'].forEach(function(src) {
+  var script = document.createElement('script');
+  script.src = src;
+  document.head.appendChild(script);
+});
+
+{% endhighlight %}
+
+这种方法的好处是，动态生成的script标签不会阻塞页面渲染，也就不会造成浏览器假死。但是问题在于，这种方法无法保证脚本的执行顺序，哪个脚本文件先下载完成，就先执行哪个。
+
+如果想避免这个问题，可以设置async属性为false。
+
+{% highlight javascript %}
+
+['1.js', '2.js'].forEach(function(src) {
+  var script = document.createElement('script');
+  script.src = src;
+  script.async = false;
+  document.head.appendChild(script);
+});
+
+{% endhighlight %}
+
+上面的代码依然不会阻塞页面渲染，而且可以保证2.js在1.js后面执行。不过需要注意的是，在这段代码后面加载的脚本文件，会因此都等待2.js执行完成后再执行。
 
 ## JavaScript虚拟机
 
@@ -148,3 +240,4 @@ a() 结束运行
 ## 参考链接
 
 - John Dalziel, [The race for speed part 2: How JavaScript compilers work](http://creativejs.com/2013/06/the-race-for-speed-part-2-how-javascript-compilers-work/)
+- Jake Archibald，[Deep dive into the murky waters of script loading](http://www.html5rocks.com/en/tutorials/speed/script-loading/)

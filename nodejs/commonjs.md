@@ -3,17 +3,42 @@ title: CommonJS规范
 layout: page
 category: nodejs
 date: 2013-06-04
-modifiedOn: 2013-06-04
+modifiedOn: 2013-06-13
 ---
 
 ## 概述
 
 CommonJS是服务器端模块的规范。
 
-每个模块使用两个通用的组件：
+根据CommonJS规范，一个单独的文件就是一个模块。每个模块使用两个通用的组件：
 
 - exports变量：它所包含的对象，就是对外输出的、供其他模块调用的对象。
 - require函数：用于加载或输入其他模块。
+
+举例来说，定义一个最简单的模块，只要一行语句就够了。
+
+{% highlight javascript %}
+
+// addition.js
+
+exports.do = function(a, b){ return a + b };
+
+{% endhighlight %}
+
+上面的语句定义了一个加法模块，做法就是在exports对象上定义一个do方法，那就是供外部调用的方法。
+
+使用的时候，只要用require函数调用即可。
+
+{% highlight javascript %}
+
+var add = require('./addition');
+
+add.do(1,2)
+// 3
+
+{% endhighlight %}
+
+require调用的时候，需要给出模块的路径，但是不用加后缀名，因为文件后缀名默认为js。
 
 下面就是一个典型的CommonJS模块。
 
