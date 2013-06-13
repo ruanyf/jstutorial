@@ -3,7 +3,7 @@ title: 运算符
 layout: page
 category: grammar
 date: 2013-02-04
-modifiedOn: 2013-04-28
+modifiedOn: 2013-06-13
 ---
 
 ## 算术运算符
@@ -327,9 +327,43 @@ v1 === v2
 - NaN
 - ""
 
-(2) && 且运算
+(2) AND(&&) 且运算
 
-(3) OR 或运算
+如果第一个运算子为true，则返回第二个运算子；如果第一个运算子为false，则直接返回第一个运算子，且不再对第二个运算子求值。
+
+{% highlight javascript %}
+
+"t" && "" // ""
+"t" && "f" // "f"
+"" && "f" // ""
+"" && "" // ""
+
+{% endhighlight %}
+
+(3) OR(||) 或运算
+
+如果第一个运算子为true，则返回第一个运算子，且不再对第二个运算子求值；如果第一个运算子为false，则返回第二个运算子。
+
+{% highlight javascript %}
+
+"t" || "" // "t"
+"t" || "f" // "t"
+"" || "f" // "f"
+"" || "" // ""
+
+{% endhighlight %}
+
+(4) 三元运算符 ? :
+
+三元运算符用问号（？）和冒号（：），分隔三个表达式。如果第一个表达式为true，则返回第二个表达式，否则返回第三个表达式。
+
+{% highlight javascript %}
+
+"t" ? true : false // true
+
+0 ? true : false // false
+
+{% endhighlight %}
 
 ## 位运算符
 
