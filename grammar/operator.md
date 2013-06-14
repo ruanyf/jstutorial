@@ -318,7 +318,17 @@ v1 === v2
 
 (1) ! 取反运算
 
-以下六个值取反后为true，其他都为false。
+取反运算用于将一个布尔值变为相反值。
+
+{% highlight javascript %}
+
+!true // false
+
+!false // true
+
+{% endhighlight %}
+
+对于非布尔值的数据，布尔运算会自动将其转为布尔值。以下六个值取反后为true，其他都为false。
 
 - undefined
 - null
@@ -326,6 +336,18 @@ v1 === v2
 - 0（包括+0和-0）
 - NaN
 - ""
+
+{% highlight javascript %}
+
+!undefined // true
+!null // true
+!0 // true
+!NaN // true
+!"" // true
+
+{% endhighlight %}
+
+这种自动转为布尔值的规则，对下面几种布尔运算都成立。
 
 (2) AND(&&) 且运算
 
