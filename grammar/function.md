@@ -342,9 +342,26 @@ a(add)(1,1)
 
 ## arguments对象
 
-JavaScript语言定义了一个arguments对象，用来指代函数运行时的所有参数，arguments[0]就是第一个参数，arguments[1]就是第二个参数，依次类推。这个对象只有在函数体内部，才可以使用。
+由于JavaScript允许函数有不定数目的参数，所以我们需要一种机制，可以在函数体内部读取所有参数。这就是arguments对象的由来。
 
-它的一个用途，就是通过length属性，判断函数调用时到底带几个参数。
+arguments对象包含了函数运行时的所有参数，arguments[0]就是第一个参数，arguments[1]就是第二个参数，依次类推。这个对象只有在函数体内部，才可以使用。
+
+{% highlight javascript %}
+
+var f = function(one) {
+  console.log(arguments[0]);
+  console.log(arguments[1]);
+  console.log(arguments[2]);
+}
+
+f(1, 2, 3)
+// 1
+// 2
+// 3
+
+{% endhighlight %}
+
+可以通过arguments对象的length属性，判断函数调用时到底带几个参数。
 
 {% highlight javascript %}
 
@@ -360,6 +377,34 @@ f(1)
 
 f()
 // 0
+
+{% endhighlight %}
+
+需要注意的是，虽然arguments很像数组，但它是一个对象。如果对arguments对象调用数组方法会出错，比如，arguments.sort() 会报出TypeError。解决方法是将arguments转为数组。
+
+{% highlight javascript %}
+
+var args = Array.prototype.slice.call(arguments);
+
+// or 
+
+var args = [];
+for(var i = 0; i < arguments.length; i++) {
+	  args.push(arguments[i]);
+}
+
+{% endhighlight %}
+
+arguments对象带有一个callee属性，返回它对应的原函数。
+
+{% highlight javascript %}
+
+var f = function(one) {
+  console.log(arguments.callee === f);
+}
+
+f()
+// true
 
 {% endhighlight %}
 
@@ -771,3 +816,4 @@ new function(){ /* code */ }() // 只有传递参数时，才需要最后那个�
 - [Immediately-Invoked Function Expression (IIFE)](http://benalman.com/news/2010/11/immediately-invoked-function-expression/)
 - Mark Daggett, [Functions Explained](http://markdaggett.com/blog/2013/02/15/functions-explained/)
 - Juriy "kangax" Zaytsev, [Named function expressions demystified](http://kangax.github.com/nfe/)
+- Marco Rogers polotek, [What is the arguments object?](http://docs.nodejitsu.com/articles/javascript-conventions/what-is-the-arguments-object)
