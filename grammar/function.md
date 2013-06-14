@@ -633,7 +633,7 @@ Array.apply(null, ["a",,"b"])
 
 这里的差别就是，数组的foreach方法会逃过空元素，但是不会跳过undefined。因此，遍历内部元素的时候，会体现出差别。
 
-使用apply方法的另一个场合是，如果数组的成员也是数组，那么数组对象的concat方法会返回被展开的数组。
+使用apply方法的另一个场合是，展开双层数组（即数组的成员也是数组），使用数组对象的concat方法。
 
 {% highlight javascript %}
 
@@ -645,7 +645,7 @@ Array.prototype.concat.apply([], [[1], 2])
 
 {% endhighlight %}
 
-concat方法是定义数组对象上的，所以apply方法的第一个参数必须是数组。另外，这个方法只能展开一层数组。
+concat方法是定义数组对象上的，所以apply方法的第一个参数必须是数组，而第二个参数就是需要被展开的双层数组。不过，这个方法只能展开双层数组，对于更多层的数组，只能展开最外面的一层。
 
 {% highlight javascript %}
 
@@ -653,6 +653,26 @@ Array.prototype.concat.apply([], [[[1]], [2]])
 // [[1], 2]
 
 {% endhighlight %}
+
+最后，前面已经说过，利用slice方法，可以将一个类似数组的对象转为真正的数组。
+
+{% highlight javascript %}
+
+Array.prototype.slice.apply({0:1,length:1})
+// [1]
+
+Array.prototype.slice.apply({0:1})
+// []
+
+Array.prototype.slice.apply({0:1,length:2})
+// [1, undefined]
+
+Array.prototype.slice.apply({length:1})
+// [undefined]
+
+{% endhighlight %}
+
+从上面的代码可以看到，这个方法起作用的前提是，被处理的对象必须有length属性，以及相对应的数字键。
 
 ### bind方法
 
@@ -698,6 +718,35 @@ var plus5 = add.bind(null, 5);
 
 plus5(10)
 // 15
+
+{% endhighlight %}
+
+bind方法每运行一次，就返回一个新函数，这会产生一些问题。比如，监听事件的时候，不能写成下面这样：
+
+{% highlight javascript %}
+
+domElement.addEventListener(
+        'click', myWidget.handleClick.bind(myWidget));
+
+{% endhighlight %}
+
+因为每点击一次，就绑定一个新函数，导致无法取消这些绑定。
+
+{% highlight javascript %}
+
+domElement.removeEventListener(
+        myWidget.handleClick.bind(myWidget));
+
+{% endhighlight %}
+
+正确的方法是写成下面这样：
+
+{% highlight javascript %}
+
+    var listener = myWidget.handleClick.bind(myWidget);
+    domElement.addEventListener('click', listener);
+    ...
+    domElement.removeEventListener(listener);
 
 {% endhighlight %}
 
