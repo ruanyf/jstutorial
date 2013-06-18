@@ -3,19 +3,71 @@ title: CommonJS规范
 layout: page
 category: nodejs
 date: 2013-06-04
-modifiedOn: 2013-06-13
+modifiedOn: 2013-06-19
 ---
 
 ## 概述
 
 CommonJS是服务器端模块的规范。
 
-根据CommonJS规范，一个单独的文件就是一个模块。每个模块使用两个通用的组件：
+根据CommonJS规范，一个单独的文件就是一个模块。加载模块使用require方法，该方法读取一个文件并执行，最后返回文件内部的exports对象。下面就是一个简单的模块文件example.js。
 
-- exports变量：它所包含的对象，就是对外输出的、供其他模块调用的对象。
-- require函数：用于加载或输入其他模块。
+{% highlight javascript %}
 
-举例来说，定义一个最简单的模块，只要一行语句就够了。
+console.log("evaluating example.js");
+
+var invisible = function () {
+  console.log("invisible");
+}
+
+exports.message = "hi";
+
+exports.say = function () {
+  console.log(message);
+}
+
+{% endhighlight %}
+
+使用require方法，加载example.js。
+
+{% highlight javascript %}
+
+var example = require('./example.js');
+
+{% endhighlight %}
+
+这时，变量example就对应模块中的exports对象，于是就可以通过这个变量，使用模块提供的各个方法。
+
+{% highlight javascript %}
+
+{
+  message: "hi",
+  say: [Function]
+}
+
+{% endhighlight %}
+
+require方法默认读取js文件，所以可以省略js后缀名。
+
+{% highlight javascript %}
+
+var example = require('./example');
+
+{% endhighlight %}
+
+js文件名前面需要加上路径，可以是相对路径（相对于使用require方法的文件），也可以是绝对路径。如果省略路径，node.js会认为，你要加载一个核心模块，或者已经安装在本地 node_modules 目录中的模块。如果加载的是一个目录，node.js会首先寻找该目录中的 package.json 文件，加载该文件 main 属性提到的模块，否则就寻找该目录下的 index.js 文件。
+
+有时，不需要exports返回一个对象，只需要它返回一个函数。这时，就要写成module.exports。
+
+{% highlight javascript %}
+
+module.exports = function () {
+  console.log("hello world")
+}
+
+{% endhighlight %}
+
+再看一个例子，使用一行语句，定义一个最简单的模块。
 
 {% highlight javascript %}
 
@@ -37,8 +89,6 @@ add.do(1,2)
 // 3
 
 {% endhighlight %}
-
-require调用的时候，需要给出模块的路径，但是不用加后缀名，因为文件后缀名默认为js。
 
 下面就是一个典型的CommonJS模块。
 

@@ -3,7 +3,7 @@ title: Node.js 概述
 layout: page
 category: nodejs
 date: 2013-01-14
-modifiedOn: 2013-06-10
+modifiedOn: 2013-06-16
 ---
 
 ## 简介
@@ -164,6 +164,28 @@ http.createServer(function(req, res) {
   }
 
 }).listen(1337, "localhost");
+
+{% endhighlight %}
+
+## http模块
+
+### POST方法
+
+{% highlight javascript %}
+
+var http = require('http');
+
+http.createServer(function (req, res) {
+  var body = "";
+  req.on('data', function (chunk) {
+    body += chunk;
+  });
+  req.on('end', function () {
+    console.log('POSTed: ' + body);
+    res.writeHead(200);
+    res.end();
+  });
+}).listen(8080);
 
 {% endhighlight %}
 
