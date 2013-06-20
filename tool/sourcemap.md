@@ -3,7 +3,7 @@ title: Source Map
 layout: page
 category: tool
 date: 2013-01-23
-modifiedOn: 2013-01-23
+modifiedOn: 2013-06-20
 ---
 
 ## 概述
@@ -53,11 +53,19 @@ java -jar compiler.jar \
 
 其他的生成方法可以参考[这篇文章](http://net.tutsplus.com/tutorials/tools-and-tips/source-maps-101/)。
 
-启用Source map的方法很简单，只要在转换后的代码尾部，加上一行就可以了。
+启用Source map的方法很简单，只要在转换后的代码头部或尾部，加上一行就可以了。
 
-{% highlight java %}
+{% highlight javascript %}
 
-//@ sourceMappingURL=/path/to/file.js.map
+//# sourceMappingURL=/path/to/file.js.map
+
+{% endhighlight %}
+
+或者
+
+{% highlight javascript %}
+
+/*# sourceMappingURL=/path/to/file.js.map */
 
 {% endhighlight %}
 
@@ -161,3 +169,4 @@ V　　　　　V
 
 - [Introduction To JavaScript Source Maps](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/)
 - [Source Map Revision 3 Proposal](https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit)
+- Paul Irish, [sourceMappingURL and sourceURL syntax changed](http://updates.html5rocks.com/2013/06/sourceMappingURL-and-sourceURL-syntax-changed)
