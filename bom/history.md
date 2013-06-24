@@ -3,7 +3,7 @@ title: history对象
 layout: page
 category: bom 
 date: 2012-12-22
-modifiedOn: 2012-12-22
+modifiedOn: 2013-06-24
 ---
 
 ## 概述
@@ -58,8 +58,8 @@ HTML5为history对象添加了两个新方法，history.pushState() 和 history.
 
 pushState方法接受三个参数，依次为：
 
-- state对象：一个与当前网址相关的对象。
-- title：新页面的标题，但是所有浏览器目前都忽视这个值。
+- state对象：一个与当前网址相关的对象。如果不输入这个值，此处填null。
+- title：新页面的标题，但是所有浏览器目前都忽略这个值。如果不输入这个值，此处填null。
 - url：新的网址，必须与当前页面处在同一个域。
 
 假定当前网址是1.html，我们使用pushState方法在浏览记录中添加一个新记录。
@@ -74,9 +74,9 @@ history.pushState(stateObj, "page 2", "2.html");
 
 添加这个新记录后，浏览器并不会跳转到2.html，甚至也不会检查2.html是否存在，它只是成为浏览历史中的最新记录。假定这时你访问了google.com，然后点击了倒退按钮，页面的url将显示2.html，但是内容还是原来的1.html。你再点击一次倒退按钮，url将显示1.html，内容不变。
 
-如果pushState()的url参数，设置了一个当前网页的#号值（即hash），并不会触发hashchange事件。
+如果 pushState 的url参数，设置了一个当前网页的#号值（即hash），并不会触发hashchange事件。
 
-replaceState() 的参数与pushState()一模一样，它修改浏览历史中当前页面的值。
+replaceState 的参数与 pushState 一模一样，它修改浏览历史中当前页面的值。
 
 假定当前网页是http://example.com/example.html。
 
@@ -93,9 +93,9 @@ history.go(2);  // url显示为http://example.com/example.html?page=3
 
 ## popstate事件
 
-每当浏览历史出现变化时，就会触发window.onpopstate事件。这就是说，不管是点击倒退按钮，还是使用pushState()和replaceState()，这个事件都会触发。
+每当浏览历史（即history对象）出现变化时，就会触发popstate事件。这就是说，不管是点击倒退按钮，还是使用pushState和replaceState方法，这个事件都会触发。
 
-这个事件的state属性，包含了当前url相对应的state对象。
+可以为popstate事件指定回调函数。这个回调函数的参数是一个event事件对象，它的state属性指向pushState和replaceState方法为当前url所提供的state对象（也就是这两个方法的第一个参数）。
 
 {% highlight javascript %}
 
@@ -105,7 +105,9 @@ window.onpopstate = function(event) {
 
 {% endhighlight %}
 
-当前url的state对象也可以通过history对象读取。
+上面代码中的event.state，就是通过pushState和replaceState方法，为当前url绑定的state对象。
+
+这个state对象也可以直接通过history对象读取。
 
 {% highlight javascript %}
 
@@ -117,3 +119,4 @@ var currentState = history.state;
 
 - MOZILLA DEVELOPER NETWORK，[Manipulating the browser history](https://developer.mozilla.org/en-US/docs/DOM/Manipulating_the_browser_history)
 - MOZILLA DEVELOPER NETWORK，[window.onpopstate](https://developer.mozilla.org/en-US/docs/DOM/window.onpopstate)
+- Johnny Simpson, [Controlling History: The HTML5 History API And ‘Selective’ Loading](http://www.inserthtml.com/2013/06/history-api/)

@@ -3,7 +3,7 @@ title: JavaScript的历史
 layout: page
 category: introduction
 date: 2013-01-10
-modifiedOn: 2013-06-10
+modifiedOn: 2013-06-21
 ---
 
 ## 互联网的起源
@@ -112,6 +112,8 @@ JavaScript 1.1版对应ECMAScript 1.0版，但是直到JavaScript 1.4版才完�
 2005年，Apache基金会发布了CouchDB数据库。这是一个基于JSON格式的数据库，可以用Javascript函数定义视图和索引。它在本质上有别于传统的关系型数据库，标识着NoSQL类型的数据库诞生。
 
 2006年，jQuery函数库诞生，它为操纵网页DOM结构提供了非常强大易用的接口，成为了使用最广泛的函数库，并且让Javascript语言的应用难度大大降低，推动了这种语言的流行。
+
+2006年，Google推出 Google Web Toolkit 项目（缩写为GWT），提供Java编译成JavaScript的功能，开创了将其他语言转为JavaScript的先河。
 
 2007年，Webkit引擎在iPhone手机中得到部署。它最初基于KDE项目，2003年苹果公司首先采用，2005年开源。这标志着Javascript语言开始能在手机中使用了，意味着有可能写出在桌面电脑和手机中都能使用的程序。
 
