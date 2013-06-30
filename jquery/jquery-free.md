@@ -3,18 +3,20 @@ title: 如何做到 jQuery-free？
 layout: page
 category: jquery
 date: 2013-05-11
-modifiedOn: 2013-05-11
+modifiedOn: 2013-07-01
 ---
 
 ## 概述
 
 jQuery是最流行的JavaScript工具库。据[统计](http://w3techs.com/technologies/details/js-jquery/all/all)，目前全世界57.3%的网站使用它。也就是说，10个网站里面，有6个使用jQuery。如果只考察使用工具库的网站，这个比例就会上升到惊人的91.7%。
 
-虽然jQuery如此受欢迎，但是它臃肿的[体积](http://mathiasbynens.be/demo/jquery-size)也让人头痛不已。jQuery 2.0的原始大小为235KB，优化后为81KB；如果是支持IE6、7、8的jQuery 1.8.3，原始大小为261KB，优化后为91KB。
+jQuery如此受欢迎，以至于有被滥用的趋势。许多开发者不管什么样的项目，都一股脑使用jQuery。但是，jQuery本质只是一个中间层，提供一套统一易用的DOM操作接口，消除浏览器之间的差异。多了这一层中间层，操作的性能和效率多多少少会打一些折扣。
 
-这样的体积，即使是宽带环境，完全加载也需要1秒或更长，更不要说移动设备了。这意味着，如果你使用了jQuery，用户至少延迟1秒，才能看到网页效果。考虑到本质上，jQuery只是一个操作DOM的工具，我们不仅要问：如果只是为了几个网页特效，是否有必要动用这么大的库？
+2006年，jQuery诞生的时候，主要是为了解决IE6与标准的不兼容问题。如今的[情况](http://en.wikipedia.org/wiki/Usage_share_of_web_browsers)已经发生了很大的变化。IE的市场份额不断下降，以ECMAScript为基础的JavaScript标准语法，正得到越来越广泛的支持，不同浏览器对标准的支持越来越好、越来越趋同。开发者直接使用JavScript标准语法，就能同时在各大浏览器运行，不再需要通过jQuery获取兼容性。
 
-2006年，jQuery诞生的时候，主要用于消除不同浏览器的差异（主要是IE6），为开发者提供一个简洁的统一接口。相比当时，如今的[情况](http://en.wikipedia.org/wiki/Usage_share_of_web_browsers)已经发生了很大的变化。IE的市场份额不断下降，以ECMAScript为基础的JavaScript标准语法，正得到越来越广泛的支持。开发者直接使用JavScript标准语法，就能同时在各大浏览器运行，不再需要通过jQuery获取兼容性。
+另一方面，jQuery臃肿的[体积](http://mathiasbynens.be/demo/jquery-size)也让人头痛不已。jQuery 2.0的原始大小为235KB，优化后为81KB；如果是支持IE6、7、8的jQuery 1.8.3，原始大小为261KB，优化后为91KB。即使有CDN，浏览器加载这样大小的脚本，也会产生不小的开销。
+
+所以，对于一些不需要支持老式浏览器的小型项目来说，不使用jQuery，直接使用DOM原生接口，可能是更好的选择。开发者有必要了解，jQuery的一些常用操作所对应的DOM写法。而且，理解jQuery背后的原理，会帮助你更好地使用jQuery。要知道有一种极端的说法是，如果你不理解一样东西，就不要使用它。
 
 下面就探讨如何用JavaScript标准语法，取代jQuery的一些主要功能，做到jQuery-free。
 
@@ -341,3 +343,5 @@ el.addEventListener("transitionend", transitionEnded);
 - Remy Sharp，[I know jQuery. Now what?](http://remysharp.com/2013/04/19/i-know-jquery-now-what/)
 - Hemanth.HM，[Power of Vanilla JS](http://h3manth.com/new/blog/2013/power-of-vanilla-js/)
 - Burke Holland, [5 Things You Should Stop Doing With jQuery](http://flippinawesome.org/2013/05/06/5-things-you-should-stop-doing-with-jquery/)
+- Burke Holland, [Out-Growing jQuery](http://tech.pro/tutorial/1385/out-growing-jquery)
+- Nicolas Bevacqua, [Uncovering the Native DOM API](http://flippinawesome.org/2013/06/17/uncovering-the-native-dom-api/)

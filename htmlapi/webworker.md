@@ -177,3 +177,4 @@ window.postMessage(arrayBuffer, targetOrigin, [arrayBuffer]);
 
 - Matt West, [Using Web Workers to Speed-Up Your JavaScript Applications](http://blog.teamtreehouse.com/using-web-workers-to-speed-up-your-javascript-applications)
 - Eric Bidelman，[The Basics of Web Workers](http://www.html5rocks.com/en/tutorials/workers/basics/)
+- Eric Bidelman，[Transferable Objects: Lightning Fast!](http://updates.html5rocks.com/2011/12/Transferable-Objects-Lightning-Fast)
