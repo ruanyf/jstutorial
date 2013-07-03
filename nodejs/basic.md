@@ -191,7 +191,7 @@ http.createServer(function (req, res) {
 
 ## 库管理器npm
 
-### 简介
+### npm简介
 
 npm是Node.js默认的包管理器，用来安装和管理第三方node模块。在安装node的时候，会连带一起安装。可以用下面的命令，查看npm的版本。
 
