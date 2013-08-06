@@ -3,14 +3,16 @@ title: 任务管理工具Grunt
 category: tool
 layout: page
 date: 2013-04-21
-modifiedOn: 2013-07-03
+modifiedOn: 2013-08-06
 ---
 
-在Javascript的开发过程中，经常会遇到一些重复性的任务，比如合并文件、压缩代码、检查语法错误、将Sass代码转成CSS代码等等。通常，我们需要使用不同的工具，来完成不同的任务，既重复劳动又非常耗时。Grunt就是为了解决这个问题，而发明的工具。它可以帮助我们自动管理和运行各种任务。
+在Javascript的开发过程中，经常会遇到一些重复性的任务，比如合并文件、压缩代码、检查语法错误、将Sass代码转成CSS代码等等。通常，我们需要使用不同的工具，来完成不同的任务，既重复劳动又非常耗时。Grunt就是为了解决这个问题而发明的工具，可以帮助我们自动管理和运行各种任务。
+
+简单说，Grunt是一个自动任务运行器，会按照预先设定的顺序自动运行一系列的任务。这可以简化工作流程，减轻重复性工作带来的负担。
 
 ## 安装
 
-Grunt基于Node.js，所以安装之前要先安装Node.js，然后运行下面的命令。
+Grunt基于Node.js，安装之前要先安装Node.js，然后运行下面的命令。
 
 {% highlight bash %}
 
@@ -20,7 +22,7 @@ npm install grunt-cli -g
 
 grunt-cli表示安装的grunt的命令行界面，参数g表示全局安装。
 
-Grunt使用模块结构，除了安装命令行界面以外，还可以根据需要安装所需的模块。这些模块应该采用本地安装，因为不同项目可能需要同一个模块的不同版本。
+Grunt使用模块结构，除了安装命令行界面以外，还要根据需要安装相应的模块。这些模块应该采用局部安装，因为不同项目可能需要同一个模块的不同版本。
 
 首先，在项目的根目录下，创建一个文本文件package.json，指定当前项目所需的模块。下面就是一个例子。
 
@@ -29,6 +31,7 @@ Grunt使用模块结构，除了安装命令行界面以外，还可以根据需
 {
   "name": "my-project-name",
   "version": "0.1.0",
+  "author": "Your Name",
   "devDependencies": {
     "grunt": "~0.4.0",
     "grunt-contrib-jshint": "~0.1.0",
@@ -40,7 +43,7 @@ Grunt使用模块结构，除了安装命令行界面以外，还可以根据需
 
 {% endhighlight %}
 
-上面这个package.json文件中，除了注明项目的名称和版本以外，还在devDependencies属性中指定了项目依赖的grunt模块和版本：核心文件0.4.0版，jshint插件0.1.0版，concat插件0.1.1版，uglify插件0.1.0，watch插件0.1.4版。
+上面这个package.json文件中，除了注明项目的名称和版本以外，还在devDependencies属性中指定了项目依赖的grunt模块和版本：核心文件不低于0.4.0版，jshint插件不低于0.1.0版，concat插件不低于0.1.1版，uglify插件不低于0.1.0，watch插件不低于0.1.4版。
 
 然后，在项目的根目录下运行下面的命令，这些插件就会被自动安装。
 
@@ -58,11 +61,11 @@ npm init
 
 {% endhighlight %}
 
-还有一种方法，就是加上--save-dev参数，逐一安装所需模块，该模块就会自动被加入package.json文件。
+如果要在现有的项目中使用Grunt，可以在安装的时候加上--save-dev参数，逐一安装所需模块，该模块就会自动被加入package.json文件。
 
 {% highlight bash %}
 
-npm install grunt --save-dev
+npm install <module> --save-dev
 
 {% endhighlight %}
 
@@ -127,6 +130,8 @@ grunt
 - grunt-contrib-copy ：复制文件。
 - grunt-contrib-qunit：运行单元测试。
 - grunt-contrib-jshint：检查JavaScript语法。
+
+目前，Grunt项目主页上的[模块总数](http://gruntjs.com/plugins)，已经达到了300多个。
 
 ### grunt-contrib-jshint
 
@@ -197,3 +202,5 @@ watch: {
 
 - Frederic Hemberger, [A build tool for front-end projects](http://frederic-hemberger.de/artikel/grunt-buildtool-for-frontend-projects/)
 - Mária Jurčovičová, [Building a JavaScript Library with Grunt.js](http://flippinawesome.org/2013/07/01/building-a-javascript-library-with-grunt-js/)
+- Ben Briggs，[Speed Up Your Web Development Workflow with Grunt](http://sixrevisions.com/javascript/grunt-tutorial-01/)
+- [Optimizing Images With Grunt](http://blog.grayghostvisuals.com/grunt/image-optimization/)
