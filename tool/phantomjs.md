@@ -3,7 +3,7 @@ layout: page
 title: PhantomJS
 date: 2012-12-08
 category: tool
-modifiedOn: 2013-04-21
+modifiedOn: 2013-08-07
 ---
 
 ## 概述
@@ -86,6 +86,7 @@ $ phantomjs add.js
 // page.js
 
 var page = require('webpage').create();
+
 page.open('http://slashdot.org', function (s) {
     console.log(s);
     phantom.exit();
@@ -253,3 +254,4 @@ phantom.exit();
 - [Testing JavaScript with PhantomJS](http://net.tutsplus.com/tutorials/javascript-ajax/testing-javascript-with-phantomjs/)
 - [Phantom Quick Start](https://github.com/ariya/phantomjs/wiki/Quick-Start)
 - Ariya Hidayat, [Web Page Clipping with PhantomJS](http://ariya.ofilabs.com/2013/04/web-page-clipping-with-phantomjs.html)
+- BenjaminBenBen, [Using PhantomJS WebServer](http://benjaminbenben.com/2013/07/28/phantomjs-webserver/)
