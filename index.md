@@ -65,14 +65,13 @@ modifiedOn: 2013-07-05
 
 <h2 id="htmlapi">HTML网页的API</h2>
 
-* [Canvas](htmlapi/canvas.html)
+- [Canvas](htmlapi/canvas.html)
 - [SVG图像](htmlapi/svg.html)
-* [Blob对象](htmlapi/blob.html)
-* [File](htmlapi/file.html)
+- [File对象和二进制数据](htmlapi/file.html)
 - [Web Worker](htmlapi/webworker.html)
 - [服务器端发送事件](htmlapi/eventsource.html)
-* [Page Visiblity](htmlapi/pagevisibility.html)
-* [FullScreen](htmlapi/fullscreen.html)
+- [Page Visiblity](htmlapi/pagevisibility.html)
+- [FullScreen](htmlapi/fullscreen.html)
 - [Web Speech](htmlapi/webspeech.html)
 - [requestAnimationFrame](htmlapi/requestanimationframe.html)
 

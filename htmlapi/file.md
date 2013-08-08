@@ -6,43 +6,9 @@ category: htmlapi
 modifiedOn: 2013-08-08
 ---
 
-File是一个对象，代表用户的本地文件。与这个对象相关的，有一组API，使用它们可以操作文件。
+除了文本数据，JavaScript还能操作二进制数据，Blob对象就是操作接口。
 
-## FileList对象
-
-FileList对象针对表单的file控件。当用户通过file控件选取文件后，这个控件的files属性值就是FileList对象。它在结构上类似于数组，包含用户选取的多个文件。
-
-{% highlight html %}
-
-<input type="file" id="input" onchange="console.log(this.files.length)" multiple />
-
-{% endhighlight %}
-
-当用户选取文件后，就可以读取该文件。
-
-{% highlight javascript %}
-
-var selected_file = document.getElementById('input').files[0];
-
-{% endhighlight %}
-
-## File对象
-
-FileList对象是一个类似数组的对象，每个成员就是一个File对象，包含了文件的一些元信息，比如文件名、上次改动时间、文件大小和文件类型。它的属性值如下：
-
-- name：文件名，该属性只读。
-- size：文件大小，单位为字节，该属性只读。
-- type：文件的MIME类型，如果分辨不出类型，则为空字符串，该属性只读。
-
-{% highlight javascript %}
-
-var selected_file = document.getElementById('input').files[0];
-
-var fileName = selected_file.name;
-var fileSize = selected_file.size;
-var fileType = selected_file.type;
-
-{% endhighlight %}
+在Blob对象的基础上，又衍生出一系列相关的API。File对象负责处理那些以文件形式存在的二进制数据，也就是操作本地文件；FileList对象是File对象的网页表单接口；FileReader对象负责将二进制数据读入内容；URL对象则是用于对二进制数据生成URL。
 
 ## Blob对象
 
@@ -80,7 +46,43 @@ Blob对象有两个只读属性：
 - size：二进制数据的大小，单位为字节。
 - type：二进制数据的MIME类型，全部为小写，如果类型未知，则该值为空字符串。
 
-如果xhr.responseType设为blob，接收的就是二进制数据。
+在Ajax操作中，如果xhr.responseType设为blob，接收的就是二进制数据。
+
+## FileList对象
+
+FileList对象针对表单的file控件。当用户通过file控件选取文件后，这个控件的files属性值就是FileList对象。它在结构上类似于数组，包含用户选取的多个文件。
+
+{% highlight html %}
+
+<input type="file" id="input" onchange="console.log(this.files.length)" multiple />
+
+{% endhighlight %}
+
+当用户选取文件后，就可以读取该文件。
+
+{% highlight javascript %}
+
+var selected_file = document.getElementById('input').files[0];
+
+{% endhighlight %}
+
+## File对象
+
+FileList对象是一个类似数组的对象，每个成员就是一个File对象，包含了文件的一些元信息，比如文件名、上次改动时间、文件大小和文件类型。它的属性值如下：
+
+- name：文件名，该属性只读。
+- size：文件大小，单位为字节，该属性只读。
+- type：文件的MIME类型，如果分辨不出类型，则为空字符串，该属性只读。
+
+{% highlight javascript %}
+
+var selected_file = document.getElementById('input').files[0];
+
+var fileName = selected_file.name;
+var fileSize = selected_file.size;
+var fileType = selected_file.type;
+
+{% endhighlight %}
 
 ## FileReader对象
 
