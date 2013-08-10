@@ -180,25 +180,13 @@ window.postMessage(arrayBuffer, targetOrigin, [arrayBuffer]);
 {% highlight html %}
 
 <!DOCTYPE html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="css/main.css">
-    </head>
     <body>
-        <p>Open your browser's console to see the results.</p>
-
         <script id="worker" type="app/worker">
 
             addEventListener('message', function() {
                 postMessage('Im reading Tech.pro');
             }, false);
-
         </script>
-
     </body>
 </html>
 
@@ -245,17 +233,7 @@ worker.postMessage('');
 {% highlight html %}
 
 <!DOCTYPE html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="css/main.css">
-    </head>
     <body>
-        <p>Open your browser's console to see the results.</p>
-
         <script id="worker" type="app/worker">
 
             addEventListener('message', function() {
@@ -264,7 +242,7 @@ worker.postMessage('');
 
         </script>
 
-        <script>
+		<script>
             (function() {
 
                 var blob = new Blob([document.querySelector('#worker').textContent]);
@@ -280,7 +258,6 @@ worker.postMessage('');
                 worker.postMessage('');
             })();
         </script>
-
     </body>
 </html>
 

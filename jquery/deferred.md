@@ -48,6 +48,32 @@ get('http://www.example.com').then(function (content) {
 
 {% endhighlight %}
 
+在1.7版之前，jQuery的Ajax操作采用回调函数。
+
+{% highlight javascript %}
+
+$.ajax({
+    url:"/echo/json/",
+    success: function(response)
+    {
+       console.info(response.name);
+    }
+});
+
+{% endhighlight %}
+
+1.7版之后，Ajax操作直接返回Promise对象，这意味着可以用then方法指定回调函数。
+
+{% highlight javascript %}
+
+$.ajax({
+    url: "/echo/json/",
+}).then(function (response) {
+    console.info(response.name);
+});
+
+{% endhighlight %}
+
 ## deferred对象的方法
 
 ### $.deferred()方法
