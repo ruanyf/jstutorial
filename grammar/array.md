@@ -3,7 +3,7 @@ title: 数组
 date: 2012-12-11
 category: grammar
 layout: page
-modifiedOn: 2013-05-04
+modifiedOn: 2013-08-10
 ---
 
 ## 定义
@@ -35,7 +35,16 @@ arr [2]
 
 {% endhighlight %}
 
-但是本质上，数组也属于对象，是字典结构（dictionary）的一个变种。前面说过，数组的键是从0开始的连续整数，但是对象的键都是字符串，所以才会有下面的运行结果：
+数组的length属性，返回数组的元素数量。
+
+{% highlight javascript %}
+
+['a', 'b', 'c'].length
+// 3
+
+{% endhighlight %}
+
+本质上，数组也属于对象，是字典结构（dictionary）的一个变种。前面说过，数组的键是从0开始的连续整数，但是对象的键都是字符串，所以才会有下面的运行结果：
 
 {% highlight javascript %}
 
@@ -92,7 +101,7 @@ for(var i = 0; i < a.length; i++){
 
 {% endhighlight %}
 
-字典成员的引用可以使用“点”结构（object.key），也可以用方括号表示。但是数组成员不能使用点结构表示，arr.0不合法，因为数字不是标识符（identifier）。所以，数组成员只能用方括号表示。
+对象成员的引用可以使用“点”结构（object.key），也可以用方括号表示。但是数组成员不能使用点结构表示，arr.0不合法，因为数字不是标识符（identifier）。所以，数组成员只能用方括号表示。
 
 除了直接使用方括号创建，数组还是使用JavaScript内置的Array对象创建。
 
@@ -176,6 +185,19 @@ arr.length = 2;
 
 2 in arr
 // false
+
+{% endhighlight %}
+
+将数组清空的一个有效方法，就是将length属性设为0。
+
+{% highlight javascript %}
+
+var arr = [ 'a', 'b', 'c' ];
+
+arr.length = 0;
+
+arr
+// []
 
 {% endhighlight %}
 
