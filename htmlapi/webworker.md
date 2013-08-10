@@ -3,7 +3,7 @@ title: Web Worker
 layout: page
 category: htmlapi
 date: 2013-01-25
-modifiedOn: 2013-06-30
+modifiedOn: 2013-08-10
 ---
 
 ## 概述
@@ -173,8 +173,124 @@ window.postMessage(arrayBuffer, targetOrigin, [arrayBuffer]);
 
 {% endhighlight %}
 
+## 同页面的Web Worker
+
+通常情况下，子线程载入的是一个单独的JavaScript文件，但是也可以载入与主线程在同一个网页的代码。假设网页代码如下：
+
+{% highlight html %}
+
+<!DOCTYPE html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="css/main.css">
+    </head>
+    <body>
+        <p>Open your browser's console to see the results.</p>
+
+        <script id="worker" type="app/worker">
+
+            addEventListener('message', function() {
+                postMessage('Im reading Tech.pro');
+            }, false);
+
+        </script>
+
+    </body>
+</html>
+
+{% endhighlight %}
+
+我们可以读取页面中的script，用worker来处理。
+
+{% highlight javascript %}
+
+var blob = new Blob([document.querySelector('#worker').textContent]);
+
+{% endhighlight %}
+
+这里需要把代码当作二进制对象读取，所以使用Blob接口。然后，这个二进制对象转为URL，再通过这个URL创建worker。
+
+{% highlight javascript %}
+
+var url = window.URL.createObjectURL(blob);
+
+var worker = new Worker(url);
+
+{% endhighlight %}
+
+部署事件监听代码。
+
+{% highlight javascript %}
+
+worker.addEventListener('message', function(e) {
+   console.log(e.data);
+}, false);
+
+{% endhighlight %}
+
+最后，启动worker。
+
+{% highlight javascript %}
+
+worker.postMessage('');
+
+{% endhighlight %}
+
+整个页面的代码如下：
+
+{% highlight html %}
+
+<!DOCTYPE html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="css/main.css">
+    </head>
+    <body>
+        <p>Open your browser's console to see the results.</p>
+
+        <script id="worker" type="app/worker">
+
+            addEventListener('message', function() {
+                postMessage('Work done!');
+            }, false);
+
+        </script>
+
+        <script>
+            (function() {
+
+                var blob = new Blob([document.querySelector('#worker').textContent]);
+
+                var url = window.URL.createObjectURL(blob);
+
+                var worker = new Worker(url);
+
+                worker.addEventListener('message', function(e) {
+                    console.log(e.data);
+                }, false);
+
+                worker.postMessage('');
+            })();
+        </script>
+
+    </body>
+</html>
+
+{% endhighlight %}
+
+可以看到，主线程和子线程的代码都在同一个网页上面。除此之外，还有一种Web Worker，允许多个浏览器窗口共享同一个worker，这里就省略了。
+
 ## 参考链接
 
 - Matt West, [Using Web Workers to Speed-Up Your JavaScript Applications](http://blog.teamtreehouse.com/using-web-workers-to-speed-up-your-javascript-applications)
 - Eric Bidelman，[The Basics of Web Workers](http://www.html5rocks.com/en/tutorials/workers/basics/)
 - Eric Bidelman，[Transferable Objects: Lightning Fast!](http://updates.html5rocks.com/2011/12/Transferable-Objects-Lightning-Fast)
+- Jesse Cravens，[Web Worker Patterns](http://tech.pro/tutorial/1487/web-worker-patterns)
