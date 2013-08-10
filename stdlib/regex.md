@@ -3,7 +3,7 @@ title: Regex对象
 layout: page
 category: stdlib
 date: 2013-01-17
-modifiedOn: 2013-08-07
+modifiedOn: 2013-08-10
 ---
 
 ## 概述
@@ -161,7 +161,20 @@ search 方法返回第一个满足匹配条件的字符在整个字符串中的�
 
 replace 方法可以替换匹配的值。如果不加g修饰符，就替换第一个匹配成功的值，否则替换所有匹配成功的值。
 
-它接受两个参数，第一个是搜索模式，第二个是替换的内容。
+{% highlight javascript %}
+
+"aaa".replace("a", "b")
+// "baa"
+
+"aaa".replace(/a/, "b")
+// "baa"
+
+"aaa".replace(/a/g, "b")
+// "bbb"
+
+{% endhighlight %}
+
+replace方法接受两个参数，第一个是搜索模式，第二个是替换的内容。
 
 {% highlight javascript %}
 
@@ -179,14 +192,8 @@ str.replace(search, replacement)
 
 {% highlight javascript %}
 
-"a1b_c1d".replace("1", "[$`-$&-$']")
-// 'a[a-1-b_c1d]b_c1d'
-
-"a1b_c1d".replace(/1/, "[$`-$&-$']")
-// 'a[a-1-b_c1d]b_c1d'
-
-"a1b_c1d".replace(/1/g, "[$`-$&-$']")
-// 'a[a-1-b_c1d]b_c[a1b_c-1-d]d'
+"a1b".replace("1", "[$`-$&-$']")
+// "a[a-1-b]b"
 
 {% endhighlight %}
 
