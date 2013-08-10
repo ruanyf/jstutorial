@@ -229,36 +229,44 @@ toLowerCase用于将一个字符串转为小写，toUpperCase则是转为大写�
 
 {% endhighlight %}
 
-### 正则方法
+### 搜索和替换
 
-match方法用于正则匹配，等同于RegExp的exec方法。
+与搜索和替换相关的有三个方法，它们都允许使用正则表达式。
+
+- match：用于确定原字符串是否匹配某个子字符串，返回匹配的子字符串数组。
+- search：等同于match，但是返回值不一样。
+- replace：用于替换匹配的字符串。
+
+下面是这三个方法的简单介绍，详细介绍见正则表达式的章节。
+
+match方法返回一个匹配数组，成员为匹配的第一个字符串，等同于正则对象的exec方法。如果没有找到匹配，则返回null。
 
 {% highlight javascript %}
 
 var matches = "cat, bat, sat, fat".match(".at");
 
+matches
+// ["cat"]
+
 matches.index;
 // 0
 
-matches[0]
-// "cat"
-
 {% endhighlight %}
 
-search方法的用法等同于match，只返回匹配的第一个位置。
+search方法的用法等同于match，但是返回值为匹配的第一个位置。如果没有找到匹配，则返回-1。
 
 {% highlight javascript %}
 
 "cat, bat, sat, fat".search(".at")
-// 1
+// 0
 
 {% endhighlight %}
 
-replace方法用于替换。
+replace方法用于替换匹配的子字符串，一般情况下只替换第一个匹配的值，除非搜索模式是带有g修饰符的正则对象。
 
 {% highlight javascript %}
 
-"cat, bat, sat, fat".replace("/at/g", "ond")
-// "cond, bond, sond, fond"
+"aaa".replace("a", "b")
+// "baa"
 
 {% endhighlight %}
