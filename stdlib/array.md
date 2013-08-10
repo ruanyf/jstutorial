@@ -3,7 +3,7 @@ title: Array 对象
 layout: page
 category: stdlib
 date: 2013-05-04
-modifiedOn: 2013-05-04
+modifiedOn: 2013-08-10
 ---
 
 ## 概述
@@ -134,7 +134,7 @@ a.join("|")
 
 ### slice方法
 
-该方法用于从数组中返回指定位置的元素，原数组不变。它的第一个参数为起始位置，第二个参数为终止位置。
+该方法用于从数组中返回指定位置的元素组成的数组，原数组不变。它的第一个参数为起始位置（从0开始），第二个参数为终止位置。如果省略第二个参数，则一直返回到原数组的最后一个元素。
 
 {% highlight javascript %}
 
@@ -143,8 +143,18 @@ var a = ["a","b","c","d","e","f","g","h","i"];
 a.slice(5,9)
 // ["f", "g", "h", "i"]
 
-a
+a.slice(0)
 // ["a","b","c","d","e","f","g","h","i"];
+
+{% endhighlight %}
+
+该方法可以将类似数组的对象，转为真正的数组。
+
+{% highlight javascript %}
+
+Array.prototype.slice.call(document.querySelectorAll("div"));
+
+Array.prototype.slice.call(arguments);
 
 {% endhighlight %}
 
@@ -198,16 +208,13 @@ a
 
 {% highlight javascript %}
 
-var a = ["d","c","b","a"];
-a.sort()
+["d","c","b","a"].sort()
 // ["a", "b", "c", "d"]
 
-var a = [4,3,2,1];
-a.sort()
+[4,3,2,1].sort()
 // [1, 2, 3, 4]
 
-var a = [11,101];
-a.sort()
+[11,101].sort()
 // [101, 11]
 
 {% endhighlight %}
@@ -226,5 +233,18 @@ function f(a,b){
 
 a.sort(f)
 // [111, 1101, 10111]
+
+[
+    { name: "张三", age: 30 },
+    { name: "李四", age: 24 },
+    { name: "王五", age: 28  }
+].sort(function(o1, o2) {
+    return o1.age - o2.age;
+})
+// [
+//    { name: "李四", age: 24 },
+//    { name: "王五", age: 28  },
+//    { name: "张三", age: 30 }
+// ]
 
 {% endhighlight %}
