@@ -3,16 +3,50 @@ title: jQuery.Deferred对象
 category: jquery
 date: 2012-12-07
 layout: page
-modifiedOn: 2013-02-04
+modifiedOn: 2013-08-10
 ---
 
 ## 概述
 
-deferred对象是jQuery非同步操作的接口，你可以将它看作一个将来完成的任务。事实上，它扮演代理人（proxy）的角色，用来沟通那些还未完成或者已经完成的非同步操作，典型例子就是Ajax操作、网页动画、web worker等等。
-
-deferred对象最简单的应用是，指定非同步操作成功或失败后的回调函数（callback）。根据deferred的术语，成功叫做resolve，失败叫做reject。
+deferred对象是jQuery对Promises接口的实现。它是非同步操作的通用接口，可以被看作是一个等待完成的任务，开发者通过一些通过的接口对其进行设置。事实上，它扮演代理人（proxy）的角色，将那些非同步操作包装成具有某些统一特性的对象，典型例子就是Ajax操作、网页动画、web worker等等。
 
 jQuery的所有Ajax操作函数，默认返回的就是一个deferred对象。
+
+## Promises是什么
+
+由于JavaScript单线程的特点，如果某个操作耗时很长，其他操作就必需排队等待。为了避免整个程序失去响应，通常的解决方法是将那些排在后面的操作，写成“回调函数”（callback）的形式。这样做虽然可以解决问题，但是有一些显著缺点：
+
+- 回调函数往往写成函数参数的形式，导致函数的输入和输出非常混乱，整个程序的可阅读性差；
+- 回调函数往往只能指定一个，如果有多个操作，就需要改写回调函数。
+- 整个程序的运行流程被打乱，除错和调试的难度都相应增加。
+
+Promises就是为了解决这些问题而提出的，它的主要目的就是取代回调函数，成为非同步操作的解决方案。它的核心思想就是让非同步操作返回一个对象，其他操作都针对这个对象来完成。比如，假定ajax操作返回一个Promise对象。
+
+{% highlight javascript %}
+
+var promise = get('http://www.example.com');
+
+{% endhighlight %}
+
+然后，Promise对象有一个then方法，可以用来指定回调函数。一旦非同步操作完成，就调用指定的回调函数。
+
+{% highlight javascript %}
+
+promise.then(function (content) {
+  console.log(content)
+})
+
+{% endhighlight %}
+
+可以将上面两段代码合并起来，这样程序的流程看得更清楚。
+
+{% highlight javascript %}
+
+get('http://www.example.com').then(function (content) {
+  console.log(content)
+})
+
+{% endhighlight %}
 
 ## deferred对象的方法
 
