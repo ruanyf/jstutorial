@@ -8,13 +8,15 @@ modifiedOn: 2013-08-10
 
 ## 概述
 
-Array 本身既是一个对象，也是一个构造函数。可以用它生成新的数组。
+Array是JavaScript的内置对象，同时也是一个构造函数，可以用它生成新的数组。
+
+作为构造函数时，如果没有参数，则返回一个空数组；如果使用一个正整数作为参数，则这个正整数表示新数组的长度；如果参数在一个以上，则这些参数就是新数组的成员。
 
 {% highlight javascript %}
 
 var a1 = new Array();
 a1
-// 没有任何显示
+// []
 
 var a2 = new Array(1);
 a2
@@ -27,6 +29,8 @@ a3
 {% endhighlight %}
 
 ## Array对象实例的方法
+
+以下这些Array对象实例的方法，都是数组实例才能使用。如果不想创建实例，只是想单纯调用这些方法，可以写成 [].method.call(调用对象，参数) 的形式，或者 Array.prototype.method.call(调用对象，参数)的形式。
 
 - pop 删除并返回数组的最后一个元素
 - reverse 颠倒数组中元素的顺序
@@ -100,7 +104,21 @@ a
 
 {% endhighlight %}
 
-它还可以向对象添加元素，添加后的对象变成“类似数组的”对象，即新加入元素的键对应数组的索引，并且对象有一个length属性。
+如果需要合并两个数组，可以这些写：
+
+{% highlight javascript %}
+
+var a = [1,2,3];
+var b = [4,5,6];
+
+Array.prototype.push.apply(a, b);
+
+a
+// [1, 2, 3, 4, 5, 6]
+
+{% endhighlight %}
+
+该方法还可以用于向对象添加元素，添加后的对象变成“类似数组的”对象，即新加入元素的键对应数组的索引，并且对象有一个length属性。
 
 {% highlight javascript %}
 
