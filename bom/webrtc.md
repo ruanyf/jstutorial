@@ -3,7 +3,7 @@ title: WebRTC
 layout: page
 category: bom
 date: 2013-01-10
-modifiedOn: 2013-02-15
+modifiedOn: 2013-08-10
 ---
 
 ## 概述
@@ -73,7 +73,7 @@ navigator.getUserMedia({
 
 {% highlight javascript %}
 
-function onSuccess() {
+function onSuccess(stream) {
 
     var video = document.getElementById('webcam');
  
@@ -100,8 +100,57 @@ function onSuccess(stream) {
 
 它的主要用途是让用户使用摄影头为自己拍照。
 
+## 捕获麦克风声音
+
+通过浏览器捕获声音，相对复杂，需要借助Web Audio API。
+
+{% highlight javascript %}
+
+function onSuccess(stream) {
+
+	// 创建一个“音频环境”的对象
+	audioContext = window.AudioContext || window.webkitAudioContext;
+    context = new audioContext(); 
+
+	// 将声音流输入这个对象
+	audioInput = context.createMediaStreamSource(stream);
+
+	// 设置音量节点
+	volume = context.createGain();
+	audioInput.connect(volume);
+
+	// 创建缓存，用来暂存声音
+	var bufferSize = 2048;
+
+	// 创建声音的缓存节点，createJavaScriptNode方法的
+	// 第二个和第三个参数指的是输入和输出都是双声道。
+    recorder = context.createJavaScriptNode(bufferSize, 2, 2);
+
+	// 录音过程的回调函数，基本上是将左右两声道的声音
+	// 分别放入缓存。
+	recorder.onaudioprocess = function(e){
+        console.log('recording');
+        var left = e.inputBuffer.getChannelData(0);
+        var right = e.inputBuffer.getChannelData(1);
+        // we clone the samples
+        leftchannel.push(new Float32Array(left));
+        rightchannel.push(new Float32Array(right));
+        recordingLength += bufferSize;
+    }
+
+	// 将音量节点连上缓存节点，换言之，音量节点是输入
+	// 和输出的中间环节。
+	volume.connect(recorder);
+
+	// 将缓存节点连上输出的目的地，可以是扩音器，也可以
+	// 是音频文件。
+    recorder.connect(context.destination); 
+
+}
+
+{% endhighlight %}
+
 ## 参考链接
 
 - Andi Smith，[Get Started with WebRTC](http://www.netmagazine.com/tutorials/get-started-webrtc)
-
-
+- Thibault Imbert, [From microphone to .WAV with: getUserMedia and Web Audio](http://typedarray.org/from-microphone-to-wav-with-getusermedia-and-web-audio/)
