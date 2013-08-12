@@ -3,7 +3,7 @@ title: 任务管理工具Grunt
 category: tool
 layout: page
 date: 2013-04-21
-modifiedOn: 2013-08-06
+modifiedOn: 2013-08-10
 ---
 
 在Javascript的开发过程中，经常会遇到一些重复性的任务，比如合并文件、压缩代码、检查语法错误、将Sass代码转成CSS代码等等。通常，我们需要使用不同的工具，来完成不同的任务，既重复劳动又非常耗时。Grunt就是为了解决这个问题而发明的工具，可以帮助我们自动管理和运行各种任务。
@@ -45,7 +45,7 @@ Grunt使用模块结构，除了安装命令行界面以外，还要根据需要
 
 上面这个package.json文件中，除了注明项目的名称和版本以外，还在devDependencies属性中指定了项目依赖的grunt模块和版本：核心文件不低于0.4.0版，jshint插件不低于0.1.0版，concat插件不低于0.1.1版，uglify插件不低于0.1.0，watch插件不低于0.1.4版。
 
-然后，在项目的根目录下运行下面的命令，这些插件就会被自动安装。
+然后，在项目的根目录下运行下面的命令，这些插件就会被自动安装在node_modules子目录。
 
 {% highlight bash %}
 
@@ -65,13 +65,15 @@ npm init
 
 {% highlight bash %}
 
+npm install grunt --save-dev
+
 npm install <module> --save-dev
 
 {% endhighlight %}
 
 ## Gruntfile.js 命令脚本文件 
 
-在项目的根目录下，新建命令脚本文件Gruntfile.js，由它来执行各种任务。Gruntfile.js就是一般的Node.js模块的写法。
+在项目的根目录下，新建脚本文件Gruntfile.js。它是grunt的配置文件，就好像package.json是npm的配置文件一样。Gruntfile.js就是一般的Node.js模块的写法。
 
 {% highlight javascript %}
 
@@ -87,7 +89,7 @@ module.exports = function(grunt) {
 
 	});
 
-  // 加载模块
+  // 从node_modules目录加载模块文件
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -97,6 +99,7 @@ module.exports = function(grunt) {
   // default表示默认情况下，需要完成的任务。
   // 具体的任务用数组表示。如果不需要采取任何动作，就使用空数组（[]）。
   grunt.registerTask('default', ['jshint', 'concat', 'uglify']);
+  grunt.registerTask('check', ['jshint']);
 
 };
 
@@ -106,11 +109,11 @@ module.exports = function(grunt) {
 
 - grunt.initConfig：定义了执行各种任务所需的参数。
 - grunt.loadNpmTasks：加载完成任务所需的插件。
-- grunt.registerTask：定义了默认模式，即如果直接输入grunt命令，后面不跟任何参数，这时所需要完成的任务。
+- grunt.registerTask：定义了具体的任务，上面代码的default任务，表示如果直接输入grunt命令，后面不跟任何参数，这时所需要完成的任务（jshint，concat和uglify）；check任务则表示使用jshint插件对代码进行语法检查。
 
-上面的代码一共定义了四个任务：jshint（检查语法错误）、concat（合并文件）、uglify（压缩代码）和watch（自动执行）。要执行某个任务，只需在grunt后面加上这个任务即可，比如grunt jshint。
+上面的代码一共加载了四个插件：jshint（检查语法错误）、concat（合并文件）、uglify（压缩代码）和watch（自动执行）。要执行某个任务，只需在grunt后面加上这个任务即可，比如grunt jshint。
 
-定义Gruntfile.js以后，直接在项目的根目录下面，运行grunt命令即可。
+定义Gruntfile.js以后，直接在项目的根目录下面，直接运行grunt命令就表示执行默认的default任务。
 
 {% highlight bash %}
 
@@ -121,15 +124,23 @@ grunt
 
 如果一切正常，就显示“Done, without errors”；如果出错，系统会报错。
 
+如果要运行check任务，就在grunt命令后面加上任务名。
+
+{% highlight bash %}
+
+grunt check
+
+{% endhighlight %}
+
 ## 常用模块
 
-以下是一些比较常用的grunt模块。
+以下我们选几个常用模块，看看它们配置参数的写法，也就是说如何在grunt.initConfig方法中配置各个模块。
 
+- grunt-contrib-jshint：检查JavaScript语法。
 - grunt-contrib-concat：合并文件。
 - grunt-contrib-uglify：合并文件，然后将其最小化。
 - grunt-contrib-copy ：复制文件。
 - grunt-contrib-qunit：运行单元测试。
-- grunt-contrib-jshint：检查JavaScript语法。
 
 目前，Grunt项目主页上的[模块总数](http://gruntjs.com/plugins)，已经达到了300多个。
 
@@ -204,3 +215,4 @@ watch: {
 - Mária Jurčovičová, [Building a JavaScript Library with Grunt.js](http://flippinawesome.org/2013/07/01/building-a-javascript-library-with-grunt-js/)
 - Ben Briggs，[Speed Up Your Web Development Workflow with Grunt](http://sixrevisions.com/javascript/grunt-tutorial-01/)
 - [Optimizing Images With Grunt](http://blog.grayghostvisuals.com/grunt/image-optimization/)
+- Swapnil Mishra, [Simplifying Chores with Grunt](http://howtonode.org/c4e0f8565942d5e6df45fb78b12d19435543c236/simplifying-chores-with-grunt)
