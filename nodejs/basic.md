@@ -3,7 +3,7 @@ title: Node.js 概述
 layout: page
 category: nodejs
 date: 2013-01-14
-modifiedOn: 2013-06-16
+modifiedOn: 2013-08-10
 ---
 
 ## 简介
@@ -161,7 +161,7 @@ http.createServer(function(req, res) {
   else {
     res.writeHead(404, { "Content-Type": "text/plain" });
     res.end("404 error! File not found.");
-  }
+  }The above npm command is telling npm to grab backbone from the registry and install backbone into the current directory. Since our directory was empty, npm creates a folder called node_modules and places backbone and its dependencies inside this folder. Let’s examine the tree structure, shown below, after the npm install command install's backbone.
 
 }).listen(1337, "localhost");
 
@@ -193,17 +193,22 @@ http.createServer(function (req, res) {
 
 ### npm简介
 
-npm是Node.js默认的包管理器，用来安装和管理第三方node模块。在安装node的时候，会连带一起安装。可以用下面的命令，查看npm的版本。
+npm是Node.js默认的库管理器，用来安装和管理第三方node模块。在安装node的时候，会连带一起安装。node安装完成后，可以用下面的命令，查看一下帮助文件。
+
+{% highlight bash %}
+
+npm help
+
+# 各个命令的简单用法
+npm -l
+
+{% endhighlight %}
+
+下面的命令查看npm的版本和配置。
 
 {% highlight bash %}
 
 npm -version
-
-{% endhighlight %}
-
-再查看一下npm的默认设置。
-
-{% highlight bash %}
 
 npm config list -l
 
@@ -217,9 +222,11 @@ npm update -global npm
 
 {% endhighlight %}
 
+上面的命令之所以最后一个参数是npm，是因为npm本身也是Node.js的一个包。
+
 ### 库的安装
 
-每个库可以“全局安装”，也可以“本地安装”。两者的差异是库的安装位置，以及调用方法。“全局安装”指的是将一个库直接下载到Node.js的安装目录中，然后所有项目都可以调用这个库。“本地安装”指的是将一个库下载到当前目录，然后只有在这个目录和它的子目录之中，才能调用这个库。
+每个库可以“全局安装”，也可以“本地安装”。两者的差异是库的安装位置，以及调用方法。“全局安装”指的是将一个库直接下载到Node.js的安装目录中，各个项目都可以调用。“本地安装”指的是将一个库下载到当前目录，然后只有在这个目录和它的子目录之中，才能调用这个库。一般来说，全局安装只适用于工具库，比如npm和grunt。
 
 默认情况下，npm install 命令是“本地安装”某个库。库文件将下载到当前目录的 node_modules 子目录。
 
@@ -265,7 +272,7 @@ console.log(backbone.VERSION)
 
 ### 库的升级和删除
 
-npm update 命令可以升级本地安装的包。
+npm update 命令可以升级本地安装的库。
 
 {% highlight bash %}
 
@@ -309,17 +316,19 @@ npm -global list
 
 {% endhighlight %}
 
-搜索某个库，可以使用search命令。
+向服务器端搜索某个库，使用search命令（可接受正则搜索）。
 
 {% highlight bash %}
 
-npm search [search terms ...]
+npm search [搜索词]
 
 {% endhighlight %}
 
+如果不加搜索词，npm search 默认返回服务器端的所有库。
+
 ## 配置文件package.json
 
-每个项目的根目录下面，一般都有一个package.json文件，定义了这个项目所需要的各种库，以及项目的配置（比如项目的名称、版本、许可证等元数据）。npm命令根据这个文件，自动下载这些库。所以，package.json 可以看作是npm命令的配置文件。
+每个项目的根目录下面，一般都有一个package.json文件，定义了这个项目所需要的各种库，以及项目的配置（比如项目的名称、版本、许可证等元数据）。npm install 命令根据这个文件，自动下载这些库。所以，package.json 可以看作是npm命令的配置文件。
 
 下面是一个虚拟的package.json文件。
 
@@ -356,7 +365,29 @@ npm search [search terms ...]
 
 {% endhighlight %}
 
-最简单的生成 package.json 文件的方式，就是使用 npm init 命令。这个命令采用互动方式，要求用户回答一些问题，然后在当前目录生成一个基本的 package.json 文件。所有问题之中，只有项目名称（name）和项目版本（version）是必填的，其他都是选填的。
+最简单的生成 package.json 文件的方式，就是使用 npm init 命令。
+
+{% highlight bash %}
+
+npm init
+
+{% endhighlight %}
+
+这个命令采用互动方式，要求用户回答一些问题，然后在当前目录生成一个基本的 package.json 文件。所有问题之中，只有项目名称（name）和项目版本（version）是必填的，其他都是选填的。
+
+{% highlight bash %}
+
+name: (getBackboneVersion) get-backbone-version
+version: (0.0.0) 0.1.0
+description: get backbone version used
+entry point: (getBackboneVersion.js) getBackboneVersion.js
+test command: n/a
+git repository: n/a
+keywords: backbone, version
+author: cody lindley
+license: (BSD) MIT
+
+{% endhighlight %}
 
 有了package.json文件，直接使用npm install命令，就会在当前目录中安装文件指定的包。
 
