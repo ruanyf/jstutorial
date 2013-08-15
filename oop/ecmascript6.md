@@ -3,7 +3,7 @@ title: ECMAScript 6 介绍
 layout: page
 category: oop
 date: 2013-05-09
-modifiedOn: 2013-05-09
+modifiedOn: 2013-08-15
 ---
 
 ## 概述
@@ -14,42 +14,61 @@ ECMAScript 6 的目标，是使得JavaScript可以用来编写复杂的应用程
 
 最新的浏览器已经部分支持ECMAScript 6 的语法，可以通过[《ECMAScript 6 浏览器兼容表》](http://kangax.github.io/es5-compat-table/es6/)查看浏览器支持情况。
 
-## let关键字
+## 数据类型
+
+### let关键字
 
 let关键字类似于var，用来声明变量，但是该变量只在声明所在的块级作用域有效。
 
-下面的代码如果使用var，最后输出的是ES10。
+下面的代码如果使用var，最后输出的是10。
 
 {% highlight javascript %}
 
-var es = [];
+var a = [];
 for (var i = 0; i < 10; i++) {
-  es[i] = function () {
-    console.log("Upcoming edition of ECMAScript is ES" + i);
+  a[i] = function () {
+    console.log(i);
   };
 }
-es[6]();
+a[6]();
 
 {% endhighlight %}
 
-我们可是使用let，声明一个变量仅在块级作用域内有效，最后输出的是ES6。
+如果使用let，声明的变量仅在块级作用域内有效，最后输出的是6。
 
 {% highlight javascript %}
 
-var es = [];
+var a = [];
 for (var i = 0; i < 10; i++) {
   let c = i;
-  es[i] = function () {
-    console.log("Upcoming edition of ECMAScript is ES" + c);
+  a[i] = function () {
+    console.log(c);
   };
 }
-es[6]();
+a[6]();
 
 {% endhighlight %}
 
-## const关键字
+let实际上为JavaScript新增了块级作用域。
 
-const与let的作用相似，也是用来在块级作用域声明变量。但是，它声明的是常量，一旦声明，它的值就不能改变。
+{% highlight javascript %}
+
+function doSomething() {
+  let N = 5;
+  if (someCondition) {
+     let N = 10;
+     doSomethingElse(N);
+  }
+  console.log(N); // 5
+}
+
+{% endhighlight %}
+
+上面的代码有两个代码块，都声明了变量N。可以看到，外层代码块不受内层代码块的影响。如果使用var定义变量，最后输出的值就是10。
+
+### const关键字
+
+const与let的作用相似，也用来在块级作用域声明变量。但是，它声明的是常量，一旦声明，它的值就不能改变。
 
 {% highlight javascript %}
 
@@ -71,60 +90,172 @@ PI
 
 {% endhighlight %}
 
-## class结构
+### Set数据结构
 
-ECMAScript 6 提供了“类”。
-
-在此之前，一般用构造函数模拟“类”。
+ECMAScript 6 提供了新的数据结构Set。它类似于数组，但是所有值都是唯一的。
 
 {% highlight javascript %}
 
-var Language = function(config) {
-  this.name = config.name;
-  this.founder = config.founder;
-  this.year = config.year;
-};
+var e = new Set(); // 新建集合
  
-Language.prototype.summary = function() {
-  return this.name + " was created by " + this.founder + " in " + this.year;
+e.add("1") // 加入集合
+e.add("2")
+e.add("3")
+e.add("4")
+e.add("4") // 注意“4”被加入了两次
+ 
+e.has("1")    // true
+e.has("4")    // true
+e.has("5")   // false
+ 
+e.delete("4"); // delete item
+e.has("4")    // false
+
+{% endhighlight %}
+
+### Map数据结构
+
+ECMAScript 6 还提供了map数据结构。它就是一个键值对的数据结构，类似于对象，但是“键”的范围不限于字符串。
+
+{% highlight javascript %}
+
+var es6 = new Map(); // 新建Map
+ 
+es6.set("edition", 6)        // 键是字符串
+es6.set(262, "standard")     // 键是数值
+es6.set(undefined, "nah")    // 键是undefined
+ 
+var hello = function() {console.log("hello");}
+es6.set(hello, "Hello ES6!") // 键是函数
+ 
+es6.has("edition")     // true
+es6.has("years")       // false
+es6.has(262)           // true
+es6.has(undefined)     // true
+es6.has(hello)         // true
+ 
+es6.delete(undefined) // delete map
+es6.has(undefined)       // false
+ 
+es6.get(hello)  // Hello ES6!
+es6.get("edition")  // 6
+
+{% endhighlight %}
+
+### 函数的多余参数
+
+ECMAScript 6引入扩展运算符（...），允许获取函数的多余参数。
+
+{% highlight javascript %}
+
+function push(array, ...items) { 
+  items.forEach(function(item) {
+    array.push(item);
+    console.log( item );
+  });
+}
+ 
+var planets = [];
+console.log("太阳系的内层行星是：" );
+// 1个固定参数 + 4个可变参数
+push(planets, "Mercury", "Venus", "Earth", "Mars"); 
+
+{% endhighlight %}
+
+这种表示法不仅可以用于函数定义，还可以用于函数调用。
+
+{% highlight javascript %}
+
+function createURL (comment, path, protocol, subdomain, domain, tld) {
+      var url = comment
+        + ": "
+        + protocol
+        + "://"
+        + subdomain
+        + "."
+        + domain
+        + "."
+        + tld
+        + "/"
+        + path;
+ 
+  console.log(url);
+}
+ 
+var weblink = ["hypertext/WWW/TheProject.html", "http", "info", "cern", "ch"],
+  comment = "世界上第一个网站";
+ 
+createURL(comment, ...weblink ); // spread operator
+
+{% endhighlight %}
+
+从上面的例子可以看出，扩展运算符可以将数组转变成正常的参数序列。
+
+{% highlight javascript %}
+
+var max = Math.max(...[14, 3, 77]);
+
+{% endhighlight %}
+
+### generator 函数
+
+ECMAScript 6 引入了generator 函数，允许函数内部暂停执行某些操作。
+
+{% highlight javascript %}
+
+function* foo() {
+  yield 'foo';
+  yield 'bar';
+  yield 'baz';
+}
+
+{% endhighlight %}
+
+上面就是一个generator函数，定义时function关键字后面加上星号。然后，函数内部就可以使用yield关键字，表示暂停执行某个操作，等到外部调用next方法时再执行。
+
+{% highlight javascript %}
+
+var x = foo();
+
+x.next().value // 'foo'
+x.next().value // 'bar'
+x.next().value // 'baz'
+
+{% endhighlight %}
+
+## 语法糖
+
+### 简洁的方法定义
+
+ECMAScript 6 允许直接写入函数，作为对象的方法。这样的书写更加简洁。
+
+{% highlight javascript %}
+
+// ES 6
+var Person = {
+  name: 'Joe',
+  hello() { console.log('Hello, my name is', this.name); }
 };
 
 {% endhighlight %}
 
-ECMAScript 6 允许使用class结构，达到同样的效果。
+### 回调函数的简洁写法
+
+ECMAScript 6 允许函数的简写形式作为回调函数，不再需要function和return关键，最后一个表达式就是函数的返回值。
 
 {% highlight javascript %}
 
-class Language {
-  constructor(name, founder, year) {
-    this.name = name;
-    this.founder = founder;
-    this.year = year;
-  }
-  summary() {
-    return this.name + " was created by " + this.founder + " in " + this.year;
-  }
-}
+// ES 5
+[1,2,3].map(function (x) {
+  return x * x;
+});
 
-// 生成实例
-var js = new Language；
+// ES 6
+[1,2,3].map(x => x * x);
 
 {% endhighlight %}
 
-class结构还允许使用extends关键字，表示继承。
-
-{% highlight javascript %}
-
-class MetaLanguage extends Language {
-  constructor(x, y, z, version) {
-    super(x, y, z);
-    this.version = version;
-  }
-}
-
-{% endhighlight %}
-
-## 函数参数的默认值
+### 函数参数的默认值
 
 ECMAScript 6 允许为函数的参数设置默认值。
 
@@ -136,59 +267,44 @@ function history(lang = "C", year = 1972) {
 
 {% endhighlight %}
 
-## Set数据结构
+### 数组处理的简洁写法
 
-ECMAScript 6 提供了新的数据结构Sets。它类似于数组，但是所有值都是唯一的。
-
-{% highlight javascript %}
-
-var engines = new Set(); // create new Set
- 
-engines.add("Gecko"); // add to Set
-engines.add("Trident");
-engines.add("Webkit");
-engines.add("Hippo");
-engines.add("Hippo"); // note that Hippo is added twice
- 
-console.log("Browser engines include Gecko? " + engines.has("Gecko"));    // true
-console.log("Browser engines include Hippo? " + engines.has("Hippo"));    // true
-console.log("Browser engines include Indigo? " + engines.has("Indigo"));   // false
- 
-engines.delete("Hippo"); // delete item
-console.log("Hippo is deleted. Browser engines include Hippo? " + engines.has("Hippo"));    // false
-
-{% endhighlight %}
-
-## Map数据结构
-
-ECMAScript 6 还提供了map数据结构。它就是一个键值对的数据结构，类似于对象，但是“键”的范围不限于字符串。
+ECMAScript 6 提供简洁写法，对数组进行处理。
 
 {% highlight javascript %}
 
-var es6 = new Map(); // create new Map
+// ES 5
+[1, 2, 3].map(function (i) { return i * i });
+
+// ES 6
+[for (i of [1, 2, 3]) i * i];
+
+// ES 5
+[1,4,2,3,-8].filter(function(i) { return i < 3 });
  
-es6.set("edition", 6);        // key is string
-es6.set(262, "standard");     // key is number
-es6.set(undefined, "nah");    // key is undefined
- 
-var hello = function() {console.log("hello");};
-es6.set(hello, "Hello ES6!"); // key is function
- 
-console.log( "Value of 'edition' exits? " + es6.has("edition") );     // true
-console.log( "Value of 'year' exits? " + es6.has("years") );          // false
-console.log( "Value of 262 exits? " + es6.has(262) );                 // true
-console.log( "Value of undefined exits? " + es6.has(undefined) );     // true
-console.log( "Value of hello() exits? " + es6.has(hello) );           // true
- 
-es6.delete(undefined); // delete map
-console.log( "Value of undefined exits? " + es6.has(undefined) );      // false
- 
-console.log( es6.get(hello) ); // Hello ES6!
-console.log( "Work is in progress for ES" + es6.get("edition") ); // Work is in progress for ES6
+// ES 6
+[for (i of [1,4,2,3,-8]) if (i < 3) i];
 
 {% endhighlight %}
 
-## 多变量赋值
+新引入的for...of运算符，可以直接跟在表达式的前面或后面。
+
+{% highlight javascript %}
+
+// 一重循环
+var temperature = [0, 37, 100];
+[t + 273 for (t of temperature)]; // [273, 310, 373]
+ 
+// 三重循环
+var a1 = ["x1", "y1"],
+  a2 = ["x2", "y2"],
+  a3 = ["x3", "y3"];
+ 
+[(console.log(s + w + r)) for (s of a1) for (w of a2) for (r of a3)];
+
+{% endhighlight %}
+
+### 多变量赋值
 
 ECMAScript 6 允许简洁地对多变量赋值。
 
@@ -231,55 +347,7 @@ console.log("This year's equinox was on " + d + m + " at " + h); // This year's 
 
 {% endhighlight %}
 
-## 函数的多余参数
-
-ECMAScript 6允许获取函数的多余参数。
-
-{% highlight javascript %}
-
-function push(array, ...items) { // defining rest parameters with 3 dot syntax
-  items.forEach(function(item) {
-    array.push(item);
-    console.log( item );
-  });
-}
- 
-// 1 fixed + 4 variable parameters
-var planets = [];
-console.log("Inner planets of our Solar system are: " );
-push(planets, "Mercury", "Venus", "Earth", "Mars"); // rest parameters
-
-{% endhighlight %}
-
-这种表示法不仅可以用于函数定义，还可以用于函数调用。
-
-{% highlight javascript %}
-
-// Spread operator "...weblink"
-function createURL (comment, path, protocol, subdomain, domain, tld) {
-      var shoutout = comment
-        + ": "
-        + protocol
-        + "://"
-        + subdomain
-        + "."
-        + domain
-        + "."
-        + tld
-        + "/"
-        + path;
- 
-  console.log( shoutout );
-}
- 
-var weblink = ["hypertext/WWW/TheProject.html", "http", "info", "cern", "ch"],
-  comment = "World's first Website";
- 
-createURL(comment, ...weblink ); // spread operator
-
-{% endhighlight %}
-
-## for...of结构
+### for...of结构
 
 JavaScript的for...in结构，只能获得键，不能直接获取值。
 
@@ -326,33 +394,78 @@ for (var [name, value] of es6) {
 
 {% endhighlight %}
 
-## 数组处理的简洁写法
+## 数据结构
 
-ECMAScript 6 提供简洁写法，对数组进行处理。
+### class结构
+
+ECMAScript 6 提供了“类”。在此之前，一般用构造函数模拟“类”。
 
 {% highlight javascript %}
 
-// Array created with 1 loop
-var temperature = [0, 37, 100];
-[t + 273 for (t of temperature)]; // [273, 310, 373]
- 
-// Array created with 3 loops
-var suspects = ["Miss Scarlet", "Colonel Mustard"],
-  weapons = ["Candlestick", "Dagger"],
-  rooms = ["Kitchen", "Ballroom"];
- 
-[(console.log(s + " with a " + w + " in the " + r)) for (s of suspects) for (w of weapons) for (r of rooms)];
+// ES5
 
+var Language = function(config) {
+  this.name = config.name;
+  this.founder = config.founder;
+  this.year = config.year;
+};
+ 
+Language.prototype.summary = function() {
+  return this.name + " was created by " + this.founder + " in " + this.year;
+};
 
 {% endhighlight %}
 
-## module定义
+ECMAScript 6 允许使用class结构，达到同样的效果。
 
-ECMAScript 6 允许定义模块。
+{% highlight javascript %}
+
+// ES6
+
+class Language {
+  constructor(name, founder, year) {
+    this.name = name;
+    this.founder = founder;
+    this.year = year;
+  }
+  summary() {
+    return this.name + " was created by " + this.founder + " in " + this.year;
+  }
+}
+
+// 生成实例
+var js = new Language；
+
+{% endhighlight %}
+
+上面代码的constructor方法，就是类的构造函数。
+
+class结构还允许使用extends关键字，表示继承。
+
+{% highlight javascript %}
+
+class MetaLanguage extends Language {
+  constructor(x, y, z, version) {
+    super(x, y, z);
+    this.version = version;
+  }
+}
+
+{% endhighlight %}
+
+上面代码的super方法，表示调用父类的构造函数。
+
+### module定义
+
+ECMAScript 6 允许定义模块。也就是说，允许一个JavaScript脚本文件调用另一个脚本文件。
 
 假设有一个circle.js，它是一个单独模块。
 
 {% highlight javascript %}
+
+// circle.js
+
+const PI = 3.1415;
 
 export function area(radius) {
   return Math.PI * radius * radius;
@@ -368,6 +481,8 @@ export function circumference(radius) {
 
 {% highlight javascript %}
 
+// main.js
+
 import { area, circumference } from 'circle';
  
 console.log("Area of the circle: " + area(4) + " meter squared");
@@ -378,3 +493,4 @@ console.log("Circumference of the circle: " + circumference(14) + " meters");
 ## 参考链接
 
 - Sayanee Basu, [Use ECMAScript 6 Today](http://net.tutsplus.com/articles/news/ecmascript-6-today/)
+- Ariya Hidayat, [Toward Modern Web Apps with ECMAScript 6](http://www.sencha.com/blog/toward-modern-web-apps-with-ecmascript-6/)
