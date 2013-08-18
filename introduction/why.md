@@ -8,25 +8,31 @@ modifiedOn: 2013-06-10
 
 JavaScript语言有一些显著特点，使得它非常值得学习。
 
-## 广泛的使用
+## 操控浏览器的能力
 
-JavaScript的发明目的，是为了浏览器的网页编程。它是目前唯一一种通用的浏览器脚本语言，所有主流浏览器全部支持。它可以让网页呈现各种特殊效果，为用户提供良好的互动体验。
+JavaScript的发明目的，就是作为浏览器的内置脚本语言，为网页开发者提供操控浏览器的能力。它是目前唯一一种通用的浏览器脚本语言，所有主流浏览器全部支持。它可以让网页呈现各种特殊效果，为用户提供良好的互动体验。
 
-随着浏览器的功能越来越强、越来越平台化，尤其是HTML 5的出现，JavaScript得以调用许多系统功能，比如操作本地文件、操作图片、调用摄像头和麦克风等等。这使得JavaScript可以完成许多以前无法想象的事情。
+目前，全世界大部分网页都使用JavaScript。如果不用，网站的易用性将大打折扣，无法成为对用户友好的网站。
 
-除此之外，Node.js项目使得JavaScript可以用于开放服务器端的大型项目；越来越多的应用程序，使用JavaScript作为它们的脚本语言。JavaScript正在成为一种通用目的语言。（当然，JavaScript最擅长的领域还是网页开发。）
+对于一个互联网开发者来说，如果你想提供漂亮的网页、令用户满意的上网体验、各种基于浏览器的便捷功能，JavaScript是必不可少的工具。
 
-JavaScript可以做到，让你用一种语言开发出适应不同平台（包括桌面端、服务器端、手机端）的程序。
+## 广泛的使用领域
 
-JavaScript正在变成一种通用目的语言，不再仅仅局限于网页编程。在程序员中流传这样一句话，“所有可以用JavaScript编写的程序，最终都会出现JavaScript的版本。”
+近年来，JavaScript的使用范围，慢慢超越了浏览器，正在向通用的系统语言发展。
 
-下面是几个非网页领域JavaScript应用的例子：
+（1）随着HTML 5的出现，浏览器本身的功能越来越强，不再仅仅能浏览网页，而是越来越像一个平台，JavaScript因此得以调用许多系统功能，比如操作本地文件、操作图片、调用摄像头和麦克风等等。这使得JavaScript可以完成许多以前无法想象的事情。
 
-- PhoneGap使用JavaScript编写支持多种移动平台的应用程序。
-- Mozilla的Open Web Apps项目，可以用来编写运行于Windows、Mac OS和Android等多个桌面平台的程序，不依赖浏览器。
-- Adobe公司的著名PDF阅读器Acrobat，接受JavaScript作为它的脚本语言。
-- Chromium OS、Windows 8等操作系统直接支持JavaScript编写应用程序。
-- PostgreSQL数据库支持JavaScript作为操作语言，可以部分取代SQL查询语言。
+（2）Node.js项目使得JavaScript可以用于开发服务器端的大型项目，网站的前后端都用JavaScript开发已经成为了现实。有些嵌入式平台（Raspberry Pi）能够安装Node.js，于是JavaScript就能为这些平台开发应用程序。
+
+（3）JavaScript甚至也可以用来操作数据库。noSQL数据库这个概念，本身就是在JSON（JavaScript Object Notation，JavaScript对象表示法）格式的基础上诞生的，大部分noSQL数据库允许JavaScript直接操作。基于SQL语言的开源数据库PostgreSQL支持JavaScript作为操作语言，可以部分取代SQL查询语言。
+
+（4）PhoneGap项目使得JavaScript可以开发在多种移动平台（iOS和Android）上使用的应用程序。Mozilla基金会的手机操作系统Firefox OS，更是直接将JavaScript操作系统的平台语言。
+
+（5）越来越多的应用程序，将JavaScript作为内嵌的脚本语言，比如Adobe公司的著名PDF阅读器Acrobat。
+
+（6） Chromium OS、Windows 8等操作系统直接支持JavaScript编写应用程序。Mozilla的Open Web Apps项目，可以用来编写运行于Windows、Mac OS和Android等多个桌面平台的程序，不依赖浏览器。
+
+可以预期，JavaScript最终将能让你只用一种语言，就开发出适应不同平台（包括桌面端、服务器端、手机端）的程序。著名程序员Jeff Atwood甚至提出了一条[“Atwood定律”](http://www.codinghorror.com/blog/2007/07/the-principle-of-least-power.html)：“所有可以用JavaScript编写的程序，最终都会出现JavaScript的版本。”(Any application that can be written in JavaScript will eventually be written in JavaScript.)
 
 ## 易学性
 
@@ -50,7 +56,7 @@ JavaScript的性能优势体现在以下方面。
 
 （1）灵活的语法，表达力强。
 
-JavaScript既支持类似C语言清晰的过程式编程，也支持灵活的函数式编程。可以用来写并发处理（concorrent）。这些语法特性已经被证明非常强大，可以用于许多场合，尤其适用非同步编程。
+JavaScript既支持类似C语言清晰的过程式编程，也支持灵活的函数式编程。可以用来写并发处理（concurrent）。这些语法特性已经被证明非常强大，可以用于许多场合，尤其适用非同步编程。
 
 JavaScript的所有值都是对象，这为程序员提供了灵活性和便利性。因为你可以很方便地、按照需要随时创造数据结构，不用进行麻烦的预定义。
 
