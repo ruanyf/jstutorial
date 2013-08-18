@@ -3,7 +3,7 @@ title: ECMAScript 6 介绍
 layout: page
 category: oop
 date: 2013-05-09
-modifiedOn: 2013-08-15
+modifiedOn: 2013-08-19
 ---
 
 ## 概述
@@ -308,42 +308,108 @@ var a1 = ["x1", "y1"],
 
 ECMAScript 6 允许简洁地对多变量赋值。
 
+正常情况下，将数组元素赋值给多个变量，只能一次次分开赋值。
+
 {% highlight javascript %}
 
-var [ start, end ] = ["earth", "moon"] // initialize
-console.log(start + " calling " + end); // earth calling moon
- 
-[start, end] = [end, start] // variable swapping
-console.log(start + " calling " + end); // moon calling earth
-
-function equinox() {
-  return [20, "March", 2013, 11, 02];
-}
-var [date, month, , ,] = equinox();
-console.log("This year's equinox was on " + date + month); // This year's equinox was on 20March
+var first = someArray[0];
+var second = someArray[1];
+var third = someArray[2];
 
 {% endhighlight %}
 
-这种简洁写法不仅可以使用数据结构，还可以用于对象结构。
+在ECMAScript 6 中可以写成
 
 {% highlight javascript %}
 
-function equinox2() {
-  return {
-    date: 20,
-    month: "March",
-    year: 2013,
-    time: {
-      hour: 11, // nested
-      minute: 2
-    }
-  };
+var [first, second, third] = someArray;
+
+{% endhighlight %}
+
+这种赋值写法在语法上非常灵活。
+
+{% highlight javascript %}
+
+var [ start, end ] = ["earth", "moon"] 
+
+[start, end] = [end, start] // 变量互换
+
+var [foo, [[bar], baz]] = [1, [[2], 3]]
+
+var [,,third] = ["foo", "bar", "baz"]
+
+var [head, ...tail] = [1, 2, 3, 4]
+
+{% endhighlight %}
+
+它还可以接受默认值。
+
+{% highlight javascript %}
+
+var [missing = true] = [];
+console.log(missing)
+// true
+
+var { x = 3 } = {};
+console.log(x)
+// 3
+
+{% endhighlight %}
+
+它不仅可以用于数组，还可以用于对象。
+
+{% highlight javascript %}
+
+var { foo, bar } = { foo: "lorem", bar: "ipsum" };
+
+console.log(foo)
+// "lorem"
+
+console.log(bar)
+// "ipsum"
+
+var o = {
+  p1: [
+    "Hello",
+    { p2: "World" }
+  ]
+};
+
+var { a: [p1, { p2 }] } = o;
+
+console.log(p1)
+// "Hello"
+
+console.log(p2)
+// "World"
+
+{% endhighlight %}
+
+有了这种用法，函数定义和调用时，使用参数就很方便。
+
+{% highlight javascript %}
+
+function f({p1, p2, p3}) {
+  // ...
 }
- 
-var { date: d, month: m, time : { hour: h} } = equinox2();
-// h has the value of the nested property while "year" and "minute" are skipped totally
- 
-console.log("This year's equinox was on " + d + m + " at " + h); // This year's equinox was on 20March at 11
+
+{% endhighlight %}
+
+赋给函数参数默认值，也容易多了。
+
+{% highlight javascript %}
+
+jQuery.ajax = function (url, {
+  async = true,
+  beforeSend = function () {},
+  cache = true,
+  complete = function () {},
+  crossDomain = false,
+  global = true,
+  // ... more config
+}) {
+  // ... do stuff
+};
 
 {% endhighlight %}
 
@@ -494,3 +560,4 @@ console.log("Circumference of the circle: " + circumference(14) + " meters");
 
 - Sayanee Basu, [Use ECMAScript 6 Today](http://net.tutsplus.com/articles/news/ecmascript-6-today/)
 - Ariya Hidayat, [Toward Modern Web Apps with ECMAScript 6](http://www.sencha.com/blog/toward-modern-web-apps-with-ecmascript-6/)
+- Nick Fitzgerald, [Destructuring Assignment in ECMAScript 6](http://fitzgeraldnick.com/weblog/50/)
