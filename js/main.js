@@ -24,7 +24,11 @@ jQuery(document).ready(function(){
 
 			$('#toc ul li.toc-h2').clone().appendTo("nav section li.nav-3 ul");
 			
-			$('#toc').before('<h2>目录</h2>');	
+			$('#toc').before('<h2>目录</h2>');
+
+			if($.trim($('article h2:nth-last-of-type(1)').text())==='参考链接'){
+				$('article h2:nth-last-of-type(1)').addClass('reference').next('ul').addClass('reference-list');
+			}
 
 /*
         $('#toc li.toc-h2 a').each(function (i){
