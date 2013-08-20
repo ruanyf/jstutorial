@@ -40,9 +40,9 @@ JavaScript程序的执行单位为行（line），也就是一行一行地执行
 
 
 
-1 + 3;
+`1 + 3;`
 
-"abc";
+`"abc";`
 
 
 
@@ -71,7 +71,7 @@ Javascript提供两种注释：一种是单行注释，用//起头；另一种�
 
 
 
-var a = 1;
+`var a = 1;`
 
 
 
@@ -81,9 +81,9 @@ var a = 1;
 
 
 
-var a;
+	var a;
 
-a = 1;
+	a = 1;
 
 
 
@@ -93,8 +93,8 @@ JavaScript允许省略var，也就是说，省略上面的第一行命令，直�
 
 
 
-console.log(x)
-// ReferenceError: x is not defined 
+`console.log(x)`
+`// ReferenceError: x is not defined `
 
 
 
@@ -102,7 +102,7 @@ console.log(x)
 
 
 
-var a,b;
+`var a,b;`
 
 
 
@@ -112,8 +112,9 @@ JavaScript解释器的工作方式是，先解析代码，获取所有被声明�
 
 
 
-alert(a);
-var a = 1;
+`alert(a);` 
+
+`var a = 1;` 
 
 
 
@@ -121,9 +122,11 @@ var a = 1;
 
 
 
-var a;
-alert(a);
-a = 1;
+`var a;` 
+
+`alert(a);` 
+
+`a = 1;` 
 
 
 
@@ -135,14 +138,14 @@ JavaScript使用大括号，将相关的语句组合在一起，称为“区块�
 
 
 
-{ 
-	var a;
-	a = 1;
+	{ 
+		var a;
+		a = 1;
 
-}
+	}
 
-a
-// 1
+	a
+	// 1
 
 
 
@@ -168,10 +171,10 @@ undefined表示“未定义”，即还没有确定数据类型。如果一个�
 
 
 
-var v;
+	var v;
 
-v
-// undefined
+	v
+	// undefined
 
 
 
@@ -179,10 +182,10 @@ null表示空对象。它不是一种单独的数据类型，而是包含在对�
 
 
 
-var v = null;
+	var v = null;
 
-v
-// null
+	v
+	// null
 
 
 
@@ -196,8 +199,8 @@ v
 
 
 
-typeof false
-// boolean
+	typeof false
+	// boolean
 
 
 
@@ -205,8 +208,8 @@ typeof false
 
 
 
-typeof 123
-// number
+	typeof 123
+	// number
 
 
 
@@ -214,8 +217,8 @@ typeof 123
 
 
 
-typeof "123"
-// string
+	typeof "123"
+	// string
 
 
 
@@ -223,8 +226,8 @@ typeof "123"
 
 
 
-typeof print
-// function
+	typeof print
+	// function
 
 
 
@@ -232,7 +235,7 @@ typeof print
 
 
 
-> typeof undefined
+ typeof undefined
   "undefined"
 
 
@@ -241,11 +244,11 @@ typeof print
 
 
 
-v
-// ReferenceError: v is not defined
+	v
+	// ReferenceError: v is not defined
 
-typeof v
-// undefined
+	typeof v
+	// undefined
 
 
 
@@ -253,8 +256,8 @@ typeof v
 
 
 
-typeof null
-// object
+	typeof null
+	// object
 
 
 
@@ -262,17 +265,17 @@ typeof null
 
 
 
-typeof window 
-// object
+	typeof window 
+	// object
 
-typeof {}; 
-// object
+	typeof {}; 
+	// object
 
-typeof []; 
-// object
+	typeof []; 
+	// object
 
-typeof null;
-// object
+	typeof null;
+	// object
 
 
 
@@ -280,15 +283,15 @@ typeof null;
 
 
 
-var o = {};
+	var o = {};
 
-var a = [];
+	var a = [];
 
-o instanceof Array
-// false
+	o instanceof Array
+	// false
 
-a instanceof Array
-// true
+	a instanceof Array
+	// true
 
 
 
@@ -302,8 +305,8 @@ a instanceof Array
 
 
 
-"a" + "b"
-// "ab"
+	"a" + "b"
+	// "ab"
 
 
 
@@ -311,11 +314,11 @@ a instanceof Array
 
 
 
-a += b;
+	a += b;
 
-// 等同于
+	// 等同于
 
-a = a + b;
+	a = a + b;
 
 
 
@@ -323,16 +326,16 @@ a = a + b;
 
 
 
-var arr = [];
+	var arr = [];
 
-arr.push("Hello");
+	arr.push("Hello");
 
-arr.push(" ");
+	arr.push(" ");
 
-arr.push("World");
+	arr.push("World");
 
-arr.join("")
-// "Hello World"
+	arr.join("")
+	// "Hello World"
 
 
 
@@ -344,11 +347,11 @@ JavaScript引擎对“+”运算做过优化，所以上面两种方法，在速
 
 
 
-window.btoa("Hello World")
-// "SGVsbG8gV29ybGQ="
+	window.btoa("Hello World")
+	// "SGVsbG8gV29ybGQ="
 
-window.atob("SGVsbG8gV29ybGQ=")
-// "Hello World"
+	window.atob("SGVsbG8gV29ybGQ=")
+	// "Hello World"
 
 
 
@@ -356,17 +359,17 @@ window.atob("SGVsbG8gV29ybGQ=")
 
 
 
-function utf8_to_b64( str ) {
-    return window.btoa(unescape(encodeURIComponent( str )));
-}
+	function utf8_to_b64( str ) {
+		return window.btoa(unescape(encodeURIComponent( str )));
+	}
  
-function b64_to_utf8( str ) {
-    return decodeURIComponent(escape(window.atob( str )));
-}
+	function b64_to_utf8( str ) {
+    	return decodeURIComponent(escape(window.atob( str )));
+	}
 
 // 使用方法
-utf8_to_b64('你好'); // "5L2g5aW9"
-b64_to_utf8('4pyTIMOgIGxhIG1vZGU='); // "你好"
+	utf8_to_b64('你好'); // "5L2g5aW9"
+	b64_to_utf8('4pyTIMOgIGxhIG1vZGU='); // "你好"
 
 
 
@@ -391,11 +394,11 @@ if (""){ console.log(true);}
 
 
 
-if ([]){ console.log(true);}
-// true
+	if ([]){ console.log(true);}
+	// true
 
-if ({}){ console.log(true);}
-// true
+	if ({}){ console.log(true);}
+	// true
 
 
 
@@ -405,11 +408,11 @@ if ({}){ console.log(true);}
 
 
 
- if (myvar === 3) {
-    // then
- } else {
-   // else
- }
+ 	if (myvar === 3) {
+	  // then
+	 } else {
+	   // else
+	 }
 
 
 
@@ -438,9 +441,9 @@ While语句包括一个循环条件，只要该条件为真，就不断循环。
 
 
 
-while (condition){
-	// some code here
-}	
+	while (condition){
+		// some code here
+	}	
 
 
 
@@ -521,9 +524,9 @@ while(true){} // 没有分号
 
 
 
-do {
-        a--;
-    } while(a > 0); // 分号不能省略
+	do {
+	       a--;
+	   } while(a > 0); // 分号不能省略
 
 
 
