@@ -514,9 +514,9 @@ break用于在循环体中跳出循环，continue用于不再进行本次循环�
 
 
 
-for(;;){} // 没有分号
+`for(;;){} // 没有分号`
 
-while(true){} // 没有分号
+`while(true){} // 没有分号`
 
 
 
@@ -534,11 +534,11 @@ while(true){} // 没有分号
 
 
 
-if (true) {} // 没有分号
+`if (true) {} // 没有分号`
 
-switch () {} // 没有分号
+`switch () {} // 没有分号`
 
-try {} catch {} // 没有分号
+`try {} catch {} // 没有分号`
 
 
 
@@ -546,7 +546,7 @@ try {} catch {} // 没有分号
 
 
 
-function f() {} // 没有分号
+`function f() {} // 没有分号`
 
 
 
@@ -554,7 +554,7 @@ function f() {} // 没有分号
 
 
 
-var f = function f() {};
+`var f = function f() {};`
 
 
 
@@ -566,7 +566,7 @@ var f = function f() {};
 
 
 
-var a = b + c
+`var a = b + c`
 
 
 
@@ -576,8 +576,8 @@ var a = b + c
 
 
 
-"abc"
-.length
+	"abc"
+	.length
 
 
 
@@ -585,7 +585,7 @@ var a = b + c
 
 
 
-"abc".length
+`"abc".length`
 
 
 
@@ -593,31 +593,28 @@ var a = b + c
 
 
 
-var a = b + c
-(d+e).toString();
-// 解释为c(d+e)，即先进行乘法运算
+	var a = b + c
+	(d+e).toString();
+	// 解释为c(d+e)，即先进行乘法运算
 
-a = b
-/hi/g.exec(c).map(d);
-// 解释为 a = b / hi / g.exec(c).map(d)，即把正则表达式的斜杠当作除法运算符   
+	a = b
+	/hi/g.exec(c).map(d);
+	// 解释为 a = b / hi / g.exec(c).map(d)，即把正则表达式的斜杠当作除法运算符   
 
-var  = "b"
-[ "red", "green" ].foreach(function(c) { console.log(c) })
-// 解释为"b"["red", "green"]，即把字符串当作一个数组，按索引取值 
+	var  = "b"
+	[ "red", "green" ].foreach(function(c) { console.log(c) })
+	// 解释为"b"["red", "green"]，即把字符串当作一个数组，按索引取值 
 
-var a = 0;
-var f = function(x) { return x }
-(a++)
-// f等于0，因为(a++)被视为匿名函数的调用
+	var a = 0;
+	var f = function(x) { return x }
+	(a++)
+	// f等于0，因为(a++)被视为匿名函数的调用
 
-return a +
-b;
+	return a +b;
 
-return (a
-+ b)
+	return (a+ b)
  
-obj.foo(arg1,
-arg2)
+	obj.foo(arg1,arg2)
 
 
 
@@ -625,13 +622,13 @@ arg2)
 
 
 
-if (a < 0) a = 0
-console.log(a)
+	if (a < 0) a = 0
+	console.log(a)
 
-// 等同于下面的代码，因为0console没有意义
+	// 等同于下面的代码，因为0console没有意义
 
-if (a < 0) a = 0;
-console.log(a)
+	if (a < 0) a = 0;
+	console.log(a)
 
 
 
@@ -639,15 +636,13 @@ console.log(a)
 
 
 
-a = b = c = 1
-a
-++
-b
---
-c
+	a = b = c = 1
+	a++
+	b--
+	c
 
-console.log(a, b, c)
-// 1 2 0
+	console.log(a, b, c)
+	// 1 2 0
 
 
 
@@ -655,10 +650,10 @@ console.log(a, b, c)
 
 
 
-a = b = c = 1;
-a;
-++b;
---c;
+	a = b = c = 1;
+	a;
+	++b;
+	--c;
 
 
 
