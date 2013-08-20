@@ -23,11 +23,11 @@ JavaScript程序的执行单位为行（line），也就是一行一行地执行
 
 语句以分号结尾，一个分号就表示一个语句结束。多个语句可以写在一行内。
 
-{% highlight javascript %}
+`
 
 var a = 1 + 3 ; var b = "abc";
 
-{% endhighlight %}
+`
 
 分号前面可以没有任何内容，解释器将其视为空语句。
 
