@@ -7,10 +7,10 @@ modifiedOn: 2013-07-05
 
 <h2 id="introduction">导论</h2>
 
-- [为什么学习JavaScript？](introduction/why.html)
-- [Javascript的历史](introduction/history.html)
-- [使用说明](introduction/instruction.html)
-- [参考书目](introduction/bibliography.html)
+- [为什么学习JavaScript？](introduction/why.md)
+- [Javascript的历史](introduction/history.md)
+- [使用说明](introduction/instruction.md)
+- [参考书目](introduction/bibliography.md)
 
 <h2 id="grammar">基本语法</h2>
 
