@@ -125,34 +125,7 @@ String({toString:function(){return 3;}})
 
 ### 强制转换成布尔值
 
-使用Boolean方法，可以将任意类型的变量转为布尔值。它的转换规则与下面的“自动转换为布尔值”的规则相同。
-
-{% highlight javascript %}
-
-Boolean(undefined)
-// false
-
-Boolean(0)
-// false
-
-Boolean(3)
-// true
-
-{% endhighlight %}
-
-## 自动转换
-
-当遇到以下几种情况，JavaScript会自动转换数据类型：
-
-- 不同类型的数据进行互相运算；
-- 对非布尔值类型的数据求布尔值;
-- 对非数值类型的数据使用一元运算符（即“+”和“-”）。
-
-### 自动转换为布尔值
-
-当JavaScript遇到预期为布尔值的地方（比如if语句的条件部分），就会将非布尔值的参数自动转换为布尔值。
-
-除了布尔值false，以下几种值会自动转为false：
+使用Boolean方法，可以将任意类型的变量转为布尔值。以下六个值的转化结果为false。
 
 - undefined
 - null
@@ -160,6 +133,25 @@ Boolean(3)
 - +0
 - NaN
 - ''（空字符串）
+
+{% highlight javascript %}
+
+Boolean(undefined)
+// false
+
+Boolean(null)
+// false
+
+Boolean(0)
+// false
+
+Boolean(NaN)
+// false
+
+Boolean('')
+// false
+
+{% endhighlight %}
 
 其他的值都会被转化成true。需要注意的是，空对象{}和空数组[]都会被转化成true。
 
@@ -178,6 +170,36 @@ Boolean({})
 {% highlight javascript %}
 
 Boolean(new Boolean(false))
+// true
+
+{% endhighlight %}
+
+## 自动转换
+
+当遇到以下几种情况，JavaScript会自动转换数据类型：
+
+- 不同类型的数据进行互相运算；
+- 对非布尔值类型的数据求布尔值;
+- 对非数值类型的数据使用一元运算符（即“+”和“-”）。
+
+### 自动转换为布尔值
+
+当JavaScript遇到预期为布尔值的地方（比如if语句的条件部分），就会将非布尔值的参数自动转换为布尔值。它的转换规则与上面的“强制转换成布尔值”的规则相同，也就是说，在预期为布尔值的地方，系统内部会自动调用Boolean方法。
+
+因此除了以下六个值，其他都是自动转为true：
+
+- undefined
+- null
+- -0
+- +0
+- NaN
+- ''（空字符串）
+
+{% highlight javascript %}
+
+if (!undefined && !null && !0 && !NaN && !''){
+	console.log('true');
+}
 // true
 
 {% endhighlight %}
