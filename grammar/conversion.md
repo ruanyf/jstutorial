@@ -163,6 +163,25 @@ Boolean(3)
 
 其他的值都会被转化成true。需要注意的是，空对象{}和空数组[]都会被转化成true。
 
+{% highlight javascript %}
+
+Boolean([])
+// true
+
+Boolean({})
+// true
+
+{% endhighlight %}
+
+不仅空对象和空数组的布尔值是true，事实上，所有对象的布尔值都是true，甚至连false对应的布尔对象也是ture。
+
+{% highlight javascript %}
+
+Boolean(new Boolean(false))
+// true
+
+{% endhighlight %}
+
 ### 自动转换为字符串
 
 当JavaScript遇到预期为字符串的地方，就会将非字符串的数据自动转为字符串。
