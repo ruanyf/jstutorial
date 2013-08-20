@@ -63,17 +63,17 @@ modifiedOn: 2013-07-05
 - [MatchMedia](bom/matchmedia.md)
 - [WebRTC](bom/webrtc.md)
 
-<h2 id="mdapi">md网页的API</h2>
+<h2 id="htmlapi">HTML网页的API</h2>
 
-- [Canvas](mdapi/canvas.md)
-- [SVG图像](mdapi/svg.md)
-- [File对象和二进制数据](mdapi/file.md)
-- [Web Worker](mdapi/webworker.md)
-- [服务器端发送事件](mdapi/eventsource.md)
-- [Page Visiblity](mdapi/pagevisibility.md)
-- [FullScreen](mdapi/fullscreen.md)
-- [Web Speech](mdapi/webspeech.md)
-- [requestAnimationFrame](mdapi/requestanimationframe.md)
+- [Canvas](htmlapi/canvas.md)
+- [SVG图像](htmlapi/svg.md)
+- [File对象和二进制数据](htmlapi/file.md)
+- [Web Worker](mhtmlpi/webworker.md)
+- [服务器端发送事件](htmlapi/eventsource.md)
+- [Page Visiblity](htmlapi/pagevisibility.md)
+- [FullScreen](htmlapi/fullscreen.md)
+- [Web Speech](htmlapi/webspeech.md)
+- [requestAnimationFrame](htmlapi/requestanimationframe.md)
 
 <h2 id="jquery">jQuery</h2>
 
