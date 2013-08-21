@@ -3,7 +3,7 @@ title: Node.js 概述
 layout: page
 category: nodejs
 date: 2013-01-14
-modifiedOn: 2013-08-10
+modifiedOn: 2013-08-20
 ---
 
 ## 简介
@@ -26,7 +26,7 @@ node file.js
 
 {% endhighlight %}
 
-## 非同步操作
+### 非同步操作
 
 Node.js采用V8引擎处理JavaScript脚本，最大特征就是单线程运行，即一次只能运行一个任务。这导致Node.js大量采用非同步操作（asynchronous opertion），任务不是马上执行，而是插在队列的尾部，等到前面的任务运行完后再执行。
 
@@ -167,6 +167,24 @@ http.createServer(function(req, res) {
 
 {% endhighlight %}
 
+## 文件读写模块
+
+filesystem模块提供本地文件的读写能力。
+
+{% highlight javascript %}
+
+var fs = require('fs');
+
+fs.readFile('example_log.txt', function (err, logData) {
+
+  if (err) throw err;
+
+  var text = logData.toString();
+
+});
+
+{% endhighlight %}
+
 ## http模块
 
 ### POST方法
@@ -181,7 +199,6 @@ http.createServer(function (req, res) {
     body += chunk;
   });
   req.on('end', function () {
-    console.log('POSTed: ' + body);
     res.writeHead(200);
     res.end();
   });

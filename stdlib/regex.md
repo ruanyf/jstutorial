@@ -65,11 +65,40 @@ test()方法用来验证字符串是否符合某个模式，返回true或false�
 
 {% endhighlight %}
 
+如果正则表达式带有g修饰符，则每一次test方法都从上一次结束的位置开始向后匹配。
+
+{% highlight javascript %}
+
+var regex = /x/g;
+var str = '_x_x';
+
+regex.lastIndex
+// 0
+
+regex.test(str)
+// true
+
+regex.lastIndex
+// 2
+
+regex.test(str)
+// true
+
+regex.lastIndex
+// 4
+
+regex.test(str)
+// false
+
+{% endhighlight %}
+
 ### exec方法
 
 exec()方法返回一个字符串中所有匹配结果。
 
-如果没有匹配，该方法返回null，否则返回一个数组。该数组的长度是匹配成功的组数+1，其中数组的第一个元素是整个被匹配的字符串。此外，该数组还包含以下两个属性：
+如果没有匹配，该方法返回null，否则返回一个数组。该数组的长度是匹配成功的组数+1，其中数组的第一个元素是整个被匹配的字符串。如果正则表示式中含有组匹配，则第二个元素就对应第一个括号，第三个元素对应第二个括号，以此类推。
+
+此外，该数组还包含以下两个属性：
 
 - input：被匹配的字符串。
 - index：匹配成功的位置。
@@ -161,6 +190,13 @@ match 方法对字符串进行正则匹配，返回匹配结果。
 ### search
 
 search 方法返回第一个满足匹配条件的字符在整个字符串中的位置。如果没有任何匹配，则返回-1。该方法会忽略g参数。
+
+{% highlight javascript %}
+
+'_x_x'.search(/x/)
+// 1
+
+{% endhighlight %}
 
 ### replace
 
