@@ -3,7 +3,7 @@ title: JavaScript 编程风格
 layout: page
 category: grammar
 date: 2013-06-02
-modifiedOn: 2013-06-02
+modifiedOn: 2013-08-20
 ---
 
 所谓"编程风格"（programming style），指的是编写代码的样式规则。不同的程序员，往往有不同的编程风格。
@@ -11,6 +11,8 @@ modifiedOn: 2013-06-02
 有人说，编译器的规范叫做"语法规则"（grammar），这是程序员必须遵守的；而编译器忽略的部分，就叫"编程风格"（programming style），这是程序员可以自由选择的。这种说法不完全正确，程序员固然可以自由选择编程风格，但是好的编程风格有助于写出质量更高、错误更少、更易于维护的程序。
 
 所以，"编程风格"的选择不应该基于个人爱好、熟悉程度、打字量等因素，而要考虑如何尽量使代码清晰易读、减少出错。你选择的，不是你喜欢的风格，而是一种能够清晰表达你的意图的风格。这一点，对于Javascript这种语法自由度很高的语言尤其重要。
+
+必须牢记的一点是，如果你选定了一种“编程风格”，就应该坚持遵守，切忌多种风格混用。如果你加入他人的项目，就应该遵守现有的风格。
 
 ## 大括号的位置
 
@@ -427,6 +429,6 @@ eval函数的作用是，将一段字符串当作语句执行。问题是eval不
 
 ## 参考链接
 
-* Eric Elliott, Programming JavaScript Applications, [Chapter 2. JavaScript Style Guide](http://chimera.labs.oreilly.com/books/1234000000262/ch02.html), O'reilly, 2013.
-
+- Eric Elliott, Programming JavaScript Applications, [Chapter 2. JavaScript Style Guide](http://chimera.labs.oreilly.com/books/1234000000262/ch02.html), O'reilly, 2013.
+- Axel Rauschmayer, [A meta style guide for JavaScript](http://www.2ality.com/2013/07/meta-style-guide.html)
 
