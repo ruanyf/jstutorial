@@ -324,7 +324,7 @@ str.split(separator, [limit])
 
 {% endhighlight %}
 
-正则模式中，需要用斜杠转义的，一共有12个字符：^、.、[、$、(、)、|、*、+、?、{和 \。需要特别注意的是，如果使用RegExp方法生成正则对象，转义需要使用两个斜杠，因为字符串内部会先转义一次。
+正则模式中，需要用斜杠转义的，一共有12个字符：，&#94;、.、[、$、(、)、|、*、+、?、{和 \。需要特别注意的是，如果使用RegExp方法生成正则对象，转义需要使用两个斜杠，因为字符串内部会先转义一次。
 
 {% highlight javascript %}
 
@@ -386,14 +386,14 @@ regex.test(str); // false
 
 {% endhighlight %}
 
-(3) 修饰符m表示多行模式，&#95;和$会忽略换行符。
+(3) 修饰符m表示多行模式，&#94;和$会忽略换行符。
 
 {% highlight javascript %}
 
 /world$/.test("hello world\n")
 // false
  
-/world$/m.test("Hello World\n")
+/world$/m.test("hello world\n")
 // true
 
 {% endhighlight %}
@@ -405,7 +405,7 @@ regex.test(str); // false
 预定义模式指的是某些常见模式的简写方式。
 
 - \w 匹配任意的字母、数字和下划线，相当于[A-Za-z0-9_]。
-- \W 除所有字幕、数字和下划线以外的字符，相当于/[^A-Za-z0-9_]/ 。
+- \W 除所有字幕、数字和下划线以外的字符，相当于/[&#94;A-Za-z0-9_]/ 。
 - \s 匹配制表符、空格符、断行符、以及其他对应为空白的unicode字符。
 - \S 匹配所有除了制表符、空格符、断行符、以及其他对应为空白的unicode字符以外的字符。
 
