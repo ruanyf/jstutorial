@@ -3,7 +3,7 @@ title: jQuery.Deferred对象
 category: jquery
 date: 2012-12-07
 layout: page
-modifiedOn: 2013-08-10
+modifiedOn: 2013-08-25
 ---
 
 ## 概述
@@ -100,6 +100,8 @@ deferred.done(function(value) {
 
 {% endhighlight %}
 
+它们返回的是原有的deferred对象，因此可以采用链式写法，在后面再链接别的方法（包括done和fail在内）。
+
 ### resolve() 和 reject()
 
 这两个方法用来改变deferred对象的状态。resolve()将状态改为非同步操作成功，reject()改为操作失败。
@@ -115,6 +117,8 @@ deferred.done(function(value) {
 deferred.resolve("hello world");
 
 {% endhighlight %}
+
+一旦调用resolve()，就会依次执行done()和then()方法指定的回调函数；一旦调用reject()，就会依次执行fail()和then()方法指定的回调函数。
 
 ### state方法
 
@@ -174,6 +178,103 @@ deferred.then( doneFilter [, failFilter ] [, progressFilter ] )
 
 {% endhighlight %}
 
+在jQuery 1.8之前，then()只是.done().fail()写法的语法糖，两种写法是等价的。在jQuery 1.8之后，then()返回一个新的deferred对象，而done()返回的是原有的deferred对象。如果then()指定的回调函数有返回值，该返回值会作为参数，传入后面的回调函数。
+
+{% highlight javascript %}
+
+var defer = jQuery.Deferred();
+
+defer.done(function(a,b){
+            return a * b;
+}).done(function( result ) {
+            console.log("result = " + result);
+}).then(function( a, b ) {
+            return a * b;
+}).done(function( result ) {
+            console.log("result = " + result);
+}).then(function( a, b ) {
+            return a * b;
+}).done(function( result ) {
+            console.log("result = " + result);
+});
+
+defer.resolve( 2, 3 );
+
+{% endhighlight %}
+
+在jQuery 1.8版本之前，上面代码的结果是：
+
+{% highlight javascript %}
+
+result = 2 
+result = 2 
+result = 2 
+
+{% endhighlight %}
+
+在jQuery 1.8版本之后，返回结果是
+
+{% highlight javascript %}
+
+result = 2 
+result = 6 
+result = NaN 
+
+{% endhighlight %}
+
+这一点需要特别引起注意。
+
+{% highlight javascript %}
+
+$.ajax( url1, { dataType: "json" } )
+.then(function( data ) {
+    return $.ajax( url2, { data: { user: data.userId } } );
+}).done(function( data ) {
+  // 从url2获取的数据
+});
+
+{% endhighlight %}
+
+上面代码最后那个done方法，处理的是从url2获取的数据，而不是从url1获取的数据。
+
+利用then()会修改返回值这个特性，我们可以在调用其他回调函数之前，对前一步操作返回的值进行处理。
+
+{% highlight javascript %}
+
+var post = $.post("/echo/json/")
+	.then(function(p){
+        return p.firstName;
+	});
+
+post.done(function(r){ console.log(r); });
+
+{% endhighlight %}
+
+上面代码先使用then()方法，从返回的数据中取出所需要的字段（firstName），所以后面的操作就可以只处理这个字段了。
+
+有时，Ajax操作返回json字符串里面有一个error属性，表示发生错误。这个时候，传统的方法只能是通过done()来判断是否发生错误。通过then()方法，可以让deferred对象调用fail()方法。
+
+{% highlight javascript %}
+
+var myDeferred = $.post('/echo/json/', {json:JSON.stringify({'error':true})})
+    .then(function (response) {
+            if (response.error) {
+                return $.Deferred().reject(response);
+            }
+            return response;
+        },function () {
+            return $.Deferred().reject({error:true});
+        }
+    );
+
+myDeferred.done(function (response) {
+        $("#status").html("Success!");
+    }).fail(function (response) {
+        $("#status").html("An error occurred");
+    });
+
+{% endhighlight %}
+
 ### always()
 
 always()也是指定回调函数，不管是resolve或reject都要调用。
@@ -182,7 +283,7 @@ always()也是指定回调函数，不管是resolve或reject都要调用。
 
 大多数情况下，我们不想让用户从外部更改deferred对象的状态。这时，你可以在deferred对象的基础上，返回一个针对它的promise对象。我们可以把后者理解成，promise是deferred的只读版，或者更通俗地理解成promise是一个对将要完成的任务的承诺。
 
-你可以通过promise对象，为原始的deferred对象添加回调函数，查询它的状态，但是无法改变它的状态，也就是说promise对象不允许你调用resolve和reject方法。jQuery的ajax() 方法返回的就是一个promise对象。
+你可以通过promise对象，为原始的deferred对象添加回调函数，查询它的状态，但是无法改变它的状态，也就是说promise对象不允许你调用resolve和reject方法。
 
 {% highlight javascript %}
 
@@ -192,44 +293,15 @@ function getPromise(){
 
 try{
     getPromise().resolve("a");
+} catch(err) {
+    console.log(err);
 }
-catch(err){
-    alert(err);
-}
 
 {% endhighlight %}
 
-promise对象有一个then方法，允许指定当任务成功或失败后的回调函数。一般来说，如果我们要为一个任务指定回调函数，往往需要把回调函数直接传入这个任务。
+上面的代码会出错，显示TypeError {} 。
 
-{% highlight javascript %}
-
-task(param, {
-  success: function() {},
-  error: function() {}
-});
-
-{% endhighlight %}
-
-但是，如果这个任务返回的是promise对象，我们就可以用then方法指定回调函数。
-
-{% highlight javascript %}
-
-task(param).then(
-  successFunc() {},
-  errorFunc() {}
-);
-
-{% endhighlight %}
-
-有了这个接口，可以方便地为多个操作连续指定回调函数，当调用第一个回调函数成功后，再依次调用第二个回调函数。
-
-{% highlight javascript %}
-
-task(param).then(f1).then(f2).then(f3);
-
-{% endhighlight %}
-
-除了Ajax操作，Animation类操作也可以使用promise对象。
+jQuery的ajax() 方法返回的就是一个promise对象。此外，Animation类操作也可以使用promise对象。
 
 {% highlight javascript %}
 
@@ -248,59 +320,6 @@ $.when(
     $.ajax( "/modules.php" ),
     $.ajax( "/lists.php" )
 ).then( successFunc, failureFunc );
-
-{% endhighlight %}
-
-## deferred对象的pipe()方法
-
-pipe()方法用来在调用回调函数之前，修改非同步操作传回的值。
-
-{% highlight javascript %}
-
-var post = $.post("/echo/json/",
-        {
-            json: JSON.stringify({firstName: "Jose", lastName: "Romaniello"})
-        }
-    ).pipe(function(p){
-        return "Saved " + p.firstName;
-    });
-
-post.done(function(r){ alert(r); });
-
-{% endhighlight %}
-
-举例来说，有时Ajax操作返回一个json字符串，里面有一个error属性，表示发生错误。这个时候，传统的方法只能是通过done()来判断是否发生错误。通过pipe()方法，可以让deferred对象调用fail()方法。
-
-{% highlight javascript %}
-
-var myXhrDeferred = $.post('/echo/json/', {json:JSON.stringify({'error':true})})
-    .pipe(
-        //done filter
-        function (response) {
-            if (response.error) {
-                //If our response indicates an error
-                //we'll return a rejected deferred with the response data
-                return $.Deferred().reject(response);
-            }
-            return response;
-        },
-        //fail filter
-        function () {
-            //If the request failed (failing http status code)
-            //we'll call this an error too — we pass back a
-            //deferred that's rejected here as well.
-            return $.Deferred().reject({error:true});
-        }
-    );
-
-//Now our done and fail callbacks will run based on whether the JSON response returns error:true
-myXhrDeferred
-    .done(function (response) {
-        $("#status").html("Success!");
-    })
-    .fail(function (response) {
-        $("#status").html("An error occurred");
-    });
 
 {% endhighlight %}
 
@@ -383,7 +402,8 @@ doSomething("uh oh").done(function() {
 
 ## 参考链接
 
-+ [jQuery.Deferred is the most important client-side tool you have](http://eng.wealthfront.com/2012/12/jquerydeferred-is-most-important-client.html)
-+ [Fun With jQuery Deferred](http://www.intridea.com/blog/2011/2/8/fun-with-jquery-deferred)
+- [jQuery.Deferred is the most important client-side tool you have](http://eng.wealthfront.com/2012/12/jquerydeferred-is-most-important-client.html)
+- [Fun With jQuery Deferred](http://www.intridea.com/blog/2011/2/8/fun-with-jquery-deferred)
 - Bryan Klimt, [What’s so great about JavaScript Promises?](http://blog.parse.com/2013/01/29/whats-so-great-about-javascript-promises/)
 - José F. Romaniello, [Understanding JQuery.Deferred and Promise](http://joseoncode.com/2011/09/26/a-walkthrough-jquery-deferred-and-promise/)
+- Julian Aubourg, Addy Osmani, [Creating Responsive Applications Using jQuery Deferred and Promises](http://msdn.microsoft.com/en-us/magazine/gg723713.aspx)

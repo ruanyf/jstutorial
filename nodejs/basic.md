@@ -3,7 +3,7 @@ title: Node.js 概述
 layout: page
 category: nodejs
 date: 2013-01-14
-modifiedOn: 2013-08-20
+modifiedOn: 2013-08-21
 ---
 
 ## 简介
@@ -107,25 +107,20 @@ exports.newModule = function() {
 
 {% highlight javascript %}
 
-var http = require("http");
+var http = require('http');
 
-var app = http.createServer(function(request, response) {
-  response.writeHead(200, {
-    "Content-Type": "text/plain"
-  });
-  response.end("Hello world!\n");
-});
+http.createServer(function (req, res) {
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.end('Hello World\n');
+}).listen(8080);
 
-app.listen(1337, "localhost");
-console.log("Server running at http://localhost:1337/");
+console.log('Server running on port 8080.');
 
 {% endhighlight %}
 
 第一行 var http = require("http")，表示加载http模块。然后，调用http模块的createServer方法，创造一个服务器实例，将它赋给变量app。
 
-ceateServer方法接受一个函数作为参数，该函数的request参数是一个对象，表示客户端的HTTP请求；response参数也是一个对象，表示服务器端的HTTP回应。response.writeHead方法表示，服务器端回应一个HTTP头信息；response.end方法表示，服务器端回应的具体内容，以及回应完成后关闭本次对话。
-
-最后的app.listen(1337, "localhost")，表示启动服务器实例，监听本机的1337端口。然后，使用console.log在控制台输出一行提示信息。
+ceateServer方法接受一个函数作为参数，该函数的req参数是一个对象，表示客户端的HTTP请求；res参数也是一个对象，表示服务器端的HTTP回应。rese.writeHead方法表示，服务器端回应一个HTTP头信息；response.end方法表示，服务器端回应的具体内容，以及回应完成后关闭本次对话。最后的listen(8080)表示启动服务器实例，监听本机的1337端口。
 
 将上面这几行代码保存成文件app.js，然后用node调用这个文件，服务器就开始运行了。
 
@@ -135,7 +130,7 @@ node app.js
 
 {% endhighlight %}
 
-这时命令行窗口将显示一行提示“Server running at http://localhost:1337/”。打开浏览器，访问http://localhost:1337，网页显示“Hello world!”。
+这时命令行窗口将显示一行提示“Server running at port 8080.”。打开浏览器，访问http://localhost:8080，网页显示“Hello world!”。
 
 将app.js稍加修改，就可以做出一个网站的雏形，请求不同的网址，会显示不同的内容。
 
@@ -145,25 +140,25 @@ var http = require("http");
 
 http.createServer(function(req, res) {
 
-  // Homepage
+  // 主页
   if (req.url == "/") {
     res.writeHead(200, { "Content-Type": "text/html" });
     res.end("Welcome to the homepage!");
   }
 
-  // About page
+  // About页面
   else if (req.url == "/about") {
     res.writeHead(200, { "Content-Type": "text/html" });
     res.end("Welcome to the about page!");
   }
 
-  // 404'd!
+  // 404错误
   else {
     res.writeHead(404, { "Content-Type": "text/plain" });
     res.end("404 error! File not found.");
-  }The above npm command is telling npm to grab backbone from the registry and install backbone into the current directory. Since our directory was empty, npm creates a folder called node_modules and places backbone and its dependencies inside this folder. Let’s examine the tree structure, shown below, after the npm install command install's backbone.
+  }
 
-}).listen(1337, "localhost");
+}).listen(8080, "localhost");
 
 {% endhighlight %}
 
