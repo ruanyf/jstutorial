@@ -493,3 +493,24 @@ font-family: "Consolas", "Courier New", "Courier", "FreeMono", monospace;
 .foundicon-search:before {
   content: "\f02e";
 }
+
+/* temporary */
+
+article aside{
+	background-color:#f5f2f0;
+	padding:1em 1em 0em 1em;
+	margin:2em 2em;
+	font-family: Consolas, Monaco, 'Andale Mono', monospace;
+	-moz-border-radius: 20px; /* FF1+ */
+	-webkit-border-radius:20px; /* Saf3+, Chrome */
+    border-radius: 20px;
+	border-width: 1em;   
+	border-color: #e0dfcc;
+	border-style: solid;
+	text-shadow: 0 1px white;
+}
+
+article aside p{
+	font-size:1.5em;
+	font-style:normal;
+}
