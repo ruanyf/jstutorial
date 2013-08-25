@@ -3,54 +3,77 @@ title: Ajax
 layout: page
 category: bom
 date: 2013-02-16
-modifiedOn: 2013-08-10
+modifiedOn: 2013-08-25
 ---
 
 ## XMLHttpRequest对象
 
-该对象用于发出HTTP请求。
-
-首先，新建一个实例对象。
+该对象用于从JavaScript发出HTTP请求，下面是典型用法。
 
 {% highlight javascript %}
 
-var xmlhttp = new XMLHttpRequest();
+// 新建一个XMLHttpRequest实例对象
+var xhr = new XMLHttpRequest();
+
+// 指定通信过程中状态改变时的回调函数
+xhr.onreadystatechange = function(){
+
+	// 通信成功时，状态值为4
+    var completed = 4;
+    if(xhr.readyState === completed){
+        if(xhr.status === 200){
+            // 处理服务器发送过来的数据
+        }else{
+            // 处理错误
+        }
+    }
+};
+
+// open方式用于指定HTTP动词、请求的网址、是否异步
+xhr.open('GET', '/endpoint', true);
+
+// 发送HTTP请求
+xhr.send(null);
 
 {% endhighlight %}
 
-然后，使用open方式，指定请求的网址。
+### Open方法
 
-{% highlight javascript %}
-
-xmlhttp.open( "GET", "some/ur1", true );
-
-{% endhighlight %}
-
-open方法的三个参数如下：
-
+open方法用于指定发送HTTP请求的参数，它有三个参数如下：
 - 发送方法，一般来说为“GET”、“POST”、“PUT”和“DELETE”中的一个值。
 - 网址。
 - 是否异步，true表示异步，false表示同步。
 
-XMLHttpRequest对象有一个readyStateChange事件，通信过程中任何状态的改变，都会触发这个事件。可以指定它的回调函数，对服务器传送的数据进行处理。
+### readyState属性和readyStateChange事件
+
+在通信过程中，每当发生状态变化的时候，readyState属性的值就会发生改变。
+
+这个值每一次变化，都会触发readyStateChange事件。我们可以指定这个事件的回调函数，对不同状态进行不同处理。尤其是当状态变为4的时候，表示通信成功，这时回调函数就可以处理服务器传送回来的数据。
+
+### send方法
+
+send方法用于实际发出HTTP请求。如果不带参数，就表示HTTP请求只包含头信息，也就是只有一个URL，典型例子就是GET请求；如果带有参数，就表示除了头信息，还带有包含具体数据的信息体，典型例子就是POST请求。它可以发送许多类型的数据。
 
 {% highlight javascript %}
 
-xmlhttp.onreadystatechange = function( data ) {
-    if ( xmlhttp.readyState === 4 ) {
-        console.log( data );
-    }
-};
+void send();
+void send(ArrayBuffer data);
+void send(Blob data);
+void send(Document data);
+void send(DOMString? data);
+void send(FormData data);
 
 {% endhighlight %}
 
-最后，调用send方法，实际发出请求。
+### 服务器返回的信息
 
-{% highlight javascript %}
+（1）status属性
 
-xmlhttp.send( null );
+status属性表示返回的HTTP状态码。一般来说，如果通信成功的话，这个状态码是200。
 
-{% endhighlight %}
+（2）responseText属性
+
+responseText属性表示服务器返回的文本数据。
 
 ### responseType属性
 
