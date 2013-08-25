@@ -51,11 +51,13 @@ $(".class").css({
 
 ## 属性的读写
 
-.attr(name)用于读取某个网页元素的属性值，.attr(name, val)用于写入属性值。
+首先，这里要区分两种属性。
 
-.prop(name)用于读取某个DOM元素的属性值，.prop(name, val)用于写入属性值。它与attr方法的区别在于，后者针对的是网页元素的属性，也就是说这个属性应该是出现在网页代码中的，而前者针对DOM元素的属性，范围大了很多，比如selectedIndex、 tagName、nodeName、nodeType、ownerDocument、defaultChecked、defaultSelected这些DOM的内置属性。在英语中，attr是attribute的缩写，prop是property的缩写，中文很难表达出这种差异。
+一种是网页元素的属性，比如a元素的href属性、img元素的src属性，这要使用attr方法读写：.attr(name)用于读取属性值，.attr(name, val)用于写入属性值。
 
-有时，attr方法和prop方法对同一个属性会读到不一样的值。比如，网页上有一个单选框。
+另一种是DOM元素的属性，比如tagName、nodeName、nodeType等等，这要使用prop方法读写：.prop(name)用于读取属性值，.prop(name, val)用于写入属性值。
+
+所以，attr方法和prop方法针对的是不同的属性。在英语中，attr是attribute的缩写，prop是property的缩写，中文很难表达出这种差异。有时，attr方法和prop方法对同一个属性会读到不一样的值。比如，网页上有一个单选框。
 
 {% highlight html %}
 
