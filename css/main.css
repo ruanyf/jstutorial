@@ -496,7 +496,7 @@ font-family: "Consolas", "Courier New", "Courier", "FreeMono", monospace;
 
 /* temporary */
 
-article aside{
+article aside.annoucement{
 	background-color:#f5f2f0;
 	padding:1em 1em 0em 1em;
 	margin:2em 2em;
@@ -510,7 +510,7 @@ article aside{
 	text-shadow: 0 1px white;
 }
 
-article aside p{
+article aside.annoucement p{
 	font-size:1.5em;
 	font-style:normal;
 }
