@@ -1,14 +1,18 @@
 jQuery(document).on('click',"header a",function(){
 	$('header')
-	.animate({width:0,height:0,opacity:0},700)
-	.animate({width:"100%",height:"100%",opacity:1}, 700);
+	.animate({height:50},300)
+	.animate({height:"100%"},300);
 });
 
 jQuery(document).on('click',"#toc a",function(){
 	$('header')
-	.animate({width:0,height:0,opacity:0},700)
-	.animate({width:"100%",height:"100%",opacity:1}, 700);
+	.animate({height:50},300)
+	.animate({height:"100%"},300);
+// 	.animate({width:0,height:0,opacity:0},700)
+//	.animate({width:"100%",height:"100%",opacity:1}, 700);
 });
+
+
 
 jQuery(document).ready(function(){
 
