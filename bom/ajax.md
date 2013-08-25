@@ -83,9 +83,9 @@ XMLHttpRequest对象有一个responseType属性，用来指定服务器返回数
 
 ## JSON-P
 
-越来越多的服务器返回JSON数据，这时就需要用JSON.parse将数据转为JSON对象。为了方便起见，许多服务器也支持指定回调函数的名称，直接将JSON数据放入回调函数的参数。这种方法就被称为JSON-P。
+越来越多的服务器返回JSON格式的数据，但是从数据性质上来看，它属于字符串。这时就需要用JSON.parse方法将文本数据转为JSON对象。为了方便起见，许多服务器也支持指定回调函数的名称，直接将JSON数据放入回调函数的参数，如此一来就省略将字符串解析为JSON对象的步骤。这种方法就被称为JSON-P。
 
-假定访问 http://example.com/ip ，返回如下JSON数据：
+请看下面的例子，假定访问 http://example.com/ip ，返回如下JSON数据：
 
 {% highlight javascript %}
 
@@ -101,7 +101,7 @@ foo({"ip":"8.8.8.8"})
 
 {% endhighlight %}
 
-这时，如果客户端网页设置了相应代码，foo函数就会被立即调用，而作为参数的JSON数据被视为JavaScript对象，而不是字符串，因此避免了使用JSON.parse的步骤。
+这时，如果客户端定义了foo函数，该函数就会被立即调用，而作为参数的JSON数据被视为JavaScript对象，而不是字符串，因此避免了使用JSON.parse的步骤。
 
 {% highlight javascript %}
 
