@@ -2,7 +2,7 @@
 layout: homepage
 title: JavaScript 标准教程（alpha）
 date: 2012-11-18
-modifiedOn: 2013-07-05
+modifiedOn: 2013-08-25
 ---
 
 <h2 id="introduction">导论</h2>
@@ -53,7 +53,7 @@ modifiedOn: 2013-07-05
 
 <h2 id="bom">浏览器对象</h2>
 
-- [JavaScript运行原理](bom/engine.html)
+- [浏览器的JavaScript引擎](bom/engine.html)
 - [History对象](bom/history.html)
 - [CSS](bom/css.html)
 - [Ajax](bom/ajax.html)
@@ -67,7 +67,7 @@ modifiedOn: 2013-07-05
 
 - [Canvas](htmlapi/canvas.html)
 - [SVG图像](htmlapi/svg.html)
-- [File对象和二进制数据](htmlapi/file.html)
+- [二进制数据的操作](htmlapi/file.html)
 - [Web Worker](htmlapi/webworker.html)
 - [服务器端发送事件](htmlapi/eventsource.html)
 - [Page Visiblity](htmlapi/pagevisibility.html)
