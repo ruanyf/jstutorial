@@ -3,7 +3,7 @@ title: 如何做到 jQuery-free？
 layout: page
 category: jquery
 date: 2013-05-11
-modifiedOn: 2013-07-01
+modifiedOn: 2013-08-25
 ---
 
 ## 概述
@@ -80,7 +80,17 @@ child.parentNode.removeChild(child)
 
 ## 事件的监听
 
-jQuery的on方法，完全可以用addEventListener模拟。
+jQuery使用on方法，监听事件和绑定回调函数。
+
+{% highlight javascript %}
+
+$('button').on('click', function(){
+    ajax( ... );
+});
+
+{% endhighlight %}
+
+完全可以自己定义on方法，将它指向addEventListener方法。
 
 {% highlight javascript %}
 
@@ -101,6 +111,14 @@ NodeList.prototype.on = function (event, fn) {
     return this;
 
 };
+
+{% endhighlight %}
+
+取消事件绑定的off方法，也可以自己定义。
+
+{% highlight javascript %}
+
+Element.prototype.off = Element.prototype.removeEventListener;
 
 {% endhighlight %}
 
@@ -161,7 +179,7 @@ $("#picture").src = "http://url/to/image";
 
 {% endhighlight %}
 
-需要注意，input元素的this.value返回的是输入框中的值，链接元素的this.href返回的是绝对URL。如果需要用到这两个网页元素的属性准确值，可以用this.getAttribute('value')和this.getAttibute('href')。
+需要注意，input元素的this.value返回的是输入框中的值，链接元素（a标签）的this.href返回的是绝对URL。如果需要用到这两个网页元素的属性准确值，可以用this.getAttribute('value')和this.getAttibute('href')。当然，其他属性的值也可以用DOM元素的getAttribute(name)方法读取，写入使用.setAttribute(name, val)方法。
 
 ## addClass方法
 
@@ -243,7 +261,7 @@ element.dataset.score = score;
 
 ## Ajax
 
-jQuery的Ajax方法，用于异步操作。
+jQuery的ajax方法，用于异步操作。
 
 {% highlight javascript %}
 
@@ -257,46 +275,41 @@ $.ajax({
 
 {% endhighlight %}
 
-我们可以定义一个request函数，模拟Ajax方法。
+我们自定义一个ajax函数，简单模拟jQuery的ajax方法。
 
 {% highlight javascript %}
 
-function request(type, url, opts, callback) {
-
-	var xhr = new XMLHttpRequest();
-
-	if (typeof opts === 'function') {
-		callback = opts;
-		opts = null;
-	}
-
-	xhr.open(type, url);
-
-	var fd = new FormData();
-
-	if (type === 'POST' && opts) {
-		for (var key in opts) {
-			fd.append(key, JSON.stringify(opts[key]));
-		}
-	}
-
-	xhr.onload = function () {
-		callback(JSON.parse(xhr.response));
-	};
- 
-	xhr.send(opts ? fd : null);
-
+function ajax(url, opts){
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function(){
+        var completed = 4;
+        if(xhr.readyState === completed){
+            if(xhr.status === 200){
+                opts.success(xhr.responseText, xhr);
+            }else{
+                opts.error(xhr.responseText, xhr);
+            }
+        }
+    };
+    xhr.open(opts.method, url, true);
+    xhr.send(opts.data);
 }
 
 {% endhighlight %}
 
-然后，基于request函数，模拟jQuery的get和post方法。
+使用的时候，除了网址，还需要传入一个自己构造的option对象。
 
 {% highlight javascript %}
 
-var get = request.bind(this, 'GET');
-
-var post = request.bind(this, 'POST');
+ajax('/foo', { 
+    method: 'GET',
+    success: function(response){
+        console.log(response);
+    },
+    error: function(response){
+        console.log(response);
+    }
+});
 
 {% endhighlight %}
 
@@ -345,3 +358,4 @@ el.addEventListener("transitionend", transitionEnded);
 - Burke Holland, [5 Things You Should Stop Doing With jQuery](http://flippinawesome.org/2013/05/06/5-things-you-should-stop-doing-with-jquery/)
 - Burke Holland, [Out-Growing jQuery](http://tech.pro/tutorial/1385/out-growing-jquery)
 - Nicolas Bevacqua, [Uncovering the Native DOM API](http://flippinawesome.org/2013/06/17/uncovering-the-native-dom-api/)
+- Pony Foo, [Getting Over jQuery](http://blog.ponyfoo.com/2013/07/09/getting-over-jquery)

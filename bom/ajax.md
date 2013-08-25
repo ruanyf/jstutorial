@@ -52,7 +52,9 @@ open方法用于指定发送HTTP请求的参数，它有三个参数如下：
 
 ### send方法
 
-send方法用于实际发出HTTP请求。如果不带参数，就表示HTTP请求只包含头信息，也就是只有一个URL，典型例子就是GET请求；如果带有参数，就表示除了头信息，还带有包含具体数据的信息体，典型例子就是POST请求。它可以发送许多类型的数据。
+send方法用于实际发出HTTP请求。如果不带参数，就表示HTTP请求只包含头信息，也就是只有一个URL，典型例子就是GET请求；如果带有参数，就表示除了头信息，还带有包含具体数据的信息体，典型例子就是POST请求。
+
+在XHR 2之中，send方法可以发送许多类型的数据。
 
 {% highlight javascript %}
 
@@ -60,8 +62,60 @@ void send();
 void send(ArrayBuffer data);
 void send(Blob data);
 void send(Document data);
-void send(DOMString? data);
+void send(DOMString data);
 void send(FormData data);
+
+{% endhighlight %}
+
+Blob类型可以用来发送二进制数据，这使得通过Ajax上传文件成为可能。
+
+FormData类型可以用于构造表单数据。
+
+{% highlight javascript %}
+
+var formData = new FormData();
+
+formData.append('username', '张三');
+formData.append('email', 'zhangsan@example.com');
+formData.append('birthDate', 1940);
+
+xhr.send(formData);
+
+{% endhighlight %}
+
+上面的代码构造了一个formData对象，然后使用send方法发送。它的效果与点击下面表单的submit按钮是一样的。
+
+{% highlight html %}
+
+<form id='registration' name='registration' action='/register'>
+    <input type='text' name='username' value='张三'>
+    <input type='email' name='email' value='zhangsan@example.com'>
+    <input type='number' name='birthDate' value='1940'>
+    <input type='submit' onclick='return sendForm(this.form);'>
+</form>
+
+{% endhighlight %}
+
+FormData对象还可以对现有表单添加数据，这为我们操作表单提供了极大的灵活性。
+
+{% highlight javascript %}
+
+function sendForm(form) {
+    var formData = new FormData(form);
+    formData.append('csrf', 'e69a18d7db1286040586e6da1950128c');
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', form.action, true);
+    xhr.onload = function(e) {
+        // ...
+    };
+    xhr.send(formData);
+
+    return false; 
+}
+
+var form = document.querySelector('#registration');
+sendForm(form);
 
 {% endhighlight %}
 
@@ -79,7 +133,16 @@ responseText属性表示服务器返回的文本数据。
 
 XMLHttpRequest对象有一个responseType属性，用来指定服务器返回数据（xhr.response）的类型。
 
-如果将这个属性设为“json”，支持JSON的浏览器，就会自动对返回数据调用JSON.parse() 方法。也就是说，你从xhr.response属性（注意，不是xhr.responseText属性）得到的不是文本，而不是一个JSON对象。
+XHR 2允许用户自行设置这个属性，也就是指定返回数据的类型，可以设置如下的值：
+- 'text'：返回类型为字符串，这时默认值。
+- 'arraybuffer'：返回类型为ArrayBuffer。
+- 'blob'：返回类型为Blob。
+- 'document'：返回类型为Document。
+- 'json'：返回类型为JSON object。
+
+text类型适合大多数情况，而且直接处理文本也比较方便，document类型适合返回XML文档的情况，blob类型适合读取二进制数据，比如图片文件。
+
+如果将这个属性设为“json”，支持JSON的浏览器（Firefox>9，chrome>30），就会自动对返回数据调用JSON.parse() 方法。也就是说，你从xhr.response属性（注意，不是xhr.responseText属性）得到的不是文本，而是一个JSON对象。
 
 ## JSON-P
 
