@@ -1,5 +1,5 @@
 ---
-title: File对象和二进制数据
+title: 二进制数据的操作
 date: 2012-11-30
 layout: page
 category: htmlapi

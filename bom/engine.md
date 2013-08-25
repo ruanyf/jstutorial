@@ -1,12 +1,14 @@
 ---
-title: JavaScript 运行原理
+title: 浏览器的JavaScript引擎
 layout: page
 category: bom
 date: 2013-03-10
 modifiedOn: 2013-06-13
 ---
 
-## 嵌入网页的方法
+浏览器通过内置的JavaScript引擎，读取网页中的代码，对其处理后运行。
+
+## JavaScript代码嵌入网页的方法
 
 ### 静态嵌入
 
