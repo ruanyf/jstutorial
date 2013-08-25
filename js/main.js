@@ -1,10 +1,10 @@
-jQuery(document).on('click',"header a",function(){
+jQuery(document).on('click',"header a",function(e){
 	$('header')
 	.animate({marginBottom:130},200)
 	.animate({marginBottom:30},200);
 });
 
-jQuery(document).on('click',"#toc a",function(){
+jQuery(document).on('click',"#toc a",function(e){
 	$('header')
 	.animate({marginBottom:130},200)
 	.animate({marginBottom:30},200);
