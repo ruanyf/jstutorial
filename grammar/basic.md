@@ -602,8 +602,9 @@ a = b
 /hi/g.exec(c).map(d);
 // 解释为 a = b / hi / g.exec(c).map(d)，即把正则表达式的斜杠当作除法运算符   
 
-var  = "b"
-[ "red", "green" ].foreach(function(c) { console.log(c) })
+var a = "b"
+[ "red", "green" ].forEach(function(c) { console.log(c) })
+// 结果报错，因为两行连在一起，
 // 解释为"b"["red", "green"]，即把字符串当作一个数组，按索引取值 
 
 var a = 0;
