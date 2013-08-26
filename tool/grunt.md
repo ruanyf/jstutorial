@@ -3,7 +3,7 @@ title: 任务管理工具Grunt
 category: tool
 layout: page
 date: 2013-04-21
-modifiedOn: 2013-08-10
+modifiedOn: 2013-08-26
 ---
 
 在Javascript的开发过程中，经常会遇到一些重复性的任务，比如合并文件、压缩代码、检查语法错误、将Sass代码转成CSS代码等等。通常，我们需要使用不同的工具，来完成不同的任务，既重复劳动又非常耗时。Grunt就是为了解决这个问题而发明的工具，可以帮助我们自动管理和运行各种任务。
@@ -107,22 +107,21 @@ module.exports = function(grunt) {
 
 上面的代码用到了grunt代码的三个方法：
 
-- grunt.initConfig：定义了执行各种任务所需的参数。
+- grunt.initConfig：定义了执行各种任务所需的参数，每一项就对应一个同名模块。
 - grunt.loadNpmTasks：加载完成任务所需的插件。
 - grunt.registerTask：定义了具体的任务，上面代码的default任务，表示如果直接输入grunt命令，后面不跟任何参数，这时所需要完成的任务（jshint，concat和uglify）；check任务则表示使用jshint插件对代码进行语法检查。
 
 上面的代码一共加载了四个插件：jshint（检查语法错误）、concat（合并文件）、uglify（压缩代码）和watch（自动执行）。要执行某个任务，只需在grunt后面加上这个任务即可，比如grunt jshint。
 
-定义Gruntfile.js以后，直接在项目的根目录下面，直接运行grunt命令就表示执行默认的default任务。
+定义Gruntfile.js以后，在项目的根目录下面，直接运行grunt命令就表示执行默认的default任务。
 
 {% highlight bash %}
 
 grunt
-// Done, without errors.
 
 {% endhighlight %}
 
-如果一切正常，就显示“Done, without errors”；如果出错，系统会报错。
+如果运行成功，就会显示“Done, without errors.”。
 
 如果要运行check任务，就在grunt命令后面加上任务名。
 
@@ -136,17 +135,74 @@ grunt check
 
 以下我们选几个常用模块，看看它们配置参数的写法，也就是说如何在grunt.initConfig方法中配置各个模块。
 
+- grunt-contrib-cssmin：最小化css文件。
 - grunt-contrib-jshint：检查JavaScript语法。
 - grunt-contrib-concat：合并文件。
 - grunt-contrib-uglify：合并文件，然后将其最小化。
 - grunt-contrib-copy ：复制文件。
-- grunt-contrib-qunit：运行单元测试。
 
 目前，Grunt项目主页上的[模块总数](http://gruntjs.com/plugins)，已经达到了300多个。
 
+### grunt-contrib-cssmin
+
+cssmin模块用于最小化CSS文件。
+
+{% highlight javascript %}
+
+cssmin: {
+      production: {
+        expand: true,
+        cwd: 'css',
+        src: ['*.css'],
+        dest: 'css'
+      }
+    }
+
+{% endhighlight %}
+
+首先，一个模块可以有多种配置，每一个配置就叫做一个目标（target），在上面代码里面“production”就是一个目标。由于多种配置的存在，执行的时候，要指明目标。
+
+{% highlight bash %}
+
+grunt cssmin:production
+
+{% endhighlight %}
+
+如果不指明目标，只是调用模块名。
+
+{% highlight bash %}
+
+grunt cssmin
+
+{% endhighlight %}
+
+那么，就代表所有配置将依次运行一遍。
+
+在每一个配置里面，需要设置具体的配置选项。有一些配置选项是各个模块通用的：
+
+- expand：如果设为true就表示读取下面的扩展设置。
+- cwd：需要处理的文件所在的目录。
+- src：表示文件的来源。如果采用数组形式，数组的每一项就是一个文件名，可以使用通配符。比如['*.css']就表示所有后缀名为css的文件。
+- dest：表示处理后的文件名或所在目录。
+
+下面是一些src和dest的设置格式举例。
+
+{% highlight javascript %}
+
+// 单个文件
+{src: 'foo/this.js', dest: ...}
+// 文件数组
+{src: ['foo/this.js', 'foo/that.js', 'foo/the-other.js'], dest: ...}
+// 通配符
+{src: 'foo/th*.js', dest: ...}
+{src: 'foo/{a,b}*.js', dest: ...}
+{src: ['foo/a*.js', 'foo/b*.js'], dest: ...}
+
+{% endhighlight %}
+
 ### grunt-contrib-jshint
 
-jshint用来检查语法错误，比如分号的使用是否正确、有没有忘记写括号等等。
+jshint用来检查语法错误，比如分号的使用是否正确、有没有忘记写括号等等。它的配置代码要放在grunt.initConfig方法里面。
 
 {% highlight javascript %}
 
