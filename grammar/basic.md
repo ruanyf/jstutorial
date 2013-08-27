@@ -6,7 +6,7 @@ date: 2012-12-14
 modifiedOn: 2013-04-15
 ---
 
-## 基本句法
+## 基本句法和变量
 
 ### 表达式和语句
 
@@ -54,22 +54,87 @@ var a = 1 + 3 ; var b = "abc";
 
 上面两行语句有返回值，但是没有任何意义，因为没有使用这个返回值，也没有任何其他操作。
 
-### 注释
+### 变量
 
-Javascript提供两种注释：一种是单行注释，用//起头；另一种是多行注释，放在/* 和 */之间。
+变量是对“值”的引用，使用变量等同于引用一个值。每一个变量都有一个变量名。
 
 {% highlight javascript %}
 
-// 单行注释
+var a = 1;
+
+{% endhighlight %}
+
+上面的代码先声明a，然后在变量a与数值1之间建立引用关系，也称将数值1“赋值”给变量a。以后，引用a就会得到数值1。最前面var，是变量声明命令。它表示通知解释器，要创建一个变量a。
+
+变量的声明和赋值，是分开的两个步骤，上面的代码将它们合在了一起，实际的步骤是下面这样。
+
+{% highlight javascript %}
+
+var a;
+
+a = 1;
+
+{% endhighlight %}
+
+JavaScript允许省略var，也就是说，省略上面的第一行命令，直接对未声明的变量赋值，效果完全相同。由于这样的做法很容易不知不觉地创建全局变量（尤其是在函数内部），所以建议总是使用var命令声明变量。
+
+但是，如果一个变量也没有声明和赋值就使用，JavaScript会报错，告诉你变量未定义。
+
+{% highlight javascript %}
+
+console.log(x)
+// ReferenceError: x is not defined 
+
+{% endhighlight %}
+
+可以在同一条var命令中声明多个变量。
+
+{% highlight javascript %}
+
+var a,b;
+
+{% endhighlight %}
+
+### 变量提升
+
+JavaScript引擎的工作方式是，先解析代码，获取所有被声明的变量，然后再一行一行地运行。这造成的结果，就是所有的变量的声明语句，都会被提升到代码的头部，这就叫做变量提升。
+
+{% highlight javascript %}
+
+console.log(a);
+var a = 1;
+
+{% endhighlight %}
+
+上面的代码在声明变量a之前就使用它，是一种错误的做法，但是实际上不会报错。因为存在变量提升，真正运行的是下面的代码：
+
+{% highlight javascript %}
+
+var a;
+console.log(a);
+a = 1;
+
+{% endhighlight %}
+
+最后的结果是显示undefined，表示变量a已声明，但还未赋值。
+
+### 注释
+
+源码中被JavaScript引擎忽略的部分就叫做注释，它的作用是对代码进行解释。Javascript提供两种注释：一种是单行注释，用//起头；另一种是多行注释，放在/* 和 */之间。
+
+{% highlight javascript %}
+
+// 这是单行注释
 
 /*
- 多
- 行
- 注
- 释
+ 这是  
+ 多行
+ 注释
 */
 
 {% endhighlight %}
+
+本教程后面的代码部分，会采用这两种形式说明代码的运行结果，以及需要注意的地方。
 
 ### 区块
 
@@ -190,68 +255,6 @@ do...while循环与while循环类似，唯一的区别就是先运行一次循�
 
 break用于在循环体中跳出循环，continue用于不再进行本次循环的后续操作，直接进入下一次循环。
 
-## 变量
-
-变量是对“值”的引用，使用变量等同于引用一个值。每一个变量都有一个变量名。
-
-{% highlight javascript %}
-
-var a = 1;
-
-{% endhighlight %}
-
-上面的代码先声明a，然后在变量a与数值1之间建立引用关系，也称将数值1“赋值”给变量a。以后，引用a就会得到数值1。最前面var，是变量声明命令。它表示通知解释器，要创建一个变量a。
-
-变量的声明和赋值，是分开的两个步骤，上面的代码将它们合在了一起，实际的步骤是下面这样。
-
-{% highlight javascript %}
-
-var a;
-
-a = 1;
-
-{% endhighlight %}
-
-JavaScript允许省略var，也就是说，省略上面的第一行命令，直接对未声明的变量赋值，效果完全相同。由于这样的做法很容易不知不觉地创建全局变量（尤其是在函数内部），所以建议总是使用var命令声明变量。
-
-但是，如果一个变量也没有声明和赋值就使用，JavaScript会报错，告诉你变量未定义。
-
-{% highlight javascript %}
-
-console.log(x)
-// ReferenceError: x is not defined 
-
-{% endhighlight %}
-
-可以在同一条var命令中声明多个变量。
-
-{% highlight javascript %}
-
-var a,b;
-
-{% endhighlight %}
-
-### 变量提升
-
-JavaScript解释器的工作方式是，先解析代码，获取所有被声明的变量，然后再一行一行地运行。这造成的结果，就是所有的变量的声明语句，都会被提升到代码的头部，这就叫做变量提升。
-
-{% highlight javascript %}
-
-alert(a);
-var a = 1;
-
-{% endhighlight %}
-
-上面的代码等同于下面的写法，所以解释器不会报错，但是结果不会得到1，而是undefined。
-
-{% highlight javascript %}
-
-var a;
-alert(a);
-a = 1;
-
-{% endhighlight %}
-
 ## 数据类型
 
 Javascript的值的类型分成两大类：原始类型（primitive type）和合成类型（complex type）。
@@ -311,7 +314,7 @@ typeof false
 
 {% highlight javascript %}
 
-typeof 123
+typeof ole23
 // number
 
 {% endhighlight %}
