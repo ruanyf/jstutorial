@@ -257,6 +257,8 @@ break用于在循环体中跳出循环，continue用于不再进行本次循环�
 
 ## 数据类型
 
+### 原始类型和合成类型
+
 Javascript的值的类型分成两大类：原始类型（primitive type）和合成类型（complex type）。
 
 原始类型又分成三种。
@@ -299,45 +301,36 @@ v
 
 ### typeof 运算符
 
-该运算符用来确定一个值的数据类型，可能有以下结果：
+typeof运算符可以返回一个值的数据类型，可能有以下结果：
 
-（1）如果值的类型是布尔值，返回boolean。
-
-{% highlight javascript %}
-
-typeof false
-// boolean
-
-{% endhighlight %}
-
-（2）如果值的类型是数值，返回number。
+（1）数值、字符串、布尔值分别返回number、string、boolean。
 
 {% highlight javascript %}
 
-typeof ole23
-// number
-
-{% endhighlight %}
-
-（3）如果值的类型是字符串，返回string。
-
-{% highlight javascript %}
+typeof 123
+// "number"
 
 typeof "123"
-// string
+// "string"
+
+typeof false
+// "boolean"
 
 {% endhighlight %}
 
-（4）如果值的类型是函数，返回function。
+（2）函数返回function。
 
 {% highlight javascript %}
 
-typeof print
-// function
+// 定义一个空函数
+function f(){}
+
+typeof f
+// "function"
 
 {% endhighlight %}
 
-（5） 如果值的类型是undefined: 返回undefined。
+（3）undefined返回undefined。
 
 {% highlight javascript %}
 
@@ -354,38 +347,31 @@ v
 // ReferenceError: v is not defined
 
 typeof v
-// undefined
+// "undefined"
 
 {% endhighlight %}
 
-（6）如果值的类型是null，返回object。
+（4）除此以外，都返回object。
 
 {% highlight javascript %}
 
-typeof null
-// object
-
-{% endhighlight %}
-
-（7）如果值的类型不属于上面任何一种情况，返回object。
-
-{% highlight javascript %}
-
-typeof window 
-// object
+typeof window
+// "object"
 
 typeof {}; 
-// object
+// "object"
 
 typeof []; 
-// object
+// "object"
 
 typeof null;
-// object
+// "object"
 
 {% endhighlight %}
 
-考虑到typeof对数组（array）和对象（object）的显示结果，都是object。因此，可以使用instanceof运算符进一步区分。
+从上面代码可以看到，空数组（[]）的类型也是object，这表示在JavaScript内部，数组本质上只是一种特殊的对象。另外，null的类型也是object，说明它不是一种的数据类型。
+
+既然typeof对数组（array）和对象（object）的显示结果都是object，那么怎么区分它们呢？instanceof运算符可以做到。
 
 {% highlight javascript %}
 
@@ -400,6 +386,8 @@ a instanceof Array
 // true
 
 {% endhighlight %}
+
+instanceof运算符的详细解释，请见《面向对象编程》一章。
 
 ### 字符串
 
