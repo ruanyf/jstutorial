@@ -134,6 +134,7 @@ responseText属性表示服务器返回的文本数据。
 XMLHttpRequest对象有一个responseType属性，用来指定服务器返回数据（xhr.response）的类型。
 
 XHR 2允许用户自行设置这个属性，也就是指定返回数据的类型，可以设置如下的值：
+
 - 'text'：返回类型为字符串，这时默认值。
 - 'arraybuffer'：返回类型为ArrayBuffer。
 - 'blob'：返回类型为Blob。

@@ -24,7 +24,7 @@ JavaScript的发明目的，就是作为浏览器的内置脚本语言，为网�
 
 （2）Node.js项目使得JavaScript可以用于开发服务器端的大型项目，网站的前后端都用JavaScript开发已经成为了现实。有些嵌入式平台（Raspberry Pi）能够安装Node.js，于是JavaScript就能为这些平台开发应用程序。
 
-（3）JavaScript甚至也可以用来操作数据库。noSQL数据库这个概念，本身就是在JSON（JavaScript Object Notation，JavaScript对象表示法）格式的基础上诞生的，大部分noSQL数据库允许JavaScript直接操作。基于SQL语言的开源数据库PostgreSQL支持JavaScript作为操作语言，可以部分取代SQL查询语言。
+（3）JavaScript甚至也可以用来操作数据库。NoSQL数据库这个概念，本身就是在JSON（JavaScript Object Notation，JavaScript对象表示法）格式的基础上诞生的，大部分NoSQL数据库允许JavaScript直接操作。基于SQL语言的开源数据库PostgreSQL支持JavaScript作为操作语言，可以部分取代SQL查询语言。
 
 （4）PhoneGap项目使得JavaScript可以开发在多种移动平台（iOS和Android）上使用的应用程序。Mozilla基金会的手机操作系统Firefox OS，更是直接将JavaScript操作系统的平台语言。
 
