@@ -3,7 +3,7 @@ title: Ajax
 layout: page
 category: bom
 date: 2013-02-16
-modifiedOn: 2013-08-25
+modifiedOn: 2013-08-28
 ---
 
 ## XMLHttpRequest对象
@@ -144,9 +144,9 @@ text类型适合大多数情况，而且直接处理文本也比较方便，docu
 
 如果将这个属性设为“json”，支持JSON的浏览器（Firefox>9，chrome>30），就会自动对返回数据调用JSON.parse() 方法。也就是说，你从xhr.response属性（注意，不是xhr.responseText属性）得到的不是文本，而是一个JSON对象。
 
-## JSON-P
+## JSONP
 
-越来越多的服务器返回JSON格式的数据，但是从数据性质上来看，它属于字符串。这时就需要用JSON.parse方法将文本数据转为JSON对象。为了方便起见，许多服务器也支持指定回调函数的名称，直接将JSON数据放入回调函数的参数，如此一来就省略将字符串解析为JSON对象的步骤。这种方法就被称为JSON-P。
+越来越多的服务器返回JSON格式的数据，但是从数据性质上来看，它属于字符串。这时就需要用JSON.parse方法将文本数据转为JSON对象。为了方便起见，许多服务器也支持指定回调函数的名称，直接将JSON数据放入回调函数的参数，如此一来就省略将字符串解析为JSON对象的步骤。这种方法就被称为JSONP。
 
 请看下面的例子，假定访问 http://example.com/ip ，返回如下JSON数据：
 
@@ -173,6 +173,62 @@ function foo(data) {
 };
 
 {% endhighlight %}
+
+## CORS
+
+CORS的全称是“跨域资源共享”（Cross-origin resource sharing），它提出一种方法，允许网页JavaScript代码向另一个域名发出XMLHttpRequests请求，从而克服了传统上Ajax只能在同一个域名下使用的限制（same origin security policy）。
+
+所有主流浏览器都支持该方法，不过IE8和IE9的该方法不是部署在XMLHttpRequest对象，而是部署在XDomainRequest对象。检查浏览器是否支持的代码如下：
+
+{% highlight javascript %}
+
+var request = new XMLHttpRequest();
+
+if("withCredentials" in request) {
+  // 发出跨域请求
+}
+
+{% endhighlight %}
+
+CORS的原理其实很简单，就是增加一条HTTP头信息的查询，询问服务器端，当前请求的域名是否在许可名单之中，以及可以使用哪些HTTP动词。如果得到肯定的答复，就发出XMLHttpRequest请求。这种机制叫做“预检”（preflight）。
+
+“预检”的专用HTTP头信息是Origin。假定用户正在浏览来自www.example.com的网页，该网页需要向另一个域名请求数据，这时浏览器会向该域名询问是否同意跨域请求，发出的HTTP头信息如下：
+
+{% highlight http %}
+
+Origin: http://www.example.com
+
+{% endhighlight %}
+
+这行HTTP头信息表示，请求来自www.example.com。服务端如果同意，就返回一个Access-Control-Allow-Origin头信息。
+
+{% highlight http %}
+
+Access-Control-Allow-Origin: http://www.example.com
+
+{% endhighlight %}
+
+如果不同意，服务器端会返回一个错误。
+
+如果服务器端对所有网站都开放，可以返回一个星号（*）通配符。
+
+{% highlight http %}
+
+Access-Control-Allow-Origin: *
+
+{% endhighlight %}
+
+由于整个过程都是浏览器自动后台完成，不用用户参与，所以对于开发者来说，使用Ajax跨域请求与同域请求没有区别，代码完全一样。但是，这需要服务端的支持，所以在使用CORS之前，要查看一下所请求的网站是否支持。
+
+CORS机制默认不发送cookie和HTTP认证信息，除非打开withCredentials属性。
+
+{% highlight javascript %}
+
+request.withCredentials = "true";
+
+{% endhighlight %}
+
+CORS机制与JSONP模式的使用目的相同，而且更强大。JSONP只支持GET请求，CORS可以支持所有类型的HTTP请求。在发生错误的情况下，CORS可以得到更详细的错误信息，部署更有针对性的错误处理代码。JSONP的优势在于可以用于老式浏览器，以及可以向不支持CORS的网站请求数据。
 
 ## 参考链接
 

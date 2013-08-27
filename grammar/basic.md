@@ -259,7 +259,7 @@ break用于在循环体中跳出循环，continue用于不再进行本次循环�
 
 ### 原始类型和合成类型
 
-Javascript的值的类型分成两大类：原始类型（primitive type）和合成类型（complex type）。
+JavaScript的值的类型分成两大类：原始类型（primitive type）和合成类型（complex type）。
 
 原始类型又分成三种。
 
@@ -273,7 +273,7 @@ Javascript的值的类型分成两大类：原始类型（primitive type）和�
 - 数组（array）
 - 函数（function）
 
-除了上面这六种数据类型，Javascript还定义一个特殊的数据类型undefined和一个特殊的值null。
+除了上面这六种数据类型，JavaScript还定义一个特殊的数据类型undefined和一个特殊的值null。
 
 undefined表示“未定义”，即还没有确定数据类型。如果一个变量只是被声明，没有被赋值，那么它的值默认就是undefined。
 
@@ -297,7 +297,7 @@ v
 
 {% endhighlight %}
 
-这里需要明确的是，Javascript的所有数据，都可以视为对象，数组和函数只不过是特殊的对象而已，就连数值、字符串、布尔值都可以用对象方式调用。
+这里需要明确的是，JavaScript的所有数据，都可以视为对象，数组和函数只不过是特殊的对象而已，就连数值、字符串、布尔值都可以用对象方式调用。
 
 ### typeof 运算符
 
