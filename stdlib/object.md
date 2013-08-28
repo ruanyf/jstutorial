@@ -73,7 +73,7 @@ o.toString()
 
 这两种方法的意义在于，某些场合JavaScript需要自动将对象转化为原始类型，转化的结果就取决于这两个方法，具体请参见上一章的《数据类型转换》。
 
-另外，定义在Object.prototype对象上面的toString方法会返回某些对象的详细类型，比如数组会返回“[object Array]”，正则对象会返回“[object RegExp]”，比typeof运算符更详细。
+另外，定义在Object.prototype对象上面的toString方法会返回某些对象的详细类型，比如数组会返回“[object Array]”，正则对象会返回“[object RegExp]”，比typeof运算符更详细。注意，只有定义在Object.prototype对象上面的toString方法，才有这个特性，因为其他对象往往部署了自己的toString方法。
 
 {% highlight javascript %}
 
@@ -87,7 +87,7 @@ proto.toString.call(/xyz/)
 
 {% endhighlight %}
 
-利用这一点，可以写一个更准确的toType函数。
+利用这一点，可以写一个更准确的toType函数，返回各种对象的类型。
 
 {% highlight javascript %}
 
@@ -389,7 +389,7 @@ o.p
 
 {% endhighlight %}
 
-上面代码中，对现有代码重新赋值，并不会报错，只是默默地失败。但是，如果是在严格模式下，就会报错。
+上面代码中，对现有属性重新赋值（o.p = "world"），并不会报错，只是默默地失败。但是，如果是在严格模式下，就会报错。
 
 {% highlight javascript %}
 

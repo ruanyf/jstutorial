@@ -3,8 +3,40 @@ title: CSS
 layout: page
 category: bom
 date: 2013-02-08
-modifiedOn: 2013-04-18
+modifiedOn: 2013-08-29
 ---
+
+## CSS模块的侦测
+
+CSS的规格发展太快，新的模块层出不穷。不同浏览器的不同版本，对CSS模块的支持情况都不一样。有时候，需要知道当前浏览器是否支持某个模块，这就叫做“CSS模块的侦测”。
+
+目前，部分浏览器（Firefox 22+, Chrome 28+, Opera 12.1+）部署了supports API，可以返回是否支持某条CSS规则。
+
+{% highlight javascript %}
+
+CSS.supports('transform-origin', '5px');
+CSS.supports('(display: table-cell) and (display: list-item)');
+
+{% endhighlight %}
+
+但是，这个API还不是标准，而且不成熟，所以不是很靠得住。
+
+一个比较普遍适用的方法是，判断某个DOM元素的style对象的某个属性值是否为字符串。
+
+{% highlight javascript %}
+
+typeof element.style.animationName === 'string';
+typeof element.style.transform === 'string';
+
+{% endhighlight %}
+
+如果是的话，就说明该属性在style对象中确实存在，代表浏览器支持该CSS属性。所有浏览器都能用这个方法，但是使用的时候，需要把不同浏览器的CSS规则前缀也考虑进去。
+
+{% highlight javascript %}
+
+typeof document.getElementById("content").style['-webkit-animation'] === 'string'
+
+{% endhighlight %}
 
 ## CSS生成内容
 
@@ -110,3 +142,4 @@ Ended: elapsed time is 9.234000205993652
 ## 参考链接
 
 - MDN, [Using CSS animations](https://developer.mozilla.org/en-US/docs/CSS/Tutorials/Using_CSS_animations)
+- Ryan Morr, [Detecting CSS Style Support](http://ryanmorr.com/detecting-css-style-support/)
