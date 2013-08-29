@@ -86,7 +86,7 @@ var o = {p:1};
 
 function f(){return 1;}
 
-f()
+f();
 // 1
 
 (f)
