@@ -358,6 +358,7 @@ a.forEach(function (x, i) { console.log(i+". "+x) });
 
 for (var i in a){console.log(i)}
 // 0
+// 1
 // 2
 
 {% endhighlight %}

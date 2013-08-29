@@ -10,7 +10,7 @@ modifiedOn: 2013-08-29
 
 CSS的规格发展太快，新的模块层出不穷。不同浏览器的不同版本，对CSS模块的支持情况都不一样。有时候，需要知道当前浏览器是否支持某个模块，这就叫做“CSS模块的侦测”。
 
-目前，部分浏览器（Firefox 22+, Chrome 28+, Opera 12.1+）部署了supports API，可以返回是否支持某条CSS规则。
+目前，部分浏览器（Firefox 22+, Chrome 28+, Opera 12.1+）部署了supports API，可以返回是否支持某条CSS规则。但是，这个API还没有成为标准。
 
 {% highlight javascript %}
 
@@ -18,8 +18,6 @@ CSS.supports('transform-origin', '5px');
 CSS.supports('(display: table-cell) and (display: list-item)');
 
 {% endhighlight %}
-
-但是，这个API还不是标准，而且不成熟，所以不是很靠得住。
 
 一个比较普遍适用的方法是，判断某个DOM元素的style对象的某个属性值是否为字符串。
 
