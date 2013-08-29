@@ -8,13 +8,11 @@ modifiedOn: 2013-04-15
 
 ## 基本句法和变量
 
-### 表达式和语句
+### 语句
 
-JavaScript程序的执行单位为行（line），也就是一行一行地执行。每行由表达式或语句组成。
+JavaScript程序的执行单位为行（line），也就是一行一行地执行。每行就叫做一个语句。
 
-表达式（expression）是一种以返回值为目的的操作，比如 1+3 就是一个表达式，它的目的就是得到返回值4。
-
-语句（statement）则是以完成某种任务为主要目的的操作，不一定有返回值。比如下面就是一个赋值语句：
+语句（statement）是为了完成某种任务而进行的操作，比如下面就是一行赋值语句：
 
 {% highlight javascript %}
 
@@ -22,7 +20,9 @@ var a = 1 + 3 ;
 
 {% endhighlight %}
 
-这条语句将 1+3 的运算结果赋值给变量a。它是没有返回值的，因为主要目的不是为了得到返回值。
+这条语句先用var命令，声明了变量a，然后将 1+3 的运算结果赋值给变量a。
+
+“1+3”叫做表达式（expression），指一个为了得到返回值的计算式。语句和表达式的区别在于，前者主要为了进行某种操作，后者则是为了得到返回值。凡是JavaScript语言中预期为值的地方，都可以使用表达式。比如，赋值语句的等号右边，预期是一个值，因此可以放置各种表达式。
 
 语句以分号结尾，一个分号就表示一个语句结束。多个语句可以写在一行内。
 
@@ -32,7 +32,7 @@ var a = 1 + 3 ; var b = "abc";
 
 {% endhighlight %}
 
-分号前面可以没有任何内容，解释器将其视为空语句。
+分号前面可以没有任何内容，JavaScript引擎将其视为空语句。
 
 {% highlight javascript %}
 
@@ -42,7 +42,7 @@ var a = 1 + 3 ; var b = "abc";
 
 上面的代码就表示3个空语句。（关于分号的更多介绍，请看后文《结尾的分号》一节。）
 
-表达式不需要分号结尾。一旦在表达式后面添加分号，则解释器就将表达式视为语句，这样会产生一些没有任何意义的语句。
+表达式不需要分号结尾。一旦在表达式后面添加分号，则JavaScript引擎就将表达式视为语句，这样会产生一些没有任何意义的语句。
 
 {% highlight javascript %}
 
@@ -52,7 +52,7 @@ var a = 1 + 3 ; var b = "abc";
 
 {% endhighlight %}
 
-上面两行语句有返回值，但是没有任何意义，因为没有使用这个返回值，也没有任何其他操作。
+上面两行语句有返回值，但是没有任何意义，因为只是返回一个单纯的值，没有任何其他操作。
 
 ### 变量
 
@@ -78,14 +78,16 @@ a = 1;
 
 JavaScript允许省略var，也就是说，省略上面的第一行命令，直接对未声明的变量赋值，效果完全相同。由于这样的做法很容易不知不觉地创建全局变量（尤其是在函数内部），所以建议总是使用var命令声明变量。
 
-但是，如果一个变量也没有声明和赋值就使用，JavaScript会报错，告诉你变量未定义。
+但是，如果一个变量没有声明和赋值就直接使用，JavaScript会报错，告诉你变量未定义。
 
 {% highlight javascript %}
 
-console.log(x)
+x
 // ReferenceError: x is not defined 
 
 {% endhighlight %}
+
+上面代码直接使用变量x，系统就报错，告诉你变量x没有声明。
 
 可以在同一条var命令中声明多个变量。
 
@@ -94,6 +96,18 @@ console.log(x)
 var a,b;
 
 {% endhighlight %}
+
+JavaScirpt是一种动态类型语言，也就是说，变量的类型没有限制，可以赋予各种类型的值。
+
+{% highlight javascript %}
+
+var a = 1;
+
+a = "hello";
+
+{% endhighlight %}
+
+上面代码中，变量a起先被赋值为一个数值，后来又被重新赋值为一个字符串。第二次赋值的时候，因为变量a已经存在，所以不需要使用var命令。如果用了，就等于重新声明一个变量a，会覆盖掉前面的同名变量。
 
 ### 变量提升
 
@@ -117,6 +131,40 @@ a = 1;
 {% endhighlight %}
 
 最后的结果是显示undefined，表示变量a已声明，但还未赋值。
+
+### 标识符
+
+标识符（identifier）是用来识别具体对象的一个名称。最常见的标识符就是变量名，以及后面要提到的函数名。JavaScript语言的标识符对大小写敏感。
+
+标识符有一套命名规则，不符合规则的就是非法标识符。JavaScript引擎遇到非法标识符，就会报错。
+
+简单说，标识符命名规则如下：
+
+- 第一个字符可以是任意Unicode字母，以及美元符号（$）和下划线（_）。
+- 第二个字符及后面的字符，还可以用数字。
+
+下面这些都是合法的标识符。
+
+{% highlight javascript %}
+
+arg0
+_tmp
+$elem
+π
+
+{% endhighlight %}
+
+中文也可以用作变量名。
+
+{% highlight javascript %}
+
+var 临时变量 = 1;
+
+{% endhighlight %}
+
+JavaScript语言有一些保留字，不能用作标识符：arguments、break、case、catch、class、const、continue、debugger、default、delete、do、else、enum、eval、export、extends、false、finally、for、function、if、implements、import、in、instanceof、interface、let、new、null、package、private、protected、public、return、static、super、switch、this、throw、true、try、typeof、var、void、while、with、yield。
+
+另外，还有三个词虽然不是保留字，但是因为具有特别含义，也不应该用作标识符：Infinity、NaN、undefined。
 
 ### 注释
 
