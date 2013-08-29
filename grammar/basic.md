@@ -517,7 +517,14 @@ b64_to_utf8('4pyTIMOgIGxhIG1vZGU='); // "你好"
 
 ### 布尔值
 
-Javascript将下面的值，都视为false。
+布尔值包含true和false两个值。下列运算符会返回布尔值：
+
+- 两元逻辑运算符： && (And)，|| (Or)
+- 前置逻辑运算符： ! (Not)
+- 相等运算符：===，!==，==，!=
+- 比较运算符：>，>=，<，<=
+
+如果JavaScript预期某个位置应该是布尔值，会将该位置上现有的值自动转为布尔值。转换规则是除了下面五个值被转为false，其他值都视为true。
 
 - undefined
 - null
@@ -525,12 +532,16 @@ Javascript将下面的值，都视为false。
 - 0
 - ""
 
+下面是一个例子。
+
 {% highlight javascript %}
 
 if (""){ console.log(true);}
 // 没有任何输出
 
 {% endhighlight %}
+
+上面代码的if命令后面是一个空字符串，被转为false，因此不会进入代码块，所以没有任何输出。
 
 需要特别注意的是，空数组（[]）和空对象（{}）对应的布尔值，都是true。
 
@@ -543,6 +554,8 @@ if ({}){ console.log(true);}
 // true
 
 {% endhighlight %}
+
+更多关于数据类型转换的介绍，参见《数据类型转换》一节。
 
 ## 结尾的分号
 
