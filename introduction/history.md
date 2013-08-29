@@ -33,9 +33,13 @@ Netscape公司很快发现，Navigator浏览器需要一种可以嵌入网页的
 
 1995年5月，Brendan Eich只用了10天，就设计完成了这种语言的第一版。它的语法有多个来源：
 
-- C语言的基本语法。
-- Scheme语言（Lisp语言的一种方言）的函数式用法，包括闭包。
+- C语言和Java语言的基本语法。
+- Java语言的数据结构，包括将值分成原始值和对象两大类。
+- Scheme语言（Lisp的一种方言）和Awk语言的函数式用法，将函数当作第一等公民，以及引入闭包。
 - Self语言（Smalltalk的一种变种）的原型继承模式。
+- Perl语言和Python语言对字符串、数组和正则表达式的处理。
+
+为了保持语言本身的简单性，JavaScript缺少一些关键的功能，比如块级作用域、模块、子类型（subtyping）等等，但是可以利用现有功能找出解决办法。所以，对于其他语言，你需要学习语言的各种功能，而对于JavaScript，你常常需要学习各种解决问题的模式。
 
 ## 起名
 
@@ -55,7 +59,7 @@ Netscape公司很快发现，Navigator浏览器需要一种可以嵌入网页的
 
 1996年11月，网景公司决定将JavaScript提交给国际标准化组织ECMA，希望JavaScript能够成为国际标准，以此抵抗微软。
 
-1997年7月，ECMA组织发布262号标准文件（ECMA-262），规定了浏览器脚本语言的标准，并将这种语言称为ECMAScript。这个版本就是ECMAScript 1.0版。之所以不叫JavaScript，一方面是由于商标的关系，另一方面也是想体现这门语言的制定者是ECMA，也不是网景公司。因此，ECMAScript和Javascript的关系是，前者是后者的规格，后者是前者的一种实现。日常的场合，这两个词是可以互换的。
+1997年7月，ECMA组织发布262号标准文件（ECMA-262），规定了浏览器脚本语言的标准，并将这种语言称为ECMAScript。这个版本就是ECMAScript 1.0版。之所以不叫JavaScript，一方面是由于商标的关系，Java是Sun公司的商标，只有网景公司才能合法地使用JavaScript这个名字，另一方面也是想体现这门语言的制定者是ECMA，也不是网景公司。因此，ECMAScript和Javascript的关系是，前者是后者的规格，后者是前者的一种实现。在日常场合，这两个词是可以互换的。
 
 1998年6月，ECMAScript 2.0版发布。
 
@@ -135,4 +139,4 @@ JavaScript 1.1版对应ECMAScript 1.0版，但是直到JavaScript 1.4版才完�
 
 - Axel Rauschmayer, [The Past, Present, and Future of JavaScript](http://oreilly.com/javascript/radarreports/past-present-future-javascript.csp)
 - John Dalziel, [The race for speed part 4: The future for JavaScript](http://creativejs.com/2013/06/the-race-for-speed-part-4-the-future-for-javascript/)
-
+- Axel Rauschmayer, [Basic JavaScript for the impatient programmer](http://www.2ality.com/2013/06/basic-javascript.html)

@@ -92,6 +92,20 @@ define(['math', 'graph'],
 
 {% endhighlight %}
 
+上面代码定义的模块依赖math和graph两个库，然后返回一个具有plot接口的对象。
+
+另一个实际的例子是，通过判断浏览器是否为IE，而选择加载zepto或jQuery。
+
+{% highlight javascript %}
+
+define(('__proto__' in {} ? ['zepto'] : ['jquery']), function($) {
+    return $;
+});
+ 
+{% endhighlight %}
+
+上面代码定义了一个中间模块，该模块先判断浏览器是否支持__proto__属性（除了IE，其他浏览器都支持），如果返回true，就加载zepto库，否则加载jQuery库。
+
 ## require方法：调用模块
 
 require方法用于调用模块。它的参数与define方法类似。
