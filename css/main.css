@@ -67,7 +67,7 @@ article a[href^="http"]:after {
 	top:-0.2em;
 }
 
-article.bookPage>div>div>ul, article.bookPage>div>div>ol{
+article.bookPage>div>div>ul:not(.reference-list), article.bookPage>div>div>ol{
 	background-color:#f5f2f0;
 	padding:1em 1em 1em 3em;
 	margin:2em 0em;
@@ -79,6 +79,11 @@ article.bookPage>div>div>ul, article.bookPage>div>div>ol{
 	border-left-color: #e0dfcc;
 	border-left-style: solid;
 	text-shadow: 0 1px white;
+}
+
+
+article.bookPage>div>div>ul:not(.reference-list){
+	list-style-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAKCAYAAACXDi8zAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAScAAAEnABIZuYagAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAACSSURBVAiZVY0hDsJQEERfG+RW9wRIBA4DAgMKg6nZIkg4B6fgAFUEw5UQiG1CQNSSDILSfEbOy8zLwq0CKJvuTJIcuAGnti62KUAS4TYPt1e4bSQh6Qt6uOzhWhKZpGHd1sUKuADHnP/cgTcwTq+m4daG22FwhNss3B7hthvk4bYIt2e4Vb9SEiNgAuzLprumsg/n8VnjsKqsSQAAAABJRU5ErkJggg==);
 }
 
 /* feature section */
