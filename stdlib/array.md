@@ -3,7 +3,7 @@ title: Array 对象
 layout: page
 category: stdlib
 date: 2013-05-04
-modifiedOn: 2013-08-10
+modifiedOn: 2013-08-30
 ---
 
 ## 概述
@@ -31,10 +31,6 @@ a3
 ## Array对象实例的方法
 
 以下这些Array对象实例的方法，都是数组实例才能使用。如果不想创建实例，只是想单纯调用这些方法，可以写成 [].method.call(调用对象，参数) 的形式，或者 Array.prototype.method.call(调用对象，参数)的形式。
-
-- pop 删除并返回数组的最后一个元素
-- reverse 颠倒数组中元素的顺序
-- unshift 向数组的开头添加一个或多个元素，并返回添加后的数组长度
 
 ### valueOf 方法和 toString 方法
 
@@ -85,9 +81,25 @@ a.toString()
 
 {% endhighlight %}
 
-### push方法
+### indexOf方法
 
-该方法用于在数组的末端添加一个或多个元素，并返回添加后的数组的长度。
+返回某个元素在数组中的位置（从0开始），如果找不到该元素，就返回-1。
+
+{% highlight javascript %}
+
+var a = ['a','b','c'];
+
+a.indexOf('b')
+// 1
+
+a.indexOf('y')
+// -1
+
+{% endhighlight %}
+
+### push方法和pop方法
+
+push方法用于在数组的末端添加一个或多个元素，并返回添加后的数组的长度。
 
 {% highlight javascript %}
 
@@ -134,6 +146,18 @@ a
 
 {% endhighlight %}
 
+pop方法用于删除数组的最后一个元素，并返回该元素。
+
+{% highlight javascript %}
+
+var a = [ 'a', 'b', 'c' ];
+
+a.pop(); // 'c'
+a
+// [ 'a', 'b' ]
+
+{% endhighlight %}
+
 ### join方法
 
 该方法将所有数组元素组成一个字符串返回，默认用逗号分隔。
@@ -142,11 +166,48 @@ a
 
 var a = [1,2,3,4];
 
-a.join()
-// "1,2,3,4"
+a.join() // "1,2,3,4"
+a.join('') // '1234'
+a.join("|") // "1|2|3|4"
 
-a.join("|")
-// "1|2|3|4"
+{% endhighlight %}
+
+### shift方法和unshift方法
+
+shift方法用于删除数组的第一个元素，并返回该元素。
+
+{% highlight javascript %}
+
+var a = [ 'a', 'b', 'c' ];
+
+a.shift(); // 'a'
+a
+// [ 'b', 'c' ]
+
+{% endhighlight %}
+
+unshift方法用于在数组的第一个位置添加元素，并返回添加新元素后的数组长度。
+
+{% highlight javascript %}
+
+var a = [ 'a', 'b', 'c' ];
+
+a.shift('x'); // 3
+a
+// [ 'x', 'a', 'b', 'c' ]
+
+{% endhighlight %}
+
+### reverse方法
+
+reverse方法用于颠倒数组中元素的顺序。
+
+{% highlight javascript %}
+
+var a = [ 'a', 'b', 'c' ];
+
+a.reverse()
+// ["c", "b", "a"]
 
 {% endhighlight %}
 
