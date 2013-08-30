@@ -8,7 +8,16 @@ modifiedOn: 2013-02-13
 
 ## 概述
 
-JavaScript内部，所有数字都是以64位浮点数形式储存。由于浮点数不是精确的值，所以涉及浮点数的比较和运算要特别小心。
+JavaScript内部，所有数字都是以64位浮点数形式储存，即使整数也是如此。
+
+{% highlight javascript %}
+
+1 === 1.0
+// true
+
+{% endhighlight %}
+
+由于浮点数不是精确的值，所以涉及小数的比较和运算要特别小心。
 
 {% highlight javascript %}
 
@@ -184,7 +193,7 @@ function myIsNaN2(value) {
 
 ## Infinity
 
-Infinity表示“无穷”。任意数除以0（0本身除外），会得到Infinity。它有正负之分。
+Infinity表示“无穷”。除了0除以0得到NaN，其他任意数除以0，得到Infinity。它有正负之分。
 
 {% highlight javascript %}
 

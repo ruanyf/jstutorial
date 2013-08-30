@@ -3,7 +3,7 @@ title: 运算符
 layout: page
 category: grammar
 date: 2013-02-04
-modifiedOn: 2013-06-13
+modifiedOn: 2013-08-29
 ---
 
 ## 算术运算符
@@ -35,6 +35,16 @@ true + "1"
 更详尽的转化规则参见《数据类型转化》一节。
 
 ### 其他算术运算符
+
+除了加法运算符，JavaScript还提供如下算术运算符：
+- 减法运算符（Subtraction）： number1 - number2
+- 乘法运算符（Multiplication）： number1 * number2
+- 除法运算符（Division）：number1 / number2
+- 余数运算符（Remainder）：number1 % number2
+- 自增运算符（Increment）：++variable, variable++
+- 自减运算符（Decrement）：--variable, variable--
+- 求负运算符（Negate）：-value
+- 数值运算符（Convert to number）： +value
 
 如果一个运算子是数值类型，另一个是其他类型，那么除了加法运算符，在其他运算符的情况下，另一个运算子都会被转化成数值类型。
 
@@ -351,7 +361,7 @@ v1 === v2
 
 (2) AND(&&) 且运算
 
-如果第一个运算子为true，则返回第二个运算子；如果第一个运算子为false，则直接返回第一个运算子，且不再对第二个运算子求值。
+如果第一个运算子的值为true，则返回第二个运算子的值；如果第一个运算子的值为false，则直接返回该值，且不再对第二个运算子求值。
 
 {% highlight javascript %}
 
@@ -362,9 +372,11 @@ v1 === v2
 
 {% endhighlight %}
 
+这种跳过第二个运算子的机制，被称为“短路”。
+
 (3) OR(||) 或运算
 
-如果第一个运算子为true，则返回第一个运算子，且不再对第二个运算子求值；如果第一个运算子为false，则返回第二个运算子。
+如果第一个运算子的值为true，则返回该值，且不再对第二个运算子求值；如果第一个运算子的值为false，则返回第二个运算子的值。
 
 {% highlight javascript %}
 
@@ -374,6 +386,8 @@ v1 === v2
 "" || "" // ""
 
 {% endhighlight %}
+
+短路规则对这个运算符也适用。
 
 (4) 三元运算符 ? :
 

@@ -207,9 +207,11 @@ a
 
 （1）if 结构
 
+if结构先判断一个表达式的布尔值，如果为true，则后面代码块中的代码，如果为false，则执行else后面的代码块。
+
 {% highlight javascript %}
 
- if (myvar === 3) {
+ if (m === 3) {
     // then
  } else {
    // else
@@ -217,7 +219,27 @@ a
 
 {% endhighlight %}
 
+else代码块不是必需的，可省略。
+
+对同一个变量进行多次判断时，多个if...else语句可以连写在一起。
+
+{% highlight javascript %}
+
+if (m === 0) {
+    // ...
+} else if (m === 1) {
+   // ...
+} else if (m === 2) {
+   // ...
+} else {
+   // ...
+}
+
+{% endhighlight %}
+
 （2）switch结构
+
+多个if...else连在一起使用的时候，可以转为使用更方便的switch结构。
 
 {% highlight javascript %}
 
@@ -233,6 +255,8 @@ a
     }
 
 {% endhighlight %}
+
+需要注意的是，每个case代码块内部的break语句不能少，否则会接下去执行下一个case代码块，而不是跳出switch结构。
 
 ### 循环语句
 
@@ -298,6 +322,8 @@ do...while循环与while循环类似，唯一的区别就是先运行一次循�
     } while(condition);
 
 {% endhighlight %}
+
+不管条件是否为真，do..while循环至少运行一次，这是这种结构最大的特点。另外，while语句后面的分号不能省略。
 
 （4）break语句和continue语句
 
@@ -439,7 +465,74 @@ instanceof运算符的详细解释，请见《面向对象编程》一章。
 
 ### 字符串
 
-字符串就是若干个排在一起的字符。每个字符在JavaScript内部都是以16位的UTF-16格式储存，可以用"\uxxxx"的内码形式表示，xxxx代表该字符的Unicode编码。
+字符串就是若干个排在一起的字符，放在单引号或双引号之中。如果字符串内部有单引号或双引号，必须在它的前面加上反斜杠，用来转义。
+
+{% highlight javascript %}
+
+'Did she say "Hello"?'
+"Did she say \"Hello\"?"
+
+'That\'s nice!'
+"That's nice!"
+
+{% endhighlight %}
+
+可以看到，用单引号标识的字符串内部，允许直接使用双引号；用双引号标识的字符串内部，允许直接使用单引号。
+
+如果字符串的内容包含反斜杠，则反斜杠前面需要再加一个反斜杠，用来转义。
+
+{% highlight javascript %}
+
+'Prev \\ Next'
+
+{% endhighlight %}
+
+反斜杠还可以用来表示一些特殊含义字符，比如换行符用\n表示。
+
+{% highlight javascript %}
+
+'行1\n行2'
+
+{% endhighlight %}
+
+字符串后面如果有方括号，表示返回某个位置的字符（从0开始）。
+
+{% highlight javascript %}
+
+'abc'[1]
+// "b"
+
+{% endhighlight %}
+
+如果方括号中的数字超过字符串的范围，或者方括号中根本不是数字，则返回undefined。
+
+{% highlight javascript %}
+
+'abc'[3]
+// undefined
+
+'abc'[-1]
+// undefined
+
+'abc'["x"]
+// undefined
+
+{% endhighlight %}
+
+这是因为JavaScirpt内部将字符串视为字符组成的数组，方括号运算符遵循数组运算规则（详见《数组》一节）。
+
+字符串后面加上点运算符，再加上length，会返回字符串的长度。
+
+{% highlight javascript %}
+
+'abc'.length
+// 3
+
+{% endhighlight %}
+
+这是因为这时字符串被自动转为对象（详见下一章的《原始类型值的包装对象》）。
+
+每个字符在JavaScript内部都是以16位的UTF-16格式储存，可以用"\uxxxx"的内码形式表示，xxxx代表该字符的Unicode编码。
 
 ### 字符串连接
 
@@ -452,7 +545,19 @@ instanceof运算符的详细解释，请见《面向对象编程》一章。
 
 {% endhighlight %}
 
-在一个字符串的结尾添加一个字符串，可以使用+=运算符。
+需要注意的是，加号（+）运算符的两侧，只要有一个运算子是字符串，则另一个运算子也被转为字符串。
+
+{% highlight javascript %}
+
+3  + "b"
+// "3b"
+
+"a" + 3
+// "a3"
+
+{% endhighlight %}
+
+在字符串的结尾添加另一个字符串，可以使用+=运算符。
 
 {% highlight javascript %}
 
