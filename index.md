@@ -20,7 +20,7 @@ modifiedOn: 2013-08-30
 - [对象](grammar/object.html)
 - [数组](grammar/array.html)
 - [函数](grammar/function.html)
-- [数据类型转换](grammar/conversion.htmli)
+- [数据类型转换](grammar/conversion.html)
 - [错误处理机制](grammar/error.html)
 - [编程风格](grammar/style.html)
 - [严格模式](grammar/strict.html)

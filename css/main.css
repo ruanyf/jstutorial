@@ -67,6 +67,20 @@ article a[href^="http"]:after {
 	top:-0.2em;
 }
 
+article.bookPage>div>div>ul, article.bookPage>div>div>ol{
+	background-color:#f5f2f0;
+	padding:1em 1em 1em 3em;
+	margin:2em 0em;
+	font-family: Consolas, Monaco, 'Andale Mono', monospace;
+	-moz-border-radius: 20px; /* FF1+ */
+	-webkit-border-radius:20px; /* Saf3+, Chrome */
+    border-radius: 20px;
+	border-width: 1em;   
+	border-color: #e0dfcc;
+	border-style: solid;
+	text-shadow: 0 1px white;
+}
+
 /* feature section */
 
 #feature h2{border-bottom: 1px dashed #999;margin-bottom:0.5em;margin-top:0.5em;}
