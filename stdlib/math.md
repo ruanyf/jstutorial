@@ -3,7 +3,7 @@ title: Math对象
 layout: page
 category: stdlib
 date: 2013-02-12
-modifiedOn: 2013-03-16
+modifiedOn: 2013-08-30
 ---
 
 ## round方法
@@ -56,6 +56,17 @@ Math.floor(-3.2) // -4
 
 Math.ceil(3.2) // 4
 Math.ceil(-3.2) // -3
+
+{% endhighlight %}
+
+## Max方法
+
+Max方法返回最大的那个参数。
+
+{% highlight javascript %}
+
+Math.max(2, -1, 5)
+// 5
 
 {% endhighlight %}
 

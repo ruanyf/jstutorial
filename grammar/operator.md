@@ -37,6 +37,7 @@ true + "1"
 ### 其他算术运算符
 
 除了加法运算符，JavaScript还提供如下算术运算符：
+
 - 减法运算符（Subtraction）： number1 - number2
 - 乘法运算符（Multiplication）： number1 * number2
 - 除法运算符（Division）：number1 / number2
@@ -507,5 +508,6 @@ Math.floor(2147483648.4); // 2147483648
 
 ## 参考链接
 
-- Dr. Axel Rauschmayer, [What is {} + {} in JavaScript?](http://www.2ality.com/2012/01/object-plus-object.html)
+- Axel Rauschmayer, [What is {} + {} in JavaScript?](http://www.2ality.com/2012/01/object-plus-object.html)
 - Michal Budzynski, [JavaScript: The less known parts. Bitwise Operators](http://michalbe.blogspot.co.uk/2013/03/javascript-less-known-parts-bitwise.html)
+- Axel Rauschmayer, [Basic JavaScript for the impatient programmer](http://www.2ality.com/2013/06/basic-javascript.html)

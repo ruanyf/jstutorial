@@ -270,3 +270,35 @@ replace方法用于替换匹配的子字符串，一般情况下只替换第一�
 // "baa"
 
 {% endhighlight %}
+
+## Base64转码
+
+在浏览器环境中，JavaScript原生提供btoa方法，将字符串或二进制值转化为Base64编码；以及atob方法，将Base64编码转化为原来的编码。
+
+{% highlight javascript %}
+
+window.btoa("Hello World")
+// "SGVsbG8gV29ybGQ="
+
+window.atob("SGVsbG8gV29ybGQ=")
+// "Hello World"
+
+{% endhighlight %}
+
+这两个方法不适合Unicode字符串，浏览器会报错。必须中间插入一个浏览器转码的环节，再使用这两个方法。
+
+{% highlight javascript %}
+
+function utf8_to_b64( str ) {
+    return window.btoa(unescape(encodeURIComponent( str )));
+}
+ 
+function b64_to_utf8( str ) {
+    return decodeURIComponent(escape(window.atob( str )));
+}
+
+// 使用方法
+utf8_to_b64('你好'); // "5L2g5aW9"
+b64_to_utf8('4pyTIMOgIGxhIG1vZGU='); // "你好"
+
+{% endhighlight %}
