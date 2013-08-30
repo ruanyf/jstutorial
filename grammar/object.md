@@ -219,7 +219,6 @@ v2.a
 {% highlight javascript %}
 
 var x = 1;
-
 var y = x;
 
 y
@@ -227,7 +226,7 @@ y
 
 x = 2;
 y
-// 2
+// 1
 
 {% endhighlight %}
 
