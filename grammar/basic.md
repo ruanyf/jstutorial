@@ -193,15 +193,15 @@ JavaScript使用大括号，将相关的语句组合在一起，称为“区块�
 {% highlight javascript %}
 
 { 
-	var a;
-	a = 1;
-
+	var a = 1;
 }
 
 a
 // 1
 
 {% endhighlight %}
+
+上面代码在区块内部，声明并赋值了变量a，然后在区块外部变量a依然有效，这说明区块不构成单独的作用域。
 
 ### 条件语句
 
@@ -219,7 +219,7 @@ if结构先判断一个表达式的布尔值，如果为true，则后面代码�
 
 {% endhighlight %}
 
-else代码块不是必需的，可省略。
+上面代码判断变量m是否等于3，如果等于就执行if代码块，否则执行else代码块。else代码块不是必需的，可省略。
 
 对同一个变量进行多次判断时，多个if...else语句可以连写在一起。
 
@@ -243,20 +243,20 @@ if (m === 0) {
 
 {% highlight javascript %}
 
-    switch (fruit) {
-        case "banana":
-            // ...
-            break;
-        case "apple":
-            // ...
-            break;
-        default:
-            // ...
-    }
+switch (fruit) {
+	case "banana":
+		// ...
+		break;
+    case "apple":
+        // ...
+        break;
+    default:
+        // ...
+}
 
 {% endhighlight %}
 
-需要注意的是，每个case代码块内部的break语句不能少，否则会接下去执行下一个case代码块，而不是跳出switch结构。
+上面代码根据变量fruit的值，选择执行相应的case。如果所有case都不符合，则执行最后的default部分。需要注意的是，每个case代码块内部的break语句不能少，否则会接下去执行下一个case代码块，而不是跳出switch结构。
 
 ### 循环语句
 
@@ -292,9 +292,9 @@ for(初值; 循环条件; 下一步)
 
 {% highlight javascript %}
 
-    for (var i=0; i < arr.length; i++) {
-        console.log(arr[i]);
-    }
+for (var i=0; i < arr.length; i++) {
+	console.log(arr[i]);
+}
 
 {% endhighlight %}
 
@@ -302,12 +302,12 @@ for(初值; 循环条件; 下一步)
 
 {% highlight javascript %}
 
-    var i = 0;
+var i = 0;
 
-	while (i < arr.length) {
-        console.log(arr[i]);
-        i++;
-    }
+while (i < arr.length) {
+	console.log(arr[i]);
+    i++;
+}
 
 {% endhighlight %}
 
@@ -317,9 +317,9 @@ do...while循环与while循环类似，唯一的区别就是先运行一次循�
 
 {% highlight javascript %}
 
-    do {
-        // ...
-    } while(condition);
+do {
+	// ...
+} while(condition);
 
 {% endhighlight %}
 
@@ -341,11 +341,15 @@ JavaScript的值的类型分成两大类：原始类型（primitive type）和�
 - 字符串（string）
 - 布尔值（boolean）
 
+“数值”就是整数和小数(比如3.14)，“字符串”就是由多个字符组成的文本（比如"Hello World"），“布尔值”则是true（真）和false（假）两个特定值。
+
 合成类型也分成三种。
 
 - 对象（object）
 - 数组（array）
 - 函数（function）
+
+对象和数组是两种不同的数据组合方式，而函数其实是处理数据的方法。JavaScript把它当成一种数据类型，可以像其他类型的数据一样，进行赋值和传递，这为编程带来了很大的灵活性，体现了JavaScript作为“函数式语言”的本质。
 
 除了上面这六种数据类型，JavaScript还定义一个特殊的数据类型undefined和一个特殊的值null。
 
@@ -354,7 +358,6 @@ undefined表示“未定义”，即还没有确定数据类型。如果一个�
 {% highlight javascript %}
 
 var v;
-
 v
 // undefined
 
@@ -365,103 +368,14 @@ null表示空对象。它不是一种单独的数据类型，而是包含在对�
 {% highlight javascript %}
 
 var v = null;
-
 v
 // null
 
 {% endhighlight %}
 
-这里需要明确的是，JavaScript的所有数据，都可以视为对象，数组和函数只不过是特殊的对象而已，就连数值、字符串、布尔值都可以用对象方式调用。
+这里需要明确的是，JavaScript的所有数据，都可以视为对象。不仅合成类型的数据（对象、数组、函数）是对象，就连原始类型的数据（数值、字符串、布尔值）也可以用对象方式调用。
 
-### typeof 运算符
-
-typeof运算符可以返回一个值的数据类型，可能有以下结果：
-
-（1）数值、字符串、布尔值分别返回number、string、boolean。
-
-{% highlight javascript %}
-
-typeof 123
-// "number"
-
-typeof "123"
-// "string"
-
-typeof false
-// "boolean"
-
-{% endhighlight %}
-
-（2）函数返回function。
-
-{% highlight javascript %}
-
-// 定义一个空函数
-function f(){}
-
-typeof f
-// "function"
-
-{% endhighlight %}
-
-（3）undefined返回undefined。
-
-{% highlight javascript %}
-
-typeof undefined
-// "undefined"
-
-{% endhighlight %}
-
-利用这一点，typeof可以用来检查一个没有声明的变量，而不报错。其他语法结构都没有这个功能。
-
-{% highlight javascript %}
-
-v
-// ReferenceError: v is not defined
-
-typeof v
-// "undefined"
-
-{% endhighlight %}
-
-（4）除此以外，都返回object。
-
-{% highlight javascript %}
-
-typeof window
-// "object"
-
-typeof {}; 
-// "object"
-
-typeof []; 
-// "object"
-
-typeof null;
-// "object"
-
-{% endhighlight %}
-
-从上面代码可以看到，空数组（[]）的类型也是object，这表示在JavaScript内部，数组本质上只是一种特殊的对象。另外，null的类型也是object，说明它不是一种的数据类型。
-
-既然typeof对数组（array）和对象（object）的显示结果都是object，那么怎么区分它们呢？instanceof运算符可以做到。
-
-{% highlight javascript %}
-
-var o = {};
-
-var a = [];
-
-o instanceof Array
-// false
-
-a instanceof Array
-// true
-
-{% endhighlight %}
-
-instanceof运算符的详细解释，请见《面向对象编程》一章。
+下面先简单介绍“字符串”和“布尔值”这两种原始类型的数据，其他数据类型在后面章节介绍。
 
 ### 字符串
 
@@ -575,6 +489,96 @@ if ({}){ console.log(true);}
 {% endhighlight %}
 
 更多关于数据类型转换的介绍，参见《数据类型转换》一节。
+
+### typeof 运算符
+
+typeof运算符可以返回一个值的数据类型，可能有以下结果：
+
+（1）数值、字符串、布尔值分别返回number、string、boolean。
+
+{% highlight javascript %}
+
+typeof 123
+// "number"
+
+typeof "123"
+// "string"
+
+typeof false
+// "boolean"
+
+{% endhighlight %}
+
+（2）函数返回function。
+
+{% highlight javascript %}
+
+// 定义一个空函数
+function f(){}
+
+typeof f
+// "function"
+
+{% endhighlight %}
+
+（3）undefined返回undefined。
+
+{% highlight javascript %}
+
+typeof undefined
+// "undefined"
+
+{% endhighlight %}
+
+利用这一点，typeof可以用来检查一个没有声明的变量，而不报错。其他语法结构都没有这个功能。
+
+{% highlight javascript %}
+
+v
+// ReferenceError: v is not defined
+
+typeof v
+// "undefined"
+
+{% endhighlight %}
+
+（4）除此以外，都返回object。
+
+{% highlight javascript %}
+
+typeof window
+// "object"
+
+typeof {}; 
+// "object"
+
+typeof []; 
+// "object"
+
+typeof null;
+// "object"
+
+{% endhighlight %}
+
+从上面代码可以看到，空数组（[]）的类型也是object，这表示在JavaScript内部，数组本质上只是一种特殊的对象。另外，null的类型也是object，说明它不是一种的数据类型。
+
+既然typeof对数组（array）和对象（object）的显示结果都是object，那么怎么区分它们呢？instanceof运算符可以做到。
+
+{% highlight javascript %}
+
+var o = {};
+
+var a = [];
+
+o instanceof Array
+// false
+
+a instanceof Array
+// true
+
+{% endhighlight %}
+
+instanceof运算符的详细解释，请见《面向对象编程》一章。
 
 ## 结尾的分号
 
