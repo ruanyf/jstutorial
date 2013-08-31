@@ -239,9 +239,17 @@ $( "#button" ).on( "click", f );
 
 为了解决这个问题，可以采用下面的一些方法对this进行绑定，也就是使得this固定指向某个对象，减少编程中的不确定性。
 
-### call方法和apply方法
+### call方法
 
-call方法和apply方法的作用，是指定函数运行的上下文对象。它们接受的第一个参数都是this所要指向的那个对象，如果该参数是null或undefined，则等同于指定全局对象。
+正常情况下，函数体内部的this关键字，总是指向函数运行时所在的那个对象。函数的call方法可以改变this指向的对象，然后再调用该函数。
+
+{% highlight javascript %}
+
+func.call(context, [arg1], [arg2], ...)
+
+{% endhighlight %}
+
+call方法的第一个参数就是this所要指向的那个对象，后面的参数则是函数调用时所需的参数。如果this所要指向的那个对象，设定为null或undefined，则等同于指定全局对象。
 
 {% highlight javascript %}
 
@@ -254,22 +262,122 @@ function a() {
 }
 
 a.call() // 123
-a.apply() // 123
-
-a.call(window) // 123
-a.apply(window)// 123
-
-a.call(o) // 456
-a.apply(o) // 456
-
 a.call(null) // 123
-a.apply(null) // 123
+a.call(undefined) // 123
+a.call(window) // 123
+a.call(o) // 456
 
 {% endhighlight %}
 
-call方法和apply方法的区别在于，call方法除了第一个参数以外，其他参数都会依次传入原函数，而apply方法的第二个参数是一个数组，该数组的所有成员依次作为参数，传入原函数。
+上面代码中，a函数中的this关键字，如果指向全局对象，返回结果为123。如果使用call方法，将this关键字指向o对象，返回结果为456。
 
-因此，上一节按钮点击事件的例子，可以改写成
+### apply方法
+
+apply方法的作用与call方法类似，也是改变this关键字指向的对象。区别在于，apply方法的第二个参数是一个数组，该数组的所有成员依次作为参数，传入原函数。
+
+{% highlight javascript %}
+
+func.apply(context, [arg1, arg2, ...])
+
+{% endhighlight %}
+
+原函数的参数，在call方法中必须一个个添加，但是在apply方法中，必须以数组形式添加。下面的例子是一个参数数组的例子。
+
+{% highlight javascript %}
+
+function f(x,y){ console.log(x+y);}
+
+f.call(null,1,1)
+// 2
+
+// 改写为apply方法
+
+f.apply(null,[1,1])
+// 2
+
+{% endhighlight %}
+
+上面的f函数本来接受两个参数，使用apply方法以后，就变成可以接受一个数组作为参数。利用这一点，可以做一些有趣的应用。比如，JavaScript不提供找出数组最大元素的函数，Math.max方法只能返回它的所有参数的最大值，使用apply方法，就可以返回数组的最大元素。
+
+{% highlight javascript %}
+
+Math.max.apply(null, [10, 2, 4, 15, 9])
+// 15
+
+{% endhighlight %}
+
+apply方法还有一个特点，就是可以把数组的空元素变成undefined。
+
+{% highlight javascript %}
+
+Array.apply(null, ["a",,"b"])
+// [ 'a', undefined, 'b' ]
+
+{% endhighlight %}
+
+这里的差别就是，数组的foreach方法会逃过空元素，但是不会跳过undefined。因此，遍历内部元素的时候，会体现出差别。
+
+{% highlight javascript %}
+
+var a = ["a",,"b"];
+
+function print(i) {
+	console.log(i);
+}
+
+a.forEach(print)
+// a
+// b
+
+Array.apply(null,a).forEach(print)
+// a
+// undefined
+// b
+
+{% endhighlight %}
+
+使用apply方法的另一个场合是，使用数组对象的concat方法，展开双层数组（即数组的成员也是数组）。
+
+{% highlight javascript %}
+
+Array.prototype.concat.apply([], [[1], [2]])
+// [1, 2]
+
+Array.prototype.concat.apply([], [[1], 2])
+// [1, 2]
+
+{% endhighlight %}
+
+concat方法是定义数组对象上的，所以apply方法的第一个参数必须是数组，而第二个参数就是需要被展开的双层数组。不过，这个方法只能展开双层数组，对于更多层的数组，只能展开最外面的一层。
+
+{% highlight javascript %}
+
+Array.prototype.concat.apply([], [[[1]], [2]])
+// [[1], 2]
+
+{% endhighlight %}
+
+另外，利用数组对象的slice方法，可以将一个类似数组的对象（比如arguments对象）转为真正的数组。
+
+{% highlight javascript %}
+
+Array.prototype.slice.apply({0:1,length:1})
+// [1]
+
+Array.prototype.slice.apply({0:1})
+// []
+
+Array.prototype.slice.apply({0:1,length:2})
+// [1, undefined]
+
+Array.prototype.slice.apply({length:1})
+// [undefined]
+
+{% endhighlight %}
+
+从上面代码可以看到，这个方法起作用的前提是，被处理的对象必须有length属性，以及相对应的数字键。
+
+最后，上一节按钮点击事件的例子，可以改写成
 
 {% highlight javascript %}
 
@@ -288,20 +396,81 @@ $( "#button" ).on( "click", o.f.apply(o) );
 
 ### bind方法
 
-bind方法则是对原函数绑定上下文以后，返回一个新函数。
+bind方法比call方法和apply方法更进一步，它不仅将原函数的this关键字绑定到其他对象，还绑定原函数的参数，然后返回一个新函数。
 
 {% highlight javascript %}
 
-var o = {
-	p : 1,
-	f : function() { console.log(this.p); } 
-}
-
-$( "#button" ).on( "click", o.f.bind(o) );
+func.bind(context, [arg1], [arg2], ...)
 
 {% endhighlight %}
 
-jQuery的$.proxy方法可以起到同样作用，同时对老式浏览器保持兼容。
+请看下面的例子。
+
+{% highlight javascript %}
+
+var o1 = {
+	p: 123,
+	m: function(){ console.log(this.p);}
+};
+
+// 不绑定上下文
+var o2 = { p: 456};
+o2.m = o1.m;
+o2.m()
+// 456
+
+// 绑定上下文
+o2.m = o1.m.bind(o1);
+o2.m()
+// 123
+
+{% endhighlight %}
+
+上面代码绑定this对象以后，o1对象的m方法就不再读取o2对象的属性了。
+
+如果bind方法的第一个参数是null或undefined，则函数运行时上下文绑定全局环境。
+
+{% highlight javascript %}
+
+function add(x,y) { return x+y;}
+
+var plus5 = add.bind(null, 5);
+
+plus5(10)
+// 15
+
+{% endhighlight %}
+
+bind方法每运行一次，就返回一个新函数，这会产生一些问题。比如，监听事件的时候，不能写成下面这样：
+
+{% highlight javascript %}
+
+element.addEventListener(
+        'click', myWidget.handleClick.bind(myWidget));
+
+{% endhighlight %}
+
+因为每点击一次，就绑定一个新函数，导致无法取消这些绑定。下面的代码是无效的：
+
+{% highlight javascript %}
+
+element.removeEventListener(
+        myWidget.handleClick.bind(myWidget));
+
+{% endhighlight %}
+
+正确的方法是写成下面这样：
+
+{% highlight javascript %}
+
+    var listener = myWidget.handleClick.bind(myWidget);
+    element.addEventListener('click', listener);
+    ...
+    element.removeEventListener(listener);
+
+{% endhighlight %}
+
+对于那些不支持bind方法的老式浏览器，可以使用jQuery的$.proxy方法，它与bind方法的作用基本相同。
 
 {% highlight javascript %}
 
