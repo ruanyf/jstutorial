@@ -68,7 +68,7 @@ modifiedOn: 2013-08-30
 
 - [Canvas](htmlapi/canvas.html)
 - [SVG图像](htmlapi/svg.html)
-- [二进制数据的操作](htmlapi/file.html)
+- [文件与二进制数据的操作](htmlapi/file.html)
 - [Web Worker](htmlapi/webworker.html)
 - [服务器端发送事件](htmlapi/eventsource.html)
 - [Page Visiblity](htmlapi/pagevisibility.html)
@@ -110,10 +110,11 @@ modifiedOn: 2013-08-30
 
 - [设计模式](pattern/designpattern.html)
 - [异步编程](pattern/asynchronous.html)
+- [有限状态机](pattern/fsm.html)
 
 <h2 id="algorithm">算法</h2>
 
-* [排序](algorithm/sorting.html)
+- [排序](algorithm/sorting.html)
 
 {% comment %}
 
