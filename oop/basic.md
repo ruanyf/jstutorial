@@ -463,14 +463,29 @@ element.removeEventListener(
 
 {% highlight javascript %}
 
-    var listener = myWidget.handleClick.bind(myWidget);
-    element.addEventListener('click', listener);
-    ...
-    element.removeEventListener(listener);
+var listener = myWidget.handleClick.bind(myWidget);
+element.addEventListener('click', listener);
+//  ...
+element.removeEventListener(listener);
 
 {% endhighlight %}
 
-对于那些不支持bind方法的老式浏览器，可以使用jQuery的$.proxy方法，它与bind方法的作用基本相同。
+对于那些不支持bind方法的老式浏览器，可以自行定义bind方法。
+
+{% highlight javascript %}
+
+if(!('bind' in Function.prototype)){
+    Function.prototype.bind = function(){
+        var fn = this, context = arguments[0], args = Array.prototype.slice.call(arguments, 1);
+        return function(){
+            return fn.apply(context, args);
+        }
+    }
+}
+
+{% endhighlight %}
+
+另一种方法是使用jQuery的$.proxy方法，它与bind方法的作用基本相同。
 
 {% highlight javascript %}
 
@@ -478,7 +493,7 @@ $( "#button" ).on( "click", $.prox（o.f，o) );
 
 {% endhighlight %}
 
-另一种常见的技巧，则是事先在函数体内部将this的值固定。
+还有一种更直接的办法，就是索性事先在函数体内部将this的值固定。
 
 {% highlight javascript %}
 

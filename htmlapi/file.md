@@ -1,9 +1,9 @@
 ---
-title: 二进制数据的操作
+title: 文件和二进制数据的操作
 date: 2012-11-30
 layout: page
 category: htmlapi
-modifiedOn: 2013-08-08
+modifiedOn: 2013-09-02
 ---
 
 除了文本数据，JavaScript还能操作二进制数据，Blob对象就是操作接口。
@@ -66,13 +66,34 @@ var selected_file = document.getElementById('input').files[0];
 
 {% endhighlight %}
 
+采用拖放方式，也可以得到FileList对象。
+
+{% highlight javascript %}
+
+var dropZone = document.getElementById('drop_zone');
+dropZone.addEventListener('drop', handleFileSelect, false);
+
+function handleFileSelect(evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+
+    var files = evt.dataTransfer.files; // FileList object.
+
+    // ...
+}
+
+{% endhighlight %}
+
+上面代码的 handleFileSelect 是拖放事件的回调函数，它的参数evt是一个事件对象，该参数的dataTransfer.files属性就是一个FileList对象，里面包含了拖放的文件。
+
 ## File对象
 
-FileList对象是一个类似数组的对象，每个成员就是一个File对象，包含了文件的一些元信息，比如文件名、上次改动时间、文件大小和文件类型。它的属性值如下：
+File对象是FileList对象的成员，包含了文件的一些元信息，比如文件名、上次改动时间、文件大小和文件类型。它的属性值如下：
 
 - name：文件名，该属性只读。
 - size：文件大小，单位为字节，该属性只读。
 - type：文件的MIME类型，如果分辨不出类型，则为空字符串，该属性只读。
+- lastModifiedDate：文件的上次修改时间。
 
 {% highlight javascript %}
 
@@ -84,11 +105,33 @@ var fileType = selected_file.type;
 
 {% endhighlight %}
 
+File对象有一个slice方法，允许将文件分块，这为读取大文件创造了方便。
+
+{% highlight javascript %}
+
+var blob = file.slice(startingByte, endindByte);
+
+{% endhighlight %}
+
 ## FileReader对象
 
-该对象接收File对象或Blob对象作为参数，用于读取文件的实际内容，即把文件内容读入内存。它读取的文件分成几种不同的类型：Text（UTF-8）、ArrayBuffer（二进制文件）、基于base64编码的data-uri。
+FileReader对象接收File对象或Blob对象作为参数，用于读取文件的实际内容，即把文件内容读入内存。对于不同类型的文件，FileReader使用不同的方法读取。
 
-FileReader采用非同步方式读取文件，所以采用回调函数的方式，进行数据处理。下面的代码是如何展示文本文件的内容。
+- FileReader.readAsBinaryString(Blob|File) ：读取结果为二进制字符串，每个字节包含一个0到255之间的整数。
+- FileReader.readAsText(Blob|File, opt_encoding) ：读取结果是一个文本字符串。默认情况下，文本编码格式是'UTF-8'，可以通过可选的格式参数，指定其他编码格式的文本。
+- FileReader.readAsDataURL(Blob|File) ： 读取结果是一个基于Base64编码的 data-uri 对象。
+- FileReader.readAsArrayBuffer(Blob|File) ：读取结果是一个 ArrayBuffer 对象。
+
+FileReader采用异步方式读取文件，可以为一系列事件指定回调函数。
+
+- onabort：读取中断或调用reader.abort()方法时触发。
+- onerror：读取出错时触发。
+- onload：读取成功后触发。
+- onloadend：读取完成后触发，不管是否成功。触发顺序排在 onload 或 onerror 后面。
+- onloadstart：读取将要开始时触发。
+- onprogress：读取过程中周期性触发。
+
+下面的代码是如何展示文本文件的内容。
 
 {% highlight javascript %}
 
@@ -102,11 +145,69 @@ reader.readAsText(blob);
 
 {% endhighlight %}
 
-除了上面的readAsText方法，类似的方法还有readAsArrayBuffer、readAsBinaryString和readAsDataURL，分别用于读取不同类型的数据。
+onload事件的回调函数接受一个事件对象，该对象的target.result就是文件的内容。
 
-FileReader对象定义了几个事件，可以用于指定回调函数，分别是onerror、onloadstart、onabort和onprogress。
+下面是一个使用readAsDataURL方法，为img元素添加src属性的例子。
 
-### 实例：显示用户选取的本地图片
+{% highlight javascript %}
+
+var reader = new FileReader();
+
+reader.onload = function(e) {
+	document.createElement('img').src = e.target.result;
+
+};
+
+reader.readAsDataURL(f);
+
+{% endhighlight %}
+
+下面是一个onerror事件回调函数的例子。
+
+{% highlight javascript %}
+
+var reader = new FileReader();
+reader.onerror = errorHandler;
+
+function errorHandler(evt) {
+    switch(evt.target.error.code) {
+      case evt.target.error.NOT_FOUND_ERR:
+        alert('File Not Found!');
+        break;
+      case evt.target.error.NOT_READABLE_ERR:
+        alert('File is not readable');
+        break;
+      case evt.target.error.ABORT_ERR:
+        break;
+      default:
+        alert('An error occurred reading this file.');
+    };
+}
+
+{% endhighlight %}
+
+下面是一个onprogress事件回调函数的例子，主要用来显示读取进度。
+
+{% highlight javascript %}
+
+var reader = new FileReader();
+reader.onprogress = updateProgress;
+
+function updateProgress(evt) {
+    if (evt.lengthComputable) {
+      var percentLoaded = Math.round((evt.loaded / evt.totalEric Bidelman) * 100);
+	  
+      var progress = document.querySelector('.percent');
+      if (percentLoaded < 100) {
+        progress.style.width = percentLoaded + '%';
+        progress.textContent = percentLoaded + '%';
+      }
+    }
+}
+
+{% endhighlight %}
+
+## 综合实例：显示用户选取的本地图片
 
 假设有一个表单，用于用户选取图片。
 
@@ -241,3 +342,4 @@ window.URL.revokeObjectURL(obj_url);
 - Andrew Dodson, [Get Loaded with the File API](http://msdn.microsoft.com/en-gb/magazine/jj835793.aspx)
 - Mozilla Developer Network，[Using files from web applications](https://developer.mozilla.org/en-US/docs/Using_files_from_web_applications)
 - [HTML5 download attribute](http://javascript-reverse.tumblr.com/post/37056936789/html5-download-attribute)
+- Eric Bidelman, [Reading files in JavaScript using the File APIs](http://www.html5rocks.com/en/tutorials/file/dndfiles/)
