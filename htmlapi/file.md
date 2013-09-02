@@ -8,13 +8,20 @@ modifiedOn: 2013-09-02
 
 除了文本数据，JavaScript还能操作二进制数据，Blob对象就是操作接口。
 
-在Blob对象的基础上，又衍生出一系列相关的API。File对象负责处理那些以文件形式存在的二进制数据，也就是操作本地文件；FileList对象是File对象的网页表单接口；FileReader对象负责将二进制数据读入内容；URL对象则是用于对二进制数据生成URL。
+在Blob对象的基础上，又衍生出一系列相关的API。
+
+- File对象：负责处理那些以文件形式存在的二进制数据，也就是操作本地文件；
+- FileList对象：File对象的网页表单接口；
+- FileReader对象：负责将二进制数据读入内存内容；
+- URL对象：用于对二进制数据生成URL。
 
 ## Blob对象
 
-Blob（Binary Large Object）对象用于操作二进制数据。File对象就是建立在Blob对象基础上的，所以继承了后者的属性和方法。
+Blob（Binary Large Object）对象代表了一段二进制数据，提供了一系列操作接口。其他操作二进制数据的API（比如File对象），都是建立在Blob对象基础上的，继承了它的属性和方法。
 
-Blob对象的构造函数，接受两个参数。第一个参数是一个包含实际数据的数组，第二个参数是数据的类型，这两个参数都不是必需的。
+生成Blob对象有两种方法：一种是使用Blob构造函数，另一种是对现有的Blob对象使用slice方法切出一部分。
+
+（1）Blob构造函数，接受两个参数。第一个参数是一个包含实际数据的数组，第二个参数是数据的类型，这两个参数都不是必需的。
 
 {% highlight javascript %}
 
@@ -41,7 +48,15 @@ body.appendChild(a);
 
 上面的代码生成了一个超级链接，点击后提示下载文本文件hello-world.txt，文件内容为“Hello World”。
 
-Blob对象有两个只读属性：
+（2）Blob对象的slice方法，将二进制数据按照字节分块，返回一个新的Blob对象。
+
+{% highlight javascript %}
+
+var newBlob = oldBlob.slice(startingByte, endindByte);
+
+{% endhighlight %}
+
+（3）Blob对象有两个只读属性：
 
 - size：二进制数据的大小，单位为字节。
 - type：二进制数据的MIME类型，全部为小写，如果类型未知，则该值为空字符串。
@@ -102,14 +117,6 @@ var selected_file = document.getElementById('input').files[0];
 var fileName = selected_file.name;
 var fileSize = selected_file.size;
 var fileType = selected_file.type;
-
-{% endhighlight %}
-
-File对象有一个slice方法，允许将文件分块，这为读取大文件创造了方便。
-
-{% highlight javascript %}
-
-var blob = file.slice(startingByte, endindByte);
 
 {% endhighlight %}
 
@@ -206,6 +213,8 @@ function updateProgress(evt) {
 }
 
 {% endhighlight %}
+
+读取大文件的时候，可以利用Blob对象的slice方法，将大文件分成小段，逐一读取，这样可以加快处理速度。
 
 ## 综合实例：显示用户选取的本地图片
 
