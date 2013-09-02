@@ -123,7 +123,7 @@ Javascript Finite State Machine允许为每个事件指定两个回调函数，�
 
 {% highlight javascript %}
 
-fsm.onwarn = function(){
+fsm.onleavegreen = function(){
 　　light.fadeOut('slow', function() {
 　　　　fsm.transition();
 　　});
@@ -132,7 +132,7 @@ fsm.onwarn = function(){
 
 {% endhighlight %}
 
-上面代码的回调函数里面，有一个异步操作（light.fadeOut）。如果不希望状态立即改变，就要让回调函数返回一个StateMachine.ASYNC对象，表示状态暂时不改变；等到异步操作结束，再调用transition方法，使得状态发生改变。
+上面代码的回调函数里面，有一个异步操作（light.fadeOut）。如果不希望状态立即改变，就要让回调函数返回StateMachine.ASYNC，表示状态暂时不改变；等到异步操作结束，再调用transition方法，使得状态发生改变。
 
 Javascript Finite State Machine还允许指定错误处理函数，当发生了当前状态不可能发生的事件时自动触发。
 
