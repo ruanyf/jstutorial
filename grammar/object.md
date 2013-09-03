@@ -232,6 +232,62 @@ y
 
 上面的代码中，当x的值发生变化后，y的值并不变，这就表示y和x并不是指向同一个内存地址。
 
+### in运算符
+
+in运算符用于确定某个属性是否包含在对象中。
+
+{% highlight javascript %}
+
+var o = { p: 1 };
+
+'p' in o
+// true
+
+{% endhighlight %}
+
+如果某个属性值是undefined，in运算符也返回true。
+
+{% highlight javascript %}
+
+var o = { p: undefined };
+
+'p' in o
+// true
+
+{% endhighlight %}
+
+该运算符对数组也适用。
+
+{% highlight javascript %}
+
+var a = ["hello", "world"];
+
+0 in a
+// true
+
+1 in a
+// true
+
+{% endhighlight %}
+
+在JavaScript语言中，所有变量都是它的上层对象的属性（顶层对象除外），因此可以用in运算符判断一个变量是否存在。
+
+{% highlight javascript %}
+
+
+if (x) { return 1; }
+// 报错
+
+if (window[x]) { return 1; }
+// 不正确的写法
+
+if (x in window) { return 1; }
+// 正确的写法
+
+{% endhighlight %}
+
+上面三种写法之中，如果x不存在，第一种写法会报错；如果x的值对应布尔值false（比如x等于空字符串），第二种写法无法得到正确结果；只有第三种写法，才是变量x是否存在的正确写法。
+
 ## 类似数组的对象
 
 在JavaScript中，有些对象被称为“类似数组的对象”（array-like object）。意思是，它们看上去很像数组，可以使用length属性，但是它们并不是数组，所以无法使用一些数组的方法。典型的例子是arguments对象，以及大多数DOM元素集。
