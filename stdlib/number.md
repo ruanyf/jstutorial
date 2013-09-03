@@ -3,18 +3,41 @@ title: Number对象
 layout: page
 category: stdlib
 date: 2013-03-16
-modifiedOn: 2013-04-30
+modifiedOn: 2013-09-03
 ---
 
 ## 属性
 
 Number拥有一些特别的属性。
 
-- Number.POSITIVE_INFINITY 正的无限
-- Number.NEGATIVE_INFINITY 负的无限
-- Number.NaN 表示非数值，被0除就得到这个值
+- Number.POSITIVE_INFINITY 表示正的无限，指向关键字Infinity。
+- Number.NEGATIVE_INFINITY 表示负的无限，指向-Infinity。
+- Number.NaN 表示非数值，指向NaN。
+- Number.MAX_VALUE 表示最大的正数。最大的负数为-Number.MAX_VALUE。
+- Number.MIN_VALUE 表示最小的正数（即最接近0的正数）。最接近0的负数为-Number.MIN_VALUE。
 
-## toString方法
+{% highlight javascript %}
+
+Number.POSITIVE_INFINITY
+// Infinity
+
+Number.NEGATIVE_INFINITY
+// -Infinity
+
+Number.NaN
+// NaN
+
+Number.MAX_VALUE
+// 1.7976931348623157e+308
+
+Number.MIN_VALUE
+// 5e-324
+
+{% endhighlight %}
+
+## Number实例对象的方法
+
+### toString方法
 
 Number对象部署了单独的toString方法，可以接受一个参数，表示将一个数字转化成某个进制的字符串。
 
@@ -62,7 +85,7 @@ Number对象部署了单独的toString方法，可以接受一个参数，表示
 
 {% endhighlight %}
 
-## toFixed方法
+### toFixed方法
 
 toFixed方法用于将一个数转为指定位数的小数。
 
@@ -79,7 +102,7 @@ toFixed方法用于将一个数转为指定位数的小数。
 
 toFixed的输出支持0到20位小数。
 
-## toExponential方法
+### toExponential方法
 
 toExponential方法用于将一个数转为科学计数法形式。
 
@@ -93,9 +116,9 @@ toExponential方法用于将一个数转为科学计数法形式。
 
 {% endhighlight %}
 
-可以看到，toExponential方法在小数点后只提供一位有效数字。
+toExponential方法的参数表示小数点后有效数字的位数。
 
-## toPrecision方法
+### toPrecision方法
 
 toPrecision方法用于将一个数转为指定位数的有效数字。
 

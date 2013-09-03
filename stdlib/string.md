@@ -53,18 +53,7 @@ s.charAt(1)
 
 {% endhighlight %}
 
-charCodeAt方法返回给定位置字符的Unicode编码（十进制）。
-
-{% highlight javascript %}
-
-var s = new String("abc");
-
-s.charcodeat(1)
-// 98
-
-{% endhighlight %}
-
-还可以用类似数组的下标，取出给定位置的字符。
+其实，这个方法完全可以用数组下标替代。
 
 {% highlight javascript %}
 
@@ -73,7 +62,20 @@ s.charcodeat(1)
 
 {% endhighlight %}
 
-如果给定位置为负数，或大于等于字符串的长度，则这两个方法返回nan。
+charCodeAt方法返回给定位置字符的Unicode编码（十进制）。
+
+{% highlight javascript %}
+
+var s = new String("abc");
+
+s.charCodeAt(1)
+// 98
+
+{% endhighlight %}
+
+需要注意的是，charCodeAt方法返回的Unicode编码不大于65536(0xFFFF)，也就是说，只返回两个字节。因此如果遇到Unicode大于65536的字符（根据UTF-16的编码规则，第一个字节在U+D800到U+DBFF之间），就必需连续使用两次charCodeAt，不仅读入charCodeAt(i)，还要读入charCodeAt(i+1)，将两个16字节放在一起，才能得到准确的字符。
+
+如果给定位置为负数，或大于等于字符串的长度，则这两个方法返回NaN。
 
 ### concat方法
 
