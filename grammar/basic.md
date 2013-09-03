@@ -458,6 +458,32 @@ s
 
 {% endhighlight %}
 
+需要注意的是，UTF-16有两种长度：对于U+0000到U+FFFF之间的字符，长度为16位（即2个字节）；对于U+10000到U+10FFFF之间的字符，长度为32位（即4个字节），而且前两个字节在0xD800到0xDBFF之间，后两个字节在0xDC00到0xDFFF之间。举例来说，U+1D306对应的字符为𝌆，它写成UTF-16就是0xD834和0xDF06。浏览器会正确将这两个字节识别为一个字符，但是JavaScript内部的字符长度总是固定为16位，会把这两个字节视为两个字符。
+
+{% highlight javascript %}
+
+var s = "\uD834\uDF06"
+s
+// "𝌆"
+
+s.length
+// 2
+
+{% endhighlight %}
+
+上面代码说明，对于于U+10000到U+10FFFF之间的字符，JavaScript总是视为两个字符（字符串长度为2）,所以处理的时候，必须把这一点考虑在内。假定C是字符的Unicode编号，H是对应的UTF-16的前两个字节，F是对应的UTF-16的后两个字节，则它们之间的换算关系如下：
+
+{% highlight javascript %}
+
+// 将大于U+FFFF的字符，从Unicode转为UTF-16
+H = Math.floor((C - 0x10000) / 0x400) + 0xD800
+L = (C - 0x10000) % 0x400 + 0xDC00
+
+// 将大于U+FFFF的字符，从UTF-16转为Unicode
+C = (H - 0xD800) * 0x400 + L - 0xDC00 + 0x10000
+
+{% endhighlight %}
+
 ### 布尔值
 
 布尔值包含true和false两个值。下列运算符会返回布尔值：
@@ -773,3 +799,4 @@ a;
 - Dr. Axel Rauschmayer, [Automatic semicolon insertion in JavaScript](http://www.2ality.com/2011/05/semicolon-insertion.html)
 - MDN, [window.btoa](https://developer.mozilla.org/en-US/docs/DOM/window.btoa)
 - Rod Vagg, [JavaScript and Semicolons](http://dailyjs.com/2012/04/19/semicolons/)
+- Mathias Bynens, [JavaScript’s internal character encoding: UCS-2 or UTF-16?](http://mathiasbynens.be/notes/javascript-encoding)
