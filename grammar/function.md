@@ -3,7 +3,7 @@ title: 函数
 layout: page
 category: grammar
 date: 2012-12-15
-modifiedOn: 2013-08-31
+modifiedOn: 2013-09-03
 ---
 
 ## 概述
@@ -319,6 +319,19 @@ function square(x){
 {% endhighlight %}
 
 上式的x就是square函数的参数。每次运行的时候，需要提供这个值，否则得不到结果。
+
+函数对象的length属性，返回函数定义中参数的个数。
+
+{% highlight javascript %}
+
+function f(a,b) {}
+
+f.length
+// 2
+
+{% endhighlight %}
+
+上面代码定义了空函数f，它的length属性就表示参数的个数。
 
 ### 参数的省略
 

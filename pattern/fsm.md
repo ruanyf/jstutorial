@@ -3,7 +3,7 @@ title: JavaScript与有限状态机
 layout: page
 category: pattern
 date: 2013-09-02
-modifiedOn: 2013-09-02
+modifiedOn: 2013-09-03
 ---
 
 ## 概述
@@ -18,7 +18,7 @@ modifiedOn: 2013-09-02
 
 它对JavaScript的意义在于，很多对象可以写成有限状态机。
 
-举例来说，网页上有一个菜单元素。鼠标悬停的时候，菜单显示；鼠标移开的时候，菜单隐藏。如果使用有限状态机描述，就是这个菜单只有两种状态（显示和隐藏），鼠标会引发状态转变。
+举例来说，网页上有一个菜单元素。鼠标点击，菜单显示；鼠标再次点击，菜单隐藏。如果使用有限状态机描述，就是这个菜单只有两种状态（显示和隐藏），鼠标会引发状态转变。
 
 代码可以写成下面这样：
 
@@ -32,7 +32,7 @@ var menu = {
 　　// 绑定事件
 　　initialize: function() {
 　　　　var self = this;
-　　　　self.on("hover", self.transition);
+　　　　self.on("click", self.transition);
 　　},
 　　
 　　// 状态转换
