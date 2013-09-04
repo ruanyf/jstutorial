@@ -56,6 +56,38 @@ var newBlob = oldBlob.slice(startingByte, endindByte);
 
 {% endhighlight %}
 
+下面是一个使用XMLHttpRequest对象，将大文件分割上传的例子。
+
+{% highlight javascript %}
+
+function upload(blobOrFile) {
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', '/server', true);
+  xhr.onload = function(e) { ... };
+  xhr.send(blobOrFile);
+}
+
+document.querySelector('input[type="file"]').addEventListener('change', function(e) {
+  var blob = this.files[0];
+
+  const BYTES_PER_CHUNK = 1024 * 1024; // 1MB chunk sizes.
+  const SIZE = blob.size;
+
+  var start = 0;
+  var end = BYTES_PER_CHUNK;
+
+  while(start < SIZE) {
+    upload(blob.slice(start, end));
+
+    start = end;
+    end = start + BYTES_PER_CHUNK;
+  }
+}, false);
+
+})();
+
+{% endhighlight %}
+
 （3）Blob对象有两个只读属性：
 
 - size：二进制数据的大小，单位为字节。
@@ -202,7 +234,7 @@ struct someStruct {
 
 {% endhighlight %}
 
-除了在ArrayBuffer对象的基础上建立视图，还可以直接上普通数组的基础上建立类型数组。
+除了在ArrayBuffer对象的基础上建立视图，还可以直接在普通数组的基础上建立类型数组。
 
 {% highlight javascript %}
 

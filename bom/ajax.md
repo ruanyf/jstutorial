@@ -3,7 +3,7 @@ title: Ajax
 layout: page
 category: bom
 date: 2013-02-16
-modifiedOn: 2013-08-28
+modifiedOn: 2013-09-04
 ---
 
 ## XMLHttpRequest对象
@@ -119,6 +119,83 @@ sendForm(form);
 
 {% endhighlight %}
 
+FormData对象也能用来模拟File控件，进行文件上传。
+
+{% highlight javascript %}
+
+function uploadFiles(url, files) {
+  var formData = new FormData();
+
+  for (var i = 0, file; file = files[i]; ++i) {
+    formData.append(file.name, file);
+  }
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', url, true);
+  xhr.onload = function(e) { ... };
+
+  xhr.send(formData);  // multipart/form-data
+}
+
+document.querySelector('input[type="file"]').addEventListener('change', function(e) {
+  uploadFiles('/server', this.files);
+}, false);
+
+{% endhighlight %}
+
+### progress事件
+
+上传文件时，XMLHTTPRequest对象的upload属性有一个progress，会不断返回上传的进度。
+
+假定网页上有一个progress元素。
+
+{% highlight javascript %}
+
+<progress min="0" max="100" value="0">0% complete</progress>
+
+{% endhighlight %}
+
+文件上传时，对upload属性指定progress事件回调函数，即可获得上传的进度。
+
+{% highlight javascript %}
+
+function upload(blobOrFile) {
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', '/server', true);
+  xhr.onload = function(e) { ... };
+
+  // Listen to the upload progress.
+  var progressBar = document.querySelector('progress');
+  xhr.upload.onprogress = function(e) {
+    if (e.lengthComputable) {
+      progressBar.value = (e.loaded / e.total) * 100;
+      progressBar.textContent = progressBar.value; // Fallback for unsupported browsers.
+    }
+  };
+
+  xhr.send(blobOrFile);
+}
+
+upload(new Blob(['hello world'], {type: 'text/plain'}));
+
+{% endhighlight %}
+
+下面是一个上传ArrayBuffer对象的例子。
+
+{% highlight javascript %}
+
+function sendArrayBuffer() {
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', '/server', true);
+  xhr.onload = function(e) { ... };
+
+  var uInt8Array = new Uint8Array([1, 2, 3]);
+
+  xhr.send(uInt8Array.buffer);
+}
+
+{% endhighlight %}
+
 ### 服务器返回的信息
 
 （1）status属性
@@ -159,6 +236,8 @@ xhr.send();
 
 上面代码中，因为传回来的是二进制数据，首先用xhr.overrideMimeType方法强制改变它的MIME类型，伪装成文本数据。字符集必需指定为“x-user-defined”，如果是其他字符集，浏览器内部会强制转码，将其保存成UTF-16的形式。字符集“x-user-defined”其实也会发生转码，浏览器会在每个字节前面再加上一个字节（0xF700-0xF7ff），因此后面要对每个字符进行一次与运算（&），将高位的8个位去除，只留下低位的8个位，由此逐一读出原文件二进制数据的每个字节。
 
+这种方法很麻烦，在XMLHttpRequest版本升级以后，一般采用下面的指定responseType的方法。
+
 ### responseType属性
 
 XMLHttpRequest对象有一个responseType属性，用来指定服务器返回数据（xhr.response）的类型。
@@ -183,6 +262,25 @@ xhr.onload = function(e) {
   if (this.status == 200) {
     var blob = new Blob([this.response], {type: 'image/png'});
     // ...
+  }
+};
+
+xhr.send();
+
+{% endhighlight %}
+
+如果将这个属性设为ArrayBuffer，就可以按照数组的方式处理二进制数据。
+
+{% highlight javascript %}
+
+var xhr = new XMLHttpRequest();
+xhr.open('GET', '/path/to/image.png', true);
+xhr.responseType = 'arraybuffer';
+
+xhr.onload = function(e) {
+  var uInt8Array = new Uint8Array(this.response);
+  for (var i = 0, len = binStr.length; i < len; ++i) {
+	// var byte = uInt8Array[i]; 
   }
 };
 
@@ -282,3 +380,4 @@ CORS机制与JSONP模式的使用目的相同，而且更强大。JSONP只支持
 
 - MDN, [Using XMLHttpRequest](https://developer.mozilla.org/en-US/docs/DOM/XMLHttpRequest/Using_XMLHttpRequest)
 - Mathias Bynens, [Loading JSON-formatted data with Ajax and xhr.responseType='json'](http://mathiasbynens.be/notes/xhr-responsetype-json)
+- Eric Bidelman, [New Tricks in XMLHttpRequest2](http://www.html5rocks.com/en/tutorials/file/xhr2/)
