@@ -421,6 +421,48 @@ v
 
 {% endhighlight %}
 
+需要用反斜杠转义的字符串，主要有下面这些：
+
+- \b	后退键
+- \f	换页符
+- \n	换行符
+- \r	回车键
+- \t	制表符
+- \v	垂直制表符
+- \'	单引号
+- \"	双引号
+- \\	反斜杠
+- \XXX	用三位八进制数（0到377）代表一些特殊符号，比如\251表示版权符号。
+- \xXX	用两位十六进制数（00到FF）代表一些特殊符号，比如\xA9表示版权符号。
+- \uXXXX	用四位十六进制的Unicode编号代表某个字符，比如\u00A9表示版权符号。
+
+{% highlight javascript %}
+
+"\251"
+// "©"
+
+"\xA9"
+// "©"
+
+"\u00A9"
+// "©"
+
+{% endhighlight %}
+
+如果一个字符串变量需要写成多行，可以在每行的结尾加上反斜杠。
+
+{% highlight javascript %}
+
+var s = "This is \
+a \
+multiline \
+string.";
+
+s
+// "This is a multiline string."
+
+{% endhighlight %}
+
 字符串后面如果有方括号，表示返回某个位置的字符（从0开始）。
 
 {% highlight javascript %}

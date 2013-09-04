@@ -3,7 +3,7 @@ title: 数组
 date: 2012-12-11
 category: grammar
 layout: page
-modifiedOn: 2013-08-10
+modifiedOn: 2013-09-04
 ---
 
 ## 定义
@@ -74,7 +74,7 @@ arr [2]
 
 {% highlight javascript %}
 
-var a = [1,2,3,4];
+var a = [1,2,3];
 
 for (var i in a){
 	console.log(a[i]);
@@ -82,7 +82,6 @@ for (var i in a){
 // 1
 // 2
 // 3
-// 4
 
 {% endhighlight %}
 
@@ -90,20 +89,19 @@ for (var i in a){
 
 {% highlight javascript %}
 
-var a = [1,2,3,4];
+var a = [1,2,3];
 for(var i = 0; i < a.length; i++){
 	console.log(a[i]);
 }
 // 1
 // 2
 // 3
-// 4
 
 {% endhighlight %}
 
 对象成员的引用可以使用“点”结构（object.key），也可以用方括号表示。但是数组成员不能使用点结构表示，arr.0不合法，因为数字不是标识符（identifier）。所以，数组成员只能用方括号表示。
 
-除了直接使用方括号创建，数组还是使用JavaScript内置的Array对象创建。
+除了直接使用方括号创建，数组还可以使用JavaScript内置的Array构造函数创建。但是，Array构造函数的参数定义不符合直觉，使用一个参数时表示数组的长度，使用一个以上参数时表示数组的定义，所以建议总是直接采用方括号创建数组。
 
 {% highlight javascript %}
 
@@ -134,10 +132,6 @@ a
 
 a.length
 // 2
-
-var a = new Array ("a","b","c");
-a
-// ["a", "b", "c"]
 
 {% endhighlight %}
 
@@ -222,7 +216,7 @@ a
 
 {% endhighlight %}
 
-如果人为设置length为不合法的值，Javascript会报错。
+如果人为设置length为不合法的值，JavaScript会报错。
 
 {% highlight javascript %}
 
@@ -289,7 +283,7 @@ for (var i=0; i<a.length; i++){
 
 ## 数组的空位
 
-当数组的某个位置是空元素，我们称该数组存在空位（hole）。
+当数组的某个位置是空元素（比如两个逗号之间没有任何值），我们称该数组存在空位（hole）。
 
 {% highlight javascript %}
 
@@ -311,6 +305,20 @@ delete a[1]
 
 a
 // [1, undefined × 1, 3]
+
+{% endhighlight %}
+
+需要注意的是，如果最后一个元素后面有逗号，并不会产生空位。也就是说，有没有这个逗号，结果都是一样的。
+
+{% highlight javascript %}
+
+var a = [1,2,3,];
+
+a.length
+// 3
+
+a
+// [1, 2, 3]
 
 {% endhighlight %}
 
