@@ -47,6 +47,18 @@ true + "1"
 - 求负运算符（Negate）：-value
 - 数值运算符（Convert to number）： +value
 
+最后两个求负运算符和数值运算符，可以将字符串转为数值。
+
+{% highlight javascript %}
+
+"1.1" + "1.1" 
+// "1.11.1"
+
+(+"1.1") + (+"1.1") 
+// 2.2 
+
+{% endhighlight %}
+
 如果一个运算子是数值类型，另一个是其他类型，那么除了加法运算符，在其他运算符的情况下，另一个运算子都会被转化成数值类型。
 
 {% highlight javascript %}

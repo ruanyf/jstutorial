@@ -3,7 +3,7 @@ title: 数值
 layout: page
 category: grammar
 date: 2013-02-13
-modifiedOn: 2013-02-13
+modifiedOn: 2013-09-04
 ---
 
 ## 概述
@@ -108,7 +108,7 @@ Math.pow(2, 53)
 
 ## NaN
 
-NaN表示“非数字”（not a number），主要用于将字符串解析成数字出错的场合。
+NaN表示“非数字”（not a number），主要出现在将字符串解析成数字出错的场合。
 
 {% highlight javascript %}
 
@@ -141,6 +141,16 @@ NaN === NaN
 
 0 / 0
 // NaN
+
+{% endhighlight %}
+
+NaN在数值运算时被当作0，在布尔运算时被当作false。
+
+{% highlight javascript %}
+
+var n = null;
+n * 32
+// 0
 
 {% endhighlight %}
 
@@ -249,7 +259,7 @@ Infinity / Infinity // NaN
 
 ## parseInt方法
 
-该方法可以将字符串或小数转化为整数。
+该方法可以将字符串或小数转化为整数。如果字符串头部有空格，空格会被自动去除。
 
 {% highlight javascript %}
 
@@ -261,7 +271,16 @@ parseInt(1.23)
 
 {% endhighlight %}
 
-如果字符串的第一个字符不能转化为数字，返回NaN。
+如果字符串包含不能转化为数字的字符，则不再进行转化，返回已经转好的部分。
+
+{% highlight javascript %}
+
+parseInt("8a")
+// 8
+
+{% endhighlight %}
+
+如果第一个字符不能转化为数字（正负号除外），返回NaN。
 
 {% highlight javascript %}
 
@@ -297,6 +316,69 @@ parseInt(1000, 6)
 
 parseInt(1000, 8)
 // 512
+
+{% endhighlight %}
+
+需要注意的是，如果第一个参数是数值，则会将这个数值先转为10进制，然后再应用第二个参数。
+
+{% highlight javascript %}
+
+parseInt(010, 10)
+// 8
+
+parseInt(010, 8)
+// NaN
+
+parseInt(020, 10)
+// 16
+
+parseInt(020, 8)
+// 14
+		
+{% endhighlight %}
+
+上面代码中，010会被先转为十进制8，然后再应用第二个参数，由于八进制中没有8这个数字，所以parseInt(010, 8)会返回NaN。同理，020会被先转为十进制16，然后再应用第二个参数。
+
+如果第一个参数是字符串，则不会将其先转为十进制。
+
+{% highlight javascript %}
+
+parseInt("010")
+// 10
+
+parseInt("010",10)
+// 10
+
+parseInt("010",8)
+// 8
+
+{% endhighlight %}
+
+可以看到，parseInt的很多复杂行为，都是由八进制的前缀0引发的。因此，ECMAScript 5不再允许parseInt将带有前缀0的数字，视为八进制数。但是，为了保证兼容性，大部分浏览器并没有部署这一条规定。
+
+## parseFloat方法
+
+parseFloat方法用于将一个字符串转为浮点数。
+
+如果字符串包含不能转化为浮点数的字符，则不再进行转化，返回已经转好的部分。
+
+{% highlight javascript %}
+
+parseFloat("3.14");
+parseFloat("314e-2");
+parseFloat("0.0314E+2");
+parseFloat("3.14more non-digit characters");
+
+{% endhighlight %}
+
+上面四个表达式都返回3.14。
+
+如果第一个字符不能转化为浮点数，则返回NaN。
+
+{% highlight javascript %}
+
+parseFloat("FF2")
+// NaN
 
 {% endhighlight %}
 
