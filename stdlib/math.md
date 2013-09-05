@@ -32,7 +32,7 @@ Math.round(-1.5) // -1
 
 {% highlight javascript %}
 
-Math.abs(1) // 0
+Math.abs(1) // 1
 Math.abs(-1) // 1
 
 {% endhighlight %}
