@@ -199,29 +199,64 @@ var max = Math.max(...[14, 3, 77]);
 
 ### generator 函数
 
-ECMAScript 6 引入了generator 函数，允许函数内部暂停执行某些操作。
+ECMAScript 6 引入了generator 函数，作用是生成一个遍历器（iterator）。所谓“遍历器”，就是指能够依次遍历某些值。
+
+定义generator函数，需要在function关键字后面，加一个星号。然后，函数内部使用yield关键字，定义遍历器的每个成员。
 
 {% highlight javascript %}
 
-function* foo() {
-  yield 'foo';
-  yield 'bar';
-  yield 'baz';
+function* helloWorldGenerator() {
+    yield 'hello';
+    yield 'world';
 }
 
 {% endhighlight %}
 
-上面就是一个generator函数，定义时function关键字后面加上星号。然后，函数内部就可以使用yield关键字，表示暂停执行某个操作，等到外部调用next方法时再执行。
+上面代码定义了一个generator函数helloWorldGenerator，它的遍历器有两个成员“hello”和“world”。调用这个函数，就会得到遍历器。
 
 {% highlight javascript %}
 
-var x = foo();
-
-x.next().value // 'foo'
-x.next().value // 'bar'
-x.next().value // 'baz'
+var hw = helloWorldGenerator();
 
 {% endhighlight %}
+
+执行遍历器的next方法，则会依次遍历每个成员。
+
+{% highlight javascript %}
+
+console.log(hw.next()); // { value: 'hello', done: false }
+console.log(hw.next()); // { value: 'world', done: false }
+console.log(hw.next()); // { value: undefined, done: true }
+
+{% endhighlight %}
+
+上面代码每次调用遍历器的next方法，就会返回一个对象。它的value属性就是遍历器当前成员的值，done属性表示遍历是否结束。直到遍历完最后一个成员，done属性才会从false变为true，这时value属性为undefined，表示此处没有遍历器的成员。
+
+遍历器的本质，其实是使用yield语句暂停执行它后面的操作，当调用next方法时，再继续执行。
+
+{% highlight javascript %}
+
+function* powersOfTwo(maxExponent) {
+    var exponent = 0;
+    while (exponent <= maxExponent) {
+        yield Math.pow(2, exponent);
+        exponent++;
+    }
+}
+
+var it = powersOfTwo(10),
+    result = it.next();
+
+while (!result.done) {
+    console.log(result.value);
+    result = it.next();
+}
+
+{% endhighlight %}
+
+上面代码定义的powerOfTwo函数，第一次执行的时候，只会执行到yield语句为止，然后调用next方法时，再执行下去。通过判断遍历器的done属性，完成遍历器的循环。
+
+这种暂停执行的效果，意味着可以把异步操作写在yield语句里面，等到调用next方法时再往后执行。这实际上等同于不需要写回调函数了，因为异步操作的后续操作可以放在yield语句下面，反正要等到next方法时再执行。所以，generator函数的一个重要实际意义就是用来处理异步操作，改写回调函数。
 
 ## 语法糖
 
@@ -561,3 +596,5 @@ console.log("Circumference of the circle: " + circumference(14) + " meters");
 - Sayanee Basu, [Use ECMAScript 6 Today](http://net.tutsplus.com/articles/news/ecmascript-6-today/)
 - Ariya Hidayat, [Toward Modern Web Apps with ECMAScript 6](http://www.sencha.com/blog/toward-modern-web-apps-with-ecmascript-6/)
 - Nick Fitzgerald, [Destructuring Assignment in ECMAScript 6](http://fitzgeraldnick.com/weblog/50/)
+- jmar777, [What's the Big Deal with Generators?](http://devsmash.com/blog/whats-the-big-deal-with-generators)
+
