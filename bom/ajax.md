@@ -206,6 +206,22 @@ status属性表示返回的HTTP状态码。一般来说，如果通信成功的�
 
 responseText属性表示服务器返回的文本数据。
 
+### setRequestHeader方法
+
+setRequestHeader方法用于设置HTTP头信息。
+
+{% highlight javascript %}
+
+xhr.setRequestHeader('Content-Type', 'application/json');
+
+xhr.setRequestHeader('Content-Length', JSON.stringify(data).length);
+
+xhr.send(JSON.stringify(data));
+
+{% endhighlight %}
+
+上面代码首先设置头信息Content-Type，表示发送JSON格式的数据；然后设置Content-Length，表示数据长度；最后发送JSON数据。
+
 ### overrideMimeType方法
 
 该方法用来指定服务器返回数据的MIME类型。

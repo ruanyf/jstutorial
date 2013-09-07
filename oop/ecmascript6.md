@@ -20,6 +20,23 @@ ECMAScript 6 的目标，是使得JavaScript可以用来编写复杂的应用程
 
 let关键字类似于var，用来声明变量，但是该变量只在声明所在的块级作用域有效。
 
+{% highlight javascript %}
+
+{
+    let a = 10;
+    var b = 1;
+}
+
+a
+// ReferenceError: a is not defined. 
+
+b
+//1
+
+{% endhighlight %}
+
+上面代码在代码块之中，分别用let和var声明了两个变量。然后在代码块之外调用这两个变量，结果let声明的变量报错，var声明的变量返回了正确的值。这标明，let声明的变量只在它所在的代码块有效。
+
 下面的代码如果使用var，最后输出的是10。
 
 {% highlight javascript %}
@@ -232,7 +249,7 @@ console.log(hw.next()); // { value: undefined, done: true }
 
 上面代码每次调用遍历器的next方法，就会返回一个对象。它的value属性就是遍历器当前成员的值，done属性表示遍历是否结束。直到遍历完最后一个成员，done属性才会从false变为true，这时value属性为undefined，表示此处没有遍历器的成员。
 
-遍历器的本质，其实是使用yield语句暂停执行它后面的操作，当调用next方法时，再继续执行。
+遍历器的本质，其实是使用yield语句暂停执行它后面的操作，当调用next方法时，返回yield语句的值，然后再继续往下执行，直到遇到下一个yield语句。如果直到运行结束，也没有发现其他yield语句，则返回的对象的value属性为undefined，done变为true。某种程序上，yield语句很像return语句，只不过记得返回时位置，下次从该位置继续执行。
 
 {% highlight javascript %}
 
@@ -257,6 +274,33 @@ while (!result.done) {
 上面代码定义的powerOfTwo函数，第一次执行的时候，只会执行到yield语句为止，然后调用next方法时，再执行下去。通过判断遍历器的done属性，完成遍历器的循环。
 
 这种暂停执行的效果，意味着可以把异步操作写在yield语句里面，等到调用next方法时再往后执行。这实际上等同于不需要写回调函数了，因为异步操作的后续操作可以放在yield语句下面，反正要等到next方法时再执行。所以，generator函数的一个重要实际意义就是用来处理异步操作，改写回调函数。
+
+另外一种遍历器循环的方法是使用for...of语句。
+
+{% highlight javascript %}
+
+function* fibonacci() {
+    let [prev, curr] = [0, 1];
+    for (;;) {
+        [prev, curr] = [curr, prev + curr];
+        yield curr;
+    }
+}
+
+{% endhighlight %}
+
+上面代码定义了斐波那契数列，然后使用for..of语句完成循环。
+
+{% highlight javascript %}
+
+for (n of fibonacci()) {
+    if (n > 1000) break;
+    console.log(n);
+}
+
+{% endhighlight %}
+
+从上面代码可见，使用for...of语句时不需要使用next方法。
 
 ## 语法糖
 
@@ -566,8 +610,6 @@ ECMAScript 6 允许定义模块。也就是说，允许一个JavaScript脚本文
 
 // circle.js
 
-const PI = 3.1415;
-
 export function area(radius) {
   return Math.PI * radius * radius;
 }
@@ -586,8 +628,8 @@ export function circumference(radius) {
 
 import { area, circumference } from 'circle';
  
-console.log("Area of the circle: " + area(4) + " meter squared");
-console.log("Circumference of the circle: " + circumference(14) + " meters");
+console.log("圆面积：" + area(4));
+console.log("圆周长：" + circumference(14));
 
 {% endhighlight %}
 

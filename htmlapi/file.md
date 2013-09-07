@@ -3,7 +3,7 @@ title: 文件和二进制数据的操作
 date: 2012-11-30
 layout: page
 category: htmlapi
-modifiedOn: 2013-09-04
+modifiedOn: 2013-09-06
 ---
 
 除了文本数据，JavaScript还能操作二进制数据，Blob对象就是操作接口。
@@ -96,6 +96,8 @@ document.querySelector('input[type="file"]').addEventListener('change', function
 在Ajax操作中，如果xhr.responseType设为blob，接收的就是二进制数据。
 
 ## ArrayBuffer对象
+
+随着二进制数据引入JavaScript，迫切需要一种方便的方法，对JavaScript的二进制数据进行操作。ArrayBuffer对象就是在这种背景下诞生的，它很像C语言的数组，划出一块连续的内存区域，允许根据数组下标，对内存进行读写。
 
 ArrayBuffer对象用来生成固定长度的二进制数据。
 
