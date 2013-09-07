@@ -38,6 +38,7 @@ modifiedOn: 2013-08-30
 - [Regex对象](stdlib/regex.html)
 - [JSON对象](stdlib/json.html)
 - [Error对象](stdlib/error.html)
+- [类型化数组](stdlib/arraybuffer.html)
 
 <h2 id="oop">面向对象编程</h2>
 

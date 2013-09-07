@@ -8,16 +8,7 @@ modifiedOn: 2013-09-04
 
 ## 概述
 
-JavaScript内部，所有数字都是以64位浮点数形式储存，即使整数也是如此。
-
-{% highlight javascript %}
-
-1 === 1.0
-// true
-
-{% endhighlight %}
-
-由于浮点数不是精确的值，所以涉及小数的比较和运算要特别小心。
+JavaScript内部，所有数字都是以64位浮点数形式储存，即使整数也是如此。由于浮点数不是精确的值，所以涉及小数的比较和运算要特别小心。
 
 {% highlight javascript %}
 
