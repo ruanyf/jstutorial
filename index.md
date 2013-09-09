@@ -51,6 +51,7 @@ modifiedOn: 2013-08-30
 - [dataset](dom/dataset.html)
 - [classList](dom/classlist.html)
 - [样式表操作](dom/stylesheet.html)
+- [拖放操作](dom/dragndrop.html)
 
 <h2 id="bom">浏览器对象</h2>
 
