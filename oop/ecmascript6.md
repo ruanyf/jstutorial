@@ -3,7 +3,7 @@ title: ECMAScript 6 介绍
 layout: page
 category: oop
 date: 2013-05-09
-modifiedOn: 2013-08-19
+modifiedOn: 2013-09-11
 ---
 
 ## 概述
@@ -318,19 +318,114 @@ var Person = {
 
 {% endhighlight %}
 
-### 回调函数的简洁写法
+### 箭头函数
 
-ECMAScript 6 允许函数的简写形式作为回调函数，不再需要function和return关键，最后一个表达式就是函数的返回值。
+ECMAScript 6允许使用“箭头”（=>）定义函数。
 
 {% highlight javascript %}
 
-// ES 5
+var f = v => v;
+
+{% endhighlight %}
+
+上面的箭头函数等同于：
+
+{% highlight javascript %}
+
+var f = function(v) {
+    return v;
+};
+
+{% endhighlight %}
+
+如果箭头函数有多个参数，就要在它们外面加上括号。
+
+{% highlight javascript %}
+
+var sum = (num1, num2) => num1 + num2;
+
+{% endhighlight %}
+
+上面的箭头函数等同于
+
+{% highlight javascript %}
+
+var sum = function(num1, num2) {
+    return num1 + num2;
+};
+
+{% endhighlight %}
+
+如果箭头函数的代码块部分多于一条语句，就要使用大括号将它们括起来，并且使用return语句返回。
+
+{% highlight javascript %}
+
+var sum = (num1, num2) => { return num1 + num2; }
+
+{% endhighlight %}
+
+由于大括号被解释为代码块，所以如果箭头函数直接返回一个对象，必须在对象外面加上括号。
+
+{% highlight javascript %}
+
+var getTempItem = id => ({ id: id, name: "Temp" });
+
+{% endhighlight %}
+
+箭头函数有几个特点。
+
+- 函数体内的this对象，绑定定义时所在的对象，而不是使用时所在的对象。
+- 不可以当作构造函数，也就是说，不可以使用new命令，否则会抛出一个错误。
+- 不可以使用arguments对象，该对象在函数体内不存在。 
+
+关于this对象，下面的代码将它绑定定义时的对象。
+
+{% highlight javascript %}
+
+var handler = {
+
+    id: "123456",
+
+    init: function() {
+		// 使用箭头函数，绑定this对象
+        document.addEventListener("click",
+                event => this.doSomething(event.type), false);
+    },
+
+    doSomething: function(type) {
+        console.log("Handling " + type  + " for " + this.id);
+    }
+};
+
+{% endhighlight %}
+
+上面代码如果没有箭头函数，doSomething方法内部的this对象指向全局对象，运行时会报错。
+
+箭头函数的另一个用处是简化回调函数。
+
+{% highlight javascript %}
+
+// 正常函数写法
 [1,2,3].map(function (x) {
   return x * x;
 });
 
-// ES 6
+// 箭头函数写法
 [1,2,3].map(x => x * x);
+
+{% endhighlight %}
+
+另一个例子是
+
+{% highlight javascript %}
+
+// 正常函数写法
+var result = values.sort(function(a, b) {
+    return a - b;
+});
+
+// 箭头函数写法
+var result = values.sort((a, b) => a - b);
 
 {% endhighlight %}
 
@@ -639,4 +734,4 @@ console.log("圆周长：" + circumference(14));
 - Ariya Hidayat, [Toward Modern Web Apps with ECMAScript 6](http://www.sencha.com/blog/toward-modern-web-apps-with-ecmascript-6/)
 - Nick Fitzgerald, [Destructuring Assignment in ECMAScript 6](http://fitzgeraldnick.com/weblog/50/)
 - jmar777, [What's the Big Deal with Generators?](http://devsmash.com/blog/whats-the-big-deal-with-generators)
-
+- Nicholas C. Zakas, [Understanding ECMAScript 6 arrow functions](http://www.nczonline.net/blog/2013/09/10/understanding-ecmascript-6-arrow-functions/)

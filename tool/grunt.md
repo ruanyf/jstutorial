@@ -107,9 +107,9 @@ module.exports = function(grunt) {
 
 上面的代码用到了grunt代码的三个方法：
 
-- grunt.initConfig：定义了执行各种任务所需的参数，每一项就对应一个同名模块。
-- grunt.loadNpmTasks：加载完成任务所需的插件。
-- grunt.registerTask：定义了具体的任务，上面代码的default任务，表示如果直接输入grunt命令，后面不跟任何参数，这时所需要完成的任务（jshint，concat和uglify）；check任务则表示使用jshint插件对代码进行语法检查。
+- **grunt.initConfig**：定义了执行各种任务所需的参数，每一项就对应一个同名模块。
+- **grunt.loadNpmTasks**：加载完成任务所需的插件。
+- **grunt.registerTask**：定义了具体的任务，上面代码的default任务，表示如果直接输入grunt命令，后面不跟任何参数，这时所需要完成的任务（jshint，concat和uglify）；check任务则表示使用jshint插件对代码进行语法检查。
 
 上面的代码一共加载了四个插件：jshint（检查语法错误）、concat（合并文件）、uglify（压缩代码）和watch（自动执行）。要执行某个任务，只需在grunt后面加上这个任务即可，比如grunt jshint。
 
