@@ -3,7 +3,7 @@ title: 任务管理工具Grunt
 category: tool
 layout: page
 date: 2013-04-21
-modifiedOn: 2013-08-26
+modifiedOn: 2013-09-11
 ---
 
 在Javascript的开发过程中，经常会遇到一些重复性的任务，比如合并文件、压缩代码、检查语法错误、将Sass代码转成CSS代码等等。通常，我们需要使用不同的工具，来完成不同的任务，既重复劳动又非常耗时。Grunt就是为了解决这个问题而发明的工具，可以帮助我们自动管理和运行各种任务。
@@ -141,7 +141,8 @@ grunt check
 - grunt-contrib-uglify：合并文件，然后将其最小化。
 - grunt-contrib-copy ：复制文件。
 
-目前，Grunt项目主页上的[模块总数](http://gruntjs.com/plugins)，已经达到了300多个。
+模块的前缀如果是grunt-contrib，就表示该模块由grunt开发团队维护；如果前缀是grunt（比如grunt-pakmanager），就表示由
+第三方开发者维护。目前，Grunt项目主页上的[模块总数](http://gruntjs.com/plugins)，已经达到了几百个。
 
 ### grunt-contrib-cssmin
 
@@ -272,3 +273,4 @@ watch: {
 - Ben Briggs，[Speed Up Your Web Development Workflow with Grunt](http://sixrevisions.com/javascript/grunt-tutorial-01/)
 - [Optimizing Images With Grunt](http://blog.grayghostvisuals.com/grunt/image-optimization/)
 - Swapnil Mishra, [Simplifying Chores with Grunt](http://howtonode.org/c4e0f8565942d5e6df45fb78b12d19435543c236/simplifying-chores-with-grunt)
+- AJ ONeal, [Moving to GruntJS](http://blog.coolaj86.com/articles/moving-to-grunt.html)
