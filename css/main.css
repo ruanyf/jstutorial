@@ -86,7 +86,7 @@ article.bookPage blockquote{
 }
 
 article.bookPage blockquote p{
-	color:#7f8c8d;
+	color:#34495e;
 	margin-left:1em;
 }
 
@@ -104,6 +104,20 @@ article.bookPage>div>div>ol{
 	text-shadow: 0 1px white;
 }
 
+article.bookPage>div>div>ul:not(.reference-list) a:link, 
+article.bookPage>div>div>ol a:link{
+	color:#556677;
+}
+
+article.bookPage>div>div>ul:not(.reference-list) a:visited, 
+article.bookPage>div>div>ol a:visited{
+	color:#556677;
+}
+
+article.bookPage>div>div>ul:not(.reference-list) a:hover, 
+article.bookPage>div>div>ol a:hover{
+	color:#d35400;
+}
 
 article.bookPage>div>div>ul:not(.reference-list){
 	list-style-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAKCAYAAACXDi8zAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAScAAAEnABIZuYagAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAACSSURBVAiZVY0hDsJQEERfG+RW9wRIBA4DAgMKg6nZIkg4B6fgAFUEw5UQiG1CQNSSDILSfEbOy8zLwq0CKJvuTJIcuAGnti62KUAS4TYPt1e4bSQh6Qt6uOzhWhKZpGHd1sUKuADHnP/cgTcwTq+m4daG22FwhNss3B7hthvk4bYIt2e4Vb9SEiNgAuzLprumsg/n8VnjsKqsSQAAAABJRU5ErkJggg==);
