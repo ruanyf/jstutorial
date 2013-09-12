@@ -71,11 +71,30 @@ article.bookPage>div>div>aside + p:first-of-type{
 	margin-top:3em;
 }
 
-article.bookPage>div>div>ul:not(.reference-list), article.bookPage>div>div>ol{
+article.bookPage blockquote{
+	background-color:#f5f2f0;
+	padding:2em 1em 1em 1em;
+	margin:2em 0em;
+	font-family: Consolas, Monaco, 'Andale Mono', monospace;
+	-moz-border-radius: 1.5em; /* FF1+ */
+	-webkit-border-radius:1.5em; /* Saf3+, Chrome */
+    border-radius: 1.5em;
+	border-left-width: 1.2em;   
+	border-left-color: #e67e22;
+	border-left-style: solid;
+	text-shadow: 0 1px white;
+}
+
+article.bookPage blockquote p{
+	color:#7f8c8d;
+	margin-left:1em;
+}
+
+article.bookPage>div>div>ul:not(.reference-list), 
+article.bookPage>div>div>ol{
 	background-color:#f5f2f0;
 	padding:1em 1em 1em 3em;
 	margin:2em 0em;
-	font-family: Consolas, Monaco, 'Andale Mono', monospace;
 	-moz-border-radius: 1.5em; /* FF1+ */
 	-webkit-border-radius:1.5em; /* Saf3+, Chrome */
     border-radius: 1.5em;

@@ -32,7 +32,11 @@ JavaScript的发明目的，就是作为浏览器的内置脚本语言，为网�
 
 （6） Chromium OS、Windows 8等操作系统直接支持JavaScript编写应用程序。Mozilla的Open Web Apps项目，可以用来编写运行于Windows、Mac OS和Android等多个桌面平台的程序，不依赖浏览器。
 
-可以预期，JavaScript最终将能让你只用一种语言，就开发出适应不同平台（包括桌面端、服务器端、手机端）的程序。著名程序员Jeff Atwood甚至提出了一条[“Atwood定律”](http://www.codinghorror.com/blog/2007/07/the-principle-of-least-power.html)：“所有可以用JavaScript编写的程序，最终都会出现JavaScript的版本。”(Any application that can be written in JavaScript will eventually be written in JavaScript.)
+可以预期，JavaScript最终将能让你只用一种语言，就开发出适应不同平台（包括桌面端、服务器端、手机端）的程序。
+
+著名程序员Jeff Atwood甚至提出了一条[“Atwood定律”](http://www.codinghorror.com/blog/2007/07/the-principle-of-least-power.html)：
+
+> “所有可以用JavaScript编写的程序，最终都会出现JavaScript的版本。”(Any application that can be written in JavaScript will eventually be written in JavaScript.)
 
 ## 易学性
 
