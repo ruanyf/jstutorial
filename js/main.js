@@ -14,6 +14,9 @@ jQuery(document).on('click',"#toc a",function(e){
 
 jQuery(document).ready(function(){
 
+			// Hide the Address Bar of mobile browser
+			setTimeout(function(){window.scrollTo(0, 1);}, 0);
+
 	        if ($('article h2').length === 0) {
 				$('#toc').remove();
 				return 0;

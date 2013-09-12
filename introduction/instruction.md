@@ -34,9 +34,9 @@ modified: 2013-09-12
 
 Developer Tools的使用方法：
 
-（1）确认已经安装Chrome浏览器，然后使用浏览器菜单，从Tools子菜单中打开Developer Tools。或者直接按F12。
+> （1）确认已经安装Chrome浏览器，然后使用浏览器菜单，从Tools子菜单中打开Developer Tools。或者直接按F12。
 
-（2）打开Developer Tools以后，点击console选项卡，进入控制台。
+> （2）打开Developer Tools以后，点击console选项卡，进入控制台。
 
 在console中，按Enter键，代码就会执行；按Shift+Enter键，则是代码换行，不会触发执行。
 
