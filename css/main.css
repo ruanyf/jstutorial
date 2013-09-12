@@ -67,6 +67,10 @@ article a[href^="http"]:after {
 	top:-0.2em;
 }
 
+article.bookPage>div>div>aside + p:first-of-type{
+	margin-top:3em;
+}
+
 article.bookPage>div>div>ul:not(.reference-list), article.bookPage>div>div>ol{
 	background-color:#f5f2f0;
 	padding:1em 1em 1em 3em;

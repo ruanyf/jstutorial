@@ -3,7 +3,7 @@ title: 为什么学习JavaScript？
 layout: page
 category: introduction
 date: 2012-12-29
-modifiedOn: 2013-06-10
+modifiedOn: 2013-09-12
 ---
 
 JavaScript语言有一些显著特点，使得它非常值得学习。
@@ -26,7 +26,7 @@ JavaScript的发明目的，就是作为浏览器的内置脚本语言，为网�
 
 （3）JavaScript甚至也可以用来操作数据库。NoSQL数据库这个概念，本身就是在JSON（JavaScript Object Notation，JavaScript对象表示法）格式的基础上诞生的，大部分NoSQL数据库允许JavaScript直接操作。基于SQL语言的开源数据库PostgreSQL支持JavaScript作为操作语言，可以部分取代SQL查询语言。
 
-（4）PhoneGap项目使得JavaScript可以开发在多种移动平台（iOS和Android）上使用的应用程序。Mozilla基金会的手机操作系统Firefox OS，更是直接将JavaScript操作系统的平台语言。
+（4）PhoneGap项目使得JavaScript可以开发在多种移动平台（iOS和Android）上使用的应用程序。Mozilla基金会的手机操作系统Firefox OS，更是直接将JavaScript作为操作系统的平台语言。
 
 （5）越来越多的应用程序，将JavaScript作为内嵌的脚本语言，比如Adobe公司的著名PDF阅读器Acrobat。
 
@@ -38,15 +38,15 @@ JavaScript的发明目的，就是作为浏览器的内置脚本语言，为网�
 
 相比学习其他语言，学习JavaScript有一些有利条件。
 
-(1) 学习环境无处不在。
+**（1）学习环境无处不在。**
 
 只要有浏览器，就能运行JavaScript程序；只要有文本编辑器，就能编写JavaScript程序。这意味着，几乎所有电脑都原生提供JavaScript学习环境，不用另行安装复杂的IDE（集成开发环境）和编译器。
 
-（2）简单性。
+**（2）简单性。**
 
-相比其他脚本语言（比如Python或Ruby），JavaScript的语法相对简单一些，本身的语法特性并不是特别多。那些语法中的复杂部分，也不是必需要学会。你完全可以只用简单命令，完成一些基本操作。
+相比其他脚本语言（比如Python或Ruby），JavaScript的语法相对简单一些，本身的语法特性并不是特别多。而且，那些语法中的复杂部分，也不是必需要学会。你完全可以只用简单命令，完成大部分的操作。
 
-（3）与主流语言的相似性。
+**（3）与主流语言的相似性。**
 
 JavaScript的语法很类似C/C++和Java，如果学过这些语言，JavaScript的入门会非常容易。
 
@@ -54,7 +54,7 @@ JavaScript的语法很类似C/C++和Java，如果学过这些语言，JavaScript
 
 JavaScript的性能优势体现在以下方面。
 
-（1）灵活的语法，表达力强。
+**（1）灵活的语法，表达力强。**
 
 JavaScript既支持类似C语言清晰的过程式编程，也支持灵活的函数式编程。可以用来写并发处理（concurrent）。这些语法特性已经被证明非常强大，可以用于许多场合，尤其适用非同步编程。
 
@@ -62,11 +62,11 @@ JavaScript的所有值都是对象，这为程序员提供了灵活性和便利�
 
 JavaScript的标准还是快速进化中，并不断合理化，并添加更适用的语法特性。
 
-（2）支持编译运行。
+**（2）支持编译运行。**
 
 JavaScript语言本身，虽然是一种解释型语言，但是在现代浏览器中，JavaScript都是编译后运行。程序会被高度优化，运行效率接近二进制程序。而且，JavaScript引擎正在快速发展，性能将越来越好。
 
-（3）事件驱动和非阻塞式设计。
+**（3）事件驱动和非阻塞式设计。**
 
 JavaScript程序可以采用事件驱动（event-driven）和非阻塞式（non-blocking）设计，在服务器端适合高并发环境，普通的硬件就可以承受很大的访问量。
 
@@ -78,7 +78,7 @@ JavaScript是一种开放的语言。它的标准是国际标准，写得非常�
 
 ## 社区支持
 
-全世界程序员都在使用JavaScript，它有着极大的社区、广泛的文献和图书、丰富的代码资源。
+全世界程序员都在使用JavaScript，它有着极大的社区、广泛的文献和图书、丰富的代码资源。绝大部分你需要用到的功能，都有多个开源函数库可供选用。
 
 作为项目负责人，你不难招聘到数量众多的JavaScript程序员；作为开发者，你也不难找到一份JavaScript的工作。
 
