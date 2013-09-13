@@ -3,7 +3,7 @@ title: Math对象
 layout: page
 category: stdlib
 date: 2013-02-12
-modifiedOn: 2013-08-30
+modifiedOn: 2013-09-13
 ---
 
 ## round方法
@@ -87,7 +87,7 @@ Math.pow(2, 3) // 8
 
 {% highlight javascript %}
 
-Math.sqrt(4) // 4
+Math.sqrt(4) // 2
 Math.sqrt(-4) // NaN
 
 {% endhighlight %}
