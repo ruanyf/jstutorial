@@ -2,7 +2,7 @@
 layout: homepage
 title: JavaScript 标准教程（alpha）
 date: 2012-11-18
-modifiedOn: 2013-09-12
+modifiedOn: 2013-09-13
 ---
 
 <h2 id="introduction">导论</h2>
@@ -107,6 +107,7 @@ modifiedOn: 2013-09-12
 
 - [概述](nodejs/basic.html)
 - [CommonJS规范](nodejs/commonjs.html)
+- [Express框架](nodejs/express.html)
 
 <h2 id="pattern">模式</h2>
 
