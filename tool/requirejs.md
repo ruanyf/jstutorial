@@ -200,6 +200,36 @@ require( [
 
 允许非同步加载模块，也可以根据需要动态加载模块。
 
+## 错误处理
+
+require方法允许添加第三个参数，即错误处理的回调函数。
+
+{% highlight javascript %}
+
+require(
+    [ "backbone" ], 
+    function ( Backbone ) {
+        return Backbone.View.extend({ /* ... */ });
+    }, 
+    function (err) {
+		// ...
+    }
+);
+
+{% endhighlight %}
+
+错误处理的回调函数，接受一个error对象作为参数。
+
+require对象还允许指定一个全局性的Error事件的监听函数。所有没有被上面的方法捕获的错误，都会被触发这个监听函数。
+
+{% highlight javascript %}
+
+requirejs.onError = function (err) {
+    // ...
+};
+
+{% endhighlight %}
+
 ## config方法：配置require.js
 
 require方法本身也是一个对象，它带有一个config方法，用来配置require.js运行参数。
@@ -286,7 +316,7 @@ node r.js -o <arguments>
 
 {% endhighlight %}
 
-<argument>表示命令运行时，所需要的一系列参数。
+&lt;argument&gt;表示命令运行时，所需要的一系列参数。
 
 {% highlight bash %}
 
@@ -378,3 +408,4 @@ node r.js -o build.js
 - NaorYe, [Optimize (Concatenate and Minify) RequireJS Projects](http://www.webdeveasy.com/optimize-requirejs-projects/)
 - Jonathan Creamer, [Deep dive into Require.js](http://tech.pro/tutorial/1300/deep-dive-into-requirejs)
 - Addy Osmani, [Writing Modular JavaScript With AMD, CommonJS & ES Harmony](http://addyosmani.com/writing-modular-js/) 
+- Jim Cowart, [Five Helpful Tips When Using RequireJS](http://tech.pro/blog/1561/five-helpful-tips-when-using-requirejs) 
