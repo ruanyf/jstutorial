@@ -377,6 +377,19 @@ f(,1)
 
 {% endhighlight %}
 
+如果一定要省略靠前的参数，只有显式传入undefined。
+
+{% highlight javascript %}
+
+function f(a,b){
+	return a;
+}
+
+f(undefined,1)
+// undefined
+
+{% endhighlight %}
+
 ### 默认值
 
 可以通过下面的方法，为参数设置默认值。

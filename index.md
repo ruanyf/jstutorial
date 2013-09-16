@@ -45,6 +45,7 @@ modifiedOn: 2013-09-16
 - [概述](oop/basic.html)
 - [封装](oop/encapsulation.html)
 - [继承](oop/inheritance.html)
+- [Promises](oop/promises.html)
 - [ECMAscript 6 介绍](oop/ecmascript6.html)
 
 <h2 id="dom">DOM</h2>
