@@ -16,7 +16,7 @@ Promises是一种处理异步操作的规范。
 
 也就是说，异步操作的传统写法是：
 
-{% highlight JavaScript %}
+{% highlight javascript %}
 
 asyncOperation(option, callback)；
 
@@ -26,7 +26,7 @@ asyncOperation(option, callback)；
 
 Promises对象的写法是：
 
-{% highlight JavaScript %}
+{% highlight javascript %}
 
 asyncOperationPromise.then(callback)；
 
@@ -36,7 +36,7 @@ asyncOperationPromise是asyncOperation的包装对象，它的then方法可以�
 
 除了保持流程清晰，Promises的好处还在于，它有一整套完整的接口，使得异步操作变得更易于使用和控制。比如，它允许链式使用then方法，按顺序定义多个回调函数。
 
-{% highlight JavaScript %}
+{% highlight javascript %}
 
 asyncOperationPromise
 .then(callback1)
@@ -53,7 +53,7 @@ asyncOperationPromise
 
 首先，定义一个Promise的构造函数，用来生成实例。
 
-{% highlight JavaScript %}
+{% highlight javascript %}
 
 var Promise = function() {
 
@@ -67,7 +67,7 @@ var Promise = function() {
 
 然后，在构造函数内部，定义一个常量对象State，表示Promise的状态。
 
-{% highlight JavaScript %}
+{% highlight javascript %}
 
 var Promise = function() {
 	var State = {
@@ -89,7 +89,7 @@ var Promise = function() {
 
 接着，为promise实例定义一个changeState方法，表示状态转移。根据规格，Promise对象的状态转移只可能有两种：从“未完成”转移到“已完成”，以及从“未完成”转移到“失败”。
 
-{% highlight JavaScript %}
+{% highlight javascript %}
 
 var promise = {
 	state: State.PENDING,
@@ -127,7 +127,7 @@ var promise = {
 
 接着，部署实例的fulfill和reject方法，用来将状态转移到“已完成”或“失败”。
 
-{% highlight JavaScript %}
+{% highlight javascript %}
 
 var promise = {
 	fulfill: function( value ) {
@@ -142,7 +142,7 @@ var promise = {
 
 然后，部署实例的then方法，用来绑定回调函数。
 
-{% highlight JavaScript %}
+{% highlight javascript %}
 
 var promise = {
 	then: function( onFulfilled, onRejected ) {
@@ -165,7 +165,7 @@ var promise = {
 
 然后，定义resolve方法，表示任务已结束，调用相应的回调函数。
 
-{% highlight JavaScript %}
+{% highlight javascript %}
 
 var promise = {
 	resolve: function() {
