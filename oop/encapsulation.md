@@ -61,7 +61,7 @@ Object.create的作用是，以一个对象为原型，新建另一个对象。�
 
 {% highlight javascript %}
 
-var o = { k: 1 };
+var o = { p: 1 };
 
 var o1 = Object.create(o);
 
@@ -70,7 +70,7 @@ o1.p
 
 {% endhighlight %}
 
-该方法的基本等同于下面的代码：
+Object.create方法基本等同于下面的代码：
 
 {% highlight javascript %}
 
@@ -84,13 +84,39 @@ if(typeof Object.create !== "function") {
 
 {% endhighlight %}
 
-我们可以看到，这个方法实际上就是新建一个对象，让它的原型指向另一个对象，从而让前者继承后者的属性。
-
-这个方法可以接受两个参数，第一个是对象的原型，第二个是描述属性的attributes对象。
+我们可以看到，这个方法实际上就是新建一个对象，让它的原型指向另一个对象，从而让前者继承后者的属性。所以，修改原型对象的属性值，会影响到新生成的对象。
 
 {% highlight javascript %}
 
-Object.create(proto, propDescObj）
+var o = { p: 1 };
+var o1 = Object.create(o);
+
+o.p = 2; 
+
+o1.p
+// 2 
+
+{% endhighlight %}
+
+修改新生成的对象的属性值，则不会影响到原型对象。
+
+{% highlight javascript %}
+
+var o = { p: 1 };
+var o1 = Object.create(o);
+
+o1.p = 2; 
+
+o.p
+// 1 
+
+{% endhighlight %}
+
+Object.create方法可以接受两个参数，第一个是对象的原型，第二个是描述属性的attributes对象。
+
+{% highlight javascript %}
+
+Object.create(proto, propDescObj)
 
 {% endhighlight %}
 
@@ -102,6 +128,9 @@ var o = Object.create(Object.prototype, {
         p1: { value: 123, enumerable: true },
         p2: { value: "abc", enumerable: true }
 });
+
+o.p1 // 123
+o.p2 // "abc"
 
 {% endhighlight %}
 
