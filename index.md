@@ -2,7 +2,7 @@
 layout: homepage
 title: JavaScript 标准教程（alpha）
 date: 2012-11-18
-modifiedOn: 2013-09-13
+modifiedOn: 2013-09-16
 ---
 
 <h2 id="introduction">导论</h2>
@@ -53,6 +53,7 @@ modifiedOn: 2013-09-13
 - [classList](dom/classlist.html)
 - [样式表操作](dom/stylesheet.html)
 - [拖放操作](dom/dragndrop.html)
+- [Mutation Observer](dom/mutationobserver.html)
 
 <h2 id="bom">浏览器对象</h2>
 
