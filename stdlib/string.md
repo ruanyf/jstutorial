@@ -3,7 +3,7 @@ title: String对象
 layout: page
 category: stdlib
 date: 2013-04-30
-modifiedOn: 2013-04-30
+modifiedOn: 2013-09-19
 ---
 
 ## 概述
@@ -233,15 +233,18 @@ toLowerCase用于将一个字符串转为小写，toUpperCase则是转为大写�
 
 ### 搜索和替换
 
-与搜索和替换相关的有三个方法，它们都允许使用正则表达式。
+与搜索和替换相关的有4个方法，它们都允许使用正则表达式。
 
-- match：用于确定原字符串是否匹配某个子字符串，返回匹配的子字符串数组。
-- search：等同于match，但是返回值不一样。
-- replace：用于替换匹配的字符串。
+- **match**：用于确定原字符串是否匹配某个子字符串，返回匹配的子字符串数组。
+- **search**：等同于match，但是返回值不一样。
+- **replace**：用于替换匹配的字符串。
+- **split**：将字符串按照给定规则分割，返回一个由分割出来的各部分组成的新数组。
 
-下面是这三个方法的简单介绍，详细介绍见正则表达式的章节。
+下面是这4个方法的简单介绍。它们都可以使用正则对象，涉及正则对象的部分见《Regex对象》一节。
 
-match方法返回一个匹配数组，成员为匹配的第一个字符串，等同于正则对象的exec方法。如果没有找到匹配，则返回null。
+**（1）match方法**
+
+该方法返回一个匹配数组，成员为匹配的第一个字符串，等同于正则对象的exec方法。如果没有找到匹配，则返回null。
 
 {% highlight javascript %}
 
@@ -255,7 +258,9 @@ matches.index;
 
 {% endhighlight %}
 
-search方法的用法等同于match，但是返回值为匹配的第一个位置。如果没有找到匹配，则返回-1。
+**（2）search方法**
+
+该方法的用法等同于match，但是返回值为匹配的第一个位置。如果没有找到匹配，则返回-1。
 
 {% highlight javascript %}
 
@@ -264,12 +269,64 @@ search方法的用法等同于match，但是返回值为匹配的第一个位置
 
 {% endhighlight %}
 
-replace方法用于替换匹配的子字符串，一般情况下只替换第一个匹配的值，除非搜索模式是带有g修饰符的正则对象。
+**（3）replace方法**
+
+该方法用于替换匹配的子字符串，一般情况下只替换第一个匹配的值（除非使用带有g修饰符的正则表达式）。
 
 {% highlight javascript %}
 
 "aaa".replace("a", "b")
 // "baa"
+
+{% endhighlight %}
+
+**（4）split方法**
+
+该方法按照给定规则分割字符串，返回一个由分割出来的各部分组成的新数组。
+
+{% highlight javascript %}
+
+"a|b|c".split("|")
+// ["a", "b", "c"]
+
+{% endhighlight %}
+
+如果分割规则为空字符串，则返回数组的成员是原字符串的每一个字符。
+
+{% highlight javascript %}
+
+"a|b|c".split("")
+// ["a", "|", "b", "|", "c"]
+
+{% endhighlight %}
+
+如果省略分割规则，则返回数组的唯一成员就是原字符串。
+
+{% highlight javascript %}
+
+"a|b|c".split()
+// ["a|b|c"]
+
+{% endhighlight %}
+
+如果满足分割规则的两个部分紧邻着（即中间没有其他字符），则返回数组之中会有一个空字符串。
+
+{% highlight javascript %}
+
+"a||c".split("|")
+// ["a", "", "c"]
+
+{% endhighlight %}
+
+split方法还可以接受第二个参数，限定返回数组的最大成员数。
+
+{% highlight javascript %}
+
+"a|b|c".split("|", 0) // []
+"a|b|c".split("|", 1) // ["a"]
+"a|b|c".split("|", 2) // ["a", "b"]
+"a|b|c".split("|", 3) // ["a", "b", "c"]
+"a|b|c".split("|", 4) // ["a", "b", "c"]
 
 {% endhighlight %}
 
@@ -287,20 +344,29 @@ window.atob("SGVsbG8gV29ybGQ=")
 
 {% endhighlight %}
 
-这两个方法不适合Unicode字符串，浏览器会报错。必须中间插入一个浏览器转码的环节，再使用这两个方法。
+这两个方法不适合非ASCII码的字符，浏览器会报错。
 
 {% highlight javascript %}
 
-function utf8_to_b64( str ) {
+window.btoa('你好')
+// InvalidCharacterError: An invalid or illegal character was specified, such as in an XML name.
+
+{% endhighlight %}
+
+要将非ASCII码字符转为Base64编码，必须中间插入一个浏览器转码的环节，再使用这两个方法。
+
+{% highlight javascript %}
+
+function b64Encode( str ) {
     return window.btoa(unescape(encodeURIComponent( str )));
 }
  
-function b64_to_utf8( str ) {
+function b64Decode( str ) {
     return decodeURIComponent(escape(window.atob( str )));
 }
 
 // 使用方法
-utf8_to_b64('你好'); // "5L2g5aW9"
-b64_to_utf8('4pyTIMOgIGxhIG1vZGU='); // "你好"
+b64Encode('你好') // "5L2g5aW9"
+b64Decode('5L2g5aW9') // "你好"
 
 {% endhighlight %}
