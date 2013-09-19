@@ -64,7 +64,7 @@ var a = 1;
 
 {% endhighlight %}
 
-上面的代码先声明a，然后在变量a与数值1之间建立引用关系，也称将数值1“赋值”给变量a。以后，引用a就会得到数值1。最前面var，是变量声明命令。它表示通知解释器，要创建一个变量a。
+上面的代码先声明变量a，然后在变量a与数值1之间建立引用关系，也称将数值1“赋值”给变量a。以后，引用变量a就会得到数值1。最前面的var，是变量声明命令。它表示通知解释引擎，要创建一个变量a。
 
 变量的声明和赋值，是分开的两个步骤，上面的代码将它们合在了一起，实际的步骤是下面这样。
 
@@ -86,7 +86,9 @@ a
 
 {% endhighlight %}
 
-JavaScript允许省略var，直接对未声明的变量赋值。也就是说，var a = 1 与 a = 1，这两条语句的效果完全相同。但是由于这样的做法很容易不知不觉地创建全局变量（尤其是在函数内部），所以建议总是使用var命令声明变量。
+JavaScript允许省略var，直接对未声明的变量赋值。也就是说，var a = 1 与 a = 1，这两条语句的效果相同。但是由于这样的做法很容易不知不觉地创建全局变量（尤其是在函数内部），所以建议总是使用var命令声明变量。
+
+> （严格地说，var a = 1 与 a = 1，这两条语句的效果不完全一样，主要体现在delete命令无法删除前者。不过，绝大多数情况下，这种差异是可以忽略的。）
 
 如果一个变量没有声明就直接使用，JavaScript会报错，告诉你变量未定义。
 
@@ -130,7 +132,7 @@ var a = 1;
 
 {% endhighlight %}
 
-上面的代码在声明变量a之前就使用它，是一种错误的做法，但是实际上不会报错。因为存在变量提升，真正运行的是下面的代码：
+上面的代码首先使用console.log方法，在控制台（console）显示变量a的值。这时变量a还没有声明和赋值，所以这是一种错误的做法，但是实际上不会报错。因为存在变量提升，真正运行的是下面的代码：
 
 {% highlight javascript %}
 
@@ -164,7 +166,19 @@ $elem
 
 {% endhighlight %}
 
-中文也可以用作变量名。
+下面这些则是不合法的标识符。
+
+{% highlight javascript %}
+
+1a
+23
+***
+a+b
+-d
+
+{% endhighlight %}
+
+中文是合法的标识符，可以用作变量名。
 
 {% highlight javascript %}
 
@@ -172,7 +186,7 @@ var 临时变量 = 1;
 
 {% endhighlight %}
 
-JavaScript语言有一些保留字，不能用作标识符：arguments、break、case、catch、class、const、continue、debugger、default、delete、do、else、enum、eval、export、extends、false、finally、for、function、if、implements、import、in、instanceof、interface、let、new、null、package、private、protected、public、return、static、super、switch、this、throw、true、try、typeof、var、void、while、with、yield。
+JavaScript有一些保留字，不能用作标识符：arguments、break、case、catch、class、const、continue、debugger、default、delete、do、else、enum、eval、export、extends、false、finally、for、function、if、implements、import、in、instanceof、interface、let、new、null、package、private、protected、public、return、static、super、switch、this、throw、true、try、typeof、var、void、while、with、yield。
 
 另外，还有三个词虽然不是保留字，但是因为具有特别含义，也不应该用作标识符：Infinity、NaN、undefined。
 
