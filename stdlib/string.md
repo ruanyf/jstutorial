@@ -318,6 +318,18 @@ matches.index;
 
 {% endhighlight %}
 
+如果满足分割规则的部分处于字符串的开头或结尾（即它的前面或后面没有其他字符），则返回数组的第一个或最后一个成员是一个空字符串。
+
+{% highlight javascript %}
+
+"|b|c".split("|")
+// ["", "b", "c"]
+
+"a|b|".split("|")
+// ["a", "b", ""]
+
+{% endhighlight %}
+
 split方法还可以接受第二个参数，限定返回数组的最大成员数。
 
 {% highlight javascript %}
