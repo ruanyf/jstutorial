@@ -59,6 +59,7 @@ modifiedOn: 2013-09-16
 <h2 id="bom">浏览器对象</h2>
 
 - [浏览器的JavaScript引擎](bom/engine.html)
+- [Navigator对象](bom/navigator.html)
 - [History对象](bom/history.html)
 - [CSS](bom/css.html)
 - [Ajax](bom/ajax.html)
