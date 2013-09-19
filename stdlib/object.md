@@ -407,7 +407,7 @@ Object.getOwnPropertyDescriptor(this,'a1')
 
 {% endhighlight %}
 
-而不使用var命令声明变量时，变量的可配置性为true。
+而不使用var命令声明变量时（或者使用属性赋值的方式声明变量），变量的可配置性为true。
 
 {% highlight javascript %}
 
@@ -416,9 +416,18 @@ a2 = 1;
 Object.getOwnPropertyDescriptor(this,'a2')
 // Object {value: 1, writable: true, enumerable: true, configurable: true}
 
+// or
+
+this.a3 = 1;
+
+Object.getOwnPropertyDescriptor(this,'a3')
+// Object {value: 1, writable: true, enumerable: true, configurable: true}
+
 {% endhighlight %}
 
-这种差异意味着，使用var命令声明变量时，该变量不能被delete，否则就可以。
+上面代码中的this.a3 = 1，与a3 =1 是等价的写法。this指的是当前的作用域，更多关于this的解释，参见《面向对象编程》一章。
+
+这种差异意味着，如果一个变量是使用var命令生成的，就无法用delete命令删除，否则就可以。
 
 {% highlight javascript %}
 
