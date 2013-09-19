@@ -191,6 +191,7 @@ delete命令可以删除属性。
 var o = { p:1 };
 
 delete o.p
+// true
 
 o.p
 // undefined

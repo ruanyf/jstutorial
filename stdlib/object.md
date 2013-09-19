@@ -3,7 +3,7 @@ title: Object对象
 layout: page
 category: stdlib
 date: 2013-04-30
-modifiedOn: 2013-05-04
+modifiedOn: 2013-09-19
 ---
 
 ## 概述
@@ -150,12 +150,17 @@ o.p = 123;
 
 attributes对象包含如下元信息：
 
-- value：表示该属性的值，默认为undefined。
-- writable：表示该属性的值（value）是否可以改变，默认为true。
-- enumerable： 表示该属性是否可枚举，默认为true，也就是该属性会出现在for...in和Object.keys()等操作中。
-- configurable：该属性是否可配置，默认为true，也就是你可以删除该属性，可以改变该属性的各种性质（比如writable和enumerable）。configurable控制该属性“元信息”的读写状态。
-- get：表示该属性的取值函数（getter），默认为undefined。
-- set：表示该属性的存值函数（setter），默认为undefined。
+- **value**：表示该属性的值，默认为undefined。
+
+- **writable**：表示该属性的值（value）是否可以改变，默认为true。
+
+- **enumerable**： 表示该属性是否可枚举，默认为true，也就是该属性会出现在for...in和Object.keys()等操作中。
+
+- **configurable**：该属性是否可配置，默认为true，也就是你可以删除该属性，可以改变该属性的各种性质（比如writable和enumerable）。configurable控制该属性“元信息”的读写状态。
+
+- **get**：表示该属性的取值函数（getter），默认为undefined。
+
+- **set**：表示该属性的存值函数（setter），默认为undefined。
 
 有了attributes对象，就可以精确描述其对应的属性。前面代码中o对象的p属性，它的attributes对像就是像下面这样：
 
@@ -172,7 +177,7 @@ attributes对象包含如下元信息：
 
 ### Object.defineProperty方法
 
-defineProperty方法允许通过定义attributes对象，来定义一个属性，然后返回修改后的对象。它的格式如下
+defineProperty方法允许通过定义attributes对象，来定义或修改一个属性，然后返回修改后的对象。它的格式如下
 
 {% highlight javascript %}
 
@@ -201,7 +206,9 @@ o.p
 
 {% endhighlight %}
 
-如果一次性定义多个属性，可以使用Object.defineProperties方法。
+### Object.defineProperties方法
+
+如果一次性定义或修改多个属性，可以使用Object.defineProperties方法。
 
 {% highlight javascript %}
 
@@ -218,6 +225,8 @@ o.p2
 
 {% endhighlight %}
 
+### Object.getOwnPropertyDescriptor方法
+
 Object.getOwnPropertyDescriptor方法可以读取attributes对象。
 
 {% highlight javascript %}
@@ -229,9 +238,204 @@ Object.getOwnPropertyDescriptor(o, 'p')
 
 {% endhighlight %}
 
+### 可枚举性enumerable
+
+**（1）for...in和Object.keys**
+
+可枚举性（enumerable）与两个操作有关：for...in和Object.keys。如果某个属性的可枚举性为true，则这两个操作的循环过程都包括该属性；如果为false，就不包括。
+
+假定，对象o有两个属性p1和p2，可枚举性分别为true和false。
+
+{% highlight javascript %}
+
+var o = Object.defineProperties({}, {
+        p1: { value: 1, enumerable: true },
+        p2: { value: 2, enumerable: false }
+});
+
+{% endhighlight %}
+
+那么，for...in操作和Object.keys操作的循环过程，将不包括p2。
+
+{% highlight javascript %}
+
+for (var x in o) console.log(x);
+// p1
+
+Object.keys(o)
+// ["p1"]
+
+{% endhighlight %}
+
+除了上面两个操作，其他操作都不受可枚举性的影响。
+
+需要注意的是，Object.keys只会列出对象自身的可枚举属性，不包括对象继承的可枚举属性；for...in循环则会列出所有的可枚举属性，包括对象继承的可枚举属性。
+
+{% highlight javascript %}
+
+for (key in []){
+	console.log(key);
+}
+// copy
+// first
+// fitIndex
+// scramble
+// add
+// remove
+// toJSON
+
+for (key in Object.prototype){
+	console.log(key);
+}
+// undefined
+
+{% endhighlight %}
+
+上面代码可以看到，空数组（[]）继承的可枚举属性有不少，而Object.prototype对象处于继承链的顶部，没有可枚举的属性。
+
+**（2）Object.getOwnPropertyNames方法**
+
+该方法返回直接定义在某个对象上面的全部属性的名称，而不管该属性是否可枚举。
+
+{% highlight javascript %}
+
+var o = Object.defineProperties({}, {
+        p1: { value: 1, enumerable: true },
+        p2: { value: 2, enumerable: false }
+});
+
+Object.getOwnPropertyNames(o)
+// ["p1", "p2"]
+
+{% endhighlight %}
+
+一般来说，系统原生的属性（即非用户自定义的属性）都是不可枚举的。
+
+{% highlight javascript %}
+
+Object.keys([])
+// []
+ 
+Object.getOwnPropertyNames([])
+// [ 'length' ]
+
+Object.keys(Object.prototype)
+// []
+
+Object.getOwnPropertyNames(Object.prototype)
+// ['hasOwnProperty',
+    'valueOf',
+    'constructor',
+    'toLocaleString',
+    'isPrototypeOf',
+    'propertyIsEnumerable',
+    'toString']
+
+{% endhighlight %}
+
+上面代码可以看到，空数组（[]）没有可枚举属性，不可枚举属性有length；Object.prototype对象也没有可枚举属性，但是有不少不可枚举属性。
+
+**（3）propertyIsEnumerable方法**
+
+该方法用来判断一个属性是否可枚举。
+
+{% highlight javascript %}
+
+Object.prototype.propertyIsEnumerable("toString")
+// false
+
+{% endhighlight %}
+
+### 可配置性configurable
+
+可配置性（configurable）决定了是否可以删除（delete）某个属性，以及是否可以更改该属性的writable和enumerable性质。
+
+{% highlight javascript %}
+
+var o = Object.defineProperty({}, 'p', {value: 1, enumerable: false, configurable: false});
+
+Object.defineProperty(o,'p', {enumerable: true})
+// TypeError: Cannot redefine property: p
+
+Object.defineProperties(o,'p',{configurable: true})
+// TypeError: Cannot redefine property: p
+
+{% endhighlight %}
+
+上面代码首先生成对象o，并且定义它的属性p为不可枚举，也不可配置。然后，更改属性p为可枚举，这时解释引擎就会报错，表示不能更改该属性的enumerable性质，甚至也不能更改configurable性质。
+
+但是，如果生成属性的时候，将可配置性configurable设为true，一切就不一样了。
+
+{% highlight javascript %}
+
+var o = Object.defineProperty({}, 'p', {value: 1, enumerable: false, configurable: true});
+
+Object.defineProperty(o,'p', {enumerable: true})
+// Object {p: 1}
+
+{% endhighlight %}
+
+上面代码表示，当可配置性改为true以后，更改可枚举性就能成功。
+
+可配置性决定了一个变量是否可以被删除（delete）。
+
+{% highlight javascript %}
+
+var o = Object.defineProperties({}, {
+        p1: { value: 1, configurable: true },
+        p2: { value: 2, configurable: false }
+});
+
+delete o.p1 // true
+delete o.p2 // false
+
+o.p1 // undefined
+o.p2 // 2
+
+{% endhighlight %}
+
+上面代码中的对象o有两个属性，p1是可配置的，p2是不可配置的。结果，p1就无法删除。
+
+需要注意的是，当使用var命令声明变量时（实际上是声明当前作用域的属性），变量的可配置性为false。
+
+{% highlight javascript %}
+
+var a1 = 1;
+
+Object.getOwnPropertyDescriptor(this,'a1')
+// Object {value: 1, writable: true, enumerable: true, configurable: false}
+
+{% endhighlight %}
+
+而不使用var命令声明变量时，变量的可配置性为true。
+
+{% highlight javascript %}
+
+a2 = 1;
+
+Object.getOwnPropertyDescriptor(this,'a2')
+// Object {value: 1, writable: true, enumerable: true, configurable: true}
+
+{% endhighlight %}
+
+这种差异意味着，使用var命令声明变量时，该变量不能被delete，否则就可以。
+
+{% highlight javascript %}
+
+var a1 = 1;
+a2 = 1;
+
+delete a1 // false
+delete a2 // true
+
+a1 // 1
+a2 // ReferenceError: a2 is not defined
+
+{% endhighlight %}
+
 ### 控制对象的可写性
 
-(1) Object.preventExtensions方法
+**(1) Object.preventExtensions方法**
 
 该方法可以使得一个对象无法再添加新的属性。
 
@@ -291,7 +495,7 @@ Object.isExtensible(o)
 
 {% endhighlight %}
 
-(2) Object.seal方法
+**(2) Object.seal方法**
 
 该方法可以使得一个对象既无法添加新属性，也无法删除旧属性。
 
@@ -372,7 +576,7 @@ Object.isExtensible(o)
 
 {% endhighlight %}		
 
-(3) Object.freeze方法
+**(3) Object.freeze方法**
 
 该方法可以使得一个对象无法添加新属性、无法删除旧属性、也无法改变属性的值，使得这个对象实际上变成了常量。
 
@@ -435,101 +639,7 @@ o.t
 
 {% endhighlight %}
 
-### 可枚举性
-
-可枚举性（enumerable）与两个操作有关：for...in和Object.keys。如果某个属性的可枚举性为true，则这两个操作的循环过程都包括该属性；如果为false，就不包括。
-
-假定，对象o有两个属性p1和p2，可枚举性分别为true和false。
-
-{% highlight javascript %}
-
-var o = Object.defineProperties({}, {
-        p1: { value: 1, enumerable: true },
-        p2: { value: 2, enumerable: false }
-});
-
-{% endhighlight %}
-
-那么，for...in操作和Object.keys操作的循环过程，将不包括p2。
-
-{% highlight javascript %}
-
-for (var x in o) console.log(x);
-// p1
-
-Object.keys(o)
-// ["p1"]
-
-{% endhighlight %}
-
-除了上面两个操作，其他操作都不受可枚举性的影响。
-
-{% highlight javascript %}
-
-Object.getOwnPropertyNames(o)
-// ["p1", "p2"]
-
-{% endhighlight %}
-
-一般来说，系统原生的属性（即非用户自定义的属性）都是不可枚举的。
-
-{% highlight javascript %}
-
-Object.keys([])
-// []
- 
-Object.getOwnPropertyNames([])
-// [ 'length' ]
-
-Object.keys(Object.prototype)
-// []
-
-Object.getOwnPropertyNames(Object.prototype)
-// ['hasOwnProperty',
-    'valueOf',
-    'constructor',
-    'toLocaleString',
-    'isPrototypeOf',
-    'propertyIsEnumerable',
-    'toString']
-
-{% endhighlight %}
-
-上面代码可以看到，空数组（[]）没有可枚举属性，不可枚举属性有length；Object.prototype对象也没有可枚举属性，但是有不少不可枚举属性。
-
-需要注意的是，Object.keys只会列出对象自身的可枚举属性，不包括对象继承的可枚举属性；for...in循环则会列出所有的可枚举属性，包括对象继承的可枚举属性。
-
-{% highlight javascript %}
-
-for (key in []){
-	console.log(key);
-}
-// copy
-// first
-// fitIndex
-// scramble
-// add
-// remove
-// toJSON
-
-for (key in Object.prototype){
-	console.log(key);
-}
-// undefined
-
-{% endhighlight %}
-
-上面代码可以看到，空数组（[]）继承的可枚举属性有不少，而Object.prototype对象处于继承链的顶部，没有可枚举的属性。
-
-propertyIsEnumerable方法用来判断一个属性是否可枚举。
-
-{% highlight javascript %}
-
-Object.prototype.propertyIsEnumerable("toString")
-// false
-
-{% endhighlight %}
-
 ## 参考链接
 
 - Axel Rauschmayer, [Protecting objects in JavaScript](http://www.2ality.com/2013/08/protecting-objects.html)
+- kangax, [Understanding delete](http://perfectionkills.com/understanding-delete/)
