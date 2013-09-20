@@ -857,12 +857,12 @@ a;
 
 {% highlight javascript %}
 
-    return
-    { first: "Jane" };
+return
+{ first: "Jane" };
     
-    // 解释成
-    return;
-    { first: "Jane" };
+// 解释成
+return;
+{ first: "Jane" };
 
 {% endhighlight %}
 

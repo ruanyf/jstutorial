@@ -6,39 +6,47 @@ date: 2013-08-30
 modifiedOn: 2013-08-30
 ---
 
-## error对象
+## Error对象
 
 一旦运行时发生错误，JavaScript引擎就会自动产生并抛出一个Error对象，然后整个程序就中断在发生错误的地方。
 
 Error对象的实例有两个最基本的属性：
 
-- error.name：错误名称
-- error.message：错误提示信息
+- **name**：错误名称
+- **message**：错误提示信息
 
 利用这两个属性，可以对发生什么错误有一个大概的了解。
 
+{% highlight javascript %}
+
+if (error.name){
+	console.log(error.message);
+}
+
+{% endhighlight %}
+
 JavaScript一共定义了6种错误，也就是说，存在Error的6个衍生对象。
 
-- EvalError：执行代码时发生的错误。
-- RangeError：当一个数值型变量或参数超出有效范围时发生的错误。
-- ReferenceError：引用一个不存在的变量时发生的错误。
-- SyntaxError：解析代码时发生的语法错误。
-- TypeError：变量或参数的类型无效时发生的错误。
-- URIError：向encodeURI() 或者 decodeURI() 传入无效参数时发生的错误。
+- **EvalError**：执行代码时发生的错误。
+- **RangeError**：当一个数值型变量或参数超出有效范围时发生的错误。
+- **ReferenceError**：引用一个不存在的变量时发生的错误。
+- **SyntaxError**：解析代码时发生的语法错误。
+- **TypeError**：变量或参数的类型无效时发生的错误。
+- **URIError**：向encodeURI() 或者 decodeURI() 传入无效参数时发生的错误。
 
 这6种错误对象，连同原始的Error对象，都是构造函数。开发者可以使用它们，人为生成错误对象的实例。
 
 {% highlight javascript %}
 
 new Error("出错了！");
-new RangeError("出错了！");
-new TypeError("出错了！");
+new RangeError("出错了，变量超出有效范围！");
+new TypeError("出错了，变量类型无效！");
 
 {% endhighlight %}
 
-这些构造函数接受一个参数，表示错误提示信息（message）。
+上面代码白哦是，这些构造函数接受一个表示错误提示信息（message）的参数。
 
-开发者还可以定义自己的错误对象。
+除了JavaScript内建的7种错误对象，还可以定义自己的错误对象。
 
 {% highlight javascript %}
 
@@ -49,6 +57,14 @@ function UserError(message) {
 
 UserError.prototype = new Error();
 UserError.prototype.constructor = UserError;
+
+{% endhighlight %}
+
+上面代码自定义一个错误对象UserError，让它继承Error对象。然后，就可以生成这种自定义的错误了。
+
+{% highlight javascript %}
+
+new UserError("这是自定义的错误！");
 
 {% endhighlight %}
 
@@ -65,7 +81,9 @@ throw {toString: function() { return "Error!"; } };
 
 {% endhighlight %}
 
-JavaScript引擎一旦遇到throw语句，就会中断执行后面的语句，并将throw语句的参数表达式的值，返回给用户。如果只是简单的错误，返回一条简单的信息就可以了，但是有时需要更多的信息和相应的处理，这时最好的做法是使用throw语句手动抛出一个错误。
+上面代码表示，throw可以接受各种值作为参数。JavaScript引擎一旦遇到throw语句，就会停止执行后面的语句，并将throw语句的参数值，返回给用户。
+
+如果只是简单的错误，返回一条出错信息就可以了，但是如果遇到复杂的情况，就需要在出错以后进一步处理。这时最好的做法是使用throw语句手动抛出一个Error对象。
 
 {% highlight javascript %}
 
