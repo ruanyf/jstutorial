@@ -3,7 +3,7 @@ title: CSS
 layout: page
 category: bom
 date: 2013-02-08
-modifiedOn: 2013-09-19
+modifiedOn: 2013-09-20
 ---
 
 ## CSS模块的侦测
@@ -76,9 +76,7 @@ CSS的animation动画定义了三个事件，可以绑定回调函数：动画�
 var e = document.getElementById("animation");
 
 e.addEventListener("animationstart", listener, false);
-
 e.addEventListener("animationend", listener, false);
-
 e.addEventListener("animationiteration", listener, false);
 
 {% endhighlight %}
@@ -121,6 +119,15 @@ Started: elapsed time is 0
 New loop started at time 3.01200008392334
 New loop started at time 6.00600004196167
 Ended: elapsed time is 9.234000205993652
+
+{% endhighlight %}
+
+animation-play-state属性可以控制动画的状态（暂停/播放），该属性需求加上浏览器前缀。
+
+{% highlight javascript %}
+
+element.style.webkitAnimationPlayState = "paused";
+element.style.webkitAnimationPlayState = "running";
 
 {% endhighlight %}
 

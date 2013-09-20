@@ -10,23 +10,51 @@ modifiedOn: 2013-08-30
 
 Array是JavaScript的内置对象，同时也是一个构造函数，可以用它生成新的数组。
 
-作为构造函数时，如果没有参数，则返回一个空数组；如果使用一个正整数作为参数，则这个正整数表示新数组的长度；如果参数在一个以上，则这些参数就是新数组的成员。
+作为构造函数时，Array可以接受参数，但是不同的参数，会使得Array产生不同的行为。
+
+- 无参数时，返回一个空数组；
+
+- 如果使用一个正整数作为参数，则这个正整数表示新数组的长度；
+
+- 如果使用非数值（字符串、布尔值、对象等）作为参数，则该值是新数组的成员；
+
+- 如果参数在一个以上，则这些参数都是新数组的成员。
 
 {% highlight javascript %}
 
 var a1 = new Array();
-a1
-// []
-
 var a2 = new Array(1);
-a2
-// [undefined × 1]
+var a3 = new Array('abc');
+var a4 = new Array([1]);
+var a5 = new Array(1,2);
 
-var a3 = new Array(1,2);
-a3
-// [1, 2]
+a1 // []
+a2 // [undefined × 1]
+a3 // ['abc']
+a4 // [Array[1]]
+a5 // [1, 2]
 
 {% endhighlight %}
+
+从上面代码可以看到，Array的构造函数行为很不一致。因此，不建议使用它生成新数组，直接使用数组的字面量是更好的方法。
+
+## Array对象的静态方法
+
+### isArray方法
+
+Array.isArray方法用来判断一个值是否为数组。它可以弥补typeof运算符的不足。
+
+{% highlight javascript %}
+
+var a = [1,2,3];
+
+typeof a // "object"
+
+Array.isArray(a) // true
+
+{% endhighlight %}
+
+上面代码表示，typeof运算符只能显示数组的类型是Object，而Array.isArray方法可以对数组返回true。
 
 ## Array对象实例的方法
 
@@ -192,7 +220,7 @@ unshift方法用于在数组的第一个位置添加元素，并返回添加新�
 
 var a = [ 'a', 'b', 'c' ];
 
-a.unshift('x'); // 4
+a.unshift('x'); // 3
 a
 // [ 'x', 'a', 'b', 'c' ]
 

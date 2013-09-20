@@ -3,7 +3,7 @@ title: Object对象
 layout: page
 category: stdlib
 date: 2013-04-30
-modifiedOn: 2013-09-19
+modifiedOn: 2013-09-20
 ---
 
 ## 概述
@@ -156,7 +156,7 @@ attributes对象包含如下元信息：
 
 - **enumerable**： 表示该属性是否可枚举，默认为true，也就是该属性会出现在for...in和Object.keys()等操作中。
 
-- **configurable**：该属性是否可配置，默认为true，也就是你可以删除该属性，可以改变该属性的各种性质（比如writable和enumerable）。configurable控制该属性“元信息”的读写状态。
+- **configurable**：该属性是否可配置，默认为true，也就是你可以删除该属性，可以改变该属性的各种性质（比如writable和enumerable等），即configurable控制该属性“元信息”的读写状态。
 
 - **get**：表示该属性的取值函数（getter），默认为undefined。
 
@@ -348,7 +348,7 @@ Object.prototype.propertyIsEnumerable("toString")
 
 ### 可配置性configurable
 
-可配置性（configurable）决定了是否可以删除（delete）某个属性，以及是否可以更改该属性的writable和enumerable性质。
+可配置性（configurable）决定了是否可以删除（delete）某个属性，以及是否可以更改该属性attributes对象中除了value以外的性质。
 
 {% highlight javascript %}
 
@@ -442,7 +442,31 @@ a2 // ReferenceError: a2 is not defined
 
 {% endhighlight %}
 
-### 控制对象的可写性
+### 可写性writable
+
+可写性（writable）决定了属性的值（value）是否可以被改变。
+
+{% highlight javascript %}
+
+var o = {}; 
+
+Object.defineProperty(o, "a", { value : 37, writable : false });
+
+o.a
+// 37
+
+o.a = 25;
+
+o.a
+// 37
+
+{% endhighlight %}
+
+上面代码将o对象的a属性可写性设为false，然后改变这个属性的值，就不会有任何效果。
+
+这里需要注意的是，当对a属性重新赋值的时候，并不会抛出错误，只是静静地失败。但是，如果在严格模式下，这里就会抛出一个错误，即使是对a属性重新赋予一个同样的值。
+
+### 控制对象状态
 
 **(1) Object.preventExtensions方法**
 
