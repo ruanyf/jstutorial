@@ -3,10 +3,12 @@ title: 类型化数组
 category: stdlib
 layout: page
 date: 2013-09-07
-modifiedOn: 2013-09-07
+modifiedOn: 2013-09-20
 ---
 
-最早，JavaScript需要操作二进制数据，是因为WebGL项目的诞生。所谓WebGL，就是指浏览器的显卡接口，为了满足JavaScript与显卡之间大量的、实时的数据交换，它们之间的数据通信必须是二进制的，而不能是传统的文本格式。
+类型化数组是JavaScript操作二进制数据的一个接口。
+
+这要从WebGL项目的诞生说起，所谓WebGL，就是指浏览器与显卡之间的通信接口，为了满足JavaScript与显卡之间大量的、实时的数据交换，它们之间的数据通信必须是二进制的，而不能是传统的文本格式。
 
 比如，以文本格式传递一个32位整数，两端的JavaScript脚本与显卡都要进行格式转化，将非常耗时。这时要是存在一种机制，可以像C语言那样，直接操作字节，然后将4个字节的32位整数，以二进制形式原封不动地送入显卡，脚本的性能就会大幅提升。
 
@@ -24,7 +26,7 @@ var buf = new ArrayBuffer(32);
 
 上面代码生成了一段32字节的内存区域。
 
-ArrayBuffer对象的byteLength属性，返回所分配的内存区域的字节长度。
+ArrayBuffer对象的**byteLength属性**，返回所分配的内存区域的字节长度。
 
 {% highlight javascript %}
 
@@ -46,7 +48,7 @@ if (buffer.byteLength === n) {
 
 {% endhighlight %}
 
-ArrayBuffer对象有一个slice方法，允许将其的一部分拷贝生成一个新的ArrayBuffer对象。
+ArrayBuffer对象有一个**slice方法**，允许将内存区域的一部分，拷贝生成一个新的ArrayBuffer对象。
 
 {% highlight javascript %}
 
@@ -55,9 +57,9 @@ var newBuffer = buffer.slice(0,3);
 
 {% endhighlight %}
 
-上面代码拷贝buffer对象的前4个字节，生成一个新的ArrayBuffer对象。
+上面代码拷贝buffer对象的前3个字节，生成一个新的ArrayBuffer对象。slice方法其实包含两步，第一步是先分配一段新内容，第二步是将原来那个ArrayBuffer对象拷贝过去。
 
-slice方法其实包含两步，第一步是先分配一段新内容，第二步是将原来那个ArrayBuffer对象拷贝过去。如果省略slice方法的第二个参数，则默认直到原ArrayBuffer对象的结尾。
+slice方法接受两个参数，第一个参数表示拷贝开始的字节序号，第二个参数表示拷贝截止的字节序号。如果省略第二个参数，则默认到原ArrayBuffer对象的结尾。
 
 除了slice方法，ArrayBuffer对象不提供任何直接读写内存的方法，只允许在其上方建立视图，然后通过视图读写。
 
