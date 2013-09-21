@@ -3,7 +3,7 @@ title: JavaScript的历史
 layout: page
 category: introduction
 date: 2013-01-10
-modifiedOn: 2013-06-21
+modifiedOn: 2013-09-22
 ---
 
 ## 互联网的起源
@@ -65,15 +65,19 @@ Netscape公司很快发现，Navigator浏览器需要一种可以嵌入网页的
 
 1999年12月，ECMAScript 3.0版发布，成为JavaScript的通行标准，得到了广泛支持。
 
-2008年7月，由于太过激进，ECMA开会决定，中止ECMAScript 4.0版的开发，将其中一些比较温和的设想扩大范围，放入ECMAScript第五版，而其他激进的设想放入更以后的JavaScript版本，由于会议的气氛，新项目代号起名为Harmony（和谐）。
+2008年7月，由于对于下一个版本的ECMAScript应该包括哪些功能，各方差异太大，争论过于激进，ECMA开会决定，中止ECMAScript 4.0的开发，将其中涉及现有功能改善的一小部分，发布为ECMAScript 3.1，而将其他激进的功能设想扩大范围，放入ECMAScr放入以后的JavaScript版本，由于会议的气氛，新项目代号起名为Harmony（和谐）。会后不久，ECMAScript 3.1就改名为ECMAScript 5。
 
-2009年9月，ECMAScript 5.0版正式发布。Harmony项目则一分为二，一些较为可行的设想定名为Javascript.next继续开发，可能将会演变成ECMAScript第6版；一些不是很成熟的设想，则被视为JavaScript.next.next，在更远的将来再考虑推出。
+2009年9月，ECMAScript 5.0版正式发布。Harmony项目则一分为二，一些较为可行的设想定名为Javascript.next继续开发，可能将会演变成ECMAScript第6版；一些不是很成熟的设想，则被视为JavaScript.next.next，在更远的将来再考虑推出。ECMA的第39号技术专家委员会（Technical Committee 39，简称TC39）负责制订ECMAScript标准，成员包括Michosoft、Mozilla、Google等。
 
 2011年6月，ECMAscript 5.1版发布，并且成为ISO国际标准（ISO/IEC 16262:2011）。
 
-目前，ECMA的第39号技术专家委员会（Technical Committee 39，简称TC39）负责制订该标准，成员包括Michosoft、Mozilla、Google等。TC39的计划是，ECMAScript第五版与ECMAScript第三版基本保持兼容，较大的语法修正和新功能加入，将由Javascript.next完成。预计在2013年的年底，Javascript.next将完成，发布成为ECMAScript第六版，而Harmony将是next的超集，包含更多的功能。 
+2013年3月，ECMAScript 6草案冻结，不再添加新功能。新的功能设想将被放到ECMAScript 7。
 
-同时，TC39也预计，ECMAScript第五版将在2013年的年中成为Javascript开发的主流标准，并在今后五年中一直保持这个位置。
+2013年12月，ECMAScript 6草案预计将会发布。然后是12个月的讨论期，听取各方反馈。
+
+2014年12月，ECMAScript 6预计将发布正式版本。
+
+TC39的总体考虑是，ECMAScript 5与ECMAScript 3基本保持兼容，较大的语法修正和新功能加入，将由JavaScript.next完成。当前，JavaScript.next指的是ECMAScript 6，当第六版发布以后，将指ECMAScript 7。 TC39预计，ECMAScript 5会在2013年的年中成为Javascript开发的主流标准，并在今后五年中一直保持这个位置。
 
 ## 浏览器支持
 
