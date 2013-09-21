@@ -3,7 +3,7 @@ title: 封装
 layout: page
 category: oop
 date: 2012-12-14
-modifiedOn: 2013-04-22
+modifiedOn: 2013-09-20
 ---
 
 ## 原型
@@ -34,11 +34,11 @@ JavaScript的每个对象都有一个原型（prototype），原型的方法可�
 
 由于原型本身也是对象，所以形成了一条原型链（prototype chain）。比如，a对象是b对象的原型，b对象是c对象的原型，以此类推。因为追根溯源，最底层的对象都是从Object构造函数生成（使用new Object()命令），所以如果一层层地上溯，所有对象的原型最终都可以上溯到Object.prototype。
 
-“原型链”的作用在于，当读取对象的某个属性时，JavaScript引擎先寻找对象本身的属性，如果找不到，就到它的原型去找，以此类推，如果直到Object.prototype还是找不到，则返回null。
+“原型链”的作用在于，当读取对象的某个属性时，JavaScript引擎先寻找对象本身的属性，如果找不到，就到它的原型去找，如果还是找不到，就到原型的原型去找。以此类推，如果直到最顶层的Object.prototype还是找不到，则返回undefined。
 
 ## Object.getPrototypeOf方法
 
-该方法返回一个对象的原型。
+getPrototypeOf方法返回一个对象的原型。
 
 {% highlight javascript %}
 
