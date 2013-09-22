@@ -3,10 +3,12 @@ title: Node.js 概述
 layout: page
 category: nodejs
 date: 2013-01-14
-modifiedOn: 2013-08-21
+modifiedOn: 2013-09-23
 ---
 
 ## 简介
+
+### 什么是Node.js
 
 Node.js是JavaScript在服务器端的一个运行环境，也是一个工具库，用来与服务器端其他软件互动。
 
@@ -26,82 +28,138 @@ node file.js
 
 {% endhighlight %}
 
-### 非同步操作
+### 异步操作
 
-Node.js采用V8引擎处理JavaScript脚本，最大特征就是单线程运行，即一次只能运行一个任务。这导致Node.js大量采用非同步操作（asynchronous opertion），任务不是马上执行，而是插在队列的尾部，等到前面的任务运行完后再执行。
+Node.js采用V8引擎处理JavaScript脚本，最大特征就是单线程运行，即一次只能运行一个任务。这导致Node.js大量采用异步操作（asynchronous opertion），即任务不是马上执行，而是插在队列的尾部，等到前面的任务运行完后再执行。
 
-由于这种特性，某一个任务的后续操作，往往采用回调函数（callback）的形式进行定义，即指定任务完成时，执行某个函数。Node.js的任务通常是下面的写法。
+由于这种特性，某一个任务的后续操作，往往采用回调函数（callback）的形式进行定义。
 
 {% highlight javascript %}
 
-doSomething(aThing, function (err, newThing) {
+doSomething(options, function (err, newOptions) {
   // . . .
 });
 
 {% endhighlight %}
 
-doSomething表示某个任务，aThing就是运行这个任务所需的参数，function(err, newThing)则是任务完成后的回调函数。值得注意是，回调函数的格式也有约定，即第一个参数err是表示错误的对象，第二个参数newThing才是回调函数的真正参数。
+上面代码的doSomething表示处理某个任务，options就是处理这个任务所需的参数，function(err, newOptions)则是任务完成后的回调函数。
 
-如果doSomething运行出现错误，则抛出err对象，回调函数必须做相应处理。
+值得注意的是，回调函数的格式也有约定。第一个参数err是一个Error对象，第二个参数newOptions才是回调函数的真正参数。如果doSomething运行出现错误，则抛出Error对象，回调函数必须做相应处理。
 
 {% highlight javascript %}
 
-doSomething(aThing, function (err, newThing) {
+doSomething(options, function (err, newOptions) {
 			if (err) return handleError(err);
 			// . . .
 });
 
 {% endhighlight %}
 
-如果没有发生错误，err对象的值就是null。
+如果没有发生错误，参数err的值就是null。
 
-## 加载模块
+### 模块化结构
 
-node.js采用模块化结构，按照[CommonJS规范](http://wiki.commonjs.org/wiki/CommonJS)定义和使用模块。
+Node.js采用模块化结构，按照[CommonJS规范](http://wiki.commonjs.org/wiki/CommonJS)定义和使用模块。
 
 require命令用于指定加载模块。
 
 {% highlight javascript %}
 
-var otherModule = require('otherModule');
+var someModule = require('moduleName');
 
 {% endhighlight %}
 
-require接受的参数不是模块的名称，而是模块的路径。
+require接受的参数除了模块的名称，还包括模块的路径。
 
 {% highlight javascript %}
 
-require('../otherModule');
+var someModule = require('/path/to/moduleName');
 
 {% endhighlight %}
 
-然后，就可以调用模块中定义的方法了。
+加载模块以后，就可以调用模块中定义的方法了。
 
 {% highlight javascript %}
 
-otherModule.someFunction();
+someModule.someFunction();
 
 {% endhighlight %}
 
-## 定义模块
+### 核心模块
 
-模块的定义也是采用CommonJS规范。
+Node.js自带一系列的核心模块，下面就是其中的一部分：
 
-在一个单独文件中，用require命令调用所依赖的模块，然后在exports对象上输出对外接口。
+- **http**：提供HTTP服务器功能。
+- **url**：解析URL。
+- **fs**：与文件系统交互。
+- **querystring**：解析URL的查询字符串。
+- **child_process**：新建子进程。
+- **util**：提供一系列实用小工具。
+
+除了使用核心模块，还可以使用第三方模块，以及自定义模块。
+
+### 自定义模块
+
+Node.js模块采用CommonJS规范。只要符合这个规范，就可以自定义模块。
+
+下面是一个简单的例子。新建一个文件mymodule.js，写入下面的代码。
 
 {% highlight javascript %}
 
-var M1 = require( "module1" );
-var M2 = require( "module2" );    
+// mymodule.js
 
-exports.newModule = function() {
-    M1.methodA();
-    M2.methodB();
-};
+function p(string) {
+  console.log(string);
+}
+
+exports.print = p;
 
 {% endhighlight %}
 
-## 实例：搭建一个HTTP服务器
+上面的代码定义了一个p方法，然后将模块的对外接口print指向该方法。
+
+在其他文件中使用该模块的时候，要先用require命令加载模块文件，然后调用它的接口。
+
+{% highlight javascript %}
+
+// index.js
+
+var m = require('./mymodule');
+
+m.print("这是自定义模块");
+
+{% endhighlight %}
+ 
+现在，就可以在命令行下运行index.js。
+
+{% highlight bash %}
+
+node index.js
+// 这是自定义模块
+
+{% endhighlight %}
+
+## fs模块
+
+fs是filesystem的缩写，该模块提供本地文件的读写能力。
+
+{% highlight javascript %}
+
+var fs = require('fs');
+
+fs.readFile('example_log.txt', function (err, logData) {
+
+  if (err) throw err;
+
+  var text = logData.toString();
+
+});
+
+{% endhighlight %}
+
+## http模块
+
+### 实例：搭建一个HTTP服务器
 
 使用Node.js搭建HTTP服务器非常简单。
 
@@ -161,26 +219,6 @@ http.createServer(function(req, res) {
 }).listen(8080, "localhost");
 
 {% endhighlight %}
-
-## 文件读写模块
-
-filesystem模块提供本地文件的读写能力。
-
-{% highlight javascript %}
-
-var fs = require('fs');
-
-fs.readFile('example_log.txt', function (err, logData) {
-
-  if (err) throw err;
-
-  var text = logData.toString();
-
-});
-
-{% endhighlight %}
-
-## http模块
 
 ### POST方法
 
