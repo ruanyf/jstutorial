@@ -20,13 +20,48 @@ node --version
 
 {% endhighlight %}
 
-运行node.js程序，就是使用node命令读取Javascript脚本。
+要运行node.js程序，就是使用node命令读取Javascript脚本。
 
 {% highlight bash %}
 
 node file.js
 
 {% endhighlight %}
+
+### REPL环境
+
+在命令行键入node命令，后面没有文件名，就进入一个Node.js的REPL环境（Read–eval–print loop，"读取-求值-输出"循环），可以直接运行各种JavaScript命令。
+
+{% highlight bash %}
+
+node
+> 1+1
+2
+
+{% endhighlight %}
+
+这个REPL是Node.js与用户互动的shell，各种基本的shell功能都可以在里面使用，比如使用上下方向键遍历曾经使用过的命令。特殊变量下划线（_）表示上一个命令的返回结果。
+
+{% highlight bash %}
+
+> 1+1
+2
+> _+1
+3
+
+{% endhighlight %}
+
+在REPL中，如果运行一个表达式，会直接在命令行返回结果，如果运行一条语句则不会，因为它没有返回值。
+
+{% highlight bash %}
+
+> x = 1
+1
+> var x = 1
+
+{% endhighlight %}
+
+上面代码的第二条命令，没有显示任何结果。因为这是一条语句，不是表达式，所以没有返回值。
 
 ### 异步操作
 
@@ -135,7 +170,7 @@ m.print("这是自定义模块");
 {% highlight bash %}
 
 node index.js
-// 这是自定义模块
+# 这是自定义模块
 
 {% endhighlight %}
 
@@ -222,22 +257,30 @@ http.createServer(function(req, res) {
 
 ### POST方法
 
+当客户端采用POST方法发送数据时，服务器端可以对data和end两个事件，设立监听函数。
+
 {% highlight javascript %}
 
 var http = require('http');
 
 http.createServer(function (req, res) {
-  var body = "";
+  var content = "";
+
   req.on('data', function (chunk) {
-    body += chunk;
+    content += chunk;
   });
+
   req.on('end', function () {
-    res.writeHead(200);
+    res.writeHead(200, {"Content-Type": "text/plain"});
+	res.write("You've sent: " + content);
     res.end();
   });
+
 }).listen(8080);
 
 {% endhighlight %}
+
+data事件会在数据接收过程中，每收到一段数据就触发一次，接收到的数据被传入回调函数。end事件则是在所有数据接收完成后触发。
 
 ## 库管理器npm
 
