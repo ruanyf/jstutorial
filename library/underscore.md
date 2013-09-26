@@ -3,18 +3,16 @@ title: Underscore.js
 layout: page
 category: library
 date: 2012-12-27
-modifiedOn: 2013-02-18
+modifiedOn: 2013-09-26
 ---
 
 ## 概述
 
-[Underscore.js](http://underscorejs.org/)是一个很精干的库，压缩后只有4KB。它提供了几十种函数式编程的方法，大大方便了Javascript的编程。MVC框架backbone.js就是基于这个库。
+[Underscore.js](http://underscorejs.org/)是一个很精干的库，压缩后只有4KB。它提供了几十种函数式编程的方法，大大方便了Javascript的编程。MVC框架backbone.js就将这个库作为自己的工具库。
 
-它定义了一个下划线（_）对象，函数库的所有方法都属于这个对象。这些方法大致上可以分成：集合（collection）、数组（array）、函数（function）、对象（object）和工具（utility）五大类。
+Underscor.js定义了一个下划线（_）对象，函数库的所有方法都属于这个对象。这些方法大致上可以分成：集合（collection）、数组（array）、函数（function）、对象（object）和工具（utility）五大类。
 
-## 在node.js下安装
-
-Underscore.js不仅可以用于浏览器环境，还可以用于node.js。安装命令如下：
+除了可以在浏览器环境使用，Underscore.js还可以用于Node.js。安装命令如下：
 
 {% highlight javascript %}
 
@@ -22,7 +20,7 @@ npm install underscore
 
 {% endhighlight %}
 
-但是，node.js不能直接使用_作为变量名，因此要用下面的方法使用underscore.js。
+需要注意的是，Node.js环境不能直接使用下划线（_）作为变量名，因此要用下面的方法使用underscore.js。
 
 {% highlight javascript %}
 
@@ -30,7 +28,7 @@ var u = require("underscore");
 
 {% endhighlight %}
 
-## 与集合有关的方法
+## 集合相关方法
 
 Javascript语言的数据集合，包括两种结构：数组和对象。以下的方法同时适用于这两种结构。
 
@@ -172,7 +170,7 @@ _.size({one : 1, two : 2, three : 3});
 
 {% endhighlight %}
 
-## 与对象有关的方法
+## 对象相关方法
 
 ### toArray
 
@@ -202,15 +200,7 @@ _.pluck(stooges, 'name');
 
 ### bind
 
-该方法绑定函数运行时的上下文，作为一个新函数返回。
-
-{% highlight javascript %}
-
-_.bind(function, object, [*arguments]) 
-
-{% endhighlight %}
-
-请看下面的实例。
+bind方法绑定函数运行时的上下文，返回一个新函数。
 
 {% highlight javascript %}
 
@@ -227,21 +217,41 @@ _.bind(o.m,{p:1})()
 
 {% endhighlight %}
 
+上面代码将o.m方法绑定到一个新的对象上面。
+
+除了前两个参数以外，bind方法还可以接受更多参数，它们表示函数方法运行时所需的参数。
+
+{% highlight javascript%}
+
+var add = function(n1,n2,n3) {
+  return console.log(this.sum + n1 + n2 + n3);
+};
+
+_.bind(add, {sum:1}, 1, 1, 1)()
+// 4
+
+{% endhighlight %}
+
+上面代码中bind方法有5个参数，最后那三个是给定add方法的运行参数，所以运行结果为4。
+
 ### bindAll
 
-该方法将某个对象的所有方法（除非特别声明），全部绑定在该对象上面。
+bindall方法可以一次将多个方法，绑定在某个对象上面。
 
 {% highlight javascript %}
 
-var buttonView = {
-  label   : 'underscore',
-  onClick : function(){ alert('clicked: ' + this.label); },
-  onHover : function(){ console.log('hovering: ' + this.label); }
+var o = {
+  p1 : '123',
+  p2 : '456',
+  m1 : function() { console.log(this.p1); },
+  m2 : function() { console.log(this.p2); },
 };
 
-_.bindAll(buttonView);
+_.bindAll(o, 'm1', 'm2');
 
 {% endhighlight %}
+
+上面代码一次性将两个方法（m1和m2）绑定在o对象上面。
 
 ### partial
 
