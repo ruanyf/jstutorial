@@ -155,7 +155,7 @@ JavaScript采用单线程模型，也就是说，所有的任务都在一个线�
 
 JavaScript本身也提供了一些“假死”的解决方法。最常见的就是用 setTimeout 和 setInterval 方法，将耗时的任务移到任务队列的尾部，在较晚的时间运行。另一个例子是，XMLHttpRequest对象将Ajax操作中的HTTP通信（非常耗时的任务），移到另一个线程，从而不会堵塞主线程。
 
-### setTimeout方法 和 setInterval 方法
+### setTimeout方法
 
 setTimeout方法的作用是推迟某个任务的运行时间，从而改变JavaScript的正常执行顺序。
 
@@ -180,6 +180,16 @@ console.log(3);
 上面代码的输出结果就是1--3--2，因为setTimeout方法指定第二行语句，在所有任务结束后，等待1000毫秒再执行。
 
 setTimout方法接受两个参数，第一个参数必须是函数（即任务代码必须写在函数中），第二个参数是推迟执行的时间，单位为毫秒。
+
+setTimeout方法返回一个表示计数器编号的整数值，将这个值传入clearTimeout方法，可以取消推迟执行。
+
+{% highlight javascript %}
+
+var timeoutID = setTimeout(function(m) {console.log(m);}, 1000, "醒醒！");
+
+clearTimeout(timeoutID);
+
+{% endhighlight %}
 
 ### setInterval方法
 

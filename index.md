@@ -2,7 +2,7 @@
 layout: homepage
 title: JavaScript 标准教程（alpha）
 date: 2012-11-18
-modifiedOn: 2013-09-16
+modifiedOn: 2013-09-26
 ---
 
 <h2 id="introduction">导论</h2>
@@ -68,6 +68,7 @@ modifiedOn: 2013-09-16
 - [Geolocation](bom/geolocation.html)
 - [MatchMedia](bom/matchmedia.html)
 - [WebRTC](bom/webrtc.html)
+- [Navigation Timing](bom/navigationtiming.html)
 
 <h2 id="htmlapi">HTML网页的API</h2>
 
