@@ -3,7 +3,7 @@ title: 语法概述
 layout: page
 category: grammar
 date: 2012-12-14
-modifiedOn: 2013-04-15
+modifiedOn: 2013-09-26
 ---
 
 ## 基本句法和变量
@@ -284,7 +284,7 @@ switch (fruit) {
 
 ### 循环语句
 
-（1）while循环
+**（1）while循环**
 
 While语句包括一个循环条件，只要该条件为真，就不断循环。
 
@@ -296,7 +296,7 @@ while (condition){
 
 {% endhighlight %}
 
-（2）for循环
+**（2）for循环**
 
 for语句分成三步：
 
@@ -335,7 +335,7 @@ while (i < arr.length) {
 
 {% endhighlight %}
 
-（3）do...while循环
+**（3）do...while循环**
 
 do...while循环与while循环类似，唯一的区别就是先运行一次循环体，然后判断循环条件。
 
@@ -349,7 +349,7 @@ do {
 
 不管条件是否为真，do..while循环至少运行一次，这是这种结构最大的特点。另外，while语句后面的分号不能省略。
 
-（4）break语句和continue语句
+**（4）break语句和continue语句**
 
 break用于在循环体中跳出循环，continue用于不再进行本次循环的后续操作，直接进入下一次循环。
 
@@ -417,13 +417,14 @@ v
 
 {% endhighlight %}
 
-可以看到，用单引号标识的字符串内部，允许直接使用双引号；用双引号标识的字符串内部，允许直接使用单引号。
+从上面的代码可以看到，单引号标识的字符串内部，允许直接使用双引号；双引号标识的字符串内部，允许直接使用单引号。否则，就必须使用反斜杠对单引号和双引号进行转义。
 
 如果字符串的内容包含反斜杠，则反斜杠前面需要再加一个反斜杠，用来转义。
 
 {% highlight javascript %}
 
 'Prev \\ Next'
+// "Prev \ Next"
 
 {% endhighlight %}
 
@@ -432,6 +433,8 @@ v
 {% highlight javascript %}
 
 '行1\n行2'
+// "行1
+// 行2"
 
 {% endhighlight %}
 
