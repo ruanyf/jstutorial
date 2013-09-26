@@ -3,7 +3,7 @@ title: 浏览器的JavaScript引擎
 layout: page
 category: bom
 date: 2013-03-10
-modifiedOn: 2013-06-13
+modifiedOn: 2013-09-26
 ---
 
 浏览器通过内置的JavaScript引擎，读取网页中的代码，对其处理后运行。
@@ -149,63 +149,53 @@ JavaScript是一种解释型语言，也就是说，它不需要编译，可以�
 
 ### 含义
 
-JavaScript在浏览器中以单线程运行，也就是说，所有的操作都在一个线程里按照某种顺序运行。
+JavaScript采用单线程模型，也就是说，所有的任务都在一个线程里运行。这意味着，一次只能运行一个任务，其他任务都必须在后面排队等待。这又被称为“事件循环”模型（event loop）。
 
-一个线程意味一次只能运行一个操作，其他操作都必须在后面排队等待。这被叫做JavaScript的“事件循环”模型（event loop），也就是说，JavaScript有一个运行队列，新的事件触发的操作，按照顺序插入队列，排队运行。
+新的任务被加在队列的尾部，只有前面的所有任务运行结束，才会轮到它执行。如果有一个任务特别耗时，后面的任务都会停在那里等待，造成浏览器失去响应，又称“假死”。为了避免“假死”，当某个操作在一定时间后仍无法结束，浏览器就会跳出提示框，询问用户是否要强行停止脚本运行。
 
-{% highlight javascript %}
+JavaScript本身也提供了一些“假死”的解决方法。最常见的就是用 setTimeout 和 setInterval 方法，将耗时的任务移到任务队列的尾部，在较晚的时间运行。另一个例子是，XMLHttpRequest对象将Ajax操作中的HTTP通信（非常耗时的任务），移到另一个线程，从而不会堵塞主线程。
 
-button.onclick = function() {
-      document.title = '(doing...)'+ document.title;
-};
+### setTimeout方法 和 setInterval 方法
 
-{% endhighlight %}
-
-上面的代码表示，当按钮的点击事件发生以后，网页的标题会发生变化。在实际运行中，这个操作会被添加到“运行队列”的尾部，是否马上运行取决于它前面的操作还要耗费多少时间。
-
-如果有一个操作特别耗时，后面的操作都会停在那里等待，造成浏览器堵塞，又称“假死”，使得用户体验变得非常差。浏览器为了避免这种情况，当某个操作迟迟无法结束时，会跳出提示框，询问用户是否要停止脚本运行。而JavaScript本身也提供了一些解决方法，最常见的就是用 setTimeout 和 setInterval 方法，将某个耗时的操作放到较晚的时间运行。另外，XMLHttpRequest对象提供了异步操作，使得Ajax操作（非常耗时的操作）可以在另一个线程上完成，不影响主线程。
-
-### setTimeout 和 setInterval 方法
-
-这两个方法的作用，就是改变JavaScript的正常执行顺序，推迟某些操作的执行。
+setTimeout方法的作用是推迟某个任务的运行时间，从而改变JavaScript的正常执行顺序。
 
 {% highlight javascript %}
 
 console.log(1);
-
 console.log(2);
-
 console.log(3);
 
 {% endhighlight %}
 
-正常情况下，上面三行语句按照顺序执行，输出1--2--3。现在，我们用setTimeout改变执行顺序。
+正常情况下，上面三行语句按照顺序执行，输出1--2--3。现在，用setTimeout改变执行顺序。
 
 {% highlight javascript %}
 
 console.log(1);
-
 setTimeout(function(){console.log(2);},1000);
-
 console.log(3);
 
 {% endhighlight %}
 
-上面三行语句的输出结果就是1--3--2，其中第二行语句被推迟了1000毫秒执行，所以就变成了最后输出。
+上面代码的输出结果就是1--3--2，因为setTimeout方法指定第二行语句，在所有任务结束后，等待1000毫秒再执行。
 
-setTimout方法接收两个参数，第一个参数必须是函数，所以上面的代码将语句放在一个匿名函数里面；第二个参数是推迟执行的时间，以毫秒作为单位。setIntervel的格式与setTimeout完全一致，区别在于它不仅推迟一个操作，而且让这个操作反复执行。
+setTimout方法接受两个参数，第一个参数必须是函数（即任务代码必须写在函数中），第二个参数是推迟执行的时间，单位为毫秒。
+
+### setInterval方法
+
+setIntervel方法的使用格式与setTimeout完全一致，区别在于它指定某个任务每隔一段时间就执行一次。
 
 {% highlight javascript %}
-
-setTimeout(function(){console.log(2);},1000);
 
 setInterval(function(){console.log(2);},1000);
 
 {% endhighlight %}
 
-上面的第一行语句是1000毫秒后输出2，第二行语句则是从现在开始，每隔1000毫秒就输出一个2。
+上面代码表示每隔1000毫秒就输出一个2。
 
-在本质上，这两个方法都是把相应操作添加到“运行队列”的尾部，等到前面的操作都执行完，再开始执行。由于前面的操作到底需要多少时间执行完，是不确定的，所以我们没有办法保证，被推迟的操作一定会按照预定时间执行。这一点对于setInterval影响尤其大。
+### 运行队列
+
+本质上，setTimeout和setInterval都是把任务添加到“运行队列”的尾部，等到前面的任务都执行完，再开始执行。由于前面的任务到底需要多少时间执行完，是不确定的，所以没有办法保证，被推迟的任务一定会按照预定时间执行。这一点对于setInterval影响尤其大。
 
 {% highlight javascript %}
 

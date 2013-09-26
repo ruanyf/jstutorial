@@ -224,7 +224,7 @@ _.bind(o.m,{p:1})()
 {% highlight javascript%}
 
 var add = function(n1,n2,n3) {
-  return console.log(this.sum + n1 + n2 + n3);
+  console.log(this.sum + n1 + n2 + n3);
 };
 
 _.bind(add, {sum:1}, 1, 1, 1)()
