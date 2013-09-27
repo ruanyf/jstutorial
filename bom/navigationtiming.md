@@ -8,7 +8,7 @@ modifiedOn: 2013-09-26
 
 Navigation Timing是一个提供客户端网页处理信息的API，主要部署在浏览器内置的performance对象上。它可以用来获取，其他手段难以获取的数据。
 
-Chrome 6+、Firefox 7+、IE 9+、Opera 15+支持这个API。0
+Chrome 6+、Firefox 7+、IE 9+、Opera 15+支持这个API。
 
 ## performance.timing对象
 
@@ -87,8 +87,11 @@ performance.navigation对象提供当前网页访问来源的信息。
 该属性返回一个整数值，表示网页的加载来源，可能有以下4种情况：
 
 - **值为0**：网页通过点击链接、地址栏输入、表单提交、脚本操作等方式加载，等于常数performance.navigation.TYPE_NAVIGATENEXT。
+
 - **值为1**：网页通过“重新加载”按钮或者location.reload()方法加载，等于常数performance.navigation.TYPE_RELOAD。
+
 - **值为2**：网页通过“前进”或“后退”按钮加载，等于常数performance.navigation.TYPE_BACK_FORWARD。
+
 - **值为255**：任何其他来源的加载，等于常数performance.navigation.TYPE_UNDEFINED。
 
 **（2）performance.navigation.redirectCount **
@@ -109,7 +112,7 @@ Date.now() - (performance.timing.navigationStart + performance.now())
 
 {% endhighlight %}
 
-上面代码表示，performance.timing.navigationStart加上performance.now()，近似等于Date.now()，也就是说，Date.now()可以替代performance.now()。但是，前者返回的是毫秒，后者返回的是微妙，所以后者的精度比前者高1000倍。
+上面代码表示，performance.timing.navigationStart加上performance.now()，近似等于Date.now()，也就是说，Date.now()可以替代performance.now()。但是，前者返回的是毫秒，后者返回的是微秒，所以后者的精度比前者高1000倍。
 
 ## 参考链接
 

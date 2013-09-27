@@ -179,21 +179,38 @@ console.log(3);
 
 上面代码的输出结果就是1--3--2，因为setTimeout方法指定第二行语句，在所有任务结束后，等待1000毫秒再执行。
 
-setTimout方法接受两个参数，第一个参数必须是函数（即任务代码必须写在函数中），第二个参数是推迟执行的时间，单位为毫秒。
-
-setTimeout方法返回一个表示计数器编号的整数值，将这个值传入clearTimeout方法，可以取消推迟执行。
+setTimeout方法的前两个参数是必需的。第一个参数是回调函数，第二个参数是推迟执行的时间，单位为毫秒。除了这两个参数以外，其他参数都是可选的，将在回调函数运行时传入回调函数。
 
 {% highlight javascript %}
 
-var timeoutID = setTimeout(function(m) {console.log(m);}, 1000, "醒醒！");
-
-clearTimeout(timeoutID);
+setTimeout(function(a,b){console.log(a+b);},1000,1,1);
 
 {% endhighlight %}
 
+上面代码表示，将在1000毫秒之后执行回调函数，输出1加1的和。
+
+IE小于9.0的版本，只允许setTimeout有两个参数，不支持更多的参数。这时有三种解决方法，第一种是自定义setTimeout，使用apply方法将参数输入回调函数；第二种是在一个匿名函数里面，让回调函数带参数运行，再把匿名函数输入setTimeout；第三种使用bind方法，把多余的参数绑定在回调函数上面，生成一个新的函数输入setTimeout。
+
+除了参数问题，setTimeout还有一个需要注意的地方：被setTimeout推迟执行的回调函数是在全局环境执行，这有可能不同于函数定义时的上下文环境。
+
+{% highlight javascript %}
+
+var n = 1;
+
+var o = {
+	n: 2,
+	m: function(){console.log(this.n);}
+};
+
+var timeoutID = setTimeout(o.m,1000);
+
+{% endhighlight %}
+
+上面代码输出的是1，而不是2，这表示回调函数的运行环境已经变成了全局环境。
+
 ### setInterval方法
 
-setIntervel方法的使用格式与setTimeout完全一致，区别在于它指定某个任务每隔一段时间就执行一次。
+setInterval方法的使用格式和需要注意的地方，与setTimeout完全一致，两者的区别仅仅在于setInterval指定某个任务每隔一段时间就执行一次。
 
 {% highlight javascript %}
 
@@ -203,9 +220,61 @@ setInterval(function(){console.log(2);},1000);
 
 上面代码表示每隔1000毫秒就输出一个2。
 
+除了前两个参数，setInterval 方法还可以接受更多的参数，它们会传入回调函数。
+
+{% highlight javascript %}
+
+function f(){
+	for (var i=0;i<arguments.length;i++){
+		console.log(arguments[i]);
+	}
+}
+
+setInterval(f, 1000, "Hello World");
+
+{% endhighlight %}
+
+上面代码的运行结果如下：
+
+{% highlight bash %}
+
+Hello World
+Hello World
+Hello World
+...
+
+{% endhighlight %}
+
+如果网页不在浏览器的当前窗口（或tab），许多浏览器限制setInteral指定的反复运行的任务最多每秒执行一次。
+
+### clearTimeout 和 clearInterval 方法，
+
+setTimeout 和 setInterval 方法都返回一个表示计数器编号的整数值，将该整数传入clearTimeout 和 clearInterval 方法，就可以取消指定的操作。
+
+{% highlight javascript %}
+
+var id1 = setTimeout(f,1000);
+var id2 = setInterval(f,1000);
+
+clearTimeout(id1);
+clearInterval(id2);
+
+{% endhighlight %}
+
 ### 运行队列
 
-本质上，setTimeout和setInterval都是把任务添加到“运行队列”的尾部，等到前面的任务都执行完，再开始执行。由于前面的任务到底需要多少时间执行完，是不确定的，所以没有办法保证，被推迟的任务一定会按照预定时间执行。这一点对于setInterval影响尤其大。
+本质上，setTimeout和setInterval都是把任务添加到“运行队列”的尾部，等到前面的任务都执行完，再开始执行。由于前面的任务到底需要多少时间执行完，是不确定的，所以没有办法保证，被推迟的任务一定会按照预定时间执行。
+
+{% highlight javascript %}
+
+setTimeout(someTask,100);
+veryLongTask();
+
+{% endhighlight %}
+
+上面代码的setTimeout，指定100毫秒以后运行一个任务。但是，如果后面立即运行的任务非常耗时，过了100毫秒还无法结束，那么被推迟运行的someTask就只有等着，等到前面的veryLongTask运行结束，才轮到它执行。
+
+这一点对于setInterval影响尤其大。
 
 {% highlight javascript %}
 
@@ -217,7 +286,7 @@ setInterval(function(){console.log(2);},1000);
 
 上面的第一行语句要求每隔1000毫秒，就输出一个2。但是，第二行语句需要3000毫秒才能完成，请问会发生什么结果？
 
-结果就是等到第二行语句运行完成以后，立刻连续输出三个2，然后开始每隔1000毫秒，输出一个2。为了进一步理解JavaScript的单线程模型，请看下面这段代码。
+结果就是等到第二行语句运行完成以后，立刻连续输出三个2，然后开始每隔1000毫秒，输出一个2。为了进一步理解JavaScript的单线程模型，请看下面这段伪代码。
 
 {% highlight javascript %}
 
@@ -241,13 +310,17 @@ setInterval(function(){console.log(2);},1000);
 
 请问调用init函数后，这段代码的运行顺序是怎样的？
 
-- 0-15ms，运行init函数。
-- 15-23ms，运行handleMouseClick函数。请注意，这个函数是在5ms时触发的，应该在那个时候就立即运行，但是由于单线程的关系，必须等到init函数完成之后再运行。
-- 23-25ms，运行timerTask函数。这个函数是在10ms时触发的，规定每10ms运行一次，即在20ms、30ms、40ms等时候运行。由于20ms时，JavaScript线程还有任务在运行，因此必须延迟到前面任务完成时再运行。
-- 30-32ms，运行timerTask函数。
-- 40-42ms，运行timerTask函数。
+- **0-15ms**：运行init函数。
 
-由于setInterval无法保证每次操作之间的间隔，为了避免这种情况，可以用setTimeout替代setInterval。
+- **15-23ms**：运行handleMouseClick函数。请注意，这个函数是在5ms时触发的，应该在那个时候就立即运行，但是由于单线程的关系，必须等到init函数完成之后再运行。
+
+- **23-25ms**：运行timerTask函数。这个函数是在10ms时触发的，规定每10ms运行一次，即在20ms、30ms、40ms等时候运行。由于20ms时，JavaScript线程还有任务在运行，因此必须延迟到前面任务完成时再运行。
+
+- **30-32ms**：运行timerTask函数。
+
+- **40-42ms**：运行timerTask函数。
+
+由于setInterval无法保证每次操作之间的间隔，为了避免这种情况，可以反复调用setTimeout，替代setInterval。
 
 {% highlight javascript %}
 
@@ -262,56 +335,23 @@ recursive();
 
 上面这样的写法，就能保证两次recursive之间的运行间隔，一定是1000毫秒。
 
-clearTimeout 和 clearInterval 方法，用于取消 setTimeout 和 setInterval 指定的操作。
+### 推迟时间的极限和setTimeout(f,0)的作用
+
+跟据[HTML 5标准](http://www.whatwg.org/specs/web-apps/current-work/multipage/timers.html#timers)，setTimeOut推迟执行的时间，最少是4毫秒。但是，实际应用中，可以看到有推迟0秒的。
 
 {% highlight javascript %}
 
-var id1 = setTimeout(f,1000);
-var id2 = setInterval(f,1000);
-
-clearTimeout(id1);
-clearInterval(id2);
+setTimeout(function (){console.log("你好！"), 0);
 
 {% endhighlight %}
 
-除了前两个参数，setTimeout 和 setInterval 方法还可以接受更多的参数，它们会传入这两个方法指定的回调函数。
+这种写法的含义是，当前任务队列一结束就运行setTimeout指定的回调函数。
 
 {% highlight javascript %}
 
-function f(){
-	for (var i=0;i<arguments.length;i++){
-		console.log(arguments[i]);
-	}
-}
+console.log("任务队列开始");
 
-setTimeout(f, 1000, "a", "b", "c");
-setInterval(f, 1000, "Hello World");
-
-{% endhighlight %}
-
-上面代码的运行结果如下：
-
-{% highlight bash %}
-
-a
-b
-c
-Hello World
-Hello World
-Hello World
-...
-
-{% endhighlight %}
-
-### setTimeout(f,0)的作用
-
-可见单线程的特点就是一个时间只有一个任务运行，后面的任务必须排队等待。有时，为了将耗时的任务移到当前栈的结尾，可以使用setTimeout(function, 0)方法。
-
-{% highlight javascript %}
-
-console.log("栈开始");
-
-setTimeout(function() { console.log("当前栈结束后运行");}, 0);
+setTimeout(function() { console.log("任务队列结束后运行");}, 0);
 
 function a(x) { 
 	console.log("a() 开始运行");
@@ -327,7 +367,7 @@ function b(y) {
 
 console.log("当前任务开始");
 a(42);
-console.log("栈结束");
+console.log("任务队列结束");
 
 {% endhighlight %}
 
@@ -335,23 +375,26 @@ console.log("栈结束");
 
 {% highlight bash %}
 
-栈开始
+任务队列开始
 当前任务开始
 a() 开始运行
 b() 开始运行
 传入的值为42
 b() 结束运行
 a() 结束运行
-栈结束
-当前栈结束后运行
+任务队列结束
+任务队列结束后运行
 
 {% endhighlight %}
 
-可以看到，setTimeout(function, 0)将任务移到当前栈结束后运行。
+可以看到，setTimeout(function, 0)将任务移到当前任务队列结束后运行。
 
-现在的计算机CPU普遍是多核的，单线程就意味着只使用一核。这当然没有充分利用资源，所以HTML5提供了Web Worker，允许通过这个API实现多线程操作。
+浏览器内部使用32位带符号的整数，来储存推迟执行的时间。这意味着setTimeout最多只能推迟执行2147483647毫秒，超过这个时间会发生溢出，导致回调函数将在当前任务队列结束后立即执行，即等同于setTimeout(f,0)的效果。
+
+本质上，setTimeout(f, 0)这种写法反映了JavaScript单线程运行的特点。但是，现在的计算机CPU普遍是多核的，单线程就意味着只使用一核。这当然没有充分利用资源，所以HTML5提供了Web Worker，允许通过这个API实现多线程操作。
 
 ## 参考链接
 
 - John Dalziel, [The race for speed part 2: How JavaScript compilers work](http://creativejs.com/2013/06/the-race-for-speed-part-2-how-javascript-compilers-work/)
 - Jake Archibald，[Deep dive into the murky waters of script loading](http://www.html5rocks.com/en/tutorials/speed/script-loading/)
+- Mozilla Developer Network, [window.setTimeout](https://developer.mozilla.org/en-US/docs/Web/API/window.setTimeout)
