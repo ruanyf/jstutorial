@@ -2,7 +2,7 @@
 layout: homepage
 title: JavaScript 标准教程（alpha）
 date: 2012-11-18
-modifiedOn: 2013-09-26
+modifiedOn: 2013-09-27
 ---
 
 <h2 id="introduction">导论</h2>
@@ -63,6 +63,7 @@ modifiedOn: 2013-09-26
 - [History对象](bom/history.html)
 - [CSS](bom/css.html)
 - [Ajax](bom/ajax.html)
+- [同域限制与window.postMessage方法](bom/windowpostmessage.html)
 - [Web Storage](bom/webstorage.html)
 - [WebSocket](bom/websocket.html)
 - [Geolocation](bom/geolocation.html)
