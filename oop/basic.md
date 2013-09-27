@@ -148,25 +148,32 @@ v instanceof Vehicle
 
 ### 涵义
 
-上面说到，this关键字在构造函数中指的是实例对象。但是，this关键字有多种含义，实例对象只是其中一种。严格地说，this关键字指的是变量所处的上下文环境（context）。我们分成几种情况来讨论。
+上一部分说到，this关键字在构造函数中指的是实例对象。但是，this关键字有多种含义，实例对象只是其中一种，下面就是this的详细解释。
 
-（1）在全局环境使用this，它指的就是顶层对象（浏览器环境中就是window）。
+我们知道，变量是存在于运行环境（context）之中的，同样的变量在不同运行环境之中有不同的含义。比如，JavaScript有两种运行环境，一种是全局环境，还有一种是函数环境。同样一个变量，处在全局环境与处在函数环境（即函数体内部），得到的值是不一样的。
 
-因此，下面三行命令是等价的。
+this关键字指的就是变量所处的运行环境。如果变量处在全局环境，this就是指全局环境；如果变量处在函数环境，this就是指函数环境。由于JavaScript内部一切都是对象，运行环境本身也是对象，所以this指全局环境时（在浏览器中）就是window对象，指函数环境时就是函数运行时所在的对象。
+
+我们分成几种情况来讨论。
+
+**（1）全局环境**
+
+在全局环境使用this，它指的就是顶层对象window。
+
+因此，下面两行命令是等价的。
 
 {% highlight javascript %}
 
-var a = 1;
-
 window.a = 1;
-
 this.a = 1;
 
 {% endhighlight %}
 
-在浏览器全局环境中，变量的顶层对象默认是window，这时this就表示window。
+在浏览器全局环境中，顶层对象就是window，这时this就表示window。
 
-（2）从构造函数生成实例对象时，this代表实例对象。
+**（2）构造函数**
+
+从构造函数生成实例对象时，this代表实例对象。
 
 {% highlight javascript %}
 
@@ -191,7 +198,9 @@ o.m()
 
 {% endhighlight %}
 
-（3）当函数被赋值给一个对象的属性，this就代表这个对象。
+**（3）对象属性**
+
+当函数被赋值给一个对象的属性，this就代表这个对象。
 
 {% highlight javascript %}
 
@@ -211,9 +220,11 @@ o2.f()
 
 可以看到，当f成为o1对象的方法时，this代表o1；当f成为o2对象的方法时，this代表o2。f所在的上下文环境，决定了this的指向。
 
+**（4）结论**
+
 综合上面三种情况，可以看到this就是运行时的上下文环境。如果在全局环境下运行，就代表全局对象；如果在某个对象中运行，就代表该对象。
 
-这种不确定的this指向，会给编程带来一些麻烦。比如，对某个按钮指定click事件的回调函数，可以这样写：
+这种不确定的this指向，会给编程带来一些麻烦。比如，使用jQuery函数库，对某个按钮指定click事件的回调函数，可以这样写：
 
 {% highlight javascript %}
 
@@ -223,7 +234,7 @@ $( "#button" ).on( "click", function() {
 
 {% endhighlight %}
 
-这时，this代表这个按钮的DOM对象。但是，如果像下面这样写，就会出错：
+这时，this指向这个按钮的DOM对象，因为是在按钮对象的环境中调用这个函数。但是，如果把代码改一改，this对象的指向就会发生变化。
 
 {% highlight javascript %}
 
@@ -235,7 +246,7 @@ $( "#button" ).on( "click", f );
 
 {% endhighlight %}
 
-这时，this代表全局对象。
+函数f是定义在全局环境中的，如果单独运行f，函数体内部的this指向全局环境。但是，当f被指定为按钮点击事件的回调函数时，就变成了在按钮对象中运行，这时this就指向按钮对象。这种细微的差别，很容易在编程中忽视，而导致难以察觉的错误。
 
 为了解决这个问题，可以采用下面的一些方法对this进行绑定，也就是使得this固定指向某个对象，减少编程中的不确定性。
 
@@ -450,12 +461,12 @@ element.addEventListener(
 
 {% endhighlight %}
 
-因为每点击一次，就绑定一个新函数，导致无法取消这些绑定。下面的代码是无效的：
+click事件绑定的是bind方法生成的一个匿名函数，这导致无法取消绑定。下面的代码是无效的：
 
 {% highlight javascript %}
 
 element.removeEventListener(
-        myWidget.handleClick.bind(myWidget));
+        'click', myWidget.handleClick.bind(myWidget));
 
 {% endhighlight %}
 
@@ -466,7 +477,7 @@ element.removeEventListener(
 var listener = myWidget.handleClick.bind(myWidget);
 element.addEventListener('click', listener);
 //  ...
-element.removeEventListener(listener);
+element.removeEventListener('click', listener);
 
 {% endhighlight %}
 

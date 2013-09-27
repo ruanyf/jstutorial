@@ -38,8 +38,7 @@ var popup = window.open(...popup details...);
 
 window.addEventListener("message", receiveMessage, false);
 
-function receiveMessage(event)
-{
+function receiveMessage(event) {
 	if (event.origin !== "http://example.org")
     return;
 
@@ -68,8 +67,7 @@ popup.postMessage("Hello World!", "http://example.org");
 
 // popup窗口
 
-function receiveMessage(event)
-{
+function receiveMessage(event) {
   event.source.postMessage("Nice to see you!", "*");
 }
 
