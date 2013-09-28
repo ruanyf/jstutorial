@@ -3,7 +3,7 @@ title: Navigation Timing
 category: bom
 layout: page
 date: 2013-09-26
-modifiedOn: 2013-09-26
+modifiedOn: 2013-09-27
 ---
 
 Navigation Timing是一个提供客户端网页处理信息的API，主要部署在浏览器内置的performance对象上。它可以用来获取，其他手段难以获取的数据。
@@ -86,13 +86,13 @@ performance.navigation对象提供当前网页访问来源的信息。
 
 该属性返回一个整数值，表示网页的加载来源，可能有以下4种情况：
 
-- **值为0**：网页通过点击链接、地址栏输入、表单提交、脚本操作等方式加载，等于常数performance.navigation.TYPE_NAVIGATENEXT。
+- **0**：网页通过点击链接、地址栏输入、表单提交、脚本操作等方式加载，相当于常数performance.navigation.TYPE_NAVIGATENEXT。
 
-- **值为1**：网页通过“重新加载”按钮或者location.reload()方法加载，等于常数performance.navigation.TYPE_RELOAD。
+- **1**：网页通过“重新加载”按钮或者location.reload()方法加载，相当于常数performance.navigation.TYPE_RELOAD。
 
-- **值为2**：网页通过“前进”或“后退”按钮加载，等于常数performance.navigation.TYPE_BACK_FORWARD。
+- **2**：网页通过“前进”或“后退”按钮加载，相当于常数performance.navigation.TYPE_BACK_FORWARD。
 
-- **值为255**：任何其他来源的加载，等于常数performance.navigation.TYPE_UNDEFINED。
+- **255**：任何其他来源的加载，相当于常数performance.navigation.TYPE_UNDEFINED。
 
 **（2）performance.navigation.redirectCount **
 
