@@ -3,7 +3,7 @@ title: 语法概述
 layout: page
 category: grammar
 date: 2012-12-14
-modifiedOn: 2013-09-26
+modifiedOn: 2013-09-30
 ---
 
 ## 基本句法和变量
@@ -397,7 +397,7 @@ v
 
 {% endhighlight %}
 
-需要注意的是，JavaScript的标识名区分大小写，所以undefined和null不同与Undefined和Null，后者只是普通的变量名。
+需要注意的是，JavaScript的标识名区分大小写，所以undefined和null不同于Undefined和Null，后者只是普通的变量名。
 
 这里需要明确的是，JavaScript的所有数据，都可以视为对象。不仅合成类型的数据（对象、数组、函数）是对象，就连原始类型的数据（数值、字符串、布尔值）也可以用对象方式调用。
 
@@ -635,7 +635,7 @@ typeof undefined
 
 {% endhighlight %}
 
-利用这一点，typeof可以用来检查一个没有声明的变量，而不报错。其他语法结构都没有这个功能。
+利用这一点，typeof可以用来检查一个没有声明的变量，而不报错。
 
 {% highlight javascript %}
 
@@ -644,6 +644,23 @@ v
 
 typeof v
 // "undefined"
+
+{% endhighlight %}
+
+实际编程中，这个特点通常用在判断语句。
+
+{% highlight javascript %}
+
+// 错误的写法
+if (v){
+	// ...
+}
+// ReferenceError: v is not defined
+
+// 正确的写法
+if (typeof v === undefined){
+	// ...
+}
 
 {% endhighlight %}
 
