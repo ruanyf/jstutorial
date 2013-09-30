@@ -3,7 +3,7 @@ title: Underscore.js
 layout: page
 category: library
 date: 2012-12-27
-modifiedOn: 2013-09-26
+modifiedOn: 2013-09-30
 ---
 
 ## 概述
@@ -206,7 +206,7 @@ bind方法绑定函数运行时的上下文，返回一个新函数。
 
 var o = {
 	p: 2,
-	m: function (){console.log(p);}
+	m: function (){console.log(this.p);}
 };
 
 o.m()

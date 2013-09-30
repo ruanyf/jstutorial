@@ -3,7 +3,7 @@ title: Node.js 概述
 layout: page
 category: nodejs
 date: 2013-01-14
-modifiedOn: 2013-09-23
+modifiedOn: 2013-09-30
 ---
 
 ## 简介
@@ -282,14 +282,15 @@ http.createServer(function (req, res) {
 
 data事件会在数据接收过程中，每收到一段数据就触发一次，接收到的数据被传入回调函数。end事件则是在所有数据接收完成后触发。
 
-## 库管理器npm
+## 模块管理器npm
 
 ### npm简介
 
-npm是Node.js默认的库管理器，用来安装和管理第三方node模块。在安装node的时候，会连带一起安装。node安装完成后，可以用下面的命令，查看一下帮助文件。
+npm是Node.js默认的模块管理器，用来安装和管理node模块。在安装node的时候，会连带一起安装npm。node安装完成后，可以用下面的命令，查看一下npm的帮助文件。
 
 {% highlight bash %}
 
+# npm命令列表
 npm help
 
 # 各个命令的简单用法
@@ -297,7 +298,7 @@ npm -l
 
 {% endhighlight %}
 
-下面的命令查看npm的版本和配置。
+下面的命令分别查看npm的版本和配置。
 
 {% highlight bash %}
 
@@ -307,7 +308,7 @@ npm config list -l
 
 {% endhighlight %}
 
-npm的版本可以在Node.js更新的时候一起更新。如果你想单独更新npm，使用下面的命令。
+npm的版本可以在Node更新的时候一起更新。如果你想单独更新npm，使用下面的命令。
 
 {% highlight bash %}
 
@@ -315,13 +316,15 @@ npm update -global npm
 
 {% endhighlight %}
 
-上面的命令之所以最后一个参数是npm，是因为npm本身也是Node.js的一个包。
+上面的命令之所以最后一个参数是npm，是因为npm本身也是Node.js的一个模块。
 
-### 库的安装
+### 模块的安装
 
-每个库可以“全局安装”，也可以“本地安装”。两者的差异是库的安装位置，以及调用方法。“全局安装”指的是将一个库直接下载到Node.js的安装目录中，各个项目都可以调用。“本地安装”指的是将一个库下载到当前目录，然后只有在这个目录和它的子目录之中，才能调用这个库。一般来说，全局安装只适用于工具库，比如npm和grunt。
+每个模块可以“全局安装”，也可以“本地安装”。两者的差异是模块的安装位置，以及调用方法。
 
-默认情况下，npm install 命令是“本地安装”某个库。库文件将下载到当前目录的 node_modules 子目录。
+“全局安装”指的是将一个模块直接下载到Node的安装目录中，各个项目都可以调用。“本地安装”指的是将一个模块下载到当前目录的node_modules子目录，然后只有在当前目录和它的子目录之中，才能调用这个模块。一般来说，全局安装只适用于工具模块，比如npm和grunt。
+
+默认情况下，npm install 命令是“本地安装”某个模块。
 
 {% highlight bash %}
 
@@ -329,7 +332,9 @@ npm install [package name]
 
 {% endhighlight %}
 
-使用global参数，可以“全局安装”某个库。
+使用上面的命令，模块文件将下载到当前目录的 node_modules 子目录。
+
+使用global参数，可以“全局安装”某个模块。
 
 {% highlight bash %}
 
@@ -345,7 +350,7 @@ sudo npm install -g [package name]
 
 {% endhighlight %}
 
-install命令总是安装最新版本的库，如果要安装特定版本的库，可以在库名后面加上@和版本号。
+install命令总是安装模块的最新版本，如果要安装模块的特定版本，可以在模块名后面加上@和版本号。
 
 {% highlight bash %}
 
@@ -353,7 +358,7 @@ npm install package_name@version
 
 {% endhighlight %}
 
-一旦安装了某个库，就可以在代码中用require命令调用这个库。
+一旦安装了某个模块，就可以在代码中用require命令调用这个模块。
 
 {% highlight javascript %}
 
@@ -363,9 +368,9 @@ console.log(backbone.VERSION)
 
 {% endhighlight %}
 
-### 库的升级和删除
+### 模块的升级和删除
 
-npm update 命令可以升级本地安装的库。
+npm update 命令可以升级本地安装的模块。
 
 {% highlight bash %}
 
@@ -373,7 +378,7 @@ npm update [package name]
 
 {% endhighlight %}
 
-加上global参数，可以升级全局安装的库。
+加上global参数，可以升级全局安装的模块。
 
 {% highlight bash %}
 
@@ -381,7 +386,7 @@ npm update -global [package name]
 
 {% endhighlight %}
 
-npm uninstall 命令，删除本地安装的库。
+npm uninstall 命令，删除本地安装的模块。
 
 {% highlight bash %}
 
@@ -389,7 +394,7 @@ npm uninstall [package name]
 
 {% endhighlight %}
 
-加上global参数，可以删除全局安装的库。
+加上global参数，可以删除全局安装的模块。
 
 {% highlight bash %}
 
@@ -397,9 +402,9 @@ sudo npm uninstall [package name] -global
 
 {% endhighlight %}
 
-### 库的查看和搜索
+### 模块的查看和搜索
 
-npm list命令，默认列出当前目录安装的所有库。如果使用global参数，就是列出全局安装的库。
+npm list命令，默认列出当前目录安装的所有模块。如果使用global参数，就是列出全局安装的模块。
 
 {% highlight bash %}
 
@@ -409,7 +414,7 @@ npm -global list
 
 {% endhighlight %}
 
-向服务器端搜索某个库，使用search命令（可接受正则搜索）。
+向服务器端搜索某个模块，使用search命令（可使用正则搜索）。
 
 {% highlight bash %}
 
@@ -417,11 +422,11 @@ npm search [搜索词]
 
 {% endhighlight %}
 
-如果不加搜索词，npm search 默认返回服务器端的所有库。
+如果不加搜索词，npm search 默认返回服务器端的所有模块。
 
 ## 配置文件package.json
 
-每个项目的根目录下面，一般都有一个package.json文件，定义了这个项目所需要的各种库，以及项目的配置（比如项目的名称、版本、许可证等元数据）。npm install 命令根据这个文件，自动下载这些库。所以，package.json 可以看作是npm命令的配置文件。
+每个项目的根目录下面，一般都有一个package.json文件，定义了这个项目所需要的各种模块，以及项目的配置（比如项目的名称、版本、许可证等元数据）。npm install 命令根据这个文件，自动下载所需的模块。所以，package.json 可以看作是npm命令的配置文件。
 
 下面是一个虚拟的package.json文件。
 
@@ -431,14 +436,14 @@ npm search [搜索词]
   "name":"name",
   "preferGlobal":false,
   "version":"0.0.0",
-  "author":"john doe",
+  "author":"your_name",
   "description":"",
-  "bugs":{"url":"http://github.com/owner/project/issues","email":""},
-  "contributors":[{"name":"John Bow","email":"johnbow@jb.com"}],
+  "bugs":{"url":"http://yoururl.com/","email":""},
+  "contributors":[{"name":"xxx","email":"xxx@example.com"}],
   "bin":{"http-server":"./bin/http-server"},
   "scripts":{"start":"node ./bin/http-server"},
   "main":"./lib/http-server",
-  "repository":{"type":"git","url":"https://github.com/jd"},
+  "repository":{"type":"git","url":"https://github.com/xxx"},
   "keywords":["cli","http","server"],
   "dependencies":{"package":"0.1.x"},
   "analyze":false,
@@ -457,6 +462,8 @@ npm search [搜索词]
 }
 
 {% endhighlight %}
+
+可以看到，package.json文件就是一个json对象，每一项设置就是json对象的一个成员。
 
 最简单的生成 package.json 文件的方式，就是使用 npm init 命令。
 
