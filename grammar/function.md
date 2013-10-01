@@ -3,7 +3,7 @@ title: 函数
 layout: page
 category: grammar
 date: 2012-12-15
-modifiedOn: 2013-09-03
+modifiedOn: 2013-10-01
 ---
 
 ## 概述
@@ -526,7 +526,19 @@ f()
 
 {% endhighlight %}
 
-需要注意的是，虽然arguments很像数组，但它是一个对象。如果对arguments对象调用数组方法会出错，比如，arguments.sort() 会报出TypeError。解决方法是将arguments转为数组。
+需要注意的是，虽然arguments很像数组，但它是一个对象。某些用于数组的方法，可以直接用于arguments对象，比如函数的apply方法，或者数组合并的concat方法。
+
+{% highlight javascript %}
+
+// 用于函数的apply方法
+myfunction.apply(obj, arguments).
+
+// 与另一个数组合并
+Array.prototype.concat.apply([1,2,3], arguments).
+
+{% endhighlight %}
+
+不过，大多数的数组方法，不能直接用于arguments对象，比如arguments.sort() 会报出TypeError。解决方法是将arguments转为真正的数组。下面是两种常用的转换方法：slice方法和逐一填入新数组。
 
 {% highlight javascript %}
 
@@ -541,7 +553,7 @@ for(var i = 0; i < arguments.length; i++) {
 
 {% endhighlight %}
 
-arguments对象带有一个callee属性，返回它对应的原函数。
+arguments对象带有一个callee属性，返回它所对应的原函数。
 
 {% highlight javascript %}
 
