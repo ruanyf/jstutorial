@@ -377,6 +377,8 @@ EcmaScript 5在数组原型（Array.prototype）上，新增了9个方法，其�
 
 这7个方法可以直接在数组上使用，它们的参数是一个函数。这个作为参数的函数本身又接受三个参数，分别是数组的当前元素elem、该元素的位置index和整个数组arr。
 
+对于不支持这些方法的老式浏览器（主要是IE 8及以下版本），可以使用函数库[es5-shim](https://github.com/kriskowal/es5-shim)，或者[Underscore](http://underscorejs.org/#filter)和[Lo-Dash](http://lodash.com/docs#filter)。
+
 ### map
 
 map方法对所有元素依次调用一个函数，根据函数结果返回一个新数组。
@@ -413,12 +415,27 @@ filter方法对所有元素调用一个测试函数，操作结果为true的元�
 
 {% highlight javascript %}
 
-[1, 2, 3, 4, 5].filter(function(elem, index, arr){
-    return elem % 2 === 0;
-});
-// 返回 [2, 4]
+[1,2,3,4,5].filter(function(elem){
+	return (elem>3);		
+})
+// [4,5]
 
 {% endhighlight %}
+
+上面代码只保留大于3的元素，作为一个新数组返回。
+
+filter方法接受一个返回布尔值的测试函数作为参数。该测试函数的第一个参数是当前数组成员的值。除了这个参数以外，其他参数都是可选的，分别是当前数组成员的位置和整个数组。
+
+{% highlight javascript %}
+
+[1, 2, 3, 4, 5].filter(function(elem, index, arr){
+    return index % 2 === 0;
+});
+// [1, 3, 5]
+
+{% endhighlight %}
+
+上面代码返回原数组偶数位置的成员组成的新数组。
 
 ### some
 
