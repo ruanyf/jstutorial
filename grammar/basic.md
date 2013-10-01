@@ -553,6 +553,14 @@ C = (H - 0xD800) * 0x400 + L - 0xDC00 + 0x10000
 
 {% endhighlight %}
 
+下面的正则表达式可以识别所有UTF-16字符。
+
+{% highlight javascript %}
+
+([\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF])
+
+{% endhighlight %}
+
 ### 布尔值
 
 布尔值包含true和false两个值。下列运算符会返回布尔值：
