@@ -92,6 +92,26 @@ doSomething(options, function (err, newOptions) {
 
 如果没有发生错误，参数err的值就是null。
 
+### 全局对象
+
+Node提供以下一些全局对象，它们是所有模块都可以调用的。
+
+- **global**：表示Node所在的全局环境，类似于浏览器中的window对象。
+
+- **process**：指向Node内置的process模块，允许开发者与当前进程互动。
+
+- **console**：指向Node内置的console模块，提供命令行环境中的标准输入、标准输出功能。
+
+- **定时器函数**：共有4个，分别是setTimeout(), clearTimeout(), setInterval(), clearInterval()。
+
+- **require**：用于加载模块。
+
+- **_filename**：指向当前运行的脚本文件名。
+
+- **_dirname**：指向当前运行的脚本所在的目录。
+
+除此之外，还有一些对象实际上是模块内部的局部变量，指向的对象根据模块不同而不同，但是所有模块都适用，可以看作是伪全局变量，主要为module, module.exports, exports等。
+
 ### 模块化结构
 
 Node.js采用模块化结构，按照[CommonJS规范](http://wiki.commonjs.org/wiki/CommonJS)定义和使用模块。
@@ -255,7 +275,7 @@ http.createServer(function(req, res) {
 
 {% endhighlight %}
 
-### POST方法
+### 处理POST请求
 
 当客户端采用POST方法发送数据时，服务器端可以对data和end两个事件，设立监听函数。
 
@@ -281,6 +301,108 @@ http.createServer(function (req, res) {
 {% endhighlight %}
 
 data事件会在数据接收过程中，每收到一段数据就触发一次，接收到的数据被传入回调函数。end事件则是在所有数据接收完成后触发。
+
+### 发出请求：request方法
+
+request方法用于发出HTTP请求。
+
+{% highlight javascript %}
+
+var http = require('http');
+
+//The url we want is: 'www.random.org/integers/?num=1&min=1&max=10&col=1&base=10&format=plain&rnd=new'
+var options = {
+  host: 'www.random.org',
+  path: '/integers/?num=1&min=1&max=10&col=1&base=10&format=plain&rnd=new'
+};
+
+callback = function(response) {
+  var str = '';
+
+  //another chunk of data has been recieved, so append it to `str`
+  response.on('data', function (chunk) {
+    str += chunk;
+  });
+
+  //the whole response has been recieved, so we just print it out here
+  response.on('end', function () {
+    console.log(str);
+  });
+}
+
+var req = http.request(options, callback);
+
+req.write("hello world!");
+req.end();
+
+{% endhighlight %}
+
+request对象的第一个参数是options对象，用于指定请求的域名和路径，第二个参数是请求完成后的回调函数。
+
+如果使用POST方法发出请求，只需在options对象中设定即可。
+
+{% highlight javascript %}
+
+var options = {
+  host: 'www.example.com',
+  path: '/',
+  port: '80',
+  method: 'POST'
+};
+
+{% endhighlight %}
+
+指定HTTP头信息，也是在options对象中设定。
+
+{% highlight javascript %}
+
+var options = {
+  headers: {'custom': 'Custom Header Demo works'}
+};
+
+{% endhighlight %}
+
+### 搭建HTTPs服务器
+
+搭建HTTPs服务器需要有SSL证书。对于向公众提供服务的网站，SSL证书需要向证书颁发机构购买；对于自用的网站，可以自制。
+
+自制SSL证书需要OpenSSL，具体命令如下。
+
+{% highlight bash %}
+
+openssl genrsa -out key.pem
+openssl req -new -key key.pem -out csr.pem
+openssl x509 -req -days 9999 -in csr.pem -signkey key.pem -out cert.pem
+rm csr.pem
+
+{% endhighlight %}
+
+上面的命令生成两个文件：ert.pem（证书文件）和 key.pem（私钥文件）。有了这两个文件，就可以运行HTTPs服务器了。
+
+{% highlight javascript %}
+
+var https = require('https');
+var fs = require('fs');
+
+var options = {
+  key: fs.readFileSync('key.pem'),
+  cert: fs.readFileSync('cert.pem')
+};
+
+var a = https.createServer(options, function (req, res) {
+  res.writeHead(200);
+  res.end("hello world\n");
+}).listen(8000);
+
+{% endhighlight %}
+
+上面代码显示，HTTPs服务器与HTTP服务器的最大区别，就是createServer方法多了一个options参数。运行以后，就可以测试是否能够正常访问。
+
+{% highlight bash %}
+
+curl -k https://localhost:8000
+
+{% endhighlight %}
 
 ## 模块管理器npm
 
