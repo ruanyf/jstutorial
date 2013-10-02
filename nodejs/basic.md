@@ -404,6 +404,106 @@ curl -k https://localhost:8000
 
 {% endhighlight %}
 
+## process模块
+
+process模块用来与当前进程互动，可以通过全局变量process访问，不必使用require命令加载。
+
+### 属性
+
+process对象提供一系列属性，用于返回系统信息。
+
+- **process.pid**：当前进程的进程号。
+- **process.version**：Node的版本，比如v0.10.18。
+- **process.platform**：当前系统平台，比如Linux。
+- **process.title**：默认值为“node”，可以自定义该值。
+- **process.argv**：当前进程的命令行参数数组。
+- **process.argc**：当前进程的命令行参数个数。
+- **process.env**：指向当前shell的环境变量，比如process.env.HOME。
+- **process.execPath**：运行当前进程的可执行文件的绝对路径。
+- **process.stdout**：指向标准输出。
+- **process.stdin**：指向标准输入。
+- **process.stderr**：指向标准错误。
+
+process.stdout的write方法等同于console.log。
+
+{% highlight javascript %}
+
+exports.log = function() {
+    process.stdout.write(format.apply(this, arguments) + '\n');
+};
+
+{% endhighlight %}
+
+### 方法
+
+process对象提供以下方法：
+
+- **process.exit()**：退出当前进程。
+- **process.cwd()**：返回运行当前脚本的工作目录的路径。_
+- **process.chdir()**：改变工作目录。
+- **process.nextTick()**：将一个回调函数放在下次事件循环的顶部。
+
+process.chdir()改变工作目录的例子。
+
+{% highlight bash %}
+
+process.cwd()
+# '/home/aaa'
+
+process.chdir('/home/bbb')
+
+process.cwd()
+# '/home/bbb'
+
+{% endhighlight %}
+
+process.nextTick()的例子，指定下次事件循环首先运行的任务。
+
+{% highlight bash %}
+
+process.nextTick(function () {
+    console.log('Next event loop!');
+});
+
+{% endhighlight %}
+
+上面代码可以用setTimeout改写，但是nextTick的效果更高、描述更准确。
+
+{% highlight bash %}
+
+setTimeout(function () {
+   console.log('Next event loop!');
+}, 0)
+
+{% endhighlight %}
+
+### 事件
+
+**（1）exit事件**
+
+当前进程退出时，会触发exit事件，可以对该事件指定回调函数。
+
+{% highlight javascript %}
+
+process.on('exit', function () {
+  fs.writeFileSync('/tmp/myfile', 'This MUST be saved on exit.');
+ });
+
+{% endhighlight %}
+
+**（2）uncaughtException事件**
+
+当前进程抛出一个没有被捕捉的意外时，会触发uncaughtException事件。
+
+{% highlight javascript %}
+
+ process.on('uncaughtException', function (err) {
+   console.error('An uncaught error occurred!');
+   console.error(err.stack);
+ });
+
+{% endhighlight %}
+
 ## 模块管理器npm
 
 ### npm简介
@@ -550,7 +650,20 @@ npm search [搜索词]
 
 每个项目的根目录下面，一般都有一个package.json文件，定义了这个项目所需要的各种模块，以及项目的配置（比如项目的名称、版本、许可证等元数据）。npm install 命令根据这个文件，自动下载所需的模块。所以，package.json 可以看作是npm命令的配置文件。
 
-下面是一个虚拟的package.json文件。
+package.json文件的内容，就是一个json对象，该对象的每一个成员就是当前项目的一项设置。最简单的package.json只有两个成员：项目名称和项目版本。
+
+{% highlight javascript %}
+
+{
+  "name" : "xxx",
+  "version" : "0.0.0",
+}
+
+{% endhighlight %}
+
+上面代码的name就是项目名称，version是项目版本，遵守“主要版本.次要版本.补丁号”的格式。
+
+更详细的package.json文件如下。
 
 {% highlight javascript %}
 
@@ -585,9 +698,19 @@ npm search [搜索词]
 
 {% endhighlight %}
 
-可以看到，package.json文件就是一个json对象，每一项设置就是json对象的一个成员。
+上面代码的主要成员有这样几个：
 
-最简单的生成 package.json 文件的方式，就是使用 npm init 命令。
+- **description**：项目描述。
+- **keywords**：项目关键词。
+- **author**：项目作者。
+- **contributors**：项目贡献者。
+- **homepage**：项目主页的URL。
+- **repository**：项目代码库的网址。
+- **main**：项目的加载点，指明当用户根据模块名加载模块时，所要调用的具体脚本名。
+- **dependencies**：项目运行依赖的模块。
+- **devDependencies**：项目开发依赖的模块，使用npm install --dev命令时一并安装。
+
+package.json 文件可以手动编写，也可以使用 npm init 命令手动生成。
 
 {% highlight bash %}
 
@@ -595,7 +718,7 @@ npm init
 
 {% endhighlight %}
 
-这个命令采用互动方式，要求用户回答一些问题，然后在当前目录生成一个基本的 package.json 文件。所有问题之中，只有项目名称（name）和项目版本（version）是必填的，其他都是选填的。
+这个命令采用互动方式，要求用户回答一些问题，然后在当前目录生成一个基本的 package.json 文件。所有问题之中，只有项目名称（name）和项目版本（version）是必填的，其他都是选填的。下面是一个实例。
 
 {% highlight bash %}
 
