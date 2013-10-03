@@ -65,32 +65,37 @@ node
 
 ### 异步操作
 
-Node.js采用V8引擎处理JavaScript脚本，最大特征就是单线程运行，即一次只能运行一个任务。这导致Node.js大量采用异步操作（asynchronous opertion），即任务不是马上执行，而是插在队列的尾部，等到前面的任务运行完后再执行。
+Node采用V8引擎处理JavaScript脚本，最大特点就是单线程运行，一次只能运行一个任务。这导致Node大量采用异步操作（asynchronous opertion），即任务不是马上执行，而是插在任务队列的尾部，等到前面的任务运行完后再执行。
 
 由于这种特性，某一个任务的后续操作，往往采用回调函数（callback）的形式进行定义。
 
 {% highlight javascript %}
 
-doSomething(options, function (err, newOptions) {
-  // . . .
-});
+var isTrue = function(value, callback) {
+  if (value === true) {
+    callback(null, "Value was true.");
+  }
+  else {
+    callback(new Error("Value is not true!"));
+  }
+}
 
 {% endhighlight %}
 
-上面代码的doSomething表示处理某个任务，options就是处理这个任务所需的参数，function(err, newOptions)则是任务完成后的回调函数。
-
-值得注意的是，回调函数的格式也有约定。第一个参数err是一个Error对象，第二个参数newOptions才是回调函数的真正参数。如果doSomething运行出现错误，则抛出Error对象，回调函数必须做相应处理。
+上面代码就把进一步的处理，交给回调函数callback。约定俗成，callback的位置总是最后一个参数。值得注意的是，callback的格式也有约定。
 
 {% highlight javascript %}
 
-doSomething(options, function (err, newOptions) {
-			if (err) return handleError(err);
-			// . . .
-});
+var callback = function (error, value) {
+  if (error) {
+    return console.log(error); 
+  }
+  console.log(value);
+}
 
 {% endhighlight %}
 
-如果没有发生错误，参数err的值就是null。
+callback的第一个参数是一个Error对象，第二个参数才是真正的数据。如果没有发生错误，第一个参数就传入null。这种写法有一个很大的好处，就是说只要判断回调函数的第一个参数，就知道有没有出错，如果不是null，就肯定出错了。
 
 ### 全局对象
 
@@ -150,6 +155,8 @@ Node.js自带一系列的核心模块，下面就是其中的一部分：
 - **querystring**：解析URL的查询字符串。
 - **child_process**：新建子进程。
 - **util**：提供一系列实用小工具。
+- **path**：处理文件路径。
+- **crypto**：提供加密和解密功能，基本上是对OpenSSL的包装。
 
 除了使用核心模块，还可以使用第三方模块，以及自定义模块。
 
@@ -208,6 +215,54 @@ fs.readFile('example_log.txt', function (err, logData) {
 
   var text = logData.toString();
 
+});
+
+{% endhighlight %}
+
+上面代码使用readFile方法读取文件。readFile方法的第一个参数是文件名，第二个参数是回调函数。这两个参数中间，还可以插入一个可选参数，表示文件的编码。
+
+{% highlight javascript %}
+
+fs.readFile('example_log.txt', 'utf8', function (err, logData) {
+	// ...
+});
+
+{% endhighlight %}
+
+可用的文件编码包括“ascii”、“utf8”和“base64”。如果这个参数没有提供，默认是utf8。
+
+如果想要同步读取文件，可以使用readFileSync方法。
+
+{% highlight javascript %}
+
+var data = fs.readFileSync('./file.json');
+
+{% endhighlight %}
+
+写入文件要使用writeFile方法。
+
+{% highlight javascript %}
+
+fs.writeFile('./file.txt', data, function (err) {
+    if (err) {
+      console.log(err.message);
+      return;
+    }
+    console.log('Saved successfully.');
+  });
+
+{% endhighlight %}
+
+readdir方法用于读取目录，返回一个所包含的文件和子目录的数组。
+
+{% highlight javascript %}
+
+fs.readdir(process.cwd(), function (err, files) {
+  if (err) {
+    console.log(err);
+    return;
+  }
+  console.log(files);
 });
 
 {% endhighlight %}
