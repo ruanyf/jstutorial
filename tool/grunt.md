@@ -210,7 +210,7 @@ grunt.initConfig方法中的代码是模块配置。一个模块可以完成多�
 - {}：允许使用逗号分隔的列表，表示“or”（或）关系。
 - !：用于模式的开头，表示只返回不匹配的情况。
 
-比如，foo/\*.js匹配foo目录下面的文件名以.js结尾的文件，foo/\*\*/\*.js匹配foo目录和它的所有子目录下面的文件名以.js结尾的文件，!\*.css表示所有后缀名不为“.css”的文件。
+比如，foo/\*.js匹配foo目录下面的文件名以.js结尾的文件，foo/\*\*/\*.js匹配foo目录和它的所有子目录下面的文件名以.js结尾的文件，!\*.css表示匹配所有后缀名不为“.css”的文件。
 
 使用通配符设置src属性的更多例子：
 
@@ -362,7 +362,7 @@ copy: {
 
 {% endhighlight %}
 
-上面代码将src子目录（只包含它下面的第一层文件和子目录），拷贝到dest子目录下面（即dest/src目录）。
+上面代码将src子目录（只包含它下面的第一层文件和子目录），拷贝到dest子目录下面（即dest/src目录）。如果要更准确控制拷贝行为，比如只拷贝文件、不拷贝目录、不保持目录结构，可以写成下面这样：
 
 {% highlight javascript %}
 
@@ -379,8 +379,6 @@ copy: {
 
 {% endhighlight %}
 
-上面代码将src目录及它的子目录下面的所有文件（不含子目录），拷贝到dest子目录下面。
-
 ### grunt-contrib-watch
 
 [watch模块](https://github.com/gruntjs/grunt-contrib-watch)用来在后台运行，监听指定事件，然后自动运行指定的任务。
@@ -396,6 +394,61 @@ watch: {
 
 上面代码设置，任何的代码变动，就会导致运行jshint。
 
+### 其他模块
+
+下面是另外一些有用的模块。
+
+**（1）grunt-contrib-clean**
+
+该模块用于删除文件或目录。
+
+{% highlight javascript %}
+
+clean: {
+  build: {
+    src: ["path/to/dir/one", "path/to/dir/two"]
+  }
+}
+
+{% endhighlight %}
+
+**（2）grunt-autoprefixer**
+
+该模块用于为CSS语句加上浏览器前缀。
+
+{% highlight javascript %}
+
+autoprefixer: {
+  build: {
+    expand: true,
+    cwd: 'build',
+    src: [ '**/*.css' ],
+    dest: 'build'
+  }
+},
+
+{% endhighlight %}
+
+**（3）grunt-contrib-connect**
+
+该模块用于在本机运行一个Web Server。
+
+{% highlight javascript %}
+
+connect: {
+  server: {
+    options: {
+      port: 4000,
+      base: 'build',
+      hostname: '*'
+    }
+  }
+}
+
+{% endhighlight %}
+
+connect模块会随着grunt运行结束而结束，为了使它一直处于运行状态，可以把它放在watch模块之前运行。因为watch模块需要手动中止，所以connect模块也就会一直运行。
+
 ## 参考链接
 
 - Frederic Hemberger, [A build tool for front-end projects](http://frederic-hemberger.de/artikel/grunt-buildtool-for-frontend-projects/)
@@ -405,3 +458,4 @@ watch: {
 - Swapnil Mishra, [Simplifying Chores with Grunt](http://howtonode.org/c4e0f8565942d5e6df45fb78b12d19435543c236/simplifying-chores-with-grunt)
 - AJ ONeal, [Moving to GruntJS](http://blog.coolaj86.com/articles/moving-to-grunt.html)
 - Grunt Documentation, [Configuring tasks](http://gruntjs.com/configuring-tasks)
+- Landon Schropp, [Writing an Awesome Build Script with Grunt](http://www.sitepoint.com/writing-awesome-build-script-grunt/)
