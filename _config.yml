@@ -14,9 +14,8 @@ chapters:
 - jquery
 - library
 - tool
+- special
 - nodejs
-- pattern
-- algorithm
 
 introduction: 导论
 grammar: 基本语法
@@ -25,9 +24,8 @@ oop: 面向对象编程
 dom: DOM
 bom: 浏览器对象
 htmlapi: HTML网页的API
-algorithm: 算法
 jquery: jQuery
 library: 函数库
 nodejs: Node.js
-pattern: 模式
 tool: 开发工具
+special: 专题

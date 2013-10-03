@@ -1,6 +1,6 @@
 ---
 title: 设计模式
-category: pattern
+category: special
 layout: page
 date: 2013-02-04
 modifiedOn: 2013-02-04

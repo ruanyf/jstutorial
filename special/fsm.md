@@ -1,7 +1,7 @@
 ---
 title: JavaScript与有限状态机
 layout: page
-category: pattern
+category: special
 date: 2013-09-02
 modifiedOn: 2013-09-03
 ---

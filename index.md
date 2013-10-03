@@ -2,7 +2,7 @@
 layout: homepage
 title: JavaScript 标准教程（alpha）
 date: 2012-11-18
-modifiedOn: 2013-09-27
+modifiedOn: 2013-10-03
 ---
 
 <h2 id="introduction">导论</h2>
@@ -108,21 +108,18 @@ modifiedOn: 2013-09-27
 - [Google Closure](tool/closure.html)
 - [Source map](tool/sourcemap.html)
 
+<h2 id="special">专题</h2>
+
+- [设计模式](special/designpattern.html)
+- [异步编程](special/asynchronous.html)
+- [排序算法](special/sorting.html)
+- [有限状态机](special/fsm.html)
+
 <h2 id="nodejs">Node.js</h2>
 
 - [概述](nodejs/basic.html)
 - [CommonJS规范](nodejs/commonjs.html)
 - [Express框架](nodejs/express.html)
-
-<h2 id="pattern">模式</h2>
-
-- [设计模式](pattern/designpattern.html)
-- [异步编程](pattern/asynchronous.html)
-- [有限状态机](pattern/fsm.html)
-
-<h2 id="algorithm">算法</h2>
-
-- [排序](algorithm/sorting.html)
 
 {% comment %}
 

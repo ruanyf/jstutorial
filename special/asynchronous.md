@@ -1,7 +1,7 @@
 ---
 title: 异步编程
 layout: page
-category: pattern
+category: special
 date: 2012-12-22
 modifiedOn: 2012-12-22
 ---
