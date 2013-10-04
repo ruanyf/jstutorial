@@ -3,7 +3,7 @@ title: Express框架
 category: nodejs
 layout: page
 date: 2013-09-13
-modifiedOn: 2013-09-13
+modifiedOn: 2013-10-04
 ---
 
 Express是目前最流行的基于Node.js的Web开发框架。它可以快速地搭建网站原型。
@@ -62,15 +62,28 @@ node app.js
 
 {% highlight javascript %}
 
-app.get('/', function(request, response) {
-   response.send("此处放HTML代码");
+app.get('/', function(req, res){
+  var body = 'Hello World';
+  res.setHeader('Content-Type', 'text/plain');
+  res.setHeader('Content-Length', body.length);
+  res.end(body);
 });
 
 {% endhighlight %}
 
-上面代码的get方法，表示处理客户端发出的GET请求。它的第一个参数是访问路径，正斜杠（/）就代表根路径；第二个参数是回调函数，它的request参数表示客户端发来的HTTP请求对象，response代表发向客户端的HTTP回应对象。
+上面代码的get方法，表示处理客户端发出的GET请求。它的第一个参数是访问路径，正斜杠（/）就代表根路径；第二个参数是回调函数，它的req参数表示客户端发来的HTTP请求，res参数代表发向客户端的HTTP回应。
 
-再运行下面的命令，然后在浏览器中访问http://127.0.0.1:3000。
+使用send方法，也能达到同样效果。
+
+{% highlight javascript %}
+
+app.get('/', function(req, res) {
+   res.send('Hello World');
+});
+
+{% endhighlight %}
+
+然后，运行下面的命令，再在浏览器中访问http://127.0.0.1:3000。
 
 {% highlight bash %}
 
@@ -78,9 +91,9 @@ node app.js
 
 {% endhighlight %}
 
-网页就会显示“此处放HTML代码”。
+网页就会显示“Hello World”。
 
-然后，再定义路径/api的处理方法。
+除了发送字符串，send方法还可以直接发送对象。比如，/api路径的处理可以写成下面这样：
 
 {% highlight javascript %}
 

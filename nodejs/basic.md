@@ -721,6 +721,56 @@ npm update -global npm
 
 上面的命令之所以最后一个参数是npm，是因为npm本身也是Node.js的一个模块。
 
+### 查看模块信息
+
+npm的info命令可以查看每个模块的具体信息。比如，查看underscore模块信息的命令是：
+
+{% highlight bash %}
+
+npm info underscore
+
+{% endhighlight %}
+
+上面命令返回一个JavaScript对象，包含了underscore模块的详细信息。
+
+{% highlight javascript %}
+
+{ name: 'underscore',
+  description: 'JavaScript\'s functional programming helper library.',
+  'dist-tags': { latest: '1.5.2', stable: '1.5.2' },
+  repository: 
+   { type: 'git',
+     url: 'git://github.com/jashkenas/underscore.git' },
+  homepage: 'http://underscorejs.org',
+  main: 'underscore.js',
+  version: '1.5.2',
+  devDependencies: { phantomjs: '1.9.0-1' },
+  licenses: 
+   { type: 'MIT',
+     url: 'https://raw.github.com/jashkenas/underscore/master/LICENSE' },
+  files: 
+   [ 'underscore.js',
+     'underscore-min.js',
+     'LICENSE' ],
+  readmeFilename: 'README.md'}
+
+{% endhighlight %}
+
+上面这个JavaScript对象的每个成员，都可以直接从info命令查询。
+
+{% highlight bash %}
+
+npm info underscore description
+# JavaScript's functional programming helper library.
+
+npm info underscore homepage
+# http://underscorejs.org
+
+npm info underscore version
+# 1.5.2
+
+{% endhighlight %}
+
 ### 模块的安装
 
 每个模块可以“全局安装”，也可以“本地安装”。两者的差异是模块的安装位置，以及调用方法。
