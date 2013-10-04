@@ -3,7 +3,7 @@ title: WebRTC
 layout: page
 category: bom
 date: 2013-01-10
-modifiedOn: 2013-08-10
+modifiedOn: 2013-10-04
 ---
 
 ## 概述
@@ -58,6 +58,12 @@ navigator.getUserMedia({
 上面的代码用来获取摄像头和麦克风的实时信息。
 
 如果网页使用了getUserMedia，浏览器就会询问用户，是否许可提供信息。如果用户拒绝，就调用回调函数onError。
+
+发生错误时，回调函数的参数是一个Error对象，它的code属性取值如下：
+
+- **PERMISSION_DENIED**：用户拒绝提供信息。
+- **NOT_SUPPORTED_ERROR**：浏览器不支持硬件设备。
+- **MANDATORY_UNSATISFIED_ERROR**：无法发现指定的硬件设备。
 
 ## 展示摄像头图像
 
@@ -154,3 +160,4 @@ function onSuccess(stream) {
 
 - Andi Smith，[Get Started with WebRTC](http://www.netmagazine.com/tutorials/get-started-webrtc)
 - Thibault Imbert, [From microphone to .WAV with: getUserMedia and Web Audio](http://typedarray.org/from-microphone-to-wav-with-getusermedia-and-web-audio/)
+- Ian Devlin, [Using the getUserMedia API with the HTML5 video and canvas elements](http://html5hub.com/using-the-getusermedia-api-with-the-html5-video-and-canvas-elements/#i.bz41ehmmhd3311)

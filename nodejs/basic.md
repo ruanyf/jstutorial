@@ -267,6 +267,70 @@ fs.readdir(process.cwd(), function (err, files) {
 
 {% endhighlight %}
 
+### Stream模式
+
+Stream是数据处理的一种形式，可以用来取代回调函数。举例来说，传统形式的文件处理，必须先将文件全部读入内容，然后调用回调函数，如果遇到大文件，整个过程将非常耗时。Stream则是将文件分成小块读入内存，每读入一次，都会触发相应的事件。只要监听这些事件，就能掌握进展，做出相应处理，这样就提高了性能。Node内部的很多IO处理都采用Stream，比如HTTP连接、文件读写、标准输入输出。
+
+Stream既可以读取数据，也可以写入数据。读写数据时，每读入（或写入）一段数据，就会触发一次data事件，全部读取（或写入）完毕，触发end事件。如果发生错误，则触发error事件。
+
+fs模块的createReadStream方法用于新建读取数据流，createWriteStream方法用于新建写入数据流。使用这两个方法，可以做出一个用于文件复制的脚本copy.js。
+
+{% highlight javascript %}
+
+// copy.js
+
+var fs = require('fs');
+console.log(process.argv[2], '->', process.argv[3]);
+
+var readStream = fs.createReadStream(process.argv[2]);
+var writeStream = fs.createWriteStream(process.argv[3]);
+
+readStream.on('data', function (chunk) {
+  writeStream.write(chunk);
+});
+
+readStream.on('end', function () {
+  writeStream.end();
+});
+
+readStream.on('error', function (err) {
+  console.log("ERROR", err);
+});
+
+writeStream.on('error', function (err) {
+  console.log("ERROR", err);
+});
+
+{% endhighlight %}
+
+上面代码非常容易理解，使用的时候直接提供源文件路径和目标文件路径，就可以了。
+
+{% highlight bash %}
+
+node cp.js src.txt dest.txt
+
+{% endhighlight %}
+
+Streams对象都具有pipe方法，起到管道作用，将一个数据流输入另一个数据流。所以，上面代码可以重写成下面这样：
+
+{% highlight javascript %}
+
+var fs = require('fs');
+console.log(process.argv[2], '->', process.argv[3]);
+
+var readStream = fs.createReadStream(process.argv[2]);
+var writeStream = fs.createWriteStream(process.argv[3]);
+
+readStream.on('open', function () {
+  readStream.pipe(writeStream);
+});
+
+readStream.on('end', function () {
+  writeStream.end();
+});
+
+{% endhighlight %}
+
 ## http模块
 
 ### 实例：搭建一个HTTP服务器
@@ -472,20 +536,58 @@ process对象提供一系列属性，用于返回系统信息。
 - **process.platform**：当前系统平台，比如Linux。
 - **process.title**：默认值为“node”，可以自定义该值。
 - **process.argv**：当前进程的命令行参数数组。
-- **process.argc**：当前进程的命令行参数个数。
 - **process.env**：指向当前shell的环境变量，比如process.env.HOME。
 - **process.execPath**：运行当前进程的可执行文件的绝对路径。
 - **process.stdout**：指向标准输出。
 - **process.stdin**：指向标准输入。
 - **process.stderr**：指向标准错误。
 
-process.stdout的write方法等同于console.log。
+下面是主要属性的介绍。
+
+**(1)stdout**
+
+process.stdout用来控制标准输出，也就是在命令行窗口向用户显示内容。它的write方法等同于console.log。
 
 {% highlight javascript %}
 
 exports.log = function() {
     process.stdout.write(format.apply(this, arguments) + '\n');
 };
+
+{% endhighlight %}
+
+**（2）argv**
+
+process.argv返回命令行脚本的各个参数组成的数组。
+
+先新建一个脚本文件argv.js。
+
+{% highlight javascript %}
+
+// argv.js
+
+console.log("argv: ",process.argv);
+console.log("argc: ",process.argc);
+
+{% endhighlight %}
+
+在命令行下调用这个脚本，会得到以下结果。
+
+{% highlight javascript %}
+
+node argv.js a b c
+# [ 'node', '/path/to/argv.js', 'a', 'b', 'c' ]
+
+{% endhighlight %}
+
+上面代码表示，argv返回数组的成员依次是命令行的各个部分。要得到真正的参数部分，可以把argv.js改写成下面这样。
+
+{% highlight javascript %}
+
+// argv.js
+
+var myArgs = process.argv.slice(2);
+console.log(myArgs);
 
 {% endhighlight %}
 
@@ -558,6 +660,30 @@ process.on('exit', function () {
  });
 
 {% endhighlight %}
+
+## child_process模块
+
+child_process模块用于新建子进程。子进程的运行结果储存在系统缓存之中（最大200KB），等到子进程运行结束以后，主进程再用回调函数读取子进程的运行结果。
+
+{% highlight javascript %}
+
+var childProcess = require('child_process')；
+
+var ls = childProcess.exec('ls -l', function (error, stdout, stderr) {
+   if (error) {
+     console.log(error.stack);
+     console.log('Error code: '+error.code);
+   }
+   console.log('Child Process STDOUT: '+stdout);
+});
+
+ls.on('exit', function (code) {
+   console.log('Child process exited with exit code '+code);
+});
+
+{% endhighlight %}
+
+上面代码的exec方法会新建一个子进程，然后缓存它的运行结果，运行结束后调用回调函数。由于上面运行的是ls命令，它会自然结束，所以不会触发exit事件，因此上面代码最后监听exit事件的部分，其实是多余的。
 
 ## 模块管理器npm
 
