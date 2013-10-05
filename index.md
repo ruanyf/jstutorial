@@ -2,16 +2,15 @@
 layout: homepage
 title: JavaScript 标准教程（alpha）
 date: 2012-11-18
-modifiedOn: 2013-10-03
+modifiedOn: 2013-10-06
 ---
-
+		
 <h2 id="introduction">导论</h2>
 
-- [版权声明](introduction/license.html)
+- [版权声明](introduction/license.html
+- [前言](introduction/preface.html)
 - [为什么学习JavaScript？](introduction/why.html)
 - [Javascript的历史](introduction/history.html)
-- [使用说明](introduction/instruction.html)
-- [参考书目](introduction/bibliography.html)
 
 <h2 id="grammar">基本语法</h2>
 
