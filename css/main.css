@@ -80,7 +80,7 @@ article.bookPage blockquote{
 	-webkit-border-radius:1.5em; /* Saf3+, Chrome */
     border-radius: 1.5em;
 	border-left-width: 1.2em;   
-	border-left-color: #e67e22;
+	border-left-color: #e74c3c;
 	border-left-style: solid;
 	text-shadow: 0 1px white;
 }
@@ -99,7 +99,7 @@ article.bookPage>div>div>ol{
 	-webkit-border-radius:1.5em; /* Saf3+, Chrome */
     border-radius: 1.5em;
 	border-left-width: 1.2em;   
-	border-left-color: #e0dfcc;
+	border-left-color: #e67e22;
 	border-left-style: solid;
 	text-shadow: 0 1px white;
 }
