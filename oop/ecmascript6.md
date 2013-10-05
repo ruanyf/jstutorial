@@ -3,7 +3,7 @@ title: ECMAScript 6 介绍
 layout: page
 category: oop
 date: 2013-05-09
-modifiedOn: 2013-09-22
+modifiedOn: 2013-10-05
 ---
 
 ## 概述
@@ -70,18 +70,28 @@ let实际上为JavaScript新增了块级作用域。
 
 {% highlight javascript %}
 
-function doSomething() {
-  let N = 5;
-  if (someCondition) {
-     let N = 10;
-     doSomethingElse(N);
+function f1() {
+  let n = 5;
+  if (true) {
+	  let n = 10;
   }
-  console.log(N); // 5
+  console.log(n); 
 }
 
 {% endhighlight %}
 
-上面的代码有两个代码块，都声明了变量N。可以看到，外层代码块不受内层代码块的影响。如果使用var定义变量，最后输出的值就是10。
+上面的函数有两个代码块，都声明了变量n，运行后输出5。这表示外层代码块不受内层代码块的影响。如果使用var定义变量n，最后输出的值就是10。
+
+> 需要注意的是，let声明的变量不存在“变量提升”现象。
+
+{% highlight javascript %}
+
+console.log(x);
+let x = 10;
+
+{% endhighlight %}
+
+上面代码运行后会报错，表示x没有定义。如果用var声明x，就不会报错，输出结果为undefined。
 
 ### const关键字
 
@@ -90,7 +100,6 @@ const与let的作用相似，也用来在块级作用域声明变量。但是，
 {% highlight javascript %}
 
 const PI = 3.1415;
-
 
 PI
 // 3.1415
@@ -106,6 +115,8 @@ PI
 // 3.1415
 
 {% endhighlight %}
+
+上面代码表明改变常量的值是不起作用的。需要注意的是，对常量重新赋值不会报错，只会默默地失败。
 
 ### Set数据结构
 
@@ -480,15 +491,13 @@ var a1 = ["x1", "y1"],
 
 ### 多变量赋值
 
-ECMAScript 6 允许简洁地对多变量赋值。
-
-正常情况下，将数组元素赋值给多个变量，只能一次次分开赋值。
+ECMAScript 6 允许简洁地对多变量赋值。正常情况下，将数组元素赋值给多个变量，只能一次次分开赋值。
 
 {% highlight javascript %}
 
-var first = someArray[0];
-var second = someArray[1];
-var third = someArray[2];
+var a = 1;
+var b = 2;
+var c = 3;
 
 {% endhighlight %}
 
@@ -496,17 +505,13 @@ var third = someArray[2];
 
 {% highlight javascript %}
 
-var [first, second, third] = someArray;
+var [a, b, c] = [1, 2, 3];
 
 {% endhighlight %}
 
-这种赋值写法在语法上非常灵活。
+本质上，这种写法属于模式匹配，只要等号两边的模式相同，左边的变量就会被赋予对应的值。下面是一些嵌套数组的例子。
 
 {% highlight javascript %}
-
-var [ start, end ] = ["earth", "moon"] 
-
-[start, end] = [end, start] // 变量互换
 
 var [foo, [[bar], baz]] = [1, [[2], 3]]
 
@@ -559,7 +564,29 @@ console.log(p2)
 
 {% endhighlight %}
 
-有了这种用法，函数定义和调用时，使用参数就很方便。
+这种写法的用途很多。
+
+**（1）交换变量的值。**
+
+{% highlight javascript %}
+
+[x, y] = [y, x]; 
+
+{% endhighlight %}
+
+**（2）从函数返回多个值。**
+
+{% highlight javascript %}
+
+function example() {
+    return [1, 2, 3];
+}
+
+var [a, b, c] = example();
+
+{% endhighlight %}
+
+**（3）函数参数的定义。**
 
 {% highlight javascript %}
 
@@ -569,7 +596,7 @@ function f({p1, p2, p3}) {
 
 {% endhighlight %}
 
-赋给函数参数默认值，也容易多了。
+**（4）函数参数的默认值。**
 
 {% highlight javascript %}
 
