@@ -95,7 +95,7 @@ let x = 10;
 
 ### const关键字
 
-const与let的作用相似，也用来在块级作用域声明变量。但是，它声明的是常量，一旦声明，它的值就不能改变。
+const用来声明常量，一旦声明，它的值就不能改变；const与var的作用域规则一致。
 
 {% highlight javascript %}
 
@@ -468,7 +468,7 @@ ECMAScript 6 提供简洁写法，对数组进行处理。
 [1,4,2,3,-8].filter(function(i) { return i < 3 });
  
 // ES 6
-[for (i of [1,4,2,3,-8]) if (i < 3) i];
+[for (i of [1, 4, 2, 3, -8]) if (i < 3) i];
 
 {% endhighlight %}
 
