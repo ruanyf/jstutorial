@@ -97,14 +97,10 @@ modifiedOn: 2013-10-06
 
 <h2 id="tool">开发工具</h2>
 
-- [console对象](tool/console.html)
-- [Chrome开发工具](tool/chrome.html)
-- [性能测试（Benchmark）](tool/benchmark.html)
+- [Chrome开发者工具和console对象](tool/console.html)
 - [PhantomJS](tool/phantomjs.html)
 - [Grunt任务管理工具](tool/grunt.html)
 - [RequireJS和AMD规范](tool/requirejs.html)
-- [移动端开发](tool/mobile.html)
-- [Google Closure](tool/closure.html)
 - [Source map](tool/sourcemap.html)
 
 <h2 id="special">专题</h2>
