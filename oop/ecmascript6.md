@@ -14,11 +14,13 @@ ECMAScript 6 的目标，是使得JavaScript可以用来编写复杂的应用程
 
 最新的浏览器已经部分支持ECMAScript 6 的语法，可以通过[《ECMAScript 6 浏览器兼容表》](http://kangax.github.io/es5-compat-table/es6/)查看浏览器支持情况。
 
+下面对ECMAScript 6新增的语法特性逐一介绍。
+
 ## 数据类型
 
-### let关键字
+### let命令
 
-let关键字类似于var，用来声明变量，但是该变量只在声明所在的块级作用域有效。
+ECMAScript 6新增了let命令，用来声明变量。它的用法类似于var，但是所声明的变量，只在let命令所在的代码块内有效。
 
 {% highlight javascript %}
 
@@ -47,7 +49,7 @@ for (var i = 0; i < 10; i++) {
     console.log(i);
   };
 }
-a[6]();
+a[6](); // 10
 
 {% endhighlight %}
 
@@ -62,7 +64,7 @@ for (var i = 0; i < 10; i++) {
     console.log(c);
   };
 }
-a[6]();
+a[6](); // 6
 
 {% endhighlight %}
 
@@ -93,9 +95,9 @@ let x = 10;
 
 上面代码运行后会报错，表示x没有定义。如果用var声明x，就不会报错，输出结果为undefined。
 
-### const关键字
+### const命令
 
-const与let的作用相似，也用来在块级作用域声明变量。但是，它声明的是常量，一旦声明，它的值就不能改变。
+const也用来声明变量，但是声明的是常量。一旦声明，常量的值就不能改变。
 
 {% highlight javascript %}
 
@@ -117,6 +119,8 @@ PI
 {% endhighlight %}
 
 上面代码表明改变常量的值是不起作用的。需要注意的是，对常量重新赋值不会报错，只会默默地失败。
+
+> const的作用域与var命令相同：如果在全局环境声明，常量就在全局环境有效；如果在函数内声明，常量就在函数体内有效。
 
 ### Set数据结构
 
