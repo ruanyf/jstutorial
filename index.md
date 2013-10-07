@@ -49,6 +49,7 @@ modifiedOn: 2013-10-06
 
 <h2 id="dom">DOM</h2>
 
+- [概述](dom/basic.html)
 - [dataset](dom/dataset.html)
 - [classList](dom/classlist.html)
 - [样式表操作](dom/stylesheet.html)
