@@ -3,7 +3,7 @@ title: 如何做到 jQuery-free？
 layout: page
 category: jquery
 date: 2013-05-11
-modifiedOn: 2013-08-25
+modifiedOn: 2013-10-10
 ---
 
 ## 概述
@@ -42,6 +42,30 @@ myList = Array.prototype.slice.call(myNodeList);
 
 DOM本身就具有很丰富的操作方法，可以取代jQuery提供的操作方法。
 
+获取父元素。
+
+{% highlight javascript %}
+
+// jQuery写法
+$("#elementID").parent()
+
+// DOM写法
+document.getElementById("elementID").parentNode
+
+{% endhighlight %}
+
+获取下一个同级元素。
+
+{% highlight javascript %}
+
+// jQuery写法
+$("#elementID").next()
+
+// DOM写法
+document.getElementById("elementID").nextSibling
+
+{% endhighlight %}
+
 尾部追加DOM元素。
 
 {% highlight javascript %}
@@ -66,6 +90,18 @@ parent.insertBefore(child, parent.childNodes[0])
 
 {% endhighlight %}
 
+生成DOM元素。
+
+{% highlight javascript %}
+
+// jQuery写法
+$("p")
+
+// DOM写法
+document.createElement("p")
+
+{% endhighlight %}
+
 删除DOM元素。
 
 {% highlight javascript %}
@@ -75,6 +111,43 @@ $(child).remove()
 
 // DOM写法
 child.parentNode.removeChild(child)
+
+{% endhighlight %}
+
+清空子元素。
+
+{% highlight javascript %}
+
+// jQuery写法
+$("#elementID").empty()
+
+// DOM写法
+var element = document.getElementById("elementID");
+while(element.firstChild) element.removeChild(element.firstChild);
+
+{% endhighlight %}
+
+检查是否有子元素。
+
+{% highlight javascript %}
+
+// jQuery写法
+if (!$("#elementID").is(":empty")){}
+
+// DOM写法
+if (document.getElementById("elementID").hasChildNodes()){}
+
+{% endhighlight %}
+
+克隆元素。
+
+{% highlight javascript %}
+
+// jQuery写法
+$("#elementID").clone()
+
+// DOM写法
+document.getElementById("elementID").cloned(true)
 
 {% endhighlight %}
 
@@ -157,9 +230,19 @@ NodeList.prototype.trigger = function (event) {
 
 {% endhighlight %}
 
-## document.ready
+## $(document).ready
 
-目前的最佳实践，是将JavaScript脚本文件都放在页面底部加载。这样的话，其实document.ready方法（jQuery简写为$(function)）已经不必要了，因为等到运行的时候，DOM对象已经生成了。
+DOM加载完成，会触发DOMContentLoaded事件，等同于jQuery的$(document).ready方法。
+
+{% highlight javascript %}
+
+document.addEventListener("DOMContentLoaded", function() {
+	// ...
+});
+
+{% endhighlight %}
+
+不过，目前的最佳实践，是将JavaScript脚本文件都放在页面底部加载。这样的话，其实$(document).ready方法（可以简写为$(function)）已经不必要了，因为等到运行的时候，DOM对象已经生成了。
 
 ## attr方法
 
@@ -171,7 +254,7 @@ $("#picture").attr("src", "http://url/to/image");
 
 {% endhighlight %}
 
-DOM元素允许直接读取属性值，写法要简洁许多。
+DOM提供getAttribute和setAttribute方法读写元素属性。不过，DOM还允许直接读取属性值，写法要简洁许多。
 
 {% highlight javascript %}
 
@@ -179,7 +262,7 @@ $("#picture").src = "http://url/to/image";
 
 {% endhighlight %}
 
-需要注意，input元素的this.value返回的是输入框中的值，链接元素（a标签）的this.href返回的是绝对URL。如果需要用到这两个网页元素的属性准确值，可以用this.getAttribute('value')和this.getAttibute('href')。当然，其他属性的值也可以用DOM元素的getAttribute(name)方法读取，写入使用.setAttribute(name, val)方法。
+> 需要注意的是，文本框元素（input）的this.value返回的是输入框中的值，链接元素（a标签）的this.href返回的是绝对URL。如果需要用到这两个网页元素的属性准确值，可以用this.getAttribute('value')和this.getAttibute('href')。
 
 ## addClass方法
 
@@ -359,3 +442,4 @@ el.addEventListener("transitionend", transitionEnded);
 - Burke Holland, [Out-Growing jQuery](http://tech.pro/tutorial/1385/out-growing-jquery)
 - Nicolas Bevacqua, [Uncovering the Native DOM API](http://flippinawesome.org/2013/06/17/uncovering-the-native-dom-api/)
 - Pony Foo, [Getting Over jQuery](http://blog.ponyfoo.com/2013/07/09/getting-over-jquery)
+- Hemanth.HM, [JavaScript vs Jquery+CoffeeScript](http://h3manth.com/notes/jq-cs.html)
