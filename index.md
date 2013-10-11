@@ -112,7 +112,7 @@ modifiedOn: 2013-10-06
 - [排序算法](special/sorting.html)
 - [有限状态机](special/fsm.html)
 
-<h2 id="nodejs">Node.js</h2>
+<h2 id="nodejs">附录：Node.js</h2>
 
 - [概述](nodejs/basic.html)
 - [CommonJS规范](nodejs/commonjs.html)
