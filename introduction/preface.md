@@ -16,7 +16,7 @@ modifiedOn: 2013-10-06
 
 ## 开源许可
 
-本书采用创意共享[“署名—非商业性使用”]许可证(http://javascript.ruanyifeng.com/introduction/license.html)（Creative Commons Attribution-NonCommercial license）。所有内容不仅可以免费阅读，还可以自由使用（比如转载），只需遵守两个条件：
+本书采用创意共享[“署名—非商业性使用”](http://javascript.ruanyifeng.com/introduction/license.html)许可证（Creative Commons Attribution-NonCommercial license）。所有内容不仅可以免费阅读，还可以自由使用（比如转载），只需遵守两个条件：
 
 - **署名**：必须保留原作者的署名。
 
