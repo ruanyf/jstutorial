@@ -14,6 +14,16 @@ modifiedOn: 2013-10-06
 
 在写作风格上，力求做到清晰易懂，具有可读性。所有章节都带有大量的代码实例，这不仅是为了便于理解和模仿，也是为了随时可以用到实际项目中，做到即学即用。
 
+## 开源许可
+
+本书采用创意共享[“署名—非商业性使用”]许可证(http://javascript.ruanyifeng.com/introduction/license.html)（Creative Commons Attribution-NonCommercial license）。所有内容不仅可以免费阅读，还可以自由使用（比如转载），只需遵守两个条件：
+
+- **署名**：必须保留原作者的署名。
+
+- **非商业性使用**：除非得到正式许可，否则不得用于商业目的。
+
+事实上，你还可以得到这本书的源码。它就放在[Github](https://github.com/ruanyf/jstutorial)上，欢迎克隆和提交Pull Request。
+
 ## 试验环境
 
 本书采用Google的V8引擎作为JavaScript的标准实现，所有示例都以V8引擎的运行结果为准。

@@ -8,7 +8,6 @@ modifiedOn: 2013-10-06
 <h2 id="introduction">导论</h2>
 
 - [前言](introduction/preface.html)
-- [版权声明](introduction/license.html)
 - [为什么学习JavaScript？](introduction/why.html)
 - [Javascript的历史](introduction/history.html)
 
