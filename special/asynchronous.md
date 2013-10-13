@@ -1,9 +1,9 @@
 ---
-title: 异步编程
+title: JavaScript异步编程的模式
 layout: page
 category: special
 date: 2012-12-22
-modifiedOn: 2012-12-22
+modifiedOn: 2013-10-13
 ---
 
 ## 概述
@@ -18,19 +18,19 @@ Javascript语言的执行环境是"单线程"（single thread）。所谓"单线
 
 "异步模式"非常重要。在浏览器端，耗时很长的操作都应该异步执行，避免浏览器失去响应，最好的例子就是Ajax操作。在服务器端，"异步模式"甚至是唯一的模式，因为执行环境是单线程的，如果允许同步执行所有http请求，服务器性能会急剧下降，很快就会失去响应。
 
-以下总结了"异步模式"编程的4种方法，理解它们可以让你写出结构更合理、性能更出色、维护更方便的Javascript程序。
+以下总结了"异步模式"编程的4种方法，理解它们可以让你写出结构更合理、性能更出色、维护更方便的JavaScript程序。
 
 ## 回调函数
 
-这是异步编程最基本的方法。
+回调函数是异步编程最基本的方法。
 
 假定有两个函数f1和f2，后者等待前者的执行结果。
 
 {% highlight javascript %}
 
-　　f1();
+f1();
 
-　　f2();
+f2();
 
 {% endhighlight %}
 
@@ -38,12 +38,12 @@ Javascript语言的执行环境是"单线程"（single thread）。所谓"单线
 
 {% highlight javascript %}
 
-　　function f1(callback){
-　　　　setTimeout(function () {
-　　　　　　// f1的任务代码
-　　　　　　callback();
-　　　　}, 1000);
-　　}
+function f1(callback){
+	setTimeout(function () {
+		// f1的任务代码
+		callback();
+	}, 1000);
+}
 
 {% endhighlight %}
 
@@ -51,12 +51,13 @@ Javascript语言的执行环境是"单线程"（single thread）。所谓"单线
 
 {% highlight javascript %}
 
-　　f1(f2);
+f1(f2);
 
 {% endhighlight %}
 
 采用这种方式，我们把同步操作变成了异步操作，f1不会堵塞程序运行，相当于先执行程序的主要逻辑，将耗时的操作推迟执行。
-回调函数的优点是简单、容易理解和部署，缺点是不利于代码的阅读和维护，各个部分之间高度[耦合](http://en.wikipedia.org/wiki/Coupling_(computer_programming)（Coupling），流程会很混乱，而且每个任务只能指定一个回调函数。
+
+回调函数的优点是简单、容易理解和部署，缺点是不利于代码的阅读和维护，各个部分之间高度[耦合](http://en.wikipedia.org/wiki/Coupling_(computer_programming)（Coupling），使得程序结构混乱、流程难以追踪（尤其是回调函数嵌套的情况），而且每个任务只能指定一个回调函数。
 
 ## 事件监听
 
@@ -66,7 +67,7 @@ Javascript语言的执行环境是"单线程"（single thread）。所谓"单线
 
 {% highlight javascript %}
 
-　　f1.on('done', f2);
+f1.on('done', f2);
 
 {% endhighlight %}
 
@@ -74,12 +75,12 @@ Javascript语言的执行环境是"单线程"（single thread）。所谓"单线
 
 {% highlight javascript %}
 
-　　function f1(){
-　　　　setTimeout(function () {
-　　　　　　// f1的任务代码
-　　　　　　f1.trigger('done');
-　　　　}, 1000);
-　　}
+function f1(){
+	setTimeout(function () {
+		// f1的任务代码
+		f1.trigger('done');
+	}, 1000);
+}
 
 {% endhighlight %}
 
@@ -89,9 +90,7 @@ f1.trigger('done')表示，执行完成后，立即触发done事件，从而开�
 
 ## 发布/订阅
 
-上一节的"事件"，完全可以理解成"信号"。
-
-我们假定，存在一个"信号中心"，某个任务执行完成，就向信号中心"发布"（publish）一个信号，其他任务可以向信号中心"订阅"（subscribe）这个信号，从而知道什么时候自己可以开始执行。这就叫做"[发布/订阅模式](http://en.wikipedia.org/wiki/Publish-subscribe_pattern)"（publish-subscribe pattern），又称"[观察者模式](http://en.wikipedia.org/wiki/Observer_pattern)"（observer pattern）。
+"事件"完全可以理解成"信号"，如果存在一个"信号中心"，某个任务执行完成，就向信号中心"发布"（publish）一个信号，其他任务可以向信号中心"订阅"（subscribe）这个信号，从而知道什么时候自己可以开始执行。这就叫做"[发布/订阅模式](http://en.wikipedia.org/wiki/Publish-subscribe_pattern)"（publish-subscribe pattern），又称"[观察者模式](http://en.wikipedia.org/wiki/Observer_pattern)"（observer pattern）。
 
 这个模式有多种[实现](http://msdn.microsoft.com/en-us/magazine/hh201955.aspx)，下面采用的是Ben Alman的[Tiny Pub/Sub](https://gist.github.com/661855)，这是jQuery的一个插件。
 
@@ -99,7 +98,7 @@ f1.trigger('done')表示，执行完成后，立即触发done事件，从而开�
 
 {% highlight javascript %}
 
-　　jQuery.subscribe("done", f2);
+jQuery.subscribe("done", f2);
 
 {% endhighlight %}
 
@@ -107,21 +106,22 @@ f1.trigger('done')表示，执行完成后，立即触发done事件，从而开�
 
 {% highlight javascript %}
 
-　　function f1(){
-　　　　setTimeout(function () {
-　　　　　　// f1的任务代码
-　　　　　　jQuery.publish("done");
-　　　　}, 1000);
-　　}
+function f1(){
+	setTimeout(function () {
+		// f1的任务代码
+		jQuery.publish("done");
+	}, 1000);
+}
 
 {% endhighlight %}
 
 jQuery.publish("done")的意思是，f1执行完成后，向"信号中心"jQuery发布"done"信号，从而引发f2的执行。
-此外，f2完成执行后，也可以取消订阅（unsubscribe）。
+
+f2完成执行后，也可以取消订阅（unsubscribe）。
 
 {% highlight javascript %}
 
-　　jQuery.unsubscribe("done", f2);
+jQuery.unsubscribe("done", f2);
 
 {% endhighlight %}
 
@@ -129,50 +129,167 @@ jQuery.publish("done")的意思是，f1执行完成后，向"信号中心"jQuery
 
 ## Promises对象
 
+### 简介
+
 Promises对象是CommonJS工作组提出的一种规范，目的是为异步编程提供[统一接口](http://wiki.commonjs.org/wiki/Promises/A)。
 
 简单说，它的思想是，每一个异步任务返回一个Promise对象，该对象有一个then方法，允许指定回调函数。比如，f1的回调函数f2,可以写成：
 
 {% highlight javascript %}
 
-　　f1().then(f2);
+f1().then(f2);
 
 {% endhighlight %}
 
-f1要进行如下改写（这里使用的是jQuery的[实现](http://www.ruanyifeng.com/blog/2011/08/a_detailed_explanation_of_jquery_deferred_object.html)）：
+这种写法对于嵌套的回调函数尤其有用。
 
 {% highlight javascript %}
 
-　　function f1(){
-　　　　var dfd = $.Deferred();
-　　　　setTimeout(function () {
-　　　　　　// f1的任务代码
-　　　　　　dfd.resolve();
-　　　　}, 500);
-　　　　return dfd.promise;
-　　}
+// 传统写法
+
+step1(function (value1) {
+    step2(value1, function(value2) {
+        step3(value2, function(value3) {
+            step4(value3, function(value4) {
+                // ...
+            });
+        });
+    });
+});
+
+// Promises的写法
+
+promiseStep1()
+.then(promiseStep2)
+.then(promiseStep3)
+.then(promiseStep4);
 
 {% endhighlight %}
 
-这样写的优点在于，回调函数变成了链式写法，程序的流程可以看得很清楚，而且有一整套的[配套方法](http://api.jquery.com/category/deferred-object/)，可以实现许多强大的功能。
-比如，指定多个回调函数：
+上面代码的promiseStep1函数是对Step1函数的改写，主要区别是返回一个Promise对象，后面的promiseStep2、promiseStep3和promiseStep4都是如此。
+
+可以看到传统写法使得代码混成一团，变得横向发展而不是向下发展。Promises规范就是为了解决这个问题而提出的，目标是使用正常的程序流程（同步），来处理异步操作。它先返回一个Promise对象，后面的操作以同步的方式，寄存在这个对象上面。等到异步操作有了结果，再执行前期寄放在它上面的其他操作。
+
+### 主要接口
+
+Promises只是一个规范，具体实现需要自己部署。首先，将Promise定义成构造函数。
 
 {% highlight javascript %}
 
-　　f1().then(f2).then(f3);
+var Promise = function () {
+	// ...
+};
 
 {% endhighlight %}
 
-再比如，指定发生错误时的回调函数：
+接下来，将具体方法部署在Promise的原型对象上面，这样就可以让所有实例共享。
+
+第一个定义的是then方法，它接受两个参数，分别是异步操作成功时和出错时的回调函数。为了可以部署链式操作，它必须返回一个新的Promise对象。
 
 {% highlight javascript %}
 
-　　f1().then(f2).fail(f3);
+Promise.prototype.then = function (onResolved, onRejected) {
+	// ...
+	return new Promise();
+};
 
 {% endhighlight %}
 
-而且，它还有一个前面三种方法都没有的好处：如果一个任务已经完成，再添加回调函数，该回调函数会立即执行。所以，你不用担心是否错过了某个事件或信号。这种方法的缺点就是编写和理解，都相对比较难。
+根据Promises规范，异步操作成功叫做resolve，出错叫做reject。resolve使得Promise对象的状态从“等待”（pending）变成“完成”（fulfilled)，reject则是从“等待”变成“未完成”（failed）。
+
+然后，定义resolve方法和reject方法，用来完成Promise对象的状态转变。
+
+{% highlight javascript %}
+
+Promise.prototype.resolve = function (value) {
+	// ...
+};
+ 
+Promise.prototype.reject = function (error) {
+	// ...
+};
+
+{% endhighlight %}
+
+需要注意的是，resolve方法的参数是一个值，reject方法的参数是一个错误对象。
+
+### 实例：Ajax操作
+
+Ajax操作是典型的异步操作，传统上往往写成下面这样。
+
+{% highlight javascript %}
+
+function search(term, onload, onerror) {
+	var xhr, results, url;
+ 
+	url = 'http://example.com/search?q=' + term;
+ 
+	xhr = new XMLHttpRequest();
+	xhr.open('GET', url, true);
+ 
+	xhr.onload = function (e) {
+		if (this.status === 200) {
+			results = JSON.parse(this.responseText);
+			onload(results);
+		}
+	};
+ 
+	xhr.onerror = function (e) {
+		onerror(e);
+	};
+
+	xhr.send();
+}
+
+search("Hello World", f1, f2);
+
+{% endhighlight %}
+
+可以看到上面代码的回调函数，必须直接传入。如果使用Promises，就可以写成下面这样。
+
+{% highlight javascript %}
+
+function search(term) {
+
+	var url = 'http://example.com/search?q=' + term;
+	var p = new Promise();
+	var xhr = new XMLHttpRequest();
+	var result;
+
+	xhr.open('GET', url, true);
+ 
+	xhr.onload = function (e) {
+		if (this.status === 200) {
+			results = JSON.parse(this.responseText);
+			p.resolve(results);
+		}
+	};
+ 
+	xhr.onerror = function (e) {
+		p.reject(e);
+	};
+ 
+	xhr.send();
+ 
+	return p;
+}
+
+search("Hello World").then(f1, f2);
+
+{% endhighlight %}
+
+用了Promises以后，回调函数就可以用then方法加载。
+
+### 小结
+
+Promises的优点在于，让回调函数变成了变成了规范的链式写法，程序流程可以看得很清楚。它的一整套接口，可以实现许多强大的功能，比如为多个异步操作部署一个回调函数、为多个回调函数中抛出的错误统一指定处理方法等等。。
+
+而且，它还有一个前面三种方法都没有的好处：如果一个任务已经完成，再添加回调函数，该回调函数会立即执行。所以，你不用担心是否错过了某个事件或信号。这种方法的缺点就是，编写和理解都相对比较难。
+
+实际可以使用的Promises实现，参见jQuery的deferred对象一节。
 
 ## 参考链接
 
 - [Asynchronous JS: Callbacks, Listeners, Control Flow Libs and Promises](http://sporto.github.com/blog/2012/12/09/callbacks-listeners-promises/)
+- Rhys Brett-Bowen, [Promises/A+ - understanding the spec through implementation](http://modernjavascript.blogspot.com/2013/08/promisesa-understanding-by-doing.html)
+- Matt Podwysocki, Amanda Silver, [Asynchronous Programming in JavaScript with “Promises”](http://blogs.msdn.com/b/ie/archive/2011/09/11/asynchronous-programming-in-javascript-with-promises.aspx)

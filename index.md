@@ -2,7 +2,7 @@
 layout: homepage
 title: JavaScript 标准参考教程（alpha）
 date: 2012-11-18
-modifiedOn: 2013-10-06
+modifiedOn: 2013-10-13
 ---
 	
 <h2 id="introduction">导论</h2>
@@ -43,7 +43,6 @@ modifiedOn: 2013-10-06
 - [概述](oop/basic.html)
 - [封装](oop/encapsulation.html)
 - [继承](oop/inheritance.html)
-- [Promises](oop/promises.html)
 - [ECMAscript 6 介绍](oop/ecmascript6.html)
 
 <h2 id="dom">DOM</h2>
@@ -107,7 +106,7 @@ modifiedOn: 2013-10-06
 <h2 id="special">专题</h2>
 
 - [设计模式](special/designpattern.html)
-- [异步编程](special/asynchronous.html)
+- [异步编程的模式](special/asynchronous.html)
 - [排序算法](special/sorting.html)
 - [有限状态机](special/fsm.html)
 
