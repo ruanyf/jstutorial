@@ -40,7 +40,7 @@ Chrome浏览器自带的“开发者工具”（Developer Tools），是网页�
 
 ## console对象
 
-目前，各大浏览器的JavaScript引擎都原生提供一个console对象，用来代表浏览器的JavaScript控制窗口。Chrome浏览器的console对象，就是指开发者工具中的Console窗口。
+目前，各大浏览器的JavaScript引擎都原生提供一个console对象，代表浏览器的JavaScript控制窗口。虽然它不是JavaScript语言的一部分，但是已经成为事实上的标准。Chrome浏览器的console对象，就是指开发者工具中的Console窗口。
 
 console对象主要有两个作用：
 
@@ -133,18 +133,6 @@ console.assert(list.childNodes.length < 500, "Node count is > 500");
 
 {% endhighlight %}
 
-### 分组方法：group和groupend
-
-这两个方法用于将显示的信息分组。
-
-{% highlight javascript %}
-
-console.group("Authenticating user '%s'", user);
-console.log("User authenticated");
-console.groupEnd();
-
-{% endhighlight %}
-
 ### time和timeEnd方法
 
 这两个方法用于计时，可以算出一个操作所花费的准确时间。
@@ -165,6 +153,18 @@ console.timeEnd("Array initialize");
 {% endhighlight %}
 
 time方法表示计时开始，timeEnd方法表示计时结束。它们的参数是计时器的名称。调用timeEnd方法之后，console窗口会显示“计时器名称: 所耗费的时间”。
+
+### 分组方法：group和groupend
+
+这两个方法用于将显示的信息分组。它只在输出大量信息时有用，分在一组的信息，可以用鼠标折叠/展开。
+
+{% highlight javascript %}
+
+console.group("Authenticating user '%s'", user);
+console.log("User authenticated");
+console.groupEnd();
+
+{% endhighlight %}
 
 ### 其他方法
 
@@ -327,4 +327,4 @@ hz = 1 / period;
 
 - Chrome Developer Tools, [Using the Console](https://developers.google.com/chrome-developer-tools/docs/console)
 - Firebug Wiki, [Console API](https://getfirebug.com/wiki/index.php/Console_API)
-
+- Axel Rauschmayer, [The JavaScript console API](http://www.2ality.com/2013/10/console-api.html)
