@@ -3,7 +3,7 @@ title: 数组
 date: 2012-12-11
 category: grammar
 layout: page
-modifiedOn: 2013-09-04
+modifiedOn: 2013-10-13
 ---
 
 ## 定义
@@ -465,19 +465,36 @@ every方法对所有元素调用一个测试函数，只有所有元素通过该
 
 ### reduce 和 reduceRight
 
-reduce和reduceRight方法的作用，是将数组的每个元素累计处理为一个值。它们的不同之处在于，前者的处理顺序是从左到右，后者的处理顺序是从右到左。它们的第一个参数是一个处理函数，该函数接受四个参数，分别是用来累计的变量（即当前状态）、数组的当前元素elem、该元素的位置index 和整个数组arr。这两个方法还可以有第二个参数，表示累计变量的初值。
+reduce和reduceRight方法的作用，是依次处理数组的每个元素，最终累计为一个值。这两个方法的差别在于，reduce对数组元素的处理顺序是从左到右，reduceRight则是从右到左，其他地方完全一样。
+
+reduce方法的第一个参数是一个处理函数。该函数接受四个参数，分别是：
+
+- 用来累计的变量（即当前状态）
+- 数组的当前元素
+- 当前元素在数组中的序号（从0开始）
+- 原数组
+
+这四个参数之中，只有前两个是必须的，后两个则是可选的。
 
 {% highlight javascript %}
 
-[1, 2, 3, 4, 5].reduce(function(sum, elem, index, arr){
-    return sum + elem;
+[1, 2, 3, 4, 5].reduce(function(x, y){
+    return x+y;
 });
-// 返回15
+// 15
 
-[1, 2, 3, 4, 5].reduce(function(sum, elem, index, arr){
-    return sum + elem;
+{% endhighlight %}
+
+上面代码的参数x表示累计变量，默认为0，y则是数组的当前元素。reduce方法依次将每个数组元素加入x，最终返回它们的总和15。
+
+如果要对累计变量指定初值，可以把它放在reduce方法的第二个参数。
+
+{% highlight javascript %}
+
+[1, 2, 3, 4, 5].reduce(function(x, y){
+    return x+y;
 }, 10);
-// 返回25
+// 25
 
 {% endhighlight %}
 

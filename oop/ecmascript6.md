@@ -3,7 +3,7 @@ title: ECMAScript 6 介绍
 layout: page
 category: oop
 date: 2013-05-09
-modifiedOn: 2013-10-05
+modifiedOn: 2013-10-13
 ---
 
 ## 概述
@@ -256,9 +256,14 @@ var hw = helloWorldGenerator();
 
 {% highlight javascript %}
 
-console.log(hw.next()); // { value: 'hello', done: false }
-console.log(hw.next()); // { value: 'world', done: false }
-console.log(hw.next()); // { value: undefined, done: true }
+console.log(hw.next()); 
+// { value: 'hello', done: false }
+
+console.log(hw.next()); 
+// { value: 'world', done: false }
+
+console.log(hw.next()); 
+// { value: undefined, done: true }
 
 {% endhighlight %}
 
@@ -268,25 +273,25 @@ console.log(hw.next()); // { value: undefined, done: true }
 
 {% highlight javascript %}
 
-function* powersOfTwo(maxExponent) {
-    var exponent = 0;
-    while (exponent <= maxExponent) {
-        yield Math.pow(2, exponent);
-        exponent++;
+function* p2(maxE) {
+    var e = 0;
+    while (e <= maxE) {
+        yield Math.pow(2, e);
+        e++;
     }
 }
 
-var it = powersOfTwo(10),
-    result = it.next();
+var y = p2(10),
+    result = y.next();
 
 while (!result.done) {
     console.log(result.value);
-    result = it.next();
+    result = y.next();
 }
 
 {% endhighlight %}
 
-上面代码定义的powerOfTwo函数，第一次执行的时候，只会执行到yield语句为止，然后调用next方法时，再执行下去。通过判断遍历器的done属性，完成遍历器的循环。
+上面代码定义的p2函数，第一次执行的时候，只会执行到yield语句为止，然后调用next方法时，再执行下去。通过判断遍历器的done属性，完成遍历器的循环。
 
 这种暂停执行的效果，意味着可以把异步操作写在yield语句里面，等到调用next方法时再往后执行。这实际上等同于不需要写回调函数了，因为异步操作的后续操作可以放在yield语句下面，反正要等到next方法时再执行。所以，generator函数的一个重要实际意义就是用来处理异步操作，改写回调函数。
 
