@@ -2,7 +2,7 @@
 layout: homepage
 title: JavaScript 标准参考教程（alpha）
 date: 2012-11-18
-modifiedOn: 2013-10-13
+modifiedOn: 2013-10-19
 ---
 	
 <h2 id="introduction">导论</h2>
@@ -64,7 +64,7 @@ modifiedOn: 2013-10-13
 - [同域限制与window.postMessage方法](bom/windowpostmessage.html)
 - [Web Storage：浏览器端数据储存机制](bom/webstorage.html)
 - [IndexedDB：浏览器端数据库](bom/indexeddb.html)
-- [WebSocket](bom/websocket.html)
+- [WebSocket](bom/websocket.html)（基本完成）
 - [Geolocation](bom/geolocation.html)
 - [MatchMedia](bom/matchmedia.html)
 - [WebRTC](bom/webrtc.html)
