@@ -68,9 +68,17 @@ Number({a:1})
 
 {% endhighlight %}
 
-上面代码等同于Number(({a:1}).valueOf().toString())。对象的valueOf方法返回对象本身（即{a:1}），对象的toString方法返回“[object Object]”，对这个字符串使用Number方法，得到NaN。
+上面代码等同于
 
-下面的例子是toString方法返回的不是字符串，结果就报错。
+{% highlight javascript %}
+
+Number(({a:1}).valueOf().toString())
+
+{% endhighlight %}
+
+上面代码的valueOf方法返回对象本身（{a:1}），toString方法返回“[object Object]”，对其用Number方法，得到NaN。
+
+如果toString方法返回的不是原始类型的值，结果就会报错。
 
 {% highlight javascript %}
 
@@ -120,7 +128,7 @@ String(null) // "null"
 
 {% endhighlight %}
 
-对于对象，则是调用toString方法；如果toString方法返回的不是对象，再调用valueOf方法；如果返回的还不是对象，则报错。它的调用顺序正好与Number方法相反。
+对于对象，则是先调用toString方法；如果toString方法返回的不是原始类型的值，再调用valueOf方法；如果valueOf方法返回的还不是原始类型的值，则报错。它的调用顺序正好与Number方法相反。
 
 {% highlight javascript %}
 
@@ -135,7 +143,7 @@ String({valueOf:function (){return 2;},toString:function(){return 3;}})
 
 {% endhighlight %}
 
-上面代码对三个对象使用String方法。第一个对象对toString方法的值使用String方法，得到“3”；第二个对象返回的还是toString方法的值（"[object Object]"），因为这个值是字符串；第三个对象表示toString方法先于calueOf方法执行。
+上面代码对三个对象使用String方法。第一个对象返回toString方法的值（3），然后对其使用String方法，得到“3”；第二个对象返回的还是toString方法的值（"[object Object]"），这次直接就是字符串；第三个对象表示toString方法先于valueOf方法执行。
 
 对于那些没有自定义valueOf和toString方法的对象，就使用默认的方法。
 

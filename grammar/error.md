@@ -44,7 +44,7 @@ new TypeError("出错了，变量类型无效！");
 
 {% endhighlight %}
 
-上面代码表示，这些构造函数接受一个表示错误提示信息（message）的参数。
+上面代码表示，这些构造函数接受一个参数，代表错误提示信息（message）。
 
 除了JavaScript内建的7种错误对象，还可以定义自己的错误对象。
 
@@ -125,7 +125,7 @@ try {
 
 {% endhighlight %}
 
-try代码块用来运行某段可能出错的代码，一旦出错，就被catch代码块捕获。catch接受一个参数，表示try代码块传入的错误对象，该对象包含了出错文本。
+try代码块用来运行某段可能出错的代码，一旦出错（包括用throw语句抛出错误），就被catch代码块捕获。catch接受一个参数，表示try代码块传入的错误对象。
 
 catch代码块之中，还可以再抛出错误，甚至使用嵌套的try...catch结构。
 
@@ -182,30 +182,9 @@ try {
 
 上面代码的try代码块后面跟了4个catch代码块，前面三个各自捕捉一种类型的错误，最后一个用来捕捉所有其他类型的错误。
 
-try...catch还可以用来处理用户自定义的错误对象。
-
-{% highlight javascript %}
-
-function UserError(message) {
-   this.message = message || "默认信息";
-   this.name = "UserError";
-}
-
-UserError.prototype = new Error();
-UserError.prototype.constructor = UserError;
-
-try {
-  throw new UserError("出错了！");
-} catch (e) {
-  console.log(e.name);     // "UserError"
-  console.log(e.message);  // "出错了！"
-}
-
-{% endhighlight %}
-
 ## finally代码块
 
-try...catch结构还允许在最后添加一个finally代码块，表示不管是否出现错误，都必需在最后运行的语句。
+try...catch结构允许在最后添加一个finally代码块，表示不管是否出现错误，都必需在最后运行的语句。
 
 {% highlight javascript %}
 
@@ -244,7 +223,13 @@ function f() {
     console.log(5); // 不会运行
 }
 
-f(); // 0, 1, 3; returns false
+var result = f(); 
+// 0
+// 1
+// 3
+
+result
+// false
 
 {% endhighlight %}
 
