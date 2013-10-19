@@ -3,7 +3,7 @@ title: 运算符
 layout: page
 category: grammar
 date: 2013-02-04
-modifiedOn: 2013-08-29
+modifiedOn: 2013-10-19
 ---
 
 ## 算术运算符
@@ -284,16 +284,15 @@ false == null // false
 
 {% highlight javascript %}
 
-{} === {}
-// false
+({}) === {} // false
 
-[] === []
-// false
+[] === [] // false
 
-(function (){}) === (function (){})
-// false
+(function (){}) === function (){} // false
 
 {% endhighlight %}
+
+上面代码分别比较两个空对象、两个空数组、两个空函数，结果都是不相等。原因是对于复合类型的值，相等运算比较的是它们的内存地址是否一样，而上面代码的值存放在不同的内存地址，结果当然是false。另外，之所以要把第一个空对象放在括号内，是为了避免JavaScript引擎把这一行解释代码块，从而报错；而把第一个空函数放在括号内，是为了避免这一行被解释成函数定义。
 
 如果两个变量指向同一个复合类型的值，则它们相等。
 
@@ -302,8 +301,7 @@ false == null // false
 var v1 = {};
 var v2 = v1;
 
-v1 === v2
-// true
+v1 === v2 // true
 
 {% endhighlight %}
 
