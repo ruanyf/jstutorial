@@ -42,7 +42,7 @@ Number(null) // 0
 
 {% endhighlight %}
 
-对象的转换规则比较复杂。先调用valueOf方法，该方法返回的数值就是转换结果，如果返回的不是数值，则再调用toString方法。如果toString方法返回的不是字符串，则报错。
+对象的转换规则比较复杂：先调用对象自身的valueOf方法，如果该方法返回原始类型的值（数值、字符串和布尔值），则直接对该值使用Number方法；否则再调用toString方法，如果toString方法返回的还不是原始类型的值，则报错。
 
 {% highlight javascript %}
 
