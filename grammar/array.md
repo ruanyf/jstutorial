@@ -3,7 +3,7 @@ title: 数组
 date: 2012-12-11
 category: grammar
 layout: page
-modifiedOn: 2013-10-13
+modifiedOn: 2013-10-19
 ---
 
 ## 定义
@@ -392,8 +392,6 @@ map方法对所有元素依次调用一个函数，根据函数结果返回一�
 
 {% endhighlight %}
 
-map
-
 ### forEach
 
 forEach方法对所有元素依次执行一个函数，它与map的区别在于不返回新数组。
@@ -499,6 +497,18 @@ reduce方法的第一个参数是一个处理函数。该函数接受四个参�
 {% endhighlight %}
 
 上面代码指定参数x的初值为10，所以数组元素从10开始累加，最终结果为25。
+
+由于reduce方法依次处理每个元素，所以实际上还可以用它来搜索某个元素。比如，下面代码是找出长度最长的数组元素。
+
+{% highlight javascript %}
+
+function findLongest(entries) {
+  return entries.reduce(function (longest, entry) {
+    return entry.length > longest.length ? entry : longest;
+  }, '');
+}
+
+{% endhighlight %}
 
 ### indexOf 和 lastIndexOf
 
