@@ -213,29 +213,89 @@ javascript:void(window.open("http://www.whitehouse.gov/"));
 
 ## 相等运算符与严格相等运算符
 
-相等运算符（==）比较两个“值”是否相等，严格相等运算符（===）比较它们是否为“同一个值”。
+JavaScript比较两个值是否相等的运算符有两个：一个是相等运算符（==），另一个是严格相等运算符（===）。
 
-如果两个值不是同一个类型，严格相等运算符（===）直接返回false，而相等运算符（==）会将它们转化成同一个类型，再用严格相等运算符进行比较。
+相等运算符（==）比较两个“值”是否相等，严格相等运算符（===）比较它们是否为“同一个值”。它们的一个重要区别是，如果两个值不是同一个类型，严格相等运算符（===）直接返回false，而相等运算符（==）会将它们转化成同一个类型，再用严格相等运算符进行比较。
 
-### 相等运算符的比较规则
+### 严格相等运算符
 
-不同类型的数据互相比较时，会先进行内部的类型转换。
+严格相等运算符的运算规则如下：
 
-（1）undefined和null两者，与自身或互相比较时，结果为true，与其他类型的值比较时，结果都为false。
+（1）如果两个值的类型不同，直接返回false。
 
 {% highlight javascript %}
 
-null == null // true
-undefined == undefined // true
+1 === "1" // false
 
-undefined == null // true
-
-false == null // false
-0 == null // false
+true === "true" // false
 
 {% endhighlight %}
 
-（2）原始类型的数据会转换成数值类型再进行比较。
+（2）两个同一类的原始类型的值（数值、字符串、布尔值）比较时，如果它们的值相同，则返回true，如果值不同，则返回false。
+
+需要注意的是，NaN与任何值都不相等（包括自身）。另外，正0等于负0。
+
+{% highlight javascript %}
+
+NaN !== NaN  // true
+
++0 === -0 // true
+
+{% endhighlight %}
+
+（3）两个复合类型的量比较时（包括对象、数组、函数），不是比较它们的值是否相等，而是比较它们是否指向同一个对象。
+
+{% highlight javascript %}
+
+({}) === {} // false
+
+[] === [] // false
+
+(function (){}) === function (){} // false
+
+{% endhighlight %}
+
+上面代码分别比较两个空对象、两个空数组、两个空函数，结果都是不相等。原因是对于复合类型的值，严格相等运算比较的是它们的内存地址是否一样，而上面代码中空对象、空数组、空函数的值，都存放在不同的内存地址，结果当然是false。另外，之所以要把第一个空对象放在括号内，是为了避免JavaScript引擎把这一行解释成代码块，从而报错；把第一个空函数放在括号内，是为了避免这一行被解释成函数的定义。
+
+如果两个变量指向同一个复合类型的值，则它们相等。
+
+{% highlight javascript %}
+
+var v1 = {};
+var v2 = v1;
+
+v1 === v2 // true
+
+{% endhighlight %}
+
+（4）undefinedhe 和 null 与自身严格相等。
+
+{% highlight javascript %}
+
+undefined === undefined // true
+
+null === null // true
+
+{% endhighlight %}
+
+由于变量声明后默认值是undefined，因此两个只声明未赋值的变量是相等的。
+
+{% highlight javascript %}
+
+var v1;
+var v2;
+
+v1 === v2 // true
+
+{% endhighlight %}
+
+### 相等运算符
+
+相等运算符在比较相同类型的数据时，与严格相等运算符完全一样。
+
+不同类型的数据比较时，相等运算符会先将它们进行类型转换，然后再用严格相等运算符比较。类型转换规则如下：
+
+（1）原始类型的数据会转换成数值类型再进行比较。
 
 {% highlight javascript %}
 
@@ -258,82 +318,20 @@ false == null // false
 
 {% endhighlight %}
 
-（3）对象与字符串或数值比较时，对象转化成原始类型的值，再进行比较。
+（2）对象与原始类型的值比较时，对象转化成原始类型的值，再进行比较。
 
-由于这种转化会返回一些违反直觉的结果，因此不推荐使用==，建议只使用===。
-
-### 严格相等运算符的比较规则
-
-比较不同类型的值时，严格相等运算符遵守以下规则：
-
-（1）字符串与字符串比较时，看它们的值是否相同。
-
-（2）布尔值与布尔值比较时，看它们的值是否相同。
-
-（3）数字与数字比较时，看它们的值是否相同，但是NaN与任何值都不相等（包括自身）。另外，正0等于负0。
+（3）undefined和null两者与其他类型的值比较时，结果都为false，互相比较时结果为true。
 
 {% highlight javascript %}
 
-	NaN !== NaN  // true
+undefined == null // true
 
-    +0 === -0 // true
-
-{% endhighlight %}
-
-（4）两个复合类型的量比较时（包括对象、数组、函数），不是比较它们的值是否相等，而是比较它们是否指向同一个对象。
-
-{% highlight javascript %}
-
-({}) === {} // false
-
-[] === [] // false
-
-(function (){}) === function (){} // false
+false == null // false
+0 == null // false
 
 {% endhighlight %}
 
-上面代码分别比较两个空对象、两个空数组、两个空函数，结果都是不相等。原因是对于复合类型的值，相等运算比较的是它们的内存地址是否一样，而上面代码的值存放在不同的内存地址，结果当然是false。另外，之所以要把第一个空对象放在括号内，是为了避免JavaScript引擎把这一行解释代码块，从而报错；而把第一个空函数放在括号内，是为了避免这一行被解释成函数定义。
-
-如果两个变量指向同一个复合类型的值，则它们相等。
-
-{% highlight javascript %}
-
-var v1 = {};
-var v2 = v1;
-
-v1 === v2 // true
-
-{% endhighlight %}
-
-（5）如果两个变量的值都是undefined或null，它们是相等的。
-
-{% highlight javascript %}
-
-var v1 = undefined;
-var v2 = undefined;
-
-v1 === v2
-// true
-
-var v1 = null;
-var v2 = null;
-
-v1 === v2
-// true
-
-{% endhighlight %}
-
-因为变量声明后默认类型是undefined，因此两个只声明未赋值的变量是相等的。
-
-{% highlight javascript %}
-
-var v1;
-var v2;
-
-v1 === v2
-// true
-
-{% endhighlight %}
+这种类型转换会带来一些违反直觉的结果，因此不推荐使用相等运算符（==），建议只使用严格相等运算符（===）。
 
 ## 布尔运算符
 
