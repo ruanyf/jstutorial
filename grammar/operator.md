@@ -10,23 +10,23 @@ modifiedOn: 2013-10-22
 
 JavaScript提供9个算术运算符。
 
-- 加法运算符（Addition）：number1 + number2
+- **加法运算符**（Addition）：x + y
 
-- 减法运算符（Subtraction）： number1 - number2
+- **减法运算符**（Subtraction）： x - y
 
-- 乘法运算符（Multiplication）： number1 * number2
+- **乘法运算符**（Multiplication）： x * y
 
-- 除法运算符（Division）：number1 / number2
+- **除法运算符**（Division）：x / y
 
-- 余数运算符（Remainder）：number1 % number2
+- **余数运算符**（Remainder）：x % y
 
-- 自增运算符（Increment）：++variable, variable++
+- **自增运算符**（Increment）：++x, x++
 
-- 自减运算符（Decrement）：--variable, variable--
+- **自减运算符**（Decrement）：--x, x--
 
-- 求负运算符（Negate）：-value
+- **求负运算符**（Negate）：-x
 
-- 数值运算符（Convert to number）： +value
+- **数值运算符**（Convert to number）： +x
 
 加法运算符（+）除了用于数值的相加，还能用于字符串的连接。两个运算子之中只要有一个是字符串，加法运算符号就会变为字符串连接运算符，返回连接后的字符串，其他情况则是返回数值相加的和。加法运算符行为的详细讨论，可以参见《数据类型转换》一节。
 
