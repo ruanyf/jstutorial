@@ -3,7 +3,7 @@ title: 数值
 layout: page
 category: grammar
 date: 2013-02-13
-modifiedOn: 2013-09-04
+modifiedOn: 2013-10-22
 ---
 
 ## 概述
@@ -121,11 +121,14 @@ typeof NaN
 
 {% endhighlight %}
 
-NaN不等于任何值，包括它本身。
+NaN不等于任何值，包括它本身。NaN在布尔运算时被当作false。
 
 {% highlight javascript %}
 
 NaN === NaN
+// false
+
+Boolean(NaN)
 // false
 
 {% endhighlight %}
@@ -139,15 +142,14 @@ NaN === NaN
 
 {% endhighlight %}
 
-NaN在数值运算时被当作0，在布尔运算时被当作false。
+NaN与任何数（包括它自己）的运算，得到的都是NaN。
 
 {% highlight javascript %}
 
-var n = null;
-n * 32 // 0
-
-Boolean(NaN)
-// false
+NaN + 32 // NaN
+NaN - 32 // NaN
+NaN * 32 // NaN
+NaN / 32 // NaN
 		
 {% endhighlight %}
 
@@ -256,15 +258,12 @@ Infinity / Infinity // NaN
 
 ## parseInt方法
 
-该方法可以将字符串或小数转化为整数。如果字符串头部有空格，空格会被自动去除。
+parseInt方法可以将字符串或小数转化为整数。如果字符串头部有空格，空格会被自动去除。
 
 {% highlight javascript %}
 
-parseInt("123")
-// 123
-
-parseInt(1.23)
-// 1
+parseInt("123") // 123
+parseInt(1.23) // 1
 
 {% endhighlight %}
 
@@ -272,47 +271,34 @@ parseInt(1.23)
 
 {% highlight javascript %}
 
-parseInt("8a")
-// 8
+parseInt("8a") // 8
 
 {% endhighlight %}
 
-如果第一个字符不能转化为数字（正负号除外），返回NaN。
+如果字符串的第一个字符不能转化为数字（正负号除外），返回NaN。
 
 {% highlight javascript %}
 
-parseInt("abc")
-// NaN
-
-parseInt(".3")
-// NaN
+parseInt("abc") // NaN
+parseInt(".3") // NaN
 
 {% endhighlight %}
 
-如果被解析的值是以0开头的整数，表示该数字为八进制；如果以0x或0X开头，表示该数字为十六进制。
+parseInt方法还可以接受第二个参数（2到36之间），表示被解析的值的进制。
 
 {% highlight javascript %}
 
-parseInt(010)
-// 8
-
-parseInt(0x10)
-// 16
+parseInt(1000, 2) // 8
+parseInt(1000, 6) // 216
+parseInt(1000, 8) // 512
 
 {% endhighlight %}
 
-该方法还可以接受第二个参数（2到36之间），表示被解析的值的进制。
+这意味着，可以用parseInt方法进行进制的转换。
 
 {% highlight javascript %}
 
-parseInt(1000, 2)
-// 8
-
-parseInt(1000, 6)
-// 216
-
-parseInt(1000, 8)
-// 512
+parseInt("1011", 2) // 11
 
 {% endhighlight %}
 
@@ -320,18 +306,11 @@ parseInt(1000, 8)
 
 {% highlight javascript %}
 
-parseInt(010, 10)
-// 8
+parseInt(010, 10) // 8
+parseInt(010, 8) // NaN
+parseInt(020, 10) // 16
+parseInt(020, 8) // 14
 
-parseInt(010, 8)
-// NaN
-
-parseInt(020, 10)
-// 16
-
-parseInt(020, 8)
-// 14
-		
 {% endhighlight %}
 
 上面代码中，010会被先转为十进制8，然后再应用第二个参数，由于八进制中没有8这个数字，所以parseInt(010, 8)会返回NaN。同理，020会被先转为十进制16，然后再应用第二个参数。
@@ -340,14 +319,9 @@ parseInt(020, 8)
 
 {% highlight javascript %}
 
-parseInt("010")
-// 10
-
-parseInt("010",10)
-// 10
-
-parseInt("010",8)
-// 8
+parseInt("010") // 10
+parseInt("010",10) // 10
+parseInt("010",8) // 8
 
 {% endhighlight %}
 
