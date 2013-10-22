@@ -20,9 +20,9 @@ JavaScript提供9个算术运算符。
 
 - **余数运算符**（Remainder）：x % y
 
-- **自增运算符**（Increment）：++x, x++
+- **自增运算符**（Increment）：++x 或者 x++
 
-- **自减运算符**（Decrement）：--x, x--
+- **自减运算符**（Decrement）：--x 或者 x--
 
 - **求负运算符**（Negate）：-x
 
@@ -334,6 +334,54 @@ null == undefined   // true
 
 上面代码的“t”和0的布尔值分别为true和false，所以分别返回第二个和第三个表达式的值。
 
+## 圆括号运算符
+
+在JavaScript中，圆括号是一种运算符，作用是求值。
+
+对表达式使用圆括号，返回表达式的值。
+
+{% highlight javascript %}
+
+(1) // 1
+('a') // a
+(1+2) // 3
+
+{% endhighlight %}
+
+如果对某个对象使用圆括号，则等同于调用该对象的valueOf方法。
+
+{% highlight javascript %}
+
+var o = {p:1};
+
+(o)
+// 等同于o.valueof()
+
+{% endhighlight %}
+
+调用函数的时候，在尾部添加一对圆括号，就表示对函数求值。如果将函数放在圆括号中，则会返回整个函数，因为这相当于调用函数对象的valueOf方法。
+
+{% highlight javascript %}
+
+function f(){return 1;}
+
+f()
+// 1
+
+(f)
+// function f(){return 1;}
+
+{% endhighlight %}
+
+由于圆括号的作用是求值，如果对语句使用圆括号，就会报错，因为语句没有返回值。
+
+{% highlight javascript %}
+
+(var a =1)
+// SyntaxError: Unexpected token var
+
+{% endhighlight %}
+
 ## 位运算符
 
 ### 简介
@@ -572,87 +620,6 @@ flags = ~flags;
 
 {% endhighlight %}
 
-## 圆括号运算符
-
-在JavaScript中，圆括号是一种运算符，作用是求值。
-
-对表达式使用圆括号，返回表达式的值。
-
-{% highlight javascript %}
-
-(1)
-// 1
-
-('a')
-// a
-
-(1+2)
-// 3
-
-{% endhighlight %}
-
-如果对某个对象使用圆括号，则等同于调用该对象的valueOf方法。
-
-{% highlight javascript %}
-
-var o = {p:1};
-
-(o)
-// 等同于o.valueof()
-
-{% endhighlight %}
-
-调用函数的时候，在尾部添加一对圆括号，就表示对函数求值。如果将函数放在圆括号中，则会返回整个函数，因为这相当于调用函数对象的valueOf方法。
-
-{% highlight javascript %}
-
-function f(){return 1;}
-
-f()
-// 1
-
-(f)
-// function f(){return 1;}
-
-{% endhighlight %}
-
-由于圆括号的作用是求值，如果对语句使用圆括号，就会报错，因为语句没有返回值。
-
-{% highlight javascript %}
-
-(var a =1)
-// SyntaxError: Unexpected token var
-
-{% endhighlight %}
-
-## 方括号运算符
-
-方括号运算符，用于复合类型变量（数组和对象）的属性的取值。
-
-对于数组，就是按照数组的下标取值。
-
-{% highlight javascript %}
-
-var a = ["a", "b", "c"];
-
-a[1]
-// "b"
-
-{% endhighlight %}
-
-对于对象，就是按照对象的属性名取值。
-
-{% highlight javascript %}
-
-var o = { p1:"a", p2:"b"};
-
-o["p1"]
-// "a"
-
-{% endhighlight %}
-
-> 请注意，取值的时候，属性名p1必须放在引号中，否则会被JavaScript当作变量名解释。
-
 ## void运算符
 
 void运算符的作用是执行一个表达式，然后返回undefined。
@@ -661,7 +628,7 @@ void运算符的作用是执行一个表达式，然后返回undefined。
 
 {% highlight javascript %}
 
-void  expr
+void expr
 
 {% endhighlight %}
 
@@ -691,7 +658,7 @@ javascript:void(window.open("http://www.whitehouse.gov/"));
 
 {% endhighlight %}
 
-写入超级链接，就是下面这样：
+将void写入链接，就是下面这样：
 
 {% highlight html %}
 
