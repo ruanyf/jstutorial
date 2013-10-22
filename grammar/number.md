@@ -150,7 +150,7 @@ NaN + 32 // NaN
 NaN - 32 // NaN
 NaN * 32 // NaN
 NaN / 32 // NaN
-		
+
 {% endhighlight %}
 
 isNaN方法可以用来判断一个值是否为NaN。

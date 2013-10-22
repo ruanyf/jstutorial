@@ -10,7 +10,7 @@ ModifiedOn: 2013-09-16
 
 Mutation Observer（变动观察器）是监视DOM变动的接口。当DOM对象树发生任何变动的时候，Mutation Observer会得到通知。
 
-在概念上，它很接近事件。可以理解为，当DOM发生变动，会触发Mutation Observer事件。但是，它与事件有一个本质不同：事件是同步触发，也就是说，当DOM发生变动，立刻会触发相应的事件；Mutation Observer则是异步触发，DOM发生变动以后，并不会马上触发，而是要等到当前所有操作都结束后才触发。
+在概念上，它很接近事件。可以理解为，当DOM发生变动，会触发Mutation Observer事件。但是，它与事件有一个本质不同：事件是同步触发，也就是说，当DOM发生变动，立刻会触发相应的事件；Mutation Observer则是异步触发，DOM发生变动以后，并不会马上触发，而是要等到当前所有DOM操作都结束后才触发。
 
 这样设计是为了应付DOM变动频繁的特点。举例来说，如果在文档中连续插入1000个段落（p元素），就会连续触发1000个插入事件，执行每个事件的回调函数，这很可能造成浏览器的卡顿；而Mutation Observer完全不同，只在1000个段落都插入结束后才会触发，而且只触发一次。
 
@@ -26,7 +26,11 @@ Mutation Observer有以下特点：
 
 {% highlight javascript %}
 
-var observeMutationSupport = 'MutationObserver' in window;
+var MutationObserver = window.MutationObserver ||
+        window.WebKitMutationObserver || 
+        window.MozMutationObserver;
+
+var observeMutationSupport = !!MutationObserver;
 
 {% endhighlight %}
 
@@ -81,7 +85,7 @@ disconnect方法用来停止观察。发生相应变动时，不再调用回调�
 {% highlight javascript %}
 
 observer.disconnect();
-		
+
 {% endhighlight %}
 
 takeRecord 方法用来清除变动记录，即不再处理未处理的变动。
@@ -89,7 +93,7 @@ takeRecord 方法用来清除变动记录，即不再处理未处理的变动。
 {% highlight javascript %}
 
 observer.takeRecord();
-		
+
 {% endhighlight %}
 
 ### MutationRecord对象
@@ -116,7 +120,7 @@ MutationRecord对象包含了DOM的相关信息，有如下属性：
 {% highlight javascript %}
 
 var callback = function(records){
-    records.map(functions(record){
+    records.map(function(record){
     	console.log('Mutation type: ' + record.type); 
     	console.log('Mutation target: ' + record.target);
     });
@@ -165,3 +169,5 @@ mo.observe(element, options);
 ## 参考链接
 
 - Tiffany Brown, [Getting to know mutation observers](http://dev.opera.com/articles/view/mutation-observers-tutorial/)
+- Michal Budzynski, [JavaScript: The less known parts. DOM Mutations](http://michalbe.blogspot.com/2013/04/javascript-less-known-parts-dom.html)
+- Jeff Griffiths, [DOM MutationObserver – reacting to DOM changes without killing browser performance](https://hacks.mozilla.org/2012/05/dom-mutationobserver-reacting-to-dom-changes-without-killing-browser-performance/)
