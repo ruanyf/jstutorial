@@ -3,202 +3,65 @@ title: 运算符
 layout: page
 category: grammar
 date: 2013-02-04
-modifiedOn: 2013-10-19
+modifiedOn: 2013-10-22
 ---
 
 ## 算术运算符
 
-### 加法运算
+JavaScript提供9个算术运算符。
 
-加法运算符（+）用于数字的相加或者字符串的连接。如果两个运算子都是数值，则返回它们的和；如果两个运算子都是字符，则返回连接后的字符串。
-
-{% highlight javascript %}
-
-1 + 1 // 2
-
-"1" + "1" // "11"
-
-{% endhighlight %}
-
-其他情况下，则需要将运算子转为数值或字符串类型。转化的基本规则是，如果有一个运算子是字符串，则将另一个也转成字符串，返回两者连接的结果；否则就将两个运算子都转为数值，返回两者的和。
-
-{% highlight javascript %}
-
-true + 1
-// 2
-
-true + "1"
-// "true1"
-
-{% endhighlight %}
-
-更详尽的转化规则参见《数据类型转化》一节。
-
-### 其他算术运算符
-
-除了加法运算符，JavaScript还提供如下算术运算符：
+- 加法运算符（Addition）：number1 + number2
 
 - 减法运算符（Subtraction）： number1 - number2
+
 - 乘法运算符（Multiplication）： number1 * number2
+
 - 除法运算符（Division）：number1 / number2
+
 - 余数运算符（Remainder）：number1 % number2
+
 - 自增运算符（Increment）：++variable, variable++
+
 - 自减运算符（Decrement）：--variable, variable--
+
 - 求负运算符（Negate）：-value
+
 - 数值运算符（Convert to number）： +value
 
-最后两个求负运算符和数值运算符，可以将字符串转为数值。
+加法运算符（+）除了用于数值的相加，还能用于字符串的连接。两个运算子之中只要有一个是字符串，加法运算符号就会变为字符串连接运算符，返回连接后的字符串，其他情况则是返回数值相加的和。加法运算符行为的详细讨论，可以参见《数据类型转换》一节。
 
 {% highlight javascript %}
 
-"1.1" + "1.1" 
-// "1.11.1"
-
-(+"1.1") + (+"1.1") 
-// 2.2 
+1 + "1" // "11"
 
 {% endhighlight %}
 
-如果一个运算子是数值类型，另一个是其他类型，那么除了加法运算符，在其他运算符的情况下，另一个运算子都会被转化成数值类型。
+上面代码表示，两个运算子之中有一个是字符串，另一个运算子就会被自动转为字符串。
+
+加法运算符以外的其他算术运算符都不是这样，它们的规则是：所有运算子一律转为数值。
 
 {% highlight javascript %}
 
-// 加法运算符的情况
-1 + "1"
-// "11"
-
-// 减法运算符的情况
-1 - "1"
-// 0
+1 - "1" // 0
++"3" // 3 
+-true // -1
 
 {% endhighlight %}
 
-## 圆括号运算符
+上面代码表示，减法运算符将字符串“1”自动转为数值1，数值运算符（+）将字符串“3”转为数值3，求负运算符（-）将布尔值true转为-1。
 
-在JavaScript中，圆括号是一种运算符，作用是求值。
+## 赋值运算符
 
-对表达式使用圆括号，返回表达式的值。
+赋值运算符（Assignment Operators）用于给变量赋值。
 
-{% highlight javascript %}
+JavaScript提供6个赋值运算符。
 
-(1)
-// 1
-
-('a')
-// a
-
-(1+2)
-// 3
-
-{% endhighlight %}
-
-如果对某个对象使用圆括号，则等同于调用该对象的valueOf方法。
-
-{% highlight javascript %}
-
-var o = {p:1};
-
-(o)
-// 等同于o.valueof()
-
-{% endhighlight %}
-
-调用函数的时候，在尾部添加一对圆括号，就表示对函数求值。如果将函数放在圆括号中，则会返回整个函数，因为这相当于调用函数对象的valueOf方法。
-
-{% highlight javascript %}
-
-function f(){return 1;}
-
-f()
-// 1
-
-(f)
-// function f(){return 1;}
-
-{% endhighlight %}
-
-由于圆括号的作用是求值，如果对语句使用圆括号，就会报错，因为语句没有返回值。
-
-{% highlight javascript %}
-
-(var a =1)
-// SyntaxError: Unexpected token var
-
-{% endhighlight %}
-
-## 方括号运算符
-
-方括号运算符，用于复合类型变量（数组和对象）的属性的取值。
-
-对于数组，就是按照数组的下标取值。
-
-{% highlight javascript %}
-
-var a = ["a", "b", "c"];
-
-a[1]
-// "b"
-
-{% endhighlight %}
-
-对于对象，就是按照对象的属性名取值。
-
-{% highlight javascript %}
-
-var o = { p1:"a", p2:"b"};
-
-o["p1"]
-// "a"
-
-{% endhighlight %}
-
-> 请注意，取值的时候，属性名p1必须放在引号中，否则会被JavaScript当作变量名解释。
-
-## void运算符
-
-void运算符的作用是执行一个表达式，然后返回undefined。
-
-它可以写成
-
-{% highlight javascript %}
-
-void  expr
-
-{% endhighlight %}
-
-或者
-
-{% highlight javascript %}
-
-void(expr)
-
-{% endhighlight %}
-
-建议采用后一种形式，即总是使用括号。因为void运算符的优先性很高，如果不使用括号，容易造成错误的结果。比如，void 4+7 实际上等同于 (void 4) +7 。
-
-这个运算符号主要是用于书签工具（bookmarklet）或者用于在超级链接中插入代码，目的是返回undefined可以防止网页跳转。以书签工具为例，下面的代码会导致直接在当前窗口打开新链接。
-
-{% highlight javascript %}
-
-javascript:window.open("http://www.whitehouse.gov/");
-
-{% endhighlight %}
-
-使用void运算符后，就会跳出一个新窗口打开链接。
-
-{% highlight javascript %}
-
-javascript:void(window.open("http://www.whitehouse.gov/"));
-
-{% endhighlight %}
-
-写入超级链接，就是下面这样：
-
-{% highlight html %}
-
- <a href="javascript:void(doSomething());">Compute</a>
-
-{% endhighlight %}
+- **=**：x=y表示将y赋值给x
+- **+=**：x+=y等同于x=x+y
+- **-=**：x-=y等同于x=x-y
+- **\*=**：x\*=y等同于x=x\*y
+- **/=**：x/=y等同于x=x/y
+- **%=**：x%=y等同于x=x%y
 
 ## 比较运算符
 
@@ -457,9 +320,9 @@ null == undefined   // true
 
 短路规则对这个运算符也适用。
 
-(4) 三元运算符（ ? :）
+(4) 三元条件运算符（ ? :）
 
-三元运算符用问号（？）和冒号（：），分隔三个表达式。如果第一个表达式的布尔值为true，则返回第二个表达式的值，否则返回第三个表达式的值。
+三元条件运算符用问号（？）和冒号（：），分隔三个表达式。如果第一个表达式的布尔值为true，则返回第二个表达式的值，否则返回第三个表达式的值。
 
 {% highlight javascript %}
 
@@ -706,6 +569,133 @@ flags = flags ^ mask;
 {% highlight javascript %}
 
 flags = ~flags;
+
+{% endhighlight %}
+
+## 圆括号运算符
+
+在JavaScript中，圆括号是一种运算符，作用是求值。
+
+对表达式使用圆括号，返回表达式的值。
+
+{% highlight javascript %}
+
+(1)
+// 1
+
+('a')
+// a
+
+(1+2)
+// 3
+
+{% endhighlight %}
+
+如果对某个对象使用圆括号，则等同于调用该对象的valueOf方法。
+
+{% highlight javascript %}
+
+var o = {p:1};
+
+(o)
+// 等同于o.valueof()
+
+{% endhighlight %}
+
+调用函数的时候，在尾部添加一对圆括号，就表示对函数求值。如果将函数放在圆括号中，则会返回整个函数，因为这相当于调用函数对象的valueOf方法。
+
+{% highlight javascript %}
+
+function f(){return 1;}
+
+f()
+// 1
+
+(f)
+// function f(){return 1;}
+
+{% endhighlight %}
+
+由于圆括号的作用是求值，如果对语句使用圆括号，就会报错，因为语句没有返回值。
+
+{% highlight javascript %}
+
+(var a =1)
+// SyntaxError: Unexpected token var
+
+{% endhighlight %}
+
+## 方括号运算符
+
+方括号运算符，用于复合类型变量（数组和对象）的属性的取值。
+
+对于数组，就是按照数组的下标取值。
+
+{% highlight javascript %}
+
+var a = ["a", "b", "c"];
+
+a[1]
+// "b"
+
+{% endhighlight %}
+
+对于对象，就是按照对象的属性名取值。
+
+{% highlight javascript %}
+
+var o = { p1:"a", p2:"b"};
+
+o["p1"]
+// "a"
+
+{% endhighlight %}
+
+> 请注意，取值的时候，属性名p1必须放在引号中，否则会被JavaScript当作变量名解释。
+
+## void运算符
+
+void运算符的作用是执行一个表达式，然后返回undefined。
+
+它可以写成
+
+{% highlight javascript %}
+
+void  expr
+
+{% endhighlight %}
+
+或者
+
+{% highlight javascript %}
+
+void(expr)
+
+{% endhighlight %}
+
+建议采用后一种形式，即总是使用括号。因为void运算符的优先性很高，如果不使用括号，容易造成错误的结果。比如，void 4+7 实际上等同于 (void 4) +7 。
+
+这个运算符号主要是用于书签工具（bookmarklet）或者用于在超级链接中插入代码，目的是返回undefined可以防止网页跳转。以书签工具为例，下面的代码会导致直接在当前窗口打开新链接。
+
+{% highlight javascript %}
+
+javascript:window.open("http://www.whitehouse.gov/");
+
+{% endhighlight %}
+
+使用void运算符后，就会跳出一个新窗口打开链接。
+
+{% highlight javascript %}
+
+javascript:void(window.open("http://www.whitehouse.gov/"));
+
+{% endhighlight %}
+
+写入超级链接，就是下面这样：
+
+{% highlight html %}
+
+ <a href="javascript:void(doSomething());">Compute</a>
 
 {% endhighlight %}
 
