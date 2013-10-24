@@ -14,11 +14,11 @@ modifiedOn: 2013-10-19
 <h2 id="grammar">基本语法</h2>
 
 - [概述](grammar/basic.html)
-- [运算符](grammar/operator.html)
 - [数值](grammar/number.html)
 - [对象](grammar/object.html)
 - [数组](grammar/array.html)
 - [函数](grammar/function.html)
+- [运算符](grammar/operator.html		
 - [数据类型转换](grammar/conversion.html)（基本完成）
 - [错误处理机制](grammar/error.html)（基本完成）
 - [编程风格](grammar/style.html)

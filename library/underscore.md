@@ -3,38 +3,24 @@ title: Underscore.js
 layout: page
 category: library
 date: 2012-12-27
-modifiedOn: 2013-09-30
+modifiedOn: 2013-10-24
 ---
 
 ## 概述
 
-[Underscore.js](http://underscorejs.org/)是一个很精干的库，压缩后只有4KB。它提供了几十种函数式编程的方法，大大方便了Javascript的编程。MVC框架backbone.js就将这个库作为自己的工具库。
+[Underscore.js](http://underscorejs.org/)是一个很精干的库，压缩后只有4KB。它提供了几十种函数式编程的方法，弥补了标准库的不足，大大方便了JavaScript的编程。MVC框架Backbone.js就将这个库作为自己的工具库。除了可以在浏览器环境使用，Underscore.js还可以用于Node.js。
 
 Underscor.js定义了一个下划线（_）对象，函数库的所有方法都属于这个对象。这些方法大致上可以分成：集合（collection）、数组（array）、函数（function）、对象（object）和工具（utility）五大类。
-
-除了可以在浏览器环境使用，Underscore.js还可以用于Node.js。安装命令如下：
-
-{% highlight javascript %}
-
-npm install underscore
-
-{% endhighlight %}
-
-需要注意的是，Node.js环境不能直接使用下划线（_）作为变量名，因此要用下面的方法使用underscore.js。
-
-{% highlight javascript %}
-
-var u = require("underscore");
-
-{% endhighlight %}
 
 ## 集合相关方法
 
 Javascript语言的数据集合，包括两种结构：数组和对象。以下的方法同时适用于这两种结构。
 
-### map
+### 数组处理
 
-该方法对集合的每个成员依次进行某种操作，将返回的值依次存入一个新的数组。
+数组处理指的是对数组元素进行加工。
+
+map方法对集合的每个成员依次进行某种操作，将返回的值依次存入一个新的数组。
 
 {% highlight javascript %}
 
@@ -46,9 +32,7 @@ _.map({one : 1, two : 2, three : 3}, function(num, key){ return num * 3; });
 
 {% endhighlight %}
 
-### each
-
-该方法与map类似，依次对集合的每个成员进行某种操作，但是不返回值。
+each方法与map类似，依次对数组所有元素进行某种操作，不返回任何值。
 
 {% highlight javascript %}
 
@@ -58,11 +42,7 @@ _.each({one : 1, two : 2, three : 3}, alert);
 
 {% endhighlight %}
 
-### reduce
-
-该方法依次对集合的每个成员进行某种操作，然后将操作结果累计在某一个初始值之上，全部操作结束之后，返回累计的值。
-
-该方法接受三个参数。第一个参数是被处理的集合，第二个参数是对每个成员进行操作的函数，第三个参数是累计用的变量。
+reduce方法依次对集合的每个成员进行某种操作，然后将操作结果累计在某一个初始值之上，全部操作结束之后，返回累计的值。该方法接受三个参数。第一个参数是被处理的集合，第二个参数是对每个成员进行操作的函数，第三个参数是累计用的变量。
 
 {% highlight javascript %}
 
@@ -73,7 +53,49 @@ _.reduce([1, 2, 3], function(memo, num){ return memo + num; }, 0);
 
 reduce方法的第二个参数是操作函数，它本身又接受两个参数，第一个是累计用的变量，第二个是集合每个成员的值。
 
-### filter 和 reject
+shuffle方法返回一个打乱次序的集合。
+
+{% highlight javascript %}
+
+_.shuffle([1, 2, 3, 4, 5, 6]);
+// [4, 1, 6, 3, 5, 2]
+
+{% endhighlight %}
+
+### 数组特征
+
+Underscore.js提供了一系列方法，判断数组元素的特征。这些方法都返回一个布尔值，表示是否满足条件。
+
+every方法判断数组的所有元素是否都满足某个条件。如果都满足则返回true，否则返回false。
+
+{% highlight javascript %}
+
+_.every([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
+// false
+
+{% endhighlight %}
+
+some方法则是只要有一个元素满足，就返回true，否则返回false。
+
+{% highlight javascript %}
+
+_.some([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
+// true
+
+{% endhighlight %}
+
+size方法返回集合的成员数量。
+
+{% highlight javascript %}
+
+_.size({one : 1, two : 2, three : 3});
+// 3
+
+{% endhighlight %}
+
+### 数组过滤
+
+Underscore.js提供了一系列方法，用于过滤数组，找到符合要求的成员。
 
 filter方法依次对集合的每个成员进行某种操作，只返回操作结果为true的成员。
 
@@ -93,29 +115,7 @@ _.reject([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
 
 {% endhighlight %}
 
-### every 和 some
-
-every方法依次对集合的每个成员进行某种操作，如果所有成员的操作结果都为true，则返回true，否则返回false。
-
-{% highlight javascript %}
-
-_.every([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
-// false
-
-{% endhighlight %}
-
-some方法则是只要有一个成员的操作结果为true，则返回true，否则返回false。
-
-{% highlight javascript %}
-
-_.some([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
-// true
-
-{% endhighlight %}
-
-### find
-
-该方法依次对集合的每个成员进行某种操作，返回第一个操作结果为true的成员。如果所有成员的操作结果都为false，则返回undefined。
+find方法依次对集合的每个成员进行某种操作，返回第一个操作结果为true的成员。如果所有成员的操作结果都为false，则返回undefined。
 
 {% highlight javascript %}
 
@@ -124,9 +124,7 @@ _.find([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
 
 {% endhighlight %}
 
-### contains
-
-如果某个值在集合内，该方法返回true，否则返回false。
+contains方法表示如果某个值在数组内，则返回true，否则返回false。
 
 {% highlight javascript %}
 
@@ -135,9 +133,7 @@ _.contains([1, 2, 3], 3);
 
 {% endhighlight %}
 
-### countBy
-
-该方法依次对集合的每个成员进行某种操作，将操作结果相同的成员算作一类，最后返回一个对象，表明每种操作结果对应的成员数量。
+countBy方法依次对集合的每个成员进行某种操作，将操作结果相同的成员算作一类，最后返回一个对象，表明每种操作结果对应的成员数量。
 
 {% highlight javascript %}
 
@@ -148,33 +144,9 @@ _.countBy([1, 2, 3, 4, 5], function(num) {
 
 {% endhighlight %}
 
-### shuffle
-
-该方法返回一个打乱次序的集合。
-
-{% highlight javascript %}
-
-_.shuffle([1, 2, 3, 4, 5, 6]);
-// [4, 1, 6, 3, 5, 2]
-
-{% endhighlight %}
-
-### size
-
-该方法返回集合的成员数量。
-
-{% highlight javascript %}
-
-_.size({one : 1, two : 2, three : 3});
-// 3
-
-{% endhighlight %}
-
 ## 对象相关方法
 
-### toArray
-
-该方法将对象转为数组。
+toArray方法将对象转为数组，只包含对象成员的值。典型应用是将对类似数组的对象转为真正的数组。
 
 {% highlight javascript %}
 
@@ -183,9 +155,7 @@ _.size({one : 1, two : 2, three : 3});
 
 {% endhighlight %}
 
-### pluck
-
-该方法将多个对象的某一个属性的值，提取成一个数组。
+pluck方法将多个对象的某一个属性的值，提取成一个数组。
 
 {% highlight javascript %}
 
@@ -198,7 +168,9 @@ _.pluck(stooges, 'name');
 
 ## 与函数相关的方法
 
-### bind
+### 绑定运行环境和绑定参数
+
+在不同的运行环境下，JavaScript函数内部的变量所在的上下文是不同的。这种特性会给程序带来不确定性，为了解决这个问题，Underscore.js提供了两个方法，用来给函数绑定上下文。
 
 bind方法绑定函数运行时的上下文，返回一个新函数。
 
@@ -234,8 +206,6 @@ _.bind(add, {sum:1}, 1, 1, 1)()
 
 上面代码中bind方法有5个参数，最后那三个是给定add方法的运行参数，所以运行结果为4。
 
-### bindAll
-
 bindall方法可以一次将多个方法，绑定在某个对象上面。
 
 {% highlight javascript %}
@@ -253,9 +223,7 @@ _.bindAll(o, 'm1', 'm2');
 
 上面代码一次性将两个方法（m1和m2）绑定在o对象上面。
 
-### partial
-
-该方法绑定将某个函数与参数绑定，然后作为一个新函数返回。
+除了绑定上下文，Underscore.js还允许绑定参数。partial方法将函数与某个参数绑定，然后作为一个新函数返回。
 
 {% highlight javascript %}
 
@@ -268,9 +236,11 @@ add5(10);
 
 {% endhighlight %}
 
-### memoize
+### 函数运行
 
-该方法缓存一个函数针对某个参数的运行结果。
+Underscore.js允许对函数运行行为进行控制。
+
+memoize方法缓存一个函数针对某个参数的运行结果。
 
 {% highlight javascript %}
 
@@ -280,11 +250,7 @@ var fibonacci = _.memoize(function(n) {
 
 {% endhighlight %}
 
-如果一个函数有多个参数，则需要提供一个hashFunction，用来生成标识缓存的哈希值。
-
-### delay
-
-该方法可以将函数推迟指定的时间再运行。
+delay方法可以将函数推迟指定的时间再运行。
 
 {% highlight javascript %}
 
@@ -295,9 +261,7 @@ _.delay(log, 1000, 'logged later');
 
 {% endhighlight %}
 
-### defer
-
-该方法可以将函数推迟到待运行的任务数为0时再运行，类似于setTimeout推迟0秒运行的效果。
+defer方法可以将函数推迟到待运行的任务数为0时再运行，类似于setTimeout推迟0秒运行的效果。
 
 {% highlight javascript %}
 
@@ -305,9 +269,7 @@ _.defer(function(){ alert('deferred'); });
 
 {% endhighlight %}
 
-### throttle
-
-该方法返回一个函数的新版本。连续调用这个新版本的函数时，必须等待一定时间才会触发下一次执行。
+throttle方法返回一个函数的新版本。连续调用这个新版本的函数时，必须等待一定时间才会触发下一次执行。
 
 {% highlight javascript %}
 
@@ -319,19 +281,17 @@ $(window).scroll(throttled);
 
 {% endhighlight %}
 
-### debounce
-
-该方法也是返回一个函数的新版本。每次调用这个新版本的函数，必须与上一次调用间隔一定的时间，否则就无效。它的典型应用是防止用户双击某个按钮，导致两次提交表单。
+debounce方法返回的新函数有调用的时间限制，每次调用必须与上一次调用间隔一定的时间，否则就无效。它的典型应用是防止用户双击某个按钮，导致两次提交表单。
 
 {% highlight javascript %}
 
-$("button").on("click", _.debounce(submitForm, 1000));
+$("button").on("click", _.debounce(submitForm, 1000, true));
 
 {% endhighlight %}
 
-### once
+上面代码表示click事件发生后，调用函数submitForm的新版本。该版本的两次运行时间，必须间隔1000毫秒以上，否则第二次调用无效。
 
-该方法返回一个新版本的函数，使得这个函数只能被运行一次。主要用于对象的初始化。
+once方法返回一个只能运行一次的新函数。该方法主要用于对象的初始化。
 
 {% highlight javascript %}
 
@@ -342,9 +302,7 @@ initialize();
 
 {% endhighlight %}
 
-### after
-
-该方法返回一个新版本的函数，这个函数只有在被调用一定次数后才会运行，主要用于确认一组操作全部完成后，再做出反应。
+after方法返回一个新版本的函数，这个函数只有在被调用一定次数后才会运行，主要用于确认一组操作全部完成后，再做出反应。
 
 {% highlight javascript %}
 
@@ -387,6 +345,20 @@ welcome('moe');
 
 ## 工具方法
 
+### 链式操作
+
+Underscore.js允许将多个操作写成链式的形式。
+
+{% highlight javascript %}
+
+_.(users)
+.filter(function(user) { return user.name === name })
+.sortBy(function(user) { return user.karma })
+.first()
+.value()
+
+{% endhighlight %}
+
 ### template
 
 该方法用于编译HTML模板。它接受三个参数。
@@ -403,7 +375,7 @@ _.template(templateString, [data], [settings])
 - data：输入模板的数据
 - settings：设置
 
-#### templateString
+**（1）templateString**
 
 模板字符串templateString就是普通的HTML语言，其中的变量使用<%= … %>的形式插入；data对象负责提供变量的值。
 
@@ -462,7 +434,7 @@ t1({ user: "<Jane>" })
 
 {% endhighlight %}
 
-#### data
+** （2）data **
 
 templateString中的所有变量，在内部都是obj对象的属性，而obj对象就是指第二个参数data对象。下面两句语句是等同的。
 
@@ -486,5 +458,6 @@ _.template("<%if (data.title) { %>Title: <%= title %><% } %>", null,
 
 ## 参考链接
 
-- [Using Underscore.js's debounce() to filter double-clicks](http://eng.wealthfront.com/2012/12/using-underscorejss-debounce-to-filter.html)i
-- Dr. Axel Rauschmayer, [A closer look at Underscore templates](http://www.2ality.com/2012/06/underscore-templates.html)
+- Amy Lee, [Using Underscore.js's debounce() to filter double-clicks](http://eng.wealthfront.com/2012/12/using-underscorejss-debounce-to-filter.html)
+- Axel Rauschmayer, [A closer look at Underscore templates](http://www.2ality.com/2012/06/underscore-templates.html)
+- Jules Boussekeyt, [Write concise code with UnderscoreJS](http://jules.boussekeyt.org/2012/underscorejs.html)

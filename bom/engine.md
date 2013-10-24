@@ -185,9 +185,9 @@ Event Loop就是为了解决这个问题而提出的。[Wikipedia](http://en.wik
 
 ![asynchronous mode](http://image.beekka.com/blog/201310/2013102004.png)
 
-上图主进程的绿色部分，还是表示运行时间，而橙色部分表示空闲时间。每当遇到I/O的时候，主进程就让Event Loop进程去通知相应的I/O程序，然后接着往后运行，所以不存在红色的等待时间。等到I/O程序完成操作，Event Loop进程再把结果返回主进程。主进程就调用事先设定的回调函数，完成整个任务。
+上图主线程的绿色部分，还是表示运行时间，而橙色部分表示空闲时间。每当遇到I/O的时候，主线程就让Event Loop线程去通知相应的I/O程序，然后接着往后运行，所以不存在红色的等待时间。等到I/O程序完成操作，Event Loop线程再把结果返回主线程。主线程就调用事先设定的回调函数，完成整个任务。
 
-可以看到，由于多出了橙色的空闲时间，所以主进程得以运行更多的任务，这就提高了效率。这种运行方式称为"[异步模式](http://en.wikipedia.org/wiki/Asynchronous_I/O)"（asynchronous I/O）。
+可以看到，由于多出了橙色的空闲时间，所以主线程得以运行更多的任务，这就提高了效率。这种运行方式称为"[异步模式](http://en.wikipedia.org/wiki/Asynchronous_I/O)"（asynchronous I/O）。
 
 这正是JavaScript语言的运行方式。单线程模型虽然对JavaScript构成了很大的限制，但也因此使它具备了其他语言不具备的优势。如果部署得好，JavaScript程序是不会出现堵塞的，这就是为什么node.js平台可以用很少的资源，应付大流量访问的原因。
 
