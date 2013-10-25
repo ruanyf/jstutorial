@@ -53,7 +53,7 @@ npm install
 
 {% endhighlight %}
 
-如果使用npm init命令，可以互动地生成package.json文件，只需回答所需模块的名称和版本即可。
+如果想要自动生成package.json文件，可以使用npm init命令，按照屏幕提示回答所需模块的名称和版本即可。
 
 {% highlight bash %}
 
@@ -65,15 +65,13 @@ npm init
 
 {% highlight bash %}
 
-npm install grunt --save-dev
-
 npm install <module> --save-dev
 
 {% endhighlight %}
 
 ## Gruntfile.js 命令脚本文件 
 
-在项目的根目录下，新建脚本文件Gruntfile.js。它是grunt的配置文件，就好像package.json是npm的配置文件一样。Gruntfile.js就是一般的Node.js模块的写法。
+完成模块安装以后，在项目的根目录下，新建脚本文件Gruntfile.js。它是grunt的配置文件，就好像package.json是npm的配置文件一样。Gruntfile.js就是一般的Node.js模块的写法。
 
 {% highlight javascript %}
 

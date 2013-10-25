@@ -168,11 +168,13 @@ _.pluck(stooges, 'name');
 
 ## 与函数相关的方法
 
-### 绑定运行环境和绑定参数
+### 绑定运行环境和参数
 
 在不同的运行环境下，JavaScript函数内部的变量所在的上下文是不同的。这种特性会给程序带来不确定性，为了解决这个问题，Underscore.js提供了两个方法，用来给函数绑定上下文。
 
-bind方法绑定函数运行时的上下文，返回一个新函数。
+（1）bind方法
+
+该方法绑定函数运行时的上下文，返回一个新函数。
 
 {% highlight javascript %}
 
@@ -206,7 +208,9 @@ _.bind(add, {sum:1}, 1, 1, 1)()
 
 上面代码中bind方法有5个参数，最后那三个是给定add方法的运行参数，所以运行结果为4。
 
-bindall方法可以一次将多个方法，绑定在某个对象上面。
+（2）bindall方法
+
+该方法可以一次将多个方法，绑定在某个对象上面。
 
 {% highlight javascript %}
 
@@ -223,6 +227,8 @@ _.bindAll(o, 'm1', 'm2');
 
 上面代码一次性将两个方法（m1和m2）绑定在o对象上面。
 
+（3）partial方法
+
 除了绑定上下文，Underscore.js还允许绑定参数。partial方法将函数与某个参数绑定，然后作为一个新函数返回。
 
 {% highlight javascript %}
@@ -236,100 +242,26 @@ add5(10);
 
 {% endhighlight %}
 
-### 函数运行
-
-Underscore.js允许对函数运行行为进行控制。
-
-memoize方法缓存一个函数针对某个参数的运行结果。
-
-{% highlight javascript %}
-
-var fibonacci = _.memoize(function(n) {
-  return n < 2 ? n : fibonacci(n - 1) + fibonacci(n - 2);
-});
-
-{% endhighlight %}
-
-delay方法可以将函数推迟指定的时间再运行。
-
-{% highlight javascript %}
-
-var log = _.bind(console.log, console);
-
-_.delay(log, 1000, 'logged later');
-// 'logged later'
-
-{% endhighlight %}
-
-defer方法可以将函数推迟到待运行的任务数为0时再运行，类似于setTimeout推迟0秒运行的效果。
-
-{% highlight javascript %}
-
-_.defer(function(){ alert('deferred'); });
-
-{% endhighlight %}
-
-throttle方法返回一个函数的新版本。连续调用这个新版本的函数时，必须等待一定时间才会触发下一次执行。
-
-{% highlight javascript %}
-
-// 返回updatePosition函数的新版本
-var throttled = _.throttle(updatePosition, 100);
-
-// 新版本的函数每过100毫秒才会触发一次
-$(window).scroll(throttled);
-
-{% endhighlight %}
-
-debounce方法返回的新函数有调用的时间限制，每次调用必须与上一次调用间隔一定的时间，否则就无效。它的典型应用是防止用户双击某个按钮，导致两次提交表单。
-
-{% highlight javascript %}
-
-$("button").on("click", _.debounce(submitForm, 1000, true));
-
-{% endhighlight %}
-
-上面代码表示click事件发生后，调用函数submitForm的新版本。该版本的两次运行时间，必须间隔1000毫秒以上，否则第二次调用无效。
-
-once方法返回一个只能运行一次的新函数。该方法主要用于对象的初始化。
-
-{% highlight javascript %}
-
-var initialize = _.once(createApplication);
-initialize();
-initialize();
-// Application只被创造一次
-
-{% endhighlight %}
-
-after方法返回一个新版本的函数，这个函数只有在被调用一定次数后才会运行，主要用于确认一组操作全部完成后，再做出反应。
-
-{% highlight javascript %}
-
-var renderNotes = _.after(notes.length, render);
-_.each(notes, function(note) {
-  note.asyncSave({success: renderNotes});
-});
-// 所有的note都被保存以后，renderNote才会运行一次
-
-{% endhighlight %}
-
-### wrap
+（4）wrap方法
 
 该方法将一个函数作为参数，传入另一个函数，最终返回前者的一个新版本。
 
 {% highlight javascript %}
 
 var hello = function(name) { return "hello: " + name; };
+
 hello = _.wrap(hello, function(func) {
   return "before, " + func("moe") + ", after";
 });
+
 hello();
 // 'before, hello: moe, after'
 
 {% endhighlight %}
 
-### compose
+上面代码先定义hello函数，然后将hello传入一个匿名定义，返回一个新版本的hello函数。
+
+（5）compose方法
 
 该方法接受一系列函数作为参数，由后向前依次运行，上一个函数的运行结果，作为后一个函数的运行参数。也就是说，将f(g(),h())的形式转化为f(g(h()))。
 
@@ -342,6 +274,104 @@ welcome('moe');
 // 'hi: moe!'
 
 {% endhighlight %}
+
+上面代码调用welcome时，先运行greet函数，再运行exclaim函数。并且，greet函数的运行结果是exclaim函数运行时的参数。
+
+### 函数运行控制
+
+Underscore.js允许对函数运行行为进行控制。
+
+（1）memoize方法
+
+该方法缓存一个函数针对某个参数的运行结果。
+
+{% highlight javascript %}
+
+var fibonacci = _.memoize(function(n) {
+  return n < 2 ? n : fibonacci(n - 1) + fibonacci(n - 2);
+});
+
+{% endhighlight %}
+
+（2）delay方法
+
+该方法可以将函数推迟指定的时间再运行。
+
+{% highlight javascript %}
+
+var log = _.bind(console.log, console);
+
+_.delay(log, 1000, 'logged later');
+// 'logged later'
+
+{% endhighlight %}
+
+上面代码推迟1000毫秒，再运行console.log方法，并且指定参数为“logged later”。
+
+（3）defer方法
+
+该方法可以将函数推迟到待运行的任务数为0时再运行，类似于setTimeout推迟0秒运行的效果。
+
+{% highlight javascript %}
+
+_.defer(function(){ alert('deferred'); });
+
+{% endhighlight %}
+
+（4）throttle方法
+
+该方法返回一个函数的新版本。连续调用这个新版本的函数时，必须等待一定时间才会触发下一次执行。
+
+{% highlight javascript %}
+
+// 返回updatePosition函数的新版本
+var throttled = _.throttle(updatePosition, 100);
+
+// 新版本的函数每过100毫秒才会触发一次
+$(window).scroll(throttled);
+
+{% endhighlight %}
+
+（5）debounce方法
+
+该方法返回的新函数有调用的时间限制，每次调用必须与上一次调用间隔一定的时间，否则就无效。它的典型应用是防止用户双击某个按钮，导致两次提交表单。
+
+{% highlight javascript %}
+
+$("button").on("click", _.debounce(submitForm, 1000, true));
+
+{% endhighlight %}
+
+上面代码表示click事件发生后，调用函数submitForm的新版本。该版本的两次运行时间，必须间隔1000毫秒以上，否则第二次调用无效。最后那个参数true，表示click事件发生后，立刻触发第一次submitForm函数，否则就是等1000毫秒再触发。
+
+（6）once方法
+
+该方法返回一个只能运行一次的新函数。该方法主要用于对象的初始化。
+
+{% highlight javascript %}
+
+var initialize = _.once(createApplication);
+initialize();
+initialize();
+// Application只被创造一次
+
+{% endhighlight %}
+
+（7）after方法
+
+该方法返回的新版本函数，只有在被调用一定次数后才会运行，主要用于确认一组操作全部完成后，再做出反应。
+
+{% highlight javascript %}
+
+var renderNotes = _.after(notes.length, render);
+
+_.each(notes, function(note) {
+  note.asyncSave({success: renderNotes});
+});
+
+{% endhighlight %}
+
+上面代码表示，函数renderNotes是函数render的新版本，只有调用notes.length次以后才会运行。所以，后面就可以放心地等到notes的每个成员都处理完，才会运行一次renderNotes。
 
 ## 工具方法
 
