@@ -3,7 +3,7 @@ title: JavaScript 编程风格
 layout: page
 category: grammar
 date: 2013-06-02
-modifiedOn: 2013-09-27
+modifiedOn: 2013-10-26
 ---
 
 所谓"编程风格"（programming style），指的是编写代码的样式规则。不同的程序员，往往有不同的编程风格。
@@ -14,7 +14,9 @@ modifiedOn: 2013-09-27
 
 必须牢记的一点是，如果你选定了一种“编程风格”，就应该坚持遵守，切忌多种风格混用。如果你加入他人的项目，就应该遵守现有的风格。
 
-## 大括号的位置
+## 语法标记的风格
+
+### 大括号的位置
 
 绝大多数的编程语言，都用大括号（{}）表示区块（block）。起首的大括号的位置，有许多不同的写法。
 
@@ -22,10 +24,10 @@ modifiedOn: 2013-09-27
 
 {% highlight javascript %}
 
-　　block
-　　{
-　　　　...
-　　}
+block
+{
+　　...
+}
 
 {% endhighlight %}
 
@@ -33,9 +35,9 @@ modifiedOn: 2013-09-27
 
 {% highlight javascript %}
 
-　　block {
-　　　　...
-　　}
+block {
+　　...
+}
 
 {% endhighlight %}
 
@@ -43,10 +45,10 @@ modifiedOn: 2013-09-27
 
 {% highlight javascript %}
 
-　　return
-　　{
-　　　　key:value;
-　　};
+return
+{
+　　key:value;
+};
 
 {% endhighlight %}
 
@@ -54,15 +56,15 @@ modifiedOn: 2013-09-27
 
 {% highlight javascript %}
 
-　　return {
-　　　　key : value;
-　　};
+return {
+　　key : value;
+};
 
 {% endhighlight %}
 
 因此，表示区块起首的大括号，不要另起一行。
 
-## 圆括号
+### 圆括号
 
 圆括号（parentheses）在JavaScript中有两种作用，一种表示函数的调用，另一种表示表达式的组合（grouping）。
 
@@ -85,23 +87,23 @@ console.log("abc") // 圆括号表示函数的调用
 
 {% highlight javascript %}
 
-　　foo (bar)
-　　return(a+b);
-　　if(a === 0) {...}
-　　function foo (b) {...}
-　　function(x) {...}
+foo (bar)
+return(a+b);
+if(a === 0) {...}
+function foo (b) {...}
+function(x) {...}
 
 {% endhighlight %}
 
 上面代码的最后一行是一个匿名函数，function是语法关键字，不是函数名，所以与左括号之间应该要有一个空格。
 
-## 缩进
+### 缩进
 
 空格和Tab键，都可以产生缩进效果（intent）。Tab键可以节省击键次数，但不同的文本编辑器对Tab的显示不尽相同，有的显示四个空格，有的显示两个空格，所以有人觉得，空格键可以使得显示效果更统一。
 
 无论你选择哪一种方法，都是可以接受的，要做的就是始终坚持这一种选择。不要一会使用tab键，一会使用空格键。
 
-## 行尾的分号
+### 行尾的分号
 
 分号表示语句的结束。大多数情况下，如果你省略了句尾的分号，JavaScript会自动添加。
 
@@ -124,9 +126,9 @@ var a = 1;
 {% highlight javascript %}
 
 x = y
-　　(function (){
-　　　　...
-　　})();
+(function (){
+　　...
+})();
 
 {% endhighlight %}
 
@@ -134,214 +136,13 @@ x = y
 
 {% highlight javascript %}
 
-　　x = y(function (){...})();
+x = y(function (){...})();
 
 {% endhighlight %}
 
 因此，不要省略句末的分号。
 
-## with语句
-
-with可以减少代码的书写，但是会造成混淆。
-
-{% highlight javascript %}
-
-　　with (o) {
-　　　　foo = bar;
-　　}
-
-{% endhighlight %}
-
-上面的代码，可以有四种运行结果：
-
-{% highlight javascript %}
-
-　　o.foo = bar;
-　　o.foo = o.bar;
-　　foo = bar;
-　　foo = o.bar;
-
-{% endhighlight %}
-
-这四种结果都可能发生，取决于不同的变量是否有定义。因此，不要使用with语句。
-
-## 相等和严格相等
-
-JavaScript有两个表示"相等"的运算符："相等"（==）和"严格相等"（===）。
-
-因为"相等"运算符会自动转换变量类型，造成很多意想不到的情况：
-
-{% highlight javascript %}
-
-　　0 == ''// true
-　　1 == true // true
-　　2 == true // false
-　　0 == '0' // true
-　　false == 'false' // false
-　　false == '0' // true
-　　" \t\r\n " == 0 // true
-
-{% endhighlight %}
-
-因此，不要使用"相等"（==）运算符，只使用"严格相等"（===）运算符。
-
-## 语句的合并
-
-有些程序员追求简洁，喜欢合并不同目的的语句。比如，原来的语句是
-
-{% highlight javascript %}
-
-　　a = b;
-　　if (a) {...}
-
-{% endhighlight %}
-
-他喜欢写成下面这样:
-
-{% highlight javascript %}
-
-　　if (a = b) {...}
-
-{% endhighlight %}
-
-虽然语句少了一行，但是可读性大打折扣，而且会造成误读，让别人误以为这行代码的意思是：
-
-{% highlight javascript %}
-
-　　if （a === b）{...}
-
-{% endhighlight %}
-
-另外一种情况是，有些程序员喜欢在同一行中赋值多个变量：
-
-{% highlight javascript %}
-
-　　var a = b = 0;
-
-{% endhighlight %}
-
-他以为，这行代码等同于
-
-{% highlight javascript %}
-
-　　var a = 0, b = 0;
-
-{% endhighlight %}
-
-实际上不是，它的真正效果是下面这样：
-
-{% highlight javascript %}
-
-　　b = 0;
-
-　　var a = b;
-
-{% endhighlight %}
-
-因此，不要将不同目的的语句，合并成一行。
-
-## 变量声明
-
-JavaScript会自动将变量声明"提升"（hoist）到代码块（block）的头部。
-
-{% highlight javascript %}
-
-　　if (!o) {
-　　　　var o = {};
-　　}
-
-{% endhighlight %}
-
-等同于
-
-{% highlight javascript %}
-
-　　var o;
-　　if (!o) {
-　　　　o = {};
-　　}
-
-{% endhighlight %}
-
-为了避免可能出现的问题，不如把变量声明都放在代码块的头部。
-
-{% highlight javascript %}
-
-　　for (var i ...) {...}
-
-{% endhighlight %}
-
-最好写成：
-
-{% highlight javascript %}
-
-　　var i;
-
-　　for (i ...) {...}
-
-{% endhighlight %}
-
-因此，所有变量声明都放在函数的头部，所有函数都在使用之前定义。
-
-## 全局变量
-
-JavaScript最大的语法缺点，可能就是全局变量对于任何一个代码块，都是可读可写。这对代码的模块化和重复使用，非常不利。
-
-因此，避免使用全局变量；如果不得不使用，用大写字母表示变量名，比如UPPER_CASE。
-
-## new命令
-
-JavaScript使用new命令，从构造函数生成一个新对象。
-
-{% highlight javascript %}
-
-　　var o = new myObject();
-
-{% endhighlight %}
-
-这种做法的问题是，一旦你忘了加上new，myObject()内部的this关键字就会指向全局对象，导致所有绑定在this上面的变量，都变成全局变量。
-
-因此，尽量使用Object.create()命令，替代new命令。如果不得不使用new，为了防止出错，最好在视觉上把构造函数与其他函数区分开来。比如，构造函数的函数名，采用首字母大写（InitialCap）；其他函数名，一律首字母小写。
-
-## 自增和自减运算符
-
-自增（++）和自减（--）运算符，放在变量的前面或后面，返回的值不一样，很容易发生错误。
-
-事实上，所有的++运算符都可以用"+= 1"代替。
-
-{% highlight javascript %}
-
-　　++x
-{% endhighlight %}
-
-等同于
-
-{% highlight javascript %}
-
-　　x += 1;
-
-{% endhighlight %}
-
-代码变得更清晰了。有一个很可笑的例子，某个JavaScript函数库的源代码中出现了下面的片段：
-
-{% highlight javascript %}
-
-　　++x;
-　　++x;
-
-{% endhighlight %}
-
-这个程序员忘了，还有更简单、更合理的写法：
-
-{% highlight javascript %}
-
-　　x += 2;
-
-{% endhighlight %}
-
-因此，不要使用自增（++）和自减（--）运算符，用+=和-=代替。
-
-## 区块
+### 区块
 
 如果循环和判断的代码体只有一行，JavaScript允许该区块（block）省略大括号。
 
@@ -349,7 +150,7 @@ JavaScript使用new命令，从构造函数生成一个新对象。
 
 {% highlight javascript %}
 
-　　if (a) b(); c();
+if (a) b(); c();
 
 {% endhighlight %}
 
@@ -357,7 +158,7 @@ JavaScript使用new命令，从构造函数生成一个新对象。
 
 {% highlight javascript %}
 
-　　if (a) { b(); c();}
+if (a) { b(); c();}
 
 {% endhighlight %}
 
@@ -365,13 +166,217 @@ JavaScript使用new命令，从构造函数生成一个新对象。
 
 {% highlight javascript %}
 
-　　if (a) { b();} c();
+if (a) { b();} c();
 
 {% endhighlight %}
 
 因此，总是使用大括号表示区块。
 
-## switch...case结构
+## 语法命令的风格
+
+### 全局变量
+
+JavaScript最大的语法缺点，可能就是全局变量对于任何一个代码块，都是可读可写。这对代码的模块化和重复使用，非常不利。
+
+因此，避免使用全局变量；如果不得不使用，用大写字母表示变量名，比如UPPER_CASE。
+
+### new命令
+
+JavaScript使用new命令，从构造函数生成一个新对象。
+
+{% highlight javascript %}
+
+var o = new myObject();
+
+{% endhighlight %}
+
+这种做法的问题是，一旦你忘了加上new，myObject()内部的this关键字就会指向全局对象，导致所有绑定在this上面的变量，都变成全局变量。
+
+因此，尽量使用Object.create()命令，替代new命令。如果不得不使用new，为了防止出错，最好在视觉上把构造函数与其他函数区分开来。比如，构造函数的函数名，采用首字母大写（InitialCap）；其他函数名，一律首字母小写。
+
+## 变量声明
+
+JavaScript会自动将变量声明"提升"（hoist）到代码块（block）的头部。
+
+{% highlight javascript %}
+
+if (!o) {
+　　var o = {};
+}
+
+{% endhighlight %}
+
+等同于
+
+{% highlight javascript %}
+
+var o;
+if (!o) {
+　　o = {};
+}
+
+{% endhighlight %}
+
+为了避免可能出现的问题，不如把变量声明都放在代码块的头部。
+
+{% highlight javascript %}
+
+for (var i ...) {...}
+
+{% endhighlight %}
+
+最好写成：
+
+{% highlight javascript %}
+
+var i;
+
+for (i ...) {...}
+
+{% endhighlight %}
+
+因此，所有变量声明都放在函数的头部，所有函数都在使用之前定义。
+
+### with语句
+
+with可以减少代码的书写，但是会造成混淆。
+
+{% highlight javascript %}
+
+with (o) {
+　　foo = bar;
+}
+
+{% endhighlight %}
+
+上面的代码，可以有四种运行结果：
+
+{% highlight javascript %}
+
+o.foo = bar;
+o.foo = o.bar;
+foo = bar;
+foo = o.bar;
+
+{% endhighlight %}
+
+这四种结果都可能发生，取决于不同的变量是否有定义。因此，不要使用with语句。
+
+### 相等和严格相等
+
+JavaScript有两个表示"相等"的运算符："相等"（==）和"严格相等"（===）。
+
+因为"相等"运算符会自动转换变量类型，造成很多意想不到的情况：
+
+{% highlight javascript %}
+
+0 == ''// true
+1 == true // true
+2 == true // false
+0 == '0' // true
+false == 'false' // false
+false == '0' // true
+" \t\r\n " == 0 // true
+
+{% endhighlight %}
+
+因此，不要使用"相等"（==）运算符，只使用"严格相等"（===）运算符。
+
+### 语句的合并
+
+有些程序员追求简洁，喜欢合并不同目的的语句。比如，原来的语句是
+
+{% highlight javascript %}
+
+a = b;
+if (a) {...}
+
+{% endhighlight %}
+
+他喜欢写成下面这样:
+
+{% highlight javascript %}
+
+if (a = b) {...}
+
+{% endhighlight %}
+
+虽然语句少了一行，但是可读性大打折扣，而且会造成误读，让别人误以为这行代码的意思是：
+
+{% highlight javascript %}
+
+if （a === b）{...}
+
+{% endhighlight %}
+
+另外一种情况是，有些程序员喜欢在同一行中赋值多个变量：
+
+{% highlight javascript %}
+
+var a = b = 0;
+
+{% endhighlight %}
+
+他以为，这行代码等同于
+
+{% highlight javascript %}
+
+var a = 0, b = 0;
+
+{% endhighlight %}
+
+实际上不是，它的真正效果是下面这样：
+
+{% highlight javascript %}
+
+b = 0;
+
+var a = b;
+
+{% endhighlight %}
+
+因此，不要将不同目的的语句，合并成一行。
+
+### 自增和自减运算符
+
+自增（++）和自减（--）运算符，放在变量的前面或后面，返回的值不一样，很容易发生错误。
+
+事实上，所有的++运算符都可以用"+= 1"代替。
+
+{% highlight javascript %}
+
+++x
+
+{% endhighlight %}
+
+等同于
+
+{% highlight javascript %}
+
+x += 1;
+
+{% endhighlight %}
+
+代码变得更清晰了。有一个很可笑的例子，某个JavaScript函数库的源代码中出现了下面的片段：
+
+{% highlight javascript %}
+
+++x;
+++x;
+
+{% endhighlight %}
+
+这个程序员忘了，还有更简单、更合理的写法：
+
+{% highlight javascript %}
+
+x += 2;
+
+{% endhighlight %}
+
+因此，不要使用自增（++）和自减（--）运算符，用+=和-=代替。
+
+### switch...case结构
 
 switch...case结构要求，在每一个case的最后一行必须是break语句，否则会接着运行下一个case。这样不仅容易忘记，还会造成代码的冗长。
 
@@ -431,7 +436,7 @@ function doAction(action) {
 
 因此，避免使用switch...case结构，用对象结构代替。
 
-## eval函数
+### eval函数
 
 eval函数的作用是，将一段字符串当作语句执行。问题是eval不提供单独的作用域，而是直接在全局作用域运行。这会造成eval中的语句创建或修改全局变量，使得恶意代码有机可乘。
 

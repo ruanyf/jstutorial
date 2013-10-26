@@ -21,8 +21,8 @@ modifiedOn: 2013-10-19
 - [运算符](grammar/operator.html)		
 - [数据类型转换](grammar/conversion.html)（基本完成）
 - [错误处理机制](grammar/error.html)（基本完成）
-- [编程风格](grammar/style.html)
-- [严格模式](grammar/strict.html)
+- [编程风格](grammar/style.html)（基本完成）
+- [严格模式](grammar/strict.html)（基本完成）
 
 <h2 id="stdlib">标准库</h2>
 
