@@ -10,6 +10,20 @@ category: oop
 
 每个对象都有一个内部属性\__proto__（注意，前后各两个下划线），指向这个对象的原型对象。通过这个内部属性，可以从实例对象读取原型对象的属性。
 
+正常情况下，\__proto__属性的指向与constructor.prototype属性是一致的。
+
+{% highlight javascript %}
+
+Array.prototype.p = 'abc';
+var a = new Array();
+
+console.log(a.__proto__.p) // abc
+console.log(a.constructor.prototype.p)	// abc	
+
+{% endhighlight %}
+
+上面代码表示，\__proto_属性和constructor.prototype属性都可以用来读取原型对象。显然，\__proto__看上去更简洁一些。
+
 必须说明的是，这个属性目前还不是标准，所以不应该在生产代码中使用。我们这里用它，只是因为它可以帮助理解继承。
 
 {% highlight javascript %}

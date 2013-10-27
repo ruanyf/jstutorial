@@ -24,14 +24,9 @@ var arr = ['a', 'b', 'c'];
 
 var arr = ['a', 'b', 'c'];
 
-arr[0]
-// "a"
-
-arr[1]
-// "b"
-
-arr [2]
-// "c"
+arr[0] // "a"
+arr[1] // "b"
+arr [2] // "c"
 
 {% endhighlight %}
 
@@ -48,13 +43,10 @@ arr [2]
 
 {% highlight javascript %}
 
- var arr = ['a', 'b', 'c'];
+var arr = ['a', 'b', 'c'];
  
- arr['0']
- // 'a'
- 
- arr[0]
- // 'a'
+arr['0'] // 'a'
+arr[0] // 'a'
 
 {% endhighlight %}
 
@@ -85,7 +77,7 @@ for (var i in a){
 
 {% endhighlight %}
 
-另一种遍历的做法是for循环结合length属性。
+另一种遍历的做法是用for循环或者while循环结合length属性。
 
 {% highlight javascript %}
 
@@ -93,11 +85,25 @@ var a = [1,2,3];
 for(var i = 0; i < a.length; i++){
 	console.log(a[i]);
 }
-// 1
-// 2
-// 3
+
+// or
+
+var i = 0;
+while (i< a.length){
+	console.log(a[i]);
+	i++;
+}
+
+// or
+
+var l = a.length;
+while (l--){
+	console.log(a[l]);
+}
 
 {% endhighlight %}
+
+上面代码是三种遍历数组的写法。需要注意的是，最后一种写法是逆向遍历，即从最后一个元素向最后一个元素遍历。
 
 对象成员的引用可以使用“点”结构（object.key），也可以用方括号表示。但是数组成员不能使用点结构表示，arr.0不合法，因为数字不是标识符（identifier）。所以，数组成员只能用方括号表示。
 
@@ -106,32 +112,45 @@ for(var i = 0; i < a.length; i++){
 {% highlight javascript %}
 
 var a = new Array();
-a
-// []
-
-a.length
-// 0
+a // []
+a.length // 0
 
 var a = new Array(1);
-a
-// [undefined × 1]
-
-a.length
-// 1
+a // [undefined × 1]
+a.length // 1
 
 var a = new Array(2);
-a
-// [undefined × 2]
-
-a.length
-// 2
+a // [undefined × 2]
+a.length // 2
 
 var a = new Array(1,2);
-a
-// [1,2]
+a // [1,2]
+a.length // 2
 
-a.length
-// 2
+{% endhighlight %}
+
+数组内部可以放置任意值，包括对象或函数。
+
+{% highlight javascript %}
+
+var a = [];
+a[0] = {p:1};
+a[1] = functiont (){ console.log("Hello World!"); };
+
+a[0].p // 1
+a[1]() // Hello World!
+
+{% endhighlight %}
+
+上面代码定义了一个数组，它的成员分别是对象和函数。取出这个数组成员以后，就可以像对象或函数那样地处理它。
+
+如果数组的元素还是数组，就形成了多维数组。
+
+{% highlight javascript %}
+
+var a = [[1,2],[3,4]];
+a[0][1] // 2
+a[1][1] // 4
 
 {% endhighlight %}
 

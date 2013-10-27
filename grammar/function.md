@@ -249,7 +249,7 @@ f()
 {% highlight javascript %}
 
 function f(){
-   var v = 1;	   
+   var v = 1;
 }
 
 v

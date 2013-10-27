@@ -60,6 +60,8 @@ modifiedOn: 2013-10-26
 
 - Axel Rauschmayer, [The Past, Present, and Future of JavaScript](http://oreilly.com/javascript/radarreports/past-present-future-javascript.html), O'Reilly, 2012
 
+- Cody Lindley, [JavaScript Enlightenment](http://www.javascriptenlightenment.com/), O'Reilly, 2012
+
 - Cody Lindley, [DOM Enlightenment](http://domenlightenment.com/), O'Reilly, 2013
 
 - Aaron Frost, [JS.next: A Manager’s Guide](http://chimera.labs.oreilly.com/books/1234000001623), O'Reilly, 2013

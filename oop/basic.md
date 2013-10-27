@@ -205,7 +205,6 @@ o.m()
 {% highlight javascript %}
 
 var o1 = { m : 1 };
-
 var o2 = { m : 2 };
 
 o1.f = function(){ console.log(this.m);};
@@ -223,6 +222,47 @@ o2.f()
 **（4）结论**
 
 综合上面三种情况，可以看到this就是运行时的上下文环境。如果在全局环境下运行，就代表全局对象；如果在某个对象中运行，就代表该对象。
+
+由于this的指向是不确定的，所以切勿在函数中包含多层的this。
+
+{% highlight javascript %}
+
+var o = {
+	f1: function() {
+		console.log(this); 
+		var f2 = function() {
+			console.log(this);
+		}();
+	}
+}
+
+o.f1()
+// Object
+// Window
+
+{% endhighlight %}
+
+上面代码包含两层this，结果运行后，第一层指向该对象，第二层指向全局对象。一个解决方法是在第二层改用一个指向外层this的变量。
+
+{% highlight javascript %}
+
+var o = {
+	f1: function() {
+		console.log(this); 
+		var that = this;
+		var f2 = function() {
+			console.log(that);
+		}();
+	}
+}
+
+o.f1()
+// Object
+// Object
+
+{% endhighlight %}
+
+上面代码定义了变量that，固定指向外层的this，然后在内层使用that，就不会发生this指向的改变。
 
 这种不确定的this指向，会给编程带来一些麻烦。比如，使用jQuery函数库，对某个按钮指定click事件的回调函数，可以这样写：
 

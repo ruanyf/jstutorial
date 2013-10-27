@@ -1,7 +1,7 @@
 ---
 title: DOM概述
 layout: page
-category: layout
+category: dom
 date: 2013-10-07
 modifiedOn: 2013-10-07
 ---
