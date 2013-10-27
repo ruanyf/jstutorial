@@ -3,7 +3,7 @@ title: 选择器
 layout: page
 category: jquery
 date: 2013-02-01
-modifiedOn: 2013-08-25
+modifiedOn: 2013-10-27
 ---
 
 ## 内置循环
@@ -88,6 +88,34 @@ if ( $(elem).is(":checked") ) { //...};
 
 {% endhighlight %}
 
+## 事件处理
+
+### 一次性事件
+
+one方法指定一次性的回调函数，即这个函数只能运行一次。这对提交表单很有用。
+
+{% highlight javascript %}
+
+$("#button").one( "click", function() { return false; } );
+
+{% endhighlight %}
+
+one方法本质上是回调函数运行一次，即解除对事件的监听。
+
+{% highlight javascript %}
+
+document.getElementById("#button").addEventListener("click", handler);
+
+function handler(e) {
+    e.target.removeEventListener(e.type, arguments.callee);
+	return false;
+}
+
+{% endhighlight %}
+
+上面的代码在点击一次以后，取消了对click事件的监听。如果有特殊需要，可以设定点击2次或3次之后取消监听，这都是可以的。
+
 ## 参考链接
 
 - Elijah Manor, [Do You Know When You Are Looping in jQuery?](http://www.elijahmanor.com/2013/01/yo-dawg-i-herd-you-like-loops-so-jquery.html)
+- Craig Buckler, [How to Create One-Time Events in JavaScript](http://www.sitepoint.com/create-one-time-events-javascript/)
