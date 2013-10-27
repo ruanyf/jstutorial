@@ -3,12 +3,12 @@ title: 对象
 layout: page
 category: grammar
 date: 2012-12-12
-modifiedOn: 2013-08-28
+modifiedOn: 2013-10-27
 ---
 
 ## 概述
 
-对象（object）是一种数据结构，由若干个“键值对”（key-value）构成。
+对象（object）是JavaScript的核心概念，这门语言中的所有数据都可以被视为对象。所谓对象，指的是一种数据结构，由若干个“键值对”（key-value）构成。
 
 {% highlight javascript %}
 
@@ -18,7 +18,7 @@ var o = {
 
 {% endhighlight %}
 
-上面代码中，大括号就代表一个对象，被赋值给变量o。这个对象内部包含一个键值对（又称为“成员”），p是“键名”（成员的名称），字符串“Hello World”是“键值”（成员的值）。键名与键值之间用冒号分隔。
+上面代码中，大括号就定义了一个对象，被赋值给变量o。这个对象内部包含一个键值对（又称为“成员”），p是“键名”（成员的名称），字符串“Hello World”是“键值”（成员的值）。键名与键值之间用冒号分隔。
 
 键名加不加引号都可以，上面的代码也可以写成下面这样：
 
@@ -42,7 +42,9 @@ var o = {
 
 {% endhighlight %}
 
-“键名”又称为“属性”（property），它的“键值”可以是任何数据类型。如果一个属性的值为函数，通常把这个属性称为“方法”。
+对象也可以被看成一个容器，里面封装了多个成员，上面的对象就包含了三个成员。
+
+对象的每一个“键名”又称为“属性”（property），它的“键值”可以是任何数据类型。如果一个属性的值为函数，通常把这个属性称为“方法”，它可以像函数那样调用。
 
 {% highlight javascript %}
 
@@ -55,34 +57,34 @@ o.p(1)
 
 {% endhighlight %}
 
-属性之间用逗号分隔，最后一个属性后面可以加逗号（trailing comma），也可以不加。
+上面的对象就有一个方法p，它就是一个函数。
+
+对象的属性之间用逗号分隔，ECMAScript 5规定最后一个属性后面可以加逗号（trailing comma），也可以不加。
 
 {% highlight javascript %}
 
-   var obj = {
-        foo: 123,
-        bar: function () { ... },
-    }
+var o = {
+    p: 123,
+    m: function () { ... },
+}
 
 {% endhighlight %}
 
-上面的代码中bar属性后面的那个逗号，有或没有都不算错。
+上面的代码中m属性后面的那个逗号，有或没有都不算错。
 
 ### 生成方法
 
-对象的生成方法，除了像上面那样直接使用{}，还可以用new Object()命令。
+对象的生成方法，除了像上面那样直接使用大括号（{}），还可以用new命令直接生成一个Object对象的实例，或者从Object.create方法。
 
 {% highlight javascript %}
 
-var o = {};
-
-// or
-
-var o = new Object();
+var o1 = {};
+var o2 = new Object();
+var o3 = Object.create(null);
 
 {% endhighlight %}
 
-上面两行语句是等价的。
+上面三行语句是等价的。一般来说，第一种采用大括号的写法比较简洁，第二种采用构造函数的写法清晰地表示了意图，第三种写法一般用在需要对象继承的场合。本书一般采用第一种写法，关于第二种和第三种写法的详细解释，参考《标准库》一章的Object对象章节，以及《面向对象编程》一章的对象继承章节。
 
 ### 读取属性
 
@@ -94,17 +96,12 @@ var o = {
 	p: "Hello World"
 };
 
-// 点运算符
-o.p
-// "Hello World"
-
-// 方括号运算符
-o["p"]
-// "Hello World"
+o.p // "Hello World"
+o["p"] // "Hello World"
 
 {% endhighlight %}
 
-可以看到，如果使用方括号，键名必须放在引号里面，否则会被当作变量处理。
+上面代码分别采用点运算符和方括号运算符，读取属性p。请注意，如果使用方括号运算符，键名必须放在引号里面，否则会被当作变量处理。
 
 {% highlight javascript %}
 
@@ -121,8 +118,7 @@ o[p]
 
 {% highlight javascript %}
 
-o[undefined]
-// undefined
+o[undefined] // undefined
 
 {% endhighlight %}
 
@@ -144,7 +140,7 @@ if(window.a) {
 
 {% endhighlight %}
 
-上面的第二种写法之所以不报错，是因为在浏览器环境，所有全局变量都是window对象的成员。window.a的含义就是读取window对象的a键，如果该键不存在，就返回undefined，而不会报错。
+上面的第二种写法之所以不报错，是因为在浏览器环境，所有全局变量都是window对象的成员。window.a的含义就是读取window对象的a键，如果该键不存在，就返回undefined，而不会报错。需要注意的是，第二种写法有漏洞，如果a键的布尔值等于false（比如包含一个空字符串），则无法起到检查变量是否声明的作用。正确的写法请看下面的“in运算符”一节。
 
 点运算符和方括号运算符，不仅可以用来读取值，还可以用来赋值。
 
@@ -184,7 +180,7 @@ o.p = 1;
 
 {% endhighlight %}
 
-delete命令可以删除属性。
+delete命令可以删除属性，如果删除成功，返回布尔值true。
 
 {% highlight javascript %}
 
@@ -235,7 +231,7 @@ y
 
 ### in运算符
 
-in运算符用于确定某个属性是否包含在对象中。
+in运算符用于检查对象是否包含某个属性名，如果包含就返回true。
 
 {% highlight javascript %}
 
@@ -275,11 +271,10 @@ var a = ["hello", "world"];
 
 {% highlight javascript %}
 
-
 if (x) { return 1; }
 // 报错
 
-if (window[x]) { return 1; }
+if (window.x) { return 1; }
 // 不正确的写法
 
 if (x in window) { return 1; }

@@ -75,7 +75,7 @@ var add = new Function("x","y","return (x+y)");
 {% highlight javascript %}
 
 function add(x,y) {
-	return (x+y);
+	return x+y;
 }
 
 add(1,1)
@@ -85,9 +85,23 @@ add(1,1)
 
 函数体内部的return语句，表示返回。JavaScript引擎遇到return语句，就直接返回return后面的那个表达式的值，下面即使还有语句，也不会得到执行。
 
+函数可以调用自身，这就是递归（recursion）。下面就是使用递归，计算斐波那契数列的代码。
+
+{% highlight javascript %}
+
+function fib(num) {
+        if (num > 2) {
+            return fib(num - 2) + fib(num - 1);
+        } else {
+            return 1;
+        }
+}
+
+{% endhighlight %}
+
 ### 第一等公民
 
-在JavaScript语言中，函数与其他数据类型处于同等地位，可以被赋值给变量和对象的属性，也可以当作参数传入其他函数，或者作为函数的结果返回。
+JavaScript的函数与其他数据类型处于同等地位，可以使用其他数据类型的地方就能使用函数。比如，可以把函数赋值给变量和对象的属性，也可以当作参数传入其他函数，或者作为函数的结果返回。这表示函数与其他数据类型的地方是平等，所以又称函数为第一等公民。
 
 {% highlight javascript %}
 
@@ -97,23 +111,8 @@ function add(x,y){
 
 // 将函数赋值给一个变量
 var a = add;
-a(1,1)
-// 2
 
-// 将函数赋值给对象的属性
-var o = new Object();
-o.a = add;
-o.a(1,1)
-// 2
-
-// 将函数作为另一个函数的参数
-function a(op){
-	return op(1,1);
-}
-a(add)
-// 2
-
-// 将函数作为另一个函数的返回值
+// 将函数作为参数和返回值
 function a(op){
 	return op;
 }
@@ -121,8 +120,6 @@ a(add)(1,1)
 // 2
 
 {% endhighlight %}
-
-由于函数的使用与其他数据类型处于同等地位，不是第二等公民。所以我们说，函数在JavaScript中属于“第一等公民”。
 
 ### 函数名的提升
 
@@ -335,17 +332,23 @@ f.length
 
 ### 参数的省略
 
-但是，参数不是必需的，Javascript语言允许省略函数。
+参数不是必需的，Javascript语言允许省略参数。
 
 {% highlight javascript %}
 
 function f(a,b){
 	return a;
 }
+
+f(1,2,3) // 1
+f(1) // 1
+f() // undefined
 
 {% endhighlight %}
 
-上面的函数定义了两个参数，但是运行时无论提供多少个参数，JavaScript都不会报错。被省略的参数的值就变为undefined。
+上面代码的函数f定义了两个参数，但是运行时无论提供多少个参数（或者不提供参数），JavaScript都不会报错。被省略的参数的值就变为undefined。
+
+但是，没有办法只省略靠前的参数，而保留靠后的参数。如果一定要省略靠前的参数，只有显式传入undefined。
 
 {% highlight javascript %}
 
@@ -353,40 +356,8 @@ function f(a,b){
 	return a;
 }
 
-f(1,2,3)
-// 1
-
-f(1)
-// 1
-
-f()
-// undefined
-
-{% endhighlight %}
-
-但是没有办法只省略靠前的参数，而保留靠后的参数。
-
-{% highlight javascript %}
-
-function f(a,b){
-	return a;
-}
-
-f(,1)
-// error
-
-{% endhighlight %}
-
-如果一定要省略靠前的参数，只有显式传入undefined。
-
-{% highlight javascript %}
-
-function f(a,b){
-	return a;
-}
-
-f(undefined,1)
-// undefined
+f(,1) // error
+f(undefined,1) // undefined
 
 {% endhighlight %}
 
@@ -504,6 +475,21 @@ f(1, 2, 3)
 // 1
 // 2
 // 3
+
+{% endhighlight %}
+
+arguments对象除了可以读取参数，还可以为参数赋值。
+
+{% highlight javascript %}
+
+var f = function(a,b) {
+  arguments[0] = 3;
+  arguments[1] = 2;
+  return a+b;
+}
+
+f(1, 1)
+// 5
 
 {% endhighlight %}
 
