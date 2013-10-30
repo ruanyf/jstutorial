@@ -2,7 +2,7 @@
 layout: homepage
 title: JavaScript 标准参考教程（alpha）
 date: 2012-11-18
-modifiedOn: 2013-10-19
+modifiedOn: 2013-10-31
 ---
 	
 <h2 id="introduction">导论</h2>
@@ -99,7 +99,7 @@ modifiedOn: 2013-10-19
 
 - [Chrome开发者工具和console对象](tool/console.html)
 - [PhantomJS](tool/phantomjs.html)
-- [Grunt任务管理工具](tool/grunt.html)
+- [任务管理工具Grunt](tool/grunt.html)
 - [RequireJS和AMD规范](tool/requirejs.html)
 - [Source map](tool/sourcemap.html)
 

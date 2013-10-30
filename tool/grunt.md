@@ -101,9 +101,9 @@ module.exports = function(grunt) {
 
 上面的代码用到了grunt代码的三个方法：
 
-- **grunt.initConfig**：定义了执行各种任务所需的参数，每一项就对应一个同名模块。
+- **grunt.initConfig**：定义各种模块的参数，每一个成员项对应一个同名模块。
 
-- **grunt.loadNpmTasks**：加载完成任务所需的插件。
+- **grunt.loadNpmTasks**：加载完成任务所需的模块。
 
 - **grunt.registerTask**：定义具体的任务。第一个参数为任务名，第二个参数是一个数组，表示该任务需要依次使用的模块。default任务名表示，如果直接输入grunt命令，后面不跟任何参数，这时所调用的模块（该例为jshint，concat和uglify）；该例的check任务则表示使用jshint插件对代码进行语法检查。
 
@@ -178,7 +178,7 @@ module.exports = function(grunt) {
 
 **（1）grunt.initConfig**
 
-grunt.initConfig方法中的代码是模块配置。一个模块可以完成多种目标（target）。上面代码里面，cssmin模块共有两个目标，一个是“minify”，用于压缩css文件；另一个是“combine”，用于将多个css文件合并一个文件。
+grunt.initConfig方法用于模块配置。一个模块可以完成多种目标（target）。上面代码里面，cssmin模块共有两个目标，一个是“minify”，用于压缩css文件；另一个是“combine”，用于将多个css文件合并一个文件。
 
 每个目标的具体设置，需要参考该模板的文档。就cssmin来讲，minify目标的参数具体含义如下：
 
@@ -242,7 +242,7 @@ files: [
 
 {% endhighlight %}
 
-如果minify目标和combine目标的属性设置有重合的部分，可以另行定义一个与minify和combine平行的option属性。
+如果minify目标和combine目标的属性设置有重合的部分，可以另行定义一个与minify和combine平行的options属性。
 
 {% highlight javascript %}
 
