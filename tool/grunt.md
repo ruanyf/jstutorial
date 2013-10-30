@@ -3,7 +3,7 @@ title: 任务管理工具Grunt
 category: tool
 layout: page
 date: 2013-04-21
-modifiedOn: 2013-09-30
+modifiedOn: 2013-10-30
 ---
 
 在Javascript的开发过程中，经常会遇到一些重复性的任务，比如合并文件、压缩代码、检查语法错误、将Sass代码转成CSS代码等等。通常，我们需要使用不同的工具，来完成不同的任务，既重复劳动又非常耗时。Grunt就是为了解决这个问题而发明的工具，可以帮助我们自动管理和运行各种任务。
@@ -32,9 +32,9 @@ Grunt使用模块结构，除了安装命令行界面以外，还要根据需要
   "name": "my-project-name",
   "version": "0.1.0",
   "author": "Your Name",
-  "dependencies": {
+  "devDependencies": {
     "grunt": "0.x.x",
-    "grunt-contrib-jshint": "~0.1.0",
+    "grunt-contrib-jshint": "*",
     "grunt-contrib-concat": "~0.1.1",
     "grunt-contrib-uglify": "~0.1.0",
     "grunt-contrib-watch": "~0.1.4"
@@ -43,7 +43,7 @@ Grunt使用模块结构，除了安装命令行界面以外，还要根据需要
 
 {% endhighlight %}
 
-上面这个package.json文件中，除了注明项目的名称和版本以外，还在dependencies属性中指定了项目依赖的grunt模块和版本：grunt核心模块为最新的0.x.x版，jshint插件不低于0.1.0版，concat插件不低于0.1.1版，uglify插件不低于0.1.0版，watch插件不低于0.1.4版。
+上面这个package.json文件中，除了注明项目的名称和版本以外，还在devDependencies属性中指定了项目依赖的grunt模块和版本：grunt核心模块为最新的0.x.x版，jshint插件为最新版本，concat插件不低于0.1.1版，uglify插件不低于0.1.0版，watch插件不低于0.1.4版。
 
 然后，在项目的根目录下运行下面的命令，这些插件就会被自动安装在node_modules子目录。
 
@@ -53,7 +53,7 @@ npm install
 
 {% endhighlight %}
 
-如果想要自动生成package.json文件，可以使用npm init命令，按照屏幕提示回答所需模块的名称和版本即可。
+上面这种方法是针对已有package.json的情况。如果想要自动生成package.json文件，可以使用npm init命令，按照屏幕提示回答所需模块的名称和版本即可。
 
 {% highlight bash %}
 
@@ -61,7 +61,7 @@ npm init
 
 {% endhighlight %}
 
-如果要在现有的项目中使用Grunt，可以在安装的时候加上--save-dev参数，逐一安装所需模块，该模块就会自动被加入package.json文件。
+如果已有的package.json文件不包括Grunt模块，可以在直接安装Grunt模块的时候，加上--save-dev参数，该模块就会自动被加入package.json文件。
 
 {% highlight bash %}
 
@@ -69,23 +69,21 @@ npm install <module> --save-dev
 
 {% endhighlight %}
 
-## Gruntfile.js 命令脚本文件 
+## 命令脚本文件Gruntfile.js 
 
-完成模块安装以后，在项目的根目录下，新建脚本文件Gruntfile.js。它是grunt的配置文件，就好像package.json是npm的配置文件一样。Gruntfile.js就是一般的Node.js模块的写法。
+模块安装完以后，下一步在项目的根目录下，新建脚本文件Gruntfile.js。它是grunt的配置文件，就好像package.json是npm的配置文件一样。Gruntfile.js就是一般的Node.js模块的写法。
 
 {% highlight javascript %}
 
 module.exports = function(grunt) {
 
-  // 配置Grunt的各种任务的参数
+  // 配置Grunt各种模块的参数
   grunt.initConfig({
-
     jshint: { /* jshint的参数 */ },
     concat: { /* concat的参数 */ },
     uglify: { /* uglify的参数 */ },
     watch:  { /* watch的参数 */ }
-
-	});
+  });
 
   // 从node_modules目录加载模块文件
   grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -93,9 +91,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
-  // registerTask 方法用来定义任务的别名，下面就定义了名为default的任务别名。
-  // default表示默认情况下，需要完成的任务。
-  // 具体的任务用数组表示。如果不需要采取任何动作，就使用空数组（[]）。
+  // 每行registerTask定义一个任务
   grunt.registerTask('default', ['jshint', 'concat', 'uglify']);
   grunt.registerTask('check', ['jshint']);
 
@@ -109,27 +105,31 @@ module.exports = function(grunt) {
 
 - **grunt.loadNpmTasks**：加载完成任务所需的插件。
 
-- **grunt.registerTask**：定义了具体的任务，上面代码的default任务，表示如果直接输入grunt命令，后面不跟任何参数，这时所需要完成的任务（jshint，concat和uglify）；check任务则表示使用jshint插件对代码进行语法检查。
+- **grunt.registerTask**：定义具体的任务。第一个参数为任务名，第二个参数是一个数组，表示该任务需要依次使用的模块。default任务名表示，如果直接输入grunt命令，后面不跟任何参数，这时所调用的模块（该例为jshint，concat和uglify）；该例的check任务则表示使用jshint插件对代码进行语法检查。
 
-上面的代码一共加载了四个插件：jshint（检查语法错误）、concat（合并文件）、uglify（压缩代码）和watch（自动执行）。要执行某个任务，只需在grunt后面加上这个任务即可，比如grunt jshint。
+上面的代码一共加载了四个模块：jshint（检查语法错误）、concat（合并文件）、uglify（压缩代码）和watch（自动执行）。接下来，有两种使用方法。
 
-定义Gruntfile.js以后，在项目的根目录下面，直接运行grunt命令就表示执行默认的default任务。
+（1）命令行执行某个模块，比如
 
 {% highlight bash %}
 
-grunt
+grunt jshint
 
 {% endhighlight %}
 
-如果运行成功，就会显示“Done, without errors.”。
+上面代码表示运行jshint模块。
 
-如果要运行check任务，就在grunt命令后面加上任务名。
+（2）命令行执行某个任务。比如
 
 {% highlight bash %}
 
 grunt check
 
 {% endhighlight %}
+
+上面代码表示运行check任务。如果运行成功，就会显示“Done, without errors.”。
+
+如果没有给出任务名，只键入grunt，就表示执行默认的default任务。
 
 ## Gruntfile.js实例：grunt-contrib-cssmin模块
 
@@ -178,7 +178,7 @@ module.exports = function(grunt) {
 
 **（1）grunt.initConfig**
 
-grunt.initConfig方法中的代码是模块配置。一个模块可以完成多种任务，每一种任务就叫做一个目标（target）。上面代码里面，cssmin模块共有两个目标，一个是“minify”，用于压缩css文件；另一个是“combine”，用于将多个css文件合并一个文件。
+grunt.initConfig方法中的代码是模块配置。一个模块可以完成多种目标（target）。上面代码里面，cssmin模块共有两个目标，一个是“minify”，用于压缩css文件；另一个是“combine”，用于将多个css文件合并一个文件。
 
 每个目标的具体设置，需要参考该模板的文档。就cssmin来讲，minify目标的参数具体含义如下：
 
@@ -242,28 +242,39 @@ files: [
 
 {% endhighlight %}
 
+如果minify目标和combine目标的属性设置有重合的部分，可以另行定义一个与minify和combine平行的option属性。
+
+{% highlight javascript %}
+
+ grunt.initConfig({
+    cssmin: {
+	  options: { /* ... */ },
+      minify: { /* ... */ },
+      combine: { /* ... */ }
+    }
+  });
+
+{% endhighlight %}
+
 **（2）grunt.loadNpmTasks**
 
 grunt.loadNpmTasks方法载入模块文件。
 
 **（3）grunt.registerTask**
 
-grunt.registerTask方法定义调用具体任务的命令。“default”命令表示如果不提供参数，直接输入grunt命令，则先运行“cssmin:minify”，后运行“cssmin:combine”，即先压缩再合并。如果只执行压缩，或者只执行合并，则需要在grunt命令后面指明“模块名:目标名”。
+grunt.registerTask方法定义如何调用具体的任务。“default”任务表示如果不提供参数，直接输入grunt命令，则先运行“cssmin:minify”，后运行“cssmin:combine”，即先压缩再合并。如果只执行压缩，或者只执行合并，则需要在grunt命令后面指明“模块名:目标名”。
 
 {% highlight bash %}
 
-# 默认情况下，先压缩后合并
-grunt
+grunt # 默认情况下，先压缩后合并
 
-# 只压缩不合并
-grunt cssmin:minify
+grunt cssmin:minify # 只压缩不合并
 
-# 只合并不压缩
-grunt css:combine
+grunt css:combine # 只合并不压缩
 
 {% endhighlight %}
 
-如果不指明目标，只是调用模块名，就表示将所有目标依次运行一遍。
+如果不指明目标，只是指明模块，就表示将所有目标依次运行一遍。
 
 {% highlight bash %}
 
@@ -275,11 +286,11 @@ grunt cssmin
 
 以下选几个常用模块，看看它们配置参数的写法，也就是说如何在grunt.initConfig方法中配置各个模块。
 
-- grunt-contrib-jshint：检查JavaScript语法。
-- grunt-contrib-concat：合并文件。
-- grunt-contrib-uglify：合并文件，然后将其最小化。
-- grunt-contrib-copy ：复制文件。
-- grunt-contrib-watch：监视文件变动，做出相应动作。
+- **grunt-contrib-jshint**：检查JavaScript语法。
+- **grunt-contrib-concat**：合并文件。
+- **grunt-contrib-uglify**：合并文件，然后将其最小化。
+- **grunt-contrib-copy**：复制文件。
+- **grunt-contrib-watch**：监视文件变动，做出相应动作。
 
 模块的前缀如果是grunt-contrib，就表示该模块由grunt开发团队维护；如果前缀是grunt（比如grunt-pakmanager），就表示由第三方开发者维护。目前，Grunt项目主页上的[模块总数](http://gruntjs.com/plugins)，已经达到了几百个。
 
@@ -390,7 +401,7 @@ watch: {
 
 {% endhighlight %}
 
-上面代码设置，任何的代码变动，就会导致运行jshint。
+设置好上面的代码，运行grunt watch以后，任何的代码变动，文件保存就会导致运行jshint。
 
 ### 其他模块
 
@@ -447,6 +458,49 @@ connect: {
 
 connect模块会随着grunt运行结束而结束，为了使它一直处于运行状态，可以把它放在watch模块之前运行。因为watch模块需要手动中止，所以connect模块也就会一直运行。
 
+**（4）grunt-htmlhint**
+
+该模块用于检查HTML语法。
+
+{% highlight javascript %}
+
+htmlhint: {
+    build: {
+        options: {
+            'tag-pair': true,
+            'tagname-lowercase': true,
+            'attr-lowercase': true,
+            'attr-value-double-quotes': true,
+            'spec-char-escape': true,
+            'id-unique': true,
+            'head-script-disabled': true,
+        },
+        src: ['index.html']
+    }
+}
+
+{% endhighlight %}
+
+上面代码用于检查index.html文件：HTML标记是否配对、标记名和属性名是否小写、属性值是否包括在双引号之中、特殊字符是否转义、HTML元素的id属性是否为唯一值、head部分是否没有script标记。
+
+**（5）grunt-contrib-sass模块**
+
+该模块用于将SASS文件转为CSS文件。
+
+{% highlight javascript %}
+
+sass: {
+    build: {
+        files: {
+            'build/css/master.css': 'assets/sass/master.scss'
+        }
+    }
+}
+
+{% endhighlight %}
+
+上面代码指定输出文件为build/css/master.css，输入文件为assets/sass/master.scss。
+
 ## 参考链接
 
 - Frederic Hemberger, [A build tool for front-end projects](http://frederic-hemberger.de/artikel/grunt-buildtool-for-frontend-projects/)
@@ -457,3 +511,4 @@ connect模块会随着grunt运行结束而结束，为了使它一直处于运�
 - AJ ONeal, [Moving to GruntJS](http://blog.coolaj86.com/articles/moving-to-grunt.html)
 - Grunt Documentation, [Configuring tasks](http://gruntjs.com/configuring-tasks)
 - Landon Schropp, [Writing an Awesome Build Script with Grunt](http://www.sitepoint.com/writing-awesome-build-script-grunt/)
+- Mike Cunsolo, [Get Up And Running With Grunt](http://coding.smashingmagazine.com/2013/10/29/get-up-running-grunt/)
