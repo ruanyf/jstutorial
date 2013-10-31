@@ -3,7 +3,7 @@ title: Date对象
 layout: page
 category: stdlib
 date: 2013-09-03
-modifiedOn: 2013-03-23
+modifiedOn: 2013-10-31
 ---
 
 Date对象是日期和时间的主要操作接口。
@@ -181,9 +181,9 @@ today.toTimeString()
 
 {% endhighlight %}
 
-### valueOf，getTime
+### valueOf方法
 
-valueOf方法和getTime方法都返回实例对象距离1970年1月1日00:00:00 UTC对应的毫秒数。
+valueOf方法返回实例对象距离1970年1月1日00:00:00 UTC对应的毫秒数，该方法等同于getTime方法。
 
 {% highlight javascript %}
 
@@ -197,13 +197,13 @@ today.getTime()
 
 {% endhighlight %}
 
-getTime可以用于计算精确时间。
+该方法可以用于计算精确时间。
 
 {% highlight javascript %}
 
 var start = new Date();
 
-doSomethingForALongTime();
+doSomething();
 var end = new Date();
 var elapsed = end.getTime() - start.getTime(); 
 
@@ -213,28 +213,24 @@ var elapsed = end.getTime() - start.getTime();
 
 Date提供一系列get方法，得到实例对象某个方面的值。
 
-- getDate：返回实例对象对应每个月的几号（从1开始）。
-- getDay：返回星期，星期日为0，星期一为1，以此类推。
-- getFullYear：返回四位的年份。
-- getMonth：返回月份（0-11）。
-- getHours：返回小时（0-23）。
-- getMilliseconds：返回毫秒（0-999）。
-- getMinutes：返回分钟（0-59）。
-- getSeconds：返回秒（0-59）。
-- getTimezoneOffset：返回时区差异。
+- **getTime**：返回实例对象距离1970年1月1日00:00:00 UTC对应的毫秒数，等同于valueOf方法。
+- **getDate**：返回实例对象对应每个月的几号（从1开始）。
+- **getDay**：返回星期，星期日为0，星期一为1，以此类推。
+- **getFullYear**：返回四位的年份。
+- **getMonth**：返回月份（0-11）。
+- **getHours**：返回小时（0-23）。
+- **getMilliseconds**：返回毫秒（0-999）。
+- **getMinutes**：返回分钟（0-59）。
+- **getSeconds**：返回秒（0-59）。
+- **getTimezoneOffset**：返回时区差异。
 
 {% highlight javascript %}
 
 var date1 = new Date ( "January 6, 2013" );
 
-date1.getDate()
-// 6
-
-date1.getMonth()
-// 0
-
-date1.getFullYear()
-// 2013
+date1.getDate() // 6
+date1.getMonth() // 0
+date1.getFullYear() // 2013
 
 {% endhighlight %}
 

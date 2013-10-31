@@ -134,15 +134,15 @@ v instanceof Vehicle
 
 {% highlight javascript %}
 
-[1, 2, 3] instanceof Array
-// true
+"" instanceof String // false
 
-{} instanceof Object
-// true
+[1, 2, 3] instanceof Array // true
+
+{} instanceof Object // true
 
 {% endhighlight %}
 
-上面的Array和Object，就是JavaScript原生提供的构造函数。
+上面代码表示字符串不是String对象的实例，而数组和对象则分别是Array对象和Object对象的实例。
 
 ## this关键字
 

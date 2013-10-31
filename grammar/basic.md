@@ -186,7 +186,7 @@ var 临时变量 = 1;
 
 {% endhighlight %}
 
-JavaScript有一些保留字，不能用作标识符：arguments、break、case、catch、class、const、continue、debugger、default、delete、do、else、enum、eval、export、extends、false、finally、for、function、if、implements、import、in、instanceof、interface、let、new、null、package、private、protected、public、return、static、super、switch、this、throw、true、try、typeof、var、void、while、with、yield。
+> JavaScript有一些保留字，不能用作标识符：arguments、break、case、catch、class、const、continue、debugger、default、delete、do、else、enum、eval、export、extends、false、finally、for、function、if、implements、import、in、instanceof、interface、let、new、null、package、private、protected、public、return、static、super、switch、this、throw、true、try、typeof、var、void、while、with、yield。
 
 另外，还有三个词虽然不是保留字，但是因为具有特别含义，也不应该用作标识符：Infinity、NaN、undefined。
 
@@ -397,7 +397,7 @@ v
 
 {% endhighlight %}
 
-需要注意的是，JavaScript的标识名区分大小写，所以undefined和null不同于Undefined和Null，后者只是普通的变量名。
+需要注意的是，JavaScript的标识名区分大小写，所以undefined和null不同于Undefined和Null（或者其他仅仅大小写不同的词形），后者只是普通的变量名。
 
 这里需要明确的是，JavaScript的所有数据，都可以视为对象。不仅合成类型的数据（对象、数组、函数）是对象，就连原始类型的数据（数值、字符串、布尔值）也可以用对象方式调用。
 
@@ -510,8 +510,7 @@ s
 
 {% highlight javascript %}
 
-'abc'.length
-// 3
+'abc'.length // 3
 
 {% endhighlight %}
 
@@ -522,8 +521,8 @@ s
 {% highlight javascript %}
 
 var s = '\u00A9';
-s
-"©"
+
+s // "©"
 
 {% endhighlight %}
 
@@ -532,11 +531,9 @@ s
 {% highlight javascript %}
 
 var s = "\uD834\uDF06"
-s
-// "𝌆"
 
-s.length
-// 2
+s // "𝌆"
+s.length // 2
 
 {% endhighlight %}
 
@@ -603,26 +600,31 @@ if ({}){ console.log(true);}
 
 更多关于数据类型转换的介绍，参见《数据类型转换》一节。
 
+## 数据类型的识别方法
+
+JavaScript有三种方法，可以确定一个值到底是什么类型。
+
+- typeof运算符
+- instanceof运算符
+- 内部属性[[Class]]
+
+下面介绍第一和第三种方法，instanceof运算符放在《面向对象编程》一章介绍。
+
 ### typeof 运算符
 
 typeof运算符可以返回一个值的数据类型，可能有以下结果：
 
-（1）数值、字符串、布尔值分别返回number、string、boolean。
+**（1）数值、字符串、布尔值分别返回number、string、boolean。**
 
 {% highlight javascript %}
 
-typeof 123
-// "number"
-
-typeof "123"
-// "string"
-
-typeof false
-// "boolean"
+typeof 123 // "number"
+typeof "123" // "string"
+typeof false // "boolean"
 
 {% endhighlight %}
 
-（2）函数返回function。
+**（2）函数返回function。**
 
 {% highlight javascript %}
 
@@ -634,7 +636,7 @@ typeof f
 
 {% endhighlight %}
 
-（3）undefined返回undefined。
+**（3）undefined返回undefined。**
 
 {% highlight javascript %}
 
@@ -672,21 +674,14 @@ if (typeof v === undefined){
 
 {% endhighlight %}
 
-（4）除此以外，都返回object。
+**（4）除此以外，都返回object。**
 
 {% highlight javascript %}
 
-typeof window
-// "object"
-
-typeof {}; 
-// "object"
-
-typeof []; 
-// "object"
-
-typeof null;
-// "object"
+typeof window // "object"
+typeof {} // "object"
+typeof [] // "object"
+typeof null // "object"
 
 {% endhighlight %}
 
@@ -697,18 +692,55 @@ typeof null;
 {% highlight javascript %}
 
 var o = {};
-
 var a = [];
 
-o instanceof Array
-// false
-
-a instanceof Array
-// true
+o instanceof Array // false
+a instanceof Array // true
 
 {% endhighlight %}
 
 instanceof运算符的详细解释，请见《面向对象编程》一章。
+
+### 内部属性[[Class]]
+
+JavaScript有一个内部属性[[Class]]，用来记录值的类型。这个属性只有用Object.prototype.toString()方法读取。
+
+- 对于数值，返回[object Number]。
+- 对于字符串，返回[object String]。
+- 对于布尔值，返回[object Boolean]。
+- 对于undefined，返回[object Undefined]。
+- 对于null，返回[object Null]。
+- 对于各种对象，返回"[object " + obj.[[Class]] + "]" 。
+
+{% highlight javascript %}
+
+Object.prototype.toString.call('') // "[object String]"
+Object.prototype.toString.call(2) // "[object Number]"
+Object.prototype.toString.call(true) // "[object Boolean]"
+Object.prototype.toString.call(undefined) // "[object Undefined]"
+Object.prototype.toString.call(Math) // "[object Math]"
+Object.prototype.toString.call({}) // "[object Object]"
+Object.prototype.toString.call([]) // "[object Object]"
+
+{% endhighlight %}
+
+利用这个值，可以写一个返回准确数据类型的函数。
+
+{% highlight javascript %}
+
+function getClass(x) {
+    var str = Object.prototype.toString.call(x);
+    return /^\[object (.*)\]$/.exec(str)[1];
+}
+
+getClass(null) // 'Null'
+getClass({}) // 'Object'
+getClass([]) // 'Array'
+getClass(JSON) // 'JSON'
+
+(function () { return getClass(arguments) }()) // 'Arguments'
+
+{% endhighlight %}
 
 ## 结尾的分号
 
@@ -898,9 +930,10 @@ return;
 
 ## 参考链接
 
-- Dr. Axel Rauschmayer, [A quick overview of JavaScript](http://www.2ality.com/2011/10/javascript-overview.html)
-- Dr. Axel Rauschmayer, [Improving the JavaScript typeof operator](http://www.2ality.com/2011/11/improving-typeof.html)
-- Dr. Axel Rauschmayer, [Automatic semicolon insertion in JavaScript](http://www.2ality.com/2011/05/semicolon-insertion.html)
+- Axel Rauschmayer, [A quick overview of JavaScript](http://www.2ality.com/2011/10/javascript-overview.html)
+- Axel Rauschmayer, [Improving the JavaScript typeof operator](http://www.2ality.com/2011/11/improving-typeof.html)
+- Axel Rauschmayer, [Automatic semicolon insertion in JavaScript](http://www.2ality.com/2011/05/semicolon-insertion.html)
+- Axel Rauschmayer, [Categorizing values in JavaScript](http://www.2ality.com/2013/01/categorizing-values.html)
 - MDN, [window.btoa](https://developer.mozilla.org/en-US/docs/DOM/window.btoa)
 - Rod Vagg, [JavaScript and Semicolons](http://dailyjs.com/2012/04/19/semicolons/)
 - Mathias Bynens, [JavaScript’s internal character encoding: UCS-2 or UTF-16?](http://mathiasbynens.be/notes/javascript-encoding)

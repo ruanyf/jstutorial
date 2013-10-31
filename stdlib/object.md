@@ -3,7 +3,7 @@ title: Object对象
 layout: page
 category: stdlib
 date: 2013-04-30
-modifiedOn: 2013-09-20
+modifiedOn: 2013-10-31
 ---
 
 ## 概述
@@ -515,20 +515,26 @@ o.p
 
 {% endhighlight %}
 
-Object.isExtensible方法用于检查一个对象是否使用了preventExtensions方法。
+**（2）Object.isExtensible方法**
+
+Object.isExtensible方法用于检查一个对象是否使用了preventExtensions方法。也就是说，该方法可以用来检查是否可以为一个对象添加属性。
 
 {% highlight javascript %}
 
 var o = new Object();
 
-Object.preventExtensions(o);
+Object.isExtensible(o)
+// true
 
+Object.preventExtensions(o);
 Object.isExtensible(o)
 // false
 
 {% endhighlight %}
 
-**(2) Object.seal方法**
+上面代码新生成了一个o对象，对该对象使用Object.isExtensible方法，返回true，表示可以添加新属性。对该对象使用Object.preventExtensions方法以后，再使用Object.isExtensible方法，返回false，表示已经不能添加新属性了。
+
+**(3) Object.seal方法**
 
 该方法可以使得一个对象既无法添加新属性，也无法删除旧属性。
 
@@ -609,7 +615,7 @@ Object.isExtensible(o)
 
 {% endhighlight %}		
 
-**(3) Object.freeze方法**
+**(4) Object.freeze方法**
 
 该方法可以使得一个对象无法添加新属性、无法删除旧属性、也无法改变属性的值，使得这个对象实际上变成了常量。
 

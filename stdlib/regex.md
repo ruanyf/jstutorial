@@ -3,7 +3,7 @@ title: Regex对象
 layout: page
 category: stdlib
 date: 2013-01-17
-modifiedOn: 2013-09-19
+modifiedOn: 2013-10-31
 ---
 
 ## 概述
@@ -40,7 +40,7 @@ var regex = new RegExp("xyz", "i");
 
 正则对象生成以后，有两种使用方式：一种是使用正则对象本身的方法，另一种是将正则对象作为字符串对象的参数进行使用。
 
-## 使用方法：基于正则对象
+## 正则对象的实例的属性和方法
 
 正则对象与其他对象一样，也有自己的属性和方法。
 
@@ -84,6 +84,8 @@ test方法用来验证字符串是否符合某个模式，返回true或false。
 
 {% endhighlight %}
 
+上面代码验证参数字符串之中是否包含cat，结果返回true。
+
 如果正则表达式带有g修饰符，则每一次test方法都从上一次结束的位置开始向后匹配。
 
 {% highlight javascript %}
@@ -91,36 +93,38 @@ test方法用来验证字符串是否符合某个模式，返回true或false。
 var regex = /x/g;
 var str = '_x_x';
 
-regex.lastIndex
-// 0
+regex.lastIndex // 0
+regex.test(str) // true
 
-regex.test(str)
+regex.lastIndex // 2
+regex.test(str) // true
+
+regex.lastIndex // 4
+regex.test(str) // false
+
+{% endhighlight %}
+
+上面代码的正则对象使用了g修饰符，表示要记录搜索位置。接着，三次使用test方法，每一次开始搜索的位置都是上一次匹配的后一个位置。
+
+如果正则模式是一个空字符串，则匹配所有字符串。
+
+{% highlight javascript %}
+
+new RegExp("").test("abc")
 // true
-
-regex.lastIndex
-// 2
-
-regex.test(str)
-// true
-
-regex.lastIndex
-// 4
-
-regex.test(str)
-// false
 
 {% endhighlight %}
 
 ### exec方法
 
-exec方法返回一个字符串中所有匹配结果。
+exec方法返回一个字符串中所有匹配正则模式的结果。
 
-如果没有匹配，该方法返回null，否则返回一个数组。该数组的长度是匹配成功的组数+1，其中数组的第一个元素是整个被匹配的字符串。如果正则表示式中含有组匹配，则第二个元素就对应第一个括号，第三个元素对应第二个括号，以此类推。
+如果没有匹配，该方法返回null，否则返回一个数组。返回数组的length属性等于匹配成功的组数+1，即数组的第一个元素是整个被匹配的字符串，后面的元素就是匹配成功的组，也就是说第二个元素就对应第一个括号，第三个元素对应第二个括号，以此类推。
 
 此外，该数组还包含以下两个属性：
 
 - input：被匹配的字符串。
-- index：匹配成功的位置。
+- index：整个模式匹配成功的开始位置。
 
 {% highlight javascript %}
 
@@ -188,7 +192,19 @@ while(true) {
 
 {% endhighlight %}
 
-## 使用方法：基于字符串对象
+如果正则对象是一个空字符串，则exec的结果如下：
+
+{% highlight javascript %}
+
+new RegExp("").exec("abc")
+// [ '', index: 0, input: 'abc' ]
+
+/()/.exec("abc")
+// [ '', '', index: 0, input: 'abc' ]
+
+{% endhighlight %}
+
+## 字符串对象的方法
 
 字符串对象的方法之中，有4种与正则对象有关。
 
