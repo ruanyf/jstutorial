@@ -668,7 +668,7 @@ if (v){
 // ReferenceError: v is not defined
 
 // 正确的写法
-if (typeof v === undefined){
+if (typeof v === "undefined"){
 	// ...
 }
 

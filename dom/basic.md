@@ -107,8 +107,8 @@ for (var i = 0; i <= 9; i++) {
   tbody.rows[i].insertCell(1);
   tbody.rows[i].insertCell(2);
   tbody.rows[i].cells[0].appendChild(document.createTextNode('Row ' + rowcount + ', Cell 1'));
-  tbody.rows[i].cells[1].appendChild(document.createTextNode('Row 1, Cell 2'));
-  tbody.rows[i].cells[2].appendChild(document.createTextNode('Row 1, Cell 3'));
+  tbody.rows[i].cells[1].appendChild(document.createTextNode('Row ' + rowcount + ', Cell 2'));
+  tbody.rows[i].cells[2].appendChild(document.createTextNode('Row ' + rowcount + ', Cell 3'));
 }
 
 table.createCaption();
