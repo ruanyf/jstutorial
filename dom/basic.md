@@ -18,15 +18,15 @@ DOM的最小单位是节点（node），一个文档的树形结构就是由各�
 
 <table class="twelve">
   <thead>
-    <tr><th>类型</th><th>名称</th><th>含义</th><th>nodeName</th><th>nodeType</th></tr>
+    <tr><th>类型</th><th>名称</th><th>含义</th></tr>
   </thead>
   <tbody>
-<tr><td>DOCUMENT_NODE</td><td>文档节点</td><td>整个文档（比如 window.document）</td><td>#document</td><td>9</td></tr>
-<tr><td>ELEMENT_NODE</td><td>标签节点</td><td>各种HTML标签（比如&lt;body&gt;、&lt;a&gt;、&lt;p&gt;等）</td><td>大写的标签名（比如a标签对应的值为A）</td><td>1</td></tr>
-<tr><td>ATTRIBUTE_NODE</td><td>属性节点</td><td>HTML标签的属性（比如class="right"）</td><td>等同于Attr.name</td><td>2</td></tr>
-<tr><td>TEXT_NODE</td><td>文本节点</td><td>HTML文档中出现的文本</td><td>#text</td><td>3</td></tr>
-<tr><td>DOCUMENT_FRAGMENT_NODE</td><td>文档碎片节点</td><td>文档的片段</td><td>#document-fragment</td><td>11</td></tr>
-<tr><td>DOCUMENT_TYPE_NODE</td><td>文档类型节点</td><td>文档的类型（比如&lt;!DOCTYPE html&gt;）</td><td>等同于DocumentType.name</td><td>10</td></tr>
+<tr><td>DOCUMENT_NODE</td><td>文档节点</td><td>整个文档（比如 window.document）</td></tr>
+<tr><td>ELEMENT_NODE</td><td>标签节点</td><td>各种HTML标签（比如&lt;body&gt;、&lt;a&gt;、&lt;p&gt;等）</td></tr>
+<tr><td>ATTRIBUTE_NODE</td><td>属性节点</td><td>HTML标签的属性（比如class="right"）</td></tr>
+<tr><td>TEXT_NODE</td><td>文本节点</td><td>HTML文档中出现的文本</td></tr>
+<tr><td>DOCUMENT_FRAGMENT_NODE</td><td>文档碎片节点</td><td>文档的片段</td></tr>
+<tr><td>DOCUMENT_TYPE_NODE</td><td>文档类型节点</td><td>文档的类型（比如&lt;!DOCTYPE html&gt;）</td></tr>
   </tbody>
 </table>
 
@@ -53,7 +53,21 @@ Node对象有以下属性：
 
 （1）nodeName属性和nodeType属性
 
-nodeName属性返回节点的名称，nodeType属性返回节点的常数值。具体的返回值，可查阅上方的表格。
+nodeName属性返回节点的名称，nodeType属性返回节点的常数值。具体的返回值，可查阅下方的表格。
+
+<table class="twelve">
+  <thead>
+    <tr><th>类型</th><th>nodeName</th><th>nodeType</th></tr>
+  </thead>
+  <tbody>
+<tr><td>DOCUMENT_NODE</td><td>#document</td><td>9</td></tr>
+<tr><td>ELEMENT_NODE</td><td>大写的标签名（比如a标签对应的值为A）</td><td>1</td></tr>
+<tr><td>ATTRIBUTE_NODE</td><td>等同于Attr.name</td><td>2</td></tr>
+<tr><td>TEXT_NODE</td><td>#text</td><td>3</td></tr>
+<tr><td>DOCUMENT_FRAGMENT_NODE</td><td>#document-fragment</td><td>11</td></tr>
+<tr><td>DOCUMENT_TYPE_NODE</td><td>等同于DocumentType.name</td><td>10</td></tr>
+  </tbody>
+</table>
 
 通常来说，使用nodeType属性确定一个节点的类型，比较方便。
 
@@ -293,7 +307,7 @@ var h = box.getBoundingClientRect().height;
 
 所有浏览器都支持这个方法，但是IE 6到8对这个对象的支持不完整。 
 
-## table元素
+### table元素
 
 表格有一些特殊的DOM操作方法。
 
