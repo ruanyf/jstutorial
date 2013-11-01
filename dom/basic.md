@@ -16,19 +16,12 @@ DOM的最小单位是节点（node），一个文档的树形结构就是由各�
 
 对于HTML文档，节点有以下类型：
 
-<table class="twelve">
-  <thead>
-    <tr><th>类型</th><th>名称</th><th>含义</th></tr>
-  </thead>
-  <tbody>
-<tr><td>DOCUMENT_NODE</td><td>文档节点</td><td>整个文档（比如 window.document）</td></tr>
-<tr><td>ELEMENT_NODE</td><td>标签节点</td><td>各种HTML标签（比如&lt;body&gt;、&lt;a&gt;、&lt;p&gt;等）</td></tr>
-<tr><td>ATTRIBUTE_NODE</td><td>属性节点</td><td>HTML标签的属性（比如class="right"）</td></tr>
-<tr><td>TEXT_NODE</td><td>文本节点</td><td>HTML文档中出现的文本</td></tr>
-<tr><td>DOCUMENT_FRAGMENT_NODE</td><td>文档碎片节点</td><td>文档的片段</td></tr>
-<tr><td>DOCUMENT_TYPE_NODE</td><td>文档类型节点</td><td>文档的类型（比如&lt;!DOCTYPE html&gt;）</td></tr>
-  </tbody>
-</table>
+- DOCUMENT_NODE：文档节点，代表整个文档（window.document）。
+- ELEMENT_NODE：元素节点，代表HTML元素（比如&lt;body&gt;、&lt;a&gt;等）。
+- ATTRIBUTE_NODE：属性节点，代表HTML元素的属性（比如class="right"）。
+- TEXT_NODE：文本节点，代表HTML文档中出现的文本。
+- DOCUMENT_FRAGMENT_NODE：文档碎片节点，代表文档的片段。
+- DOCUMENT_TYPE_NODE：文档类型节点，代表文档的类型（比如&lt;!DOCTYPE html&gt;）。
 
 浏览器原生提供一个Node对象，上面所有类型的节点都是Node对象派生出来的，也就是说它们都继承了Node的属性和方法。
 
@@ -61,7 +54,7 @@ nodeName属性返回节点的名称，nodeType属性返回节点的常数值。�
   </thead>
   <tbody>
 <tr><td>DOCUMENT_NODE</td><td>#document</td><td>9</td></tr>
-<tr><td>ELEMENT_NODE</td><td>大写的标签名（比如a标签对应的值为A）</td><td>1</td></tr>
+<tr><td>ELEMENT_NODE</td><td>大写的HTML元素名</td><td>1</td></tr>
 <tr><td>ATTRIBUTE_NODE</td><td>等同于Attr.name</td><td>2</td></tr>
 <tr><td>TEXT_NODE</td><td>#text</td><td>3</td></tr>
 <tr><td>DOCUMENT_FRAGMENT_NODE</td><td>#document-fragment</td><td>11</td></tr>
