@@ -3,7 +3,7 @@ title: DOM概述
 layout: page
 category: dom
 date: 2013-10-07
-modifiedOn: 2013-10-07
+modifiedOn: 2013-11-04
 ---
 
 DOM是文档对象模型（Document Object Model）的简称，它的基本思想是把结构化文档（比如HTML和XML）解析成一系列的节点，再由这些节点组成一个树状结构。所有的节点和最终的树状结构，都有规范的对外接口，以达到使用编程语言操作文档的目的（比如增删内容）。所以，DOM可以理解成文档的编程接口。
@@ -48,7 +48,7 @@ Node对象有以下属性：
 
 nodeName属性返回节点的名称，nodeType属性返回节点的常数值。具体的返回值，可查阅下方的表格。
 
-<table class="twelve">
+<table class="ten">
   <thead>
     <tr><th>类型</th><th>nodeName</th><th>nodeType</th></tr>
   </thead>
@@ -181,12 +181,64 @@ input[0].isEqualNode(input[1])
 
 当使用querySelectorAll()方法选择一组对象时，会返回一个NodeList对象（比如document.querySelectorAll('*')的返回结果）或者HTMLCollection对象（比如document.scripts）。它们是类似数组的对象，即可以使用length属性，但是不能使用pop或push之类数组特有的方法。 
 
-## Document对象
+## document对象
 
-Document对象的方法：
+document对象是文档的根节点，window.document属性就指向这个对象。也就是说，只要浏览器开始载入HTML文档，这个对象就开始存在了，可以直接调用。
+
+一般来说，document对象有两个子节点。第一个子节点是文档类型节点（DocumentType），对于HTML5文档来说，该节点就代表\<!DOCTYPE html\>，document.doctype属性指向该节点。第二个子节点是元素节点（Element），代表\<html lang="en"\>，document.documentElement属性指向该节点。这两个子节点肯定包括document.childNodes之中。
+
+### document对象的属性
+
+document对象有很多属性，用得比较多的是下面这样。
+
+（1）提供文档信息的属性。
+
+- title：文档的标题。
+- lastModified：文档文件的上一次修改时间。
+- referrer：文档的访问来源。
+- URL：文档的URL。
+- compatMode：浏览器处理文档的模式，可能的值为BackCompat（向后兼容模式）和 CSS1Compat（严格模式）。
+
+（2）指向其他节点或对象的属性
+
+- doctype：指向文档类型节点。
+- documentElement：指向html元素节点。
+- head：指向文档的head元素节点。
+- body：指向文档的body元素节点。
+- activeElement：指向文档中被激活（focused/active）的元素。
+- defaultView：指向当前文档的JavaScript顶层对象，即window对象。
+
+{% highlight javascript %}
+
+document.doctype // <!DOCTYPE html>
+document.documentElement // <html>...</html>
+document.head // <head>...</head>
+document.body // <body>...</body>
+document.defaultView // window
+
+document.querySelector('textarea').focus();
+document.activeElement // <textarea>
+
+{% endhighlight %}
+
+（3）implementation属性
+
+该属性指向一个对象，提供浏览器支持的模块信息，它的hasFeature方法返回一个布尔值，表示是否支持某个模块。
+
+{% highlight javascript %}
+
+document.implementation.hasFeature('MutationEvents','2.0')
+// true
+
+{% endhighlight %}
+
+上面代码表示，当前浏览器支持MutationEvents模块的2.0版本。
+
+### document对象的方法
 
 - document.createElement()
 - document.createTextNode()
+- hasFocus()
 
 createElement() 方法接受一个字符串参数，表示要创造哪一种HTML元素。传入的字符串应该等同于元素节点的tagName属性。
 
@@ -199,6 +251,8 @@ var elementNode = document.createElement('div');
 var textNode = document.createTextNode('Hi');
 
 {% endhighlight %}
+
+hasFocus()方法返回一个布尔值，表示当前文档之中是否有元素被激活或获得焦点。
 
 ## Element对象
 

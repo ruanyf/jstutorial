@@ -3,7 +3,7 @@ title: 运算符
 layout: page
 category: grammar
 date: 2013-02-04
-modifiedOn: 2013-10-22
+modifiedOn: 2013-11-03
 ---
 
 ## 算术运算符
@@ -334,54 +334,6 @@ null == undefined   // true
 
 上面代码的“t”和0的布尔值分别为true和false，所以分别返回第二个和第三个表达式的值。
 
-## 圆括号运算符
-
-在JavaScript中，圆括号是一种运算符，作用是求值。
-
-对表达式使用圆括号，返回表达式的值。
-
-{% highlight javascript %}
-
-(1) // 1
-('a') // a
-(1+2) // 3
-
-{% endhighlight %}
-
-如果对某个对象使用圆括号，则等同于调用该对象的valueOf方法。
-
-{% highlight javascript %}
-
-var o = {p:1};
-
-(o)
-// 等同于o.valueof()
-
-{% endhighlight %}
-
-调用函数的时候，在尾部添加一对圆括号，就表示对函数求值。如果将函数放在圆括号中，则会返回整个函数，因为这相当于调用函数对象的valueOf方法。
-
-{% highlight javascript %}
-
-function f(){return 1;}
-
-f()
-// 1
-
-(f)
-// function f(){return 1;}
-
-{% endhighlight %}
-
-由于圆括号的作用是求值，如果对语句使用圆括号，就会报错，因为语句没有返回值。
-
-{% highlight javascript %}
-
-(var a =1)
-// SyntaxError: Unexpected token var
-
-{% endhighlight %}
-
 ## 位运算符
 
 ### 简介
@@ -620,7 +572,57 @@ flags = ~flags;
 
 {% endhighlight %}
 
-## void运算符
+## 其他运算符
+
+### 圆括号运算符
+
+在JavaScript中，圆括号是一种运算符，作用是求值。
+
+对表达式使用圆括号，返回表达式的值。
+
+{% highlight javascript %}
+
+(1) // 1
+('a') // a
+(1+2) // 3
+
+{% endhighlight %}
+
+如果对某个对象使用圆括号，则等同于调用该对象的valueOf方法。
+
+{% highlight javascript %}
+
+var o = {p:1};
+
+(o)
+// 等同于o.valueof()
+
+{% endhighlight %}
+
+调用函数的时候，在尾部添加一对圆括号，就表示对函数求值。如果将函数放在圆括号中，则会返回整个函数，因为这相当于调用函数对象的valueOf方法。
+
+{% highlight javascript %}
+
+function f(){return 1;}
+
+f()
+// 1
+
+(f)
+// function f(){return 1;}
+
+{% endhighlight %}
+
+由于圆括号的作用是求值，如果对语句使用圆括号，就会报错，因为语句没有返回值。
+
+{% highlight javascript %}
+
+(var a =1)
+// SyntaxError: Unexpected token var
+
+{% endhighlight %}
+
+### void运算符
 
 void运算符的作用是执行一个表达式，然后返回undefined。
 
@@ -663,6 +665,24 @@ javascript:void(window.open("http://www.whitehouse.gov/"));
 {% highlight html %}
 
  <a href="javascript:void(doSomething());">Compute</a>
+
+{% endhighlight %}
+
+### 逗号运算符
+
+逗号运算符用于对两个表达式求值，并返回后一个表达式的值。
+
+{% highlight javascript %}
+
+"a", "b"
+// "b"
+
+var x = ("a", "b")
+x
+// "b"
+
+console.log(("a", "b"))
+// b
 
 {% endhighlight %}
 

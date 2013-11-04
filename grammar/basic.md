@@ -227,6 +227,27 @@ a
 
 上面代码在区块内部，声明并赋值了变量a，然后在区块外部变量a依然有效，这说明区块不构成单独的作用域。
 
+JavaScript允许对区块加上标签（label）。
+
+{% highlight javascript %}
+
+function test(printTwo) {
+    printing: {
+        console.log("One");
+        if (!printTwo) break printing;
+        console.log("Two");
+    }
+    console.log("Three");
+}
+
+test(false)
+// One
+// Three
+
+{% endhighlight %}
+
+上面代码有一个标签为printing的区块，当不满足条件时，可以使用break命令跳出该区块。所以，运行结果为One和Three，没有输出Two。
+
 ### 条件语句
 
 （1）if 结构
