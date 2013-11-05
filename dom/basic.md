@@ -3,7 +3,7 @@ title: DOM概述
 layout: page
 category: dom
 date: 2013-10-07
-modifiedOn: 2013-11-04
+modifiedOn: 2013-11-05
 ---
 
 DOM是文档对象模型（Document Object Model）的简称，它的基本思想是把结构化文档（比如HTML和XML）解析成一系列的节点，再由这些节点组成一个树状结构。所有的节点和最终的树状结构，都有规范的对外接口，以达到使用编程语言操作文档的目的（比如增删内容）。所以，DOM可以理解成文档的编程接口。
@@ -185,7 +185,7 @@ input[0].isEqualNode(input[1])
 
 document对象是文档的根节点，window.document属性就指向这个对象。也就是说，只要浏览器开始载入HTML文档，这个对象就开始存在了，可以直接调用。
 
-一般来说，document对象有两个子节点。第一个子节点是文档类型节点（DocumentType），对于HTML5文档来说，该节点就代表\<!DOCTYPE html\>，document.doctype属性指向该节点。第二个子节点是元素节点（Element），代表\<html lang="en"\>，document.documentElement属性指向该节点。这两个子节点肯定包括document.childNodes之中。
+一般来说，document对象有两个子节点。第一个子节点是文档类型节点（DocumentType），对于HTML5文档来说，该节点就代表\<!DOCTYPE html\>，document.doctype属性指向该节点。第二个子节点是元素节点（Element），代表\<html lang="en"\>，document.documentElement 属性指向该节点。这两个子节点肯定包括在document.childNodes之中。
 
 ### document对象的属性
 
@@ -256,7 +256,9 @@ hasFocus()方法返回一个布尔值，表示当前文档之中是否有元素�
 
 ## Element对象
 
-Element对象的属性：
+每一个HTML标签元素，都会转化成一个Element对象节点。所有的Element节点的nodeType属性都是1，但是不同标签生成的节点是不一样的。JavaScript内部使用不同的构造函数，生成不同的Element节点，比如a标签的节点由HTMLAnchorElement()构造函数生成，button标签的节点由HTMLButtonElement()构造函数生成。因此，Element对象不是一种对象，而是一组对象。
+
+Element对象特有的属性：
 
 - innerHTML
 - outerHTML
@@ -268,6 +270,11 @@ Element对象的属性：
 - nextElementChild
 - previousElementChild
 - children
+- tagName
+- dataset
+- attributes
+
+（1）与标签代码相关的属性
 
 innerHTML属性用来读取或设置某个节点内的HTML代码。
 
@@ -277,9 +284,136 @@ textContent属性用来读取或设置节点包含的文本内容。
 
 innerText属性和outerText属性在读取元素节点的文本内容时，得到的值是不一样的。它们的不同之处在于设置一个节点的文本属性时，outerText属性会使得原来的元素节点被文本节点替换掉。
 
-Element对象的方法：
+（2）tagName属性
 
-- insertAdjacentHTML()
+tagName属性返回该节点的HTML标签名，与nodeName属性相同。
+
+{% highlight javascript %}
+
+document.querySelector('a').tagName // A
+
+document.querySelector('a').nodeName) // A
+
+{% endhighlight %}
+
+从上面代码可以看出，这两个属性返回的都是标签名的大写形式。
+
+（3）attributes属性
+
+该属性返回一个数组，数组成员就是Element元素包含的每一个属性节点对象。
+
+{% highlight javascript %}
+
+var atts = document.querySelector('a').attributes;
+
+for(var i=0; i< atts.length; i++){
+	console.log(atts[i].nodeName +'='+ atts[i].nodeValue);
+}
+
+{% endhighlight %}
+
+### className属性和classList属性
+
+className属性和classList属性都返回HTML元素的class属性。不同之处是，className属性返回一个字符串，每个class之间用空格分割，classList属性则返回一个类似数组的对象，每个class就是这个对象的一个成员。
+
+{% highlight html %}
+
+<div class="one two three" id="myDiv"></div>
+
+{% endhighlight %}
+
+上面这个div节点对象的className属性和classList属性，分别如下：
+
+{% highlight javascript %}
+
+document.getElementById('myDiv').classList
+// {
+//	0: "one"
+//	1: "two"
+//	2: "three"
+//	length: 3
+//	}
+
+document.getElementById('myDiv').classList
+// "one two three"
+
+{% endhighlight %}
+
+classList属性指向一个类似数组的对象，简称classList对象。该对象的length属性（只读），可以返回HTML标签的class数量。
+
+classList对象有一系列方法。
+
+- add()：增加一个class。
+- remove()：移除一个class。
+- contains()：检查该DOM元素是否包含某个class。
+- toggle()：将某个class移入或移出该DOM元素。
+- item()：返回列表中某个特定位置的class。
+- toString()：将class的列表转为字符串。
+
+{% highlight javascript %}
+
+myDiv.classList.add('myCssClass');
+
+myDiv.classList.remove('myCssClass');
+
+myDiv.classList.toggle('myCssClass'); // myCssClass被加入
+
+myDiv.classList.toggle('myCssClass'); // myCssClass被移除
+
+myDiv.classList.contains('myCssClass'); // 返回 true 或者 false
+
+myDiv.classList.item(0);
+
+myDiv.classList.toString();
+
+{% endhighlight %}
+
+### dataset属性
+
+dataset属性用于操作HTML标签元素的data-*属性。目前，Firefox、Chrome、Opera、Safari浏览器支持该API。
+
+假设有如下的网页代码。
+
+{% highlight html %}
+
+<div id="myDiv" data-id="myId"></div>
+
+{% endhighlight %}
+
+以data-id属性为例，要读取这个值，可以用dataset.id。
+
+{% highlight javascript %}
+
+var id = document.getElementById("myDiv").dataset.id;
+
+{% endhighlight %}
+
+要设置data-id属性，可以直接对dataset.id赋值。这时，如果data-id属性不存在，将会被创造出来。
+
+{% highlight javascript %}
+
+document.getElementById("myDiv").dataset.id = "hello";
+
+{% endhighlight %}
+
+删除一个data-*属性，可以直接使用delete命令。
+
+{% highlight javascript %}
+
+delete document.getElementById("myDiv").dataset.id
+
+{% endhighlight %}
+
+IE 9不支持dataset属性，可以用 getAttribute('data-foo')、removeAttribute('data-foo')、setAttribute('data-foo')、hasAttribute('data-foo') 代替。
+
+需要注意的是，dataset属性使用骆驼拼写法表示属性名，这意味着data-hello-world会用dataset.helloWorld表示。
+
+### HTML元素的属性相关方法
+
+- hasAttribute()：返回一个布尔值，表示Element对象是否有该属性。
+- getAttribute()
+- setAttribute()
+- removeAttribute()
 
 ### insertAdjacentHTML方法
 
@@ -407,3 +541,7 @@ table元素有以下属性：
 ## 参考链接
 
 - Louis Lazaris, [Thinking Inside The Box With Vanilla JavaScript](http://coding.smashingmagazine.com/2013/10/06/inside-the-box-with-vanilla-javascript/)
+- David Walsh, [HTML5 classList API](http://davidwalsh.name/classlist)
+- Derek Johnson, [The classList API](http://html5doctor.com/the-classlist-api/)
+- Mozilla Developer Network, [element.dataset API](http://davidwalsh.name/element-dataset)
+- David Walsh, [The element.dataset API](http://davidwalsh.name/element-dataset) 
