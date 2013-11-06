@@ -29,22 +29,17 @@ DOM的最小单位是节点（node），一个文档的树形结构就是由各�
 
 Node对象有以下属性：
 
-- childNodes：所有子节点。
 - firstChild：第一个子节点。
 - lastChild：最后一个子节点。
 - nextSibling：下一个同级节点。
-- nodeName：节点名称。
-- nodeType：节点类型。
-- nodeValue：节点值。
 - parentNode：父节点。
 - previousSibling：上一个同级节点。
 - firstElementChild：第一个类型为HTML元素的子节点。
 - lastElementChild：最后一个类型为HTML元素的子节点。
 - nextElementSibling：下一个类型为HTML元素的同级节点。
 - previousElementChild：上一个类型为HTML元素的同级节点。
-- children：所有类型为HTML元素的子节点。
 
-（1）nodeName属性和nodeType属性
+**（1）nodeName属性和nodeType属性**
 
 nodeName属性返回节点的名称，nodeType属性返回节点的常数值。具体的返回值，可查阅下方的表格。
 
@@ -76,19 +71,23 @@ document.querySelector('a').nodeType === Node.ELEMENT_NODE
 
 上面两种写法是等价的。
 
-（2）nodeValue属性
+**（2）nodeValue属性**
 
 Text节点的nodeValue属性返回文本内容，而其他五类节点都返回null。所以，该属性的作用主要是提取文本节点的内容。
 
-（3）childNodes属性
+**（3）childNodes属性和children属性**
 
-该属性返回父节点的所有子节点，注意返回的不仅包括元素节点，还包括文本节点以及其他各种类型的子节点。另外，返回的是一个NodeList对象。
+childNodes属性返回一个NodeList对象，该对象的成员是父节点的所有子节点，注意返回的不仅包括元素节点，还包括文本节点以及其他各种类型的子节点。如果父对象不包括任何子对象，则返回一个空对象。
 
 {% highlight javascript %}
 
 var ulElementChildNodes = document.querySelector('ul').childNodes;
 
 {% endhighlight %}
+
+childrean属性返回一个类似数组的对象，该对象的成员为HTML元素类型的子节点。如果没有HTML元素类型的子节点，则返回一个空数组。
+
+childNodes属性和children属性返回的节点都是动态的。一旦原节点发生变化，立刻会反映在返回结果之中。
 
 ### Node对象的方法
 
@@ -234,11 +233,55 @@ document.implementation.hasFeature('MutationEvents','2.0')
 
 上面代码表示，当前浏览器支持MutationEvents模块的2.0版本。
 
+### 特定元素的集合属性
+
+document对象有一些属性，指向特定元素的集合。
+
+- document.all ：文档中所有的元素，Firefox不支持该属性。
+- document.forms ：所有的form元素。
+- document.images：所有的img元素。
+- document.links：所有的a元素。
+- document.scripts：所有的script元素。
+- document.styleSheets：所有的link或者style元素。
+
+上面所有的元素集合都是动态的，原节点有任何变化，立刻会反映在这些集合中。
+
 ### document对象的方法
 
-- document.createElement()
-- document.createTextNode()
-- hasFocus()
+**（1）querySelector方法和getElementById方法**
+
+这两个方法用于获取一个Element节点。它们的不同之处是，querySelector方法的参数使用CSS选择器语法，getElementById方法的参数是HTML标签元素的id属性。
+
+{% highlight javascript %}
+
+document.querySelector('li')
+document.getElementById('last')
+
+{% endhighlight %}
+
+如果有多个节点满足querySelector方法的条件，则返回第一个匹配的节点。
+
+**（2）querySelectorAll方法、getElementsByTagName方法和getElementsByClassName方法**
+
+这三个方法都返回一个NodeList对象，也就是返回一组符合条件的节点对象。它们的不同之处在于，querySelectorAll方法的参数使用CSS选择器，getElementsByTagName方法的参数是HTML元素名，getElementsByClassName方法的参数是HTML标签元素的class属性。
+
+{% highlight javascript %}
+
+document.querySelectorAll('li')
+document.getElementsByTagName('li')
+document.getElementsByClassName('liClass')
+
+{% endhighlight %}
+
+getElementsByTagName方法和getElementsByClassName方法返回的是对象的指针，当对象发生变化时，返回的结果集会跟着变化，querySelectorAll方法返回的结果集没有这种特性。
+
+如果querySelectorAll方法和getElementsByTagName方法的参数是字符串“*”，则会返回文档中的所有HTML元素节点。
+
+**（3）getElementsByName方法**
+
+getElementsByName方法用于选择拥有name属性的HTML元素，比如form、img、frame、embed和object。
+
+**（4）createElement方法和createTextNode方法**
 
 createElement() 方法接受一个字符串参数，表示要创造哪一种HTML元素。传入的字符串应该等同于元素节点的tagName属性。
 
@@ -251,6 +294,8 @@ var elementNode = document.createElement('div');
 var textNode = document.createTextNode('Hi');
 
 {% endhighlight %}
+
+**（5）hasFocus方法**
 
 hasFocus()方法返回一个布尔值，表示当前文档之中是否有元素被激活或获得焦点。
 
@@ -408,12 +453,43 @@ IE 9不支持dataset属性，可以用 getAttribute('data-foo')、removeAttribut
 
 需要注意的是，dataset属性使用骆驼拼写法表示属性名，这意味着data-hello-world会用dataset.helloWorld表示。
 
-### HTML元素的属性相关方法
+### Element对象的方法
+
+（1）选择子元素的方法
+
+Element对象也部署了document对象的4个选择子元素的方法，而且用法完全一样。
+
+- querySelector方法
+- querySelectorAll方法
+- getElementsByTagName方法
+- getElementsByClassName方法
+
+上面四个方法只用于选择Element对象的子节点。因此，可以采用链式写法来选择子节点。
+
+{% highlight javascript %}
+
+document.getElementById('header').getElementsByClassName('a')
+
+{% endhighlight %}
+
+（2）HTML元素的属性相关方法
 
 - hasAttribute()：返回一个布尔值，表示Element对象是否有该属性。
 - getAttribute()
 - setAttribute()
 - removeAttribute()
+
+（3）matchesSelector方法
+
+该方法返回一个布尔值，表示Element对象是否符合某个CSS选择器。
+
+{% highlight javascript %}
+
+document.querySelector('li').matchesSelector('li:first-child')
+
+{% endhighlight %}
+
+这个方法需要加上浏览器前缀，需要写成mozMatchesSelector()、webkitMatchesSelector()、oMatchesSelector()、msMatchesSelector()。
 
 ### insertAdjacentHTML方法
 
