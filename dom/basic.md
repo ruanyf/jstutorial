@@ -343,7 +343,7 @@ document.querySelector('a').nodeName) // A
 
 从上面代码可以看出，这两个属性返回的都是标签名的大写形式。
 
-（3）attributes属性
+**（3）attributes属性**
 
 该属性返回一个数组，数组成员就是Element元素包含的每一个属性节点对象。
 
@@ -356,6 +356,28 @@ for(var i=0; i< atts.length; i++){
 }
 
 {% endhighlight %}
+
+**（4）textcontent属性**
+
+该属性返回Element节点包含的所有文本内容。它通常用于剥离HTML标签，还用于返回&lt;script&gt;and&lt;style&gt;标签所包含的代码。
+
+{% highlight javascript %}
+
+document.body.textContent
+
+{% endhighlight %}
+
+如果对document或者doctype节点使用该属性，会返回null。
+
+textcontent属性的作用与innerText属性很相近，但是有以下几点区别：
+
+- innerText受CSS影响，textcontent没有这个问题。比如，如果CSS规则隐藏了某段文本，innerText就不会返回这段文本，textcontent则照样返回。
+
+- innerText返回的文本，会过滤掉空格、换行和回车键，innerText则不会。
+
+- innerText属性不是DOM标准的一部分，Firefox浏览器甚至没有部署这个属性，而textcontent是DOM标准的一部分。
+
+另外，该属性是可写的，可以用它设置Element节点的文本内容。但是这样一来，原有的子节点会被全部删除。
 
 ### className属性和classList属性
 
@@ -754,6 +776,75 @@ table元素有以下属性：
 - **rows**：行元素对象，该属性只读。
 - **rows.cells**：每一行的单元格对象，该属性只读。
 - **tBodies**：表体，该属性只读。
+
+## Text节点
+
+文档中的文本对应Text节点，通常使用Element对象的firstChild、nextSibling等属性获取文本节点，或者使用document对象的createTextNode方法创造一个文本节点。
+
+{% highlight javascript %}
+
+// 获取文本节点
+var textNode = document.querySelector('p').firstChild;
+
+// 创造文本节点
+var textNode = document.createTextNode('Hi');
+document.querySelector('div').appendChild(textNode);
+
+{% endhighlight %}
+
+注意，由于空格也是一个字符，所以哪怕只有一个空格，也会形成文本节点。
+
+### 文本节点的属性
+
+文本节点主要有以下属性：
+
+- textContent
+- data
+
+文本节点的文本可以用data属性或nodeValue属性获取。
+
+### 文本节点的方法
+
+（1）文本编辑方法
+
+- appendData()：在文本尾部追加字符串。
+- deleteData()：删除子字符串，第一个参数为子字符串位置，第二个参数为子字符串长度。
+- insertData()：在文本中插入字符串，第一个参数为插入位置，第二个参数为插入的子字符串。
+- replaceData()：替换文本，第一个参数为替换开始位置，第二个参数为需要被替换掉的长度，第三个参数为新加入的字符串。
+- subStringData()：获取子字符串，第一个参数为子字符串在文本中的开始位置，第二个参数为子字符串长度。
+
+{% highlight javascript %}
+
+var pElementText = document.querySelector('p').firstChild;
+
+pElementText.appendData('!');
+pElementText.deleteData(7,5);
+pElementText.insertData(7,'Hello ');
+pElementText.replaceData(7,5,'World');
+pElementText.substringData(7,10));
+
+{% endhighlight %}
+
+（2）文本的分割与合并
+
+- splitText()：将文本节点一分为二。
+- normalize()：将毗邻的两个文本节点合并。
+
+{% highlight javascript %}
+
+// 将文本节点从第4个位置开始一分为二
+document.querySelector('p').firstChild.splitText(4)；
+
+document.querySelector('p').firstChild.textContent
+// 2
+
+// 将毗邻的两个文本节点合并
+document.querySelector('div').normalize()
+
+document.querySelector('p').childNodes.length
+// 1
+
+{% endhighlight %}
 
 ## 参考链接
 

@@ -90,6 +90,8 @@ getComputedStyle方法接受一个HTML元素作为参数，返回一个包含该
 
 {% highlight javascript %}
 
+var div = document.querySelector('div');
+
 window.getComputedStyle(div).backgroundColor
 
 {% endhighlight %}
