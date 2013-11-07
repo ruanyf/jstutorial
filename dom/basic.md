@@ -453,6 +453,67 @@ IE 9不支持dataset属性，可以用 getAttribute('data-foo')、removeAttribut
 
 需要注意的是，dataset属性使用骆驼拼写法表示属性名，这意味着data-hello-world会用dataset.helloWorld表示。
 
+### CSS相关属性
+
+Element对象提供一系列与CSS相关的属性，用来提供HTML元素的样式信息。
+
+（1）offsetParent属性、offsetTop属性和offsetLeft属性
+
+这三个属性提供Element对象在页面上的位置。
+
+- offsetParent：当前HTML元素的最靠近的、并且CSS的position属性不等于static的父元素。
+- offsetTop：当前HTML元素左上角相对于offsetParent的垂直位移。
+- offsetLeft：当前HTML元素左上角相对于offsetParent的水平位移。
+
+如果Element对象的父对象都没有将position属性设置为非static的值（比如absolute或relative），则offsetParent属性指向body元素。另外，计算offsetTop和offsetLeft的时候，是从边框的左上角开始计算，即Element对象的border宽度不计入offsetTop和offsetLeft。
+
+（2） clientWidth属性和clientHeight属性
+
+这两个属性返回HTML元素的宽度和高度，在数值上等于内容本身+padding，不包括边框（border）。
+
+{% highlight javascript %}
+
+document.querySelector('div').clientWidth
+document.querySelector('div').clientHeight
+
+{% endhighlight %}
+
+如果一个元素是可以滚动的，则clientWidth和clientHeight只计算它的可见部分的宽度和高度。
+
+（3）scrollHeight属性和scrollWidth属性 
+
+这两个只读属性提供可滚动的HTML元素的总高度和总宽度。
+
+{% highlight javascript %}
+
+// <html>元素的总宽度
+document.documentElement.scrollHeight
+
+// <body>元素的总宽度
+document.body.scrollHeight
+
+{% endhighlight %}
+
+（4）scrollTop属性和scrollLeft属性
+
+这两个属性提供可滚动元素的可以滚动的高度和宽度。这两个属性是读写的。
+
+{% highlight javascript %}
+
+document.querySelector('div').scrollTop = 750;
+
+{% endhighlight %}
+
+上面代码将div元素的向下滚动750像素。
+
+可滚动对象的高度和宽度，满足下面的公式。
+
+{% highlight javascript %}
+
+element.scrollHeight - element.scrollTop === element.clientHeight
+
+{% endhighlight %}
+
 ### Element对象的方法
 
 （1）选择子元素的方法
@@ -472,14 +533,26 @@ document.getElementById('header').getElementsByClassName('a')
 
 {% endhighlight %}
 
-（2）HTML元素的属性相关方法
+（2）elementFromPoint方法
+
+该方法用于选择在指定坐标的最上层的Element对象。
+
+{% highlight javascript %}
+
+document.elementFromPoint(50,50)
+
+{% endhighlight %}
+
+上面代码了选中在(50,50)这个坐标的最上层的那个HTML元素。
+
+（3）HTML元素的属性相关方法
 
 - hasAttribute()：返回一个布尔值，表示Element对象是否有该属性。
 - getAttribute()
 - setAttribute()
 - removeAttribute()
 
-（3）matchesSelector方法
+（4）matchesSelector方法
 
 该方法返回一个布尔值，表示Element对象是否符合某个CSS选择器。
 
@@ -490,6 +563,18 @@ document.querySelector('li').matchesSelector('li:first-child')
 {% endhighlight %}
 
 这个方法需要加上浏览器前缀，需要写成mozMatchesSelector()、webkitMatchesSelector()、oMatchesSelector()、msMatchesSelector()。
+
+（5）scrollIntoView方法
+
+该方法用于将一个可滚动元素滚动到可见区域。
+
+{% highlight javascript %}
+
+document.querySelector('content').children[4].scrollIntoView();
+
+{% endhighlight %}
+
+scrollIntoView方法接受一个布尔值作为参数，默认值为true，表示滚动到HTML元素的上方边缘，如果该值为false，表示滚动到下方边缘。
 
 ### insertAdjacentHTML方法
 
@@ -545,7 +630,7 @@ insertAdjacentHTML方法比innerHTML方法效率高，因为它不是彻底置�
 
 ### getBoundingClientRect方法
 
-getBoundingClientRect方法用于获取元素相对于视口（viewport）的坐标。
+getBoundingClientRect方法返回一个记录了位置信息的对象，用于获取HTML元素相对于视口（viewport）左上角的位置以及本身的长度和宽度。
 
 {% highlight javascript %}
 
@@ -560,7 +645,9 @@ var h = box.getBoundingClientRect().height;
 
 {% endhighlight %}
 
-上面代码获取DOM元素之后，使用getBoundingClientRect方法相应属性，先后得到左上角和右下角的四个坐标（相对于视口），然后得到元素的宽和高。所有这些值都是只读的。
+上面代码获取DOM元素之后，使用getBoundingClientRect方法的相应属性，先后得到左上角和右下角的四个坐标（相对于视口），以及元素的宽和高。所有这些值都是只读的。
+
+注意，getBoundingClientRect方法的所有属性，都把边框（border属性）算作元素的一部分。也就是说，都是从边框外缘的各个点来计算。因此，width和height包括了元素本身+padding+border。
 
 所有浏览器都支持这个方法，但是IE 6到8对这个对象的支持不完整。 
 
