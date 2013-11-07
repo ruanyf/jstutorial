@@ -3,7 +3,7 @@ title: window对象
 layout: page
 category: bom
 date: 2013-09-19
-modifiedOn: 2013-10-27
+modifiedOn: 2013-11-07
 ---
 
 ## 概述
@@ -83,6 +83,20 @@ if (/mobi/i.test(ua)) {
 /mobi|android|touch|mini/i.test(ua)
 
 {% endhighlight %}
+
+## getComputedStyle方法
+
+getComputedStyle方法接受一个HTML元素作为参数，返回一个包含该HTML元素的最终样式信息的对象。所谓“最终样式信息”，指的是各种CSS规则叠加后的结果。
+
+{% highlight javascript %}
+
+window.getComputedStyle(div).backgroundColor
+
+{% endhighlight %}
+
+getComputedStyle方法只能读取CSS属性，而不能设置。它使用骆驼拼写法表示CSS规则名，比如background-color要写成backgroundColor。
+
+getComputedStyle方法的返回值有两点需要注意。首先，它返回的颜色值一律都是rgb(#,#,#)格式。其次，它不能读取CSS规则的快捷写法，只能读取非快捷写法，比如可以读取marginTop而不可以读取margin。
 
 ## 参考链接
 

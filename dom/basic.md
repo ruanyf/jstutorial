@@ -457,7 +457,7 @@ IE 9不支持dataset属性，可以用 getAttribute('data-foo')、removeAttribut
 
 Element对象提供一系列与CSS相关的属性，用来提供HTML元素的样式信息。
 
-（1）offsetParent属性、offsetTop属性和offsetLeft属性
+**（1）offsetParent属性、offsetTop属性和offsetLeft属性**
 
 这三个属性提供Element对象在页面上的位置。
 
@@ -467,7 +467,7 @@ Element对象提供一系列与CSS相关的属性，用来提供HTML元素的样
 
 如果Element对象的父对象都没有将position属性设置为非static的值（比如absolute或relative），则offsetParent属性指向body元素。另外，计算offsetTop和offsetLeft的时候，是从边框的左上角开始计算，即Element对象的border宽度不计入offsetTop和offsetLeft。
 
-（2） clientWidth属性和clientHeight属性
+**（2） clientWidth属性和clientHeight属性**
 
 这两个属性返回HTML元素的宽度和高度，在数值上等于内容本身+padding，不包括边框（border）。
 
@@ -480,21 +480,21 @@ document.querySelector('div').clientHeight
 
 如果一个元素是可以滚动的，则clientWidth和clientHeight只计算它的可见部分的宽度和高度。
 
-（3）scrollHeight属性和scrollWidth属性 
+**（3）scrollHeight属性和scrollWidth属性**
 
 这两个只读属性提供可滚动的HTML元素的总高度和总宽度。
 
 {% highlight javascript %}
 
-// <html>元素的总宽度
+// <html>元素的总高度
 document.documentElement.scrollHeight
 
-// <body>元素的总宽度
+// <body>元素的总高度
 document.body.scrollHeight
 
 {% endhighlight %}
 
-（4）scrollTop属性和scrollLeft属性
+**（4）scrollTop属性和scrollLeft属性**
 
 这两个属性提供可滚动元素的可以滚动的高度和宽度。这两个属性是读写的。
 
@@ -514,9 +514,63 @@ element.scrollHeight - element.scrollTop === element.clientHeight
 
 {% endhighlight %}
 
+**（5）style属性**
+
+style属性用来读写HTML元素的行内CSS属性。
+
+{% highlight javascript %}
+
+var divStyle = document.querySelector('div').style; 
+
+divStyle.backgroundColor = 'red';
+divStyle.border = '1px solid black';
+divStyle.width = '100px';
+divStyle.height = '100px';
+
+divStyle.backgroundColor // red
+divStyle.border // 1px solid black 
+divStyle.height // 100px
+divStyle.width // 100px
+
+{% endhighlight %}
+
+从上面代码可以看到，style属性指向一个对象（简称style对象），该对象的属性与css规则名一一对应，但是需要改写。具体规则是将横杠从CSS规则名中去除，然后将横杠后的第一个字母大写，比如background-color写成backgroundColor。如果CSS规则名是JavaScript保留字，则规则名之前需要加上字符串“css”，比如float写成cssFloat。
+
+注意，style对象的属性值都是字符串，而且包括单位。所以，divStyle.width不能设置为100，而要设置为'100px'。
+
+style对象的cssText可以用来读写或删除整个style属性。
+
+{% highlight javascript %}
+
+divStyle.cssText = 'background-color:red;border:1px solid black;height:100px;width:100px;';
+
+{% endhighlight %}
+
+使用Element对象的getAttribute方法、setAttribute方法和removeAttribute方法，也能达到读写或删除整个style属性的目的。
+
+{% highlight javascript %}
+
+div.setAttribute('style','background-color:red;border:1px solid black;height:100px;width:100px;');
+
+{% endhighlight %}
+
+style对象有以下三个方法，也可以用来设置、读取和删除行内CSS规则，而且不必改写CSS规则名。
+
+- setPropertyValue(propertyName)
+- getPropertyValue(propertyName,value)
+- removeProperty(propertyName)
+
+{% highlight javascript %}
+
+divStyle.setProperty('background-color','red');
+divStyle.getPropertyValue('background-color');
+divStyle.removeProperty('background-color');
+
+{% endhighlight %}
+
 ### Element对象的方法
 
-（1）选择子元素的方法
+**（1）选择子元素的方法**
 
 Element对象也部署了document对象的4个选择子元素的方法，而且用法完全一样。
 
@@ -533,7 +587,7 @@ document.getElementById('header').getElementsByClassName('a')
 
 {% endhighlight %}
 
-（2）elementFromPoint方法
+**（2）elementFromPoint方法**
 
 该方法用于选择在指定坐标的最上层的Element对象。
 
@@ -545,14 +599,14 @@ document.elementFromPoint(50,50)
 
 上面代码了选中在(50,50)这个坐标的最上层的那个HTML元素。
 
-（3）HTML元素的属性相关方法
+**（3）HTML元素的属性相关方法**
 
 - hasAttribute()：返回一个布尔值，表示Element对象是否有该属性。
 - getAttribute()
 - setAttribute()
 - removeAttribute()
 
-（4）matchesSelector方法
+**（4）matchesSelector方法**
 
 该方法返回一个布尔值，表示Element对象是否符合某个CSS选择器。
 
@@ -564,7 +618,7 @@ document.querySelector('li').matchesSelector('li:first-child')
 
 这个方法需要加上浏览器前缀，需要写成mozMatchesSelector()、webkitMatchesSelector()、oMatchesSelector()、msMatchesSelector()。
 
-（5）scrollIntoView方法
+**（5）scrollIntoView方法**
 
 该方法用于将一个可滚动元素滚动到可见区域。
 
