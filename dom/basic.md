@@ -796,12 +796,15 @@ document.querySelector('div').appendChild(textNode);
 
 ### 文本节点的属性
 
-文本节点主要有以下属性：
+除了继承的属性，文本节点自身主要的属性是data，它等同于nodeValue属性，用来返回文本节点的内容。
 
-- textContent
-- data
+{% highlight javascript %}
 
-文本节点的文本可以用data属性或nodeValue属性获取。
+document.querySelector('p').firstChild.data
+
+document.querySelector('p').firstChild.nodeValue
+
+{% endhighlight %}
 
 ### 文本节点的方法
 
@@ -833,7 +836,7 @@ pElementText.substringData(7,10));
 {% highlight javascript %}
 
 // 将文本节点从第4个位置开始一分为二
-document.querySelector('p').firstChild.splitText(4)；
+document.querySelector('p').firstChild.splitText(4)
 
 document.querySelector('p').firstChild.textContent
 // 2

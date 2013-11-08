@@ -621,17 +621,15 @@ if ({}){ console.log(true);}
 
 更多关于数据类型转换的介绍，参见《数据类型转换》一节。
 
-## 数据类型的识别方法
+### typeof运算符
 
 JavaScript有三种方法，可以确定一个值到底是什么类型。
 
 - typeof运算符
 - instanceof运算符
-- 内部属性[[Class]]
+- Object.prototype.toString方法
 
-下面介绍第一和第三种方法，instanceof运算符放在《面向对象编程》一章介绍。
-
-### typeof 运算符
+instanceof运算符放在《面向对象编程》一章介绍，Object.prototype.toString方法放在《标准库》的Object 一节介绍。下面介绍typeof 运算符。
 
 typeof运算符可以返回一个值的数据类型，可能有以下结果：
 
