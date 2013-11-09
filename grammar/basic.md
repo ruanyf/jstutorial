@@ -720,47 +720,6 @@ a instanceof Array // true
 
 instanceof运算符的详细解释，请见《面向对象编程》一章。
 
-### 内部属性[[Class]]
-
-JavaScript有一个内部属性[[Class]]，用来记录值的类型。这个属性只有用Object.prototype.toString()方法读取。
-
-- 对于数值，返回[object Number]。
-- 对于字符串，返回[object String]。
-- 对于布尔值，返回[object Boolean]。
-- 对于undefined，返回[object Undefined]。
-- 对于null，返回[object Null]。
-- 对于各种对象，返回"[object " + obj.[[Class]] + "]" 。
-
-{% highlight javascript %}
-
-Object.prototype.toString.call('') // "[object String]"
-Object.prototype.toString.call(2) // "[object Number]"
-Object.prototype.toString.call(true) // "[object Boolean]"
-Object.prototype.toString.call(undefined) // "[object Undefined]"
-Object.prototype.toString.call(Math) // "[object Math]"
-Object.prototype.toString.call({}) // "[object Object]"
-Object.prototype.toString.call([]) // "[object Object]"
-
-{% endhighlight %}
-
-利用这个值，可以写一个返回准确数据类型的函数。
-
-{% highlight javascript %}
-
-function getClass(x) {
-    var str = Object.prototype.toString.call(x);
-    return /^\[object (.*)\]$/.exec(str)[1];
-}
-
-getClass(null) // 'Null'
-getClass({}) // 'Object'
-getClass([]) // 'Array'
-getClass(JSON) // 'JSON'
-
-(function () { return getClass(arguments) }()) // 'Arguments'
-
-{% endhighlight %}
-
 ## 结尾的分号
 
 ### 不使用分号结尾的语句 

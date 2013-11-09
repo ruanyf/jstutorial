@@ -3,22 +3,22 @@ title: IndexedDB：浏览器端数据库
 layout: page
 category: bom
 date: 2013-10-07
-modifiedOn: 2013-10-07
+modifiedOn: 2013-11-09
 ---
 
 ## 概述
 
-随着浏览器平台的处理能力不能增强，越来越多的网站开始考虑，将大量数据储存在客户端，以减少用户网络通信的等待时间。
+随着浏览器的处理能力不能增强，越来越多的网站开始考虑，将大量数据储存在客户端，这样可以减少用户等待从服务器获取数据的时间。
 
-现有的浏览器端数据储存方案，都不适合储存大量数据：cookie不超过4KB，且每次请求都会发送回服务器端，而localStorage在2.5MB到10MB之间（各家浏览器不同）。所以，需要一种新的解决方案，这就是IndexedDB诞生的背景。
+现有的浏览器端数据储存方案，都不适合储存大量数据：cookie不超过4KB，且每次请求都会发送回服务器端；Window.name属性缺乏安全性，且没有统一的标准；localStorage在2.5MB到10MB之间（各家浏览器不同）。所以，需要一种新的解决方案，这就是IndexedDB诞生的背景。
 
-通俗地说，IndexedDB就是网页创建的浏览器端数据库。它允许储存大量数据，提供查找接口，还能建立索引。这些都是localStorage所不具备的。就数据库类型而言，IndexedDB不属于关系型数据库（不支持SQL查询语句），更接近NoSQL数据库。
+通俗地说，IndexedDB就是浏览器端数据库，可以被网页脚本程序创建和操作。它允许储存大量数据，提供查找接口，还能建立索引。这些都是localStorage所不具备的。就数据库类型而言，IndexedDB不属于关系型数据库（不支持SQL查询语句），更接近NoSQL数据库。
 
-IndexedDB内部采用对象仓库（object store）存放数据。所有类型的数据都可以直接存入，包括JavaScript对象。在对象仓库中，数据以键值对的形式保存，每一个数据都有对应的键名，键名是独一无二的，不能有重复，否则会抛出一个错误。
+IndexedDB内部采用对象仓库（object store）存放数据。所有类型的数据都可以直接存入，包括JavaScript对象。在对象仓库中，数据以“键值对”的形式保存，每一个数据都有对应的键名，键名是独一无二的，不能有重复，否则会抛出一个错误。
 
-IndexedDB也受到同域限制，每一个数据库对应创建该数据库的域名。来自不同域名的网页，只能访问与自身域名相同的数据库，而不能访问其他域名下的数据库。
+IndexedDB也受到同域限制，每一个数据库对应创建该数据库的域名。来自不同域名的网页，只能访问自身域名下的数据库，而不能访问其他域名下的数据库。
 
-目前，Chrome 27+、Firefox 21+、Opera 15+和IE 10+支持这个API，可以说在桌面端有良好的支持，但是移动端支持这个API的浏览器还不多。
+目前，Chrome 27+、Firefox 21+、Opera 15+和IE 10+支持这个API。可以说，它在桌面端有良好的支持，但是移动端支持这个API的浏览器还不多。
 
 下面的代码用来检查浏览器是否支持这个API。
 
@@ -39,7 +39,7 @@ if("indexedDB" in window) {
 
 ### open方法
 
-open方法用于打开数据库。
+indexedDB.open方法用于打开数据库。
 
 {% highlight javascript %}
 
@@ -47,18 +47,18 @@ var openRequest = indexedDB.open("test",1);
 
 {% endhighlight %}
 
-open方法的第一个参数是数据库名称，第二个参数是数据库版本。
+open方法的第一个参数是数据库名称，第二个参数是数据库版本。上面代码代码表示，打开一个名为test、版本为1的数据库。
 
 打开数据库的结果是，有可能触发4种事件。
 
-- **success**：打开成功时触发。
-- **error**：打开失败时触发。
-- **upgradeneeded**：第一次打开该数据库时或数据库版本变化时触发。
-- **blocked**：上一次的数据库连接还未关闭时触发。
+- **success**：打开成功。
+- **error**：打开失败。
+- **upgradeneeded**：第一次打开该数据库，或者数据库版本发生变化。
+- **blocked**：上一次的数据库连接还未关闭。
 
 第一次打开数据库时，会先触发upgradeneeded事件，然后触发success事件。
 
-根据需要对上面4种事件建立监听函数。
+根据不同的需要，对上面4种事件设立回调函数。
 
 {% highlight javascript %}
 
@@ -81,7 +81,11 @@ openRequest.onerror = function(e) {
 
 {% endhighlight %}
 
-上面代码显示，回调函数接受一个事件对像作为参数。该对象的target.result属性就指向IndexedDB数据库。
+上面代码显示，回调函数接受一个事件对象event作为参数。event对象的target.result属性就指向IndexedDB数据库。
+
+## indexedDB实例对象的方法
+
+获得数据库实例以后，就可以用实例对象的方法操作数据库。
 
 ### createObjectStore方法
 
@@ -93,7 +97,7 @@ db.createObjectStore("firstOS");
 
 {% endhighlight %}
 
-如果所要创建的“对象仓库”已经存在，就会抛出一个错误。为了避免出错，需要用到下文的objectStoreNames属性。
+上面代码创建了一个名为firstOS的对象仓库，如果该对象仓库已经存在，就会抛出一个错误。为了避免出错，需要用到下文的objectStoreNames属性，检查已有哪些对象仓库。
 
 createObject方法还可以接受第二个对象参数，用来设置“对象仓库”的属性。
 
@@ -141,6 +145,12 @@ var t = db.transaction(["firstOS"],"readwrite");
 var store = t.objectStore("firstOS");
 
 {% endhighlight %}
+
+transaction方法有三个事件，可以用来定义回调函数。
+
+- **abort**：事务中断。
+- **complete**：事务完成。
+- **error**：事务出错。
 
 **（1）添加数据：add方法**
 
@@ -208,7 +218,31 @@ db.transaction(["test"], "readonly").objectStore("test").get(X).onsuccess = func
 
 {% endhighlight %}
 
-**（3）遍历数据：openCursor方法**
+**（3）更新记录：put方法**
+
+put方法的用法与add方法相近。
+
+{% highlight javascript %}
+
+var o = { p:456 };
+var request = store.put(person);
+
+{% endhighlight %}
+
+**（4）删除记录：delete方法**
+
+删除记录使用delete方法。
+
+{% highlight javascript %}
+
+var t = db.transaction(["people"], "readwrite");
+var request = t.objectStore("people").delete(thisId);
+
+{% endhighlight %}
+
+delete方法的参数是数据的键名。另外，delete也是一个异步操作，可以为它指定回调函数。
+
+**（5）遍历数据：openCursor方法**
 
 如果想要遍历数据，就要openCursor方法，它在当前对象仓库里面建立一个读取光标（cursor）。
 
@@ -216,7 +250,7 @@ db.transaction(["test"], "readonly").objectStore("test").get(X).onsuccess = func
 
 var t = db.transaction(["test"], "readonly");
 var store = t.objectStore("test");
- 
+
 var cursor = store.openCursor();
 
 {% endhighlight %}
@@ -265,7 +299,7 @@ store.createIndex("email","email", {unique:true});
 
 {% endhighlight %}
 
-createIndex方法接受三个参数，第一个是索引名称，第二个是建立索引的属性名，第三个是对象参数，用来设置索引特性。unique表示索引所在的属性是否有唯一值，上面代码表示name属性没有唯一值，email属性有。
+createIndex方法接受三个参数，第一个是索引名称，第二个是建立索引的属性名，第三个是参数对象，用来设置索引特性。unique表示索引所在的属性是否有唯一值，上面代码表示name属性没有唯一值，email属性有。
 
 有了索引以后，就可以针对索引所在的属性读取数据。
 
@@ -354,4 +388,5 @@ index.openCursor(range).onsuccess = function(e) {
 
 ## 参考链接
 
-- Raymond Camden, [Working With IndexedDB](http://net.tutsplus.com/tutorials/javascript-ajax/working-with-indexeddb/)
+- Raymond Camden, [Working With IndexedDB – Part 1](http://net.tutsplus.com/tutorials/javascript-ajax/working-with-indexeddb/)
+- Raymond Camden, [Working With IndexedDB – Part 2](http://net.tutsplus.com/tutorials/javascript-ajax/working-with-indexeddb-part-2/)
