@@ -152,6 +152,18 @@ transaction方法有三个事件，可以用来定义回调函数。
 - **complete**：事务完成。
 - **error**：事务出错。
 
+{% highlight javascript %}
+
+var transaction = db.transaction(["note"], "readonly");  
+
+transaction.oncomplete = function(event) {
+      // some code
+};
+
+{% endhighlight %}
+
+事务对象有以下方法，用于操作数据。
+
 **（1）添加数据：add方法**
 
 获取对象仓库以后，就可以用add方法往里面添加数据了。

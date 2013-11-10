@@ -30,6 +30,14 @@ modifiedOn: 2013-10-21
 
 {% endhighlight %}
 
+如果脚本文件使用了非英语字符，还应该注明编码。
+
+{% highlight html %}
+
+<script charset="utf-8" src="example.js"></script>
+
+{% endhighlight %}
+
 下载和执行JavaScript代码时，浏览器会暂停页面渲染，等待执行完成，这是因为JavaScript代码可能会修改页面。由于这个原因，如果某段代码的下载或执行时间特别长，浏览器就会呈现“假死”状态，失去响应。为了避免这种情况，较好的做法是将script标签都放在页面底部，而不是头部。
 
 如果有多个script标签，比如下面这样：
