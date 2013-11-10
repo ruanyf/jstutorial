@@ -3,7 +3,7 @@ title: DOM概述
 layout: page
 category: dom
 date: 2013-10-07
-modifiedOn: 2013-11-05
+modifiedOn: 2013-11-10
 ---
 
 DOM是文档对象模型（Document Object Model）的简称，它的基本思想是把结构化文档（比如HTML和XML）解析成一系列的节点，再由这些节点组成一个树状结构。所有的节点和最终的树状结构，都有规范的对外接口，以达到使用编程语言操作文档的目的（比如增删内容）。所以，DOM可以理解成文档的编程接口。
@@ -846,6 +846,33 @@ document.querySelector('div').normalize()
 
 document.querySelector('p').childNodes.length
 // 1
+
+{% endhighlight %}
+
+## DocumentFragment节点
+
+DocumentFragment节点代表一个完整的DOM树形结构，但是不属于当前文档，只存在于内存之中。操作DocumentFragment节点，要比直接操作文档快得多。它就像一个文档的片段，一般用于构建一个子结构，然后插入当前文档。
+
+document对象的createDocumentFragment方法可以创建DocumentFragment节点，然后再可以使用其他DOM方法，添加子节点。
+
+{% highlight javascript %}
+
+var docFrag = document.createDocumentFragment();
+var li = document.createElement("li");
+li.textContent = "Hello World";
+docFrag.appendChild(li);
+
+document.queryselector('ul').appendChild(docFrag);
+
+{% endhighlight %}
+
+上面代码创建了一个DocumentFragment节点，然后将一个li节点添加在它里面，最后将DocumentFragment节点加入原文档。
+
+一旦DocumentFragment节点被添加进原文档，它自身就变成了空节点。如果想要保存DocumentFragment节点的内容，可以使用cloneNode方法。
+
+{% highlight javascript %}
+
+document.queryselector('ul').(docFrag.cloneNode(true));
 
 {% endhighlight %}
 
