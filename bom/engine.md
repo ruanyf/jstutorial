@@ -3,7 +3,7 @@ title: 浏览器的JavaScript引擎
 layout: page
 category: bom
 date: 2013-03-10
-modifiedOn: 2013-10-21
+modifiedOn: 2013-11-10
 ---
 
 浏览器通过内置的JavaScript引擎，读取网页中的代码，对其处理后运行。
@@ -38,7 +38,42 @@ modifiedOn: 2013-10-21
 
 {% endhighlight %}
 
+这两种方法不能混用。下面代码的console.log语句直接被忽略。
+
+{% highlight html %}
+
+<script charset="utf-8" src="example.js">
+	console.log('Hello World!');
+</script>
+
+{% endhighlight %}
+
+除了上面两种方法，HTML语言允许在某些元素的事件属性和a元素的href属性中，直接写入JavaScript。
+
+{% highlight html %}
+
+<div onclick="alert('Hello')"></div>
+
+<a href="javascript:alert('Hello')"></a>
+
+{% endhighlight %}
+
+这种写法将HTML代码与JavaScript代码混写在一起，非常不利于代码管理，不建议使用。
+
 下载和执行JavaScript代码时，浏览器会暂停页面渲染，等待执行完成，这是因为JavaScript代码可能会修改页面。由于这个原因，如果某段代码的下载或执行时间特别长，浏览器就会呈现“假死”状态，失去响应。为了避免这种情况，较好的做法是将script标签都放在页面底部，而不是头部。
+
+将脚本文件都放在网页尾部加载，还有一个好处。在DOM结构生成之前就调用DOM，JavaScript会报错，如果脚本都在网页尾部加载，就不存在这个问题，因为这时DOM肯定已经生成了。另一方面，这样也不必指定网页ready事件的回调函数了。
+
+{% highlight html %}
+
+<head>
+<script>
+console.log(document.body.innerHTML); 
+</head>
+
+{% endhighlight %}
+
+上面代码执行时会报错，因为此时body元素还未生成。
 
 如果有多个script标签，比如下面这样：
 
@@ -51,7 +86,7 @@ modifiedOn: 2013-10-21
 
 浏览器会同时平行下载1.js和2.js，但是执行时会保证先执行1.js，然后再执行2.js，即使后者先下载完成，也是如此。也就是说，脚本的执行顺序由它们在页面中的出现顺序决定，这是为了保证脚本之间的依赖关系不受到破坏。
 
-一个解决方法是加入defer属性。
+为了解决脚本文件下载阻塞网页渲染的问题，一个方法是加入defer属性。
 
 {% highlight html %}
 
@@ -60,7 +95,7 @@ modifiedOn: 2013-10-21
 
 {% endhighlight %}
 
-有了defer属性，浏览器下载脚本文件的时候，不会阻塞页面渲染。下载的脚本文件在DOMContentLoaded事件触发前执行，而且可以保证执行顺序就是它们在页面上出现的顺序。但是，浏览器对这个属性的支持不够理想，IE（<=9）还有一个bug，无法保证执行顺序（一旦1.js修改了页面的DOM结构，会引发2.js立即执行）。此外，对于没有src属性的script标签，以及动态生成的script标签，defer不起作用。
+有了defer属性，浏览器下载脚本文件的时候，不会阻塞页面渲染。下载的脚本文件在DOMContentLoaded事件触发前执行（即刚刚读取完&lt;/html&gt;标签），而且可以保证执行顺序就是它们在页面上出现的顺序。但是，浏览器对这个属性的支持不够理想，IE（<=9）还有一个bug，无法保证2.js一定在1.js之后执行。此外，对于内置代码、而不是连接外部脚本的script标签，以及动态生成的script标签，defer属性不起作用。
 
 另一个解决方法是加入async属性。
 
@@ -71,7 +106,9 @@ modifiedOn: 2013-10-21
 
 {% endhighlight %}
 
-async属性可以保证脚本下载的同时，浏览器继续渲染。一旦渲染完成，再执行脚本文件，这就是“非同步执行”的意思。需要注意的是，一旦采用这个属性，就无法保证脚本的执行顺序。先下载完成的脚本，就会排在最前面执行。
+async属性可以保证脚本下载的同时，浏览器继续渲染。一旦渲染完成，再执行脚本文件，这就是“非同步执行”的意思。需要注意的是，一旦采用这个属性，就无法保证脚本的执行顺序。哪个脚本先下载结束，就先执行那个脚本。IE 10支持async属性，低于这个版本的IE都不支持。
+
+如果同时使用async和defer属性，后者不起作用，浏览器行为由async属性决定。
 
 对于来自同一个域名的资源，比如脚本文件、样式表文件、图片文件等，浏览器一般最多同时下载六个。如果是来自不同域名的资源，就没有这个限制。所以，通常把静态文件放在不同的域名之下，以加快下载速度。
 
@@ -129,6 +166,14 @@ async属性可以保证脚本下载的同时，浏览器继续渲染。一旦渲
 {% endhighlight %}
 
 上面的代码依然不会阻塞页面渲染，而且可以保证2.js在1.js后面执行。不过需要注意的是，在这段代码后面加载的脚本文件，会因此都等待2.js执行完成后再执行。
+
+当script标签指定的外部脚本文件下载和解析完成，会触发一个load事件，可以为这个事件指定回调函数。
+
+{% highlight html %}
+
+<script async src="jquery.min.js" onload="console.log('jQuery已加载！"></script>
+
+{% endhighlight %}
 
 ## JavaScript虚拟机
 

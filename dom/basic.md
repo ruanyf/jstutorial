@@ -3,7 +3,7 @@ title: DOM概述
 layout: page
 category: dom
 date: 2013-10-07
-modifiedOn: 2013-11-10
+modifiedOn: 2013-11-11
 ---
 
 DOM是文档对象模型（Document Object Model）的简称，它的基本思想是把结构化文档（比如HTML和XML）解析成一系列的节点，再由这些节点组成一个树状结构。所有的节点和最终的树状结构，都有规范的对外接口，以达到使用编程语言操作文档的目的（比如增删内容）。所以，DOM可以理解成文档的编程接口。
@@ -875,6 +875,137 @@ document.queryselector('ul').appendChild(docFrag);
 document.queryselector('ul').(docFrag.cloneNode(true));
 
 {% endhighlight %}
+
+## DOM事件
+
+### 概述
+
+DOM定义了一些事件，允许开发者指定它们的回调函数。
+
+定义回调事件的方法有三种。
+
+第一种，直接在HTML属性定义。
+
+{% highlight html %}
+
+<body onclick="console.log('触发事件')">
+
+{% endhighlight %}
+
+第二种，定义Element对象的事件属性。
+
+{% highlight javascript %}
+
+document.querySelector('div').onclick = function(){
+	console.log('触发事件')
+};
+
+{% endhighlight %}
+
+第三种，使用addEventListener方法。
+
+{% highlight javascript %}
+
+document.querySelector('div').addEventListener('click',function(){
+			console.log('fire/trigger addEventListener')
+}, false);
+
+{% endhighlight %}
+
+addEventListener方法有三个参数，第一个是事件名称，第二个是回调函数，第三个是一个布尔值，表示是否在冒泡阶段捕捉该事件。
+
+（4）简评
+
+上面三种方法之中，第一种违反了HTML与JavaScript代码相分离的原则，不建议使用；第二种的缺点是，同一个事件只能定义一个回调函数，比如说如果定义两次onclick属性，则后一次定义会覆盖前一次；第三种是推荐使用的方法，不仅可以多个回调函数，而且可以统一接口。
+
+### 事件的类型
+
+DOM支持多种事件。
+
+（1）用户界面的事件
+
+<table>
+<thead>
+<tr>
+	<th>事件名称</th>
+	<th>涵义</th>
+	<th>事件的目标</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+	<td>load</td>
+	<td>资源加载成功</td>
+	<td>Element, Document, window, XMLHttpRequest, XMLHttpRequestUpload</td>
+</tr>
+<tr>
+	<td>unload</td>
+	<td>浏览器卸载某个资源</td>
+	<td>window, &lt;body&gt;, &lt;frameset&gt;</td>
+</tr>
+<tr>
+	<td>abort</td>
+	<td>资源在加载成功前停止加载</td>
+	<td>Element, XMLHttpRequest, XMLHttpRequestUpload</td>
+</tr>
+<tr>
+	<td>error</td>
+	<td>资源加载出错</td>
+	<td>Element, XMLHttpRequest, XMLHttpRequestUpload</td>
+</tr>
+<tr>
+	<td>resize</td>
+	<td>改变窗口大小</td>
+	<td>window, &lt;body&gt;, &lt;frameset&gt;</td>
+</tr>
+<tr>
+	<td>scroll</td>
+	<td>用户滚动窗口或某个元素</td>
+	<td>Element, Document, window</td>
+</tr>
+<tr>
+	<td>contextmenu</td>
+	<td>用户鼠标右击某个元素</td>
+	<td>Element</td>
+</tr>
+</tbody>
+</table>
+
+（2）焦点相关事件
+
+<table>
+<thead>
+<tr>
+	<th>事件名称</th>
+	<th>涵义</th>
+	<th>事件的目标</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+	<td>blur</td>
+	<td>元素丧失焦点</td>
+	<td>Element（除了body和frameset元素），Document</td>
+</tr>
+<tr>
+	<td>focus</td>
+	<td>元素获得焦点</td>
+	<td>Element（除了body和frameset元素），Document</td>
+</tr>
+<tr>
+	<td>focusin</td>
+	<td>元素即将获得焦点，在focus之前触发</td>
+	<td>Element</td>
+</tr>
+<tr>
+	<td>focusout</td>
+	<td>元素即将丧失焦点，在blur之前触发</td>
+	<td>Element</td>
+</tr>
+</tbody>
+</table>
+
+（3）鼠标事件
 
 ## 参考链接
 
