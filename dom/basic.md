@@ -912,7 +912,19 @@ document.querySelector('div').addEventListener('click',function(){
 
 {% endhighlight %}
 
-addEventListener方法有三个参数，第一个是事件名称，第二个是回调函数，第三个是一个布尔值，表示是否在冒泡阶段捕捉该事件。
+addEventListener方法有三个参数，第一个是事件名称，第二个是回调函数，第三个是一个布尔值，表示回调函数是否在捕获阶段（capture）触发。
+
+IE 8及以下版本不支持该方法。
+
+与addEventListener配套的，还有一个removeEventListener方法，用来移除某一类事件的回调函数。
+
+{% highlight javascript %}
+
+element.removeEventListener(event, callback, use-capture);
+
+{% endhighlight %}
+
+注意，removeEventListener的回调函数与addEventListener的回调函数，必须是同一个函数，否则无效。
 
 （4）简评
 
@@ -1006,6 +1018,31 @@ DOM支持多种事件。
 </table>
 
 （3）鼠标事件
+
+### event对象
+
+当事件发生以后，会生成一个事件对象event，在DOM中传递，也被作为参数传给回调函数。
+
+event对象有以下属性。
+
+- type：返回一个字符串，表示事件的名称。
+- target：返回一个Element节点，表示事件起源的那个节点。
+- currentTarget：返回一个Element节点，表示触发回调函数的那个节点。
+- bubbles：返回一个布尔值，表示事件触发时，是否处在“冒泡”阶段。
+- cancelable：返回一个布尔值，表示该事件的默认行为是否可以被preventDefault方法阻止。
+- defaultPrevented：返回一个布尔值，表示是否已经调用过preventDefault方法。
+- isTrusted：返回一个布尔值，表示事件是否可信任，即事件是从设备上触发，还是JavaScript方法模拟的。
+- eventPhase：返回一个数字，表示事件目前所处的阶段，0为事件开始从DOM表层向目标元素传播，1为捕获阶段，2为事件到达目标元素，3为冒泡阶段。
+- timestamp：返回一个数字，
+
+除了上面这些属性，特定事件还会有一些独特的属性。比如，click事件的event对象就有clientX和clientY属性，表示事件发生的位置相对于视口左上角的水平坐标和垂直坐标。
+
+event对象有以下方法。
+
+- preventDefault：该方法阻止浏览器触发事件所对应的默认方法，最常见的应用是点击一个a元素以后，阻止浏览器的跳转行为。
+- stopPropagation：该方法阻止事件在DOM中继续传播，防止再触发定义在别的节点上的回调函数，但是不包括在当前节点上新定义的事件回调函数。
+- stopImmediatePropagation：该方法作用与stopPropagation方法相同，唯一的区别是还阻止当前节点上新定义的事件回调函数。
+- 
 
 ## 参考链接
 

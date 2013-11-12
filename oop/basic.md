@@ -3,7 +3,7 @@ title: 面向对象编程概述
 layout: page
 category: oop
 date: 2012-12-28
-modifiedOn: 2013-06-01
+modifiedOn: 2013-11-12
 ---
 
 ## 简介
@@ -148,11 +148,25 @@ v instanceof Vehicle
 
 ### 涵义
 
-上一部分说到，this关键字在构造函数中指的是实例对象。但是，this关键字有多种含义，实例对象只是其中一种，下面就是this的详细解释。
+this关键字有多种含义，下面就是详细解释。
 
-我们知道，变量是存在于运行环境（context）之中的，同样的变量在不同运行环境之中有不同的含义。比如，JavaScript有两种运行环境，一种是全局环境，还有一种是函数环境。同样一个变量，处在全局环境与处在函数环境（即函数体内部），得到的值是不一样的。
+JavaScript语言的所有变量都存在于某个对象之下，要知道一个变量确切的值，必须知道它属于哪个对象。
 
-this关键字指的就是变量所处的运行环境。如果变量处在全局环境，this就是指全局环境；如果变量处在函数环境，this就是指函数环境。由于JavaScript内部一切都是对象，运行环境本身也是对象，所以this指全局环境时（在浏览器中）就是window对象，指函数环境时就是函数运行时所在的对象。
+{% highlight javascript %}
+
+var a = new Object();
+var b = new Object();
+
+a.m = 1;
+b.m = 2;
+
+{% endhighlight %}
+
+上面代码先定义了两个对象a和b，这两个对象各有一个名为m的属性，要想知道m确切的值，就必须它属于a对象，还是属于b对象。
+
+JavaScript语言的特点是，某个变量到底属于哪个对象是动态的，可以在运行时切换。完全有可能，m一会属于a对象，一会又属于b对象。
+
+this关键字就是指变量所处的那个对象（即this.m），由于变量的所处对象是动态的，所以this关键字的值也是动态的。如果变量处在全局环境，this就是指全局环境的顶层对象（在浏览器中为window对象）；如果变量不处在全局环境，this就是指对变量求值时所在的对象。
 
 我们分成几种情况来讨论。
 
@@ -160,25 +174,22 @@ this关键字指的就是变量所处的运行环境。如果变量处在全局�
 
 在全局环境使用this，它指的就是顶层对象window。
 
-因此，下面两行命令是等价的。
-
 {% highlight javascript %}
 
-window.a = 1;
-this.a = 1;
+this === window // true
 
 {% endhighlight %}
 
-在浏览器全局环境中，顶层对象就是window，这时this就表示window。
+在浏览器全局环境中，顶层对象就是window，所以this等于window。
 
 **（2）构造函数**
 
-从构造函数生成实例对象时，this代表实例对象。
+构造函数中的this，指的是实例对象。
 
 {% highlight javascript %}
 
-var O = function( p ) {
-    this.p = p ;
+var O = function(p) {
+	this.p = p;
 };
 
 O.prototype.m = function() {
@@ -187,41 +198,85 @@ O.prototype.m = function() {
 
 {% endhighlight %}
 
-当使用new命令，生成一个O的实例时，this就代表这个实例。
+上面代码定义了一个构造函数O。由于this指向实例对象，所以在构造函数内部定义this.p，就相当于定义实例对象有一个p属性；然后m方法可以返回这个p属性。
 
 {% highlight javascript %}
 
 var o = new O("Hello World!");
 
-o.m()
-// "Hello World!"
+o.p // "Hello World!"
+
+o.m() // "Hello World!"
 
 {% endhighlight %}
 
 **（3）对象属性**
 
-当函数被赋值给一个对象的属性，this就代表这个对象。
+非构造函数内部的this，指的是函数运行时所在的对象。
+
+{% highlight javascript %}
+
+function f(){
+	console.log(this.m);
+}
+
+var m = 1;
+f() // 1
+
+{% endhighlight %}
+
+上面代码定义了一个函数f，当它在全局环境中运行，this的指向就是全局对象window，所以可以读取全局变量m的值。
 
 {% highlight javascript %}
 
 var o1 = { m : 1 };
+o1.f = f;
+o1.f() // 1
+
+
 var o2 = { m : 2 };
-
-o1.f = function(){ console.log(this.m);};
-o1.f()
-// 1
-
-o2.f = o1.f;
-o2.f()
-// 2
+o2.f = f;
+o2.f() // 2
 
 {% endhighlight %}
 
-可以看到，当f成为o1对象的方法时，this代表o1；当f成为o2对象的方法时，this代表o2。f所在的上下文环境，决定了this的指向。
+上面代码表示，当f在o1下运行时，this指向o1，当f在o2下运行时，this指向o2。
+
+由于this取决于运行时所在的对象，所以如果将某个对象的方法赋值给另一个对象，会改变this的指向。这一点要特别小心。
+
+{% highlight javascript %}
+
+var o1 = new Object();
+o1.m = 1;
+o1.f = function (){ console.log(this.m);};
+
+o1.f() // 1
+
+var o2 = new Object();
+o2.m = 2;
+o2.f = o1.f
+
+o2.f() // 2
+
+{% endhighlight %}
+
+从上面代码可以看到，f方法是o1的方法，但是如果在o2上面调用这个方法，f方法中的this就会指向o2。这就说明JavaScript函数的运行环境完全是动态绑定的，可以在运行时切换。
+
+如果不想改变this的指向，可以将o2.f改写成下面这样。
+
+{% highlight javascript %}
+
+o2.f = function (){ o1.f() };
+
+o2.f() // 1
+
+{% endhighlight %}
+
+上面代码表示，由于f方法这时是在o1下面运行，所以this就指向o1。
 
 **（4）结论**
 
-综合上面三种情况，可以看到this就是运行时的上下文环境。如果在全局环境下运行，就代表全局对象；如果在某个对象中运行，就代表该对象。
+综合上面三种情况，可以看到this就是运行时变量或方法所在的对象。如果在全局环境下运行，就代表全局对象window；如果在某个对象中运行，就代表该对象。
 
 由于this的指向是不确定的，所以切勿在函数中包含多层的this。
 
