@@ -250,15 +250,23 @@ jQuery使用attr方法，读写网页元素的属性。
 
 {% highlight javascript %}
 
-$("#picture").attr("src", "http://url/to/image");
+$("#picture").attr("src", "http://url/to/image")
 
 {% endhighlight %}
 
-DOM提供getAttribute和setAttribute方法读写元素属性。不过，DOM还允许直接读取属性值，写法要简洁许多。
+DOM提供getAttribute和setAttribute方法读写元素属性。
 
 {% highlight javascript %}
 
-$("#picture").src = "http://url/to/image";
+imgElement.setAttribute("src", "http://url/to/image")
+
+{% endhighlight %}
+
+DOM还允许直接读取属性值，写法要简洁许多。
+
+{% highlight javascript %}
+
+imgElement.src = "http://url/to/image";
 
 {% endhighlight %}
 

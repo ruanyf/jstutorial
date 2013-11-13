@@ -124,110 +124,142 @@ PI
 
 ### Set数据结构
 
-ECMAScript 6 提供了新的数据结构Set。它类似于数组，但是所有值都是唯一的。
+ECMAScript 6 提供了新的数据结构Set。它类似于数组，但是成员的值都是唯一的，没有重复的值。
+
+Set本身是一个构造函数，用来生成Set数据结构。
 
 {% highlight javascript %}
 
-var e = new Set(); // 新建集合
- 
-e.add("1") // 加入集合
-e.add("2")
-e.add("3")
-e.add("4")
-e.add("4") // 注意“4”被加入了两次
- 
+var s = new Set();
+[2,3,5,4,5,2,2].map(x => s.add(x))
+for (i of s) {console.log(i)}
+// 2 3 4 5
+
+{% endhighlight %}
+
+上面代码表示，set数据结构不会添加重复的值。
+
+set数据结构有以下属性和方法：
+
+- size：返回成员总数。
+- add(value)：添加某个值。
+- delete(value)：删除某个值。
+- has(value)：返回一个布尔值，表示该值是否为set的成员。
+- clear()：清除所有成员。
+
+{% highlight javascript %}
+
+s.add("1"); 
+s.add("2");
+e.add("2"); // 注意“2”被加入了两次
+
 e.has("1")    // true
-e.has("4")    // true
-e.has("5")   // false
- 
-e.delete("4"); // delete item
-e.has("4")    // false
+e.has("2")    // true
+e.has("3")   // false
+
+e.delete("2");
+e.has("2")    // false
 
 {% endhighlight %}
 
 ### Map数据结构
 
-ECMAScript 6 还提供了map数据结构。它就是一个键值对的数据结构，类似于对象，但是“键”的范围不限于字符串。
+ECMAScript 6还提供了map数据结构。它类似于对象，就是一个键值对的集合，但是“键”的范围不限于字符串，甚至对象也可以当作键。。
 
 {% highlight javascript %}
 
-var es6 = new Map(); // 新建Map
- 
-es6.set("edition", 6)        // 键是字符串
-es6.set(262, "standard")     // 键是数值
-es6.set(undefined, "nah")    // 键是undefined
- 
-var hello = function() {console.log("hello");}
-es6.set(hello, "Hello ES6!") // 键是函数
- 
-es6.has("edition")     // true
-es6.has("years")       // false
-es6.has(262)           // true
-es6.has(undefined)     // true
-es6.has(hello)         // true
- 
-es6.delete(undefined) // delete map
-es6.has(undefined)       // false
- 
-es6.get(hello)  // Hello ES6!
-es6.get("edition")  // 6
+var m = new Map();
+o = {p: "Hello World"};
+m.set(o, "content")
+console.log(m.get(o))
+// "content"
 
 {% endhighlight %}
 
-### 函数的多余参数
+上面代码将一个对象当作m的一个属性名。
 
-ECMAScript 6引入扩展运算符（...），允许获取函数的多余参数。
+Map数据结构有以下属性和方法。
+
+- size：返回成员总数。
+- set(key, value)：设置一个键值对。
+- get(key)：读取一个键。
+- has(key)：返回一个布尔值，表示某个键是否在Map数据结构中。
+- delete(key)：删除某个键。
+- clear()：清除所有成员。
+
+{% highlight javascript %}
+
+var m = new Map(); 
+
+m.set("edition", 6)        // 键是字符串
+m.set(262, "standard")     // 键是数值
+m.set(undefined, "nah")    // 键是undefined
+
+var hello = function() {console.log("hello");}
+m.set(hello, "Hello ES6!") // 键是函数
+
+m.has("edition")     // true
+m.has("years")       // false
+m.has(262)           // true
+m.has(undefined)     // true
+m.has(hello)         // true
+
+m.delete(undefined)
+m.has(undefined)       // false
+
+m.get(hello)  // Hello ES6!
+m.get("edition")  // 6
+
+{% endhighlight %}
+
+### rest运算符
+
+ECMAScript 6引入rest运算符（...），用于获取函数的多余参数，这样就不需要通过arguments对象，获取函数的参数个数了。rest运算符后面是一个数组变量，该变量将多余的参数放入数组中。
 
 {% highlight javascript %}
 
 function push(array, ...items) { 
   items.forEach(function(item) {
     array.push(item);
-    console.log( item );
+    console.log(item);
   });
 }
  
-var planets = [];
-console.log("太阳系的内层行星是：" );
-// 1个固定参数 + 4个可变参数
-push(planets, "Mercury", "Venus", "Earth", "Mars"); 
+var a = [];
+push(a, "a1", "a2", "a3", "a4"); 
 
 {% endhighlight %}
 
-这种表示法不仅可以用于函数定义，还可以用于函数调用。
+rest运算符不仅可以用于函数定义，还可以用于函数调用。
 
 {% highlight javascript %}
 
-function createURL (comment, path, protocol, subdomain, domain, tld) {
-      var url = comment
-        + ": "
-        + protocol
-        + "://"
-        + subdomain
-        + "."
-        + domain
-        + "."
-        + tld
-        + "/"
-        + path;
- 
-  console.log(url);
+function f(s1, s2, s3, s4, s5) {
+ 	console.log(s1 + s2 + s3 + s4 +s5);
 }
- 
-var weblink = ["hypertext/WWW/TheProject.html", "http", "info", "cern", "ch"],
-  comment = "世界上第一个网站";
- 
-createURL(comment, ...weblink ); // spread operator
+
+var a = ["a2", "a3", "a4", "a5"];
+
+f("a1", ...a);
 
 {% endhighlight %}
 
-从上面的例子可以看出，扩展运算符可以将数组转变成正常的参数序列。
+从上面的例子可以看出，rest运算符的另一个重要作用是，可以将数组转变成正常的参数序列。
 
 {% highlight javascript %}
 
-var max = Math.max(...[14, 3, 77]);
+// ES5写法
+Math.max.apply(null, [14, 3, 77])
+
+// ES6写法
+Math.max(...[14, 3, 77])
+
+// 等同于
+Math.max(14, 3, 77);
 
 {% endhighlight %}
+
+上面代码表示，用于JavaScript不提供求数组最大元素的函数，所以只能套用Math.max函数，将数组转为一个参数序列，然后求最大值。有了rest运算符以后，就可以直接用Math.max了。
 
 ### generator 函数
 
@@ -785,3 +817,4 @@ ECMAScript 7可能包括的功能有：
 - Nick Fitzgerald, [Destructuring Assignment in ECMAScript 6](http://fitzgeraldnick.com/weblog/50/)
 - jmar777, [What's the Big Deal with Generators?](http://devsmash.com/blog/whats-the-big-deal-with-generators)
 - Nicholas C. Zakas, [Understanding ECMAScript 6 arrow functions](http://www.nczonline.net/blog/2013/09/10/understanding-ecmascript-6-arrow-functions/)
+- Dale Schouten, [10 Ecmascript-6 tricks you can perform right now](http://html5hub.com/10-ecmascript-6-tricks-you-can-perform-right-now/)
