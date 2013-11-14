@@ -3,12 +3,12 @@ title: ECMAScript 6 介绍
 layout: page
 category: oop
 date: 2013-05-09
-modifiedOn: 2013-10-13
+modifiedOn: 2013-11-14
 ---
 
 ## 概述
 
-ECMAScript 6 是JavaScript的下一个标准，正处在快速开发之中，大部分已经完成了。预计Mozilla将在这个标准的基础上，推出JavaScript的 2.0。
+ECMAScript 6 是JavaScript的下一个标准，正处在快速开发之中，大部分已经完成了，预计将在2014年正式发布。Mozilla将在这个标准的基础上，推出JavaScript 2.0。
 
 ECMAScript 6 的目标，是使得JavaScript可以用来编写复杂的应用程序、函数库和代码的自动生成器（code generator）。
 
@@ -29,15 +29,12 @@ ECMAScript 6新增了let命令，用来声明变量。它的用法类似于var�
     var b = 1;
 }
 
-a
-// ReferenceError: a is not defined. 
-
-b
-//1
+a // ReferenceError: a is not defined. 
+b //1
 
 {% endhighlight %}
 
-上面代码在代码块之中，分别用let和var声明了两个变量。然后在代码块之外调用这两个变量，结果let声明的变量报错，var声明的变量返回了正确的值。这标明，let声明的变量只在它所在的代码块有效。
+上面代码在代码块之中，分别用let和var声明了两个变量。然后在代码块之外调用这两个变量，结果let声明的变量报错，var声明的变量返回了正确的值。这表明，let声明的变量只在它所在的代码块有效。
 
 下面的代码如果使用var，最后输出的是10。
 
@@ -77,7 +74,7 @@ function f1() {
   if (true) {
 	  let n = 10;
   }
-  console.log(n); 
+  console.log(n); // 5
 }
 
 {% endhighlight %}

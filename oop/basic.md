@@ -210,9 +210,9 @@ o.m() // "Hello World!"
 
 {% endhighlight %}
 
-**（3）对象属性**
+**（3）普通函数**
 
-非构造函数内部的this，指的是函数运行时所在的对象。
+普通函数（非构造函数）内部的this，指的是函数运行时所在的对象。
 
 {% highlight javascript %}
 
@@ -232,7 +232,6 @@ f() // 1
 var o1 = { m : 1 };
 o1.f = f;
 o1.f() // 1
-
 
 var o2 = { m : 2 };
 o2.f = f;
@@ -319,31 +318,33 @@ o.f1()
 
 上面代码定义了变量that，固定指向外层的this，然后在内层使用that，就不会发生this指向的改变。
 
-这种不确定的this指向，会给编程带来一些麻烦。比如，使用jQuery函数库，对某个按钮指定click事件的回调函数，可以这样写：
+这种不确定的this指向，会给编程带来一些麻烦。
 
 {% highlight javascript %}
 
-$( "#button" ).on( "click", function() {
-    var $this = $( this );
-});
+var o = new Object();
 
-{% endhighlight %}
-
-这时，this指向这个按钮的DOM对象，因为是在按钮对象的环境中调用这个函数。但是，如果把代码改一改，this对象的指向就会发生变化。
-
-{% highlight javascript %}
-
-function f() {
-    var $this = $( this );
+o.f = function (){
+    console.log(this === o);
 }
 
-$( "#button" ).on( "click", f );
+o.f() // true
 
 {% endhighlight %}
 
-函数f是定义在全局环境中的，如果单独运行f，函数体内部的this指向全局环境。但是，当f被指定为按钮点击事件的回调函数时，就变成了在按钮对象中运行，这时this就指向按钮对象。这种细微的差别，很容易在编程中忽视，而导致难以察觉的错误。
+上面代码表示，如果调用o对象的f方法，其中的this就是指向o对象。
 
-为了解决这个问题，可以采用下面的一些方法对this进行绑定，也就是使得this固定指向某个对象，减少编程中的不确定性。
+但是，如果将f方法指定给某个按钮的click事件，this的指向就变了。
+
+{% highlight javascript %}
+
+$("#button").on("click", o.f);
+
+{% endhighlight %}
+
+点击按钮以后，控制台会显示false。原因是此时this不再指向o对象，而是指向按钮的DOM对象，因为f方法是在按钮对象的环境中被调用的。这种细微的差别，很容易在编程中忽视，导致难以察觉的错误。
+
+为了解决这个问题，可以采用下面的一些方法对this进行绑定，也就是使得this固定指向某个对象，减少不确定性。
 
 ### call方法
 
@@ -391,28 +392,27 @@ func.apply(context, [arg1, arg2, ...])
 
 {% highlight javascript %}
 
-function f(x,y){ console.log(x+y);}
+function f(x,y){ console.log(x+y); }
 
-f.call(null,1,1)
-// 2
-
-// 改写为apply方法
-
-f.apply(null,[1,1])
-// 2
+f.call(null,1,1) // 2
+f.apply(null,[1,1]) // 2
 
 {% endhighlight %}
 
-上面的f函数本来接受两个参数，使用apply方法以后，就变成可以接受一个数组作为参数。利用这一点，可以做一些有趣的应用。比如，JavaScript不提供找出数组最大元素的函数，Math.max方法只能返回它的所有参数的最大值，使用apply方法，就可以返回数组的最大元素。
+上面的f函数本来接受两个参数，使用apply方法以后，就变成可以接受一个数组作为参数。
+
+利用这一点，可以做一些有趣的应用。比如，JavaScript不提供找出数组最大元素的函数，Math.max方法只能返回它的所有参数的最大值，使用apply方法，就可以返回数组的最大元素。
 
 {% highlight javascript %}
 
-Math.max.apply(null, [10, 2, 4, 15, 9])
+var a = [10, 2, 4, 15, 9];
+
+Math.max.apply(null, a)
 // 15
 
 {% endhighlight %}
 
-apply方法还有一个特点，就是可以把数组的空元素变成undefined。
+另一个应用是，通过apply方法，利用构造函数Array将数组的空元素变成undefined。
 
 {% highlight javascript %}
 
@@ -421,7 +421,7 @@ Array.apply(null, ["a",,"b"])
 
 {% endhighlight %}
 
-这里的差别就是，数组的foreach方法会逃过空元素，但是不会跳过undefined。因此，遍历内部元素的时候，会体现出差别。
+空元素与undefined的差别在于，数组的foreach方法会跳过空元素，但是不会跳过undefined。因此，遍历内部元素的时候，会得到不同的结果。
 
 {% highlight javascript %}
 
@@ -439,27 +439,6 @@ Array.apply(null,a).forEach(print)
 // a
 // undefined
 // b
-
-{% endhighlight %}
-
-使用apply方法的另一个场合是，使用数组对象的concat方法，展开双层数组（即数组的成员也是数组）。
-
-{% highlight javascript %}
-
-Array.prototype.concat.apply([], [[1], [2]])
-// [1, 2]
-
-Array.prototype.concat.apply([], [[1], 2])
-// [1, 2]
-
-{% endhighlight %}
-
-concat方法是定义数组对象上的，所以apply方法的第一个参数必须是数组，而第二个参数就是需要被展开的双层数组。不过，这个方法只能展开双层数组，对于更多层的数组，只能展开最外面的一层。
-
-{% highlight javascript %}
-
-Array.prototype.concat.apply([], [[[1]], [2]])
-// [[1], 2]
 
 {% endhighlight %}
 
@@ -481,32 +460,36 @@ Array.prototype.slice.apply({length:1})
 
 {% endhighlight %}
 
-从上面代码可以看到，这个方法起作用的前提是，被处理的对象必须有length属性，以及相对应的数字键。
+上面代码的apply方法的参数都是对象，但是返回结果都是数组，这就起到了将对象转成数组的目的。从上面代码可以看到，这个方法起作用的前提是，被处理的对象必须有length属性，以及相对应的数字键。
 
 最后，上一节按钮点击事件的例子，可以改写成
 
 {% highlight javascript %}
 
-var o = {
-	p : 1,
-	f : function() { console.log(this.p); } 
+var o = new Object();
+
+o.f = function (){
+    console.log(this === o);
 }
 
-$( "#button" ).on( "click", o.f.call(o) );
+var f = function (){
+	o.f.apply(o);
+	// 或者 o.f.call(o);
+};
 
-// or
-
-$( "#button" ).on( "click", o.f.apply(o) );
+$("#button").on("click", f);
 
 {% endhighlight %}
 
+点击按钮以后，控制台将会显示true。由于apply方法（或者call方法）不仅绑定函数执行时所在的对象，还会立即执行函数，因此不得不把绑定语句写在一个函数体内。更简洁的写法是采用下面介绍的bind方法。
+
 ### bind方法
 
-bind方法比call方法和apply方法更进一步，它不仅将原函数的this关键字绑定到其他对象，还绑定原函数的参数，然后返回一个新函数。
+bind方法就是单纯地将函数体内的this绑定到某个对象，然后返回一个新函数。它比call方法和apply方法更进一步的是，除了绑定this以外，还可以绑定原函数的参数。
 
 {% highlight javascript %}
 
-func.bind(context, [arg1], [arg2], ...)
+func.bind(contexti [, arg1] [, arg2] ...)
 
 {% endhighlight %}
 
@@ -514,27 +497,28 @@ func.bind(context, [arg1], [arg2], ...)
 
 {% highlight javascript %}
 
-var o1 = {
-	p: 123,
-	m: function(){ console.log(this.p);}
+var o1 = new Object();
+o1.p = 123;
+o1.m = function (){
+	console.log(this.p);
 };
 
-// 不绑定上下文
-var o2 = { p: 456};
-o2.m = o1.m;
-o2.m()
-// 456
+o1.m() // 123 
 
-// 绑定上下文
+var o2 = new Object();
+o2.p = 456;
+o2.m = o1.m;
+
+o2.m() // 456
+
 o2.m = o1.m.bind(o1);
-o2.m()
-// 123
+o2.m() // 123
 
 {% endhighlight %}
 
-上面代码绑定this对象以后，o1对象的m方法就不再读取o2对象的属性了。
+上面代码使用bind方法将o1.m方法绑定到o1以后，在o2对象上调用o1.m的时候，o1.m函数体内部的this.p就不再到o2对象去寻找p属性的值了。
 
-如果bind方法的第一个参数是null或undefined，则函数运行时上下文绑定全局环境。
+如果bind方法的第一个参数是null或undefined，则函数运行时this指向全局对象（在浏览器中为window）。
 
 {% highlight javascript %}
 
@@ -542,26 +526,25 @@ function add(x,y) { return x+y;}
 
 var plus5 = add.bind(null, 5);
 
-plus5(10)
-// 15
+plus5(10) // 15
 
 {% endhighlight %}
+
+上面代码除了将add函数的运行环境绑定为全局对象，还将add函数的第一个参数绑定为5，然后返回一个新函数。以后，每次运行这个新函数，就只需要提供另一个参数就够了。
 
 bind方法每运行一次，就返回一个新函数，这会产生一些问题。比如，监听事件的时候，不能写成下面这样：
 
 {% highlight javascript %}
 
-element.addEventListener(
-        'click', myWidget.handleClick.bind(myWidget));
+element.addEventListener('click', o.m.bind(o));
 
 {% endhighlight %}
 
-click事件绑定的是bind方法生成的一个匿名函数，这导致无法取消绑定。下面的代码是无效的：
+上面代码表示，click事件绑定bind方法生成的一个匿名函数。这样会导致无法取消绑定，所以，下面的代码是无效的。
 
 {% highlight javascript %}
 
-element.removeEventListener(
-        'click', myWidget.handleClick.bind(myWidget));
+element.removeEventListener('click', o.m.bind(o));
 
 {% endhighlight %}
 
@@ -569,7 +552,7 @@ element.removeEventListener(
 
 {% highlight javascript %}
 
-var listener = myWidget.handleClick.bind(myWidget);
+var listener = o.m.bind(o);
 element.addEventListener('click', listener);
 //  ...
 element.removeEventListener('click', listener);
@@ -582,7 +565,9 @@ element.removeEventListener('click', listener);
 
 if(!('bind' in Function.prototype)){
     Function.prototype.bind = function(){
-        var fn = this, context = arguments[0], args = Array.prototype.slice.call(arguments, 1);
+        var fn = this;
+		var context = arguments[0];
+		var args = Array.prototype.slice.call(arguments, 1);
         return function(){
             return fn.apply(context, args);
         }
@@ -591,28 +576,91 @@ if(!('bind' in Function.prototype)){
 
 {% endhighlight %}
 
-另一种方法是使用jQuery的$.proxy方法，它与bind方法的作用基本相同。
+除了用bind方法绑定函数运行时所在的对象，还可以使用jQuery的$.proxy方法，它与bind方法的作用基本相同。
 
 {% highlight javascript %}
 
-$( "#button" ).on( "click", $.prox（o.f，o) );
+$("#button").on("click", $.proxy(o.f, o));
 
 {% endhighlight %}
+
+$.proxy方法将o,f方法绑定到o对象。
 
 还有一种更直接的办法，就是索性事先在函数体内部将this的值固定。
 
 {% highlight javascript %}
 
 var o = {
-	p : 1,
-	self : this,
-	f : function() { console.log(self.p); } 
+	p: 1,
+	self: this,
+	f: function() { console.log(self.p); } 
 }
 
-$( "#button" ).on( "click", o.f );
+$("#button").on("click", o.f);
 
 {% endhighlight %}
 
+利用bind方法，可以改写apply方法和call方法，将它们写成更简便的形式，以数组的slice方法为例。
+
+{% highlight javascript %}
+
+[1,2,3].slice(0,1) 
+// [1]
+
+// 等同于
+
+Array.prototype.slice.call([1,2,3], 0, 1)
+// [1]
+
+{% endhighlight %}
+
+上面的代码中，数组的slice方法从[1, 2, 3]里面，按照指定位置和长度切分出另一个数组。这样做的本质是在[1, 2, 3]上面调用Array.prototype.slice方法，因此可以用call方法表达这个过程，得到同样的结果。
+
+call方法实质上是调用Function.prototype.call方法，因此上面的表达式可以用bind方法改写。
+
+{% highlight javascript %}
+
+var slice = Function.prototype.call.bind(Array.prototype.slice);
+
+slice([1, 2, 3], 0, 1) // [1]
+
+{% endhighlight %}
+
+可以看到，利用bind方法，将[1, 2, 3].slice(0, 1)变成了slice([1, 2, 3], 0, 1)的形式。这种形式的改变还可以用于其他数组方法。
+
+{% highlight javascript %}
+
+var push = Function.prototype.call.bind(Array.prototype.push);
+var pop = Function.prototype.call.bind(Array.prototype.pop);
+
+var a = [1 ,2 ,3];
+push(a, 4)
+a // [1, 2, 3, 4]
+
+pop(a)
+a // [1, 2, 3]
+
+{% endhighlight %}
+
+如果再进一步，将Function.prototype.call方法绑定Function.prototype.bind，就意味着bind的调用形式也可以被改写。
+
+{% highlight javascript %}
+
+function f(){
+	console.log(this.v);
+}
+
+var o = { v: 123 };
+
+var bind = Function.prototype.call.bind(Function.prototype.bind);
+
+bind(f,o)() // 123
+
+{% endhighlight %}
+
+上面代码表示，将Function.prototype.call方法绑定Function.prototype.bind以后，bind方法的使用形式从f.bind(o)，变成了bind(f, o)。
+
 ## 参考链接
 
-- Jonathan Creamer, [Avoiding the "this" problem in JavaScript](http://tech.pro/tutorial/1192/avoiding-the-this-problem-in-javascript) 
+- Jonathan Creamer, [Avoiding the "this" problem in JavaScript](http://tech.pro/tutorial/1192/avoiding-the-this-problem-in-javascript)
+- Erik Kronberg, [Bind, Call and Apply in JavaScript](https://variadic.me/posts/2013-10-22-bind-call-and-apply-in-javascript.html)
