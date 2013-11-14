@@ -352,6 +352,41 @@ clearInterval(id2);
 
 {% endhighlight %}
 
+下面是一个clearTimeout实际应用的例子。有些网站会实时将用户在文本框的输入，通过Ajax方法传回服务器，用jQuery表示就是下面的写法。
+
+{% highlight javascript %}
+
+$('textarea').on('keydown', ajaxAction);
+
+{% endhighlight %}
+
+这样写有一个很大的缺点，就是如果用户连续击键，就会连续触发keydown事件，造成大量的Ajax通信。这是不必要的，而且很可能会发生性能问题。正确的做法应该是，设置一个门槛值，表示两次Ajax通信的最小间隔时间。如果在设定的时间内，发生新的keydown事件，则不触发Ajax通信，并且重新开始计时。如果过了指定时间，没有发生新的keydown事件，将进行Ajax通信将数据发送出去。
+
+这种做法叫做debounce（防抖动）方法，用来返回一个新函数。只有当两次触发之间的时间间隔大于事先设定的值，这个新函数才会运行实际的任务。假定两次Ajax通信的间隔不小于2500毫秒，上面的代码可以改写成下面这样。
+
+{% highlight javascript %}
+
+$('textarea').on('keydown', debounce(ajaxAction, 2500))
+
+{% endhighlight %}
+
+利用setTimeout和clearTimeout，可以实现debounce方法。
+
+{% highlight javascript %}
+
+function debounce(fn, delay){
+	var timer = null; // 声明计时器
+	return function(){
+		var context = this, args = arguments;
+		clearTimeout(timer);
+		timer = setTimeout(function(){
+			fn.apply(context, args);
+		}, delay);
+	};
+}
+
+{% endhighlight %}
+
 ### 运行队列
 
 本质上，setTimeout和setInterval都是把任务添加到“运行队列”的尾部，等到前面的任务都执行完，再开始执行。由于前面的任务到底需要多少时间执行完，是不确定的，所以没有办法保证，被推迟的任务一定会按照预定时间执行。
@@ -489,3 +524,4 @@ a() 结束运行
 - John Dalziel, [The race for speed part 2: How JavaScript compilers work](http://creativejs.com/2013/06/the-race-for-speed-part-2-how-javascript-compilers-work/)
 - Jake Archibald，[Deep dive into the murky waters of script loading](http://www.html5rocks.com/en/tutorials/speed/script-loading/)
 - Mozilla Developer Network, [window.setTimeout](https://developer.mozilla.org/en-US/docs/Web/API/window.setTimeout)
+- Remy Sharp, [Throttling function calls](http://remysharp.com/2010/07/21/throttling-function-calls/)

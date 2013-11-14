@@ -600,7 +600,7 @@ $("#button").on("click", o.f);
 
 {% endhighlight %}
 
-利用bind方法，可以改写apply方法和call方法，将它们写成更简便的形式，以数组的slice方法为例。
+利用bind方法，可以改写一些JavaScript原生方法的使用形式，以数组的slice方法为例。
 
 {% highlight javascript %}
 
@@ -642,7 +642,7 @@ a // [1, 2, 3]
 
 {% endhighlight %}
 
-如果再进一步，将Function.prototype.call方法绑定Function.prototype.bind，就意味着bind的调用形式也可以被改写。
+如果再进一步，将Function.prototype.call方法绑定到Function.prototype.bind对象，就意味着bind的调用形式也可以被改写。
 
 {% highlight javascript %}
 
