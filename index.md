@@ -47,7 +47,8 @@ modifiedOn: 2013-11-05
 
 <h2 id="dom">DOM</h2>
 
-- [概述](dom/basic.html)
+- [DOM API 概述](dom/basic.html)
+- [DOM 事件](dom/event.html)
 - [样式表操作](dom/stylesheet.html)
 - [拖放操作](dom/dragndrop.html)
 - [Mutation Observer](dom/mutationobserver.html)
