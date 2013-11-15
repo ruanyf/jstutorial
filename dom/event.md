@@ -1,9 +1,9 @@
 ---
 title: DOM 事件
 layout: page
-category: DOM
+category: dom
 date: 2013-11-15
-ModifiedOn: 2013-11-15
+modifiedOn: 2013-11-15
 ---
 
 ## 概述
