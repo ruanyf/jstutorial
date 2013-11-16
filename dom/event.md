@@ -3,7 +3,7 @@ title: DOM 事件
 layout: page
 category: dom
 date: 2013-11-15
-modifiedOn: 2013-11-15
+modifiedOn: 2013-11-16
 ---
 
 ## 概述
@@ -46,7 +46,7 @@ document.querySelector('div').addEventListener('click',function(){
 
 {% endhighlight %}
 
-addEventListener方法有三个参数，第一个是事件名称，第二个是回调函数，第三个是一个布尔值，表示回调函数是否在捕获阶段（capture）触发，如果设为false，则回调函数只在冒泡阶段被触发。
+addEventListener方法有三个参数，第一个是事件名称，第二个是回调函数，第三个是一个布尔值，表示回调函数是否在捕获阶段（capture）触发，如果设为false，则回调函数只在冒泡阶段被触发。如果不提供第三个参数，则默认为false。
 
 IE 8及以下版本不支持该方法。
 
@@ -125,6 +125,8 @@ function callback(event) {
 
 注意，用户点击网页的时候，浏览器总是假定click事件的目标对象，就是嵌套最深的那个元素（嵌套在div元素中的p元素）。
 
+事件传播的最上层对象是window，接着依次是document，html（document.documentElement）和body（document.dody）。也就是说，如果body元素中有一个div元素，点击该元素。事件的传播顺序，在捕获阶段依次为window、document、html、body、div，在冒泡阶段依次为div、body、html、document、window。
+
 由于事件会在冒泡阶段向上传播到父元素，因此可以把子元素的回调函数定义在父元素上，由父元素的回调函数统一处理多个子元素的事件。这种方法叫做事件的代表（delegation）。
 
 {% highlight javascript %}
@@ -133,7 +135,7 @@ var ul = document.querySelector('ul');
 
 ul.addEventListener('click', function(event) {
 
-  if (event.target.tagName === 'LI') {
+  if (event.target.tagName.toLowerCase() === 'li') {
     // some code
   }
 
@@ -285,7 +287,167 @@ error事件有一个特殊的性质，就是不会冒泡。这样设计是正确
 </tbody>
 </table>
 
+### 表单事件
+
+（1）change事件
+
+一些特定的表单元素（比如文本框和输入框）失去焦点、并且值发生变化时触发。
+
+（2）reset事件
+
+表单重置（reset）时触发。
+
+（3）submit事件
+
+表单提交（submit）时触发。
+
+（4）select事件
+
+用户在文本框或输入框中选中文本时触发。
+
 ### 鼠标事件
+
+（1）click事件
+
+用户在element、document、window对象上用鼠标单击（或者按下回车键）时触发。
+
+单击被定义鼠标在同一个位置完成一次mousedown动作和mouseup动作。它们的触发顺序是：mousedown首先触发，mouseup接着触发，click最后触发。
+
+（2）dblclick事件
+
+用户在element、document、window对象上用鼠标双击时触发。该事件会在mousedown、mouseup、click之后触发。
+
+（3）mousedown事件
+
+用户按下鼠标按钮时触发。
+
+（4）mouseup事件
+
+用户放开鼠标按钮时触发。
+
+（5）mouseenter事件
+
+鼠标进入某个HTML元素或它的子元素时触发。该事件与mouseover事件相似，区别在于mouseenter事件不会冒泡，而且当鼠标移出子元素的边界、当仍在父元素之中时，它不会在父元素上触发。
+
+（6）mouseleave事件
+
+鼠标移出某个HTML元素以及它的所有子元素时触发。该事件与mouseout事件类似，区别在于mouseleave事件不会冒泡，而且要等到鼠标离开该元素本身和它的所有子元素时才触发。
+
+（7）mousemove事件
+
+鼠标在某个元素上方移动时触发。当鼠标持续移动时，该事件会连续触发。为了避免性能问题，建议对该事件的回调函数做一些限定，比如限定一段时间内只能运行一次代码。
+
+（8）mouseout事件
+
+鼠标移出某个HTML元素时触发。它与mouseleave事件类似，区别在于mouseout事件会冒泡，而且它会在从该元素移入某个子元素时触发。
+
+（9）mouseover事件
+
+鼠标在某个元素上方时触发。
+
+（10）wheel事件
+
+用户滚动鼠标的滚轮时触发。
+
+### 键盘事件
+
+（1）keydown事件
+
+用户按下某个键时触发。它的触发时间早于系统输入法接收到用户的动作。键盘上的任何键都可以触发该事件。
+
+（2）keypress事件
+
+用户按下能够输入字符的键时触发。
+
+（3）keyup事件
+
+用户松开某个键时触发。它总是发生在相应的keydown和keypress事件之后。
+
+### 触摸事件
+
+（1）touchstart事件
+
+用户开始触摸时触发。
+
+（2）touchend事件
+
+用户结束触摸时触发。
+
+（3）touchmove事件
+
+用户在触摸设备表面移动时触发。
+
+（4）touchenter事件
+
+触摸点进入设定在DOM上的互动区域时触发。
+
+（5）toucheleave事件
+
+触摸点离开设定在DOM上的互动区域时触发。
+
+（6）touchcancel事件
+
+触摸因为某些原因被中断时触发。
+
+### window、body、frame对象的特有事件
+
+（1）beforeprint，afterprint
+
+beforeprint事件在文档打印或打印预览前触发，afterprint事件在之后触发。
+
+（2）beforeunload
+
+文档关闭前触发。
+
+（3）hashchange
+
+URL的hash部分发生变化时触发。
+
+（4）messsage
+
+一个worker子线程通过postMessage方法发来消息时触发。
+
+（5）offline，online
+
+offline事件在浏览器离线时触发，online事件在浏览器重新连线时触发。
+
+（6）pageshow，pagehide
+
+pageshow事件在网页从缓存加载时触发，这种情况下load事件不会触发。网页第一次加载时，pageshow事件在load事件后面触发。
+
+pagehide事件用于离开页面，但是希望页面保存在缓存中。如果使用unload事件，网页不会保存在缓存中。
+
+### document对象的特有事件
+
+（1）readystatechange
+
+readystatechange事件在readyState属性发生变化时触发。它的发生对象是document和XMLHttpRequest对象。
+
+（2）DOMContentLoaded
+
+DOMContentLoaded事件在网页解析完成时触发，此时各种外部资源（resource）还没有被完全下载。
+
+### 拖拉事件
+
+（1）drag
+
+drag事件在源对象被拖拉过程中触发。
+
+（2）dragstart，dragend
+
+dragstart事件在用户开始用鼠标拖拉某个对象时触发，dragend事件在结束拖拉时触发。
+
+（3）dragenter，dragleave
+
+dragenter事件在源对象拖拉进目标对象后，在目标对象上触发。dragleave事件在源对象离开目标对象后，在目标对象上触发。
+
+（4）dragover事件
+
+dragover事件在源对象拖拉过另一个对象上方时，在后者上触发。
+
+（5）drop事件
+
+当源对象被拖拉到目标对象上方，用户松开鼠标时，在目标对象上触发drop事件。
 
 ### CSS事件
 
@@ -332,7 +494,7 @@ event对象有以下属性。
 
 - type：返回一个字符串，表示事件的名称。
 - target：返回一个Element节点，表示事件起源的那个节点。
-- currentTarget：返回一个Element节点，表示触发回调函数的那个节点。
+- currentTarget：返回一个Element节点，表示触发回调函数的那个节点。通常，事件回调函数中的this关键字的指向，与currentTarget是一致的。
 - bubbles：返回一个布尔值，表示事件触发时，是否处在“冒泡”阶段。
 - cancelable：返回一个布尔值，表示该事件的默认行为是否可以被preventDefault方法阻止。
 - defaultPrevented：返回一个布尔值，表示是否已经调用过preventDefault方法。
@@ -356,6 +518,8 @@ anchor.addEventListener('click', function(event) {
 });
 
 {% endhighlight %}
+
+如果事件回调函数最后返回布尔值false，即使用return false语言，则浏览器也不会触发默认行为，与preventDefault有等同效果。
 
 （2）stopPropagation方法
 
@@ -383,6 +547,18 @@ var myEvent = new CustomEvent("myevent", {
 
 构造函数CustomEvent接受两个参数，第一个是事件名称，第二个是事件的属性对象。
 
+还可以使用document.createEvent方法来生成事件对象。
+
+{% highlight javascript %}
+
+var myEvent = document.createEvent('CustomEvent');
+
+myEvent.initCustomEvent('myevent',true,false,{name:'张三'});
+
+{% endhighlight %}
+
+上面两种自定义事件的写法是等价的。但是，IE 9只支持第二种写法，不支持第一种写法。
+
 定义事件对象以后，就可以用addEventListener方法为时事件指定回调函数，用dispatchEvent方法触发该时间。
 
 {% highlight javascript %}
@@ -395,7 +571,18 @@ element.dispatchEvent(myEvent);
 
 {% endhighlight %}
 
-IE 8及以下版本不支持CustomEvent构造函数。
+document.createEvent方法除了自定义事件以外，还能触发浏览器的默认事件。比如，模仿并触发click事件的写法如下。
+
+{% highlight javascript %}
+
+var simulateDivClick = document.createEvent('MouseEvents');
+
+// initMouseEvent(type,bubbles,cancelable,view,detail,screenx,screeny,clientx,clienty,ctrlKey,altKey,shiftKey,metaKey,button,relatedTarget)
+simulateDivClick.initMouseEvent('click',true,true,document.defaultView,0,0,0,0,0,false,false,false,0,null,null);
+
+divElement.dispatchEvent(simulateDivClick);
+
+{% endhighlight %}
 
 ## 参考链接
 
