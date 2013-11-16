@@ -3,7 +3,7 @@ title: 封装
 layout: page
 category: oop
 date: 2012-12-14
-modifiedOn: 2013-10-31
+modifiedOn: 2013-11-16
 ---
 
 ## 原型prototype对象
@@ -91,20 +91,18 @@ Object.getPrototypeOf(f) === F.prototype
 
 ## Object.create方法
 
-Object.create的作用是，以一个对象为原型，新建另一个对象。后者完全继承前者的属性。
+Object对象的create方法用于生成新的对象。它接受一个原型对象作为参数，返回一个新对象，后者完全继承前者的属性。
 
 {% highlight javascript %}
 
-var o = { p: 1 };
+var o1 = { p: 1 };
+var o2 = Object.create(o1);
 
-var o1 = Object.create(o);
-
-o1.p
-// 1 
+o2.p // 1
 
 {% endhighlight %}
 
-Object.create方法基本等同于下面的代码：
+Object.create方法基本等同于下面的代码，如果老式浏览器不支持Object.create方法，可以用下面代码自己部署。
 
 {% highlight javascript %}
 
@@ -118,33 +116,56 @@ if(typeof Object.create !== "function") {
 
 {% endhighlight %}
 
-我们可以看到，这个方法实际上就是新建一个对象，让它的原型指向另一个对象，从而让前者继承后者的属性。所以，修改原型对象的属性值，会影响到新生成的对象。
+上面代码表示，Object.create方法实质是新建一个构造函数F，然后让F的prototype属性指向作为原型的对象o，最后返回一个F的实例，从而实现让实例继承o的属性。
+
+下面三种方式生成的新对象是等价的。
 
 {% highlight javascript %}
 
-var o = { p: 1 };
-var o1 = Object.create(o);
-
-o.p = 2; 
-
-o1.p
-// 2 
+var o1 = Object.create({})
+var o2 = Object.create(Object.prototype)
+var o3 = new Object();
 
 {% endhighlight %}
 
-修改新生成的对象的属性值，则不会影响到原型对象。
+如果想要生成一个不继承任何属性（比如toString和valueOf方法）的对象，可以将Object.create的参数设为null。
 
 {% highlight javascript %}
 
-var o = { p: 1 };
-var o1 = Object.create(o);
+var o = Object.create(null);
+
+o.valueOf()
+// TypeError: Object [object Object] has no method 'valueOf'
+
+{% endhighlight %}
+
+上面代码表示，如果对象o的原型是null，它就不具备一些定义在Object.prototype对象上面的属性，比如valueOf方法。
+
+使用Object.create方法的时候，必须提供对象原型，否则会报错。
+
+{% highlight javascript %}
+
+Object.create()
+// TypeError: Object prototype may only be an Object or null
+
+{% endhighlight %}
+
+总之，Object.create方法生成的新对象继承了对象原型。
+
+{% highlight javascript %}
+
+var o1 = { p: 1 };
+var o2 = Object.create(o1);
 
 o1.p = 2; 
+o2.p // 2 
 
-o.p
-// 1 
+o2.p = 1; 
+o1.p // 2 
 
 {% endhighlight %}
+
+上面代码表示，修改对象原型会影响到新生成的对象，反之不成立。
 
 Object.create方法可以接受两个参数，第一个是对象的原型，第二个是描述属性的attributes对象。
 

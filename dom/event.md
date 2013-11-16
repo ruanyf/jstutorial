@@ -12,7 +12,9 @@ DOM定义了一些事件，允许开发者指定它们的回调函数。
 
 指定回调事件的方法有三种。
 
-第一种，直接在HTML属性定义。
+**（1）HTML属性定义**
+
+HTML语言允许在元素的属性中，直接定义某些事件的回调代码。
 
 {% highlight html %}
 
@@ -20,7 +22,9 @@ DOM定义了一些事件，允许开发者指定它们的回调函数。
 
 {% endhighlight %}
 
-第二种，定义Element对象的事件属性。
+**（2）Element对象的事件属性**
+
+Element对象有事件属性，可以定义回调函数。
 
 {% highlight javascript %}
 
@@ -30,7 +34,9 @@ document.querySelector('div').onclick = function(){
 
 {% endhighlight %}
 
-第三种，使用addEventListener方法。
+**（3）addEventListener方法**
+
+通过Element对象的addEventListener方法，也可以定义事件的回调函数。
 
 {% highlight javascript %}
 
@@ -54,9 +60,9 @@ element.removeEventListener(event, callback, use-capture);
 
 注意，removeEventListener的回调函数与addEventListener的回调函数，必须是同一个函数，否则无效。
 
-（4）简评
+**（4）简评**
 
-上面三种方法之中，第一种违反了HTML与JavaScript代码相分离的原则，不建议使用；第二种的缺点是，同一个事件只能定义一个回调函数，比如说如果定义两次onclick属性，则后一次定义会覆盖前一次；第三种是推荐使用的方法，不仅可以多个回调函数，而且可以统一接口。
+上面三种方法之中，第一种违反了HTML与JavaScript代码相分离的原则，不建议使用；第二种的缺点是，同一个事件只能定义一个回调函数，也就是说，如果定义两次onclick属性，后一次定义会覆盖前一次；第三种是推荐使用的方法，不仅可以多个回调函数，而且可以统一接口。
 
 ## 事件的传播
 

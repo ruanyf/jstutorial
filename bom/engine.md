@@ -3,7 +3,7 @@ title: 浏览器的JavaScript引擎
 layout: page
 category: bom
 date: 2013-03-10
-modifiedOn: 2013-11-10
+modifiedOn: 2013-11-16
 ---
 
 浏览器通过内置的JavaScript引擎，读取网页中的代码，对其处理后运行。
@@ -412,25 +412,27 @@ setInterval(function(){console.log(2);},1000);
 
 上面的第一行语句要求每隔1000毫秒，就输出一个2。但是，第二行语句需要3000毫秒才能完成，请问会发生什么结果？
 
-结果就是等到第二行语句运行完成以后，立刻连续输出三个2，然后开始每隔1000毫秒，输出一个2。为了进一步理解JavaScript的单线程模型，请看下面这段伪代码。
+结果就是等到第二行语句运行完成以后，立刻连续输出三个2，然后开始每隔1000毫秒，输出一个2。也就是说，setIntervel具有累积效应，如果某个操作特别耗时，超过了setInterval的时间间隔，排在后面的操作会被累积起来，然后在很短的时间内连续触发，这可能或造成性能问题（比如集中发出Ajax请求）。
+
+为了进一步理解JavaScript的单线程模型，请看下面这段伪代码。
 
 {% highlight javascript %}
 
-    function init(){
+function init(){
         { 耗时5ms的某个操作 } 
         触发mouseClickEvent事件
         { 耗时5ms的某个操作 }
         setInterval(timerTask,10);
         { 耗时5ms的某个操作 }
-    }
+}
 
-    function handleMouseClick(){
+function handleMouseClick(){
           耗时8ms的某个操作 
-    }
+}
 
-    function timerTask(){
+function timerTask(){
           耗时2ms的某个操作 
-    }
+}
 
 {% endhighlight %}
 
@@ -446,7 +448,7 @@ setInterval(function(){console.log(2);},1000);
 
 - **40-42ms**：运行timerTask函数。
 
-由于setInterval无法保证每次操作之间的间隔，为了避免这种情况，可以反复调用setTimeout，替代setInterval。
+由于setInterval无法保证每次操作之间的间隔，存在累积效应，为了避免这个问题，可以反复调用setTimeout，替代setInterval。
 
 {% highlight javascript %}
 
@@ -460,6 +462,27 @@ recursive();
 {% endhighlight %}
 
 上面这样的写法，就能保证两次recursive之间的运行间隔，一定是1000毫秒。
+
+另一种方法是自己部署一个函数，模拟setInterval的效果。
+
+{% highlight javascript %}
+
+setInterval(function(){console.log(2);},1000);
+
+function interval(func, wait){
+    var interv = function(w){
+        return function(){
+                setTimeout(interv, w);
+                    func.call(null);
+        }
+    }(wait);
+
+    setTimeout(interv, wait);
+};
+
+{% endhighlight %}
+
+上面代码部署了一个interval函数，用循环调用setTimeout模拟了setInterval。
 
 ### 推迟时间的极限和setTimeout(f,0)的作用
 
@@ -524,4 +547,5 @@ a() 结束运行
 - John Dalziel, [The race for speed part 2: How JavaScript compilers work](http://creativejs.com/2013/06/the-race-for-speed-part-2-how-javascript-compilers-work/)
 - Jake Archibald，[Deep dive into the murky waters of script loading](http://www.html5rocks.com/en/tutorials/speed/script-loading/)
 - Mozilla Developer Network, [window.setTimeout](https://developer.mozilla.org/en-US/docs/Web/API/window.setTimeout)
-- Remy Sharp, [Throttling function calls](http://remysharp.com/2010/07/21/throttling-function-calls/)
+- Remy Sharp, [Throttling function calls](http://remysharp.com/2010/07/21/throttling-function-calls/)\
+- Ayman Farhat, [An alternative to Javascript's evil setInterval](http://www.thecodeship.com/web-development/alternative-to-javascript-evil-setinterval/) 
