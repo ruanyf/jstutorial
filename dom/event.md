@@ -195,6 +195,8 @@ image.addEventListener('load', function(event) {
 
 该事件在卸载某个资源时触发。window、body、frameset等元素都可能触发该事件。
 
+如果在window对象上定义了该事件，网页就不会被浏览器缓存。
+
 （3）beforeunload事件
 
 该事件在用户关闭网页时触发。它可以用来防止用户不当心关闭网页。
@@ -212,6 +214,8 @@ window.onbeforeunload = function() {
 {% endhighlight %}
 
 上面代码表示，当用户关闭网页，会跳出一个确认对话框，上面显示“你确认要离开吗？”。
+
+如果定义了该事件的回调函数，网页不会被浏览器缓存。
 
 （4）resize事件
 
@@ -391,31 +395,41 @@ error事件有一个特殊的性质，就是不会冒泡。这样设计是正确
 
 ### window、body、frame对象的特有事件
 
-（1）beforeprint，afterprint
+**（1）beforeprint，afterprint**
 
 beforeprint事件在文档打印或打印预览前触发，afterprint事件在之后触发。
 
-（2）beforeunload
+**（2）beforeunload**
 
 文档关闭前触发。
 
-（3）hashchange
+**（3）hashchange**
 
 URL的hash部分发生变化时触发。
 
-（4）messsage
+**（4）messsage**
 
-一个worker子线程通过postMessage方法发来消息时触发。
+message事件在一个worker子线程通过postMessage方法发来消息时触发，详见《Web Worker》一节。
 
-（5）offline，online
+**（5）offline，online**
 
 offline事件在浏览器离线时触发，online事件在浏览器重新连线时触发。
 
-（6）pageshow，pagehide
+**（6）pageshow，pagehide**
 
-pageshow事件在网页从缓存加载时触发，这种情况下load事件不会触发。网页第一次加载时，pageshow事件在load事件后面触发。
+默认情况下，浏览器会在当前会话（session）缓存页面，当用户点击“前进/后退”按钮时，浏览器就会缓存中加载页面。pageshow事件在每次网页从缓存加载时触发，这种情况下load事件不会触发，因为网页在缓存中的样子通常是load事件的回调函数运行后的样子，所以不必重复执行。同理，如果是从缓存中加载页面，网页内初始化的JavaScript脚本也不会执行。
 
-pagehide事件用于离开页面，但是希望页面保存在缓存中。如果使用unload事件，网页不会保存在缓存中。
+如果网页是第一次加载（即不在缓存中），那么首先会触发load事件，然后再触发pageshow事件。也就是说，pageload事件是每次网页加载都会运行的。pageshow事件的event对象有一个persisted属性，返回一个布尔值。如果是第一次加载，这个值为false；如果是从缓存中加载，这个值为true。
+
+{% highlight html %}
+
+<body onload="onLoad();" onpageshow="if (event.persisted) onPageShow();"> 
+
+{% endhighlight %}
+
+上面代码表示，通过判断persisted属性，做到网页第一次加载时，不运行onPageShow函数，其后如果是从缓存中加载，就运行onPageShow函数。
+
+pagehide事件与pageshow事件类似，当用户通过“前进/后退”按钮，离开当前页面时触发。它与unload事件的区别在于，使用unload事件之后，页面不会保存在缓存中，而使用pagehide事件，页面会保存在缓存中。pagehide事件的event对象有一个persisted属性，将这个属性设为true，就表示页面要保存在缓存中；设为false，表示网页不保存在缓存中，这时如果设置了unload事件的回调函数，该函数将在pagehide事件后立即运行。
 
 ### document对象的特有事件
 
@@ -587,3 +601,4 @@ divElement.dispatchEvent(simulateDivClick);
 ## 参考链接
 
 - Wilson Page, [An Introduction To DOM Events](http://coding.smashingmagazine.com/2013/11/12/an-introduction-to-dom-events/)
+- Mozilla Developer Network, [Using Firefox 1.5 caching](https://developer.mozilla.org/en-US/docs/Using_Firefox_1.5_caching)
