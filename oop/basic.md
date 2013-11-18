@@ -584,7 +584,7 @@ $("#button").on("click", $.proxy(o.f, o));
 
 {% endhighlight %}
 
-$.proxy方法将o,f方法绑定到o对象。
+$.proxy方法将o.f方法绑定到o对象。
 
 还有一种更直接的办法，就是索性事先在函数体内部将this的值固定。
 
@@ -596,9 +596,9 @@ var o = {
 	f: function() { console.log(self.p); } 
 }
 
-$("#button").on("click", o.f);
-
 {% endhighlight %}
+
+上面代码将f方法内部的this换成了self，而self属性中的this总是指向对象o，这样做就等于绑定了this。
 
 利用bind方法，可以改写一些JavaScript原生方法的使用形式，以数组的slice方法为例。
 

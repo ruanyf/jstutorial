@@ -1,12 +1,20 @@
 ---
-title: 选择器
+title: jQuery概述
 layout: page
 category: jquery
 date: 2013-02-01
 modifiedOn: 2013-10-27
 ---
 
-## 内置循环
+jQuery是目前使用最广泛的JavaScript函数库。据统计，全世界使用JavaScript函数库的网页，90%选择了jQuery。下面就介绍jQuery的主要用法。
+
+jQuery的核心思想是“选中某个元素，进行某种处理”（find something, do something），也就是说，先选择后处理。所以，绝大多数jQuery操作都是从选择器开始的。
+
+jQuery函数库提供了一个全局对象jQuery，简写为$。在网页中加载jQuery以后，就可以使用这个全局对象了。jQuery的全部方法，都是定义在这个对象上面。
+
+## 选择器
+
+### 内置循环
 
 jQuery默认对选中的元素进行循环处理。
 
@@ -49,7 +57,7 @@ $(".class").css({
 
 {% endhighlight %}
 
-## 属性的读写
+### 属性的读写
 
 首先，这里要区分两种属性。
 
