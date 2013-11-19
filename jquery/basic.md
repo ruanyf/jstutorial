@@ -81,6 +81,22 @@ if ( $('li').length === 0 ) {
 
 上面代码表示，如果网页没有li元素，则返回对象的length属性等于0。这就是测试有没有选中的标准方法。
 
+除了length属性，还有一个is方法，返回一个布尔值，表示选中的结果是否符合某个条件。用来验证的判断条件，可以是CSS选择器，也可以是一个函数，或者DOM元素和jQuery实例。
+
+{% highlight javascript %}
+
+$('li').is('li') // true
+
+$('li').is($('.item')) 
+
+$('li').is(document.querySelector('li'))
+
+$('li').is(function() {
+      return $("strong", this).length === 0;
+});
+
+{% endhighlight %}
+
 需要注意的是，使用下标运算符取出的单个对象，就不是jQuery对象的实例，而是一个DOM对象。
 
 {% highlight javascript %}
@@ -133,7 +149,273 @@ $( '<li>', {
 
 ## jQuery实例对象的方法
 
-除了上一节提到的get和eq方法，jQuery实例还有许多其他方法。
+除了上一节提到的is、get、eq方法，jQuery实例还有许多其他方法。
+
+### filter方法，not方法，has方法
+
+通过选择器选中结果以后，有多种方法可以对结果进行过滤。
+
+filter方法用于过滤选中的结果，它可以接受多种类型的参数。
+
+{% highlight javascript %}
+
+// 返回符合CSS选择器的结果
+$('li').filter('.item')
+
+// 返回函数返回值为true的结果
+$("li").filter(function(index) {
+    return index % 2 === 1;
+})
+
+// 返回符合特定DOM对象的结果
+$("li").filter(document.getElementById("unique"))
+
+// 返回符合特定jQuery实例的结果
+$("li").filter($("#unique"))
+
+{% endhighlight %}
+
+not方法的用法与filter方法完全一致，但是返回相反的结果，即过滤掉匹配项。
+
+{% highlight javascript %}
+
+$('li').not('.item')
+
+$("li").not(function(index) {
+    return index % 2 === 1;
+})
+
+$("li").not(document.getElementById("unique"))
+
+$("li").not($("#unique"))
+
+{% endhighlight %}
+
+has方法与filter方法作用相同，但是只过滤出子元素符合条件的元素。
+
+{% highlight javascript %}
+
+// 返回子元素包含ul元素的li元素
+$("li").has("ul")
+
+{% endhighlight %}
+
+### 选择相对位置的元素
+
+如果已有选中的元素，有一些方法可以选出处在相对位置的元素。
+
+first方法返回结果集的第一个成员。
+
+{% highlight javascript %}
+
+$("li").first()
+
+{% endhighlight %}
+
+next方法返回紧邻的下一个同级元素，prev方法返回紧邻的上一个同级元素。
+
+{% highlight javascript %}
+
+$("li").first().next()
+
+$("li").first().next('.item')
+
+$("li").prev()
+
+{% endhighlight %}
+
+parent方法返回选中元素的父元素，parents方法返回选中元素的所有上级元素（直到html元素）。
+
+{% highlight javascript %}
+
+$("p").parent()
+$("p").parent(".selected")
+
+$("p").parents()
+$("p").parents("div")
+
+{% endhighlight %}
+
+children方法返回选中元素的所有下级元素。
+
+{% highlight javascript %}
+
+$("div").children()
+$("div").children(".selected")
+
+{% endhighlight %}
+
+find方法返回符合条件的所有下级元素。
+
+{% highlight javascript %}
+
+$("div").find(".selected")
+
+{% endhighlight %}
+
+closest方法返回选中元素的第一个符合条件的上级元素。
+
+{% highlight javascript %}
+
+$(li").closest('div')
+
+{% endhighlight %}
+
+siblings方法返回选中元素的所有同级元素。
+
+{% highlight javascript %}
+
+// 返回第一个li元素的同级元素
+$('li').first().siblings()
+
+// 返回第一个li元素的同级、且具有class包含item的元素
+$('li').first().siblings('.item')
+
+{% endhighlight %}
+
+nextAll方法返回选中元素其后的所有同级元素，prevAll方法返回选中元素前面的所有同级元素。
+
+{% highlight javascript %}
+
+$('li').first().nextAll()
+
+{% endhighlight %}
+
+add方法用于为结果集添加元素。
+
+{% highlight javascript %}
+
+$('li').add('p')
+
+{% endhighlight %}
+
+addBack方法将当前的选中元素加回原始的结果集。
+
+{% highlight javascript %}
+
+$('li').parent().addBack()
+
+{% endhighlight %}
+
+end方法用于返回原始的结果集。
+
+{% highlight javascript %}
+
+$('li').first().end()
+
+{% endhighlight %}
+
+### DOM相关方法
+
+许多方法可以对DOM元素进行处理。
+
+addClass方法用于添加一个类。
+
+{% highlight javascript %}
+
+$('li').addClass('special')
+
+{% endhighlight %}
+
+removeClass方法用于移除一个类。
+
+{% highlight javascript %}
+
+$('li').removeClass('special')
+
+{% endhighlight %}
+
+toggleClass方法用于折叠一个类（如果无就添加，如果有就移除）。
+
+{% highlight javascript %}
+
+$('li').toggleClass('special')
+
+{% endhighlight %}
+
+css方法用于改变CSS设置。
+
+{% highlight javascript %}
+
+$('li').css('padding-left', '20px')
+
+$('li').css({
+  'padding-left': '20px'
+});
+
+{% endhighlight %}
+
+val方法返回结果集第一个元素的值，或者设置当前结果集所有元素的值。
+
+{% highlight javascript %}
+
+$('input[type="text"]').val()
+
+$('input[type="text"]').val('new value')
+
+{% endhighlight %}
+
+prop方法返回结果集第一个元素的特定DOM属性的值，或者设置当前结果集所有元素的特定DOM属性的值。
+
+{% highlight javascript %}
+
+$('input[type="checkbox"]').prop('checked');
+
+$('input[type="checkbox"]').prop('checked', true)
+
+{% endhighlight %}
+
+attr方法返回结果集第一个元素的特定HTML属性的值，或者设置当前结果集所有元素的特定HTML属性的值。
+
+{% highlight javascript %}
+
+$('a').attr('title')
+
+$('a').attr('title', 'Click me!')
+
+$('a').attr('href', function(index, value) {
+  return value + '?special=true';
+});
+
+{% endhighlight %}
+
+attr方法与prop方法的区别在于，attr方法针对HTML属性，prop方法针对DOM属性（比如selectedIndex、tagName、nodeName、nodeType等等）。有时，一个属性既可以用attr方法读取，也可以用prop方法读取。比如，下面这一行HTML代码。
+
+{% highlight html %}
+
+<input type="checkbox" checked="checked" />
+
+{% endhighlight %}
+
+attr方法和prop方法针对checked属性的返回值不一样。
+
+{% highlight javascript %}
+
+$('input[type="checkbox"]').attr('checked')
+// 'checked'
+
+$('input[type="checkbox"]').prop('checked') 
+// true
+
+{% endhighlight %}
+
+上面代码表示，attr方法返回HTML属性的值，结果为checked；prop方法返回DOM属性的值，结果为true。
+
+removeProp方法移除某个DOM属性。
+
+{% highlight javascript %}
+
+$("a").prop("oldValue",1234).removeProp('oldValue')
+
+{% endhighlight %}
+
+removeAttr方法移除某个HTML属性。
+
+{% highlight javascript %}
+
+$('a').removeAttr("title")
+
+{% endhighlight %}
 
 ### html方法和text方法
 
@@ -210,6 +492,54 @@ $('li').each(function( index, elem ) {
 {% endhighlight %}
 
 从上面代码可以看出，作为each方法参数的函数，本身有两个参数，第一个是当前元素在集合中的位置，第二个当前元素对应的DOM对象。
+
+### 改变元素位置的方法
+
+jQuery方法提供一系列方法，可以改变元素在文档中的位置。
+
+append方法将参数中的元素插入当前元素的尾部。
+
+{% highlight javascript %}
+
+$("div").append("<p>World</p>")
+
+// <div>Hello </div>
+// 变为
+// <div>Hello <p>World</p></div>
+
+{% endhighlight %}
+
+appendTo方法将当前元素插入参数中的元素尾部。
+
+{% highlight javascript %}
+
+$("<p>World</p>").appendTo("div")
+
+{% endhighlight %}
+
+上面代码返回与前一个例子一样的结果。
+
+after方法将参数中的元素插在当前元素后面。
+
+{% highlight javascript %}
+
+$("div").after("<p>World</p>")
+
+// <div>Hello </div>
+// 变为
+// <div>Hello </div><p>World</p>
+
+{% endhighlight %}
+
+insertAfter方法将当前元素插在参数中的元素后面。
+
+{% highlight javascript %}
+
+$("<p>World</p>").insertAfter("div")
+
+{% endhighlight %}
+
+上面代码返回与前一个例子一样的结果。
 
 ### 链式操作
 
