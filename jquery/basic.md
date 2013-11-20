@@ -6,7 +6,7 @@ date: 2013-02-01
 modifiedOn: 2013-10-27
 ---
 
-jQuery是目前使用最广泛的JavaScript函数库。据统计，全世界使用JavaScript函数库的网页，90%选择了jQuery。它的最大优势有两个，一是使得操作网页元素变得异常容易，二是统一了接口，使得开发者可以用同一种方法编写能在所有现代浏览器中运行的代码，而不用担心浏览器之间的差异。
+jQuery是目前使用最广泛的JavaScript函数库。据统计，全世界使用JavaScript函数库的网页，90%选择了jQuery；全世界排名前10000位的网站，57%使用了jQuery。它的最大优势有两个，一是使得操作网页元素变得异常容易，二是统一了接口，使得开发者可以用同一种方法编写能在所有现代浏览器中运行的代码，而不用担心浏览器之间的差异。
 
 jQuery的核心思想是“选中某个元素，进行某种处理”（find something, do something），也就是说，先选择后处理。所以，绝大多数jQuery操作都是从选择器开始的。
 
@@ -497,6 +497,8 @@ $('li').each(function( index, elem ) {
 
 jQuery方法提供一系列方法，可以改变元素在文档中的位置。
 
+**（1）append方法，appendTo方法**
+
 append方法将参数中的元素插入当前元素的尾部。
 
 {% highlight javascript %}
@@ -519,15 +521,57 @@ $("<p>World</p>").appendTo("div")
 
 上面代码返回与前一个例子一样的结果。
 
+**（2）prepend方法，prependTo方法**
+
+prepend方法将参数中的元素，变为当前元素的第一个子元素。
+
+{% highlight javascript %}
+
+$("p").prepend("Hello ")
+
+// <p>World</p>
+// 变为
+// <p>Hello World</p>
+
+{% endhighlight %}
+
+如果prepend方法的参数不是新生成的元素，而是当前页面已存在的元素，则会产生移动元素的效果。
+
+{% highlight javascript %}
+
+$("p").prepend("Hello ")
+
+// <p>World</p>
+// 变为
+// <p>Hello World</p>
+
+{% endhighlight %}
+
+上面代码运行后，strong元素的位置将发生移动，而不是克隆一个新的strong元素。不过，如果当前结果集包含多个元素，则除了第一个以后，后面的p元素都将插入一个克隆的strong子元素。
+
+prependTo方法将当前元素变为参数中的元素的第一个子元素。
+
+{% highlight javascript %}
+
+$("<p></p>").prepend("div")
+
+// <div></div>
+// 变为
+// <div><p></p></div>
+
+{% endhighlight %}
+
+**（3）after方法，insertAfter方法**
+
 after方法将参数中的元素插在当前元素后面。
 
 {% highlight javascript %}
 
-$("div").after("<p>World</p>")
+$("div").after("<p></p>")
 
-// <div>Hello </div>
+// <div></div>
 // 变为
-// <div>Hello </div><p>World</p>
+// <div></div><p></p>
 
 {% endhighlight %}
 
@@ -535,11 +579,128 @@ insertAfter方法将当前元素插在参数中的元素后面。
 
 {% highlight javascript %}
 
-$("<p>World</p>").insertAfter("div")
+$("<p></p>").insertAfter("div")
 
 {% endhighlight %}
 
 上面代码返回与前一个例子一样的结果。
+
+**（4）before方法，insertBefore方法**
+
+before方法将参数中的元素插在当前元素的前面。
+
+{% highlight javascript %}
+
+$("div").before("<p></p>")
+
+// <div></div>
+// 变为
+// <p></p><div></div>
+
+{% endhighlight %}
+
+insertBefore方法将当前元素插在参数中的元素的前面。
+
+{% highlight javascript %}
+
+$("<p></p>").insertBefore("div")
+
+{% endhighlight %}
+
+上面代码返回与前一个例子一样的结果。
+
+**（5）wrap方法，wrapAll方法，unwrap方法，wrapInner方法**
+
+wrap方法将参数中的元素变成当前元素的父元素。
+
+{% highlight javascript %}
+
+$("p").wrap("<div></div>")
+
+// <p></p>
+// 变为
+// <div><p></p></div>
+
+{% endhighlight %}
+
+wrap方法的参数还可以是一个函数。
+
+{% highlight javascript %}
+
+$("p").wrap(function() {
+  return "<div></div>";
+})
+
+{% endhighlight %}
+
+上面代码返回与前一个例子一样的结果。
+
+wrapAll方法为结果集的所有元素，添加一个共同的父元素。
+
+{% highlight javascript %}
+
+$("p").wrapAll("<div></div>")
+
+// <p></p><p></p>
+// 变为
+// <div><p></p><p></p></div>
+
+{% endhighlight %}
+
+unwrap方法移除当前元素的父元素。
+
+{% highlight javascript %}
+
+$("p").unwrap()
+
+// <div><p></p></div>
+// 变为
+// <p></p>
+
+{% endhighlight %}
+
+wrapInner方法为当前元素的所有子元素，添加一个父元素。
+
+{% highlight javascript %}
+
+$("p").wrapInner('<strong></strong>')
+
+// <p>Hello</p>
+// 变为
+// <p><strong>Hello</strong></p>
+
+{% endhighlight %}
+
+**（6）clone方法**
+
+clone方法克隆当前元素。
+
+{% highlight javascript %}
+
+var clones = $('li').clone();
+
+{% endhighlight %}
+
+对于那些有id属性的节点，clone方法会连id属性一起克隆。所以，要把克隆的节点插入文档的时候，务必要修改或移除id属性。
+
+**（7）remove方法，detach方法，replaceWith方法**
+
+remove方法移除并返回一个元素，取消该元素上所有事件的绑定。detach方法也是移除并返回一个元素，但是不取消该元素上所有事件的绑定。
+
+{% highlight javascript %}
+
+$('p').remove()
+$('p').detach()
+
+{% endhighlight %}
+
+replaceWith方法用参数中的元素，替换并返回当前元素，取消当前元素的所有事件的绑定。
+
+{% highlight javascript %}
+
+$('p').replaceWith('<div></div>')
+
+{% endhighlight %}
 
 ### 链式操作
 
