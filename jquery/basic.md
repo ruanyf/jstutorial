@@ -3,7 +3,7 @@ title: jQuery概述
 layout: page
 category: jquery
 date: 2013-02-01
-modifiedOn: 2013-10-27
+modifiedOn: 2013-11-21
 ---
 
 jQuery是目前使用最广泛的JavaScript函数库。据统计，全世界使用JavaScript函数库的网页，90%选择了jQuery；全世界排名前10000位的网站，57%使用了jQuery。它的最大优势有两个，一是使得操作网页元素变得异常容易，二是统一了接口，使得开发者可以用同一种方法编写能在所有现代浏览器中运行的代码，而不用担心浏览器之间的差异。
@@ -814,16 +814,178 @@ $(input[type=checkbox]).prop("checked") // true
 
 {% highlight javascript %}
 
-if ( $(elem).prop("checked") ) { //...};
+if ($(elem).prop("checked")) { /*... */ };
 
 // 下面两种方法亦可
 
-if ( elem.checked ) { //...};
-if ( $(elem).is(":checked") ) { //...};
+if ( elem.checked ) { /*...*/ };
+if ( $(elem).is(":checked") ) { /*...*/ };
 
 {% endhighlight %}
 
 ## 事件处理
+
+### 事件绑定的简便方法
+
+jQuery提供一系列函数方法，允许直接为常见事件绑定回调函数。比如，click方法可以为一个元素绑定click事件的回调函数。
+
+{% highlight javascript %}
+
+$('li').click(function (e){
+  console.log($(this).text());
+});
+
+{% endhighlight %}
+
+上面代码为li元素绑定click事件的回调函数，点击后在console显示li元素包含的文本。
+
+这样的方法有如下一些：
+
+- click
+- keydown
+- keypress
+- keyup
+- mouseover
+- mouseout
+- mouseenter
+- mouseleave
+- scroll
+- focus
+- blur
+- resize
+
+如果不带参数调用这些方法，就是触发相应的事件，从而引发回调函数的运行。
+
+{% highlight javascript %}
+
+$('li').click()
+
+{% endhighlight %}
+
+上面代码将触发click事件的回调函数。
+
+需要注意的是，通过这种方法触发回调函数，将不会引发浏览器对该事件的默认行为。比如，对a元素调用click方法，将只触发事先绑定的回调函数，而不会导致浏览器将页面导向href属性指定的网址。
+
+### on方法，trigger方法，off方法
+
+**（1）on方法**
+
+事件绑定的那些简便方法，其实都是on方法的简写形式。on方法是jQuery事件绑定的统一接口。
+
+on方法接受两个参数，第一个是事件名称，第二个是回调函数。
+
+{% highlight javascript %}
+
+$('li').on('click', function (e){
+  console.log($(this).text());
+});
+
+{% endhighlight %}
+
+上面代码为li元素绑定click事件的回调函数。
+
+> 注意，在回调函数内部，this关键字指的是发生该事件的DOM对象。为了使用jQuery提供的方法，必须将DOM对象转为jQuery对象，因此写成$(this)。
+
+on方法允许一次为多个事件指定同样的回调函数。
+
+{% highlight javascript %}
+
+$('input[type="text"]').on('focus blur', function (){
+  console.log('focus or blur');
+});
+
+{% endhighlight %}
+
+上面代码为文本框的focus和blur事件绑定同一个回调函数。
+
+on方法还可以为当前元素的某一个子元素，添加回调函数。
+
+{% highlight javascript %}
+
+$('ul').on('click', 'li', function (e){
+  console.log(this);
+});
+
+{% endhighlight %}
+
+上面代码为ul的子元素li绑定click事件的回调函数。采用这种写法时，on方法接受三个参数，子元素选择器作为第二个参数，夹在事件名称和回调函数之间。
+
+这种写法有两个好处。首先，click事件还是在ul元素上触发回调函数，但是会检查event.target属性是否为li子元素，如果为true，再调用回调函数。这样就比为li元素一一绑定回调函数，节省了内存空间。其次，这种绑定的回调函数，对于在此后生成的li元素依然有效。
+
+**（2）trigger方法**
+
+trigger方法用于触发回调函数，它的参数就是事件的名称。
+
+{% highlight javascript %}
+
+$('li').trigger('click')
+
+{% endhighlight %}
+
+上面代码触发li元素的click事件回调函数。与那些简便方法一样，trigger方法只触发回调函数，而不会引发浏览器的默认行为。
+
+**（3）off方法**
+
+off方法用于移除事件的回调函数。
+
+{% highlight javascript %}
+
+$('li').off('click')
+
+{% endhighlight %}
+
+上面代码移除li元素所有的click事件回调函数。
+
+**（4）事件的名称空间**
+
+如果只想移除某一个回调函数，可以采用“名称空间”的方式，为每一个回调函数指定一个二级事件名，然后再用off方法移除这个二级事件的回调函数。
+
+{% highlight javascript %}
+
+$('li').on('click.logging', function (){
+  console.log('click.logging callback removed');
+});
+
+$('li').off('click.logging');
+
+{% endhighlight %}
+
+上面代码为li元素定义了二级事件click.logging的回调函数，click.logging属于click名称空间，当发生click事件时会触发该回调函数。将click.logging作为off方法的参数，就会移除这个回调函数，但是对其他click事件的回调函数没有影响。
+
+trigger方法也适用带名称空间的事件。
+
+{% highlight javascript %}
+
+$('li').trigger('click.logging')
+
+{% endhighlight %}
+
+### event对象
+
+当回调函数被触发后，它们的参数通常是一个事件对象event。
+
+{% highlight javascript %}
+
+$(document).on('click', function (e){
+	// ...
+});
+
+{% endhighlight %}
+
+上面代码的回调函数的参数e，就代表事件对象event。
+
+event对象有以下属性：
+
+- type：事件类型，比如click。
+- which：触发该事件的鼠标按钮或键盘的键。
+- target：事件发生的初始对象。
+- pageX：事件发生时，鼠标位置的水平坐标。
+- pageY：事件发生时，鼠标位置的垂直坐标。
+
+event对象有以下方法：
+
+- preventDefault：取消浏览器默认行为。
+- stopPropagation：阻止事件向上层元素传播。
 
 ### 一次性事件
 
