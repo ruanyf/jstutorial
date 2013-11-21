@@ -140,9 +140,11 @@ Object.prototype.toString.call([]) // "[object Object]"
 
 {% highlight javascript %}
 
-var s = Object.prototype.toString.call(o);
-    return s.match(/\[object (.*?)\]/)[1].toLowerCase();
-}
+var type = function (o){
+	var s = Object.prototype.toString.call(o);
+		return s.match(/\[object (.*?)\]/)[1].toLowerCase();
+	}
+};
 
 type({}); // "object"
 type([]); // "array"
@@ -468,7 +470,7 @@ o.p2 // 2
 
 {% endhighlight %}
 
-上面代码中的对象o有两个属性，p1是可配置的，p2是不可配置的。结果，p1就无法删除。
+上面代码中的对象o有两个属性，p1是可配置的，p2是不可配置的。结果，p2就无法删除。
 
 需要注意的是，当使用var命令声明变量时（实际上是声明当前作用域的属性），变量的可配置性为false。
 
@@ -477,7 +479,12 @@ o.p2 // 2
 var a1 = 1;
 
 Object.getOwnPropertyDescriptor(this,'a1')
-// Object {value: 1, writable: true, enumerable: true, configurable: false}
+// Object {
+//	value: 1, 
+//	writable: true, 
+//	enumerable: true, 
+//	configurable: false
+// }
 
 {% endhighlight %}
 
@@ -488,14 +495,24 @@ Object.getOwnPropertyDescriptor(this,'a1')
 a2 = 1;
 
 Object.getOwnPropertyDescriptor(this,'a2')
-// Object {value: 1, writable: true, enumerable: true, configurable: true}
+// Object {
+//	value: 1, 
+//	writable: true, 
+//	enumerable: true, 
+//	configurable: true
+// }
 
 // or
 
 this.a3 = 1;
 
 Object.getOwnPropertyDescriptor(this,'a3')
-// Object {value: 1, writable: true, enumerable: true, configurable: true}
+// Object {
+//	value: 1, 
+//	writable: true, 
+//	enumerable: true, 
+//	configurable: true
+// }
 
 {% endhighlight %}
 

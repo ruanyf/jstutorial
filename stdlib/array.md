@@ -3,7 +3,7 @@ title: Array 对象
 layout: page
 category: stdlib
 date: 2013-05-04
-modifiedOn: 2013-08-30
+modifiedOn: 2013-11-21
 ---
 
 ## 概述
@@ -220,7 +220,7 @@ unshift方法用于在数组的第一个位置添加元素，并返回添加新�
 
 var a = [ 'a', 'b', 'c' ];
 
-a.unshift('x'); // 3
+a.unshift('x'); // 4
 a
 // [ 'x', 'a', 'b', 'c' ]
 

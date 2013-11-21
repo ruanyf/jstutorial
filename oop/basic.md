@@ -518,11 +518,11 @@ o2.m() // 123
 
 上面代码使用bind方法将o1.m方法绑定到o1以后，在o2对象上调用o1.m的时候，o1.m函数体内部的this.p就不再到o2对象去寻找p属性的值了。
 
-如果bind方法的第一个参数是null或undefined，则函数运行时this指向全局对象（在浏览器中为window）。
+如果bind方法的第一个参数是null或undefined，等于将this绑定到全局对象，函数运行时this指向全局对象（在浏览器中为window）。
 
 {% highlight javascript %}
 
-function add(x,y) { return x+y;}
+function add(x,y) { return x+y; }
 
 var plus5 = add.bind(null, 5);
 
@@ -532,7 +532,7 @@ plus5(10) // 15
 
 上面代码除了将add函数的运行环境绑定为全局对象，还将add函数的第一个参数绑定为5，然后返回一个新函数。以后，每次运行这个新函数，就只需要提供另一个参数就够了。
 
-bind方法每运行一次，就返回一个新函数，这会产生一些问题。比如，监听事件的时候，不能写成下面这样：
+bind方法每运行一次，就返回一个新函数，这会产生一些问题。比如，监听事件的时候，不能写成下面这样。
 
 {% highlight javascript %}
 
@@ -584,21 +584,7 @@ $("#button").on("click", $.proxy(o.f, o));
 
 {% endhighlight %}
 
-$.proxy方法将o.f方法绑定到o对象。
-
-还有一种更直接的办法，就是索性事先在函数体内部将this的值固定。
-
-{% highlight javascript %}
-
-var o = {
-	p: 1,
-	self: this,
-	f: function() { console.log(self.p); } 
-}
-
-{% endhighlight %}
-
-上面代码将f方法内部的this换成了self，而self属性中的this总是指向对象o，这样做就等于绑定了this。
+上面代码表示，$.proxy方法将o.f方法绑定到o对象。
 
 利用bind方法，可以改写一些JavaScript原生方法的使用形式，以数组的slice方法为例。
 
