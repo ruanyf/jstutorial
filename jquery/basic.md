@@ -236,7 +236,7 @@ $(li").closest('div')
 
 {% endhighlight %}
 
-**（5）find方法，add方法，addBack方法，end方法
+**（5）find方法，add方法，addBack方法，end方法**
 
 find方法返回当前元素的所有符合条件的下级元素。
 
@@ -843,6 +843,107 @@ if ( $(elem).is(":checked") ) { /*...*/ };
 
 {% endhighlight %}
 
+### 动画效果相关方法
+
+jQuery提供一些方法，可以很容易地显示网页动画效果。但是，总体上来说，它们不如CSS动画强大和节省资源，所以应该优先考虑使用CSS动画。
+
+如果将jQuery.fx.off设为true，就可以将所有动画效果关闭，使得网页元素的各种变化一步到位，没有中间过渡的动画效果。
+
+**（1）动画效果的简便方法**
+
+jQuery提供以下一些动画效果方法。
+
+- show：显示当前元素。
+- hide：隐藏当前元素。
+- fadeIn：将当前元素的不透明度（opacity）逐步提升到100%。
+- fadeOut：将当前元素的不透明度逐步降为0%。
+- slideDown：以从上向下滑入的方式显示当前元素。
+- slideUp：以从下向上滑出的方式隐藏当前元素。
+- slideToggle：以垂直滑入或滑出的方式，折叠显示当前元素。
+
+上面这些方法可以不带参数调用，也可以接受毫秒或预定义的关键字作为参数。
+
+{% highlight javascript %}
+
+$('.hidden').show();
+$('.hidden').show(300);
+$('.hidden').show('slow');
+
+{% endhighlight %}
+
+上面三行代码分别表示，以默认速度、300毫秒、较慢的速度隐藏一个元素。
+
+jQuery预定义的关键字是在jQuery.fx.speeds对象上面，可以自行改动这些值，或者创造新的值。
+
+{% highlight javascript %}
+
+jQuery.fx.speeds.fast = 50;
+jQuery.fx.speeds.slow = 3000;
+jQuery.fx.speeds.normal = 1000;
+
+{% endhighlight %}
+
+上面三行代码重新定义fast和slow关键字对应的毫秒数，并且自定义了normal关键字，表示动画持续时间为1500毫秒。
+
+这些方法还可以接受一个函数，作为第二个参数，表示动画结束后的回调函数。
+
+{% highlight javascript %}
+
+$('p').fadeOut(300, function() {
+  $(this).remove();
+});
+
+{% endhighlight %}
+
+上面代码表示，p元素以300毫秒的速度淡出，然后调用回调函数，将其从DOM中移除。
+
+**（2）animate方法**
+
+上面这些动画效果方法，实际上都是animate方法的简便写法，在幕后jQuery都是统一使用animate方法生成各种动画效果。
+
+animate方法接受三个参数。
+
+{% highlight javascript %}
+
+$('div').animate({
+    left: '+=50', // 增加50
+    opacity: 0.25,
+    fontSize: '12px'
+  },
+  300,
+  function() {
+    // ...
+  }
+);
+
+{% endhighlight %}
+
+上面代码表示，animate方法的第一个参数是一个对象，表示动画结束时相关CSS属性的值，第二个参数是动画持续的毫秒数，第三个参数是动画结束时的回调函数。需要注意的是，第一个参数对象的成员名称，必须与CSS属性名称一致，如果CSS属性名称带有连字号，则需要用“骆驼拼写法”改写。
+
+**（3）stop方法，delay方法**
+
+stop方法表示立即停止执行当前的动画。
+
+{% highlight javascript %}
+
+$("#stop").click(function() {
+  $(".block").stop();
+});
+
+{% endhighlight %}
+
+上面代码表示，点击按钮后，block元素的动画效果停止。
+
+delay方法接受一个时间参数，表示暂停多少毫秒后继续执行。
+
+{% highlight javascript %}
+
+$("#foo").slideUp(300).delay(800).fadeIn(400)
+
+{% endhighlight %}
+
+上面代码表示，slideUp动画之后，暂停800毫秒，然后继续执行fadeIn动画。
+
 ## 事件处理
 
 ### 事件绑定的简便方法
@@ -1037,3 +1138,4 @@ function handler(e) {
 - Elijah Manor, [Do You Know When You Are Looping in jQuery?](http://www.elijahmanor.com/2013/01/yo-dawg-i-herd-you-like-loops-so-jquery.html)
 - Craig Buckler, [How to Create One-Time Events in JavaScript](http://www.sitepoint.com/create-one-time-events-javascript/)
 - jQuery Fundamentals, [jQuery Basics](http://jqfundamentals.com/chapter/jquery-basics)
+- jQuery Fundamentals, [Animating Your Pages with jQuery](http://jqfundamentals.com/chapter/effects)
