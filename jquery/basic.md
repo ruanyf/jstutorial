@@ -151,11 +151,128 @@ $( '<li>', {
 
 除了上一节提到的is、get、eq方法，jQuery实例还有许多其他方法。
 
-### filter方法，not方法，has方法
+### 结果集的处理方法
 
-通过选择器选中结果以后，有多种方法可以对结果进行过滤。
+选择器选出一组符合条件的网页元素以后，jQuery提供了许多方法，可以对结果集进行进一步处理。
 
-filter方法用于过滤选中的结果，它可以接受多种类型的参数。
+**（1）first方法，last方法**
+
+first方法返回结果集的第一个成员，last方法返回结果集的最后一个成员。
+
+{% highlight javascript %}
+
+$("li").first()
+
+$("li").last()
+
+{% endhighlight %}
+
+**（2）next方法，prev方法**
+
+next方法返回紧邻的下一个同级元素，prev方法返回紧邻的上一个同级元素。
+
+{% highlight javascript %}
+
+$("li").first().next()
+$("li").last().prev()
+
+$("li").first().next('.item')
+$("li").last().prev('.item')
+
+{% endhighlight %}
+
+如果next方法和prev方法带有参数，表示选择符合该参数的同级元素。
+
+**（3）parent方法，parents方法，children方法**
+
+parent方法返回当前元素的父元素，parents方法返回当前元素的所有上级元素（直到html元素）。
+
+{% highlight javascript %}
+
+$("p").parent()
+$("p").parent(".selected")
+
+$("p").parents()
+$("p").parents("div")
+
+{% endhighlight %}
+
+children方法返回选中元素的所有子元素。
+
+{% highlight javascript %}
+
+$("div").children()
+$("div").children(".selected")
+
+{% endhighlight %}
+
+上面这三个方法都接受一个选择器作为参数。
+
+**（4）siblings方法，nextAll方法，prevAll方法，closet方法**
+
+siblings方法返回当前元素的所有同级元素。
+
+{% highlight javascript %}
+
+$('li').first().siblings()
+$('li').first().siblings('.item')
+
+{% endhighlight %}
+
+nextAll方法返回当前元素其后的所有同级元素，prevAll方法返回当前元素前面的所有同级元素。
+
+{% highlight javascript %}
+
+$('li').first().nextAll()
+$('li').last().prevAll()
+
+{% endhighlight %}
+
+closest方法返回当前元素，以及当前元素的所有上级元素之中，第一个符合条件的元素。
+
+{% highlight javascript %}
+
+$(li").closest('div')
+
+{% endhighlight %}
+
+**（5）find方法，add方法，addBack方法，end方法
+
+find方法返回当前元素的所有符合条件的下级元素。
+
+{% highlight javascript %}
+
+$("div").find(".selected")
+
+{% endhighlight %}
+
+add方法用于为结果集添加元素。
+
+{% highlight javascript %}
+
+$('li').add('p')
+
+{% endhighlight %}
+
+addBack方法将当前元素加回原始的结果集。
+
+{% highlight javascript %}
+
+$('li').parent().addBack()
+
+{% endhighlight %}
+
+end方法用于返回原始的结果集。
+
+{% highlight javascript %}
+
+$('li').first().end()
+
+{% endhighlight %}
+
+**（6）filter方法，not方法，has方法**
+
+filter方法用于过滤结果集，它可以接受多种类型的参数。
 
 {% highlight javascript %}
 
@@ -181,127 +298,106 @@ not方法的用法与filter方法完全一致，但是返回相反的结果，�
 
 $('li').not('.item')
 
-$("li").not(function(index) {
-    return index % 2 === 1;
-})
-
-$("li").not(document.getElementById("unique"))
-
-$("li").not($("#unique"))
-
 {% endhighlight %}
 
 has方法与filter方法作用相同，但是只过滤出子元素符合条件的元素。
 
 {% highlight javascript %}
 
-// 返回子元素包含ul元素的li元素
 $("li").has("ul")
 
 {% endhighlight %}
 
-### 选择相对位置的元素
+上面代码返回具有匹配ul选择器的子元素的li元素。
 
-如果已有选中的元素，有一些方法可以选出处在相对位置的元素。
+**（7）each方法，map方法**
 
-first方法返回结果集的第一个成员。
+each方法接受一个函数作为参数，依次处理集合中的每一个元素。
 
 {% highlight javascript %}
 
-$("li").first()
+$('li').each(function( index, element) {
+  $(element).prepend( '<em>' + index + ': </em>' );
+});
+
+// <li>Hello</li>
+// <li>World</li>
+// 变为
+// <li><em>0</em>: Hello</li>
+// <li><em>1</em>: World</li>
 
 {% endhighlight %}
 
-next方法返回紧邻的下一个同级元素，prev方法返回紧邻的上一个同级元素。
+从上面代码可以看出，作为each方法参数的函数，本身有两个参数，第一个是当前元素在集合中的位置，第二个当前元素对应的DOM对象。
+
+map方法的用法与each方法完全一样，区别在于each方法没有返回值，只是对每一个元素执行某种操作，而map方法返回一个新的jQuery对象。
 
 {% highlight javascript %}
 
-$("li").first().next()
-
-$("li").first().next('.item')
-
-$("li").prev()
+$("input").map(function (index, element){
+    return $(this).val();
+})
+.get()
+.join(", ")
 
 {% endhighlight %}
 
-parent方法返回选中元素的父元素，parents方法返回选中元素的所有上级元素（直到html元素）。
+上面代码表示，将所有input元素依次取出值，然后通过get方法得到一个包含这些值的数组，最后通过数组的join方法返回一个逗号分割的字符串。
+
+**（8）内置循环**
+
+jQuery默认对当前结果集进行循环处理。
 
 {% highlight javascript %}
 
-$("p").parent()
-$("p").parent(".selected")
-
-$("p").parents()
-$("p").parents("div")
+$(".class").addClass("highlight");
 
 {% endhighlight %}
 
-children方法返回选中元素的所有下级元素。
+上面代码会执行一个内部循环，对每一个选中的元素进行addClass操作。由于这个原因，对上面操作加上each方法是不必要的。
 
 {% highlight javascript %}
 
-$("div").children()
-$("div").children(".selected")
+$(".class").each(function(index,element){
+	 $(element).addClass("highlight");
+});
+
+// 或者
+
+$(".class").each(function(){
+	$(this).addClass("highlight");
+});
 
 {% endhighlight %}
 
-find方法返回符合条件的所有下级元素。
+上面代码的each方法，都是没必要使用的。
+
+由于内置循环的存在，从性能考虑，应该尽量减少不必要的操作步骤。
 
 {% highlight javascript %}
 
-$("div").find(".selected")
+$(".class").css("color", "green").css("font-size", "16px");
+
+// 应该写成
+
+$(".class").css({ 
+  "color": "green",
+  "font-size": "16px"
+});
 
 {% endhighlight %}
 
-closest方法返回选中元素的第一个符合条件的上级元素。
+**（9）链式操作**
+
+jQuery最方便的一点就是，它的大部分方法返回的都是jQuery对象，因此可以链式操作。也就是说，后一个方法可以紧跟着写在前一个方法后面。
 
 {% highlight javascript %}
 
-$(li").closest('div')
-
-{% endhighlight %}
-
-siblings方法返回选中元素的所有同级元素。
-
-{% highlight javascript %}
-
-// 返回第一个li元素的同级元素
-$('li').first().siblings()
-
-// 返回第一个li元素的同级、且具有class包含item的元素
-$('li').first().siblings('.item')
-
-{% endhighlight %}
-
-nextAll方法返回选中元素其后的所有同级元素，prevAll方法返回选中元素前面的所有同级元素。
-
-{% highlight javascript %}
-
-$('li').first().nextAll()
-
-{% endhighlight %}
-
-add方法用于为结果集添加元素。
-
-{% highlight javascript %}
-
-$('li').add('p')
-
-{% endhighlight %}
-
-addBack方法将当前的选中元素加回原始的结果集。
-
-{% highlight javascript %}
-
-$('li').parent().addBack()
-
-{% endhighlight %}
-
-end方法用于返回原始的结果集。
-
-{% highlight javascript %}
-
-$('li').first().end()
+$('li').click(function (){
+    $(this).addClass('clicked');
+})
+.find('span')
+.attr( 'title', 'Hover over me' );
 
 {% endhighlight %}
 
@@ -472,26 +568,6 @@ $('li').html(function (i, v){
 // <li>1: World</li>
 
 {% endhighlight %}
-
-### each方法
-
-each方法接受一个函数作为参数，依次处理集合中的每一个元素。
-
-{% highlight javascript %}
-
-$('li').each(function( index, elem ) {
-  $(elem).prepend( '<em>' + index + ': </em>' );
-});
-
-// <li>Hello</li>
-// <li>World</li>
-// 变为
-// <li><em>0</em>: Hello</li>
-// <li><em>1</em>: World</li>
-
-{% endhighlight %}
-
-从上面代码可以看出，作为each方法参数的函数，本身有两个参数，第一个是当前元素在集合中的位置，第二个当前元素对应的DOM对象。
 
 ### 改变元素位置的方法
 
@@ -699,62 +775,6 @@ replaceWith方法用参数中的元素，替换并返回当前元素，取消当
 {% highlight javascript %}
 
 $('p').replaceWith('<div></div>')
-
-{% endhighlight %}
-
-### 链式操作
-
-jQuery最方便的一点就是，它的所有赋值器返回的都是同样数量的jQuery实例对象，即输入的集合有几个jQuery实例，返回的集合还是那几个实例，因此可以链式操作。也就是说，后一个方法可以紧跟着写在前一个方法后面。
-
-{% highlight javascript %}
-
-$('li').click(function (){
-    $(this).addClass( 'clicked' );
-}).find('span')
-.attr( 'title', 'Hover over me' );
-
-{% endhighlight %}
-
-### 内置循环
-
-jQuery默认对选中的元素进行循环处理。
-
-{% highlight javascript %}
-
-$(".class").addClass("highlight");
-
-{% endhighlight %}
-
-上面代码会执行一个内部循环，对每一个选中的元素进行addClass操作。由于这个原因，对选中的元素使用each方法是多余的。
-
-{% highlight javascript %}
-
-$(".class").each(function(index,element){
-	 $(element).addClass("highlight");
-});
-
-// 或者
-
-$(".class").each(function(){
-	$(this).addClass("highlight");
-});
-
-{% endhighlight %}
-
-上面代码的each方法，都是没必要使用的。
-
-由于内置循环的存在，从性能考虑，应该尽量减少不必要的操作步骤。
-
-{% highlight javascript %}
-
-$(".class").css("color", "green").css("font-size", "16px");
-
-// 应该写成
-
-$(".class").css({ 
-  "color": "green",
-  "font-size": "16px"
-});
 
 {% endhighlight %}
 
