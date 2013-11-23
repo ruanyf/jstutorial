@@ -142,7 +142,9 @@ v instanceof Vehicle
 
 {% endhighlight %}
 
-上面代码表示字符串不是String对象的实例，而数组和对象则分别是Array对象和Object对象的实例。
+上面代码表示字符串不是String对象的实例（因为字符串不是对象），而数组和对象则分别是Array对象和Object对象的实例。
+
+instanceof运算符的实质是，比较实例对象的constructor属性是否等于某个构造函数。下一节讲解prototype对象和constructor属性时，对instanceof会有进一步的讨论。
 
 ## this关键字
 
