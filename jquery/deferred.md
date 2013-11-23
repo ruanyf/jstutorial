@@ -3,7 +3,7 @@ title: jQuery.Deferred对象
 category: jquery
 date: 2012-12-07
 layout: page
-modifiedOn: 2013-08-25
+modifiedOn: 2013-11-23
 ---
 
 ## 概述
@@ -279,6 +279,10 @@ myDeferred.done(function (response) {
 
 always()也是指定回调函数，不管是resolve或reject都要调用。
 
+### pipe方法
+
+pipe方法接受一个函数作为参数，表示在调用then方法、done方法、fail方法、always方法指定的回调函数之前，先运行pipe方法指定的回调函数。它通常用来对服务器返回的数据做初步处理。
+
 ## promise对象
 
 大多数情况下，我们不想让用户从外部更改deferred对象的状态。这时，你可以在deferred对象的基础上，返回一个针对它的promise对象。我们可以把后者理解成，promise是deferred的只读版，或者更通俗地理解成promise是一个对将要完成的任务的承诺。
@@ -319,15 +323,77 @@ $.when(
     $.ajax( "/main.php" ),
     $.ajax( "/modules.php" ),
     $.ajax( "/lists.php" )
-).then( successFunc, failureFunc );
+).then(successFunc, failureFunc);
 
 {% endhighlight %}
 
+上面代码表示，要等到三个ajax操作都结束以后，才执行then方法指定的回调函数。
+
+when方法里面要执行多少个操作，回调函数就有多少个参数，对应前面每一个操作的返回结果。
+
+{% highlight javascript %}
+
+$.when(
+    $.ajax( "/main.php" ),
+    $.ajax( "/modules.php" ),
+    $.ajax( "/lists.php" )
+).then(function (resp1, resp2, resp3){
+	console.log(resp1);
+	console.log(resp2);
+	console.log(resp3);
+});
+
+{% endhighlight %}
+
+上面代码的回调函数有三个参数，resp1、resp2和resp3，依次对应前面三个ajax操作的返回结果。
+
+when方法的另一个作用是，如果它的参数返回的不是一个Deferred或Promise对象，那么when方法的回调函数将
+立即运行。
+
+{% highlight javascript %}
+
+$.when({testing: 123}).done(function (x){
+  console.log(x.testing); // "123"
+});
+
+{% endhighlight %}
+
+上面代码中指定的回调函数，将在when方法后面立即运行。
+
+利用这个特点，我们可以写一个具有缓存效果的异步操作函数。也就是说，第一次调用这个函数的时候，将执行异步操作，后面再调用这个函数，将会返回缓存的结果。
+
+{% highlight javascript %}
+
+function maybeAsync( num ) {
+  var dfd = $.Deferred();
+
+  if ( num === 1 ) {
+    setTimeout(function() {
+      dfd.resolve( num );
+    }, 100);
+    return dfd.promise();
+  }
+
+  return num;
+}
+
+$.when(maybeAsync(1)).then(function (resp){
+  $('#target').append('<p>' + resp + '</p>');
+});
+
+$.when(maybeAsync(0)).then(function (resp){
+  $('#target').append( '<p>' + resp + '</p>');
+});
+
+{% endhighlight %}
+
+上面代码表示，如果maybeAsync函数的参数为1，则执行异步操作，否则立即返回缓存的结果。
+
 ## 实例
 
-### setTimeout()的改写
+### wait方法
 
-我们可以用deferred对象改写setTimeout()
+我们可以用deferred对象写一个wait方法，表示等待多少毫秒后再执行。
 
 {% highlight javascript %}
 
@@ -346,6 +412,26 @@ $.wait = function(time) {
 $.wait(5000).then(function() {
   alert("Hello from the future!");
 });
+
+{% endhighlight %}
+
+### 改写setTimeout方法
+
+在上面的wait方法的基础上，还可以改写setTimeout方法，让其返回一个deferred对象。
+
+{% highlight javascript %}
+
+function doSomethingLater(fn, time) {
+  var dfd = $.Deferred();
+  setTimeout(function() {
+    dfd.resolve(fn());
+  }, time || 0);
+  return dfd.promise();
+}
+
+var promise = doSomethingLater(function (){
+  console.log( '已经延迟执行' );
+}, 100);
 
 {% endhighlight %}
 
