@@ -108,19 +108,23 @@ mine instanceof Array // true
 
 {% endhighlight %}
 
-上面代码的mine是MyArray的实例对象，由于MyArray的prototype属性指向一个数组，使得mine可以调用数组方法（这些方法其实定义在数组的prototype对象上面）。比较复杂的是最后那行instanceof表达式，我们知道instanceof运算符用来比较一个实例对象的构造函数是否为某个函数，为什么这里mine的构造函数不是MyArray，而是Array呢？
-
-这是因为instanceof运算符本质上等同于下面的表达式。
+上面代码的mine是MyArray的实例对象，由于MyArray的prototype属性指向一个数组，使得mine可以调用数组方法（这些方法其实定义在数组的prototype对象上面）。至于最后那行instanceof表达式，我们知道instanceof运算符用来比较一个对象是否为某个构造函数的实例，最后一行表示mine为Array的实例。
 
 {% highlight javascript %}
 
-mine.constructor === MyArray.prototype.constructor // true
+mine instanceof Array
 
-MyArray.prototype.constructor === Array // true
+// 等同于
+
+Array in [
+	MyArray.prototype.constructor, // 即MyArray 
+	Array.prototype.constructor, // 即Array
+	Object.prototype.constructor // 即Object
+]
 
 {% endhighlight %}
 
-上面代码表示，instanceof运算符的实质是读取constructor属性，再进行比较。由于mine的costructor属性等于Array，导致运算结果为true。
+上面代码说明了instanceof运算符的实质，它生成一个数组，里面是实例对象的所有原型对象的constructor属性（关于该属性的介绍，请看下一节）。如果instanceof运算符右侧的构造函数，在这个数组之中，则返回true，否则返回false。
 
 ### constructor属性
 
