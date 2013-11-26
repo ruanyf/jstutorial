@@ -3,7 +3,7 @@ title: 语法概述
 layout: page
 category: grammar
 date: 2012-12-14
-modifiedOn: 2013-09-30
+modifiedOn: 2013-11-26
 ---
 
 ## 基本句法和变量
@@ -501,12 +501,17 @@ s
 
 {% endhighlight %}
 
-字符串后面如果有方括号，表示返回某个位置的字符（从0开始）。
+在JavaScript内部，字符串可以被视为字符数组，因此接受数组的方括号运算符，表示返回某个位置的字符（从0开始）。
 
 {% highlight javascript %}
 
-'abc'[1]
-// "b"
+var s = 'hello';
+
+s[0] // "h"
+s[1] // "e"
+s[4] // "o"
+
+'hello'[1] // "e"
 
 {% endhighlight %}
 
@@ -514,28 +519,45 @@ s
 
 {% highlight javascript %}
 
-'abc'[3]
-// undefined
-
-'abc'[-1]
-// undefined
-
-'abc'["x"]
-// undefined
+'abc'[3] // undefined
+'abc'[-1] // undefined
+'abc'["x"] // undefined
 
 {% endhighlight %}
 
-这是因为JavaScirpt内部将字符串视为字符组成的数组，方括号运算符遵循数组运算规则（详见《数组》一节）。
-
-字符串后面加上点运算符，再加上length，会返回字符串的长度。
+但是，字符串与数组的相似性仅此而已，JavaScript事实上是把字符串当作类似数组的对象，而且无法改变字符串之中某个字符的值。
 
 {% highlight javascript %}
 
-'abc'.length // 3
+var s = 'hello';
+
+delete s[0];
+s // "hello"
+
+s[1] = 'a';
+s // "hello"
+
+s[5] = '!';
+s // "hello"
 
 {% endhighlight %}
 
-这是因为这时字符串被自动转为对象（详见下一章的《原始类型值的包装对象》）。
+上面代码表示，字符串内部的单个字符无法改变和增删，这些操作会默默的失败。
+
+{% highlight javascript %}
+
+var s = 'hello';
+s.length // 5
+
+s.length = 3;
+s.length // 5
+
+s.length = 7;
+s.length // 5
+
+{% endhighlight %}
+
+上面代码表示字符串的length属性也是无法改变的。
 
 每个字符在JavaScript内部都是以16位的UTF-16格式储存，可以用"\uxxxx"的内码形式表示，xxxx代表该字符的Unicode编码。比如，\u00A9代表版权符号。
 
