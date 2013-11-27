@@ -259,22 +259,23 @@ var o = { p: undefined };
 
 var a = ["hello", "world"];
 
-0 in a
-// true
-
-1 in a
-// true
+0 in a // true
+1 in a // true
 
 {% endhighlight %}
 
-在JavaScript语言中，所有变量都是它的上层对象的属性（顶层对象除外），因此可以用in运算符判断一个变量是否存在。
+上面代码表示，数字键0和1都在数组之中。
+
+在JavaScript语言中，所有变量都是它的上层对象的属性（顶层对象除外），比如浏览器之中，所有全局变量都是window对象的属性，因此可以用in运算符判断一个变量是否存在。
 
 {% highlight javascript %}
 
-if (x) { return 1; }
+// 假设未声明变量x
+
+if (x){ return 1; }
 // 报错
 
-if (window.x) { return 1; }
+if (window.x){ return 1; }
 // 不正确的写法
 
 if (x in window) { return 1; }

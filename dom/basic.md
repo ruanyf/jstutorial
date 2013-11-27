@@ -37,7 +37,7 @@ Node对象有以下属性：
 - firstElementChild：第一个类型为HTML元素的子节点。
 - lastElementChild：最后一个类型为HTML元素的子节点。
 - nextElementSibling：下一个类型为HTML元素的同级节点。
-- previousElementChild：上一个类型为HTML元素的同级节点。
+- previousElementSibling：上一个类型为HTML元素的同级节点。
 
 **（1）nodeName属性和nodeType属性**
 
@@ -85,7 +85,7 @@ var ulElementChildNodes = document.querySelector('ul').childNodes;
 
 {% endhighlight %}
 
-childrean属性返回一个类似数组的对象，该对象的成员为HTML元素类型的子节点。如果没有HTML元素类型的子节点，则返回一个空数组。
+children属性返回一个类似数组的对象，该对象的成员为HTML元素类型的子节点。如果没有HTML元素类型的子节点，则返回一个空数组。
 
 childNodes属性和children属性返回的节点都是动态的。一旦原节点发生变化，立刻会反映在返回结果之中。
 
