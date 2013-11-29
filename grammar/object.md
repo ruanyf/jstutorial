@@ -287,7 +287,38 @@ if (x in window) { return 1; }
 
 ## 类似数组的对象
 
-在JavaScript中，有些对象被称为“类似数组的对象”（array-like object）。意思是，它们看上去很像数组，可以使用length属性，但是它们并不是数组，所以无法使用一些数组的方法。典型的例子是arguments对象，以及大多数DOM元素集。
+在JavaScript中，有些对象被称为“类似数组的对象”（array-like object）。意思是，它们看上去很像数组，可以使用length属性，但是它们并不是数组，所以无法使用一些数组的方法。
+
+下面就是一个类似数组的对象。
+
+{% highlight javascript %}
+
+var a = {
+	0:'a',
+	1:'b',
+	2:'c',
+	length:3
+};
+
+a[0] // 'a'
+a[2] // 'c'
+a.length // 3
+
+{% endhighlight %}
+
+上面代码的变量a是一个对象，但是看上去跟数组很像。所以只要有数字键和length属性，就是一个类似数组的对象。当然，变量a无法使用数组特有的一些方法，比如pop和push方法。而且，length属性不是动态值，不会随着成员的变化而变化。
+
+{% highlight javascript %}
+
+a[3] = 'd';
+
+a.length // 3
+
+{% endhighlight %}
+
+上面代码为对象a添加了一个数字键，但是length属性没变。这就说明了a不是数组。
+
+典型的类似数组的对象是函数的arguments对象，以及大多数DOM元素集，还有字符串。
 
 ## with语句
 

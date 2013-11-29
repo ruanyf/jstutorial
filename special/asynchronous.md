@@ -188,7 +188,7 @@ var chainPromise = first()
 
 console.log和console.error这两个最后的回调函数，用法上有一点重要的区别。console.log只显示回调函数fourth的返回值，而console.error可以显示second、third、fourth这三个回调函数之中任何一个函数发生的错误。也就是说，假定second操作失败，抛出一个错误，这时third和fourth都不会再运行了，Promises对象开始寻找接下来的第一个错误回调函数，在上面代码中是console.error。总之，Promises对象的错误有传递性。
 
-### 主要接口
+### Promises对象的实现
 
 Promises只是一个规范，JavaScript语言原生不提供支持。一般来说，总是选用现成的函数库。为了真正理解Promises对象，下面我们自己动手写一个Promises的实现。
 

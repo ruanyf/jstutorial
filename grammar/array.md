@@ -385,6 +385,7 @@ a.length // 2
 
 对Array构造函数的详细介绍，参见《标准库》一章的《Array对象》。
 
+
 ## EcmaScript 5 新加入的数组方法
 
 EcmaScript 5在数组原型（Array.prototype）上，新增了9个方法，其中有7个与函数式（functional）操作有关：map、forEach、filter、every、some、reduce、reduceRight。
@@ -402,13 +403,29 @@ map方法对所有元素依次调用一个函数，根据函数结果返回一�
 [1, 2, 3].map(function(elem, index, arr){
     return elem * elem;
 });
-// 返回[1, 4, 9]
+// [1, 4, 9]
+
+{% endhighlight %}
+
+map方法还可以接受第二个参数，用来绑定函数中的this关键字。
+
+{% highlight javascript %}
+
+var out = [];
+
+[1, 2, 3].map(function(elem, index, arr){
+    return this.push(elem * elem);
+}, out);
+
+out // [1, 4, 9]
 
 {% endhighlight %}
 
 ### forEach
 
-forEach方法对所有元素依次执行一个函数，它与map的区别在于不返回新数组。
+forEach方法对所有元素依次执行一个函数，它与map的区别在于不返回新数组，而是对原数组的成员执行某种操作，甚至可能改变原数组的值。
+
+forEach方法的参数是一个函数，该函数接受三个参数，分别是当前元素、当前元素的位置（从0开始）、整个数组。
 
 {% highlight javascript %}
 
@@ -451,7 +468,7 @@ filter方法接受一个返回布尔值的测试函数作为参数。该测试�
 
 上面代码返回原数组偶数位置的成员组成的新数组。
 
-### some
+### some方法，every方法
 
 some方法对所有元素调用一个测试函数，只要有一个元素通过该测试，就返回true，否则返回false。
 
@@ -464,8 +481,6 @@ some方法对所有元素调用一个测试函数，只要有一个元素通过�
 
 {% endhighlight %}
 
-### every
-
 every方法对所有元素调用一个测试函数，只有所有元素通过该测试，才返回true，否则返回false。
 
 {% highlight javascript %}
@@ -477,7 +492,7 @@ every方法对所有元素调用一个测试函数，只有所有元素通过该
 
 {% endhighlight %}
 
-### reduce 和 reduceRight
+### reduce方法，reduceRight方法
 
 reduce和reduceRight方法的作用，是依次处理数组的每个元素，最终累计为一个值。这两个方法的差别在于，reduce对数组元素的处理顺序是从左到右，reduceRight则是从右到左，其他地方完全一样。
 
@@ -543,6 +558,17 @@ index = array.indexOf(7);
 // -1
 
 {% endhighlight %}
+
+indexOf方法还可以接受第二个参数，表示搜索的开始位置。
+
+{% highlight javascript %}
+
+['a','b','c'].indexOf('a', 1)
+// -1
+
+{% endhighlight %}
+
+上面代码从位置1开始搜索字符a，结果为-1，表示没有搜索到。
 
 lastIndexOf方法返回给定元素在数组中最后一次出现的位置，如果没有出现则返回-1。
 
