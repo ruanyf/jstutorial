@@ -216,10 +216,10 @@ Infinity表示“无穷”。除了0除以0得到NaN，其他任意数除以0，
 
 {% highlight javascript %}
 
-1 / -0
+1 / -0 
 // -Infinity
 
-1 / +0
+1 / +0 
 // Infinity
 
 Infinity === -Infinity
@@ -263,6 +263,15 @@ Infinity减去或除以Infinity，得到NaN。
 
 Infinity - Infinity // NaN
 Infinity / Infinity // NaN
+
+{% endhighlight %}
+
+Infinity可以用于布尔运算。
+
+{% highlight javascript %}
+
+5 > -Infinity // true
+5 > Infinity // false
 
 {% endhighlight %}
 
