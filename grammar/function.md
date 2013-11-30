@@ -662,9 +662,45 @@ new function(){ /* code */ }() // 只有传递参数时，才需要最后那个�
 
 通常情况下，只对匿名函数使用这种“立即执行的函数表达式”。它的好处在于，因为调用的时候不必指定函数名，所以避免了污染全局变量。
 
+## eval语句
+
+eval语句的作用是，将字符串当作语句执行。
+
+{% highlight javascript %}
+
+eval('var a = 1;');
+
+a // 1
+
+{% endhighlight %}
+
+上面代码将字符串当作语句运行，生成了变量a。
+
+由于eval没有自己的作用域，都在当前作用域内执行，因此可能会修改其他外部变量的值，造成安全问题。
+
+{% highlight javascript %}
+
+var a = 1;
+eval('a = 2');
+
+a // 2
+
+{% endhighlight %}
+
+上面代码中，eval语句修改了外部变量a的值。因为这个问题，所以一般总是避免使用eval。
+
+一种替代方法是使用Function构造函数，生成一个匿名函数，然后立即调用该函数。
+
+{% highlight javascript %}
+
+Function('return 1+1')(); // 2
+
+{% endhighlight %}
+
 ## 参考链接
 
-- [Immediately-Invoked Function Expression (IIFE)](http://benalman.com/news/2010/11/immediately-invoked-function-expression/)
+- Ben Alman, [Immediately-Invoked Function Expression (IIFE)](http://benalman.com/news/2010/11/immediately-invoked-function-expression/)
 - Mark Daggett, [Functions Explained](http://markdaggett.com/blog/2013/02/15/functions-explained/)
-- Juriy "kangax" Zaytsev, [Named function expressions demystified](http://kangax.github.com/nfe/)
+- Juriy Zaytsev, [Named function expressions demystified](http://kangax.github.com/nfe/)
 - Marco Rogers polotek, [What is the arguments object?](http://docs.nodejitsu.com/articles/javascript-conventions/what-is-the-arguments-object)
+- Juriy Zaytsev, [Global eval. What are the options?](http://perfectionkills.com/global-eval-what-are-the-options/)

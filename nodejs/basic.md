@@ -164,42 +164,70 @@ Node.js自带一系列的核心模块，下面就是其中的一部分：
 
 Node.js模块采用CommonJS规范。只要符合这个规范，就可以自定义模块。
 
-下面是一个简单的例子。新建一个文件mymodule.js，写入下面的代码。
+下面是一个最简单的模块，假定新建一个foo.js文件，写入以下内容。
 
 {% highlight javascript %}
 
-// mymodule.js
+// foo.js
 
-function p(string) {
-  console.log(string);
-}
-
-exports.print = p;
+module.exports = function(x) {
+    console.log(x);
+};
 
 {% endhighlight %}
 
-上面的代码定义了一个p方法，然后将模块的对外接口print指向该方法。
-
-在其他文件中使用该模块的时候，要先用require命令加载模块文件，然后调用它的接口。
+上面代码就是一个模块，它通过module.exports变量，对外输出一个方法。这个模块的使用方法如下。
 
 {% highlight javascript %}
 
 // index.js
 
-var m = require('./mymodule');
+var m = require('./foo');
+
+m("这是自定义模块");
+
+{% endhighlight %}
+
+上面代码通过require命令加载模块文件foo.js（后缀名省略），将模块的对外接口输出到变量m，然后调用m。这时，在命令行下运行index.js，屏幕上就会输出“这是自定义模块”。
+
+{% highlight bash %}
+
+node index
+# 这是自定义模块
+
+{% endhighlight %}
+
+module变量是整个模块文件的顶层变量，它的exports属性就是模块向外输出的接口。如果直接输出一个函数（就像上面的foo.js），那么调用模块就是调用一个函数。但是，模块也可以输出一个对象。下面对foo.js进行改写。
+
+{% highlight javascript %}
+
+// foo.js
+
+var out = new Object();
+
+function p(string) {
+  console.log(string);
+}
+
+out.print = p;
+
+module.exports = out;
+
+{% endhighlight %}
+
+上面的代码表示模块输出out对象，该对象有一个print属性，指向一个函数。下面是这个模块的使用方法。
+
+{% highlight javascript %}
+
+// index.js
+
+var m = require('./foo');
 
 m.print("这是自定义模块");
 
 {% endhighlight %}
- 
-现在，就可以在命令行下运行index.js。
 
-{% highlight bash %}
-
-node index.js
-# 这是自定义模块
-
-{% endhighlight %}
+上面代码表示，由于具体的方法定义在模块的print属性上，所以必须显式调用print属性。
 
 ## fs模块
 
