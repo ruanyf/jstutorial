@@ -3,12 +3,28 @@ title: RequireJS和AMD规范
 layout: page
 category: tool
 date: 2013-05-05
-modifiedOn: 2013-06-10
+modifiedOn: 2013-11-30
 ---
 
 ## 概述
 
 RequireJS是一个工具库，主要用于客户端的模块管理，它遵守[AMD规范](https://github.com/amdjs/amdjs-api/wiki/AMD)（Asynchronous Module Definition）。
+
+RequireJS的基本思想是，通过一个函数，将所需要的模块放入，然后返回一个新的模块，后者就在函数内部完成操作。
+
+{% highlight javascript %}
+
+function(dep1, dep2, dep3) {
+
+	var module  = ...
+
+	return module;
+
+}
+
+{% endhighlight %}
+
+上面代码中的dep1、dep2和dep3，是新模块所依赖的模块，将它们放入一个函数，然后返回一个新模块。
 
 首先，使用下面的格式将其嵌入网页，然后就能在网页中进行模块化编程了。
 
@@ -93,7 +109,42 @@ define(['module1', 'module2'], function(m1, m2) {
 
 需要注意的是，回调函数必须返回一个对象，这个对象就是你定义的模块。
 
-下面是一个实际的例子。
+如果依赖的模块很多，参数与模块一一对应的写法非常麻烦。
+
+{% highlight javascript %}
+
+define(
+    [       'dep1', 'dep2', 'dep3', 'dep4', 'dep5', 'dep6', 'dep7', 'dep8'],
+    function(dep1,   dep2,   dep3,   dep4,   dep5,   dep6,   dep7,   dep8){
+        ...
+    }
+);
+
+{% endhighlight %}
+
+为了避免像上面代码那样繁琐的写法，RequireJS提供一种更简单的写法。
+
+{% highlight javascript %}
+
+define(
+    function (require) {
+        var dep1 = require('dep1'),
+            dep2 = require('dep2'),
+            dep3 = require('dep3'),
+            dep4 = require('dep4'),
+            dep5 = require('dep5'),
+            dep6 = require('dep6'),
+            dep7 = require('dep7'),
+            dep8 = require('dep8');
+
+            ...
+    }
+
+});
+
+{% endhighlight %}
+
+下面是一个define实际运用的例子。
 
 {% highlight javascript %}
 
