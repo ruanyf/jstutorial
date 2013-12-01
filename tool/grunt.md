@@ -3,7 +3,7 @@ title: 任务管理工具Grunt
 category: tool
 layout: page
 date: 2013-04-21
-modifiedOn: 2013-10-30
+modifiedOn: 2013-12-01
 ---
 
 在Javascript的开发过程中，经常会遇到一些重复性的任务，比如合并文件、压缩代码、检查语法错误、将Sass代码转成CSS代码等等。通常，我们需要使用不同的工具，来完成不同的任务，既重复劳动又非常耗时。Grunt就是为了解决这个问题而发明的工具，可以帮助我们自动管理和运行各种任务。
@@ -395,13 +395,27 @@ copy: {
 {% highlight javascript %}
 
 watch: {
-    files: ['**/*'],
-    tasks: ['jshint'],
-  },
+   scripts: {
+    files: '**/*.js',
+    tasks: 'jshint',
+	options: {
+      livereload: true,
+    },
+   },
+   css: {
+    files: '**/*.sass',
+    tasks: ['sass'],
+    options: {
+      livereload: true,
+    },
+   },
+},
 
 {% endhighlight %}
 
-设置好上面的代码，运行grunt watch以后，任何的代码变动，文件保存就会导致运行jshint。
+设置好上面的代码，打开另一个进程，运行grunt watch。此后，任何的js代码变动，文件保存后就会自动运行jshint任务；任何sass文件变动，文件保存后就会自动运行sass任务。
+
+需要注意的是，这两个任务的options参数之中，都设置了livereload，表示任务运行结束后，自动在浏览器中重载（reload），默认端口为localhost:35729，但是也可以用livereload: 1337的形式重设端口（localhost:1337）。
 
 ### 其他模块
 
@@ -500,6 +514,50 @@ sass: {
 {% endhighlight %}
 
 上面代码指定输出文件为build/css/master.css，输入文件为assets/sass/master.scss。
+
+**（6）grunt-markdown**
+
+该模块用于将markdown文档转为HTML文档。
+
+{% highlight javascript %}
+
+markdown: {
+    all: {
+      files: [
+        {
+          expand: true,
+          src: '*.md',
+          dest: 'docs/html/',
+          ext: '.html'
+        }
+      ],
+      options: {
+        template: 'templates/index.html',
+      }
+    }
+},
+
+{% endhighlight %}
+
+上面代码指定将md后缀名的文件，转为docs/html/目录下的html文件。template属性指定转换时采用的模板，模板样式如下。
+
+{% highlight html %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Document</title>
+</head>
+<body>
+ 
+    <div id="main" class="container">
+        <%=content%>
+    </div>
+ 
+</body>
+</html>
+
+{% endhighlight %}
 
 ## 参考链接
 
