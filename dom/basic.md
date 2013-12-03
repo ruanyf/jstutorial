@@ -373,7 +373,7 @@ textcontent属性的作用与innerText属性很相近，但是有以下几点区
 
 - innerText受CSS影响，textcontent没有这个问题。比如，如果CSS规则隐藏了某段文本，innerText就不会返回这段文本，textcontent则照样返回。
 
-- innerText返回的文本，会过滤掉空格、换行和回车键，innerText则不会。
+- innerText返回的文本，会过滤掉空格、换行和回车键，textcontent则不会。
 
 - innerText属性不是DOM标准的一部分，Firefox浏览器甚至没有部署这个属性，而textcontent是DOM标准的一部分。
 
@@ -473,7 +473,7 @@ delete document.getElementById("myDiv").dataset.id
 
 IE 9不支持dataset属性，可以用 getAttribute('data-foo')、removeAttribute('data-foo')、setAttribute('data-foo')、hasAttribute('data-foo') 代替。
 
-需要注意的是，dataset属性使用骆驼拼写法表示属性名，这意味着data-hello-world会用dataset.helloWorld表示。
+需要注意的是，dataset属性使用骆驼拼写法表示属性名，这意味着data-hello-world会用dataset.helloWorld表示。而如果此时存在一个data-helloWorld属性，该属性将无法读取，也就是说，data属性本身只能使用连词号，不能使用骆驼拼写法。
 
 ### CSS相关属性
 

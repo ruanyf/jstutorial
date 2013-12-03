@@ -3,7 +3,7 @@ title: Chrome开发者工具和console对象
 layout: page
 category: tool
 date: 2013-03-10
-modifiedOn: 2013-10-06
+modifiedOn: 2013-12-03
 ---
 
 ## 开发者工具
@@ -115,6 +115,60 @@ console.warn('Warning! Too few nodes (%d)', document.childNodes.length)
 
 {% endhighlight %}
 
+### console.table方法
+
+对于某些复合类型的数据，console.table方法可以将其转为表格显示。
+
+{% highlight javascript %}
+
+var languages = [
+    { name: "JavaScript", fileExtension: ".js" },
+    { name: "TypeScript", fileExtension: ".ts" },
+    { name: "CoffeeScript", fileExtension: ".coffee" }
+];
+
+console.table(languages);
+
+{% endhighlight %}
+
+上面代码的language，转为表格显示如下。
+
+<table class="responsive">
+<thead>
+<tr><td>(index)</td><td>name</td><td>fileExtension</td></tr>
+</thead>
+<tbody>
+<tr><td>0</td><td>"JavaScript"</td><td>".js"</td></tr>
+<tr><td>1</td><td>"TypeScript"</td><td>".ts"</td></tr>
+<tr><td>2</td><td>"CoffeeScript"</td><td>".coffee"</td></tr>
+</tbody>
+</table>
+
+复合型数据转为表格显示的条件是，必须拥有主键。对于上面的数组来说，主键就是数字键。对于对象来说，主键就是它的最外层键。
+
+{% highlight javascript %}
+
+var languages = {
+    csharp: { name: "C#", paradigm: "object-oriented" },
+    fsharp: { name: "F#", paradigm: "functional" }
+};
+
+console.table(languages);
+
+{% endhighlight %}
+
+上面代码的language，转为表格显示如下。
+
+<table class="responsive">
+<thead>
+<tr><td>(index)</td><td>name</td><td>paradigm</td></tr>
+</thead>
+<tbody>
+<tr><td>csharp</td><td>"C#"</td><td>"object-oriented"</td></tr>
+<tr><td>fsharp</td><td>"F#"</td><td>"functional"</td></tr>
+</tbody>
+</table>
+
 ### console.assert方法
 
 assert方法用来验证某个条件是否为真。如果为假，则显示一条事先指定的错误信息。它的格式如下：
@@ -158,14 +212,6 @@ time方法表示计时开始，timeEnd方法表示计时结束。它们的参数
 
 这两个方法用于将显示的信息分组。它只在输出大量信息时有用，分在一组的信息，可以用鼠标折叠/展开。
 
-{% highlight javascript %}
-
-console.group("Authenticating user '%s'", user);
-console.log("User authenticated");
-console.groupEnd();
-
-{% endhighlight %}
-
 ### 其他方法
 
 - **console.dir**：输出对象的信息，用于显示一个对象的所有属性。
@@ -173,6 +219,21 @@ console.groupEnd();
 - **console.clear**：对console窗口进行清屏，光标回到第一行。
 
 - **console.trace**：当前执行的代码在堆栈中的调用路径。
+
+## debugger语句
+
+debugger语句的作用是，当代码运行到这一行时，就会暂停运行，自动打开console界面。它通常用于代码除错，作用类似于设置断点。
+
+{% highlight javascript %}
+
+for(var i = 0;i<5;i++){
+	console.log(i);
+	if (i===2) debugger;
+}
+
+{% endhighlight %}
+
+上面代码打印出0，1，2以后，就会暂停，自动打开console窗口，等待进一步处理。
 
 ## 移动端开发
 
@@ -328,3 +389,4 @@ hz = 1 / period;
 - Chrome Developer Tools, [Using the Console](https://developers.google.com/chrome-developer-tools/docs/console)
 - Firebug Wiki, [Console API](https://getfirebug.com/wiki/index.php/Console_API)
 - Axel Rauschmayer, [The JavaScript console API](http://www.2ality.com/2013/10/console-api.html)
+- Marius Schulz, [Advanced JavaScript Debugging with console.table()](http://blog.mariusschulz.com/2013/11/13/advanced-javascript-debugging-with-consoletable)
