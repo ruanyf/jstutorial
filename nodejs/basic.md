@@ -553,7 +553,9 @@ curl -k https://localhost:8000
 
 ## events模块
 
-events模块是node.js对“发布/订阅”模式（publish/subscribe）的部署。也就说说，通过events模块的EventEmitter属性，建立一个消息中心；然后通过on方法，为各种事件指定回调函数，从而将程序转为事件驱动型，各个模块之间通过事件联系。
+### 基本用法
+
+events模块是node.js对“发布/订阅”模式（publish/subscribe）的部署。也就说，通过events模块的EventEmitter属性，建立一个消息中心；然后通过on方法，为各种事件指定回调函数，从而将程序转为事件驱动型，各个模块之间通过事件联系。
 
 {% highlight javascript %}
 

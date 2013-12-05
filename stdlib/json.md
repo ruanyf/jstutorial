@@ -63,7 +63,7 @@ JSON格式（JavaScript Object Notation的缩写）是一种用于数据交换�
 
 ## JSON对象
 
-ECMAScript 5新增了JSON对象，用来处理JSON格式数据。它有两个方法：JSON.stringify 和 JSON.encode 。
+ECMAScript 5新增了JSON对象，用来处理JSON格式数据。它有两个方法：JSON.stringify和JSON.parse。
 
 ### JSON.stringify()
 

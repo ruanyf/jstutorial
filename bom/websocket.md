@@ -3,7 +3,7 @@ title: WebSocket
 layout: page
 category: bom 
 date: 2012-12-23
-modifiedOn: 2013-10-19
+modifiedOn: 2013-12-05
 ---
 
 ## 概述
@@ -12,7 +12,7 @@ HTTP协议是一种无状态协议，服务器端本身不具有识别客户端�
 
 WebSocket的主要作用是，允许服务器端与客户端进行全双工（full-duplex）的通信。举例来说，HTTP协议有点像发电子邮件，发出后必须等待对方回信；WebSocket则是像打电话，服务器端和客户端可以同时向对方发送数据，它们之间存着一条持续打开的数据通道。
 
-WebSocket协议完全可以取代Ajax，向服务器端文本和二进制数据，而且还没有“同域限制”。
+WebSocket协议完全可以取代Ajax方法，用来向服务器端发送文本和二进制数据，而且还没有“同域限制”。
 
 WebSocket不使用HTTP协议，而是使用自己的协议。浏览器发出的WebSocket请求类似于下面的样子：
 
