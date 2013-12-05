@@ -3,7 +3,7 @@ title: Node.js 概述
 layout: page
 category: nodejs
 date: 2013-01-14
-modifiedOn: 2013-09-30
+modifiedOn: 2013-12-04
 ---
 
 ## 简介
@@ -551,6 +551,177 @@ curl -k https://localhost:8000
 
 {% endhighlight %}
 
+## events模块
+
+events模块是node.js对“发布/订阅”模式（publish/subscribe）的部署。也就说说，通过events模块的EventEmitter属性，建立一个消息中心；然后通过on方法，为各种事件指定回调函数，从而将程序转为事件驱动型，各个模块之间通过事件联系。
+
+{% highlight javascript %}
+
+var EventEmitter = require("events").EventEmitter;
+ 
+var ee = new EventEmitter();
+ee.on("someEvent", function () {
+        console.log("event has occured");
+});
+ 
+ee.emit("someEvent");
+
+{% endhighlight %}
+
+上面代码在加载events模块后，通过EventEmitter属性建立了一个EventEmitter对象实例，这个实例就是消息中心。然后，通过on方法为someEvent事件指定回调函数。最后，通过emit方法触发someEvent事件。
+
+emit方法还接受第二个参数，用于向回调函数提供参数。
+
+{% highlight javascript %}
+
+ee.on("someEvent", function (data){
+        console.log(data);
+});
+ 
+ee.emit("someEvent", data);
+
+{% endhighlight %}
+
+默认情况下，Node.js允许同一个事件最多可以触发10个回调函数。
+
+{% highlight javascript %}
+
+ee.on("someEvent", function () { console.log("event 1"); });
+ee.on("someEvent", function () { console.log("event 2"); });
+ee.on("someEvent", function () { console.log("event 3"); });
+
+{% endhighlight %}
+
+超过10个回调函数，会发出一个警告。这个门槛值可以通过setMaxListeners方法改变。 
+
+{% highlight javascript %}
+
+ee.setMaxListeners(20);
+
+{% endhighlight %}
+
+events模块的作用，还表示在其他模块可以继承这个模块，因此也就拥有了EventEmitter接口。
+
+{% highlight javascript %}
+
+var util = require("util");
+var EventEmitter = require("events").EventEmitter;
+
+function UserList (){}
+
+util.inherits(UserList, EventEmitter);
+
+UserList.prototype.save = function (obj) {
+	// save into database
+    this.emit("saved-user", obj);  
+};
+
+{% endhighlight %}
+
+上面代码新建了一个构造函数UserList，然后让其继承EventEmitter，因此UserList就拥有了EventEmitter的接口。最后，为UserList的实例定义一个save方法，表示将数据储存进数据库，在储存完毕后，使用EventEmitter接口的emit方法，触发一个saved-user事件。
+
+### 事件类型
+
+events模块默认支持一些事件。
+
+- newListener事件：添加新的回调函数时触发。
+- removeListener事件：移除回调时触发。
+
+{% highlight javascript %}
+
+ee.on("newListener", function (evtName){
+	console.log("New Listener: " + evtName);
+});
+
+ee.on("removeListener", function (evtName){
+	console.log("Removed Listener: " + evtName);
+});
+
+function foo (){}
+
+ee.on("save-user", foo);
+ee.removeListener("save-user", foo);
+
+// New Listener: removeListener
+// New Listener: save-user
+// Removed Listener: save-user
+
+{% endhighlight %}
+
+上面代码会触发两次newListener事件，以及一次removeListener事件。
+
+### EventEmitter对象的其他方法
+
+**（1）once方法**
+
+该方法类似于on方法，但是回调函数只触发一次。
+
+{% highlight javascript %}
+
+ee.once("firstConnection", function (){
+		console.log("本提示只出现一次"); 
+});
+
+{% endhighlight %}
+
+**（2）removeListener方法**
+
+该方法用于移除回调函数。它接受两个参数，第一个是事件名称，第二个是回调函数名称。这就是说，不能用于移除匿名函数。
+
+{% highlight javascript %}
+
+function onlyOnce () {
+	console.log("You'll never see this again");
+	ee.removeListener("firstConnection", onlyOnce);
+}
+
+ee.on("firstConnection", onlyOnce);
+
+{% endhighlight %}
+
+上面代码起到与once方法类似效果。
+
+**（3）removeAllListeners方法**
+
+该方法用于移除某个事件的所有回调函数。
+
+{% highlight javascript %}
+
+ee.removeAllListeners("firstConnection");
+
+{% endhighlight %}
+
+如果不带参数，则表示移除所有事件的所有回调函数。
+
+{% highlight javascript %}
+
+ee.removeAllListeners();
+
+{% endhighlight %}
+
+**（4）listener方法**
+
+该方法接受一个事件名称作为参数，返回该事件所有回调函数组成的数组。
+
+{% highlight javascript %}
+
+function onlyOnce () {
+	console.log(ee.listeners("firstConnection"));
+	ee.removeListener("firstConnection", onlyOnce);
+	console.log(ee.listeners("firstConnection"));
+}
+
+ee.on("firstConnection", onlyOnce)
+ee.emit("firstConnection");
+ee.emit("firstConnection");
+
+// [ [Function: onlyOnce] ]
+// []
+
+{% endhighlight %}
+
+上面代码显示两次回调函数组成的数组，第一次只有一个回调函数onlyOnce，第二次是一个空数组，因为removeListener方法取消了回调函数。
+
 ## process模块
 
 process模块用来与当前进程互动，可以通过全局变量process访问，不必使用require命令加载。
@@ -712,6 +883,32 @@ ls.on('exit', function (code) {
 {% endhighlight %}
 
 上面代码的exec方法会新建一个子进程，然后缓存它的运行结果，运行结束后调用回调函数。由于上面运行的是ls命令，它会自然结束，所以不会触发exit事件，因此上面代码最后监听exit事件的部分，其实是多余的。
+
+## cluster模块
+
+Node.js默认单进程运行，对于多核CPU的计算机来说，这样做效率很低，因为只有一个核在运行，其他核都在闲置。cluster模块就是为了解决这个问题而提出的。
+
+cluster模块允许设立一个主进程和若干个worker进程，由主进程监控和协调worker进程的运行。
+
+{% highlight javascript %}
+
+var cluster = require('cluster');
+var os = require('os');
+
+if (cluster.isMaster){
+      for (var i = 0, n = os.cpus().length; i < n; i += 1){
+        cluster.fork();
+	  }
+}else{
+	  http.createServer(function(req, res) {
+	    res.writeHead(200);
+	    res.end("hello world\n");
+	  }).listen(8000);
+}
+
+{% endhighlight %}
+
+上面代码先判断当前进程是否为主进程（cluster.isMaster），如果是的，就按照CPU的核数，新建若干个worker进程；如果不是，说明当前进程是worker进程，则在该进程启动一个服务器程序。
 
 ## 模块管理器npm
 
@@ -1007,3 +1204,4 @@ npm install
 
 - Cody Lindley, [Package Managers: An Introductory Guide For The Uninitiated Front-End Developer](http://tech.pro/tutorial/1190/package-managers-an-introductory-guide-for-the-uninitiated-front-end-developer)
 - Stack Overflow, [What is Node.js?](http://stackoverflow.com/questions/1884724/what-is-node-js)
+- Andrew Burgess, [Using Node's Event Module](http://dev.tutsplus.com/tutorials/using-nodes-event-module--net-35941)
