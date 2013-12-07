@@ -344,30 +344,6 @@ Object.keys(o)
 
 除了上面两个操作，其他操作都不受可枚举性的影响。
 
-需要注意的是，Object.keys只会列出对象自身的可枚举属性，不包括对象继承的可枚举属性；for...in循环则会列出所有的可枚举属性，包括对象继承的可枚举属性。
-
-{% highlight javascript %}
-
-for (key in []){
-	console.log(key);
-}
-// copy
-// first
-// fitIndex
-// scramble
-// add
-// remove
-// toJSON
-
-for (key in Object.prototype){
-	console.log(key);
-}
-// undefined
-
-{% endhighlight %}
-
-上面代码可以看到，空数组（[]）继承的可枚举属性有不少，而Object.prototype对象处于继承链的顶部，没有可枚举的属性。
-
 **（2）Object.getOwnPropertyNames方法**
 
 该方法返回直接定义在某个对象上面的全部属性的名称，而不管该属性是否可枚举。

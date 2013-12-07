@@ -10,7 +10,7 @@ modifiedOn: 2013-11-26
 
 ### 语句
 
-JavaScript程序的执行单位为行（line），也就是一行一行地执行。每行就叫做一个语句。
+JavaScript程序的执行单位为行（line），也就是一行一行地执行。一般情况下，每一行就是一个语句。
 
 语句（statement）是为了完成某种任务而进行的操作，比如下面就是一行赋值语句：
 
@@ -143,6 +143,17 @@ a = 1;
 {% endhighlight %}
 
 最后的结果是显示undefined，表示变量a已声明，但还未赋值。
+
+请注意，变量提升只对var命令声明的变量有效，如果一个变量不是用var命令声明的，就不会发生变量提升。
+
+{% highlight javascript %}
+
+console.log(a);
+b = 1;
+
+{% endhighlight %}
+
+上面的语句将会报错，提示“ReferenceError: b is not defined”，即变量b未声明，这是因为b不是用var命令声明的，JavaScript引擎不会将其提升，而只是视为对顶层对象b属性的赋值。
 
 ### 标识符
 

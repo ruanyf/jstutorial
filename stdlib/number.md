@@ -13,8 +13,8 @@ Number拥有一些特别的属性。
 - Number.POSITIVE_INFINITY 表示正的无限，指向关键字Infinity。
 - Number.NEGATIVE_INFINITY 表示负的无限，指向-Infinity。
 - Number.NaN 表示非数值，指向NaN。
-- Number.MAX_VALUE 表示最大的正数。最大的负数为-Number.MAX_VALUE。
-- Number.MIN_VALUE 表示最小的正数（即最接近0的正数）。最接近0的负数为-Number.MIN_VALUE。
+- Number.MAX_VALUE 表示最大的正数，相应的，最小的负数为-Number.MAX_VALUE。
+- Number.MIN_VALUE 表示最小的正数（即最接近0的正数，在64位浮点数体系中为5e-324），相应的，最接近0的负数为-Number.MIN_VALUE。
 
 {% highlight javascript %}
 
