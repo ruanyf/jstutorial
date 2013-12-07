@@ -3,12 +3,12 @@ title: 错误处理机制
 layout: page
 category: grammar
 date: 2013-08-30
-modifiedOn: 2013-08-30
+modifiedOn: 2013-12-07
 ---
 
 ## Error对象
 
-一旦运行时发生错误，JavaScript引擎就会自动产生并抛出一个Error对象，然后整个程序就中断在发生错误的地方。
+一旦代码解析或运行时发生错误，JavaScript引擎就会自动产生并抛出一个Error对象的实例，然后整个程序就中断在发生错误的地方。
 
 Error对象的实例有两个最基本的属性：
 
@@ -20,12 +20,14 @@ Error对象的实例有两个最基本的属性：
 {% highlight javascript %}
 
 if (error.name){
-	console.log(error.message);
+	console.log(error.name + ": " + error.message);
 }
 
 {% endhighlight %}
 
-JavaScript一共定义了6种错误，也就是说，存在Error的6个衍生对象。
+上面代码表示，显示错误的名称以及出错提示信息。 
+
+除了Error对象，JavaScript还定义了其他6种错误，也就是说，存在Error的6个衍生对象。
 
 - **EvalError**：执行代码时发生的错误。
 - **RangeError**：当一个数值型变量或参数超出有效范围时发生的错误。
@@ -34,7 +36,7 @@ JavaScript一共定义了6种错误，也就是说，存在Error的6个衍生对
 - **TypeError**：变量或参数的类型无效时发生的错误。
 - **URIError**：向encodeURI() 或者 decodeURI() 传入无效参数时发生的错误。
 
-这6种错误对象，连同原始的Error对象，都是构造函数。开发者可以使用它们，人为生成错误对象的实例。
+这6种衍生错误，连同原始的Error对象，都是构造函数。开发者可以使用它们，人为生成错误对象的实例。
 
 {% highlight javascript %}
 
@@ -44,7 +46,7 @@ new TypeError("出错了，变量类型无效！");
 
 {% endhighlight %}
 
-上面代码表示，这些构造函数接受一个参数，代表错误提示信息（message）。
+上面代码表示新建错误对象的实例，实质就是手动抛出错误。可以看到，错误对象的构造函数接受一个参数，代表错误提示信息（message）。
 
 除了JavaScript内建的7种错误对象，还可以定义自己的错误对象。
 
@@ -181,6 +183,8 @@ try {
 {% endhighlight %}
 
 上面代码的try代码块后面跟了4个catch代码块，前面三个各自捕捉一种类型的错误，最后一个用来捕捉所有其他类型的错误。
+
+try...catch结构是JavaScript语言受到Java语言影响的一个明显的例子。这种结构多多少少是对结构化编程原则一种破坏，处理不当就会变成类似goto语句的效果，应该谨慎使用。
 
 ## finally代码块
 
