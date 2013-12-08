@@ -239,6 +239,15 @@ delete o.x; // 删除成功
 
 ### 显式报错
 
+严格模式下，设置字符串的length属性，会报错。
+
+{% highlight javascript %}
+
+'use strict';
+'abc'.length = 5;
+
+{% endhighlight %}
+
 正常模式下，对一个对象的只读属性进行赋值，不会报错，只会默默地失败。严格模式下，将报错。
 
 {% highlight javascript %}

@@ -568,7 +568,7 @@ function f() {
 
 上面的代码中，c是定义在函数f内部的函数，就是闭包。
 
-闭包的特点在于，c可以读取函数f的内部变量。
+闭包的特点在于，在函数外部可以读取函数的内部变量。
 
 {% highlight javascript %}
 
@@ -589,7 +589,27 @@ o();
 
 {% endhighlight %}
 
-原来，在函数f外部，我们是没有办法读取内部变量v的。但是，借助闭包c，可以读到这个变量。
+上面代码表示，原先在函数f外部，我们是没有办法读取内部变量v的。但是，借助闭包c，可以读到这个变量。
+
+闭包不仅可以读取函数内部变量，还可以使得内部变量记住上一次调用时的运算结果。
+
+{% highlight javascript %}
+
+function createIncrementor(start) {
+        return function () { 
+            return start++;
+        }
+}
+
+var inc = createIncrementor(5);
+
+inc() // 5
+inc() // 6
+inc() // 7
+
+{% endhighlight %}
+
+上面代码表示，函数内部的start变量，每一次调用时都是在上一次调用时的值的基础上进行计算的。 
 
 ### 立即调用的函数表达式（IIFE）
 
