@@ -278,7 +278,7 @@ if (x){ return 1; }
 if (window.x){ return 1; }
 // 不正确的写法
 
-if (x in window) { return 1; }
+if ('x' in window) { return 1; }
 // 正确的写法
 
 {% endhighlight %}

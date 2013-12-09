@@ -250,7 +250,7 @@ attributes对象包含如下元信息：
 
 {% endhighlight %}
 
-### Object.defineProperty方法
+### Object.defineProperty方法，Object.defineProperties方法
 
 defineProperty方法允许通过定义attributes对象，来定义或修改一个属性，然后返回修改后的对象。它的格式如下
 
@@ -281,8 +281,6 @@ o.p
 
 {% endhighlight %}
 
-### Object.defineProperties方法
-
 如果一次性定义或修改多个属性，可以使用Object.defineProperties方法。
 
 {% highlight javascript %}
@@ -299,6 +297,8 @@ o.p2
 // "abc"
 
 {% endhighlight %}
+
+对于没有定义的属性特征，Object.defineProperty() 和Object.defineProperties() 的默认设置为enumerable、configurable、writeable都为true。
 
 ### Object.getOwnPropertyDescriptor方法
 

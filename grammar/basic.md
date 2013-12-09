@@ -460,6 +460,22 @@ v
 
 {% endhighlight %}
 
+反斜杠可以将一行字符串拆成多行。
+
+{% highlight javascript %}
+
+var longString = "Long \
+long \
+long \
+string";
+
+longString
+// "Long long long string"
+
+{% endhighlight %}
+
+上面代码表示，加了反斜杠以后，原来写在一行的字符串，可以分成多行，效果与写在同一行完全一样。但是，这种写法有两个注意点，首先，它是ECMAScript 5新添加的，浏览器IE 8不支持，其次，反斜杠的后面必须是换行符，而不能有其他字符（比如空格），否则会报错。
+
 如果字符串内部有单引号或双引号，必须在它的前面加上反斜杠，用来转义。
 
 {% highlight javascript %}
