@@ -2,7 +2,7 @@
 layout: homepage
 title: JavaScript 标准参考教程（alpha）
 date: 2012-11-18
-modifiedOn: 2013-11-18
+modifiedOn: 2013-12-12
 ---
 	
 <h2 id="introduction">导论</h2>
@@ -85,6 +85,7 @@ modifiedOn: 2013-11-18
 
 - [概述](jquery/basic.html)
 - [Utility方法](jquery/utility.html)
+- [插件开发](jquery/plugin.html)
 - [deferred对象](jquery/deferred.html)
 - [如何做到jQuery-free？](jquery/jquery-free.html)
 

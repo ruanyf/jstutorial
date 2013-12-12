@@ -415,7 +415,7 @@ watch: {
 
 设置好上面的代码，打开另一个进程，运行grunt watch。此后，任何的js代码变动，文件保存后就会自动运行jshint任务；任何sass文件变动，文件保存后就会自动运行sass任务。
 
-需要注意的是，这两个任务的options参数之中，都设置了livereload，表示任务运行结束后，自动在浏览器中重载（reload），默认端口为localhost:35729，但是也可以用livereload: 1337的形式重设端口（localhost:1337）。
+需要注意的是，这两个任务的options参数之中，都设置了livereload，表示任务运行结束后，自动在浏览器中重载（reload）。这需要在浏览器中安装[livereload插件](http://livereload.com/)。安装后，livereload的默认端口为localhost:35729，但是也可以用livereload: 1337的形式重设端口（localhost:1337）。
 
 ### 其他模块
 
@@ -505,6 +505,9 @@ htmlhint: {
 
 sass: {
     build: {
+		options: {
+            style: 'compressed'
+        },
         files: {
             'build/css/master.css': 'assets/sass/master.scss'
         }
