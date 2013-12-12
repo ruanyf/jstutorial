@@ -373,11 +373,11 @@ str.split(separator, [limit])
 {% highlight javascript %}
 
 /[^abc]/.test("hello world") // true
-/[^abc]/.test("apple") // false
+/[^abc]/.test("bbc") // false
 
 {% endhighlight %}
 
-上面代码表示，字符串hello world不包含字母abc中的任一个，所以返回true；字符串apple包含字母a，所以返回false。
+上面代码表示，字符串hello world不包含字母abc中的任一个，所以返回true；字符串bbc不包含abc以外的字母，所以返回false。
 
 某些情况下，对于连续序列的字符，字符类提供简写形式。比如，[abc]可以写成[a-b]，[0123456789]可以写成[0-9]，同理[A-Z]表示26个大写字母。这就是说，当连字号（\-）出现在方括号（[ ]）之中时，就代表字符类的简写形式，表示字符的范围。
 

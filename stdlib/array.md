@@ -225,13 +225,15 @@ a // ['b', 'c']
 
 {% endhighlight %}
 
-list方法可以遍历并清空一个数组。
+shift方法可以遍历并清空一个数组。
 
 {% highlight javascript %}
 
 var list = [1,2,3,4,5,6,7,8,9,10];
 
-while (var item = list.shift()) {
+var item;
+
+while (item = list.shift()) {
     console.log(item);
 }
 
