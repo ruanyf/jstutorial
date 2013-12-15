@@ -3,7 +3,7 @@ title: Object对象
 layout: page
 category: stdlib
 date: 2013-04-30
-modifiedOn: 2013-11-08
+modifiedOn: 2013-12-15
 ---
 
 ## 概述
@@ -104,17 +104,31 @@ toString方法的作用是返回一个对象的字符串形式。
 
 {% highlight javascript %}
 
-var o = new Object();
+var o1 = new Object();
+o1.toString() // "[object Object]"
 
-o.toString()
+var o2 = {a:1};
+o2.toString() // "[object Object]"
 
 {% endhighlight %}
 
-上面代码表示，对于一个对象调用toString方法，会返回[object Object]字符串。
+上面代码表示，对于一个对象调用toString方法，会返回字符串[object Object]。
 
-通过自定义toString方法，可以让对象在自动类型转换时，得到想要的字符串形式。
+字符串[object Object]本身没有太大的用处，但是通过自定义toString方法，可以让对象在自动类型转换时，得到想要的字符串形式。
 
-除了将对象转为字符串，toString方法还有一个重要的作用，就是判断一个值的类型。使用call方法，可以在任意值上调用Object.prototype.toString方法，会返回这个值的构造函数，从而帮助我们判断这个值的类型。具体的返回值如下：
+{% highlight javascript %}
+
+var o = new Object();
+
+o.toString = function (){ return 'hello' }; 
+
+o + ' ' + 'world' // "hello world"
+
+{% endhighlight %}
+
+上面代码表示，当对象用于字符串加法时，会自动调用toString方法。由于自定义了toString方法，所以返回字符串hello world。
+
+toString方法的主要用途是返回对象的字符串形式，除此之外，还有一个重要的作用，就是判断一个值的类型。使用call方法，可以在任意值上调用Object.prototype.toString方法，并返回这个值的构造函数，从而帮助我们判断这个值的类型。具体的返回值如下：
 
 - 对于数值，返回[object Number]。
 - 对于字符串，返回[object String]。
@@ -132,7 +146,7 @@ Object.prototype.toString.call(undefined) // "[object Undefined]"
 Object.prototype.toString.call(null) // "[object Null]"
 Object.prototype.toString.call(Math) // "[object Math]"
 Object.prototype.toString.call({}) // "[object Object]"
-Object.prototype.toString.call([]) // "[object Object]"
+Object.prototype.toString.call([]) // "[object Array]"
 
 {% endhighlight %}
 
