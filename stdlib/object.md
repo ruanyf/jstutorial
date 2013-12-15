@@ -55,7 +55,7 @@ o.print() // Object
 
 上面代码在Object.prototype定义了一个print方法，然后生成一个Object的实例o。o直接继承了Object.prototype的属性和方法，可以在自身调用它们，也就是说，o对象的print方法实质上是调用Object.prototype.print方法。。
 
-可以看到，尽管上面两种写法的print方法功能相同，但是用法是不一样的，因此必须区分“构造函数的方法”和“实例对象的方法”。
+可以看到，尽管上面两种写法的print方法功能相同，但是用法是不一样的，因此必须区分“构造函数的方法”和“实例对象的方法”。Object对象本身没有可供调用的方法，但提供了一些实例对象的方法。
 
 ## Object实例对象的方法
 
@@ -63,7 +63,7 @@ Object实例对象继承的两种最主要的方法是valueOf和toString。
 
 ### valueOf方法
 
-valueOf方法的作用是返回一个对象本身。
+valueOf方法的作用是返回一个对象的值，默认情况下返回对象本身。
 
 {% highlight javascript %}
 
