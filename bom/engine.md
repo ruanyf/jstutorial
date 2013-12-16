@@ -467,8 +467,6 @@ recursive();
 
 {% highlight javascript %}
 
-setInterval(function(){console.log(2);},1000);
-
 function interval(func, wait){
     var interv = function(w){
         return function(){
@@ -478,7 +476,9 @@ function interval(func, wait){
     }(wait);
 
     setTimeout(interv, wait);
-};
+}
+
+interval(function(){console.log(2);},1000);
 
 {% endhighlight %}
 
