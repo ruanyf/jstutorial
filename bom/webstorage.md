@@ -3,7 +3,7 @@ title: Web Storage：浏览器端数据储存机制
 layout: page
 category: bom
 date: 2012-12-28
-modifiedOn: 2013-03-15
+modifiedOn: 2013-12-16
 ---
 
 ## 概述
@@ -115,26 +115,23 @@ window.addEventListener("storage",onStorageChange);
 
 {% endhighlight %}
 
-回调函数接受一个event参数。这个event对象的key属性，保存发生变化的键名。
+回调函数接受一个event对象作为参数。这个event对象的key属性，保存发生变化的键名。
 
 {% highlight javascript %}
 
 function onStorageChange(e) {
-
-     if(e.key === "key") {
-          alert(e.key);    
-     }
-    
+     console.log(e.key);    
 }
 
 {% endhighlight %}
 
-event对象的属性还有：
+除了key属性，event对象的属性还有三个：
 
 - oldValue：更新前的值。如果该键为新增加，则这个属性为null。
 - newValue：更新后的值。如果该键被删除，则这个属性为null。
+- url：原始触发storage事件的那个网页的网址。
 
-值得注意的是，如果浏览器同时打开一个域名下面的多个页面，当其中的一个页面改变sessionStorage或localStorage的数据时，所有页面的storage事件都会被触发。因此，可以通过这种机制，实现多个窗口之间的通信。
+值得注意的是，如果浏览器同时打开一个域名下面的多个页面，当其中的一个页面改变sessionStorage或localStorage的数据时，其他所有页面的storage事件也会被触发。因此，可以通过这种机制，实现多个窗口之间的通信。
 
 ## 参考链接
 
