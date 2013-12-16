@@ -148,12 +148,12 @@ a = 1;
 
 {% highlight javascript %}
 
-console.log(a);
+console.log(b);
 b = 1;
 
 {% endhighlight %}
 
-上面的语句将会报错，提示“ReferenceError: b is not defined”，即变量b未声明，这是因为b不是用var命令声明的，JavaScript引擎不会将其提升，而只是视为对顶层对象b属性的赋值。
+上面的语句将会报错，提示“ReferenceError: b is not defined”，即变量b未声明，这是因为b不是用var命令声明的，JavaScript引擎不会将其提升，而只是视为对顶层对象的b属性的赋值。
 
 ### 标识符
 
@@ -203,7 +203,7 @@ var 临时变量 = 1;
 
 ### 注释
 
-源码中被JavaScript引擎忽略的部分就叫做注释，它的作用是对代码进行解释。Javascript提供两种注释：一种是单行注释，用//起头；另一种是多行注释，放在/* 和 */之间。
+源码中被JavaScript引擎忽略的部分就叫做注释，它的作用是对代码进行解释。Javascript提供两种注释：一种是单行注释，用//起头；另一种是多行注释，放在/\* 和 \*/之间。
 
 {% highlight javascript %}
 
