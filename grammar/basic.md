@@ -148,7 +148,7 @@ a = 1;
 
 {% highlight javascript %}
 
-console.log(a);
+console.log(b);
 b = 1;
 
 {% endhighlight %}
