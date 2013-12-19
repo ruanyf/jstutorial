@@ -3,7 +3,7 @@ title: 函数
 layout: page
 category: grammar
 date: 2012-12-15
-modifiedOn: 2013-10-01
+modifiedOn: 2013-12-19
 ---
 
 ## 概述
@@ -713,9 +713,11 @@ a // 2
 
 {% highlight javascript %}
 
-Function('return 1+1')(); // 2
+Function("var i =2;console.log(i)")() // 2
 
 {% endhighlight %}
+
+上面代码将字符串作为代码，在一个匿名函数作用域内运行，避免了污染全局作用域。
 
 ## 参考链接
 
