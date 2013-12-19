@@ -3,7 +3,7 @@ title: DOM 事件
 layout: page
 category: dom
 date: 2013-11-15
-modifiedOn: 2013-11-16
+modifiedOn: 2013-12-19
 ---
 
 ## 概述
@@ -177,9 +177,11 @@ DOM支持多种事件。
 
 ### 用户界面事件
 
-（1）Load事件
+**（1）load事件，error事件**
 
-Load事件在资源加载完成时触发。能够触发它的元素包括图像（image）、样式表（style sheet）、脚本（script）、视频（ideo）、音频（audio）、Ajax请求（XMLHttpRequest）、Ajax文件上传（XMLHttpRequestUpload）、文档（document）和窗口（window）。
+浏览网页就是一个加载各种资源的过程，比如图像（image）、样式表（style sheet）、脚本（script）、视频（video）、音频（audio）、Ajax请求（XMLHttpRequest）等等。
+
+如果加载成功就触发load事件，如果加载失败就触发error事件。这两个事件发生的对象，除了上面列出的各种资源，还包括文档（document）、窗口（window）、Ajax文件上传（XMLHttpRequestUpload）。
 
 {% highlight javascript %}
 
@@ -187,17 +189,47 @@ image.addEventListener('load', function(event) {
   image.classList.add('finished');
 });
 
+image.addEventListener('error', function(event) {
+  image.style.display = 'none';
+});
+
 {% endhighlight %}
 
-上面代码在图片元素加载完成后，为它的calss属性添加一个值“finished”。
+上面代码在图片元素加载完成后，为图片元素的class属性添加一个值“finished”。如果加载失败，就把图片元素的样式设置为不显示。
 
-（2）unload事件
+有时候，图片加载会在脚本运行之前就完成，尤其是当脚本放置在网页底部的时候，因此有可能使得load和error事件的回调函数根本不会被执行。所以，比较可靠的方式，是用complete属性先判断一下是否加载完成。
+
+{% highlight javascript %}
+
+function loaded() {
+  // code after image loaded
+}
+
+if (image.complete) {
+  loaded();
+} else {
+  image.addEventListener('load', loaded);
+}
+
+{% endhighlight %}
+
+由于DOM没有机制判断是否发生加载错误，所以上面的方法不适用error事件的回调函数，它最好放在img元素的HTML属性中。
+
+{% highlight javascript %}
+
+<img src="/wrong/url" onerror="this.style.display='none';" />
+
+{% endhighlight %}
+
+error事件有一个特殊的性质，就是不会冒泡。这样的设计是正确的，防止引发父元素的error事件回调函数。
+
+**（2）unload事件**
 
 该事件在卸载某个资源时触发。window、body、frameset等元素都可能触发该事件。
 
 如果在window对象上定义了该事件，网页就不会被浏览器缓存。
 
-（3）beforeunload事件
+**（3）beforeunload事件**
 
 该事件在用户关闭网页时触发。它可以用来防止用户不当心关闭网页。
 
@@ -217,43 +249,19 @@ window.onbeforeunload = function() {
 
 如果定义了该事件的回调函数，网页不会被浏览器缓存。
 
-（4）resize事件
+**（4）resize事件**
 
 改变浏览器窗口大小时会触发该事件。能够触发它的元素包括window、body、frameset。
 
-（5）error事件
-
-资源加载出错时触发该事件。它主要发生在需要加载资源的元素（比如图片、视频、脚本等）、以及Ajax请求（XMLHttpRequest）、Ajax文件上传（ XMLHttpRequestUpload）等对象。
-
-{% highlight javascript %}
-
-image.addEventListener('error', function(event) {
-  image.style.display = 'none';
-});
-
-{% endhighlight %}
-
-上面代码表示，当image对象加载出错，就设置它的样式为不显示。
-
-有时候，图片加载会在脚本运行之前就完成，尤其是当脚本放置在网页底部的时候，因此有可能上面这行代码根本不会被执行。所以，比较可靠的方式，是将error事件的回调函数放在img元素的HTML属性中。
-
-{% highlight javascript %}
-
-<img src="/wrong/url" onerror="this.style.display='none';" />
-
-{% endhighlight %}
-
-error事件有一个特殊的性质，就是不会冒泡。这样设计是正确的，防止引发父元素的error事件回调函数。
-
-（6）abort事件
+**（5）abort事件**
 
 资源在加载成功前停止加载时触发该事件，主要发生在element、XMLHttpRequest、XMLHttpRequestUpload对象。
 
-（7）scroll事件
+**（6）scroll事件**
 
 用户滚动窗口或某个元素时触发该事件，主要发生在element、document、window对象。
 
-（8）contextmenu事件
+**（7）contextmenu事件**
 
 用户鼠标右击某个元素时触发，主要发生在element对象。
 
