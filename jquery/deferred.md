@@ -3,7 +3,7 @@ title: jQuery.Deferred对象
 category: jquery
 date: 2012-12-07
 layout: page
-modifiedOn: 2013-11-23
+modifiedOn: 2013-12-19
 ---
 
 ## 概述
@@ -274,6 +274,10 @@ myDeferred.done(function (response) {
     });
 
 {% endhighlight %}
+
+上面代码中，不管是通信出错，或者服务器返回一个错误，都会调用reject方法，返回一个新的deferred对象，状态为rejected，因此就会触发fail方法指定的回调函数。
+
+关于error的处理，jQuery的deferred对象与其他实现Promises规范的函数库有一个重大不同。就是说，如果deferred对象执行过程中，抛出一个非Promises对象的错误，那么将不会被后继的then方法指定的rejected回调函数捕获，而会一直传播到应用程序层面，其他函数库则会捕获这个错误。为了代码行为与Promises规范保持一致，建议出错时，总是使用reject方法返回错误。
 
 ### always()
 

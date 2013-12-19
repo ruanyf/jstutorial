@@ -172,7 +172,9 @@ promiseStep1()
 
 可以看到传统写法使得代码混成一团，变得横向发展而不是向下发展。Promises规范就是为了解决这个问题而提出的，目标是使用正常的程序流程（同步），来处理异步操作。它先返回一个Promise对象，后面的操作以同步的方式，寄存在这个对象上面。等到异步操作有了结果，再执行前期寄放在它上面的其他操作。
 
-then方法可以接受两个回调函数，第一个是操作成功（resolved）时的回调函数，第二个是操作失败（rejected）时的回调函数。
+promise对象只有三种状态：未完成（pending）、已完成（fulfilled）、失败（rejected）。这三种的状态的变化途径只有两个，且只能发生一次：从“未完成”到“已完成”，或者从“未完成”到“失败”。一旦当前状态变为“已完成”或“失败”，就意味着不会再发生状态变化了。
+
+promise对象的then方法用来添加回调函数。它可以接受两个回调函数，第一个是操作成功（fulfilled）时的回调函数，第二个是操作失败（rejected）时的回调函数（可以不提供）。一旦状态改变，就调用相应的回调函数。
 
 {% highlight javascript %}
 
@@ -393,3 +395,4 @@ Promises的优点在于，让回调函数变成了变成了规范的链式写法
 - Matt Podwysocki, Amanda Silver, [Asynchronous Programming in JavaScript with “Promises”](http://blogs.msdn.com/b/ie/archive/2011/09/11/asynchronous-programming-in-javascript-with-promises.aspx)
 - Marc Harter, [Promise A+ Implementation](https://gist.github.com//wavded/5692344)
 - Bryan Klimt, [What’s so great about JavaScript Promises?](http://blog.parse.com/2013/01/29/whats-so-great-about-javascript-promises/)
+- Jake Archibald, [JavaScript Promises There and back again](http://www.html5rocks.com/en/tutorials/es6/promises/)
