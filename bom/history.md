@@ -3,7 +3,7 @@ title: history对象
 layout: page
 category: bom 
 date: 2012-12-22
-modifiedOn: 2013-06-24
+modifiedOn: 2013-12-20
 ---
 
 ## 概述
@@ -93,7 +93,7 @@ history.go(2);  // url显示为http://example.com/example.html?page=3
 
 ## popstate事件
 
-每当浏览历史（即history对象）出现变化时，就会触发popstate事件。这就是说，不管是点击倒退按钮，还是使用pushState和replaceState方法，这个事件都会触发。
+每当同一个文档的浏览历史（即history对象）出现变化时，就会触发popstate事件。需要注意的是，仅仅调用history.pushState()或history.replaceState() ，并不会触发该事件，只有用户点击倒退按钮或用JavaScript调用 history.back()时才会触发。另外，该事件只针对同一个文档，如果浏览历史的切换，导致加载不同的文档，该事件也不会触发。
 
 可以为popstate事件指定回调函数。这个回调函数的参数是一个event事件对象，它的state属性指向pushState和replaceState方法为当前url所提供的state对象（也就是这两个方法的第一个参数）。
 
@@ -114,6 +114,8 @@ window.onpopstate = function(event) {
 var currentState = history.state;
 
 {% endhighlight %}
+
+当页面第一次加载的时候，Chrome和Safari浏览器会触发该事件，而Firefox浏览器不会。 
 
 ## 参考链接
 
