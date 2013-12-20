@@ -1,16 +1,16 @@
 ---
-title: Geolocation
+title: 移动设备API
 layout: page
 category: bom
 date: 2012-12-29
-modifiedOn: 2013-09-19
+modifiedOn: 2013-12-20
 ---
 
-## 概述
+为了更好地为移动设备服务，HTML 5推出了一系列针对移动设备的API。
+
+## Geolocation API
 
 Geolocation接口用于获取用户的地理位置。它使用的方法基于GPS或者其他机制（比如IP地址、Wifi热点等）。
-
-使用它需要得到用户的授权，浏览器会跳出一个对话框，询问用户是否许可当前页面获取他的地理位置。如果用户拒绝授权，会抛出一个错误。
 
 下面的方法，可以检查浏览器是否支持这个接口。
 
@@ -24,9 +24,9 @@ if(navigator.geolocation) {
 
 {% endhighlight %}
 
-## getCurrentPosition方法
+### getCurrentPosition方法
 
-getCurrentPosition方法，用来获取用户的地理位置。由于这需要用户的授权，所以必须考虑两种情况的回调函数：一种是同意授权，另一种是拒绝授权。
+getCurrentPosition方法，用来获取用户的地理位置。使用它需要得到用户的授权，浏览器会跳出一个对话框，询问用户是否许可当前页面获取他的地理位置。必须考虑两种情况的回调函数：一种是同意授权，另一种是拒绝授权。如果用户拒绝授权，会抛出一个错误。
 
 {% highlight javascript %}
 
@@ -101,7 +101,7 @@ navigator.geolocation.getCurrentPosition(geoSuccess, geoError, option);
 
 - **maximumAge**：客户端可以使用缓存数据的最大毫秒数。如果设为0，客户端不读取缓存；如果设为infinity，客户端只读取缓存。
 
-## watchPosition方法和clearWatch方法
+### watchPosition方法和clearWatch方法
 
 watchPosition方法可以用来监听用户位置的持续改变，使用方法与getCurrentPosition方法一样。
 
@@ -121,7 +121,55 @@ navigator.geolocation.clearWatch(watchID);
 
 {% endhighlight %}
 
+## Vibration API
+
+Vibration接口用于在浏览器中发出命令，使得设备振动。由于该操作很耗电，在低电量时最好取消该操作。
+
+使用下面的代码检查该接口是否可用。目前，只有Chrome和Firefox的最新版本支持它。
+
+{% highlight javascript %}
+
+navigator.vibrate = navigator.vibrate 
+					|| navigator.webkitVibrate 
+					|| navigator.mozVibrate 
+					|| navigator.msVibrate;
+ 
+if (navigator.vibrate) {
+    // 支持
+}
+
+{% endhighlight %}
+
+vibrate方法可以使得设备振动，它的参数就是振动持续的毫秒数。
+
+{% highlight javascript %}
+
+navigator.vibrate(1000);
+
+{% endhighlight %}
+
+上面的代码使得设备振动1秒钟。
+
+vibrate方法还可以接受一个数组作为参数，表示振动的模式。偶数位置的数组成员表示振动的毫秒数，奇数位置的数组成员表示等待的毫秒数。
+
+{% highlight javascript %}
+
+navigator.vibrate([500, 300, 100]);
+
+{% endhighlight %}
+
+上面代码表示，设备先振动500毫秒，然后等待300毫秒，再接着振动500毫秒。
+
+vibrate是一个非阻塞式的操作，即手机振动的同时，JavaScript代码继续向下运行。要停止振动，只有将0毫秒传入vibrate方法。
+
+{% highlight javascript %}
+
+navigator.vibrate(0);
+
+{% endhighlight %}
+
 ## 参考链接
 
 - Ryan Stewart, [Using the Geolocation API](http://www.adobe.com/devnet/html5/articles/using-geolocation-api.html)
 - Rathnakanya K. Srinivasan, [HTML5 Geolocation](http://www.sitepoint.com/html5-geolocation/)
+- Craig Buckler, [How to Use the HTML5 Vibration API](http://www.sitepoint.com/use-html5-vibration-api/)
