@@ -353,7 +353,19 @@ str.split(separator, [limit])
 
 ## 匹配规则
 
-如果不使用任何匹配规则和特殊字符，正则对象就是单纯的字面量匹配，比如/dog/就表示匹配d、o、g三个字母连在一起。
+正则表达式对字符串的匹配有很复杂的规则。
+
+### 字面量匹配
+
+如果不使用任何匹配规则和特殊字符，正则表达式就是单纯的字面量匹配。
+
+{% highlight javascript %}
+
+/dog/.test("old dog") // true
+
+{% endhighlight %}
+
+上面代码表示，/dog/匹配old dog，因为它就表示匹配d、o、g三个字母连在一起。
 
 ### 字符类
 
@@ -390,39 +402,77 @@ str.split(separator, [limit])
 
 上面代码中，当连字号（dash）不出现在方括号之中，就不具备简写的作用，只代表字面的含义，所以不匹配字符b。只有当连字号用在方括号之中，才表示连续的字符序列。
 
-### 元字符和转义符
+### 重复类
+
+{} 表示模式的重复次数。{n}表示重复n次，{n,}表示至少重复n次，{n,m}表示重复不少于n次，不多于m次。
+
+{% highlight javascript %}
+
+/lo{2}k/.test("look") // true
+/lo{2,5}k/.test("looook") // true
+
+{% endhighlight %}
+
+### 元字符
 
 元字符表示在正则表达式中具有特殊涵义的字符，主要有以下这些：
 
-- ^ 不在[ ]内时，表示一行的起首；在[]内时，表示其中的字符一个都不出现。
+（1）位置字符
+
+- ^ 表示一行的起首。但是如果用在方括号内的第一个字符[&#94;]时，则表示方括号中的其他字符一个都不出现。
 - $ 表示一行的行尾。
-- . 表示除回车（\r）、换行(\n) 、行分隔符（\u2028）和段分隔符（\u2029）以外的所有字符。
+
+{% highlight javascript %}
+
+/^test/.test("test123") // true
+/test$/.test("new test") // true
+/^test$/.test("test") // true
+/^test$/.test("test test") // false
+
+{% endhighlight %}
+
+（2）通配符
+
+- . 匹配除回车（\r）、换行(\n) 、行分隔符（\u2028）和段分隔符（\u2029）以外的所有字符。
+
+（3）量词符
+
 - ? 表示某个模式出现1次或0次，等同于{0, 1}。
 - \* 表示某个模式出现0次或多次，等同于 {0,}。
 - \+ 表示某个模式出现1次或多次，等同于 {1,}。
+
+{% highlight javascript %}
+
+/t?est/.test("test") // true
+/t?est/.test("est") // true
+
+/t+est/.test("test") // true
+/t+est/.test("ttest") // true
+/t+est/.test("tttest") // true
+/t+est/.test("est") // false
+
+/t*est/.test("test") // true
+/t*est/.test("ttest") // true
+/t*est/.test("tttest") // true
+/t*est/.test("est") // true
+
+{% endhighlight %}
+
+以上三个量词符，默认情况下的匹配规则都是贪婪模式，即最大可能匹配，直到下一个字符不满足匹配规则为止。比如，对于字符串“aaa”来说，/a+/将会匹配“aaa”，而不会匹配“aa”。为了将贪婪模式改为非贪婪模式，可以在量词符后面加一个问号，/a+?/将会只匹配“a”。
+
+（4）选择符
 
 - x|y 表示匹配x或y。
 
 {% highlight javascript %}
 
-/11|22/.test("911")
-// true
+/11|22/.test("911") // true
 
 {% endhighlight %}
 
-- {} 表示模式的重复次数。{n}表示重复n次，{n,}表示至少重复n次，{n,m}表示重复不少于n次，不多于m次。
+### 转义符
 
-{% highlight javascript %}
-
-/lo{2}k/.test("look")
-// true
-
-/lo{2,5}k/.test("looook")
-// true
-
-{% endhighlight %}
-
-如果要匹配元字符本身，元字符前面要加上斜杠。比如要匹配加号，就要写成\\+。
+如果要匹配元字符本身，则在元字符前面要加上反斜杠。比如要匹配加号，就要写成\\+。
 
 {% highlight javascript %}
 
@@ -438,11 +488,8 @@ str.split(separator, [limit])
 
 {% highlight javascript %}
 
-(new RegExp("1\+1")).test("1+1")
-// false
-
-(new RegExp("1\\+1")).test("1+1")
-// true
+(new RegExp("1\+1")).test("1+1") // false
+(new RegExp("1\\+1")).test("1+1") // true
 
 {% endhighlight %}
 
@@ -520,48 +567,31 @@ var regex = /test/ig;
 
 预定义模式指的是某些常见模式的简写方式。
 
+- \d 匹配0-9之间的任一数字，相当于[0-9]。
+- \D 匹配所有0-9以外的字符，相当于[^0-9]。
 - \w 匹配任意的字母、数字和下划线，相当于[A-Za-z0-9_]。
 - \W 除所有字幕、数字和下划线以外的字符，相当于/[&#94;A-Za-z0-9_]/ 。
 - \s 匹配制表符、空格符、断行符、以及其他对应为空白的unicode字符。
 - \S 匹配所有除了制表符、空格符、断行符、以及其他对应为空白的unicode字符以外的字符。
-
-{% highlight javascript %}
-
-/\s\w*/.exec("hello world")
-// [" world"]
-
-{% endhighlight %}
-
-- \d 匹配0-9之间的任一数字。
-- \D 匹配所有0-9以外的字符。
 - \b 匹配词的边界。
+- \B 匹配非词边界，即在词的内部。
 
 {% highlight javascript %}
 
-/\bworld/.test("hello-world")
-// true
+/\s\w*/.exec("hello world") // [" world"]
 
-/\bworld/.test("hello world")
-// true
+/\bworld/.test("hello world") // true
+/\bworld/.test("hello-world") // true
+/\bworld/.test("helloworld") // false
 
-/\bworld/.test("helloworld")
-// false
-
-{% endhighlight %}
-
-- \B 匹配非词边界。
-
-{% highlight javascript %}
-
-/\Bworld/.test("hello-world")
-// false
-
-/\Bworld/.test("helloworld")
-// true
+/\Bworld/.test("hello-world") // false
+/\Bworld/.test("helloworld") // true
 
 {% endhighlight %}
 
 ### 特殊字符
+
+正则对象对一些特殊字符，提供了字面的表达形式。
 
 - \cX 表示 Ctrl-X
 - [\b] 匹配退格键(U+0008)，不要与\b混淆。
@@ -576,27 +606,22 @@ var regex = /test/ig;
 
 ### 组匹配
 
+（1）概述
+
 正则表达式的括号表示分组匹配，括号中的模式可以用来捕获分组的内容。
 
 {% highlight javascript %}
 
-/(.)b(.)/.test("abc")
-
-{% endhighlight %}
-
-正则表达式/(.)b(.)/一共使用两个括号，第一个括号捕获a，第二个括号捕获c。
-
-{% highlight javascript %}
+/(.)b(.)/.test("abc") // true
 
 var m = "abc".match(/(.)b(.)/);
 
-m[1]
-// "a"
-
-m[2]
-// "c"
+m[1] // "a"
+m[2] // "c"
 
 {% endhighlight %}
+
+上面代码中，正则表达式/(.)b(.)/一共使用两个括号，第一个括号捕获a，第二个括号捕获c。
 
 在正则表达式内部，可以用\n引用括号匹配的内容，n是从1开始的自然数，表示对应顺序的括号。
 
@@ -607,7 +632,7 @@ m[2]
 
 {% endhighlight %}
 
-上面的代码中，\1表示前一个括号匹配的内容“a”，\2表示第二个括号匹配的内容“b”。
+上面的代码中，\1表示前一个括号匹配的内容（即“a”），\2表示第二个括号匹配的内容（即“b”）。
 
 组匹配非常有用，下面是一个匹配网页标签的例子。
 
@@ -619,7 +644,9 @@ tagName.exec("<b>bold</b>")[1]
 
 {% endhighlight %}
 
-- (?:x)称为非捕获组（Non-capturing group），表示不返回该组匹配的内容，即匹配的结果中不计入这个括号。
+（2）非捕获组
+
+(?:x)称为非捕获组（Non-capturing group），表示不返回该组匹配的内容，即匹配的结果中不计入这个括号。
 
 {% highlight javascript %}
 
@@ -650,33 +677,31 @@ url.exec("http://google.com/");
 
 上面的代码中，前一个正则表达式是正常匹配，第一个括号返回网络协议；后一个正则表达式是非捕获匹配，返回结果中不包括网络协议。
 
-- x(?=y)称为先行断言（Positive look-ahead），x只有在y前面才匹配，y不会被计入返回结果。
+（3）先行断言
+
+x(?=y)称为先行断言（Positive look-ahead），x只有在y前面才匹配，y不会被计入返回结果。
 
 {% highlight javascript %}
 
 var m = "abc".match(/b(?=c)/);
 
-m[0]
-// "b"
-
-m[1]
-// undefined
+m[0] // "b"
+m[1] // undefined
 
 {% endhighlight %}
 
 上面的代码使用了先行断言，b在c前面所以被匹配，但是括号对应的c不会被返回。
 
-- x(?!y)称为后行断言（Negative look-ahead），x只有不在y前面才匹配，y不会被计入返回结果。
+（4）后行断言
+
+x(?!y)称为后行断言（Negative look-ahead），x只有不在y前面才匹配，y不会被计入返回结果。
 
 {% highlight javascript %}
 
 var m = "abd".match(/b(?!c)/);
 
-m[0]
-// "b"
-
-m[1]
-// undefined
+m[0] // "b"
+m[1] // undefined
 
 {% endhighlight %}
 
