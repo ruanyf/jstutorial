@@ -55,7 +55,43 @@ o.print() // Object
 
 上面代码在Object.prototype定义了一个print方法，然后生成一个Object的实例o。o直接继承了Object.prototype的属性和方法，可以在自身调用它们，也就是说，o对象的print方法实质上是调用Object.prototype.print方法。。
 
-可以看到，尽管上面两种写法的print方法功能相同，但是用法是不一样的，因此必须区分“构造函数的方法”和“实例对象的方法”。Object对象本身没有可供调用的方法，但提供了一些实例对象的方法。
+可以看到，尽管上面两种写法的print方法功能相同，但是用法是不一样的，因此必须区分“构造函数的方法”和“实例对象的方法”。
+
+## Object对象的方法
+
+### Object.keys方法
+
+Object.keys方法返回一个数组，成员是对象自身的（而不是继承的）所有属性名。
+
+{% highlight javascript %}
+
+var o = {
+	p1: 123,
+	p2:	456
+}; 
+
+Object.keys(o)
+// ["p1", "p2"]
+
+{% endhighlight %}
+
+该方法不返回继承的属性，也不返回不可枚举的属性（关于可枚举性的详细解释见后文）。
+
+### Object.getOwnPropertyNames方法
+
+Object.getOwnPropertyNames方法与Object.keys方法类似，也是返回对象自身的所有属性，但是还返回不可枚举的属性名。
+
+{% highlight javascript %}
+
+var o = {
+	p1: 123,
+	p2:	456
+}; 
+
+Object.getOwnPropertyNames(o)
+// ["p1", "p2"]
+
+{% endhighlight %}
 
 ## Object实例对象的方法
 

@@ -3,16 +3,20 @@ title: 浏览器的JavaScript引擎
 layout: page
 category: bom
 date: 2013-03-10
-modifiedOn: 2013-11-16
+modifiedOn: 2013-12-22
 ---
 
 浏览器通过内置的JavaScript引擎，读取网页中的代码，对其处理后运行。
 
-## JavaScript代码嵌入网页的方法
+## 概述
 
-### 静态嵌入
+### JavaScript代码嵌入网页的方法
 
-在网页中使用script标签，可以直接将JavaScript代码嵌入网页。
+在网页中嵌入JavaScript代码有多种方法。
+
+（1）直接添加代码块
+
+通过script标签，可以直接将JavaScript代码嵌入网页。
 
 {% highlight html %}
 
@@ -22,7 +26,9 @@ modifiedOn: 2013-11-16
 
 {% endhighlight %}
 
-也可以指定外部的脚本文件，让script标签读取。
+（2）加载外部脚本
+
+script标签也可以指定加载外部的脚本文件。
 
 {% highlight html %}
 
@@ -38,7 +44,7 @@ modifiedOn: 2013-11-16
 
 {% endhighlight %}
 
-这两种方法不能混用。下面代码的console.log语句直接被忽略。
+加载外部脚本和直接添加代码块，这两种方法不能混用。下面代码的console.log语句直接被忽略。
 
 {% highlight html %}
 
@@ -47,6 +53,8 @@ modifiedOn: 2013-11-16
 </script>
 
 {% endhighlight %}
+
+（3）行内代码
 
 除了上面两种方法，HTML语言允许在某些元素的事件属性和a元素的href属性中，直接写入JavaScript。
 
@@ -60,7 +68,9 @@ modifiedOn: 2013-11-16
 
 这种写法将HTML代码与JavaScript代码混写在一起，非常不利于代码管理，不建议使用。
 
-下载和执行JavaScript代码时，浏览器会暂停页面渲染，等待执行完成，这是因为JavaScript代码可能会修改页面。由于这个原因，如果某段代码的下载或执行时间特别长，浏览器就会呈现“假死”状态，失去响应。为了避免这种情况，较好的做法是将script标签都放在页面底部，而不是头部。
+### 外部脚本的加载和阻塞效应
+
+下载和执行外部的JavaScript代码时，浏览器会暂停页面渲染，等待下载并执行完成，这是因为JavaScript代码可能会修改页面，所以必须等它执行完才能接着渲染。由于这个原因，如果某段代码的下载或执行时间特别长，浏览器就会呈现“假死”状态，失去响应。为了避免这种情况，较好的做法是将script标签都放在页面底部，而不是头部。
 
 将脚本文件都放在网页尾部加载，还有一个好处。在DOM结构生成之前就调用DOM，JavaScript会报错，如果脚本都在网页尾部加载，就不存在这个问题，因为这时DOM肯定已经生成了。另一方面，这样也不必指定网页ready事件的回调函数了。
 
@@ -171,7 +181,7 @@ async属性可以保证脚本下载的同时，浏览器继续渲染。一旦渲
 
 {% highlight html %}
 
-<script async src="jquery.min.js" onload="console.log('jQuery已加载！"></script>
+<script async src="jquery.min.js" onload="console.log('jQuery已加载！')"></script>
 
 {% endhighlight %}
 
