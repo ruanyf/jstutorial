@@ -326,7 +326,27 @@ switch (fruit) {
 
 上面代码根据变量fruit的值，选择执行相应的case。如果所有case都不符合，则执行最后的default部分。需要注意的是，每个case代码块内部的break语句不能少，否则会接下去执行下一个case代码块，而不是跳出switch结构。
 
+switch结构不利于代码重用，往往可以用对象形式重写。
+
+{% highlight javascript %}
+
+var o = {
+	banana: function (){ return },
+	apple: function (){ return },
+	default: function (){ return }
+};
+
+if (o[fruit]){
+	o[fruit]();
+} else {
+	o['default']();
+}
+
+{% endhighlight %}
+
 ### 循环语句
+
+循环语句用于重复执行某个操作，它有多种形式。
 
 **（1）while循环**
 
@@ -334,11 +354,16 @@ While语句包括一个循环条件，只要该条件为真，就不断循环。
 
 {% highlight javascript %}
 
-while (condition){
-	// some code here
+var i = 0;
+
+while (i<100){
+	console.log('i当前为：' + i);
+	i++;
 }	
 
 {% endhighlight %}
+
+上面的代码将循环100次，直到i等于100为止。
 
 **（2）for循环**
 
@@ -395,7 +420,35 @@ do {
 
 **（4）break语句和continue语句**
 
-break用于在循环体中跳出循环，continue用于不再进行本次循环的后续操作，直接进入下一次循环。
+如果在循环的中途，想要跳出循环，可以使用break语句。如果想不再进行本次循环的后续操作，直接进入下一轮循环，可以使用continue语句。
+
+{% highlight javascript %}
+
+var i = 0;
+
+while (i<100){
+	console.log('i当前为：' + i);
+	i++;
+	if (i === 10) break;
+}
+
+{% endhighlight %}
+
+上面代码只会执行10次循环，一旦i等于10，就会跳出循环。
+
+{% highlight javascript %}
+
+var i = 0;
+
+while (i<100){
+	i++;
+	if (i%2===0) continue;
+	console.log('i当前为：' + i);
+}
+
+{% endhighlight %}
+
+上面代码只有在i为奇数时，才会输出i的值。如果i为偶数，则直接进入下一轮循环。
 
 ## 数据类型
 

@@ -512,7 +512,7 @@ animation动画结束时触发该事件。
 
 当事件发生以后，会生成一个事件对象event，在DOM中传递，也被作为参数传给回调函数。
 
-event对象有以下属性。
+### event对象的属性
 
 - type：返回一个字符串，表示事件的名称。
 - target：返回一个Element节点，表示事件起源的那个节点。
@@ -523,12 +523,15 @@ event对象有以下属性。
 - isTrusted：返回一个布尔值，表示事件是否可信任，即事件是从设备上触发，还是JavaScript方法模拟的。
 - eventPhase：返回一个数字，表示事件目前所处的阶段，0为事件开始从DOM表层向目标元素传播，1为捕获阶段，2为事件到达目标元素，3为冒泡阶段。
 - timestamp：返回一个数字，
+- keyCode：返回按键对应的ASCII码。
+- ctrlKey：返回一个布尔值，表示是否按下ctrl键。
+- button：返回一个整数，表示用户按下了鼠标的哪个键。
 
 除了上面这些属性，特定事件还会有一些独特的属性。比如，click事件的event对象就有clientX和clientY属性，表示事件发生的位置相对于视口左上角的水平坐标和垂直坐标。
 
-event对象有以下方法。
+### event对象的方法
 
-（1）preventDefault方法
+**（1）preventDefault方法**
 
 该方法阻止事件所对应的浏览器默认行为。比如点击a元素后，浏览器跳转到指定页面，或者按一下空格键，页面向下滚动一段距离。
 
@@ -543,11 +546,11 @@ anchor.addEventListener('click', function(event) {
 
 如果事件回调函数最后返回布尔值false，即使用return false语言，则浏览器也不会触发默认行为，与preventDefault有等同效果。
 
-（2）stopPropagation方法
+**（2）stopPropagation方法**
 
 该方法阻止事件在DOM中继续传播，防止再触发定义在别的节点上的回调函数，但是不包括在当前节点上新定义的事件回调函数。
 
-（3）stopImmediatePropagation方法
+**（3）stopImmediatePropagation方法**
 
 该方法的作用与stopPropagation方法相同，唯一的区别是还阻止当前节点上后继定义的事件回调函数。
 
