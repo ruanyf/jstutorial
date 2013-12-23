@@ -501,6 +501,9 @@ var rgb2hex = function(r, g, b) {
     return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).substr(1);
 }
 
+rgb2hex(color.r,color.g,color.b)
+// "#bada55"
+
 {% endhighlight %}
 
 上面代码使用左移运算符，将颜色的RGB值转为HEX值。

@@ -110,7 +110,7 @@ function add(x,y){
 }
 
 // 将函数赋值给一个变量
-var a = add;
+var operator = add;
 
 // 将函数作为参数和返回值
 function a(op){

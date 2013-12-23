@@ -42,7 +42,7 @@ Number(null) // 0
 
 {% endhighlight %}
 
-对象的转换规则比较复杂：先调用对象自身的valueOf方法，如果该方法返回原始类型的值（数值、字符串和布尔值），则直接对该值使用Number方法；否则再调用toString方法，如果toString方法返回的还不是原始类型的值，则报错。
+对象的转换规则比较复杂：先调用对象自身的valueOf方法，如果该方法返回原始类型的值（数值、字符串和布尔值），则直接对该值使用Number方法；否则再调用对象自身的toString方法，如果toString方法返回的还不是原始类型的值，则报错。
 
 {% highlight javascript %}
 
@@ -72,11 +72,17 @@ Number({a:1})
 
 {% highlight javascript %}
 
+if (typeof {a:1}.valueOf() === 'object'){
+	Number({a:1}.toString());
+} else {
+	Number({a:1}.valueOf());
+}
+
 Number(({a:1}).valueOf().toString())
 
 {% endhighlight %}
 
-上面代码的valueOf方法返回对象本身（{a:1}），toString方法返回“[object Object]”，对其用Number方法，得到NaN。
+上面代码的valueOf方法返回对象本身（{a:1}），所以对toString方法的返回值“[object Object]”使用Number方法，得到NaN。
 
 如果toString方法返回的不是原始类型的值，结果就会报错。
 
@@ -94,8 +100,6 @@ var obj = {
 };
 
 Number(obj)
-// valueOf
-// toString
 // TypeError: Cannot convert object to primitive value
 
 {% endhighlight %}
@@ -170,8 +174,6 @@ var obj = {
 };
 
 String(obj)
-// toString
-// valueOf
 // TypeError: Cannot convert object to primitive value
 
 {% endhighlight %}
