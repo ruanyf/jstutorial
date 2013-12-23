@@ -231,14 +231,13 @@ y
 
 ### in运算符
 
-in运算符用于检查对象是否包含某个属性名，如果包含就返回true。
+in运算符用于检查对象是否包含某个属性，如果包含就返回true。
 
 {% highlight javascript %}
 
 var o = { p: 1 };
 
-'p' in o
-// true
+'p' in o // true
 
 {% endhighlight %}
 
@@ -248,8 +247,7 @@ var o = { p: 1 };
 
 var o = { p: undefined };
 
-'p' in o
-// true
+'p' in o // true
 
 {% endhighlight %}
 
@@ -266,7 +264,7 @@ var a = ["hello", "world"];
 
 上面代码表示，数字键0和1都在数组之中。
 
-在JavaScript语言中，所有变量都是它的上层对象的属性（顶层对象除外），比如浏览器之中，所有全局变量都是window对象的属性，因此可以用in运算符判断一个变量是否存在。
+在JavaScript语言中，所有全局变量都是顶层对象（浏览器环境的顶层对象为window）的属性，因此可以用in运算符判断一个全局变量是否存在。
 
 {% highlight javascript %}
 
@@ -283,7 +281,7 @@ if ('x' in window) { return 1; }
 
 {% endhighlight %}
 
-上面三种写法之中，如果x不存在，第一种写法会报错；如果x的值对应布尔值false（比如x等于空字符串），第二种写法无法得到正确结果；只有第三种写法，才是变量x是否存在的正确写法。
+上面三种写法之中，如果x不存在，第一种写法会报错；如果x的值对应布尔值false（比如x等于空字符串），第二种写法无法得到正确结果；只有第三种写法，才是判断变量x是否存在的正确写法。
 
 ## 类似数组的对象
 
