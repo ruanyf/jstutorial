@@ -8,13 +8,9 @@ modifiedOn: 2013-11-21
 
 jQuery是目前使用最广泛的JavaScript函数库。据统计，全世界使用JavaScript函数库的网页，90%选择了jQuery；全世界排名前10000位的网站，57%使用了jQuery。它的最大优势有两个，一是使得操作网页元素变得异常容易，二是统一了接口，使得开发者可以用同一种方法编写能在所有现代浏览器中运行的代码，而不用担心浏览器之间的差异。
 
-jQuery的核心思想是“选中某个元素，进行某种处理”（find something, do something），也就是说，先选择后处理。所以，绝大多数jQuery操作都是从选择器开始的。
+## jQuery对象
 
-## 选择器
-
-jQuery函数库提供了一个全局对象jQuery，简写为$。在网页中加载jQuery以后，就可以使用这个全局对象了。jQuery的全部方法，都定义在这个对象上面。
-
-jQuery对象本身是一个函数，参数为CSS选择器，返回选中的元素。
+jQuery函数库提供了一个全局对象jQuery，简写为$，两者是等价的。在网页中加载jQuery以后，就可以使用这个全局对象了。jQuery的全部方法，都定义在这个对象上面。
 
 {% highlight javascript %}
 
@@ -26,7 +22,7 @@ var listItems = $('li');
 
 上面两行代码是等价的，表示选中网页中所有的li元素。
 
-这里需要注意的是，jQuery函数返回的并不是DOM元素，而是jQuery对象实例。因为只有这样，才能在返回对象上面使用jQuery提供的各种方法。
+jQuery对象是一个构造函数，主要作用是返回jQuery对象的实例。比如，上面代码表面上是选中li元素，实际上返回是对应与li元素的jQuery对象实例。因为只有这样，才能在返回的对象之上使用jQuery提供的各种方法。
 
 {% highlight javascript %}
 
@@ -49,13 +45,34 @@ $(document.body) instanceof jQuery
 
 {% endhighlight %}
 
-上面代码中，jQuery函数的参数不是CSS选择器，而是一个DOM对象，返回的依然是jQuery对象的实例。
+上面代码中，jQuery的参数不是CSS选择器，而是一个DOM对象，返回的依然是jQuery对象的实例。
 
 如果有多个DOM元素要转为jQuery对象的实例，可以把DOM元素放在一个数组里，输入jQuery函数。
 
 {% highlight javascript %}
 
 $([document.body, document.head]) 
+
+{% endhighlight %}
+
+## 选择器
+
+jQuery的核心思想是“先选中某些网页元素，然后对其进行某种处理”（find something, do something），也就是说，先选择后处理。所以，绝大多数jQuery操作都是从选择器开始的。
+
+所谓选择器，就是指将CSS选择器传入jQuery构造函数，用于选中对应的网页元素。下面是一些例子。（本书不涉及CSS选择器的讲解，请读者参阅相关书籍或jQuery文档。）
+
+{% highlight javascript %}
+
+$('#myId'); 
+$('div.myClass'); 
+$('input[name=first_name]');
+$('a.external:first');
+$('tr:odd');
+$('#myForm :input');
+$('div:visible');
+$('div:gt(2)');
+$('div:animated');
+$("a[rel$='thinger']");
 
 {% endhighlight %}
 
@@ -81,7 +98,23 @@ if ( $('li').length === 0 ) {
 
 上面代码表示，如果网页没有li元素，则返回对象的length属性等于0。这就是测试有没有选中的标准方法。
 
-除了length属性，还有一个is方法，返回一个布尔值，表示选中的结果是否符合某个条件。用来验证的判断条件，可以是CSS选择器，也可以是一个函数，或者DOM元素和jQuery实例。
+所以，如果想知道jQuery有没有选中相应的元素，不能写成下面这样。
+
+{% highlight javascript %}
+
+if ($('div.foo')) { ... }
+
+{% endhighlight %}
+
+因为不管有没有选中，jQuery构造函数总是返回一个实例对象，而对象的布尔值永远是true。使用length属性才是判断有没有选中的正确方法。
+
+{% highlight javascript %}
+
+if ($('div.foo').length) { ... }
+
+{% endhighlight %}
+
+除了length属性，可以用来了解选择结果的信息，还有一个is方法，返回一个布尔值，表示选中的结果是否符合某个条件。用来验证的判断条件，可以是CSS选择器，也可以是一个函数，或者DOM元素和jQuery实例。
 
 {% highlight javascript %}
 

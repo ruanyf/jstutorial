@@ -39,38 +39,31 @@ launchFullScreen(document.getElementById("videoElement")); // any individual ele
 
 {% endhighlight %}
 
-### cancelFullScreen()
+### exitFullscreen()
 
-这个方法用于取消全屏（带有浏览器前缀）。
+exitFullscreen方法用于取消全屏（带有浏览器前缀）。
 
 {% highlight javascript %}
 
-function cancelFullscreen() {
-  if(document.cancelFullScreen) {
-    document.cancelFullScreen();
-  } else if(document.mozCancelFullScreen) {
-    document.mozCancelFullScreen();
-  } else if(document.webkitCancelFullScreen) {
-    document.webkitCancelFullScreen();
+function exitFullscreen() {
+  if(document.exitFullscreen) {
+    document.exitFullscreen();
+  } else if(document.mozexitFullscreen) {
+    document.mozexitFullscreen();
+  } else if(document.webkitexitFullscreen) {
+    document.webkitexitFullscreen();
   }
 }
 
-{% endhighlight %}
-
-取消全屏的时候，直接调用这个方法就可以了。
-
-{% highlight javascript %}
-
-// Cancel fullscreen for browsers that support it!
-cancelFullscreen();
+exitFullscreen();
 
 {% endhighlight %}
 
 ## 属性
 
-### fullScreenElement
+### document.fullscreenElement
 
-查看某个网页元素是否现在处于全屏状态。
+该属性返回正处于全屏状态的网页元素。
 
 {% highlight javascript %}
 
@@ -81,9 +74,9 @@ var fullscreenElement =
 
 {% endhighlight %}
 
-### fullscreenEnabled
+### document.fullscreenEnabled
 
-查看某个元素的全屏是否可用。
+该属性返回一个布尔值，表示当前是否处于全屏状态。
 
 {% highlight javascript %}
 
@@ -94,6 +87,24 @@ var fullscreenEnabled =
 
 {% endhighlight %}
 
+## 全屏状态的CSS
+
+可以对全屏状态设置单独的CSS属性，配合JavaScript使用。
+
+{% highlight css %}
+
+:-webkit-full-screen {
+  /* properties */
+}
+:-moz-full-screen {
+  /* properties */
+}
+
+:full-screen {
+  /* properties */
+}
+
+{% endhighlight %}
 
 ## 参考链接
 
