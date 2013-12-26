@@ -8,7 +8,9 @@ modifiedOn: 2013-11-21
 
 jQuery是目前使用最广泛的JavaScript函数库。据统计，全世界使用JavaScript函数库的网页，90%选择了jQuery；全世界排名前10000位的网站，57%使用了jQuery。它的最大优势有两个，一是使得操作网页元素变得异常容易，二是统一了接口，使得开发者可以用同一种方法编写能在所有现代浏览器中运行的代码，而不用担心浏览器之间的差异。
 
-## jQuery对象
+## jQuery基础
+
+### jQuery对象
 
 jQuery函数库提供了一个全局对象jQuery，简写为$，两者是等价的。在网页中加载jQuery以后，就可以使用这个全局对象了。jQuery的全部方法，都定义在这个对象上面。
 
@@ -55,7 +57,28 @@ $([document.body, document.head])
 
 {% endhighlight %}
 
-## 选择器
+如果直接在jQuery函数中输入HTML代码，则返回一个jQuery实例。
+
+{% highlight javascript %}
+
+$('<li class="greet">test</lt>')
+
+{% endhighlight %}
+
+上面代码从HTML代码生成了一个jQuery实例，它从CSS选择器生成的jQuery实例完全一样。唯一的区别就是，它对应的DOM结构不属于当前文档。上面代码也可以写成下面这样。
+
+{% highlight javascript %}
+
+$( '<li>', {
+  html: 'test',
+  'class': 'greet'
+});
+
+{% endhighlight %}
+
+上面代码中，由于class是javaScript的保留字，所以只能放在引号中。
+
+### 选择器
 
 jQuery的核心思想是“先选中某些网页元素，然后对其进行某种处理”（find something, do something），也就是说，先选择后处理。所以，绝大多数jQuery操作都是从选择器开始的。
 
@@ -86,6 +109,10 @@ $('li', someElement);
 
 上面代码表示，只寻找属于someElement对象下属的li元素。someElement可以是jQuery对象的实例，也可以是DOM对象。
 
+### 选择器返回的结果
+
+**（1）length属性**
+
 jQuery对象返回的是一个类似数组的对象，包含了所有被选中的网页元素。查看该对象的length属性，可以知道到底选中了多少个结果。
 
 {% highlight javascript %}
@@ -114,7 +141,9 @@ if ($('div.foo').length) { ... }
 
 {% endhighlight %}
 
-除了length属性，可以用来了解选择结果的信息，还有一个is方法，返回一个布尔值，表示选中的结果是否符合某个条件。用来验证的判断条件，可以是CSS选择器，也可以是一个函数，或者DOM元素和jQuery实例。
+**（2）is方法**
+
+is方法返回一个布尔值，表示选中的结果是否符合某个条件。这个用来验证的条件，可以是CSS选择器，也可以是一个函数，或者DOM元素和jQuery实例。
 
 {% highlight javascript %}
 
@@ -130,16 +159,20 @@ $('li').is(function() {
 
 {% endhighlight %}
 
-需要注意的是，使用下标运算符取出的单个对象，就不是jQuery对象的实例，而是一个DOM对象。
+**（3）下标运算符**
+
+jQuery选择器返回的是一个类似数组的对象。需要注意的是，使用下标运算符取出的单个对象，并不是jQuery对象的实例，而是一个DOM对象。
 
 {% highlight javascript %}
 
-$('li')[0] instanceof $ // false
+$('li')[0] instanceof jQuery // false
 $('li')[0] instanceof Element // true
 
 {% endhighlight %}
 
 上面代码表示，下标运算符取出的是Element节点的实例。所以，通常使用下标运算符将jQuery实例转回DOM对象。
+
+**（4）get方法**
 
 jQuery实例的get方法是下标运算符的另一种写法。
 
@@ -149,7 +182,9 @@ $('li').get(0) instanceof Element // true
 
 {% endhighlight %}
 
-如果只需要在选中结果中取出某一个对象，不需要将其转为DOM对象，则使用jQuery实例的eq方法。
+**（5）eq方法**
+
+如果想要在结果集取出一个jQuery对象的实例，不需要取出DOM对象，则使用eq方法，它的参数是实例在结果集中的位置（从0开始）。
 
 {% highlight javascript %}
 
@@ -157,36 +192,15 @@ $('li').eq(0) instanceof jQuery // true
 
 {% endhighlight %}
 
-eq方法返回的还是jQuery的实例，可以接着在返回结果上使用jQuery的方法。
-
-如果直接在jQuery函数中输入HTML代码，则返回一个jQuery实例。
-
-{% highlight javascript %}
-
-$('<li class="greet">test</lt>')
-
-{% endhighlight %}
-
-上面代码从HTML代码生成了一个jQuery实例，它从CSS选择器生成的jQuery实例完全一样。唯一的区别就是，它对应的DOM结构不属于当前文档。上面代码也可以写成下面这样。
-
-{% highlight javascript %}
-
-$( '<li>', {
-  html: 'test',
-  'class': 'greet'
-});
-
-{% endhighlight %}
-
-上面代码中，由于class是javaScript的保留字，所以只能放在引号中。
+由于eq方法返回的是jQuery的实例，所以可以在返回结果上使用jQuery实例对象的方法。
 
 ## jQuery实例对象的方法
 
 除了上一节提到的is、get、eq方法，jQuery实例还有许多其他方法。
 
-### 结果集的处理方法
+### 结果集的过滤
 
-选择器选出一组符合条件的网页元素以后，jQuery提供了许多方法，可以对结果集进行进一步处理。
+选择器选出一组符合条件的网页元素以后，jQuery提供了许多方法，可以过滤结果集，返回更准确的目标。
 
 **（1）first方法，last方法**
 
@@ -305,7 +319,7 @@ $('li').first().end()
 
 **（6）filter方法，not方法，has方法**
 
-filter方法用于过滤结果集，它可以接受多种类型的参数。
+filter方法用于过滤结果集，它可以接受多种类型的参数，只返回与参数一致的结果。
 
 {% highlight javascript %}
 
@@ -341,7 +355,7 @@ $("li").has("ul")
 
 {% endhighlight %}
 
-上面代码返回具有匹配ul选择器的子元素的li元素。
+上面代码返回具有ul子元素的li元素。
 
 **（7）each方法，map方法**
 
