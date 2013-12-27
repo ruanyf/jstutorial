@@ -315,7 +315,7 @@ $(function() {
 
 除了上一节提到的is、get、eq方法，jQuery实例还有许多其他方法。
 
-### 结果集的过滤
+### 结果集的过滤方法
 
 选择器选出一组符合条件的网页元素以后，jQuery提供了许多方法，可以过滤结果集，返回更准确的目标。
 
@@ -588,31 +588,33 @@ $('input[type="text"]').val('new value')
 
 **（5）prop方法，attr方法**
 
-prop方法返回结果集第一个元素的特定DOM属性的值，或者设置当前结果集所有元素的特定DOM属性的值。
+首先，这里要区分两种属性。
+
+一种是网页元素的属性，比如a元素的href属性、img元素的src属性。这要使用attr方法读写。
 
 {% highlight javascript %}
 
-$('input[type="checkbox"]').prop('checked');
+// 读取属性值
+$('textarea').attr(name)
 
-$('input[type="checkbox"]').prop('checked', true)
+//写入属性值
+$('textarea').attr(name, val)
 
 {% endhighlight %}
 
-attr方法返回结果集第一个元素的特定HTML属性的值，或者设置当前结果集所有元素的特定HTML属性的值。
+另一种是DOM元素的属性，比如tagName、nodeName、nodeType等等。这要使用prop方法读写。
 
 {% highlight javascript %}
 
-$('a').attr('title')
+// 读取属性值
+$('textarea').prop(name)
 
-$('a').attr('title', 'Click me!')
-
-$('a').attr('href', function(index, value) {
-  return value + '?special=true';
-});
+// 写入属性值
+$('textarea').prop(name, val)
 
 {% endhighlight %}
 
-attr方法与prop方法的区别在于，attr方法针对HTML属性，prop方法针对DOM属性（比如selectedIndex、tagName、nodeName、nodeType等等）。有时，一个属性既可以用attr方法读取，也可以用prop方法读取。比如，下面这一行HTML代码。
+所以，attr方法和prop方法针对的是不同的属性。在英语中，attr是attribute的缩写，prop是property的缩写，中文很难表达出这种差异。有时，attr方法和prop方法对同一个属性会读到不一样的值。比如，网页上有一个单选框。
 
 {% highlight html %}
 
@@ -620,21 +622,30 @@ attr方法与prop方法的区别在于，attr方法针对HTML属性，prop方法
 
 {% endhighlight %}
 
-attr方法和prop方法针对checked属性的返回值不一样。
+对于checked属性，attr方法读到的是checked，prop方法读到的是true。
 
 {% highlight javascript %}
 
-$('input[type="checkbox"]').attr('checked')
-// 'checked'
+$(input[type=checkbox]).attr("checked") // "checked"
 
-$('input[type="checkbox"]').prop('checked') 
-// true
+$(input[type=checkbox]).prop("checked") // true
 
 {% endhighlight %}
 
-上面代码表示，attr方法返回HTML属性的值，结果为checked；prop方法返回DOM属性的值，结果为true。
+可以看到，attr方法读取的是网页上该属性的值，而prop方法读取的是DOM元素的该属性的值，根据规范，element.checked应该返回一个布尔值。所以，判断单选框是否选中，要使用prop方法。事实上，不管这个单选框是否选中，attr("checked")的返回值都是checked。
 
-**（6）removeProp方法，removeAttr方法
+{% highlight javascript %}
+
+if ($(elem).prop("checked")) { /*... */ };
+
+// 下面两种方法亦可
+
+if ( elem.checked ) { /*...*/ };
+if ( $(elem).is(":checked") ) { /*...*/ };
+
+{% endhighlight %}
+
+**（6）removeProp方法，removeAttr方法**
 
 removeProp方法移除某个DOM属性，removeAttr方法移除某个HTML属性。
 
@@ -854,46 +865,7 @@ $('p').replaceWith('<div></div>')
 
 {% endhighlight %}
 
-### 属性的读写
-
-首先，这里要区分两种属性。
-
-一种是网页元素的属性，比如a元素的href属性、img元素的src属性，这要使用attr方法读写：.attr(name)用于读取属性值，.attr(name, val)用于写入属性值。
-
-另一种是DOM元素的属性，比如tagName、nodeName、nodeType等等，这要使用prop方法读写：.prop(name)用于读取属性值，.prop(name, val)用于写入属性值。
-
-所以，attr方法和prop方法针对的是不同的属性。在英语中，attr是attribute的缩写，prop是property的缩写，中文很难表达出这种差异。有时，attr方法和prop方法对同一个属性会读到不一样的值。比如，网页上有一个单选框。
-
-{% highlight html %}
-
-<input type="checkbox" checked="checked" />
-
-{% endhighlight %}
-
-对于checked属性，attr方法读到的是checked，prop方法读到的是true。
-
-{% highlight javascript %}
-
-$(input[type=checkbox]).attr("checked") // "checked"
-
-$(input[type=checkbox]).prop("checked") // true
-
-{% endhighlight %}
-
-可以看到，attr方法读取的是网页上该属性的值，而prop方法读取的是DOM元素的该属性的值，根据规范，elem.checked应该返回一个布尔值。所以，判断单选框是否选中，要使用prop方法。事实上，不管这个单选框是否选中，attr("checked")的返回值都是checked。
-
-{% highlight javascript %}
-
-if ($(elem).prop("checked")) { /*... */ };
-
-// 下面两种方法亦可
-
-if ( elem.checked ) { /*...*/ };
-if ( $(elem).is(":checked") ) { /*...*/ };
-
-{% endhighlight %}
-
-### 动画效果相关方法
+### 动画效果方法
 
 jQuery提供一些方法，可以很容易地显示网页动画效果。但是，总体上来说，它们不如CSS动画强大和节省资源，所以应该优先考虑使用CSS动画。
 
