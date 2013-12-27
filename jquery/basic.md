@@ -194,6 +194,123 @@ $('li').eq(0) instanceof jQuery // true
 
 由于eq方法返回的是jQuery的实例，所以可以在返回结果上使用jQuery实例对象的方法。
 
+**（6）each方法，map方法**
+
+each方法接受一个函数作为参数，依次处理集合中的每一个元素。
+
+{% highlight javascript %}
+
+$('li').each(function( index, element) {
+  $(element).prepend( '<em>' + index + ': </em>' );
+});
+
+// <li>Hello</li>
+// <li>World</li>
+// 变为
+// <li><em>0</em>: Hello</li>
+// <li><em>1</em>: World</li>
+
+{% endhighlight %}
+
+从上面代码可以看出，作为each方法参数的函数，本身有两个参数，第一个是当前元素在集合中的位置，第二个当前元素对应的DOM对象。
+
+map方法的用法与each方法完全一样，区别在于each方法没有返回值，只是对每一个元素执行某种操作，而map方法返回一个新的jQuery对象。
+
+{% highlight javascript %}
+
+$("input").map(function (index, element){
+    return $(this).val();
+})
+.get()
+.join(", ")
+
+{% endhighlight %}
+
+上面代码表示，将所有input元素依次取出值，然后通过get方法得到一个包含这些值的数组，最后通过数组的join方法返回一个逗号分割的字符串。
+
+**（8）内置循环**
+
+jQuery默认对当前结果集进行循环处理。
+
+{% highlight javascript %}
+
+$(".class").addClass("highlight");
+
+{% endhighlight %}
+
+上面代码会执行一个内部循环，对每一个选中的元素进行addClass操作。由于这个原因，对上面操作加上each方法是不必要的。
+
+{% highlight javascript %}
+
+$(".class").each(function(index,element){
+	 $(element).addClass("highlight");
+});
+
+// 或者
+
+$(".class").each(function(){
+	$(this).addClass("highlight");
+});
+
+{% endhighlight %}
+
+上面代码的each方法，都是没必要使用的。
+
+由于内置循环的存在，从性能考虑，应该尽量减少不必要的操作步骤。
+
+{% highlight javascript %}
+
+$(".class").css("color", "green").css("font-size", "16px");
+
+// 应该写成
+
+$(".class").css({ 
+  "color": "green",
+  "font-size": "16px"
+});
+
+{% endhighlight %}
+
+### 链式操作
+
+jQuery最方便的一点就是，它的大部分方法返回的都是jQuery对象，因此可以链式操作。也就是说，后一个方法可以紧跟着写在前一个方法后面。
+
+{% highlight javascript %}
+
+$('li').click(function (){
+    $(this).addClass('clicked');
+})
+.find('span')
+.attr( 'title', 'Hover over me' );
+
+{% endhighlight %}
+
+### $(document).ready()
+
+$(document).ready方法接受一个函数作为参数，将该参数作为document对象的DOMContentLoaded事件的回调函数。也就是说，当页面解析完成（即下载完&lt;/html&gt;标签）以后，在所有外部资源（图片、脚本等）完成加载之前，该函数就会立刻运行。
+
+{% highlight javascript %}
+
+$( document ).ready(function() {
+  console.log( 'ready!' );
+});
+
+{% endhighlight %}
+
+上面代码表示，一旦页面完成解析，就会运行ready方法指定的函数，在控制台显示“ready!”。
+
+该方法通常作为网页初始化手段使用，jQuery提供了一种简写法，就是直接把回调函数放在jQuery对象中。
+
+{% highlight javascript %}
+
+$(function() {
+  console.log( 'ready!' );
+});
+
+{% endhighlight %}
+
+上面代码与前一段代码是等价的。
+
 ## jQuery实例对象的方法
 
 除了上一节提到的is、get、eq方法，jQuery实例还有许多其他方法。
@@ -255,7 +372,7 @@ $("div").children(".selected")
 
 上面这三个方法都接受一个选择器作为参数。
 
-**（4）siblings方法，nextAll方法，prevAll方法，closet方法**
+**（4）siblings方法，nextAll方法，prevAll方法，closest方法**
 
 siblings方法返回当前元素的所有同级元素。
 
@@ -279,7 +396,7 @@ closest方法返回当前元素，以及当前元素的所有上级元素之中�
 
 {% highlight javascript %}
 
-$(li").closest('div')
+$('li').closest('div')
 
 {% endhighlight %}
 
@@ -357,126 +474,93 @@ $("li").has("ul")
 
 上面代码返回具有ul子元素的li元素。
 
-**（7）each方法，map方法**
-
-each方法接受一个函数作为参数，依次处理集合中的每一个元素。
-
-{% highlight javascript %}
-
-$('li').each(function( index, element) {
-  $(element).prepend( '<em>' + index + ': </em>' );
-});
-
-// <li>Hello</li>
-// <li>World</li>
-// 变为
-// <li><em>0</em>: Hello</li>
-// <li><em>1</em>: World</li>
-
-{% endhighlight %}
-
-从上面代码可以看出，作为each方法参数的函数，本身有两个参数，第一个是当前元素在集合中的位置，第二个当前元素对应的DOM对象。
-
-map方法的用法与each方法完全一样，区别在于each方法没有返回值，只是对每一个元素执行某种操作，而map方法返回一个新的jQuery对象。
-
-{% highlight javascript %}
-
-$("input").map(function (index, element){
-    return $(this).val();
-})
-.get()
-.join(", ")
-
-{% endhighlight %}
-
-上面代码表示，将所有input元素依次取出值，然后通过get方法得到一个包含这些值的数组，最后通过数组的join方法返回一个逗号分割的字符串。
-
-**（8）内置循环**
-
-jQuery默认对当前结果集进行循环处理。
-
-{% highlight javascript %}
-
-$(".class").addClass("highlight");
-
-{% endhighlight %}
-
-上面代码会执行一个内部循环，对每一个选中的元素进行addClass操作。由于这个原因，对上面操作加上each方法是不必要的。
-
-{% highlight javascript %}
-
-$(".class").each(function(index,element){
-	 $(element).addClass("highlight");
-});
-
-// 或者
-
-$(".class").each(function(){
-	$(this).addClass("highlight");
-});
-
-{% endhighlight %}
-
-上面代码的each方法，都是没必要使用的。
-
-由于内置循环的存在，从性能考虑，应该尽量减少不必要的操作步骤。
-
-{% highlight javascript %}
-
-$(".class").css("color", "green").css("font-size", "16px");
-
-// 应该写成
-
-$(".class").css({ 
-  "color": "green",
-  "font-size": "16px"
-});
-
-{% endhighlight %}
-
-**（9）链式操作**
-
-jQuery最方便的一点就是，它的大部分方法返回的都是jQuery对象，因此可以链式操作。也就是说，后一个方法可以紧跟着写在前一个方法后面。
-
-{% highlight javascript %}
-
-$('li').click(function (){
-    $(this).addClass('clicked');
-})
-.find('span')
-.attr( 'title', 'Hover over me' );
-
-{% endhighlight %}
-
 ### DOM相关方法
 
 许多方法可以对DOM元素进行处理。
 
-addClass方法用于添加一个类。
+**（1）html方法和text方法**
+
+html方法返回该元素包含的HTML代码，text方法返回该元素包含的文本。
+
+假定网页只含有一个p元素。
+
+{% highlight html %}
+
+<p><em>Hello World!</em></p>
+
+{% endhighlight %}
+
+html方法和text方法的返回结果分别如下。
+
+{% highlight javascript %}
+
+$('p').html()
+// <em>Hello World!</em> 
+
+$('p').text()
+// Hello World! 
+
+{% endhighlight %}
+
+jQuery的许多方法都是取值器（getter）与赋值器（setter）的合一，即取值和赋值都是同一个方法，不使用参数的时候为取值器，使用参数的时候为赋值器。
+
+上面代码的html方法和text方法都没有参数，就会当作取值器使用，取回结果集的第一个元素所包含的内容。如果对这两个方法提供参数，就是当作赋值器使用，修改结果集所有成员的内容，并返回原来的结果集，以便进行链式操作。
+
+{% highlight javascript %}
+
+$('p').html('<strong>你好</strong>')
+// 网页代码变为<p><strong>你好</strong></p> 
+
+$('p').text('你好')
+// 网页代码变为<p>你好</p> 
+
+{% endhighlight %}
+
+下面要讲到的jQuery其他许多方法，都采用这种同一个方法既是取值器又是赋值器的模式。
+
+html方法和text方法还可以接受一个函数作为参数，函数的返回值就是网页元素所要包含的新的代码和文本。这个函数接受两个参数，第一个是网页元素在集合中的位置，第二个参数是网页元素原来的代码或文本。
+
+{% highlight javascript %}
+
+$('li').html(function (i, v){
+	return (i + ': ' + v);		
+})
+
+// <li>Hello</li>
+// <li>World</li>
+// 变为
+// <li>0: Hello</li>
+// <li>1: World</li>
+
+{% endhighlight %}
+
+**（2）addClass方法，removeClass方法，toggleClass方法**
+
+addClass方法用于添加一个类，removeClass方法用于移除一个类，toggleClass方法用于折叠一个类（如果无就添加，如果有就移除）。
 
 {% highlight javascript %}
 
 $('li').addClass('special')
-
-{% endhighlight %}
-
-removeClass方法用于移除一个类。
-
-{% highlight javascript %}
-
 $('li').removeClass('special')
-
-{% endhighlight %}
-
-toggleClass方法用于折叠一个类（如果无就添加，如果有就移除）。
-
-{% highlight javascript %}
-
 $('li').toggleClass('special')
 
 {% endhighlight %}
 
+**（3）css方法**
+
 css方法用于改变CSS设置。
+
+该方法可以作为取值器使用。
+
+{% highlight javascript %}
+
+$('h1').css('fontSize');
+
+{% endhighlight %}
+
+这时需要注意，必须将CSS规则的名称改为骆驼拼写法，即第二个单词（及其后的单词）的首字母大写，比如font-size写作fontSize。
+
+该方法也可以作为赋值器使用。
 
 {% highlight javascript %}
 
@@ -488,6 +572,10 @@ $('li').css({
 
 {% endhighlight %}
 
+上面两种形式都可以用于赋值，jQuery赋值器基本上都是如此。
+
+**（4）val方法**
+
 val方法返回结果集第一个元素的值，或者设置当前结果集所有元素的值。
 
 {% highlight javascript %}
@@ -497,6 +585,8 @@ $('input[type="text"]').val()
 $('input[type="text"]').val('new value')
 
 {% endhighlight %}
+
+**（5）prop方法，attr方法**
 
 prop方法返回结果集第一个元素的特定DOM属性的值，或者设置当前结果集所有元素的特定DOM属性的值。
 
@@ -544,79 +634,18 @@ $('input[type="checkbox"]').prop('checked')
 
 上面代码表示，attr方法返回HTML属性的值，结果为checked；prop方法返回DOM属性的值，结果为true。
 
-removeProp方法移除某个DOM属性。
+**（6）removeProp方法，removeAttr方法
+
+removeProp方法移除某个DOM属性，removeAttr方法移除某个HTML属性。
 
 {% highlight javascript %}
 
 $("a").prop("oldValue",1234).removeProp('oldValue')
-
-{% endhighlight %}
-
-removeAttr方法移除某个HTML属性。
-
-{% highlight javascript %}
-
 $('a').removeAttr("title")
 
 {% endhighlight %}
 
-### html方法和text方法
-
-html方法返回该元素包含的HTML代码，text方法返回该元素包含的文本。
-
-假定网页只含有一个p元素。
-
-{% highlight html %}
-
-<p><em>Hello World!</em></p>
-
-{% endhighlight %}
-
-html方法和text方法的返回结果分别如下。
-
-{% highlight javascript %}
-
-$('p').html()
-// <em>Hello World!</em> 
-
-$('p').text()
-// Hello World! 
-
-{% endhighlight %}
-
-jQuery的许多方法都是取值器（getter）与赋值器（setter）的合一，即取值和赋值都是同一个方法，不使用参数的时候为取值器，使用参数的时候为赋值器。
-
-上面代码的html方法和text方法都没有参数，就会当作取值器使用，取回元素所包含的代码和文本。如果对它们提供参数，就是当作赋值器使用，重新赋予元素所包含的代码和文本。
-
-{% highlight javascript %}
-
-$('p').html('<strong>你好</strong>')
-// 网页代码变为<p><strong>你好</strong></p> 
-
-$('p').text('你好')
-// 网页代码变为<p>你好</p> 
-
-{% endhighlight %}
-
-由于jQuery对所有选中的元素，进行下面要讲到的内置循环操作，所以如果有一组元素被选中，html方法和text方法会都对它们进行统一处理。
-
-html方法和text方法还接受一个函数作为参数，函数的返回值就是网页元素所要包含的新的代码和文本。这个函数接受两个参数，第一个是网页元素在集合中的位置，第二个参数是网页元素原来的代码或文本。
-
-{% highlight javascript %}
-
-$('li').html(function (i, v){
-	return (i + ': ' + v);		
-})
-
-// <li>Hello</li>
-// <li>World</li>
-// 变为
-// <li>0: Hello</li>
-// <li>1: World</li>
-
-{% endhighlight %}
-
-### 改变元素位置的方法
+### 添加、复制和移动网页元素的方法
 
 jQuery方法提供一系列方法，可以改变元素在文档中的位置。
 
@@ -824,32 +853,6 @@ replaceWith方法用参数中的元素，替换并返回当前元素，取消当
 $('p').replaceWith('<div></div>')
 
 {% endhighlight %}
-
-### $(document).ready()
-
-$(document).ready方法接受一个函数作为参数，将该参数作为document对象的DOMContentLoaded事件的回调函数。也就是说，当页面解析完成（即下载完&lt;/html&gt;标签）以后，在所有外部资源（图片、脚本等）完成加载之前，该函数就会立刻运行。
-
-{% highlight javascript %}
-
-$( document ).ready(function() {
-  console.log( 'ready!' );
-});
-
-{% endhighlight %}
-
-上面代码表示，一旦页面完成解析，就会运行ready方法指定的函数，在控制台显示“ready!”。
-
-该方法通常作为网页初始化手段使用，jQuery提供了一种简写法，就是直接把回调函数放在jQuery对象中。
-
-{% highlight javascript %}
-
-$(function() {
-  console.log( 'ready!' );
-});
-
-{% endhighlight %}
-
-上面代码与前一段代码是等价的。
 
 ### 属性的读写
 
