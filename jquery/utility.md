@@ -3,12 +3,110 @@ title: 工具方法
 layout: page
 category: jquery
 date: 2013-02-16
-modifiedOn: 2013-11-23
+modifiedOn: 2013-12-27
 ---
 
-## jQuery.proxy()
+jQuery函数库提供了一个jQuery对象（简写为$），这个对象本身是一个构造函数，可以用来生成jQuery对象的实例。有了实例以后，就可以调用许多针对实例的方法，它们定义jQuery.prototype对象上面（简写为$.fn）。
 
-jQuery.proxy()类似于ECMAScript 5的bind方法，可以绑定函数的上下文（也就是this对象）和参数，返回一个新函数。
+除了实例对象的方法以外，jQuery对象本身还提供一些方法（即直接定义jQuery对象上面），不需要生成实例就能使用。由于这些方法类似“通用工具”的性质，所以我们把它们称为“工具方法”（utilities）。
+
+## 常用工具方法
+
+（1）$.trim
+
+$.trim方法用于移除字符串头部和尾部多余的空格。
+
+{% highlight javascript %}
+
+$.trim('   Hello   ') // Hello
+
+{% endhighlight %}
+
+（2）$.each
+
+$.each方法用于遍历数组和对象，然后返回原始对象。它接受两个参数，分别是数据集合和回调函数。
+
+{% highlight javascript %}
+
+$.each([ 52, 97 ], function( index, value ) {
+  console.log( index + ": " + value );
+});
+// 0: 52 
+// 1: 97 
+
+var obj = {
+  p1: "hello",
+  p2: "world"
+};
+$.each( obj, function( key, value ) {
+  console.log( key + ": " + value );
+});
+// p1: hello
+// p2: world
+
+{% endhighlight %}
+
+需要注意的，jQuery对象实例也有一个each方法（$.fn.each），两者的作用差不多。
+
+（3）$.inArray
+
+$.inArray方法返回一个值在数组中的位置（从0开始）。如果该值不在数组中，则返回-1。
+
+{% highlight javascript %}
+
+var a = [1,2,3,4];
+$.inArray(4,a) // 3
+
+{% endhighlight %}
+
+（4）$.extend
+
+$.extend方法用于将多个对象合并进第一个对象。
+
+{% highlight javascript %}
+
+var o1 = {p1:'a',p2:'b'};
+var o2 = {p1:'c'};
+
+$.extend(o1,o2);
+o1.p1 // "c"
+
+{% endhighlight %}
+
+$.extend的另一种用法是生成一个新对象，用来继承原有对象。这时，它的第一个参数应该是一个空对象。
+
+{% highlight javascript %}
+
+var o1 = {p1:'a',p2:'b'};
+var o2 = {p1:'c'};
+
+var o = $.extend({},o1,o2);
+o
+// Object {p1: "c", p2: "b"}
+
+{% endhighlight %}
+
+默认情况下，extend方法生成的对象是“浅拷贝”，也就是说，如果某个属性是对象或数组，那么只会生成指向这个对象或数组的指针，而不会复制值。如果想要“深拷贝”，可以在extend方法的第一个参数传入布尔值true。
+
+{% highlight javascript %}
+
+var o1 = {p1:['a','b']};
+
+var o2 = $.extend({},o1);
+var o3 = $.extend(true,{},o1);
+
+o1.p1[0]='c';
+
+o2.p1 // ["c", "b"]
+o3.p1 // ["a", "b"] 
+
+{% endhighlight %}
+
+上面代码中，o2是浅拷贝，o3是深拷贝。结果，改变原始数组的属性，o2会跟着一起变，而o3不会。
+
+**（5）$.proxy**
+
+$.proxy方法类似于ECMAScript 5的bind方法，可以绑定函数的上下文（也就是this对象）和参数，返回一个新函数。
 
 jQuery.proxy()的主要用处是为回调函数绑定上下文对象。
 
@@ -89,9 +187,51 @@ $('#myElement').click(function() {
 
 {% endhighlight %}
 
-## parseJSON方法
+**（6）$.parseJSON**
 
-jQuery提供parseJSON方法，用于将JSON字符串解析为JavaScript对象，作用与原生的JSON.parse()类似。但是，jQuery没有提供类似JSON.stringify()的方法，即不提供将JavaScript对象转为JSON对象的方法。
+$.parseJSON方法用于将JSON字符串解析为JavaScript对象，作用与原生的JSON.parse()类似。但是，jQuery没有提供类似JSON.stringify()的方法，即不提供将JavaScript对象转为JSON对象的方法。
+
+## 判断数据类型的方法
+
+jQuery提供一系列工具方法，用来判断数据类型，以弥补JavaScript原生的typeof运算符的不足。以下方法对参数进行判断，返回一个布尔值。
+
+- jQuery.isArray()：是否为数组。
+- jQuery.isEmptyObject()：是否为空对象（不含可枚举的属性）。
+- jQuery.isFunction()：是否为函数。
+- jQuery.isNumeric()：是否为数组。
+- jQuery.isPlainObject()：是否为使用“{}”或“new Object”生成的对象，而不是浏览器原生提供的对象。
+- jQuery.isWindow()：是否为window对象。
+- jQuery.isXMLDoc()：判断一个DOM节点是否处于XML文档之中。
+
+下面是一些例子。
+
+{% highlight javascript %}
+
+$.isEmptyObject({}) // true
+$.isPlainObject(document.location) // false
+$.isWindow(window) // true
+$.isXMLDoc(document.body) // false
+
+{% endhighlight %}
+
+## 数据储存方法
+
+$.data方法可以用来在DOM节点上储存数据。
+
+{% highlight javascript %}
+
+// 存入数据
+$.data(document.body, "foo", 52 );
+
+// 读取数据
+$.data(document.body, "foo");
+
+// 读取所有数据
+$.data(document.body);
+
+{% endhighlight %}
+
+上面代码在网页元素body上储存了一个键值对，键名为“foo”，键值为52。
 
 ## Ajax方法
 
