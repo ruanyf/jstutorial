@@ -1000,7 +1000,7 @@ $("#foo").slideUp(300).delay(800).fadeIn(400)
 
 ### 事件绑定的简便方法
 
-jQuery提供一系列函数方法，允许直接为常见事件绑定回调函数。比如，click方法可以为一个元素绑定click事件的回调函数。
+jQuery提供一系列方法，允许直接为常见事件绑定回调函数。比如，click方法可以为一个元素绑定click事件的回调函数。
 
 {% highlight javascript %}
 
@@ -1010,9 +1010,9 @@ $('li').click(function (e){
 
 {% endhighlight %}
 
-上面代码为li元素绑定click事件的回调函数，点击后在console显示li元素包含的文本。
+上面代码为li元素绑定click事件的回调函数，点击后在控制台显示li元素包含的文本。
 
-这样的方法有如下一些：
+这样绑定事件的简便方法有如下一些：
 
 - click
 - keydown
@@ -1026,6 +1026,7 @@ $('li').click(function (e){
 - focus
 - blur
 - resize
+- hover
 
 如果不带参数调用这些方法，就是触发相应的事件，从而引发回调函数的运行。
 
@@ -1039,7 +1040,21 @@ $('li').click()
 
 需要注意的是，通过这种方法触发回调函数，将不会引发浏览器对该事件的默认行为。比如，对a元素调用click方法，将只触发事先绑定的回调函数，而不会导致浏览器将页面导向href属性指定的网址。
 
+上面列表的最后一个hover方法需要特别说明。它接受两个回调函数作为参数，分别代表mouseenter和mouseleave事件的回调函数。
+
+{% highlight javascript %}
+
+$(selector).hover(handlerIn, handlerOut)
+
+// 等同于
+
+$(selector).mouseenter(handlerIn).mouseleave(handlerOut)
+
+{% endhighlight %}
+
 ### on方法，trigger方法，off方法
+
+除了简便方法，jQuery还提供事件处理的通用方法。
 
 **（1）on方法**
 
@@ -1085,6 +1100,18 @@ $('ul').on('click', 'li', function (e){
 
 这种写法有两个好处。首先，click事件还是在ul元素上触发回调函数，但是会检查event.target属性是否为li子元素，如果为true，再调用回调函数。这样就比为li元素一一绑定回调函数，节省了内存空间。其次，这种绑定的回调函数，对于在此后生成的li元素依然有效。
 
+on方法还允许向回调函数传入数据。
+
+{% highlight javascript %}
+
+$("ul" ).on("click", {name: "张三"}, function (){
+	console.log(event.data.name);
+});
+
+{% endhighlight %}
+
+上面代码在发生click事件之后，会在控制台打印出所传入的数据（即“张三”）。
+
 **（2）trigger方法**
 
 trigger方法用于触发回调函数，它的参数就是事件的名称。
@@ -1111,7 +1138,7 @@ $('li').off('click')
 
 **（4）事件的名称空间**
 
-如果只想移除某一个回调函数，可以采用“名称空间”的方式，为每一个回调函数指定一个二级事件名，然后再用off方法移除这个二级事件的回调函数。
+同一个事件有时绑定了多个回调函数，这时如果想移除其中的一个回调函数，可以采用“名称空间”的方式，即为每一个回调函数指定一个二级事件名，然后再用off方法移除这个二级事件的回调函数。
 
 {% highlight javascript %}
 
@@ -1152,8 +1179,9 @@ event对象有以下属性：
 - type：事件类型，比如click。
 - which：触发该事件的鼠标按钮或键盘的键。
 - target：事件发生的初始对象。
-- pageX：事件发生时，鼠标位置的水平坐标。
-- pageY：事件发生时，鼠标位置的垂直坐标。
+- data：传入事件对象的数据。
+- pageX：事件发生时，鼠标位置的水平坐标（相对于页面左上角）。
+- pageY：事件发生时，鼠标位置的垂直坐标（相对于页面左上角）。
 
 event对象有以下方法：
 
