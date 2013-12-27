@@ -46,7 +46,7 @@ $(document.body) instanceof jQuery
 // true
 
 {% endhighlight %}
-
+$.data(document.body, "foo");
 上面代码中，jQuery的参数不是CSS选择器，而是一个DOM对象，返回的依然是jQuery对象的实例。
 
 如果有多个DOM元素要转为jQuery对象的实例，可以把DOM元素放在一个数组里，输入jQuery函数。
@@ -310,6 +310,20 @@ $(function() {
 {% endhighlight %}
 
 上面代码与前一段代码是等价的。
+
+### $.noConflict方法
+
+jQuery使用美元符号（$）指代jQuery对象。某些情况下，其他函数库也会用到美元符号，为了避免冲突，$.noConflict方法允许将美元符号与jQuery脱钩。
+
+{% highlight html %}
+
+<script src="other_lib.js"></script>
+<script src="jquery.js"></script>
+<script>$.noConflict();</script>
+
+{% endhighlight %}
+
+上面代码就是$.noConflict方法的一般用法。在加载jQuery之后，立即调用该方法，会使得美元符号还给前面一个函数库。这意味着，其后再调用jQuery，只能写成jQuery.methond的形式，而不能用$.method了。
 
 ## jQuery实例对象的方法
 
@@ -655,6 +669,22 @@ $("a").prop("oldValue",1234).removeProp('oldValue')
 $('a').removeAttr("title")
 
 {% endhighlight %}
+
+**（7）data方法**
+
+data方法用于在一个DOM对象上储存数据。
+
+{% highlight javascript %}
+
+// 储存数据
+$("body").data("foo", 52);
+
+// 读取数据
+$("body").data("foo");
+
+{% endhighlight %}
+
+该方法可以在DOM节点上储存各种类型的数据。
 
 ### 添加、复制和移动网页元素的方法
 
