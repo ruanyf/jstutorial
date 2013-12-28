@@ -12,7 +12,7 @@ jQuery函数库提供了一个jQuery对象（简写为$），这个对象本身�
 
 ## 常用工具方法
 
-（1）$.trim
+**（1）$.trim**
 
 $.trim方法用于移除字符串头部和尾部多余的空格。
 
@@ -22,7 +22,22 @@ $.trim('   Hello   ') // Hello
 
 {% endhighlight %}
 
-（2）$.each
+
+**（2）$.contains**
+
+$.contains方法返回一个布尔值，表示某个DOM元素（第二个参数）是否为另一个DOM元素（第一个参数）的下级元素。
+
+{% highlight javascript %}
+
+$.contains(document.documentElement, document.body); 
+// true
+
+$.contains(document.body, document.documentElement); 
+// false
+
+{% endhighlight %}
+
+**（3）$.each，$.map**
 
 $.each方法用于遍历数组和对象，然后返回原始对象。它接受两个参数，分别是数据集合和回调函数。
 
@@ -48,7 +63,19 @@ $.each( obj, function( key, value ) {
 
 需要注意的，jQuery对象实例也有一个each方法（$.fn.each），两者的作用差不多。
 
-（3）$.inArray
+$.map方法也是用来遍历数组和对象，但是会返回一个新对象。
+
+{% highlight javascript %}
+
+var a = ["a", "b", "c", "d", "e"];
+a = $.map(a, function (n, i){
+  return (n.toUpperCase() + i);
+});
+// ["A0", "B1", "C2", "D3", "E4"]
+
+{% endhighlight %}
+
+**（4）$.inArray**
 
 $.inArray方法返回一个值在数组中的位置（从0开始）。如果该值不在数组中，则返回-1。
 
@@ -59,7 +86,7 @@ $.inArray(4,a) // 3
 
 {% endhighlight %}
 
-（4）$.extend
+**（5）$.extend**
 
 $.extend方法用于将多个对象合并进第一个对象。
 
@@ -104,7 +131,7 @@ o3.p1 // ["a", "b"]
 
 上面代码中，o2是浅拷贝，o3是深拷贝。结果，改变原始数组的属性，o2会跟着一起变，而o3不会。
 
-**（5）$.proxy**
+**（6）$.proxy**
 
 $.proxy方法类似于ECMAScript 5的bind方法，可以绑定函数的上下文（也就是this对象）和参数，返回一个新函数。
 
@@ -187,9 +214,87 @@ $('#myElement').click(function() {
 
 {% endhighlight %}
 
-**（6）$.parseJSON**
+**（7）$.data，$.removeData**
+
+$.data方法可以用来在DOM节点上储存数据。
+
+{% highlight javascript %}
+
+// 存入数据
+$.data(document.body, "foo", 52 );
+
+// 读取数据
+$.data(document.body, "foo");
+
+// 读取所有数据
+$.data(document.body);
+
+{% endhighlight %}
+
+上面代码在网页元素body上储存了一个键值对，键名为“foo”，键值为52。
+
+$.removeData方法用于移除$.data方法所储存的数据。
+
+{% highlight javascript %}
+
+$.data(div, "test1", "VALUE-1");
+$.removeData(div, "test1");
+
+{% endhighlight %}
+
+**（8）$.parseHTML，$.parseJSON，$.parseXML()**
+
+$.parseHTML方法用于将字符串解析为DOM对象。
 
 $.parseJSON方法用于将JSON字符串解析为JavaScript对象，作用与原生的JSON.parse()类似。但是，jQuery没有提供类似JSON.stringify()的方法，即不提供将JavaScript对象转为JSON对象的方法。
+
+$.parseXML()用于将字符串解析为XML对象。
+
+{% highlight javascript %}
+
+var html = $.parseHTML("hello, <b>my name is</b> jQuery.");
+var obj = $.parseJSON('{"name": "John"}');
+
+var xml = "<rss version='2.0'><channel><title>RSS Title</title></channel></rss>";
+var  xmlDoc = $.parseXML(xml);
+
+{% endhighlight %}
+
+**（9）$.makeArray**
+
+$.makeArray方法将一个类似数组的对象，转化为真正的数组。
+
+{% highlight javascript %}
+
+var a = $.makeArray(document.getElementsByTagName("div"));
+
+{% endhighlight %}
+
+**（10）$.merge**
+
+$.merge方法用于将一个数组（第二个参数）合并到另一个数组（第一个参数）之中。
+
+{% highlight javascript %}
+
+var a1 = [0,1,2];
+var a2 = [2,3,4];
+$.merge(a1, a2);
+
+a1
+// [0, 1, 2, 2, 3, 4]
+
+{% endhighlight %}
+
+**（11）$.now**
+
+$.now方法返回当前时间距离1970年1月1日00:00:00 UTC对应的毫秒数，等同于(new Date).getTime()。
+
+{% highlight javascript %}
+
+$.now()
+// 1388212221489
+
+{% endhighlight %}
 
 ## 判断数据类型的方法
 
@@ -214,50 +319,62 @@ $.isXMLDoc(document.body) // false
 
 {% endhighlight %}
 
-## 数据储存方法
-
-$.data方法可以用来在DOM节点上储存数据。
+除了上面这些方法以外，还有一个$.type方法，可以返回一个变量的数据类型。它的实质是用Object.prototype.toString方法读取对象内部的[[Class]]属性（参见《标准库》的Object对象一节）。
 
 {% highlight javascript %}
 
-// 存入数据
-$.data(document.body, "foo", 52 );
-
-// 读取数据
-$.data(document.body, "foo");
-
-// 读取所有数据
-$.data(document.body);
+$.type(/test/) // "regexp"
 
 {% endhighlight %}
 
-上面代码在网页元素body上储存了一个键值对，键名为“foo”，键值为52。
+## Ajax操作
 
-## Ajax方法
+### $.ajax
 
-直接定义在jQuery对象上面的Ajax方法（$.ajax()），用来处理Ajax操作。调用该方法后，浏览器就会发出一个HTTP请求。
+jQuery对象上面还定义了Ajax方法（$.ajax()），用来处理Ajax操作。调用该方法后，浏览器就会向服务器发出一个HTTP请求。
 
 $.ajax()的用法有多种，最常见的是提供一个对象参数。
 
 {% highlight javascript %}
 
 $.ajax({
+  async: true,
   url: '/url/to/json',
   type: 'GET',
+  data : { id : 123 },
   dataType: 'json',
+  timeout: 30000,
   success: successCallback,
-  error: errorCallback
+  error: errorCallback,
+  complete: completeCallback
 })
+
+function successCallback(json) {
+	$('<h1/>').text(json.title).appendTo('body');
+}
+
+function errorCallback(xhr, status){
+	console.log('出问题了！');
+}
+
+function completeCallback(xhr, status){
+	console.log('Ajax请求已结束。');
+}
 
 {% endhighlight %}
 
 上面代码的对象参数有多个属性，含义如下：
 
-- url：服务器端网址。
-- type：向服务器发送信息所使用的HTTP动词，默认为GET。
-- dataType：向服务器请求的数据类型。
-- success：请求成功时的回调函数。
-- error：请求失败时的回调函数。
+- async：该项默认为true，如果设为false，则表示发出的是同步请求。
+- cache: 该项默认为true，如果设为false，则浏览器不缓存返回服务器返回的数据。注意，浏览器本身就不会缓存POST请求返回的数据，所以即使设为false，也只对HEAD和GET请求有效。
+- url：服务器端网址。这是唯一必需的一个属性，其他属性都可以省略。
+- type：向服务器发送信息所使用的HTTP动词，默认为GET，其他动词有POST、PUT、DELETE。
+- dataType：向服务器请求的数据类型，可以设为text、html、script、json、jsonp和xml。
+- data：向服务器发送的数据，如果使用GET方法，此项将转为查询字符串，附在网址的最后。
+- success：请求成功时的回调函数，函数参数为服务器传回的数据、状态信息、发出请求的原始对象。
+- timeout: 等待的最长毫秒数。如果过了这个时间，请求还没有返回，则自动将请求状态改为失败。
+- error：请求失败时的回调函数，函数参数为发出请求的原始对象以及返回的状态信息。
+- complete：不管请求成功或失败，都会执行的回调函数，函数参数为发出请求的原始对象以及返回的状态信息。
 
 这些参数之中，url可以独立出来，作为ajax方法的第一个参数。也就是说，上面代码还可以写成下面这样。
 
@@ -272,11 +389,21 @@ $.ajax('/url/to/json',{
 
 {% endhighlight %}
 
-ajax方法还有两个简便写法，即get方法和post方法，它们分别表示向服务器发出GET请求和POST请求。
+### 简便写法
+
+ajax方法还有一些简便写法。
+
+- $.get()：发出GET请求。
+- $.getScript()：读取一个JavaScript脚本文件并执行。
+- $.getJSON()：发出GET请求，读取一个JSON文件。
+- $.post()：发出POST请求。
+- $.fn.load()：读取一个html文件，并将其放入当前元素之中。
+
+一般来说，这些简便方法依次接受三个参数：url、数据、成功时的回调函数。
 
 {% highlight javascript %}
 
-$.get( '/data/people.html', function(html){
+$.get('/data/people.html', function(html){
   $('#target').html(html);
 });
 
@@ -329,6 +456,62 @@ $.ajax({
 
 {% endhighlight %}
 
+下面是一个$.getScript方法的例子。
+
+{% highlight javascript %}
+
+$.getScript('/static/js/myScript.js', function() {
+	functionFromMyScript();
+});
+
+{% endhighlight %}
+
+上面代码先从服务器加载myScript.js脚本，然后在回调函数中执行该脚本提供的函数。
+
+$.fn.load是定义在jQuery对象实例上的方法，用于获取服务器端的HTML文件，将其放入当前元素。
+
+{% highlight javascript %}
+
+$('#newContent').load('/foo.html');
+
+{% endhighlight %}
+
+$.fn.load方法还可以指定一个选择器，将远程文件中匹配选择器的部分，放入当前元素，并指定操作完成时的回调函数。
+
+{% highlight javascript %}
+
+$('#newContent').load('/foo.html #myDiv h1:first',
+	function(html) {
+		console.log('内容更新！');
+});
+
+{% endhighlight %}
+
+上面代码只加载foo.html中匹配“#myDiv h1:first”的部分，加载完成后会运行指定的回调函数。
+
+### Ajax事件
+
+jQuery提供以下一些方法，用于指定特定的AJAX事件的回调函数。
+
+- .ajaxComplete()：ajax请求完成。
+- .ajaxError()：ajax请求出错。
+- .ajaxSend()：ajax请求发出之前。
+- .ajaxStart()：第一个ajax请求开始发出，即没有还未完成ajax请求。
+- .ajaxStop()：所有ajax请求完成之后。
+- .ajaxSuccess()：ajax请求成功之后。
+
+下面是示例。
+
+{% highlight javascript %}
+
+$('#loading_indicator')
+.ajaxStart(function (){$(this).show();})
+.ajaxStop(function (){$(this).hide();});
+
+{% endhighlight %}
+
+### 返回值
+
 ajax方法返回的是一个deferred对象，可以用then方法为该对象指定回调函数（详细解释参见《deferred对象》一节）。
 
 {% highlight javascript %}
@@ -336,14 +519,15 @@ ajax方法返回的是一个deferred对象，可以用then方法为该对象指�
 $.ajax({
   url: '/data/people.json',
   dataType: 'json'
-})
-.then(function (resp){
+}).then(function (resp){
   console.log(resp.people);
 })
 
 {% endhighlight %}
 
-由于浏览器存在“同域限制”，ajax方法只能向当前网页所在的域名发出HTTP请求。但是，通过在当前网页中插入script元素，可以向不同的域名发出GET请求，这种变通方法叫做JSONP（JSON with Padding）。
+### JSONP
+
+由于浏览器存在“同域限制”，ajax方法只能向当前网页所在的域名发出HTTP请求。但是，通过在当前网页中插入script元素（\<script\>），可以向不同的域名发出GET请求，这种变通方法叫做JSONP（JSON with Padding）。
 
 ajax方法可以发出JSONP请求，方法是在对象参数中指定dataType为JSONP。
 
