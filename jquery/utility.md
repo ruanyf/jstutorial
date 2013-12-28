@@ -1,5 +1,5 @@
 ---
-title: 工具方法
+title: jQuery工具方法
 layout: page
 category: jquery
 date: 2013-02-16
@@ -242,13 +242,13 @@ $.removeData(div, "test1");
 
 {% endhighlight %}
 
-**（8）$.parseHTML，$.parseJSON，$.parseXML()**
+**（8）$.parseHTML，$.parseJSON，$.parseXML**
 
 $.parseHTML方法用于将字符串解析为DOM对象。
 
 $.parseJSON方法用于将JSON字符串解析为JavaScript对象，作用与原生的JSON.parse()类似。但是，jQuery没有提供类似JSON.stringify()的方法，即不提供将JavaScript对象转为JSON对象的方法。
 
-$.parseXML()用于将字符串解析为XML对象。
+$.parseXML方法用于将字符串解析为XML对象。
 
 {% highlight javascript %}
 

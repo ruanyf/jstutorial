@@ -84,7 +84,7 @@ modifiedOn: 2013-12-20
 <h2 id="jquery">jQuery</h2>
 
 - [概述](jquery/basic.html)
-- [Utility方法](jquery/utility.html)
+- [工具方法](jquery/utility.html)
 - [插件开发](jquery/plugin.html)
 - [deferred对象](jquery/deferred.html)
 - [如何做到jQuery-free？](jquery/jquery-free.html)
