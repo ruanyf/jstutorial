@@ -256,7 +256,7 @@ var html = $.parseHTML("hello, <b>my name is</b> jQuery.");
 var obj = $.parseJSON('{"name": "John"}');
 
 var xml = "<rss version='2.0'><channel><title>RSS Title</title></channel></rss>";
-var  xmlDoc = $.parseXML(xml);
+var xmlDoc = $.parseXML(xml);
 
 {% endhighlight %}
 

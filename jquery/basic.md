@@ -1014,6 +1014,37 @@ $("#foo").slideUp(300).delay(800).fadeIn(400)
 
 上面代码表示，slideUp动画之后，暂停800毫秒，然后继续执行fadeIn动画。
 
+### 其他方法
+
+jQuery还提供一些供特定元素使用的方法。
+
+serialize方法用于将表单元素的值，转为url使用的查询字符串。
+
+{% highlight javascript %}
+
+$( "form" ).on( "submit", function( event ) {
+  event.preventDefault();
+  console.log( $( this ).serialize() );
+});
+// single=Single&multiple=Multiple&check=check2&radio=radio1
+
+{% endhighlight %}
+
+serializeArray方法用于将表单元素的值转为数组。
+
+{% highlight javascript %}
+
+$("form").submit(function (event){
+  console.log($(this).serializeArray());
+  event.preventDefault();
+});
+//	[
+//		{name : 'field1', value : 123},
+//		{name : 'field2', value : 'hello world'}
+//	]
+
+{% endhighlight %}
+
 ## 事件处理
 
 ### 事件绑定的简便方法
