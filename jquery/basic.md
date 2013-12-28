@@ -3,10 +3,12 @@ title: jQuery概述
 layout: page
 category: jquery
 date: 2013-02-01
-modifiedOn: 2013-11-21
+modifiedOn: 2013-12-28
 ---
 
-jQuery是目前使用最广泛的JavaScript函数库。据统计，全世界使用JavaScript函数库的网页，90%选择了jQuery；全世界排名前10000位的网站，57%使用了jQuery。它的最大优势有两个，一是使得操作网页元素变得异常容易，二是统一了接口，使得开发者可以用同一种方法编写能在所有现代浏览器中运行的代码，而不用担心浏览器之间的差异。
+jQuery是目前使用最广泛的JavaScript函数库。据统计，全世界使用JavaScript函数库的网页，90%选择了jQuery；全世界排名前10000位的网站，57%使用了jQuery。
+
+它的最大优势有两个，一是使得操作网页元素变得异常容易，二是统一了接口，使得开发者可以用同一种方法编写能在所有现代浏览器中运行的代码，而不用担心浏览器之间的差异。
 
 ## jQuery基础
 
@@ -24,7 +26,7 @@ var listItems = $('li');
 
 上面两行代码是等价的，表示选中网页中所有的li元素。
 
-jQuery对象是一个构造函数，主要作用是返回jQuery对象的实例。比如，上面代码表面上是选中li元素，实际上返回是对应与li元素的jQuery对象实例。因为只有这样，才能在返回的对象之上使用jQuery提供的各种方法。
+jQuery对象本质上是一个构造函数，主要作用是返回jQuery对象的实例。比如，上面代码表面上是选中li元素，实际上是返回对应于li元素的jQuery对象实例。因为只有这样，才能在返回的对象之上使用jQuery提供的各种方法。
 
 {% highlight javascript %}
 
@@ -38,7 +40,7 @@ $('body') instanceof jQuery
 
 上面代码表示，由于jQuery返回的不是DOM对象，所以没有nodeType属性。它返回的是jQuery对象的实例。 
 
-如果直接将DOM对象作为参数，放入jQuery函数，则会被转为jQuery对象的实例。
+jQuery构造函数的参数，除了CSS选择器，还可以是DOM对象，它也会被转为jQuery对象的实例。
 
 {% highlight javascript %}
 
@@ -46,10 +48,10 @@ $(document.body) instanceof jQuery
 // true
 
 {% endhighlight %}
-$.data(document.body, "foo");
+
 上面代码中，jQuery的参数不是CSS选择器，而是一个DOM对象，返回的依然是jQuery对象的实例。
 
-如果有多个DOM元素要转为jQuery对象的实例，可以把DOM元素放在一个数组里，输入jQuery函数。
+如果有多个DOM元素要转为jQuery对象的实例，可以把DOM元素放在一个数组里，输入jQuery构造函数。
 
 {% highlight javascript %}
 
@@ -57,7 +59,7 @@ $([document.body, document.head])
 
 {% endhighlight %}
 
-如果直接在jQuery函数中输入HTML代码，则返回一个jQuery实例。
+如果直接在jQuery函数中输入HTML代码，返回的也是jQuery实例。
 
 {% highlight javascript %}
 
@@ -65,7 +67,9 @@ $('<li class="greet">test</lt>')
 
 {% endhighlight %}
 
-上面代码从HTML代码生成了一个jQuery实例，它从CSS选择器生成的jQuery实例完全一样。唯一的区别就是，它对应的DOM结构不属于当前文档。上面代码也可以写成下面这样。
+上面代码从HTML代码生成了一个jQuery实例，它与从CSS选择器生成的jQuery实例完全一样。唯一的区别就是，它对应的DOM结构不属于当前文档。
+
+上面代码也可以写成下面这样。
 
 {% highlight javascript %}
 
@@ -196,6 +200,8 @@ $('li').eq(0) instanceof jQuery // true
 
 **（6）each方法，map方法**
 
+这两个方法用于遍历结果集，对每一个成员进行某种操作。
+
 each方法接受一个函数作为参数，依次处理集合中的每一个元素。
 
 {% highlight javascript %}
@@ -207,12 +213,12 @@ $('li').each(function( index, element) {
 // <li>Hello</li>
 // <li>World</li>
 // 变为
-// <li><em>0</em>: Hello</li>
-// <li><em>1</em>: World</li>
+// <li><em>0: </em>Hello</li>
+// <li><em>1: </em>World</li>
 
 {% endhighlight %}
 
-从上面代码可以看出，作为each方法参数的函数，本身有两个参数，第一个是当前元素在集合中的位置，第二个当前元素对应的DOM对象。
+从上面代码可以看出，作为each方法参数的函数，本身有两个参数，第一个是当前元素在集合中的位置，第二个是当前元素对应的DOM对象。
 
 map方法的用法与each方法完全一样，区别在于each方法没有返回值，只是对每一个元素执行某种操作，而map方法返回一个新的jQuery对象。
 
@@ -230,7 +236,7 @@ $("input").map(function (index, element){
 
 **（8）内置循环**
 
-jQuery默认对当前结果集进行循环处理。
+jQuery默认对当前结果集进行循环处理，所以如果直接使用jQuery内置的某种方法，each和map方法是不必要的。
 
 {% highlight javascript %}
 
@@ -907,6 +913,7 @@ jQuery提供以下一些动画效果方法。
 
 - show：显示当前元素。
 - hide：隐藏当前元素。
+- toggle：显示或隐藏当前元素。
 - fadeIn：将当前元素的不透明度（opacity）逐步提升到100%。
 - fadeOut：将当前元素的不透明度逐步降为0%。
 - slideDown：以从上向下滑入的方式显示当前元素。
@@ -937,6 +944,17 @@ jQuery.fx.speeds.normal = 1000;
 
 上面三行代码重新定义fast和slow关键字对应的毫秒数，并且自定义了normal关键字，表示动画持续时间为1500毫秒。
 
+你可以定义自己的关键字。
+
+{% highlight javascript %}
+
+jQuery.fx.speeds.blazing = 30;
+
+// 调用
+$('.hidden').show('blazing');
+
+{% endhighlight %}
+
 这些方法还可以接受一个函数，作为第二个参数，表示动画结束后的回调函数。
 
 {% highlight javascript %}
@@ -951,7 +969,7 @@ $('p').fadeOut(300, function() {
 
 **（2）animate方法**
 
-上面这些动画效果方法，实际上都是animate方法的简便写法，在幕后jQuery都是统一使用animate方法生成各种动画效果。
+上面这些动画效果方法，实际上都是animate方法的简便写法。在幕后，jQuery都是统一使用animate方法生成各种动画效果。
 
 animate方法接受三个参数。
 
@@ -962,9 +980,9 @@ $('div').animate({
     opacity: 0.25,
     fontSize: '12px'
   },
-  300,
-  function() {
-    // ...
+  300, // 持续事件
+  function() { // 回调函数
+     console.log('done!');
   }
 );
 
