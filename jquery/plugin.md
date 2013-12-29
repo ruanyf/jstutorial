@@ -6,7 +6,7 @@ date: 2013-12-12
 modifiedOn: 2013-12-12
 ---
 
-用户可以把自己的操作封装成插件（plugin），方便调用。
+所谓“插件”，就是用户自己新增的jQuery实例对象的方法。由于该方法要被所有实例共享，所以只能定义在jQuery构造函数的原型对象（prototype）之上。对于用户来说，把一些常用的操作封装成插件（plugin），使用起来会非常方便。
 
 ## 插件的编写
 
@@ -114,6 +114,27 @@ $.fn.myNewPlugin = function() {
 {% endhighlight %}
 
 上面代码使用extend方法，为参数对象设置属性的默认值。
+
+## 实例
+
+下面是一个将a元素的href属性添加到网页的插件。
+
+{% highlight javascript %}
+
+(function($){
+	$.fn.showLinkLocation = function() {
+		return this.filter('a').append(function(){
+			return ' (' + this.href + ')';
+		});
+	};
+}(jQuery));
+
+// 用法
+$('a').showLinkLocation();
+
+{% endhighlight %}
+
+从上面的代码可以看到，插件的开发和使用都非常简单。
 
 ## 插件的发布
 

@@ -70,6 +70,8 @@ modifiedOn: 2013-10-26
 
 - Cody Lindley, [DOM Enlightenment](http://domenlightenment.com/), O'Reilly, 2013
 
+- Rebecca Murphey, [jQuery Fundamentals](http://github.com/rmurphey/jqfundamentals), 2011
+
 - Aaron Frost, [JS.next: A Manager’s Guide](http://chimera.labs.oreilly.com/books/1234000001623), O'Reilly, 2013
 
 - John Resig, Bear Bibeault, [Secrets of the JavaScript Ninja](http://www.manning.com/resig/), Manning, 2012
