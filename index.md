@@ -2,7 +2,7 @@
 layout: homepage
 title: JavaScript 标准参考教程（alpha）
 date: 2012-11-18
-modifiedOn: 2013-12-20
+modifiedOn: 2013-12-31
 ---
 	
 <h2 id="introduction">导论</h2>
@@ -15,6 +15,7 @@ modifiedOn: 2013-12-20
 
 - [概述](grammar/basic.html)
 - [数值](grammar/number.html)
+- [字符串](grammar/string.html)
 - [对象](grammar/object.html)
 - [数组](grammar/array.html)
 - [函数](grammar/function.html)
