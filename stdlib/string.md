@@ -21,7 +21,16 @@ s.valueOf() // "abc"
 
 上面代码生成的变量s，类型为对象，值就是原来的字符串。
 
-String当作工具方法使用时，可以将任意类型的值转为字符串。
+通过String构造函数生成的字符串对象，是一个类似数组的对象。
+
+{% highlight javascript %}
+
+new String("abc")
+// String {0: "a", 1: "b", 2: "c"}
+
+{% endhighlight %}
+
+String还可以当作工具方法使用，作用是将任意类型的值转为字符串。
 
 {% highlight javascript %}
 

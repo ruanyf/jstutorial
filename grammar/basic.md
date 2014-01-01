@@ -484,6 +484,22 @@ v
 
 {% endhighlight %}
 
+以下是三种常见的得到undefined的情况。
+
+- 变量声明但没有赋值。
+- 读取对象不存在的属性。
+- 运行没有返回语句的函数。
+
+第一种情况已经举过例了，第二和第三种情况请看下面的代码。
+
+{% highlight javascript %}
+
+this.foo // undefined
+
+(function f(){})() // undefined
+
+{% endhighlight %}
+
 null表示非对象（no object），即一个没有具体值的对象。它不是一种单独的数据类型，而是包含在对象类型（object）之中的一种特殊值。
 
 {% highlight javascript %}
@@ -495,6 +511,8 @@ v
 {% endhighlight %}
 
 上面代码表示，v的类型设定为对象，但是目前还没有具体的值，所以赋值为null。
+
+关于null和undefined的区别，可以理解成null表示什么也没有（nothing），undefined表示缺少一个值，所以，变量已经声明但没有赋值时，就等于undefined。
 
 需要注意的是，JavaScript的标识名区分大小写，所以undefined和null不同于Undefined和Null（或者其他仅仅大小写不同的词形），后者只是普通的变量名。
 

@@ -82,6 +82,14 @@ Number对象部署了单独的toString方法，可以接受一个参数，表示
 
 {% endhighlight %}
 
+通过方括号运算符也可以调用toString方法。
+
+{% highlight javascript %}
+
+10['toString'](2) // "1010"
+
+{% endhighlight %}
+
 ### toFixed方法
 
 toFixed方法用于将一个数转为指定位数的小数。
