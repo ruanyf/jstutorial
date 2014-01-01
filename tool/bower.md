@@ -74,13 +74,32 @@ bower install jquery-ui#1.10.1
 
 如果某个库依赖另一个库，安装时默认将所依赖的库一起安装。比如，jquery-ui依赖jquery，安装时会连jquery一起安装。
 
+安装后的库默认存放在项目的bower_components子目录，如果要指定其他位置，可在.bowerrc文件的directory属性设置。
+
 ### 库的搜索和查看
 
 bower search命令用于使用关键字，从在线索引中搜索相关库。
 
 {% highlight bash %}
 
-bower search backbone
+bower search jquery
+
+{% endhighlight %}
+
+上面命令会得到下面这样的结果。
+
+{% highlight bash %}
+
+Search results:
+
+    jquery git://github.com/components/jquery.git
+    jquery-ui git://github.com/components/jqueryui
+    jquery.cookie git://github.com/carhartl/jquery-cookie.git
+    jquery-placeholder git://github.com/mathiasbynens/jquery-placeholder.git
+    jquery-file-upload git://github.com/blueimp/jQuery-File-Upload.git
+    jasmine-jquery git://github.com/velesin/jasmine-jquery
+    jquery.ui git://github.com/jquery/jquery-ui.git
+    ...
 
 {% endhighlight %}
 
@@ -103,6 +122,8 @@ bower update用于更新一个库，将其更新为最新版本。
 bower update jquery-ui
 
 {% endhighlight %}
+
+如果不给出库名，则更新所有库。
 
 bower uninstall命令用于卸载指定的库。
 
@@ -127,7 +148,7 @@ Bower ls
 
 ## 配置文件.bowerrc
 
-项目根目录下的.bowerrc文件是Bower的配置文件，它大概像下面这样。
+项目根目录下（也可以放在用户的主目录下）的.bowerrc文件是Bower的配置文件，它大概像下面这样。
 
 {% highlight javascript %}
 
@@ -151,18 +172,22 @@ Bower ls
 
 ## 库信息文件bower.json
 
-bower.json文件针对库的开发者，存放在库的根目录下，用于储存库的信息，供Bower的在线索引读取。
+bower.json文件存放在库的根目录下，用于保存项目的库信息，供项目安装时使用，以及Bower的在线索引读取。
 
 下面是一个典型的bower.json文件。
 
 {% highlight javascript %}
 
 {
-  "name": "tooltip",
+  "name": "app-name",
   "version": "0.1.0", 
-  "main": ["path/to/tooltip.html", "path/to/tooltip.css", "path/to/tooltip.js"],
+  "main": ["path/to/app.html", "path/to/app.css", "path/to/app.js"],
   "ignore": [".jshintrc","**/*.txt"],
-  "dependencies": {"jquery": "latests"},
+  "dependencies": {
+    "sass-bootstrap": "~3.0.0",
+    "modernizr": "~2.6.2",
+    "jquery": "latests"
+  },
   "devDependencies": {"qunit": ">1.11.0"}
 }
 
@@ -176,11 +201,23 @@ bower init
 
 {% endhighlight %}
 
-有了bower.json文件以后，就可以向Bower的在线索引提交你的库。
+有了bower.json文件以后，就可以用bower install命令，一下子安装所有库。
+
+{% highlight bash %}
+
+bower install
+
+{% endhighlight %}
+
+根据bower.json文件，还可以向Bower的在线索引提交你的库。
 
 {% highlight bash %}
 
 bower register <my-package-name> <git-endpoint>
+
+// 比如
+
+bower register jquery git://github.com/jquery/jquery
 
 {% endhighlight %}
 
@@ -189,3 +226,5 @@ bower register <my-package-name> <git-endpoint>
 ## 相关链接
 
 - Cody Lindley, [Package Managers: An Introductory Guide For The Uninitiated Front-End Developer](http://tech.pro/tutorial/1190/package-managers-an-introductory-guide-for-the-uninitiated-front-end-developer)
+- Tyson Cadenhead, [Client-Side Dependency Management with Bower](http://tysoncadenhead.com/blog/client-side-dependency-management-with-bower)
+- Matt West, [Getting Started with Bower](http://blog.teamtreehouse.com/getting-started-bower)
