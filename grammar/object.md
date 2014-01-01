@@ -3,7 +3,7 @@ title: 对象
 layout: page
 category: grammar
 date: 2012-12-12
-modifiedOn: 2013-10-27
+modifiedOn: 2014-01-01
 ---
 
 ## 概述
@@ -186,13 +186,13 @@ delete命令可以删除属性，如果删除成功，返回布尔值true。
 
 var o = { p:1 };
 
-delete o.p
-// true
+delete o.p // true
 
-o.p
-// undefined
+o.p // undefined
 
 {% endhighlight %}
+
+需要注意的是，delete运算符只能删除对象本身的属性，不能删除继承的属性（关于继承参见《面向对象编程》一节）。
 
 ### 对象的引用
 

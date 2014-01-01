@@ -3,7 +3,7 @@ title: String对象
 layout: page
 category: stdlib
 date: 2013-04-30
-modifiedOn: 2013-09-19
+modifiedOn: 2014-01-01
 ---
 
 ## 概述
@@ -13,6 +13,20 @@ String对象用来生成字符串的包装对象实例。
 {% highlight javascript %}
 
 var s = new String("abc");
+
+typeof s // "object"
+s.valueOf() // "abc"
+
+{% endhighlight %}
+
+上面代码生成的变量s，类型为对象，值就是原来的字符串。
+
+String当作工具方法使用时，可以将任意类型的值转为字符串。
+
+{% highlight javascript %}
+
+String(true) // "true"
+String(5) // "5"
 
 {% endhighlight %}
 

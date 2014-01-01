@@ -59,6 +59,18 @@ o.print() // Object
 
 ## Object对象的方法
 
+### Object工具方法
+
+Object本身当作工具方法使用时，可以将原始类型的值转为对应的包装对象（参见《原始类型的包装对象》一节）。
+
+{% highlight javascript %}
+
+Object(1) instanceof Number // true
+Object('foo') instanceof String // true
+Object(true) instanceof Boolean // true
+
+{% endhighlight %}
+
 ### Object.keys方法
 
 Object.keys方法返回一个数组，成员是对象自身的（而不是继承的）所有属性名。

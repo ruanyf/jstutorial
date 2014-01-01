@@ -3,7 +3,7 @@ title: 原始类型的包装对象
 layout: page
 category: stdlib
 date: 2013-04-30
-modifiedOn: 2013-04-30
+modifiedOn: 2014-01-01
 ---
 
 ## 概述
@@ -37,7 +37,7 @@ typeof new String("abc")
 
 {% endhighlight %}
 
-而且，包装对象的值都是Object对象的实例（即Object对象是它们的原型），原始类型则不是。（instanceof是判断一个对象是否为另一个对象的实例的运算符，详见《面向对象编程》一章。）
+而且，包装对象的值都是Object对象的实例（即Object对象是它们的原型），原始类型则不是。
 
 {% highlight javascript %}
 
@@ -49,15 +49,19 @@ new String("abc") instanceof Object
 
 {% endhighlight %}
 
+上面代码中的instanceof是判断一个对象是否为另一个对象的实例的运算符，详见《面向对象编程》一章。
+
 ## 包装对象的目的
 
 JavaScript设计包装对象的最大目的，首先是使得JavaScript的“对象”涵盖所有的值。其次，使得原始类型的值可以方便地调用特定方法。
 
-### Object对象提供的原生方法
+### Object对象提供的方法
 
 包装对象可以使用Object对象提供的原生方法，主要是 valueOf 方法和 toString 方法。
 
-valueOf 方法，返回该对象对应的原始类型的值。
+（1）valueOf方法
+
+valueOf方法返回该对象对应的原始类型的值。
 
 {% highlight javascript %}
 
@@ -72,7 +76,9 @@ new Boolean("true").valueOf()
 
 {% endhighlight %}
 
-toString 方法，返回该对象的原始类型值的字符串形式。
+（2）toString方法
+
+toString方法返回该对象的原始类型值的字符串形式。
 
 {% highlight javascript %}
 
@@ -87,20 +93,21 @@ new Boolean("true").toString()
 
 {% endhighlight %}
 
-如果不加new关键字，直接调用包装对象，则相当于生成实例后再调用valueOf方法。
+（3）包装对象构造函数的工具方法
+
+如果不加new关键字，直接调用包装对象的构造函数，则相当于把构造函数当作工具函数用。作用是生成实例后再调用valueOf方法，常常用于将任意类型的值转为某种原始类型的值。
 
 {% highlight javascript %}
 
-Number(123)
-// 123
+Number(123) // 123
 
-String("abc")
-// "abc"
+String("abc") // "abc"
 
-Boolean(true)
-// true
+Boolean(true) // true
 
 {% endhighlight %}
+
+（4）length属性
 
 除了valueOf和toString方法，字符串对象还有length属性，返回字符串的长度。
 
@@ -108,17 +115,17 @@ Boolean(true)
 
 var v = new String("abc");
 
-v.length
-// 3
+v.length // 3
 
-"abc".length
-// 3
+"abc".length // 3
 
 {% endhighlight %}
 
-### 包装对象提供的原生方法
+上面代码对字符串abc调用length属性，实际上是将“字符串”自动转为“字符串对象”，再在其上调用length属性。
 
-三种包装对象自身还带有一些原生方法，可以直接调用。
+### 包装对象提供的方法
+
+三种包装对象自身还带有一些方法，可以直接调用。
 
 {% highlight javascript %}
 
@@ -129,8 +136,7 @@ s1.substring(2)
 
 {% endhighlight %}
 
-上面代码的s1是一个字符串，属于原始类型，本身不能调用任何方法。当对s1调用substring方法时，JavaScript引擎自动将s
-1转化为一个包装对象实例，然后再对这个实例调用substring方法。在将得到的值返回后，再自动销毁这个临时生成的包装对象实例。
+上面代码的s1是一个字符串，属于原始类型，本身不能调用任何方法。当对s1调用substring方法时，JavaScript引擎自动将s1转化为一个包装对象实例，然后再对这个实例调用substring方法。在将得到的值返回后，再自动销毁这个临时生成的包装对象实例。
 
 但是，这种自动生成包装对象实例的机制，只对原型方法有效。如果直接对原始类型的变量添加属性，则无效。
 
@@ -147,23 +153,19 @@ s1.p
 
 ### 自定义方法
 
-三种包装对象还可以在原型上添加自定义方法（prototype的含义详见《面向对象编程》一章）。比如，我们可以新增一个double方法，使得字符串和数字翻倍。
+三种包装对象还可以在原型上添加自定义方法（原型prototype的含义详见《面向对象编程》一章）。比如，我们可以新增一个double方法，使得字符串和数字翻倍。
 
 {% highlight javascript %}
 
 String.prototype.double = function (){
-
 	return this.valueOf() + this.valueOf();
-
 };
 
 "abc".double()
 // abcabc
 
 Number.prototype.double = function (){
-
 	return this.valueOf() + this.valueOf();
-
 };
 
 (123).double()
@@ -171,7 +173,7 @@ Number.prototype.double = function (){
 
 {% endhighlight %}
 
-## 自动转化
+## 原始类型值的自动转化
 
 可以直接在原始类型的值上使用包装对象的方法，这时原始类型的值会自动转化成包装对象。
 
@@ -179,12 +181,11 @@ Number.prototype.double = function (){
 
 var v = 123;
 
-v.valueOf()
-// 123
+v.valueOf() // 123
 
 {% endhighlight %}
 
-如果使用的是未定义的方法或属性，原始类型不会自动转化。
+如果使用的不是定义在包装对象原型上的方法或属性，原始类型的值不会自动转化为对象。
 
 {% highlight javascript %}
 
@@ -192,13 +193,11 @@ var v = 123;
 
 v.x = 246;
 
-v.x
-// undefined
+v.x // undefined
 
 v.x = function (){};
 
-v.x()
-// 报错
+v.x() // 报错
 
 {% endhighlight %}
 
@@ -219,50 +218,25 @@ new String("abc") + "abc"
 {% highlight javascript %}
 
 if (new Boolean(false)) {
-
     console.log("true"); 
-
-}
-// true
+} // true
 
 if (new Boolean(false).valueOf()) {
-
     console.log("true"); 
-
-}
-// 无输出
+} // 无输出
 
 {% endhighlight %}
 
-如果要获得一个变量对应的布尔值，规范的写法如下：
+如果要获得一个变量对应的布尔值，有多种写法。
 
 {% highlight javascript %}
 
 var a = "";
 
-new Boolean(a).valueOf()
-//false
+new Boolean(a).valueOf() //false
 
-{% endhighlight %}
+Boolean(a) //false
 
-简洁的写法是：
-
-{% highlight javascript %}
-
-var a = "";
-
-Boolean(a)
-//false
-
-{% endhighlight %}
-
-还有更简洁的写法：
-
-{% highlight javascript %}
-
-var a = "";
-
-!!a
-//false
+!!a //false
 
 {% endhighlight %}

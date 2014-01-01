@@ -3,12 +3,24 @@ title: Number对象
 layout: page
 category: stdlib
 date: 2013-03-16
-modifiedOn: 2013-10-22
+modifiedOn: 2014-01-01
 ---
+
+Number是数值对应的包装对象，用于生成值为数值的对象。
+
+Number当作工具函数使用时，可以将任何类型的值转为数值。
+
+{% highlight javascript %}
+
+Number(true) // 1
+
+{% endhighlight %}
+
+上面代码将布尔值true转为数值1。
 
 ## 属性
 
-Number拥有一些特别的属性。
+Number对象拥有一些特别的属性。
 
 - Number.POSITIVE_INFINITY 表示正的无限，指向关键字Infinity。
 - Number.NEGATIVE_INFINITY 表示负的无限，指向-Infinity。
@@ -18,20 +30,11 @@ Number拥有一些特别的属性。
 
 {% highlight javascript %}
 
-Number.POSITIVE_INFINITY
-// Infinity
-
-Number.NEGATIVE_INFINITY
-// -Infinity
-
-Number.NaN
-// NaN
-
-Number.MAX_VALUE
-// 1.7976931348623157e+308
-
-Number.MIN_VALUE
-// 5e-324
+Number.POSITIVE_INFINITY // Infinity
+Number.NEGATIVE_INFINITY // -Infinity
+Number.NaN // NaN
+Number.MAX_VALUE // 1.7976931348623157e+308
+Number.MIN_VALUE // 5e-324
 
 {% endhighlight %}
 
