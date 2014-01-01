@@ -109,7 +109,23 @@ Math.pow(2, 53)
 
 {% endhighlight %}
 
-## NaN
+## 特殊数值
+
+JavaScript提供几个特殊的数值。
+
+### 正零和负零
+
+严格来说，JavaScript提供零的三种写法：0、+0、-0。它们是等价的。
+
+{% highlight javascript %}
+
+-0 === +0 // true
+0 === -0 // true
+0 === +0 // true
+
+{% endhighlight %}
+
+### NaN
 
 NaN是JavaScript的特殊值，表示“非数字”（not a number），主要出现在将字符串解析成数字出错的场合。
 
@@ -210,7 +226,7 @@ function myIsNaN2(value) {
 
 {% endhighlight %}
 
-## Infinity
+### Infinity
 
 Infinity表示“无穷”。除了0除以0得到NaN，其他任意数除以0，得到Infinity。它有正负之分。
 
@@ -275,7 +291,9 @@ Infinity可以用于布尔运算。
 
 {% endhighlight %}
 
-## parseInt方法
+## 与数值相关的全局方法
+
+### parseInt方法
 
 parseInt方法可以将字符串或小数转化为整数。如果字符串头部有空格，空格会被自动去除。
 
@@ -346,7 +364,7 @@ parseInt("010",8) // 8
 
 可以看到，parseInt的很多复杂行为，都是由八进制的前缀0引发的。因此，ECMAScript 5不再允许parseInt将带有前缀0的数字，视为八进制数。但是，为了保证兼容性，大部分浏览器并没有部署这一条规定。
 
-## parseFloat方法
+### parseFloat方法
 
 parseFloat方法用于将一个字符串转为浮点数。
 
