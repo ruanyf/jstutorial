@@ -85,7 +85,7 @@ v.price
 
 变量v就是新生成的实例对象，它从构造函数Vehicle继承了price属性。
 
-new命令后面的构造函数可以带括号，也可以不带括号。下面两行代码是等价的。
+new命令本身就可以执行构造函数，所以后面的构造函数可以带括号，也可以不带括号。下面两行代码是等价的。
 
 {% highlight javascript %}
 
@@ -130,11 +130,9 @@ v instanceof Vehicle
 
 {% endhighlight %}
 
-前面章节说过，JavaScript的所有值，都是某种对象。只要是对象，就有对应的构造函数。因此，instanceof运算符可以用来判断值的类型。
+instanceof运算符的左边放置对象，右边放置构造函数。在JavaScript之中，只要是对象，就有对应的构造函数。因此，instanceof运算符可以用来判断值的类型。
 
 {% highlight javascript %}
-
-"" instanceof String // false
 
 [1, 2, 3] instanceof Array // true
 
@@ -142,7 +140,19 @@ v instanceof Vehicle
 
 {% endhighlight %}
 
-上面代码表示字符串不是String对象的实例（因为字符串不是对象），而数组和对象则分别是Array对象和Object对象的实例。最后那一行的空对象外面，之所以要加括号，是因为如果不加，JavaScript引擎会把一对大括号解释为一个代码块，而不是一个对象，从而导致这一行代码被解释为“{}; instanceof Object”，引擎就会报错。 
+上面代码表示数组和对象则分别是Array对象和Object对象的实例。最后那一行的空对象外面，之所以要加括号，是因为如果不加，JavaScript引擎会把一对大括号解释为一个代码块，而不是一个对象，从而导致这一行代码被解释为“{}; instanceof Object”，引擎就会报错。 
+
+需要注意的是，由于原始类型的值不是对象，所以不能使用instanceof运算符判断类型。
+
+{% highlight javascript %}
+
+"" instanceof String // false
+
+1 instanceof Number // false
+
+{% endhighlight %}
+
+上面代码中，字符串不是String对象的实例（因为字符串不是对象），数值1也不是Number对象的实例（因为数值1不是对象）。
 
 如果存在继承关系，也就是某个对象可能是多个构造函数的实例，那么instanceof运算符对这些构造函数都返回true。
 
