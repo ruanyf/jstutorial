@@ -68,7 +68,7 @@ modifiedOn: 2013-12-31
 - [移动设备API](bom/mobile.html)
 - [MatchMedia](bom/matchmedia.html)
 - [WebRTC](bom/webrtc.html)
-- [Navigation Timing](bom/navigationtiming.html)
+- [performance对象：高精度时间戳](bom/performance.html)
 
 <h2 id="htmlapi">HTML网页的API</h2>
 

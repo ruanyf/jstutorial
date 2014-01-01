@@ -1,18 +1,18 @@
 ---
-title: Navigation Timing
+title: performance对象：高精度时间戳
 category: bom
 layout: page
 date: 2013-09-26
 modifiedOn: 2013-09-27
 ---
 
-Navigation Timing是一个提供客户端网页处理信息的API，主要部署在浏览器内置的performance对象上。它可以用来获取，其他手段难以获取的数据。
+为了得到程序运行的准确信息，开发者需要一个高精度时间戳。Date对象的精度只能到毫秒级别，而高精度时间戳的精度可以到1毫秒的千分之一，这对于衡量的程序的细微差别，提高程序运行速度很有好处。
 
-Chrome 6+、Firefox 7+、IE 9+、Opera 15+支持这个API。
+高精度时间戳部署在浏览器内置的performance对象上。Chrome 20+、Firefox 15+、IE 10+、Opera 15+支持这个API。
 
 ## performance.timing对象
 
-performance对象的timing属性指向一个对象，它包含了各种与性能有关的时间数据，提供浏览器处理网页各个阶段的耗时。比如，performance.timing.navigationStart就是浏览器对当前网页的启动时间。
+performance对象的timing属性指向一个对象，它包含了各种与性能有关的时间数据，提供浏览器处理网页各个阶段的耗时。比如，performance.timing.navigationStart就是浏览器处理当前网页的启动时间。
 
 {% highlight javascript %}
 
@@ -76,9 +76,37 @@ var pageLoadTime = pt.loadEventEnd - pt.navigationStart;
 
 {% endhighlight %}
 
+## performance.now方法
+
+performance.now方法返回当前网页自从performance.timing.navigationStart到当前时间之间的微秒数（毫秒的千分之一）。也就是说，它的精度可以达到100万分之一秒。
+
+{% highlight javascript %}
+
+performance.now() 
+// 23493457.476999998
+
+Date.now() - (performance.timing.navigationStart + performance.now())
+// -0.64306640625
+
+{% endhighlight %}
+
+上面代码表示，performance.timing.navigationStart加上performance.now()，近似等于Date.now()，也就是说，Date.now()可以替代performance.now()。但是，前者返回的是毫秒，后者返回的是微秒，所以后者的精度比前者高1000倍。
+
+通过两次调用performance.now方法，可以得到间隔的准确时间，用来衡量某种操作的耗时。
+
+{% highlight javascript %}
+
+var start = performance.now();
+doTasks();
+var end = performance.now();
+
+console.log('耗时：' + (end - start) + '微秒。');
+
+{% endhighlight %}
+
 ## performance.navigation对象
 
-performance.navigation对象提供当前网页访问来源的信息。
+除了时间信息，performance还可以提供一些用户行为信息，主要都存放在performance.navigation对象上面。
 
 它有两个属性：
 
@@ -98,24 +126,9 @@ performance.navigation对象提供当前网页访问来源的信息。
 
 该属性表示当前网页经过了多少次重定向跳转。
 
-## performance.now方法
-
-performance.now方法返回当前网页，自从performance.timing.navigationStart到当前时间之间的微秒数（毫秒的千分之一）。它的精度可以达到100万分之一秒。
-
-{% highlight javascript %}
-
-performance.now() 
-// 23493457.476999998
-
-Date.now() - (performance.timing.navigationStart + performance.now())
-// -0.64306640625
-
-{% endhighlight %}
-
-上面代码表示，performance.timing.navigationStart加上performance.now()，近似等于Date.now()，也就是说，Date.now()可以替代performance.now()。但是，前者返回的是毫秒，后者返回的是微秒，所以后者的精度比前者高1000倍。
-
 ## 参考链接
 
 - Mozilla Developer Network, [Navigation Timing](https://developer.mozilla.org/en-US/docs/Navigation_timing)
 - W3C, [Navigation Timing](http://www.w3.org/TR/navigation-timing/)
 - W3C, [HTML5, A vocabulary and associated APIs for HTML and XHTML](http://www.w3.org/TR/html5/browsers.html)
+- Matt West, [Timing JavaScript Code with High Resolution Timestamps](http://blog.teamtreehouse.com/timing-javascript-code-high-resolution-timestamps)
