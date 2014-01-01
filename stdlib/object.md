@@ -71,39 +71,44 @@ Object(true) instanceof Boolean // true
 
 {% endhighlight %}
 
-### Object.keys方法
+### Object.keys方法，Object.getOwnPropertyNames方法
 
-Object.keys方法返回一个数组，成员是对象自身的（而不是继承的）所有属性名。
+这两个方法很相似，它们的参数都是一个对象，都返回一个数组，成员都是是对象自身的（而不是继承的）所有属性名。它们的区别在于，Object.keys方法不返回不可枚举的属性（关于可枚举性的详细解释见后文），Object.getOwnPropertyNames方法返回不可枚举的属性名。
 
 {% highlight javascript %}
 
 var o = {
 	p1: 123,
-	p2:	456
+	p2: 456
 }; 
 
 Object.keys(o)
 // ["p1", "p2"]
 
-{% endhighlight %}
-
-该方法不返回继承的属性，也不返回不可枚举的属性（关于可枚举性的详细解释见后文）。
-
-### Object.getOwnPropertyNames方法
-
-Object.getOwnPropertyNames方法与Object.keys方法类似，也是返回对象自身的所有属性，但是还返回不可枚举的属性名。
-
-{% highlight javascript %}
-
-var o = {
-	p1: 123,
-	p2:	456
-}; 
-
 Object.getOwnPropertyNames(o)
 // ["p1", "p2"]
 
 {% endhighlight %}
+
+上面的代码表示，对于一般的对象来说，这两个方法返回的结果是一样的。只有涉及不可枚举对象时，才会有不一样的结果，具体的例子请看下文《对象的属性模型》一节。
+
+### Object.create方法
+
+Object.create方法用于生成新的对象。
+
+{% highlight javascript %}
+
+var object = Object.create(Object.prototype);
+
+// 等同于
+
+var object = {};
+
+var object = new Object();
+
+{% endhighlight %}
+
+Object.create方法的详细介绍，请参见《面向对象编程》一章。
 
 ## Object实例对象的方法
 
@@ -811,3 +816,4 @@ o.t
 - Axel Rauschmayer, [Protecting objects in JavaScript](http://www.2ality.com/2013/08/protecting-objects.html)
 - kangax, [Understanding delete](http://perfectionkills.com/understanding-delete/)
 - Jon Bretman, [Type Checking in JavaScript](http://techblog.badoo.com/blog/2013/11/01/type-checking-in-javascript/)
+- Cody Lindley, [Thinking About ECMAScript 5 Parts](http://tech.pro/tutorial/1671/thinking-about-ecmascript-5-parts)
