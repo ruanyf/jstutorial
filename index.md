@@ -99,7 +99,8 @@ modifiedOn: 2013-12-31
 <h2 id="tool">开发工具</h2>
 
 - [Chrome开发者工具和console对象](tool/console.html)
-- [PhantomJS](tool/phantomjs.html)
+- [PhantomJS](tool/phantomjs.html)\
+- [Bower：客户端库管理工具](tool/bower.html)
 - [任务管理工具Grunt](tool/grunt.html)
 - [RequireJS和AMD规范](tool/requirejs.html)
 - [Source map](tool/sourcemap.html)
