@@ -1,5 +1,5 @@
 ---
-title: 任务管理工具Grunt
+title: Grunt：任务自动管理工具
 category: tool
 layout: page
 date: 2013-04-21

@@ -733,6 +733,15 @@ var a = b + c;
 
 {% highlight javascript %}
 
+var
+a
+=
+3
+
+// 等同于
+
+var a = 3;
+
 "abc"
 .length
 
@@ -742,7 +751,7 @@ var a = b + c;
 
 {% endhighlight %}
 
-上面两行如果中间没有分号就换行，就不会自动添加分号，因为它们可以放在一起解释。下面这个例子也不会自动添加分号。
+上面代码举了两个例子，每行的尾部都没有分号，JavaScript并不会自动添加分号，因为每行的结尾与下一行的开头可以放在一起解释。下面这个例子也不会自动添加分号。
 
 {% highlight javascript %}
 
@@ -756,27 +765,31 @@ var a = b + c;
 
 {% endhighlight %}
 
-上面的例子还是比较容易看出来的，但是下面的例子就不那么容易发现了。它们都不会自动添加分号。
+这些例子还是比较容易看出来的，但是下面的例子就不那么容易发现了。它们都不会自动添加分号。
 
 {% highlight javascript %}
 
 var a = b + c
 (d+e).toString();
-// 解释为c(d+e)，即先进行乘法运算
+/* 解释为c(d+e)，
+   即先进行乘法运算 */
 
 a = b
 /hi/g.exec(c).map(d);
-// 解释为 a = b / hi / g.exec(c).map(d)，即把正则表达式的斜杠当作除法运算符   
+/* 解释为 a = b / hi / g.exec(c).map(d)，
+   即把正则表达式的斜杠当作除法运算符 */ 
 
 var a = "b"
 [ "red", "green" ].forEach(function(c) { console.log(c) })
-// 结果报错，因为两行连在一起，
-// 解释为"b"["red", "green"]，即把字符串当作一个数组，按索引取值 
+/* 结果报错，因为两行连在一起，
+ 解释为"b"["red", "green"]，
+ 即把字符串当作一个数组，按索引取值 */ 
 
 var a = 0;
 var f = function(x) { return x }
 (a++)
-// f等于0，因为(a++)被视为匿名函数的调用
+/* f等于0，
+   因为(a++)被视为匿名函数的调用 */
 
 return a +
 b;
@@ -796,7 +809,8 @@ arg2)
 if (a < 0) a = 0
 console.log(a)
 
-// 等同于下面的代码，因为0console没有意义
+// 等同于下面的代码，
+// 因为0console没有意义
 
 if (a < 0) a = 0;
 console.log(a)

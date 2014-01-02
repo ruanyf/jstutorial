@@ -101,7 +101,8 @@ modifiedOn: 2013-12-31
 - [Chrome开发者工具和console对象](tool/console.html)
 - [PhantomJS](tool/phantomjs.html)
 - [Bower：客户端库管理工具](tool/bower.html)
-- [任务管理工具Grunt](tool/grunt.html)
+- [Grunt：任务自动管理工具](tool/grunt.html)
+- [Browserify：浏览器加载Node.js模块](tool/browserify.html)
 - [RequireJS和AMD规范](tool/requirejs.html)
 - [Source map](tool/sourcemap.html)
 
