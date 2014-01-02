@@ -159,7 +159,7 @@ a // ['a', 'b']
 
 ### join方法，concat方法
 
-join方法以参数作为分隔符，将所有数组元素组成一个字符串返回。如果不提供参数，默认用逗号分隔。
+join方法以参数作为分隔符，将所有数组成员组成一个字符串返回。如果不提供参数，默认用逗号分隔。
 
 {% highlight javascript %}
 
@@ -171,7 +171,7 @@ a.join("|") // "1|2|3|4"
 
 {% endhighlight %}
 
-concat方法用于连接多个数组，或者向数组尾部添加新的值，然后返回一个新数组。
+concat方法将新数组的成员，添加到原数组的尾部，然后返回一个新数组，常用于连接多个数组。
 
 {% highlight javascript %}
 
@@ -183,7 +183,9 @@ concat方法用于连接多个数组，或者向数组尾部添加新的值，�
 
 {% endhighlight %}
 
-如果不提供参数，concat方法返回当前数组的一个浅拷贝。所谓“浅拷贝”，指的是如果数组成员包括复合型的值（比如对象），则新数组拷贝的是该值的引用。
+上面代码表明，concat方法的参数可以是一个或多个数组，以及原始类型的值。
+
+如果不提供参数，concat方法返回当前数组的一个浅拷贝。所谓“浅拷贝”，指的是如果数组成员包括复合类型的值（比如对象），则新数组拷贝的是该值的引用。
 
 {% highlight javascript %}
 
@@ -197,9 +199,9 @@ newArray[0].a // 2
 
 {% endhighlight %}
 
-上面代码中，原数组包含一个对象，concat方法生成的新数组包含这个对象的引用。所以，改变原对象以后，新数组跟着改变。其实，只要原数组包含对象成员，不管有没有参数，concat方法返回的都是该对象的引用。
+上面代码中，原数组包含一个对象，concat方法生成的新数组包含这个对象的引用。所以，改变原对象以后，新数组跟着改变。事实上，只要原数组的成员中包含对象，concat方法不管有没有参数，总是返回该对象的引用。
 
-对于对象，也可以使用concat方法。
+concat方法也可以用于将对象合并为数组，但是必须借助call方法。
 
 {% highlight javascript %}
 
@@ -260,14 +262,14 @@ reverse方法用于颠倒数组中元素的顺序，使用这个方法以后，�
 
 var a = ['a', 'b', 'c'];
 
-a.reverse()
-// ["c", "b", "a"] 
+a.reverse() // ["c", "b", "a"] 
+a // ["c", "b", "a"] 
 
 {% endhighlight %}
 
 ### slice方法
 
-slice方法用于从数组中返回指定位置的元素组成的数组，原数组不变。它的第一个参数为起始位置（从0开始），第二个参数为终止位置。如果省略第二个参数，则一直返回到原数组的最后一个元素。
+slice方法返回指定位置的数组成员组成的新数组，原数组不变。它的第一个参数为选择成员的起始位置（从0开始），第二个参数为终止位置。如果省略第二个参数，则一直返回到原数组的最后一个成员。
 
 {% highlight javascript %}
 
@@ -279,9 +281,14 @@ a.slice(5,9)
 a.slice(0)
 // ["a","b","c","d","e","f","g","h","i"];
 
+a.slice(-2)
+// ["h", "i"]
+
 {% endhighlight %}
 
-该方法可以将类似数组的对象，转为真正的数组。
+上面代码表示，如果slice方法的参数是负数，则从尾部开始选择的成员个数。
+
+slice方法的一个重要应用，是将类似数组的对象转为真正的数组。
 
 {% highlight javascript %}
 
@@ -294,9 +301,11 @@ Array.prototype.slice.call(arguments);
 
 {% endhighlight %}
 
+上面代码的参数都不是数组，但是通过call方法，在它们上面调用slice方法，就可以把它们转为真正的数组。
+
 ### splice方法
 
-该方法用于删除元素，并可以在被删除的位置添加入新的数组元素。它的返回值是被删除的元素。
+splice方法用于删除元素，并可以在被删除的位置添加入新的数组元素。它的返回值是被删除的元素。
 
 {% highlight javascript %}
 
@@ -324,7 +333,7 @@ a
 
 {% endhighlight %}
 
-如果是单纯地插入元素，splice方法的第二个参数可以设为0。
+如果只是单纯地插入元素，splice方法的第二个参数可以设为0。
 
 {% highlight javascript %}
 
@@ -335,6 +344,20 @@ a.splice(1,0,2)
 
 a
 // [1, 2, 1, 1]
+
+{% endhighlight %}
+
+如果只提供第一个参数，则表示将原数组在指定位置拆分成两个数组。
+
+{% highlight javascript %}
+
+var a = [1,2,3,4];
+
+a.splice(2)
+// [3, 4]
+
+a
+// [1, 2]
 
 {% endhighlight %}
 
@@ -387,11 +410,11 @@ a.sort(f)
 
 ## EcmaScript 5 新加入的数组方法
 
-EcmaScript 5在数组原型（Array.prototype）上，新增了9个方法，其中有7个与函数式（functional）操作有关：map、forEach、filter、every、some、reduce、reduceRight。
+EcmaScript 5新增了9个数组实例的方法，分别是map、forEach、filter、every、some、reduce、reduceRight、indexOf和lastIndexOf。其中，前7个与函数式（functional）操作有关。
 
-这些方法可以直接在数组上使用，也可以在字符串和类似数组的对象上使用，这是不同于传统数组方法的一个特性。
+这些方法可以在数组上使用，也可以在字符串和类似数组的对象上使用，这是它们不同于传统数组方法的一个地方。
 
-这些方法的参数是一个函数，这个作为参数的函数本身又接受三个参数：数组的当前元素elem、该元素的位置index和整个数组arr。另外，上下文对象（context）可以作为第二个参数，传入forEach(), every(), some(), filter(), map()方法，用来绑定函数运行时的上下文。
+在用法上，这些方法的参数是一个函数，这个作为参数的函数本身又接受三个参数：数组的当前元素elem、该元素的位置index和整个数组arr（详见下面的实例）。另外，上下文对象（context）可以作为第二个参数，传入forEach(), every(), some(), filter(), map()方法，用来绑定函数运行时的上下文。
 
 对于不支持这些方法的老式浏览器（主要是IE 8及以下版本），可以使用函数库[es5-shim](https://github.com/kriskowal/es5-shim)，或者[Underscore](http://underscorejs.org/#filter)和[Lo-Dash](http://lodash.com/docs#filter)。
 
@@ -410,8 +433,6 @@ map方法对所有元素依次调用一个函数，根据函数结果返回一�
 
 forEach方法对所有元素依次执行一个函数，它与map的区别在于不返回新数组，而是对原数组的成员执行某种操作，甚至可能改变原数组的值。
 
-forEach方法的参数是一个函数，该函数接受三个参数，分别是当前元素、当前元素的位置（从0开始）、整个数组。
-
 {% highlight javascript %}
 
 [1, 2, 3].forEach(function(elem, index, arr){
@@ -423,31 +444,27 @@ forEach方法的参数是一个函数，该函数接受三个参数，分别是�
 
 {% endhighlight %}
 
-map方法和ForEach方法都可以接受第二个参数，用来绑定函数中的this关键字。
+从上面代码可以看到，map和forEach的参数格式是一样的，都是一个函数。该函数接受三个参数，分别是当前元素、当前元素的位置（从0开始）、整个数组。
+
+这两个方法都可以接受第二个参数，用来绑定函数中的this关键字。
 
 {% highlight javascript %}
 
-var out1 = [];
+var out = [];
 
 [1, 2, 3].map(function(elem, index, arr){
     this.push(elem * elem);
-}, out1);
+}, out);
 
-out1 // [1, 4, 9]
-
-var out2 = [];
-
-[1, 2, 3].forEach(function(elem, index, arr){
-    this.push(elem+3);
-}, out2);
-
-out2 // [4, 5, 6]
+out // [1, 4, 9]
 
 {% endhighlight %}
 
+上面代码表示，如果提供一个数组作为第二个参数，则函数内部的this关键字就指向这个数组。
+
 ### filter方法
 
-filter方法对所有元素调用一个测试函数，操作结果为true的元素组成一个新数组返回。
+filter方法依次对所有数组成员调用一个测试函数，返回结果为true的成员组成一个新数组返回。
 
 {% highlight javascript %}
 
@@ -458,9 +475,9 @@ filter方法对所有元素调用一个测试函数，操作结果为true的元�
 
 {% endhighlight %}
 
-上面代码只保留大于3的元素，作为一个新数组返回。
+上面代码将大于3的原数组成员，作为一个新数组返回。
 
-filter方法接受一个返回布尔值的测试函数作为参数。该测试函数的第一个参数是当前数组成员的值。除了这个参数以外，其他参数都是可选的，分别是当前数组成员的位置和整个数组。
+filter方法的参数必须是一个返回布尔值的函数。该函数的第一个参数是当前数组成员的值，这是必需的，后两个参数是可选的，分别是当前数组成员的位置和整个数组。
 
 {% highlight javascript %}
 
@@ -571,7 +588,7 @@ function findLongest(entries) {
 
 ### indexOf 和 lastIndexOf
 
-除了上面7个，还有2个与函数式编程无关的方法中，分别是[indexOf](https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Array/indexOf) 和[lastIndexOf](https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Array/lastIndexOf)。
+ECMAScript 5新增的9个方法之中，有2个与函数式编程无关，分别是indexOf和lastIndexOf。
 
 indexOf方法返回给定元素在数组中第一次出现的位置，如果没有出现则返回-1。
 
@@ -602,26 +619,27 @@ lastIndexOf方法返回给定元素在数组中最后一次出现的位置，如
 
 {% highlight javascript %}
 
-var array = [2, 5, 9, 2];
+var a = [2, 5, 9, 2];
 
-var index = array.lastIndexOf(2);
-// index is 3
+a.lastIndexOf(2)
+// 3
 
-index = array.lastIndexOf(7);
-// index is -1
+a.lastIndexOf(7)
+// -1
 
 {% endhighlight %}
 
-### 实例
+### 链式使用
 
-这些方法的好处在于，它们可以链式使用。
+上面这些数组方法之中，有不少返回的还是数组，所以可以链式使用。
 
 {% highlight javascript %}
 
 var users = [{name:"tom", email:"tom@example.com"},
 			 {name:"peter", email:"peter@example.com"}];
 
-users.map(function (user){ return user.email; })
+users
+.map(function (user){ return user.email; })
 .filter(function (email) { return /^t/.test(email); })
 .forEach(alert);
 // 弹出tom@example.com
