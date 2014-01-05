@@ -65,27 +65,26 @@ String.fromCharCode(104, 101, 108, 108, 111)
 
 ### charAt 和 charCodeAt 方法
 
-charAt方法返回一个字符串的给定位置的字符。位置从0开始编号。
+charAt方法返回一个字符串的给定位置的字符，位置从0开始编号。
 
 {% highlight javascript %}
 
 var s = new String("abc");
 
-s.charAt(1)
-// "b"
+s.charAt(1) // "b"
+s.charAt(s.length-1) // "c"
 
 {% endhighlight %}
 
-其实，这个方法完全可以用数组下标替代。
+这个方法完全可以用数组下标替代。
 
 {% highlight javascript %}
 
-"abc"[1]
-// "b"
+"abc"[1] // "b"
 
 {% endhighlight %}
 
-charCodeAt方法返回给定位置字符的Unicode编码（十进制）。
+charCodeAt方法返回给定位置字符的Unicode编码（十进制表示）。
 
 {% highlight javascript %}
 
@@ -133,7 +132,11 @@ s1
 
 ### slice方法，substr方法和substring方法
 
-这三个方法都返回一个字符串的子串。它们都可以接受一个或两个参数，第一个参数是子字符串的开始位置，如果省略第二个参数，则表示子字符串一直持续到原字符串结束。
+这三个方法都用来返回一个字符串的子串，而不会改变原字符串。它们都可以接受一个或两个参数，区别只是参数含义的不同。
+
+**（1）第一个参数的含义**
+
+第一个参数是子字符串的开始位置，如果省略第二个参数，则表示子字符串一直持续到原字符串结束。
 
 {% highlight javascript %}
 
@@ -147,6 +150,8 @@ s1
 // "lo World"
 
 {% endhighlight %}
+
+**（2）第二个参数的含义**
 
 如果提供第二个参数，对于slice和substring方法，表示子字符串的结束位置；对于substr，表示子字符串的长度。
 
@@ -163,7 +168,9 @@ s1
 
 {% endhighlight %}
 
-如果参数为负，对于slice方法，表示用字符串长度扣掉负数的值。
+**（3）负的参数**
+
+如果参数为负，对于slice方法，表示字符位置从尾部开始计算。
 
 {% highlight javascript %}
 
@@ -187,7 +194,7 @@ s1
 
 {% endhighlight %}
 
-对于substr方法，负数出现在第一个参数，表示字符串长度扣掉负数的值；负数出现在第二个参数，将被转为0。
+对于substr方法，负数出现在第一个参数，表示从尾部开始计算的字符位置；负数出现在第二个参数，将被转为0。
 
 {% highlight javascript %}
 
@@ -198,8 +205,6 @@ s1
 // ""
 
 {% endhighlight %}
-
-这三个方法返回一个新字符串，而不会改变原字符串的值。
 
 ### indexOf 和 lastIndexOf 方法
 
