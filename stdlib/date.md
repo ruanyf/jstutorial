@@ -3,63 +3,76 @@ title: Date对象
 layout: page
 category: stdlib
 date: 2013-09-03
-modifiedOn: 2013-10-31
+modifiedOn: 2014-01-05
 ---
-
-Date对象是日期和时间的主要操作接口。
 
 ## 概述
 
-直接调用Date对象，会返回当前时间的字符串。
+Date对象是JavaScript提供的日期和时间的操作接口。
+
+Date是一个构造函数，但是可以直接调用，这时会返回表示当前日期时间的一个长字符串。无论有没有参数，结果都一样
 
 {% highlight javascript %}
 
 Date()
 // "Sat Mar 09 2013 08:46:54 GMT+0800 (CST)"
 
+Date(2013,2,9)
+// "Sat Mar 09 2013 08:46:54 GMT+0800 (CST)"
+
 {% endhighlight %}
 
-对Date对象使用new命令，则生成一个代表时间的实例对象。如果不提供参数，生成的就是代表当前时间的对象。
+对Date对象使用new命令，会返回一个Date对象的实例。如果这时不提供参数，生成的就是代表当前时间的对象。
 
 {% highlight javascript %}
 
 var today = new Date();
 
-today
+today 
+// "Sat Mar 09 2013 08:46:54 GMT+0800 (CST)"
+
+// 等同于
+today.toString() 
 // "Sat Mar 09 2013 08:46:54 GMT+0800 (CST)"
 
 {% endhighlight %}
 
-如果提供参数，则生成一个代表指定时间的对象。
+如果这时提供参数，则生成一个代表指定时间的对象。
 
 {% highlight javascript %}
 
-var date1 = new Date ( "January 6, 2013" );
+var d1 = new Date( "January 6, 2013" );
+var d2 = new Date(2013,0,6);
 
-date1
-// "Sun Jan 06 2013 00:00:00 GMT+0800 (CST)"
+d1 // "Sun Jan 06 2013 00:00:00 GMT+0800 (CST)"
+d2 // "Sun Jan 06 2013 00:00:00 GMT+0800 (CST)"
 
 {% endhighlight %}
 
 Date对象接受各种代表日期和时间的参数。
 
-（1）日期字符串
+**（1）日期字符串**
 
 所有可以被Date.parse()方法解析的日期字符串，都可以当作Date对象的参数。
 
 {% highlight javascript %}
 
-new Date ( "2013-02-15" )
-// Fri Feb 15 2013 08:00:00 GMT+0800 (CST)
-
-new Date ( "2013-FEB-15" )
+new Date("2013-02-15")
+new Date("2013-FEB-15")
+new Date("FEB, 15, 2013")
+new Date("FEB 15, 2013")
+new Date("Feberuary, 15, 2013")
+new Date("Feberuary 15, 2013")
+new Date("15, Feberuary, 2013")
 // Fri Feb 15 2013 08:00:00 GMT+0800 (CST)
 
 {% endhighlight %}
 
-（2）独立参数
+上面多种写法，返回的都是同一个时间。
 
-除了日期字符串，Date还接受年、月、日等变量独立作为参数。
+**（2）独立参数**
+
+除了日期字符串，Date还接受年、月、日等变量独立作为参数，格式和实例如下。
 
 {% highlight javascript %}
 
@@ -68,11 +81,14 @@ new Date(year, month, day [, hour, minute, second, millisecond]);
 new Date(2013,2,1)
 // Fri Mar 01 2013 00:00:00 GMT+0800 (CST)
 
+new Date(2013,2,1,17,10,30)
+// Fri Mar 01 2013 17:10:30 GMT+0800 (CST)
+
 {% endhighlight %}
 
 需要注意的是，月份是从0开始计算的，所以2就表示三月。
 
-（3）毫秒时间戳
+**（3）毫秒时间戳**
 
 Date对象还接受从1970年1月1日00:00:00 UTC开始计算的毫秒数作为参数。这意味着如果将Unix时间戳作为参数，必须将Unix时间戳乘以1000。
 
@@ -80,6 +96,21 @@ Date对象还接受从1970年1月1日00:00:00 UTC开始计算的毫秒数作为�
 
 new Date(1378218728000)
 // Tue Sep 03 2013 22:32:08 GMT+0800 (CST)
+
+{% endhighlight %}
+
+如果两个日期对象进行减法运算，返回的就是它们间隔的毫秒数；如果进行加法运算，返回的就是连接后的两个字符串。
+
+{% highlight javascript %}
+
+var then = new Date(2013,2,1);
+var now = new Date(2013,3,1);
+
+now - then
+// 2678400000
+
+now + then
+// "Mon Apr 01 2013 00:00:00 GMT+0800 (CST)Fri Mar 01 2013 00:00:00 GMT+0800 (CST)"
 
 {% endhighlight %}
 
@@ -139,11 +170,13 @@ Date.UTC(year, month[, date[, hrs[, min[, sec[, ms]]]]])
 
 如果变量超出范围，会自动折算成相应的值。比如，如果month输入15，year就会自动加1，然后month自动折算为4。
 
-## 实例对象的方法
+## Date实例对象的方法
 
-### toString，toDateString和toTimeString
+使用new命令生成的Date对象的实例，有很多自己的方法。
 
-toString方法，返回一个完整的时间字符串。
+### toString系列方法
+
+toString方法返回一个完整的时间字符串。
 
 {% highlight javascript %}
 
@@ -154,7 +187,7 @@ today.toString()
 
 {% endhighlight %}
 
-因为toString是默认的调用方法，所以上面的命令相当于
+因为toString是默认的调用方法，所以如果直接读取Date对象实例，就相当于调用这个方法。
 
 {% highlight javascript %}
 
@@ -163,21 +196,39 @@ today
 
 {% endhighlight %}
 
-toDateString方法对日期部分返回一个更可读的形式。
+toUTCString方法返回对应的UTC时间，比如北京时间需要减去8个小时；toISOString方法返回时间的ISO8601写法。
+
+{% highlight javascript %}
+
+today.toUTCString()
+// "Sat, 09 Mar 2013 00:46:54 GMT"
+
+today.toISOString()
+// "2013-03-09T00:46:54.000Z"
+
+{% endhighlight %}
+
+toDateString方法返回日期的字符串形式，toTimeString方法返回时间的字符串形式。
 
 {% highlight javascript %}
 
 today.toDateString()
 // "Sat Mar 09 2013"
 
+today.toTimeString()
+// "08:46:54 GMT+0800 (CST)"
+
 {% endhighlight %}
 
-toTimeString方法对时间部分返回一个更可读的形式。
+toLocalDateString方法返回一个字符串，代表日期的当地写法；toLocalTimeString方法返回一个字符串，代表时间的当地写法。
 
 {% highlight javascript %}
 
-today.toTimeString()
-// "08:46:54 GMT+0800 (CST)"
+today.toLocaleDateString()
+// "2013年3月9日"
+
+today.toLocaleTimeString()
+"上午8:46:54"
 
 {% endhighlight %}
 
@@ -217,8 +268,9 @@ Date提供一系列get方法，得到实例对象某个方面的值。
 - **getDate**：返回实例对象对应每个月的几号（从1开始）。
 - **getDay**：返回星期，星期日为0，星期一为1，以此类推。
 - **getFullYear**：返回四位的年份。
-- **getMonth**：返回月份（0-11）。
+- **getMonth**：返回月份（0表示1月，11表示12月）。
 - **getHours**：返回小时（0-23）。
+- **getUTCHours**：返回此时对应的UTC小时，比如北京时间半夜0点，对应UTC时间为前一天的16点。
 - **getMilliseconds**：返回毫秒（0-999）。
 - **getMinutes**：返回分钟（0-59）。
 - **getSeconds**：返回秒（0-59）。
