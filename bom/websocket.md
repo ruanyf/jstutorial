@@ -289,9 +289,9 @@ var socket = io.connect('http://localhost');
 
 {% highlight javascript	%}
 
-socket.on('news', function (data) {
+socket.on('news', function (data){
    console.log(data);
-});}
+});
 
 {% endhighlight %}
 

@@ -272,34 +272,31 @@ toLowerCase用于将一个字符串转为小写，toUpperCase则是转为大写�
 
 **（1）match方法**
 
-该方法返回一个匹配数组，成员为匹配的第一个字符串，等同于正则对象的exec方法。如果没有找到匹配，则返回null。
+match方法返回一个数组，成员为匹配的第一个字符串。如果没有找到匹配，则返回null。返回数组还有一个index属性，表示匹配字符串开始的位置（从0开始）。
 
 {% highlight javascript %}
 
-var matches = "cat, bat, sat, fat".match(".at");
+var matches = "cat, bat, sat, fat".match("at");
 
-matches
-// ["cat"]
-
-matches.index;
-// 0
+matches // ["at"]
+matches.index; // 1
 
 {% endhighlight %}
 
 **（2）search方法**
 
-该方法的用法等同于match，但是返回值为匹配的第一个位置。如果没有找到匹配，则返回-1。
+search方法的用法等同于match，但是返回值为匹配的第一个位置。如果没有找到匹配，则返回-1。
 
 {% highlight javascript %}
 
-"cat, bat, sat, fat".search(".at")
-// 0
+"cat, bat, sat, fat".search("at")
+// 1
 
 {% endhighlight %}
 
 **（3）replace方法**
 
-该方法用于替换匹配的子字符串，一般情况下只替换第一个匹配的值（除非使用带有g修饰符的正则表达式）。
+replace方法用于替换匹配的子字符串，一般情况下只替换第一个匹配（除非使用带有g修饰符的正则表达式）。
 
 {% highlight javascript %}
 
@@ -310,7 +307,7 @@ matches.index;
 
 **（4）split方法**
 
-该方法按照给定规则分割字符串，返回一个由分割出来的各部分组成的新数组。
+split方法按照给定规则分割字符串，返回一个由分割出来的各部分组成的新数组。
 
 {% highlight javascript %}
 
@@ -367,46 +364,5 @@ split方法还可以接受第二个参数，限定返回数组的最大成员数
 "a|b|c".split("|", 2) // ["a", "b"]
 "a|b|c".split("|", 3) // ["a", "b", "c"]
 "a|b|c".split("|", 4) // ["a", "b", "c"]
-
-{% endhighlight %}
-
-## Base64转码
-
-在浏览器环境中，JavaScript原生提供btoa方法，将字符串或二进制值转化为Base64编码；以及atob方法，将Base64编码转化为原来的编码。
-
-{% highlight javascript %}
-
-window.btoa("Hello World")
-// "SGVsbG8gV29ybGQ="
-
-window.atob("SGVsbG8gV29ybGQ=")
-// "Hello World"
-
-{% endhighlight %}
-
-这两个方法不适合非ASCII码的字符，浏览器会报错。
-
-{% highlight javascript %}
-
-window.btoa('你好')
-// InvalidCharacterError: An invalid or illegal character was specified, such as in an XML name.
-
-{% endhighlight %}
-
-要将非ASCII码字符转为Base64编码，必须中间插入一个浏览器转码的环节，再使用这两个方法。
-
-{% highlight javascript %}
-
-function b64Encode( str ) {
-    return window.btoa(unescape(encodeURIComponent( str )));
-}
- 
-function b64Decode( str ) {
-    return decodeURIComponent(escape(window.atob( str )));
-}
-
-// 使用方法
-b64Encode('你好') // "5L2g5aW9"
-b64Decode('5L2g5aW9') // "你好"
 
 {% endhighlight %}

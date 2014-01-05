@@ -205,7 +205,49 @@ C = (H - 0xD800) * 0x400 + L - 0xDC00 + 0x10000
 
 {% endhighlight %}
 
+## Base64转码
+
+Base64是一种将二进制数据转为可打印字符的编码方法。在浏览器环境中，JavaScript原生提供两个方法，用来处理Base64转码：btoa方法将字符串或二进制值转化为Base64编码，atob方法将Base64编码转化为原来的编码。
+
+{% highlight javascript %}
+
+window.btoa("Hello World")
+// "SGVsbG8gV29ybGQ="
+
+window.atob("SGVsbG8gV29ybGQ=")
+// "Hello World"
+
+{% endhighlight %}
+
+这两个方法不适合非ASCII码的字符，浏览器会报错。
+
+{% highlight javascript %}
+
+window.btoa('你好')
+// InvalidCharacterError: An invalid or illegal character was specified, such as in an XML name.
+
+{% endhighlight %}
+
+要将非ASCII码字符转为Base64编码，必须中间插入一个浏览器转码的环节，再使用这两个方法。
+
+{% highlight javascript %}
+
+function b64Encode( str ) {
+    return window.btoa(unescape(encodeURIComponent( str )));
+}
+ 
+function b64Decode( str ) {
+    return decodeURIComponent(escape(window.atob( str )));
+}
+
+// 使用方法
+b64Encode('你好') // "5L2g5aW9"
+b64Decode('5L2g5aW9') // "你好"
+
+{% endhighlight %}
+
 ## 参考链接
 
 - Mathias Bynens, [JavaScript’s internal character encoding: UCS-2 or UTF-16?](http://mathiasbynens.be/notes/javascript-encoding)
 - Mathias Bynens, [JavaScript has a Unicode problem](http://mathiasbynens.be/notes/javascript-unicode)
+- Mozilla Developer Network, [Window.btoa](https://developer.mozilla.org/en-US/docs/Web/API/Window.btoa)

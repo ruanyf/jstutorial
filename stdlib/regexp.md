@@ -1,9 +1,9 @@
 ---
-title: Regex对象
+title: RegExp对象
 layout: page
 category: stdlib
 date: 2013-01-17
-modifiedOn: 2013-10-31
+modifiedOn: 2014-01-06
 ---
 
 ## 概述
@@ -26,7 +26,7 @@ var regex = new RegExp("xyz");
 
 {% endhighlight %}
 
-上面两种写法是等价的，都建立了一个内容为xyz的正则表达式。
+上面两种写法是等价的，都建立了一个内容为xyz的正则表达式，也就是对应某种文本模式的对象。
 
 RegExp构造函数还可以接受第二个参数，表示修饰符（详细解释见下文）。
 
