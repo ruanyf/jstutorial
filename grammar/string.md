@@ -3,7 +3,7 @@ title: 字符串
 layout: page
 category: grammar
 date: 2013-12-31
-modifiedOn: 2013-12-31
+modifiedOn: 2014-01-05
 ---
 
 ## 概述
@@ -16,6 +16,15 @@ modifiedOn: 2013-12-31
 
 'abc'
 "abc"
+
+{% endhighlight %}
+
+用单引号表示的字符串，内部可以使用双引号；用双引号表示的字符串，内部可以使用单引号。
+
+{% highlight javascript %}
+
+'key="value"'
+"It's a long journey"
 
 {% endhighlight %}
 
@@ -37,21 +46,16 @@ longString
 
 ### 转义
 
-如果字符串内部有单引号或双引号，必须在它的前面加上反斜杠，用来转义。
+如果单引号表示字符串内需要出现单引号（或双引号表示的字符串内需要出现双引号），必须在它的前面加上反斜杠，用来转义。
 
 {% highlight javascript %}
 
 'Did she say "Hello"?'
 "Did she say \"Hello\"?"
 
-'That\'s nice!'
-"That's nice!"
-
 {% endhighlight %}
 
-从上面的代码可以看到，单引号标识的字符串内部，允许直接使用双引号；双引号标识的字符串内部，允许直接使用单引号。否则，就必须使用反斜杠对单引号和双引号进行转义。
-
-如果字符串的内容包含反斜杠，则反斜杠前面需要再加一个反斜杠，用来转义。
+这就说明，反斜杠在字符串内有特殊含义，用来表示一些特殊字符。如果字符串的内容包含需要出现反斜杠，则它前面需要再加一个反斜杠，用来对自身转义。
 
 {% highlight javascript %}
 
@@ -60,43 +64,41 @@ longString
 
 {% endhighlight %}
 
-反斜杠还可以用来表示一些特殊含义字符，比如换行符用\n表示。
-
-{% highlight javascript %}
-
-'行1\n行2'
-// "行1
-// 行2"
-
-{% endhighlight %}
-
 需要用反斜杠转义的字符串，主要有下面这些：
 
-- \b	后退键
-- \f	换页符
-- \n	换行符
-- \r	回车键
-- \t	制表符
-- \v	垂直制表符
-- \'	单引号
-- \"	双引号
-- \\\\	反斜杠
+- \0	代表没有内容的字符（\u0000）
+- \b	后退键（\u0008）
+- \f	换页符（\u000C）
+- \n	换行符（\u000A）
+- \r	回车键（\u000D）
+- \t	制表符（\u0009）
+- \v	垂直制表符（\u000B）
+- \'	单引号（\u0027）
+- \"	双引号（\u0022）
+- \\\\	反斜杠（\u005C）
 - \XXX	用三位八进制数（0到377）代表一些特殊符号，比如\251表示版权符号。
 - \xXX	用两位十六进制数（00到FF）代表一些特殊符号，比如\xA9表示版权符号。
 - \uXXXX	用四位十六进制的Unicode编号代表某个字符，比如\u00A9表示版权符号。
 
+下面是最后三种字符的特殊写法的例子。
+
 {% highlight javascript %}
 
-"\251"
-// "©"
-
-"\xA9"
-// "©"
-
-"\u00A9"
-// "©"
+"\a251" // "©"
+"\xA9" // "©"
+"\u00A9" // "©"
 
 {% endhighlight %}
+
+如果非特殊字符前面使用反斜杠，则反斜杠会被省略。
+
+{% highlight javascript %}
+
+"\a" // "a"
+
+{% endhighlight %}
+
+上面代码表示a是一个正常字符，前面加反斜杠没有特殊含义，则反斜杠会被自动省略。
 
 ### 字符串与数组
 
@@ -162,17 +164,16 @@ s.length // 5
 
 JavaScript使用Unicode字符集，也就是说在JavaScript内部，所有字符都用Unicode表示。ECMAScript 3要求使用Unicode 2.1或以上版本，ECMAScript 5则要求使用Unicode 3及以上版本。
 
-在JavaScript中，所有字符都可以用Unicode形式表示，写成"\uxxxx"的内码形式，其中xxxx代表该字符的Unicode编码。比如，\u00A9代表版权符号。
+不仅JavaScript内部使用Unicode储存字符，而且还可以直接在程序中使用Unicode，所有字符都可以写成"\uxxxx"的形式，其中xxxx代表该字符的Unicode编码。比如，\u00A9代表版权符号。
 
 {% highlight javascript %}
 
 var s = '\u00A9';
-
 s // "©"
 
 {% endhighlight %}
 
-具体来说，每个字符在JavaScript内部都是以16位的UTF-16格式储存。需要注意的是，UTF-16有两种长度：对于U+0000到U+FFFF之间的字符，长度为16位（即2个字节）；对于U+10000到U+10FFFF之间的字符，长度为32位（即4个字节），而且前两个字节在0xD800到0xDBFF之间，后两个字节在0xDC00到0xDFFF之间。举例来说，U+1D306对应的字符为𝌆，它写成UTF-16就是0xD834和0xDF06。浏览器会正确将这两个字节识别为一个字符，但是JavaScript内部的字符长度总是固定为16位，会把这两个字节视为两个字符。
+具体来说，每个字符在JavaScript内部都是以16位的UTF-16格式储存。需要注意的是，UTF-16有两种长度：对于U+0000到U+FFFF之间的字符，长度为16位（即2个字节）；对于U+10000到U+10FFFF之间的字符，长度为32位（即4个字节），而且前两个字节在0xD800到0xDBFF之间，后两个字节在0xDC00到0xDFFF之间。举例来说，U+1D306对应的字符为𝌆，它写成UTF-16就是0xD834和0xDF06。浏览器会正确将这四个字节识别为一个字符，但是JavaScript内部的字符长度总是固定为16位，会把这四个字节视为两个字符。
 
 {% highlight javascript %}
 
@@ -203,3 +204,8 @@ C = (H - 0xD800) * 0x400 + L - 0xDC00 + 0x10000
 ([\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF])
 
 {% endhighlight %}
+
+## 参考链接
+
+- Mathias Bynens, [JavaScript’s internal character encoding: UCS-2 or UTF-16?](http://mathiasbynens.be/notes/javascript-encoding)
+- Mathias Bynens, [JavaScript has a Unicode problem](http://mathiasbynens.be/notes/javascript-unicode)

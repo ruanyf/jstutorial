@@ -336,19 +336,6 @@ date1.setDate(-1)
 
 {% endhighlight %}
 
-### toISOString方法
-
-toISOString方法返回ISO 8601的日期格式。
-
-{% highlight javascript %}
-
-var today = new Date("05 October 2011 14:48 UTC");
-
-today.toISOString()
-// "2011-10-05T14:48:00.000Z"
-
-{% endhighlight %}
-
 ### toJSON方法
 
 toJSON方法返回JSON格式的日期对象。
