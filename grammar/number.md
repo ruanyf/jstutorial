@@ -8,6 +8,8 @@ modifiedOn: 2013-10-22
 
 ## 概述
 
+### 整数和浮点数
+
 JavaScript内部，所有数字都是以64位浮点数形式储存，即使整数也是如此。所以，1与1.0是相等的，而且1加上1.0得到的还是一个整数，不会像有些语言那样变成小数。
 
 {% highlight javascript %}
@@ -28,7 +30,12 @@ JavaScript内部，所有数字都是以64位浮点数形式储存，即使整�
 0.3 / 0.1
 // 2.9999999999999996
 
+(0.3-0.2) === (0.2-0.1)
+// false
+
 {% endhighlight %}
+
+### 数值精度
 
 根据国际标准IEEE 754，64位浮点数格式的64个二进制位中，第0位到第51位储存有效数字部分，第52到第62位储存指数部分，第63位是符号位，0表示正数，1表示负数。
 
@@ -67,7 +74,31 @@ Math.pow(2, 53)
 
 上面示例表明，大于2的53次方以后，多出来的有效数字（最后三位的111）都会无法保存，变成0。
 
+### 数值范围
+
 另一方面，64位浮点数的指数部分的长度是11个二进制位，意味着指数部分的最大值是2047（2的11次方减1）。所以，JavaScript能够表示的数值范围为(-2<sup>2048</sup>, 2<sup>2048</sup>)，超出这个范围的数无法表示。
+
+如果超过指数部分的最大正值，JavaScript会返回Infinity（参见下文）；如果超出最小负值（即非常接近0），JavaScript会直接把这个数转为0。
+
+{% highlight javascript %}
+
+var x = 0.5;
+for(var i =0;i<25;i++) x = x*x*x;
+
+x // 0
+
+{% endhighlight %}
+
+上面代码对0.5连续做25次平方，由于最后结果太接近0，超出了可表示的范围，JavaScript就直接将其转为0。
+
+至于具体的最大值和最小值，JavaScript提供Number对象的MAX_VALUE和MIN_VALUE属性表示（参见《Number对象》一节）。
+
+{% highlight javascript %}
+
+Number.MAX_VALUE // 1.7976931348623157e+308
+Number.MIN_VALUE // 5e-324
+
+{% endhighlight %}
 
 ## 数值的表示法
 
@@ -121,6 +152,16 @@ JavaScript提供几个特殊的数值。
 
 {% endhighlight %}
 
+但是，如果正零和负零分别当作分母，它们返回的值是不相等的。
+
+{% highlight javascript %}
+
+(1/+0) === (1/-0) // false
+
+{% endhighlight %}
+
+上面代码之所以出现这样结果，是因为除以正零得到+Infinity，除以负零得到-Infinity，这两者是不相等的（关于Infinity详见后文）。
+
 ### NaN
 
 NaN是JavaScript的特殊值，表示“非数字”（not a number），主要出现在将字符串解析成数字出错的场合。
@@ -159,8 +200,7 @@ Boolean(NaN)
 
 {% highlight javascript %}
 
-0 / 0
-// NaN
+0 / 0 // NaN
 
 {% endhighlight %}
 
@@ -211,10 +251,10 @@ isNaN(["xzy"]) // true
 {% highlight javascript %}
 
 function myIsNaN(value) {
-        return value !== value;
+    return value !== value;
 }
 
-// or
+// 或者
 
 function myIsNaN2(value) {
 	return typeof value === 'number' && isNaN(value);
@@ -224,38 +264,37 @@ function myIsNaN2(value) {
 
 ### Infinity
 
-Infinity表示“无穷”。除了0除以0得到NaN，其他任意数除以0，得到Infinity。它有正负之分。
+Infinity表示“无穷”。除了0除以0得到NaN，其他任意数除以0，得到Infinity。
 
 {% highlight javascript %}
 
-1 / -0 
-// -Infinity
-
-1 / +0 
-// Infinity
-
-Infinity === -Infinity
-// false
-
-Math.pow(+0, -1)
-// Infinity
-
-Math.pow(-0, -1)
-// -Infinity
+1 / -0 // -Infinity
+1 / +0 // Infinity
 
 {% endhighlight %}
 
-超出JavaScript表示范围的数值，也会得到无穷。
+上面代码表示，非0值除以0，JavaScript不报错，而是返回Infinity。这是需要特别注意的地方。
+
+Infinity有正负之分。
 
 {% highlight javascript %}
 
-Math.pow(2, 2048)
-// Infinity
-
--Math.pow(2, 2048)
-// -Infinity
+Infinity === -Infinity // false
+Math.pow(+0, -1) // Infinity
+Math.pow(-0, -1) // -Infinity
 
 {% endhighlight %}
+
+运算结果超出JavaScript可接受范围，也会返回无穷。
+
+{% highlight javascript %}
+
+Math.pow(2, 2048) // Infinity
+-Math.pow(2, 2048) // -Infinity
+
+{% endhighlight %}
+
+由于数值正向溢出（overflow）、负向溢出（underflow）和被0除，JavaScript都不报错，所以单纯的数学运算几乎没有可能抛出错误。
 
 Infinity的四则运算，符合无穷的数学计算规则。
 
@@ -286,6 +325,19 @@ Infinity可以用于布尔运算。
 5 > Infinity // false
 
 {% endhighlight %}
+
+isFinite函数返回一个布尔值，检查某个值是否为正常值，而不是Infinity。
+
+{% highlight javascript %}
+
+isFinite(Infinity) // false
+isFinite(-1) // true
+isFinite(true) // true
+isFinite(NaN) // false
+
+{% endhighlight %}
+
+上面代码表示，如果对NaN使用isFinite函数，也返回false，表示NaN不是一个正常值。
 
 ## 与数值相关的全局方法
 
