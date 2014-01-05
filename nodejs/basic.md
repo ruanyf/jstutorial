@@ -40,6 +40,14 @@ node
 
 {% endhighlight %}
 
+如果使用参数 --use_strict，则REPL将在严格模式下运行。
+
+{% highlight bash %}
+
+node --use_strict
+
+{% endhighlight %}
+
 这个REPL是Node.js与用户互动的shell，各种基本的shell功能都可以在里面使用，比如使用上下方向键遍历曾经使用过的命令。特殊变量下划线（_）表示上一个命令的返回结果。
 
 {% highlight bash %}
