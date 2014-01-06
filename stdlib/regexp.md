@@ -217,16 +217,16 @@ new RegExp("").exec("abc")
 
 字符串对象的方法之中，有4种与正则对象有关。
 
-- **match**：是否匹配给定的正则规则。
+- **match**：返回匹配的子字符串。
 - **search**：按照给定的正则规则进行搜索。
 - **replace**：按照给定的正则规则进行替换。
 - **split**：按照给定规则进行字符串分割。
 
-下面逐一解释。
+下面逐一介绍。
 
 ### match方法
 
-match 方法对字符串进行正则匹配，返回匹配结果。
+match方法对字符串进行正则匹配，返回匹配结果。
 
 如果正则表达式没有g修饰符，则该方法返回结果与正则对象的exec方法相同；如果有g修饰符，则返回一个数组，包含所有匹配成功的子字符串。
 
@@ -242,7 +242,7 @@ match 方法对字符串进行正则匹配，返回匹配结果。
 
 ### search方法
 
-search 方法返回第一个满足匹配条件的字符在整个字符串中的位置。如果没有任何匹配，则返回-1。该方法会忽略g参数。
+search方法返回第一个满足条件的匹配结果在整个字符串中的位置。如果没有任何匹配，则返回-1。该方法会忽略g参数。
 
 {% highlight javascript %}
 
@@ -253,7 +253,15 @@ search 方法返回第一个满足匹配条件的字符在整个字符串中的�
 
 ### replace方法
 
-replace 方法可以替换匹配的值。如果不加g修饰符，就替换第一个匹配成功的值，否则替换所有匹配成功的值。
+replace方法可以替换匹配的值，它接受两个参数，第一个是搜索模式，第二个是替换的内容。
+
+{% highlight javascript %}
+
+str.replace(search, replacement)
+
+{% endhighlight %}
+
+搜索模式如果不加g修饰符，就替换第一个匹配成功的值，否则替换所有匹配成功的值。
 
 {% highlight javascript %}
 
@@ -268,30 +276,25 @@ replace 方法可以替换匹配的值。如果不加g修饰符，就替换第�
 
 {% endhighlight %}
 
-replace方法接受两个参数，第一个是搜索模式，第二个是替换的内容。
+replace方法的第二个参数可以使用美元符号$，用来指代所替换的内容。
 
-{% highlight javascript %}
-
-str.replace(search, replacement)
-
-{% endhighlight %}
-
-第二个参数可以使用美元符号$，用来指代所替换的内容。
-
-- $& 替换为整个匹配。
-- $` 替换为匹配前的文本。
-- $' 替换为匹配后的文本。
-- $n 替换为匹配成功的第n组内容，n从1开始计数。
-- $$ 替换为美元符号$。
+- $& 指代匹配的子字符串。
+- $` 指代匹配结果前面的文本。
+- $' 指代匹配结果后面的文本。
+- $n 指代匹配成功的第n组内容，n从1开始计数。
+- $$ 指代美元符号$。
 
 {% highlight javascript %}
 
 "abc".replace("b", "[$`-$&-$']")
 // "a[a-b-c]c"
 
+"hello world".replace(/(\w+)\s(\w+)/,"$2 $1")
+// "world hello"
+
 {% endhighlight %}
 
-第二个参数可以是一个函数，将匹配内容替换为函数返回值。
+第二个参数还可以是一个函数，将匹配内容替换为函数返回值。
 
 {% highlight javascript %}
 
@@ -301,18 +304,9 @@ str.replace(search, replacement)
 
 {% endhighlight %}
 
-replace方法还可以使用组匹配。
-
-{% highlight javascript %}
-
-"hello world".replace(/(\w+)\s(\w+)/,"$2 $1")
-// "world hello"
-
-{% endhighlight %}
-
 ### split方法
 
-split方法按照正则表达式分割字符串，返回一个由分割后的各个部分组成的数组。
+split方法按照正则规则分割字符串，返回一个由分割后的各个部分组成的数组。
 
 {% highlight javascript %}
 
