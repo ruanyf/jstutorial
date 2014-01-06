@@ -393,6 +393,9 @@ className属性和classList属性都返回HTML元素的class属性。不同之�
 
 {% highlight javascript %}
 
+document.getElementById('myDiv').className
+// "one two three"
+
 document.getElementById('myDiv').classList
 // {
 //	0: "one"
@@ -401,12 +404,9 @@ document.getElementById('myDiv').classList
 //	length: 3
 //	}
 
-document.getElementById('myDiv').classList
-// "one two three"
-
 {% endhighlight %}
 
-classList属性指向一个类似数组的对象，简称classList对象。该对象的length属性（只读），可以返回HTML标签的class数量。
+从上面代码可以看出，classList属性指向一个类似数组的对象，该对象的length属性（只读）返回该节点的calss数量。
 
 classList对象有一系列方法。
 

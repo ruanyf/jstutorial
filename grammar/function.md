@@ -426,7 +426,7 @@ function f(o){
 
 f(o);
 
-o // [2,3,4]
+o // [1, 2, 3]
 
 {% endhighlight %}
 
