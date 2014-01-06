@@ -12,9 +12,9 @@ chapters:
 - bom
 - htmlapi
 - jquery
-- library
 - tool
 - special
+- library
 - nodejs
 
 introduction: 导论
@@ -25,7 +25,7 @@ dom: DOM
 bom: 浏览器对象
 htmlapi: HTML网页的API
 jquery: jQuery
-library: 函数库
-nodejs: 附录：Node.js
+library: 草稿一：函数库
+nodejs: 草稿二：Node.js
 tool: 开发工具
 special: 专题

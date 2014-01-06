@@ -2,7 +2,7 @@
 layout: homepage
 title: JavaScript 标准参考教程（alpha）
 date: 2012-11-18
-modifiedOn: 2013-12-31
+modifiedOn: 2014-01-06
 ---
 	
 <h2 id="introduction">导论</h2>
@@ -90,12 +90,6 @@ modifiedOn: 2013-12-31
 - [deferred对象](jquery/deferred.html)
 - [如何做到jQuery-free？](jquery/jquery-free.html)
 
-<h2 id="library">函数库</h2>
-
-- [Underscore.js](library/underscore.html)
-- [Modernizr](library/modernizr.html)
-- [Datejs](library/datejs.html)
-
 <h2 id="tool">开发工具</h2>
 
 - [Chrome开发者工具和console对象](tool/console.html)
@@ -113,7 +107,16 @@ modifiedOn: 2013-12-31
 - [排序算法](special/sorting.html)
 - [有限状态机](special/fsm.html)
 
-<h2 id="nodejs">附录：Node.js</h2>
+<hr></hr>
+
+<h2 id="library">草稿一：函数库</h2>
+
+- [Underscore.js](library/underscore.html)
+- [Modernizr](library/modernizr.html)
+- [Datejs](library/datejs.html)
+- [D3.js](library/d3.html)
+
+<h2 id="nodejs">草稿二：Node.js</h2>
 
 - [概述](nodejs/basic.html)
 - [CommonJS规范](nodejs/commonjs.html)
