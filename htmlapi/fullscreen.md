@@ -3,26 +3,29 @@ layout: page
 title: Fullscreen API
 category: htmlapi
 date: 2012-11-22
-modifiedOn: 2012-11-22
+modifiedOn: 2014-01-29
 ---
 
-这个API可以控制浏览器的全屏显示。
+这个API可以控制浏览器的全屏显示，目前各大浏览器的最新版本都支持这个API（包括IE11），但是使用的时候需要加上浏览器前缀。
+
+网页全屏时会触发fullscreenchange事件。
 
 ## 方法
 
-### requestFullScreen()
+### requestFullscreen()
 
-这个方法使得浏览器全屏，它目前在不同浏览器中带有前缀。
+requestFullscreen方法使得浏览器全屏。
 
 {% highlight javascript %}
 
-// Find the right method, call on correct element
-function launchFullScreen(element) {
-  if(element.requestFullScreen) {
-    element.requestFullScreen();
+function launchFullscreen(element) {
+  if(element.requestFullscreen) {
+    element.requestFullscreen();
   } else if(element.mozRequestFullScreen) {
     element.mozRequestFullScreen();
-  } else if(element.webkitRequestFullScreen) {
+  } else if(element.msRequestFullscreen){ 
+	element.msRequestFullscreen();  
+  } else if(element.webkitRequestFullscreen) {
     element.webkitRequestFullScreen();
   }
 }
@@ -33,9 +36,9 @@ function launchFullScreen(element) {
 
 {% highlight javascript %}
 
-// Launch fullscreen for browsers that support it!
-launchFullScreen(document.documentElement); // the whole page
-launchFullScreen(document.getElementById("videoElement")); // any individual element
+launchFullscreen(document.documentElement); 
+
+launchFullscreen(document.getElementById("videoElement")); 
 
 {% endhighlight %}
 
@@ -50,6 +53,8 @@ function exitFullscreen() {
     document.exitFullscreen();
   } else if(document.mozexitFullscreen) {
     document.mozexitFullscreen();
+  } else if(document.msexitFullscreen) {
+	document.msexitFullscreen(); 
   } else if(document.webkitexitFullscreen) {
     document.webkitexitFullscreen();
   }
@@ -81,15 +86,16 @@ var fullscreenElement =
 {% highlight javascript %}
 
 var fullscreenEnabled =
-	document.fullScreenEnabled ||
+	document.fullscreenEnabled ||
 	document.mozScreenEnabled ||
-	document.webkitScreenEnabled;
+	document.webkitScreenEnabled ||
+	document.msFullscreenEnabled;
 
 {% endhighlight %}
 
 ## 全屏状态的CSS
 
-可以对全屏状态设置单独的CSS属性，配合JavaScript使用。
+全屏状态下，大多数浏览器的CSS支持:full-screen伪类，只有IE11支持:fullscreen伪类。使用这个伪类，可以对全屏状态设置单独的CSS属性。
 
 {% highlight css %}
 
@@ -108,4 +114,5 @@ var fullscreenEnabled =
 
 ## 参考链接
 
-* David Walsh, [Fullscreen API](http://davidwalsh.name/fullscreen)
+- David Walsh, [Fullscreen API](http://davidwalsh.name/fullscreen)
+- David Storey, [Is your Fullscreen API code up to date? Find out how to make it work the same in modern browsers](http://generatedcontent.org/post/70347573294/is-your-fullscreen-api-code-up-to-date-find-out-how-to)
