@@ -3,12 +3,12 @@ title: Browserify：浏览器加载Node.js模块
 layout: page
 category: tool
 date: 2014-01-02
-modifiedOn: 2014-01-02
+modifiedOn: 2014-01-09
 ---
 
 随着JavaScript程序逐渐模块化，在ECMAScript 6推出官方的模块处理方案之前，有两种方案在实践中广泛采用：一种是AMD模块规范，针对模块的异步加载，主要用于浏览器端；另一种是CommonJS规范，针对模块的同步加载，主要用于服务器端，即node.js环境。
 
-Browserify是一个node.js模块，主要用于改写现有的CommonJS模块，使其可以在浏览器端运行。使用下面的命令，在全局环境下安装Browserify。
+Browserify是一个node.js模块，主要用于改写现有的CommonJS模块，使得浏览器端也可以使用这些模块。使用下面的命令，在全局环境下安装Browserify。
 
 {% highlight bash %}
 
@@ -46,6 +46,10 @@ foo("Hi");
 {% highlight bash %}
 
 browserify main.js > compiled.js
+
+# 或者
+
+browserify main.js -o compiled.js
 
 {% endhighlight %}
 
