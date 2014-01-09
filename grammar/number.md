@@ -164,23 +164,22 @@ JavaScript提供几个特殊的数值。
 
 ### NaN
 
-NaN是JavaScript的特殊值，表示“非数字”（not a number），主要出现在将字符串解析成数字出错的场合。
+NaN是JavaScript的特殊值，表示“非数字”（Not a Number），主要出现在将字符串解析成数字出错的场合。
 
 {% highlight javascript %}
 
-Number("xyz")
+5 - 'x'
 // NaN
 
 {% endhighlight %}
 
-上面代码表示无法将字符串xyz转为数值，因为它是“非数字”（NaN）。
+上面代码运行时，会自动将字符串“x”转为数值，但是由于x不是数字，所以最后得到结果为NaN，表示它是“非数字”（NaN）。
 
 需要注意的是，NaN不是一种独立的数据类型，而是一种特殊数值，它的数据类型依然属于Number，使用typeof运算符可以看得很清楚。
 
 {% highlight javascript %}
 
-typeof NaN
-// 'number'
+typeof NaN // 'number'
 
 {% endhighlight %}
 
@@ -188,11 +187,9 @@ NaN不等于任何值，包括它本身。NaN在布尔运算时被当作false。
 
 {% highlight javascript %}
 
-NaN === NaN
-// false
+NaN === NaN // false
 
-Boolean(NaN)
-// false
+Boolean(NaN) // false
 
 {% endhighlight %}
 
