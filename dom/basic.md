@@ -3,7 +3,7 @@ title: DOM概述
 layout: page
 category: dom
 date: 2013-10-07
-modifiedOn: 2013-11-11
+modifiedOn: 2014-01-10
 ---
 
 DOM是文档对象模型（Document Object Model）的简称，它的基本思想是把结构化文档（比如HTML和XML）解析成一系列的节点，再由这些节点组成一个树状结构。所有的节点和最终的树状结构，都有规范的对外接口，以达到使用编程语言操作文档的目的（比如增删内容）。所以，DOM可以理解成文档的编程接口。
@@ -587,6 +587,31 @@ style对象有以下三个方法，也可以用来设置、读取和删除行内
 divStyle.setProperty('background-color','red');
 divStyle.getPropertyValue('background-color');
 divStyle.removeProperty('background-color');
+
+{% endhighlight %}
+
+可以利用style对象，检查浏览器是否支持某个CSS属性。
+
+
+{% highlight javascript %}
+
+function isPropertySupported(property){
+
+	if (property in document.body.style) return true;
+
+	var prefixes = ['Moz', 'Webkit', 'O', 'ms', 'Khtml'];
+
+	var prefProperty = property.charAt(0).toUpperCase() + property.substr(1);
+
+	for(var i=0; i<prefixes.length; i++){
+		if((prefixes[i] + prefProperty) in document.body.style) return true;
+	}
+
+	return false;
+}
+
+isPropertySupported('background-clip')
+// true
 
 {% endhighlight %}
 
