@@ -6,7 +6,7 @@ date: 2013-02-01
 modifiedOn: 2013-12-28
 ---
 
-jQuery是目前使用最广泛的JavaScript函数库。据统计，全世界使用JavaScript函数库的网页，90%选择了jQuery；全世界排名前10000位的网站，57%使用了jQuery。
+jQuery是目前使用最广泛的JavaScript函数库。据[统计](http://w3techs.com/technologies/details/js-jquery/all/all)，全世界57.5%的网站使用jQuery，在使用JavaScript函数库的网站中，93.0%使用jQuery。
 
 它的最大优势有两个，一是使得操作网页元素变得异常容易，二是统一了接口，使得开发者可以用同一种方法编写能在所有现代浏览器中运行的代码，而不用担心浏览器之间的差异。
 
