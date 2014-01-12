@@ -14,7 +14,7 @@ ECMAScript 6的目标，是使得JavaScript可以用来编写复杂的应用程�
 
 最新的浏览器已经部分支持ECMAScript 6 的语法，可以通过[《ECMAScript 6 浏览器兼容表》](http://kangax.github.io/es5-compat-table/es6/)查看浏览器支持情况。
 
-下面对ECMAScript 6新增的语法特性逐一介绍。
+下面对ECMAScript 6新增的语法特性逐一介绍。由于ECMAScript 6的正式标准还未出台，所以以下内容随时可能发生变化，不一定是最后的版本。
 
 ## 数据类型
 
@@ -402,6 +402,12 @@ for (var i in range){
 
 当调用generator函数的时候，该函数并不执行，而是返回一个遍历器。以后，每次调用这个遍历器的next方法，就从函数体的头部或者上一次停下来的地方开始执行，直到遇到下一个yield语句为止，并返回该yield语句的值。如果遇到函数执行完毕或者return语句，就会抛出一个StopIteration异常。
 
+目前，generator有两种形式。一种是Mozilla在Firefox浏览器中已经部署的形式，另一种是ECMAScript 6草案中的形式。
+
+**（1）Mozill版本的generator**
+
+Mozill版本的gernerator，只要在函数体内使用yield关键字就可以生成。
+
 {% highlight javascript %}
 
 function simpleGenerator(){
@@ -507,6 +513,135 @@ g.send(true) // 3
 generator函数还有一个close方法，用于立即终止函数的运行。
 
 yield语句具有分阶段执行函数的效果，这意味着可以把异步操作写在yield语句里面，等到调用next方法时再往后执行。这实际上等同于不需要写回调函数了，因为异步操作的后续操作可以放在yield语句下面，反正要等到next方法时再执行。所以，generator函数的一个重要实际意义就是用来处理异步操作，改写回调函数。
+
+这里需要注意的是，yield语句运行的时候是同步运行，而不是异步运行（否则就失去了取代回调函数的设计目的了）。实际操作中，一般让yield语句返回Promises对象。
+
+{% highlight javascript %}
+
+var Q = require('q');
+ 
+function delay(milliseconds) {
+    var deferred = Q.defer();
+    setTimeout(deferred.resolve, milliseconds);
+    return deferred.promise;
+}
+
+function f(){
+    yield delay(100);
+};
+
+{% endhighlight %}
+
+上面代码yield语句返回的就是一个Promises对象。
+
+如果有一系列任务需要全部完成后，才能进行下一步操作，yield语句后面可以跟一个数组。下面就是一个例子。
+
+{% highlight javascript %}
+
+function f() {
+    var urls = [
+        'http://example.com/',
+        'http://twitter.com/',
+        'http://bbc.co.uk/news/'
+    ];
+    var arrayOfPromises = urls.map(someOperation);
+
+    var arrayOfResponses = yield arrayOfPromises;
+ 
+    this.body = "Results";
+    for (var i = 0; i < urls.length; i++) {
+        this.body += '\n' + urls[i] + ' response length is '
+              + arrayOfResponses[i].body.length;
+    }
+};
+
+{% endhighlight %}
+
+**（2）ECMAScript 6草案的generator**
+
+ECMAScript 6草案定义的generator函数，需要在function关键字后面，加一个星号。然后，函数内部使用yield关键字，定义遍历器的每个成员。
+
+{% highlight javascript %}
+
+function* helloWorldGenerator() {
+    yield 'hello';
+    yield 'world';
+}
+
+{% endhighlight %}
+
+上面代码定义了一个generator函数helloWorldGenerator，它的遍历器有两个成员“hello”和“world”。调用这个函数，就会得到遍历器。
+
+{% highlight javascript %}
+
+var hw = helloWorldGenerator();
+
+{% endhighlight %}
+
+执行遍历器的next方法，则会依次遍历每个成员。
+
+{% highlight javascript %}
+
+console.log(hw.next()); // { value: 'hello', done: false }
+console.log(hw.next()); // { value: 'world', done: false }
+console.log(hw.next()); // { value: undefined, done: true }
+
+{% endhighlight %}
+
+上面代码每次调用遍历器的next方法，就会返回一个对象。它的value属性就是遍历器当前成员的值（即当前yield语句的值），done属性表示遍历是否结束。直到遍历完最后一个成员，done属性才会从false变为true，这时value属性为undefined，表示此处没有遍历器的成员。
+
+遍历器的本质，其实是使用yield语句暂停执行它后面的操作，当调用next方法时，返回yield语句的值，然后再继续往下执行，直到遇到下一个yield语句。如果直到运行结束，也没有发现其他yield语句，则返回的对象的value属性为undefined，done变为true。某种程序上，yield语句很像return语句，只不过记得返回时位置，下次从该位置继续执行。
+
+{% highlight javascript %}
+
+function* powersOfTwo(maxExponent) {
+    var exponent = 0;
+    while (exponent <= maxExponent) {
+        yield Math.pow(2, exponent);
+        exponent++;
+    }
+}
+
+var it = powersOfTwo(10),
+    result = it.next();
+
+while (!result.done) {
+    console.log(result.value);
+    result = it.next();
+}
+
+{% endhighlight %}
+
+上面代码定义的powerOfTwo函数，第一次执行的时候，只会执行到yield语句为止，然后调用next方法时，再执行下去。通过判断遍历器的done属性，完成遍历器的循环。
+
+这种暂停执行的效果，意味着可以把异步操作写在yield语句里面，等到调用next方法时再往后执行。这实际上等同于不需要写回调函数了，因为异步操作的后续操作可以放在yield语句下面，反正要等到next方法时再执行。所以，generator函数的一个重要实际意义就是用来处理异步操作，改写回调函数。
+
+另外一种遍历器循环的方法是使用for...of语句。
+
+{% highlight javascript %}
+
+function* fibonacci() {
+    let [prev, curr] = [0, 1];
+    for (;;) {
+        [prev, curr] = [curr, prev + curr];
+        yield curr;
+    }
+}
+
+{% endhighlight %}
+
+上面代码定义了斐波那契数列，然后使用for..of语句完成循环。
+
+{% highlight javascript %}
+
+for (n of fibonacci()) {
+    if (n > 1000) break;
+    console.log(n);
+}
+
+{% endhighlight %}
+
+从上面代码可见，使用for...of语句时不需要使用next方法。
 
 ## 语法糖
 
@@ -1005,3 +1140,4 @@ ECMAScript 7可能包括的功能有：
 - Nicholas C. Zakas, [Understanding ECMAScript 6 arrow functions](http://www.nczonline.net/blog/2013/09/10/understanding-ecmascript-6-arrow-functions/)
 - Dale Schouten, [10 Ecmascript-6 tricks you can perform right now](http://html5hub.com/10-ecmascript-6-tricks-you-can-perform-right-now/)
 - Mozilla Developer Network, [Iterators and generators](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Iterators_and_Generators)
+- Steven Sanderson, [Experiments with Koa and JavaScript Generators](http://blog.stevensanderson.com/2013/12/21/experiments-with-koa-and-javascript-generators/)

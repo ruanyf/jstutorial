@@ -498,7 +498,6 @@ jQuery.getScript("/path/to/myscript.js")
 	})
 	.fail(function() {
 		// ...
-
 });
 
 {% endhighlight %}
