@@ -3,7 +3,7 @@ title: jQuery工具方法
 layout: page
 category: jquery
 date: 2013-02-16
-modifiedOn: 2013-12-27
+modifiedOn: 2014-01-12
 ---
 
 jQuery函数库提供了一个jQuery对象（简写为$），这个对象本身是一个构造函数，可以用来生成jQuery对象的实例。有了实例以后，就可以调用许多针对实例的方法，它们定义jQuery.prototype对象上面（简写为$.fn）。
@@ -401,6 +401,10 @@ ajax方法还有一些简便写法。
 
 一般来说，这些简便方法依次接受三个参数：url、数据、成功时的回调函数。
 
+**（1）$.get()，$.post()**
+
+这两个方法分别对应HTTP的GET方法和POST方法。
+
 {% highlight javascript %}
 
 $.get('/data/people.html', function(html){
@@ -431,7 +435,9 @@ $.ajax({
 
 {% endhighlight %}
 
-ajax方法的另一个简便写法是getJSON方法。当服务器端返回JSON格式的数据，可以用这个方法代替ajax方法。
+**（2）$.getJSON()**
+
+ajax方法的另一个简便写法是getJSON方法。当服务器端返回JSON格式的数据，可以用这个方法代替$.ajax方法。
 
 {% highlight javascript %}
 
@@ -456,7 +462,9 @@ $.ajax({
 
 {% endhighlight %}
 
-下面是一个$.getScript方法的例子。
+**（3）$.getScript()**
+
+$.getScript方法用于从服务器端加载一个脚本文件。
 
 {% highlight javascript %}
 
@@ -468,7 +476,36 @@ $.getScript('/static/js/myScript.js', function() {
 
 上面代码先从服务器加载myScript.js脚本，然后在回调函数中执行该脚本提供的函数。
 
-$.fn.load是定义在jQuery对象实例上的方法，用于获取服务器端的HTML文件，将其放入当前元素。
+getScript的回调函数接受三个参数，分别是脚本文件的内容，HTTP响应的状态信息和ajax对象实例。
+
+{% highlight javascript %}
+
+$.getScript( "ajax/test.js", function (data, textStatus, jqxhr){
+  console.log( data ); // test.js的内容
+  console.log( textStatus ); // Success
+  console.log( jqxhr.status ); // 200
+});
+
+{% endhighlight %}
+
+getScript是ajax方法的简便写法，因此返回的是一个deferred对象，可以使用deferred接口。
+
+{% highlight javascript %}
+
+jQuery.getScript("/path/to/myscript.js")
+	.done(function() {
+		// ...
+	})
+	.fail(function() {
+		// ...
+
+});
+
+{% endhighlight %}
+
+**（4）$.fn.load()**
+
+$.fn.load不是jQuery的工具方法，而是定义在jQuery对象实例上的方法，用于获取服务器端的HTML文件，将其放入当前元素。由于该方法也属于ajax操作，所以放在这里一起讲。
 
 {% highlight javascript %}
 
@@ -555,4 +592,8 @@ $.getJSON('/data/search.jsonp?q=a&callback=?',
 );
 
 {% endhighlight %}
+
+## 参考链接
+
+- David Walsh, [Loading Scripts with jQuery](http://davidwalsh.name/loading-scripts-jquery)
 
