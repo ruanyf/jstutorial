@@ -3,7 +3,7 @@ title: window对象
 layout: page
 category: bom
 date: 2013-09-19
-modifiedOn: 2013-11-07
+modifiedOn: 2014-01-12
 ---
 
 ## 概述
@@ -44,6 +44,23 @@ JavaScript提供四个URL的编码/解码方法。
 - decodeURIComponent()
 - encodeURI()
 - encodeURIComponent()
+
+## iframe元素
+
+window.frames返回一个类似数组的对象，成员为页面内的所有框架，包括frame元素和iframe元素。需要注意的是，window.frames的每个成员对应的是框架内的窗口（即框架的window对象），获取每个框架的DOM树，需要使用window.frames[0].document。
+
+{% highlight javascript %}
+
+var iframe = window.getElementsByTagName("iframe")[0];
+var iframe_title = iframe.contentWindow.title;
+
+{% endhighlight %}
+
+上面代码用于获取框架页面的标题。
+
+iframe元素遵守同源政策，只有当父页面与框架页面来自同一个域名，两者之间才可以用脚本通信，否则只有使用window.postMessage方法。
+
+在iframe框架内部，使用window.parent指向父页面。
 
 ## Navigator属性
 
