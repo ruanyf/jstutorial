@@ -1,7 +1,7 @@
 ---
 title: 严格模式
 layout: page
-category: grammar
+category: advanced
 date: 2013-01-11
 modifiedOn: 2013-01-25
 ---

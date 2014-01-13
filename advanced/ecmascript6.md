@@ -1,7 +1,7 @@
 ---
 title: ECMAScript 6 介绍
 layout: page
-category: oop
+category: advanced
 date: 2013-05-09
 modifiedOn: 2013-12-15
 ---

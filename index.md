@@ -23,7 +23,6 @@ modifiedOn: 2014-01-06
 - [数据类型转换](grammar/conversion.html)（基本完成）
 - [错误处理机制](grammar/error.html)（基本完成）
 - [编程风格](grammar/style.html)（基本完成）
-- [严格模式](grammar/strict.html)（基本完成）
 
 <h2 id="stdlib">标准库</h2>
 
@@ -44,7 +43,6 @@ modifiedOn: 2014-01-06
 - [概述](oop/basic.html)
 - [封装](oop/encapsulation.html)
 - [继承](oop/inheritance.html)
-- [ECMAscript 6 介绍](oop/ecmascript6.html)
 
 <h2 id="dom">DOM</h2>
 
@@ -100,11 +98,13 @@ modifiedOn: 2014-01-06
 - [RequireJS和AMD规范](tool/requirejs.html)
 - [Source map](tool/sourcemap.html)
 
-<h2 id="special">JavaScript高级语法</h2>
+<h2 id="advanced">JavaScript高级语法</h2>
 
-- [异步编程的模式](special/asynchronous.html)
-- [有限状态机](special/fsm.html)
-
+- [异步编程的模式](advanced/asynchronous.html)
+- [有限状态机](advanced/fsm.html)
+- [严格模式](advanced/strict.html)（基本完成）
+- [ECMAscript 6 介绍](advanced/ecmascript6.html)
+		
 <hr></hr>
 
 <h2 id="library">草稿一：函数库</h2>
