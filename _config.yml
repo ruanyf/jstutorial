@@ -13,7 +13,7 @@ chapters:
 - htmlapi
 - jquery
 - tool
-- special
+- advanced
 - library
 - nodejs
 
@@ -28,4 +28,4 @@ jquery: jQuery
 library: 草稿一：函数库
 nodejs: 草稿二：Node.js
 tool: 开发工具
-special: 专题
+advanced: 高级语法

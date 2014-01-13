@@ -100,7 +100,7 @@ modifiedOn: 2014-01-06
 - [RequireJS和AMD规范](tool/requirejs.html)
 - [Source map](tool/sourcemap.html)
 
-<h2 id="special">专题</h2>
+<h2 id="special">JavaScript高级语法</h2>
 
 - [异步编程的模式](special/asynchronous.html)
 - [有限状态机](special/fsm.html)

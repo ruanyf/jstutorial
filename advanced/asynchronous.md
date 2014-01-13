@@ -1,7 +1,7 @@
 ---
 title: JavaScript异步编程的模式
 layout: page
-category: special
+category: advanced
 date: 2012-12-22
 modifiedOn: 2013-11-28
 ---
