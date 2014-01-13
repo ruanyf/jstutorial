@@ -135,11 +135,11 @@ Promises对象是CommonJS工作组提出的一种规范，目的是为异步编�
 
 那么，什么是Promises？首先，它是一个对象，也就是说与其他JavaScript对象的用法，没有什么两样；其次，它起到代理作用（proxy），使得异步操作具备同步操作（synchronous code）的接口，即充当异步操作与回调函数之间的中介，使得程序具备正常的同步运行的流程，回调函数不必再一层层包裹起来。
 
-简单说，它的思想是，每一个异步任务返回一个Promise对象，该对象有一个then方法，允许指定回调函数。比如，f1的回调函数f2,可以写成：
+简单说，它的思想是，每一个异步任务立刻返回一个Promise对象，由于是立刻返回，所以可以采用同步操作的流程。这个Promises对象有一个then方法，允许指定回调函数，在异步任务完成后调用。比如，f1的回调函数f2,可以写成：
 
 {% highlight javascript %}
 
-f1().then(f2);
+(new Promise(f1)).then(f2);
 
 {% endhighlight %}
 
@@ -161,38 +161,45 @@ step1(function (value1) {
 
 // Promises的写法
 
-promiseStep1()
-.then(promiseStep2)
-.then(promiseStep3)
-.then(promiseStep4);
+(new Promise(step1))
+.then(step2)
+.then(step3)
+.then(step4);
 
 {% endhighlight %}
 
-上面代码的promiseStep1函数是对Step1函数的改写，主要区别是返回一个Promise对象，后面的promiseStep2、promiseStep3和promiseStep4都是如此。
+从上面代码可以看到，采用Promises接口以后，程序流程变得非常清楚，十分易读。
 
-可以看到传统写法使得代码混成一团，变得横向发展而不是向下发展。Promises规范就是为了解决这个问题而提出的，目标是使用正常的程序流程（同步），来处理异步操作。它先返回一个Promise对象，后面的操作以同步的方式，寄存在这个对象上面。等到异步操作有了结果，再执行前期寄放在它上面的其他操作。
+总的来说，传统的回调函数写法使得代码混成一团，变得横向发展而不是向下发展。Promises规范就是为了解决这个问题而提出的，目标是使用正常的程序流程（同步），来处理异步操作。它先返回一个Promise对象，后面的操作以同步的方式，寄存在这个对象上面。等到异步操作有了结果，再执行前期寄放在它上面的其他操作。
 
-promise对象只有三种状态：未完成（pending）、已完成（fulfilled）、失败（rejected）。这三种的状态的变化途径只有两个，且只能发生一次：从“未完成”到“已完成”，或者从“未完成”到“失败”。一旦当前状态变为“已完成”或“失败”，就意味着不会再发生状态变化了。
+Promises原本只是社区提出的一个构想，一些外部函数库率先实现了这个功能，目前ECMAScript 6正在考虑将其写入语言标准，Chrome和Firefox浏览器的最新版本都初步部署了这个功能。
+
+### Promises接口
+
+当异步任务返回一个promise对象（小写表示这是Promise的实例）时，该对象只有三种状态：未完成（pending）、已完成（fulfilled）、失败（rejected）。
+
+这三种的状态的变化途径只有两个，且只能发生一次：从“未完成”到“已完成”，或者从“未完成”到“失败”。一旦当前状态变为“已完成”或“失败”，就意味着不会再发生状态变化了。
+
 
 promise对象的then方法用来添加回调函数。它可以接受两个回调函数，第一个是操作成功（fulfilled）时的回调函数，第二个是操作失败（rejected）时的回调函数（可以不提供）。一旦状态改变，就调用相应的回调函数。
 
 {% highlight javascript %}
 
-var chainPromise = first()
-	.then(second)
-	.then(third)
-	.then(fourth)
-	.then(console.log, console.error);
+(new Promise(step1))
+.then(step2)
+.then(step3)
+.then(step4)
+.then(console.log, console.error);
 
 {% endhighlight %}
 
-上面代码先用then方法依次定义了三个操作成功时的回调函数second、third、fourth，最后再用then方法定义了操作成功时的回调函数console.log，以及操作失败时的回调函数console.error。
+再来看上面的代码就很清楚，step1是一个耗时很长的异步任务，然后使用then方法，依次绑定了三个step1操作成功后的回调函数step2、step3、step4，最后再用then方法绑定两个回调函数：操作成功时的回调函数console.log，操作失败时的回调函数console.error。
 
-console.log和console.error这两个最后的回调函数，用法上有一点重要的区别。console.log只显示回调函数fourth的返回值，而console.error可以显示second、third、fourth这三个回调函数之中任何一个函数发生的错误。也就是说，假定second操作失败，抛出一个错误，这时third和fourth都不会再运行了，Promises对象开始寻找接下来的第一个错误回调函数，在上面代码中是console.error。总之，Promises对象的错误有传递性。
+console.log和console.error这两个最后的回调函数，用法上有一点重要的区别。console.log只显示回调函数step4的返回值，而console.error可以显示step2、step3、step4之中任何一个发生的错误。也就是说，假定step2操作失败，抛出一个错误，这时step3和step4都不会再运行了，promises对象开始寻找接下来的第一个错误回调函数，在上面代码中是console.error。所以，结论就是Promises对象的错误有传递性。
 
 ### Promises对象的实现
 
-Promises只是一个规范，JavaScript语言原生不提供支持。一般来说，总是选用现成的函数库。为了真正理解Promises对象，下面我们自己动手写一个Promises的实现。
+Promises只是一个规范，JavaScript语言原生还未提供支持。一般来说，总是选用现成的函数库。为了真正理解Promises对象，下面我们自己动手写一个Promises的实现。
 
 首先，将Promise定义成构造函数。
 
@@ -207,55 +214,30 @@ var Promise = function () {
 
 上面代码表示，Promise的实例对象的state属性默认为“未完成”状态（pending），还有一个thenables属性指向一个数组，用来存放then方法生成的内部对象。
 
-接下来，将具体方法部署在Promise的原型对象上面，这样就可以让所有实例共享。
-
-第一个定义的是then方法，它接受两个参数，分别是异步操作成功时的回调函数（onFulfilled）和出错时的回调函数（onRejected）。为了可以部署链式操作，它必须返回一个新的Promise对象。
-
-{% highlight javascript %}
-
-Promise.prototype.then = function (onFulfilled, onRejected) {
-  var thenable = {};
- 
-  if (typeof onFulfilled == 'function') {
-    thenable.fulfill = onFulfilled;
-  };
- 
-  if (typeof onRejected == 'function') {
-    thenable.reject = onRejected;
-  };
- 
-  if (this.state != 'pending') {
-    setImmediate(function () {
-      this._handleThen();
-    }.bind(this));
-  }
- 
-  thenable.promise = new Promise();
-  this.thenables.push(thenable);
- 
-  return thenable.promise;
-}
-
-{% endhighlight %}
-
-上面代码首先定义了一个内部变量thenable对象，将then方法的参数都加入这个对象的属性。然后，检查当前状态，如果不等于“未完成”，则在当前操作结束后，立即调用_handleThen方法。接着，在thenable对象的promise属性上生成一个新的Promise对象，并在稍后返回这个对象。最后，将thenable对象加入实例对象的thenables数组。
-
-接下来，部署用于改变实例对象状态的resolve方法和reject方法。
+接下来，部署实例对象的resolve方法，该方法用来将实例对象的状态从“未完成”变为“已完成”。
 
 {% highlight javascript %}
 
 Promise.prototype.resolve = function (value) {
   if (this.state != 'pending') return;
- 
+
   this.state = 'fulfilled';
   this.value = value;
   this._handleThen();
   return this;
-};
+}
+
+{% endhighlight %}
+
+上面代码除了改变实例的状态，还将异步任务的返回值存入实例对象的value属性，然后调用内部方法_handleThen，最后返回实例对象本身。
+
+类似地，部署实例对象的reject方法。
+
+{% highlight javascript %}
 
 Promise.prototype.reject = function (reason) {
   if (this.state != 'pending') return;
- 
+
   this.state = 'rejected';
   this.reason = reason;
   this._handleThen();
@@ -264,22 +246,68 @@ Promise.prototype.reject = function (reason) {
 
 {% endhighlight %}
 
-上面代码表示，这两个方法先检查当前状态是不是“未完成”，如果不是就立即返回；然后，resolve方法将实例对象的state属性从“未完成”变为“完成”（fulfilled），reject方法将state属性从“未完成”变为“失败”（rejected）。如果“完成”，实例对象的value属性等于resolve方法的参数；如果失败，实例对象的reason属性等于reject方法的参数。接着，这两个方法调用_handleThen方法，去完成通过then方法添加的回调函数。等到全部完成后，再返回实例对象。
+然后，部署实例对象的then方法。它接受两个参数，分别是异步任务成功时的回调函数（onFulfilled）和出错时的回调函数（onRejected）。为了可以部署链式操作，它必须返回一个新的Promise对象。
 
-最后，定义_handleThen方法，用来调用回调函数。
+{% highlight javascript %}
+
+Promise.prototype.then = function (onFulfilled, onRejected) {
+  var thenable = {};
+
+  if (typeof onFulfilled == 'function') {
+    thenable.fulfill = onFulfilled;
+  };
+
+  if (typeof onRejected == 'function') {
+    thenable.reject = onRejected;
+  };
+
+  if (this.state != 'pending') {
+    setImmediate(function () {
+      this._handleThen();
+    }.bind(this));
+  }
+
+  thenable.promise = new Promise();
+  this.thenables.push(thenable);
+
+  return thenable.promise;
+}
+
+{% endhighlight %}
+
+上面代码首先定义了一个内部变量thenable对象，将then方法的两个参数都加入这个对象的属性。然后，检查当前状态，如果不等于“未完成”，则在当前操作结束后，立即调用_handleThen方法。接着，在thenable对象的promise属性上生成一个新的Promise对象，并在稍后返回这个对象。最后，将thenable对象加入实例对象的thenables数组。
+
+下一步就要部署内部方法_handleThen，它用来处理通过then方法绑定的回调函数。
 
 {% highlight javascript %}
 
 Promise.prototype._handleThen = function () {
-  if (this.state == 'pending') return;
- 
+  if (this.state === 'pending') return;
+
   if (this.thenables.length) {
     for (var i = 0; i < this.thenables.length; i++) {
       var thenPromise = this.thenables[i].promise;
       var returnedVal;
- 
       try {
-        switch (this.state) {
+		// 运行回调函数
+      } catch (e) {
+        thenPromise.reject(e);
+      }
+    }
+    this.thenables = [];
+  }
+}
+
+{% endhighlight %}
+
+上面代码的逻辑是这样的：如果实例对象的状态是“未完成”，就返回，否则检查thenables属性是否有值。如果有值，表明里面储存了需要执行的回调函数，则依次运行回调函数。
+
+之所以把回调函数的执行放在try...catch结构中，是因为一旦出错，就会自动执行catch代码块，从而可以运行下一个Promise实例对象的reject方法，这使得调用reject方法变得很简单。下面是try代码块中的代码。
+
+{% highlight javascript %}
+
+try {
+		switch (this.state) {
           case 'fulfilled':
             if (this.thenables[i].fulfill) {
               returnedVal = this.thenables[i].fulfill(this.value);
@@ -296,22 +324,28 @@ Promise.prototype._handleThen = function () {
             break;
         }
  
-		 if (returnedVal instanceof Promise || typeof returnedVal.then == 'function') {
-            returnedVal.then(thenPromise.resolve.bind(thenPromise), thenPromise.reject.bind(thenPromise));
-          } else {
+          if (returnedVal === null) { 
             this.thenables[i].promise.resolve(returnedVal);
           }
-      } catch (e) {
-        thenPromise.reject(e);
-      }
-    }
-    this.thenables = [];
-  }
-};
+          else if (returnedVal instanceof Promise || typeof returnedVal.then === 'function') {
+            returnedVal.then(thenPromise.resolve.bind(thenPromise), thenPromise.reject.bind(thenPromise));
+          }
+          else {
+            this.thenables[i].promise.resolve(returnedVal);
+          }
+} 
 
 {% endhighlight %}
 
-上面代码表示，_handleThen方法只在当前状态不等于“未完成”时执行。该方法首先遍历thenables对象，读取每一个then方法添加的thenable对象。接着，如果当前状态为“完成”，则执行fulfill回调函数；如果当前状态为“失败”，则执行reject回调函数。最后，触发下一个Promise对象的resolve或者reject方法。
+上面代码首先根据实例对象的状态，分别调用fulfill或reject回调函数，并传入相应的参数，并将返回值存入returnVal变量。然后再去改变this.thenables[i].promise对象的状态，触发下一个Promise对象的resolve或者reject方法。
+
+最后，由于我们写的是供调用的函数库，需要将构造函数输出。
+
+{% highlight javascript %}
+
+module.exports = Promise;
+
+{% endhighlight %}
 
 ### 实例：Ajax操作
 
@@ -321,19 +355,19 @@ Ajax操作是典型的异步操作，传统上往往写成下面这样。
 
 function search(term, onload, onerror) {
 	var xhr, results, url;
- 
+
 	url = 'http://example.com/search?q=' + term;
- 
+
 	xhr = new XMLHttpRequest();
 	xhr.open('GET', url, true);
- 
+
 	xhr.onload = function (e) {
 		if (this.status === 200) {
 			results = JSON.parse(this.responseText);
 			onload(results);
 		}
 	};
- 
+
 	xhr.onerror = function (e) {
 		onerror(e);
 	};
@@ -345,7 +379,7 @@ search("Hello World", f1, f2);
 
 {% endhighlight %}
 
-可以看到上面代码的回调函数，必须直接传入。如果使用Promises，就可以写成下面这样。
+上面代码的回调函数，必须直接传入。如果使用Promises方法，就可以写成下面这样。
 
 {% highlight javascript %}
 

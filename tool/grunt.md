@@ -69,6 +69,18 @@ npm install <module> --save-dev
 
 {% endhighlight %}
 
+比如，对应上面package.json文件指定的模块，需要运行以下npm命令。
+
+{% highlight bash %}
+
+npm install grunt --save-dev
+npm install grunt-contrib-jshint --save-dev
+npm install grunt-contrib-concat --save-dev
+npm install grunt-contrib-uglify --save-dev
+npm install grunt-contrib-watch --save-dev
+
+{% endhighlight %}
+
 ## 命令脚本文件Gruntfile.js 
 
 模块安装完以后，下一步在项目的根目录下，新建脚本文件Gruntfile.js。它是grunt的配置文件，就好像package.json是npm的配置文件一样。Gruntfile.js就是一般的Node.js模块的写法。

@@ -62,6 +62,26 @@ node app.js
 
 {% highlight javascript %}
 
+app.get('/', function(req, res) {
+   res.send('Hello World');
+});
+
+{% endhighlight %}
+
+上面代码的get方法，表示处理客户端发出的GET请求。它的第一个参数是访问路径，正斜杠（/）就代表根路径；第二个参数是回调函数，它的req参数表示客户端发来的HTTP请求，res参数代表发向客户端的HTTP回应，这两个参数都是对象。在回调函数内部，使用HTTP回应的send方法，表示向浏览器发送一个字符串。然后，运行下面的命令。
+
+{% highlight bash %}
+
+node app.js
+
+{% endhighlight %}
+
+此时，在浏览器中访问http://127.0.0.1:3000，网页就会显示“Hello World”。
+
+如果需要指定HTTP头信息，回调函数就必须换一种写法，要使用setHeader方法与end方法。
+
+{% highlight javascript %}
+
 app.get('/', function(req, res){
   var body = 'Hello World';
   res.setHeader('Content-Type', 'text/plain');
@@ -71,29 +91,9 @@ app.get('/', function(req, res){
 
 {% endhighlight %}
 
-上面代码的get方法，表示处理客户端发出的GET请求。它的第一个参数是访问路径，正斜杠（/）就代表根路径；第二个参数是回调函数，它的req参数表示客户端发来的HTTP请求，res参数代表发向客户端的HTTP回应。
+上面是处理根目录的情况，下面再举一个例子。
 
-使用send方法，也能达到同样效果。
-
-{% highlight javascript %}
-
-app.get('/', function(req, res) {
-   res.send('Hello World');
-});
-
-{% endhighlight %}
-
-然后，运行下面的命令，再在浏览器中访问http://127.0.0.1:3000。
-
-{% highlight bash %}
-
-node app.js
-
-{% endhighlight %}
-
-网页就会显示“Hello World”。
-
-除了发送字符串，send方法还可以直接发送对象。比如，/api路径的处理可以写成下面这样：
+假定用户访问/api路径，希望返回一个JSON字符串。这时，get可以这样写。
 
 {% highlight javascript %}
 
@@ -103,7 +103,7 @@ app.get('/api', function(request, response) {
 
 {% endhighlight %}
 
-重新启动node以后，再访问路径/api，浏览器就会显示一个JSON对象。
+上面代码表示，除了发送字符串，send方法还可以直接发送对象。重新启动node以后，再访问路径/api，浏览器就会显示一个JSON对象。
 
 {% highlight javascript %}
 
@@ -114,7 +114,7 @@ app.get('/api', function(request, response) {
 
 {% endhighlight %}
 
-如果只向浏览器发送简单的文本信息，上面的方法已经够用；但是如果要向浏览器发送复杂的内容，还是应该使用预先生成的网页模板。
+如果只向浏览器发送简单的文本信息，上面的方法已经够用；但是如果要向浏览器发送复杂的内容，还是应该使用网页模板。
 
 ## 静态网页模板
 
