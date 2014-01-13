@@ -1,7 +1,7 @@
 ---
 title: 排序算法
 date: 2012-12-02
-category: special
+category: library
 layout: page
 modifiedOn: 2013-01-30
 ---

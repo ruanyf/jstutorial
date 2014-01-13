@@ -1,6 +1,6 @@
 ---
 title: 设计模式
-category: special
+category: library
 layout: page
 date: 2013-02-04
 modifiedOn: 2013-02-04

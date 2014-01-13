@@ -102,9 +102,7 @@ modifiedOn: 2014-01-06
 
 <h2 id="special">专题</h2>
 
-- [设计模式](special/designpattern.html)
 - [异步编程的模式](special/asynchronous.html)
-- [排序算法](special/sorting.html)
 - [有限状态机](special/fsm.html)
 
 <hr></hr>
@@ -115,6 +113,8 @@ modifiedOn: 2014-01-06
 - [Modernizr](library/modernizr.html)
 - [Datejs](library/datejs.html)
 - [D3.js](library/d3.html)
+- [设计模式](library/designpattern.html)
+- [排序算法](library/sorting.html)
 
 <h2 id="nodejs">草稿二：Node.js</h2>
 
