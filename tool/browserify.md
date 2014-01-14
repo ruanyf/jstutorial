@@ -3,7 +3,7 @@ title: Browserify：浏览器加载Node.js模块
 layout: page
 category: tool
 date: 2014-01-02
-modifiedOn: 2014-01-09
+modifiedOn: 2014-01-14
 ---
 
 随着JavaScript程序逐渐模块化，在ECMAScript 6推出官方的模块处理方案之前，有两种方案在实践中广泛采用：一种是AMD模块规范，针对模块的异步加载，主要用于浏览器端；另一种是CommonJS规范，针对模块的同步加载，主要用于服务器端，即node.js环境。
@@ -16,7 +16,7 @@ npm install -g browserify
 
 {% endhighlight %}
 
-## 实例
+## 实例：简单应用
 
 先看一个例子。假定有一个很简单的CommonJS模块文件foo.js。
 
@@ -63,6 +63,87 @@ browserify main.js -o compiled.js
 
 使用上面的命令，在浏览器中运行compiled.js，控制台会显示Hi。
 
+## 实例：backbone的应用
+
+我们再看一个在服务器端的backbone模块转为客户端backbone模块的例子。
+
+先安装backbone和它所依赖的jQuery模块。
+
+{% highlight bash %}
+
+npm install backbone jquery
+
+{% endhighlight %}
+
+然后，新建一个main.js文件。
+
+{% highlight javascript %}
+
+// main.js
+
+var Backbone = require('backbone');
+var $ = Backbone.$ = require('jquery/dist/jquery')(window);
+
+var AppView = Backbone.View.extend({
+  render: function(){
+    $('main').append('<h1>Browserify is a great tool.</h1>');
+  }
+});
+
+var appView = new AppView();
+appView.render();
+
+{% endhighlight %}
+
+接着，使用browserify将main.js转为app.js。
+
+{% highlight bash %}
+
+browserify main.js -o app.js
+
+{% endhighlight %}
+
+app.js就可以直接插入HTML网页了。
+
+{% highlight html %}
+
+<script src="app.js"></script>
+
+{% endhighlight %}
+
+注意，只要插入app.js一个文件就可以了，完全不需要再加载backbone.js和jQuery了。
+
+## browserify-middleware模块
+
+上面是将服务器端模块直接转为客户端脚本，然后在网页中调用这个转化后的脚本文件。还有一种思路是，在运行时动态转换模块，这就需要用到[browserify-middleware模块](https://github.com/ForbesLindesay/browserify-middleware)。
+
+比如，网页中需要加载app.js，它是从main.js转化过来的。
+
+{% highlight html %}
+
+<!-- index.html -->
+
+<script src="app.js"></script>
+
+{% endhighlight %}
+
+你可以在服务器端静态生成一个app.js文件，也可以让它动态生成。这就需要用browserify-middleware模块，服务器端脚本要像下面这样写。
+
+{% highlight javascript %}
+
+var browserify = require('browserify-middleware');
+var express = require('express');
+var app = express();
+
+app.get('/app.js', browserify('./client/main.js'));
+
+app.get('/', function(req, res){
+  res.render('index.html');
+});
+
+{% endhighlight %}
+
 ## 参考链接
 
 - Jack Franklin, [Dependency Management with Browserify](http://javascriptplayground.com/blog/2013/09/browserify/)
+- Seth Vincent, [Using Browserify with Express](http://learnjs.io/blog/2013/12/22/express-and-browserify/)

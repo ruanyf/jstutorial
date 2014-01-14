@@ -920,6 +920,104 @@ if (cluster.isMaster){
 
 上面代码先判断当前进程是否为主进程（cluster.isMaster），如果是的，就按照CPU的核数，新建若干个worker进程；如果不是，说明当前进程是worker进程，则在该进程启动一个服务器程序。
 
+## 配置文件package.json
+
+每个项目的根目录下面，一般都有一个package.json文件，定义了这个项目所需要的各种模块，以及项目的配置（比如项目的名称、版本、许可证等元数据）。npm install 命令根据这个文件，自动下载所需的模块。所以，package.json 可以看作是npm命令的配置文件。
+
+package.json文件的内容，就是一个json对象，该对象的每一个成员就是当前项目的一项设置。最简单的package.json只有两个成员：项目名称和项目版本。
+
+{% highlight javascript %}
+
+{
+  "name" : "xxx",
+  "version" : "0.0.0",
+}
+
+{% endhighlight %}
+
+上面代码的name就是项目名称，version是项目版本，遵守“主要版本.次要版本.补丁号”的格式。
+
+更详细的package.json文件如下。
+
+{% highlight javascript %}
+
+{
+  "name":"name",
+  "preferGlobal":false,
+  "version":"0.0.0",
+  "author":"your_name",
+  "description":"",
+  "bugs":{"url":"http://yoururl.com/","email":""},
+  "contributors":[{"name":"xxx","email":"xxx@example.com"}],
+  "bin":{"http-server":"./bin/http-server"},
+  "scripts":{"start":"node ./bin/http-server"},
+  "main":"./lib/http-server",
+  "repository":{"type":"git","url":"https://github.com/xxx"},
+  "keywords":["cli","http","server"],
+  "dependencies":{"package":"0.1.x"},
+  "analyze":false,
+  "devDependencies":{"package":"0.5.x"},
+  "bundledDependencies":["package"],
+  "license":"MIT",
+  "files":[],
+  "man":{},
+  "config":{},
+  "engines":{"node":">=0.6"},
+  "engineStrict":true,
+  "os":"darwin",
+  "cpu":"x64",
+  "private":false,
+  "publishConfig":{}
+}
+
+{% endhighlight %}
+
+上面代码的主要成员有这样几个：
+
+- **description**：项目描述。
+- **keywords**：项目关键词。
+- **author**：项目作者。
+- **contributors**：项目贡献者。
+- **homepage**：项目主页的URL。
+- **repository**：项目代码库的网址。
+- **main**：项目的加载点，指明当用户根据模块名加载模块时，所要调用的具体脚本名。
+- **dependencies**：项目运行依赖的模块。
+- **devDependencies**：项目开发依赖的模块，使用npm install --dev命令时一并安装。
+
+package.json 文件可以手动编写，也可以使用 npm init 命令手动生成。
+
+{% highlight bash %}
+
+npm init
+
+{% endhighlight %}
+
+这个命令采用互动方式，要求用户回答一些问题，然后在当前目录生成一个基本的 package.json 文件。所有问题之中，只有项目名称（name）和项目版本（version）是必填的，其他都是选填的。下面是一个实例。
+
+{% highlight bash %}
+
+name: (getBackboneVersion) get-backbone-version
+version: (0.0.0) 0.1.0
+description: get backbone version used
+entry point: (getBackboneVersion.js) getBackboneVersion.js
+test command: n/a
+git repository: n/a
+keywords: backbone, version
+author: cody lindley
+license: (BSD) MIT
+
+{% endhighlight %}
+
+有了package.json文件，直接使用npm install命令，就会在当前目录中安装文件指定的包。
+
+{% highlight bash %}
+
+npm install
+
+{% endhighlight %}
+
+如果一个库不在 package.json 文件之中，可以在安装的时候加上--save-dev，这个库就会自动被加入 package.json 文件。
+
 ## 模块管理器npm
 
 ### npm简介
@@ -1112,104 +1210,6 @@ npm search [搜索词]
 
 如果不加搜索词，npm search 默认返回服务器端的所有模块。
 
-## 配置文件package.json
-
-每个项目的根目录下面，一般都有一个package.json文件，定义了这个项目所需要的各种模块，以及项目的配置（比如项目的名称、版本、许可证等元数据）。npm install 命令根据这个文件，自动下载所需的模块。所以，package.json 可以看作是npm命令的配置文件。
-
-package.json文件的内容，就是一个json对象，该对象的每一个成员就是当前项目的一项设置。最简单的package.json只有两个成员：项目名称和项目版本。
-
-{% highlight javascript %}
-
-{
-  "name" : "xxx",
-  "version" : "0.0.0",
-}
-
-{% endhighlight %}
-
-上面代码的name就是项目名称，version是项目版本，遵守“主要版本.次要版本.补丁号”的格式。
-
-更详细的package.json文件如下。
-
-{% highlight javascript %}
-
-{
-  "name":"name",
-  "preferGlobal":false,
-  "version":"0.0.0",
-  "author":"your_name",
-  "description":"",
-  "bugs":{"url":"http://yoururl.com/","email":""},
-  "contributors":[{"name":"xxx","email":"xxx@example.com"}],
-  "bin":{"http-server":"./bin/http-server"},
-  "scripts":{"start":"node ./bin/http-server"},
-  "main":"./lib/http-server",
-  "repository":{"type":"git","url":"https://github.com/xxx"},
-  "keywords":["cli","http","server"],
-  "dependencies":{"package":"0.1.x"},
-  "analyze":false,
-  "devDependencies":{"package":"0.5.x"},
-  "bundledDependencies":["package"],
-  "license":"MIT",
-  "files":[],
-  "man":{},
-  "config":{},
-  "engines":{"node":">=0.6"},
-  "engineStrict":true,
-  "os":"darwin",
-  "cpu":"x64",
-  "private":false,
-  "publishConfig":{}
-}
-
-{% endhighlight %}
-
-上面代码的主要成员有这样几个：
-
-- **description**：项目描述。
-- **keywords**：项目关键词。
-- **author**：项目作者。
-- **contributors**：项目贡献者。
-- **homepage**：项目主页的URL。
-- **repository**：项目代码库的网址。
-- **main**：项目的加载点，指明当用户根据模块名加载模块时，所要调用的具体脚本名。
-- **dependencies**：项目运行依赖的模块。
-- **devDependencies**：项目开发依赖的模块，使用npm install --dev命令时一并安装。
-
-package.json 文件可以手动编写，也可以使用 npm init 命令手动生成。
-
-{% highlight bash %}
-
-npm init
-
-{% endhighlight %}
-
-这个命令采用互动方式，要求用户回答一些问题，然后在当前目录生成一个基本的 package.json 文件。所有问题之中，只有项目名称（name）和项目版本（version）是必填的，其他都是选填的。下面是一个实例。
-
-{% highlight bash %}
-
-name: (getBackboneVersion) get-backbone-version
-version: (0.0.0) 0.1.0
-description: get backbone version used
-entry point: (getBackboneVersion.js) getBackboneVersion.js
-test command: n/a
-git repository: n/a
-keywords: backbone, version
-author: cody lindley
-license: (BSD) MIT
-
-{% endhighlight %}
-
-有了package.json文件，直接使用npm install命令，就会在当前目录中安装文件指定的包。
-
-{% highlight bash %}
-
-npm install
-
-{% endhighlight %}
-
-如果一个库不在 package.json 文件之中，可以在安装的时候加上--save-dev，这个库就会自动被加入 package.json 文件。
-
 ### npm run
 
 在package.json文件有一项scripts，用于指定脚本命令，供npm直接调用。
@@ -1291,4 +1291,4 @@ require('moduleA')
 - Cody Lindley, [Package Managers: An Introductory Guide For The Uninitiated Front-End Developer](http://tech.pro/tutorial/1190/package-managers-an-introductory-guide-for-the-uninitiated-front-end-developer)
 - Stack Overflow, [What is Node.js?](http://stackoverflow.com/questions/1884724/what-is-node-js)
 - Andrew Burgess, [Using Node's Event Module](http://dev.tutsplus.com/tutorials/using-nodes-event-module--net-35941)
-- James Halliday, [task automation with npm run](http://substack.net/task_automation_with_npm_run)
+- James Halliday, [task automation with npm run](http://substack.net/task_automation_with_npm_run)- Romain Prieto, [Working on related Node.js modules locally](http://www.asyncdev.net/2013/12/working-on-related-node-modules-locally/)
