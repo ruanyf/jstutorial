@@ -103,7 +103,7 @@ modifiedOn: 2014-01-06
 - [异步编程的模式](advanced/asynchronous.html)
 - [有限状态机](advanced/fsm.html)
 - [严格模式](advanced/strict.html)（基本完成）
-- [ECMAscript 6 介绍](advanced/ecmascript6.html)
+- [ECMAScript 6 介绍](advanced/ecmascript6.html)
 		
 <hr></hr>
 

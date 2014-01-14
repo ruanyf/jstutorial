@@ -1210,8 +1210,85 @@ npm install
 
 如果一个库不在 package.json 文件之中，可以在安装的时候加上--save-dev，这个库就会自动被加入 package.json 文件。
 
+### npm run
+
+在package.json文件有一项scripts，用于指定脚本命令，供npm直接调用。
+
+{% highlight javascript %}
+
+"scripts": {
+    "watch": "watchify client/main.js -o public/app.js -v",
+    "build": "browserify client/main.js -o public/app.js",
+    "start": "npm run watch & nodemon server.js"
+  },
+
+{% endhighlight %}
+
+上面代码在scripts项，定义了三个脚本命令，并且每个命令有一个别名。使用的时候，在命令行键入npm run后面加上别名，就能调用相应的脚本命令。
+
+{% highlight bash %}
+
+npm run watch
+npm run build
+npm run start
+
+{% endhighlight %}
+
+### npm link
+
+一般来说，每个项目都会在项目目录内，安装所需的模块文件。也就是说，各个模块是局部安装。但是有时候，我们希望模块是一个符号链接，连到外部文件，这时候就需要用到npm link命令。
+
+现在模块A（moduleA）的安装目录下运行npm link命令。
+
+{% highlight bash %}
+
+/path/to/moduleA $ npm link
+
+{% endhighlight %}
+
+上面的命令会在npm的安装目录内，生成一个符号链接文件。
+
+{% highlight bash %}
+
+/usr/local/share/npm/lib/node_modules/moduleA -> /path/to/moduleA
+
+{% endhighlight %}
+
+然后，转到你需要放置该模块的项目目录，再次运行npm link命令，并指定模块名。
+
+{% highlight bash %}
+
+/path/to/my-project  $ npm link moduleA
+
+{% endhighlight %}
+
+上面命令等同于生成了本地模块的符号链接。
+
+{% highlight bash %}
+
+/path/to/my-project/node_modules/moduleA -> /usr/local/share/npm/lib/node_modules/moduleA
+
+{% endhighlight %}
+
+然后，就可以在你的项目中，加载该模块了。
+
+{% highlight javascript %}
+
+require('moduleA')
+
+{% endhighlight %}
+
+如果你的项目不再需要该模块，可以在项目目录内使用npm unlink命令，删除符号链接。
+
+{% highlight bash %}
+
+/path/to/my-project  $ npm unlink moduleA
+
+{% endhighlight %}
+
 ## 参考链接
 
 - Cody Lindley, [Package Managers: An Introductory Guide For The Uninitiated Front-End Developer](http://tech.pro/tutorial/1190/package-managers-an-introductory-guide-for-the-uninitiated-front-end-developer)
 - Stack Overflow, [What is Node.js?](http://stackoverflow.com/questions/1884724/what-is-node-js)
 - Andrew Burgess, [Using Node's Event Module](http://dev.tutsplus.com/tutorials/using-nodes-event-module--net-35941)
+- James Halliday, [task automation with npm run](http://substack.net/task_automation_with_npm_run)
