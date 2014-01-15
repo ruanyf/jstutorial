@@ -435,6 +435,8 @@ myDiv.classList.toString();
 
 {% endhighlight %}
 
+各大浏览器（包括IE 10）都支持classList属性。
+
 ### dataset属性
 
 dataset属性用于操作HTML标签元素的data-*属性。目前，Firefox、Chrome、Opera、Safari浏览器支持该API。
@@ -633,6 +635,8 @@ Element对象也部署了document对象的4个选择子元素的方法，而且�
 document.getElementById('header').getElementsByClassName('a')
 
 {% endhighlight %}
+
+各大浏览器对这四个方法都支持良好，IE的情况如下：IE 6开始支持getElementsByTagName，IE 8开始支持querySelector和querySelectorAll，IE 9开始支持getElementsByClassName。
 
 **（2）elementFromPoint方法**
 
