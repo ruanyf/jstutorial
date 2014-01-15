@@ -129,29 +129,19 @@ Node提供以下一些全局对象，它们是所有模块都可以调用的。
 
 Node.js采用模块化结构，按照[CommonJS规范](http://wiki.commonjs.org/wiki/CommonJS)定义和使用模块。
 
-require命令用于指定加载模块。
+require方法用于指定加载模块。
 
 {% highlight javascript %}
 
-var someModule = require('moduleName');
+var http = require('http');
+var express = require('express');
+var routes = require('./app/routes');
 
 {% endhighlight %}
 
-require接受的参数除了模块的名称，还包括模块的路径。
-
-{% highlight javascript %}
-
-var someModule = require('/path/to/moduleName');
-
-{% endhighlight %}
+上面代码分别用require方法加载了三个模块。如果require方法的参数只是一个模块名，不带有路径，则表示该模块为核心模块或全局模块。比如，上面代码中的http为node.js自带的核心模块，express为npm命令安装的全局模块。如果require方法的参数带有路径，则表示该模块为项目自带的本地模块，必须告诉require该模块的路径，比如上面代码的routes模块的位置在项目的app子目录下。
 
 加载模块以后，就可以调用模块中定义的方法了。
-
-{% highlight javascript %}
-
-someModule.someFunction();
-
-{% endhighlight %}
 
 ### 核心模块
 
@@ -922,9 +912,9 @@ if (cluster.isMaster){
 
 ## 配置文件package.json
 
-每个项目的根目录下面，一般都有一个package.json文件，定义了这个项目所需要的各种模块，以及项目的配置（比如项目的名称、版本、许可证等元数据）。npm install 命令根据这个文件，自动下载所需的模块。所以，package.json 可以看作是npm命令的配置文件。
+每个项目的根目录下面，一般都有一个package.json文件，定义了这个项目所需要的各种模块，以及项目的配置信息（比如名称、版本、许可证等元数据）。npm install 命令根据这个配置文件，自动下载所需的模块，也就是配置项目所需的运行和开发环境。
 
-package.json文件的内容，就是一个json对象，该对象的每一个成员就是当前项目的一项设置。最简单的package.json只有两个成员：项目名称和项目版本。
+下面是一个最简单的package.json文件，只定义两项元数据：项目名称和项目版本。
 
 {% highlight javascript %}
 
@@ -935,56 +925,70 @@ package.json文件的内容，就是一个json对象，该对象的每一个成�
 
 {% endhighlight %}
 
-上面代码的name就是项目名称，version是项目版本，遵守“主要版本.次要版本.补丁号”的格式。
+从上面代码可以看到，package.json文件内部就是一个json对象，该对象的每一个成员就是当前项目的一项设置。比如上面代码的name就是项目名称，version是项目版本（遵守“主要版本.次要版本.补丁号”的格式）。
 
-更详细的package.json文件如下。
+下面是一个更完成的package.json文件。
 
 {% highlight javascript %}
 
 {
-  "name":"name",
-  "preferGlobal":false,
-  "version":"0.0.0",
-  "author":"your_name",
-  "description":"",
-  "bugs":{"url":"http://yoururl.com/","email":""},
-  "contributors":[{"name":"xxx","email":"xxx@example.com"}],
-  "bin":{"http-server":"./bin/http-server"},
-  "scripts":{"start":"node ./bin/http-server"},
-  "main":"./lib/http-server",
-  "repository":{"type":"git","url":"https://github.com/xxx"},
-  "keywords":["cli","http","server"],
-  "dependencies":{"package":"0.1.x"},
-  "analyze":false,
-  "devDependencies":{"package":"0.5.x"},
-  "bundledDependencies":["package"],
-  "license":"MIT",
-  "files":[],
-  "man":{},
-  "config":{},
-  "engines":{"node":">=0.6"},
-  "engineStrict":true,
-  "os":"darwin",
-  "cpu":"x64",
-  "private":false,
-  "publishConfig":{}
+	"name": "...",
+	"version": "0.0.0",
+	"author": "...",
+	"description": "...",
+	"keywords":["...","..."],
+	"repository": {
+		"type": "git",
+		"url": "https://..."
+	},
+	"license":"MIT",
+	"engines": {"node": "0.10.x"},
+	"bugs":{"url":"http://...","email":"..."},
+	"contributors":[{"name":"...","email":"..."}],
 }
 
 {% endhighlight %}
 
-上面代码的主要成员有这样几个：
+上面代码各个成员的含义都很明显，比较需要注意的是engines这一项，它指明了node.js运行所需要的版本。
 
-- **description**：项目描述。
-- **keywords**：项目关键词。
-- **author**：项目作者。
-- **contributors**：项目贡献者。
-- **homepage**：项目主页的URL。
-- **repository**：项目代码库的网址。
-- **main**：项目的加载点，指明当用户根据模块名加载模块时，所要调用的具体脚本名。
-- **dependencies**：项目运行依赖的模块。
-- **devDependencies**：项目开发依赖的模块，使用npm install --dev命令时一并安装。
+除了上面几项，还有两个package.json的成员需要单独讲解。
 
-package.json 文件可以手动编写，也可以使用 npm init 命令手动生成。
+一个是dependencies属性，它指定项目运行所需要的模块。
+
+{% highlight javascript %}
+
+"dependencies": {
+	"express": "latest",
+	"mongoose": "~3.8.3",
+	"handlebars-runtime": "~1.0.12",
+	"express3-handlebars": "~0.5.0",
+	"MD5": "~1.2.0"
+},
+
+{% endhighlight %}
+
+上面代码指定，项目运行需要的五个模块及其版本，其中express需要最新版。
+
+另一个是devDependencies属性，它指定项目开发所需要的模块。
+
+{% highlight javascript %}
+
+"devDependencies": {
+    "bower": "~1.2.8",
+    "grunt": "~0.4.1",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-jshint": "~0.7.2",
+    "grunt-contrib-uglify": "~0.2.7",
+    "grunt-contrib-clean": "~0.5.0",
+    "browserify": "2.36.1",
+    "grunt-browserify": "~1.3.0",
+}
+
+{% endhighlight %}
+
+上面代码指定项目开发时需要用到的模块，大部分是grunt模块。
+
+package.json文件可以手工编写，也可以使用npm init命令自动生成。
 
 {% highlight bash %}
 
@@ -992,23 +996,9 @@ npm init
 
 {% endhighlight %}
 
-这个命令采用互动方式，要求用户回答一些问题，然后在当前目录生成一个基本的 package.json 文件。所有问题之中，只有项目名称（name）和项目版本（version）是必填的，其他都是选填的。下面是一个实例。
+这个命令采用互动方式，要求用户回答一些问题，然后在当前目录生成一个基本的package.json文件。所有问题之中，只有项目名称（name）和项目版本（version）是必填的，其他都是选填的。
 
-{% highlight bash %}
-
-name: (getBackboneVersion) get-backbone-version
-version: (0.0.0) 0.1.0
-description: get backbone version used
-entry point: (getBackboneVersion.js) getBackboneVersion.js
-test command: n/a
-git repository: n/a
-keywords: backbone, version
-author: cody lindley
-license: (BSD) MIT
-
-{% endhighlight %}
-
-有了package.json文件，直接使用npm install命令，就会在当前目录中安装文件指定的包。
+有了package.json文件，直接使用npm install命令，就会在当前目录中安装所需要的模块。
 
 {% highlight bash %}
 
@@ -1016,7 +1006,16 @@ npm install
 
 {% endhighlight %}
 
-如果一个库不在 package.json 文件之中，可以在安装的时候加上--save-dev，这个库就会自动被加入 package.json 文件。
+如果一个模块不在package.json文件之中，可以单独安装这个模块，并使用相应的参数，将其写入package.json文件之中。
+
+{% highlight bash %}
+
+npm install express --save
+npm install express --save-dev
+
+{% endhighlight %}
+
+上面代码表示单独安装express模块，--save参数表示将该模块写入dependencies属性，--save-dev表示将该模块写入devDependencies属性。
 
 ## 模块管理器npm
 
