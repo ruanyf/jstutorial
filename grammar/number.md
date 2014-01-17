@@ -83,7 +83,7 @@ Math.pow(2, 53)
 {% highlight javascript %}
 
 var x = 0.5;
-for(var i =0;i<25;i++) x = x*x*x;
+for(var i =0;i<25;i++) x = x*x;
 
 x // 0
 
