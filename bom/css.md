@@ -144,15 +144,9 @@ element.style.webkitAnimationPlayState = "running";
 
 {% endhighlight %}
 
-## Media Query
+## window.matchMedia方法
 
-Media Query可以根据显示媒介的参数，设置相应的CSS规则。MediaQueryList是JavaScript操作Media Query的接口。
-
-浏览器Chrome 9+、Firefox 6+、IE 10+、Opera 12.1+和Safari 5.1+，支持该接口。对于不支持该接口的老式浏览器，可以使用第三方函数库[matchMedia.js](https://github.com/paulirish/matchMedia.js/)。
-
-### window.matchMedia方法
-
-window.matchMedia方法用来检查CSS的[mediaQuery](https://developer.mozilla.org/en-US/docs/DOM/Using_media_queries_from_code)语句。各种浏览器的最新版本（包括IE 10+）都支持该方法。
+window.matchMedia方法用来检查CSS的[mediaQuery](https://developer.mozilla.org/en-US/docs/DOM/Using_media_queries_from_code)语句。各种浏览器的最新版本（包括IE 10+）都支持该方法，对于不支持该方法的老式浏览器，可以使用第三方函数库[matchMedia.js](https://github.com/paulirish/matchMedia.js/)。
 
 {% highlight javascript %}
 
