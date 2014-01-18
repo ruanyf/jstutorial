@@ -8,32 +8,23 @@ modifiedOn: 2013-01-05
 
 ## 概述
 
-该方法用来检查[media query](https://developer.mozilla.org/en-US/docs/DOM/Using_media_queries_from_code)语句。
+window.matchMedia方法用来检查CSS的[media query](https://developer.mozilla.org/en-US/docs/DOM/Using_media_queries_from_code)语句。各种浏览器的最新版本（包括IE 10+）都支持该方法。
 
 {% highlight javascript %}
 
 var result = window.matchMedia("(min-width: 600px)");
 
+result.media // (min-width: 600px)
+result.matches // true
+
 {% endhighlight %}
 
-它返回一个[MediaQueryList](https://developer.mozilla.org/en-US/docs/DOM/MediaQueryList)对象。该对象有以下两个属性。
+matchMedia返回一个[MediaQueryList](https://developer.mozilla.org/en-US/docs/DOM/MediaQueryList)对象。该对象有以下两个属性。
 
 - media：查询语句的内容。
 - matches：如果查询结果为真，值为true，否则为false。
 
-{% highlight javascript %}
-
-var result = window.matchMedia("(min-width: 600px)");
-
-result.media
-// (min-width: 600px)
-
-result.matches
-// true
-
-{% endhighlight %}
-
-一个简单的用法，就是根据查询结果，加载相应的样式表。
+该方法的一个简单用法，就是根据查询结果加载相应的CSS样式表。
 
 {% highlight javascript %}
 
@@ -48,33 +39,17 @@ if (result.matches){
 
 ## 监听事件
 
-window.matchMedia方法返回的MediaQueryList，还可以监听事件。如果查询结果发生变化，就调用指定的回调函数。
+window.matchMedia方法返回的MediaQueryList对象，还可以监听事件。如果查询结果发生变化，就调用指定的回调函数。
 
 {% highlight javascript %}
 
 var result = window.matchMedia("(min-width: 600px)");
 
-result.addListener(sizeChange);
-
-function sizeChange(result) {
-
-	v = document.getElementById("myDiv");
-
-    if (result.matches) {
-        v.innerHTML = "getting big" + "<br/>" + result.media;
-    } else {
-        v.innerHTML = "getting small" + "<br/>"+ result.media;
-    }
-
-}
-
-{% endhighlight %}
-
-与之对应的还有一个removeListener方法，用来取消事件的监听。
-
-{% highlight javascript %}
-
-result.removeListener(sizeChange);
+result.addListener(function(e){
+        if(e.matches){
+                console.log('进入移动设备模式');
+        }
+});
 
 {% endhighlight %}
 

@@ -6,6 +6,14 @@ date: 2014-01-15
 modifiedOn: 2014-01-15
 ---
 
+## MVC框架
+
+随着JavaScript程序变得越来越复杂，往往需要一个团队协作开发，这时代码的模块化和组织规范就变得异常重要了。MVC模式就是代码组织的经典模式。
+
+（……MVC介绍。）
+
+由于网页编程不同于客户端编程，在MVC的基础上，JavaScript社区产生了各种变体框架MVP（Model-View-Presenter）、MVVM（Model-View-ViewModel）等等，有人就把所有这一类框架的各种模式统称为MV*。
+
 ## Backbone.View
 
 Backbone.View用于定义视图类。

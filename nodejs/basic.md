@@ -12,6 +12,8 @@ modifiedOn: 2013-12-04
 
 Node.js是JavaScript在服务器端的一个运行环境，也是一个工具库，用来与服务器端其他软件互动。
 
+**（1）安装与更新**
+
 访问官方网站[nodejs.org](http://nodejs.org)了解安装细节。安装完成以后，运行下面的命令，查看是否能正常运行。
 
 {% highlight bash %}
@@ -20,7 +22,18 @@ node --version
 
 {% endhighlight %}
 
-要运行node.js程序，就是使用node命令读取Javascript脚本。
+更新node.js版本，可以使用下面的命令。
+
+{% highlight bash %}
+
+sudo npm install n -g
+sudo n stable
+
+{% endhighlight %}
+
+**（2）运行脚本程序**
+
+运行node.js程序，就是使用node命令读取JavaScript脚本。
 
 {% highlight bash %}
 
@@ -1291,3 +1304,4 @@ require('moduleA')
 - Stack Overflow, [What is Node.js?](http://stackoverflow.com/questions/1884724/what-is-node-js)
 - Andrew Burgess, [Using Node's Event Module](http://dev.tutsplus.com/tutorials/using-nodes-event-module--net-35941)
 - James Halliday, [task automation with npm run](http://substack.net/task_automation_with_npm_run)- Romain Prieto, [Working on related Node.js modules locally](http://www.asyncdev.net/2013/12/working-on-related-node-modules-locally/)
+- Alon Salant, [Export This: Interface Design Patterns for Node.js Modules](http://bites.goodeggs.com/posts/export-this/)
