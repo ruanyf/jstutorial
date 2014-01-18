@@ -3,10 +3,14 @@ title: 样式表操作
 layout: page
 category: dom
 date: 2013-07-05
-modifiedOn: 2013-11-10
+modifiedOn: 2014-01-18
 ---
 
-## 获取样式表
+本节介绍JavaScript如何操作CSS样式。
+
+## 样式表
+
+### 获取样式表
 
 document对象的styleSheets属性，包含一个类似数组的对象，里面是当前文档所有的link元素(指向样式表)和style元素。
 
@@ -118,7 +122,7 @@ document.document.querySelector('#linkElement').disabled = true;
 
 disabled属性只能在JavaScript中设置，不能在html语句中设置。
 
-## 添加样式表
+### 添加样式表
 
 添加一张内置样式表，就是在文档中添加一个style节点。
 
@@ -150,6 +154,52 @@ document.head.appendChild(linkElm);
 
 {% endhighlight %}
 
+## window.matchMedia方法
+
+window.matchMedia方法用来检查CSS的[mediaQuery](https://developer.mozilla.org/en-US/docs/DOM/Using_media_queries_from_code)语句。各种浏览器的最新版本（包括IE 10+）都支持该方法。
+
+{% highlight javascript %}
+
+var result = window.matchMedia("(min-width: 600px)");
+
+result.media // (min-width: 600px)
+result.matches // true
+
+{% endhighlight %}
+
+matchMedia返回一个[MediaQueryList](https://developer.mozilla.org/en-US/docs/DOM/MediaQueryList)对象。该对象有以下两个属性。
+
+- media：查询语句的内容。
+- matches：如果查询结果为真，值为true，否则为false。
+
+该方法的一个简单用法，就是根据查询结果加载相应的CSS样式表。
+
+{% highlight javascript %}
+
+var result = window.matchMedia("(min-width: 600px)");
+
+if (result.matches){
+  document.write('<link rel="stylesheet" 
+                  href="small.css">');
+}
+
+{% endhighlight %}
+
+window.matchMedia方法返回的MediaQueryList对象，还可以监听事件。如果mediaQuery查询结果发生变化，就调用指定的回调函数。
+
+{% highlight javascript %}
+
+var result = window.matchMedia("(min-width: 600px)");
+
+result.addListener(function(e){
+        if(e.matches){
+                console.log('进入移动设备模式');
+        }
+});
+
+{% endhighlight %}
+
 ## 参考链接
 
 - David Walsh, [Add Rules to Stylesheets with JavaScript](http://davidwalsh.name/add-rules-stylesheets)
+- Robert Nyman, [Using window.matchMedia to do media queries in JavaScript](https://hacks.mozilla.org/2012/06/using-window-matchmedia-to-do-media-queries-in-javascript/)

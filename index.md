@@ -2,7 +2,7 @@
 layout: homepage
 title: JavaScript 标准参考教程（alpha）
 date: 2012-11-18
-modifiedOn: 2014-01-06
+modifiedOn: 2014-01-18
 ---
 	
 <h2 id="introduction">导论</h2>
@@ -63,11 +63,10 @@ modifiedOn: 2014-01-06
 - [Web Storage：浏览器端数据储存机制](bom/webstorage.html)
 - [IndexedDB：浏览器端数据库](bom/indexeddb.html)
 - [WebSocket](bom/websocket.html)（基本完成）
-- [移动设备API](bom/mobile.html)
-- [MatchMedia](bom/matchmedia.html)
 - [WebRTC](bom/webrtc.html)
 - [performance对象：高精度时间戳](bom/performance.html)
-
+- [移动设备API](bom/mobile.html)
+		
 <h2 id="htmlapi">HTML网页的API</h2>
 
 - [Canvas](htmlapi/canvas.html)
