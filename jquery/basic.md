@@ -6,15 +6,17 @@ date: 2013-02-01
 modifiedOn: 2013-12-28
 ---
 
-jQuery是目前使用最广泛的JavaScript函数库。据[统计](http://w3techs.com/technologies/details/js-jquery/all/all)，全世界57.5%的网站使用jQuery，在使用JavaScript函数库的网站中，93.0%使用jQuery。
+jQuery是目前使用最广泛的JavaScript函数库。据[统计](http://w3techs.com/technologies/details/js-jquery/all/all)，全世界57.5%的网站使用jQuery，在使用JavaScript函数库的网站中，93.0%使用jQuery。它已经成了开发者必须学会的技能。
 
-它的最大优势有两个，一是使得操作网页元素变得异常容易，二是统一了接口，使得开发者可以用同一种方法编写能在所有现代浏览器中运行的代码，而不用担心浏览器之间的差异。
+jQuery的最大优势有两个。首先，它基本是一个DOM操作工具，可以使操作DOM对象变得异常容易。其次，它统一了不同浏览器的API接口，使得代码在所有现代浏览器均能运行，开发者不用担心浏览器之间的差异。
 
 ## jQuery基础
 
 ### jQuery对象
 
-jQuery函数库提供了一个全局对象jQuery，简写为$，两者是等价的。在网页中加载jQuery以后，就可以使用这个全局对象了。jQuery的全部方法，都定义在这个对象上面。
+jQuery最重要的概念，就是jQuery对象。它是一个全局对象，可以简写为美元符号$。也就是说，jQuery和$两者是等价的。
+
+在网页中加载jQuery函数库以后，就可以使用jQuery对象了。jQuery的全部方法，都定义在这个对象上面。
 
 {% highlight javascript %}
 
@@ -26,7 +28,9 @@ var listItems = $('li');
 
 上面两行代码是等价的，表示选中网页中所有的li元素。
 
-jQuery对象本质上是一个构造函数，主要作用是返回jQuery对象的实例。比如，上面代码表面上是选中li元素，实际上是返回对应于li元素的jQuery对象实例。因为只有这样，才能在返回的对象之上使用jQuery提供的各种方法。
+### jQuery构造函数
+
+jQuery对象本质上是一个构造函数，主要作用是返回jQuery对象的实例。比如，上面代码表面上是选中li元素，实际上是返回对应于li元素的jQuery实例。因为只有这样，才能在DOM对象上使用jQuery提供的各种方法。
 
 {% highlight javascript %}
 
@@ -38,9 +42,34 @@ $('body') instanceof jQuery
 
 {% endhighlight %}
 
-上面代码表示，由于jQuery返回的不是DOM对象，所以没有nodeType属性。它返回的是jQuery对象的实例。 
+上面代码表示，由于jQuery返回的不是DOM对象，所以没有DOM属性nodeType。它返回的是jQuery对象的实例。 
 
-jQuery构造函数的参数，除了CSS选择器，还可以是DOM对象，它也会被转为jQuery对象的实例。
+**（1）CSS选择器作为参数**
+
+jQuery构造函数的参数，主要是CSS选择器，就像上面的那个例子。下面是另外一些CSS选择器的例子。
+
+{% highlight javascript %}
+
+$("*")
+$("#lastname")
+$(".intro")
+$("h1,div,p")
+$("p:last")
+$("tr:even")
+$("p:first-child")
+$("p:nth-of-type(2)")
+$("div + p")
+$("div:has(p)")
+$(":empty")
+$("[title^='Tom']")
+
+{% endhighlight %}
+
+本书不讲解CSS选择器，请读者参考有关书籍和jQuery文档。
+
+**（2）DOM对象作为参数**
+
+jQuery构造函数的参数，还可以是DOM对象。它也会被转为jQuery对象的实例。
 
 {% highlight javascript %}
 
@@ -59,7 +88,9 @@ $([document.body, document.head])
 
 {% endhighlight %}
 
-如果直接在jQuery函数中输入HTML代码，返回的也是jQuery实例。
+**（3）HTML代码作为参数**
+
+如果直接在jQuery构造函数中输入HTML代码，返回的也是jQuery实例。
 
 {% highlight javascript %}
 
@@ -82,28 +113,9 @@ $( '<li>', {
 
 上面代码中，由于class是javaScript的保留字，所以只能放在引号中。
 
-### 选择器
+**（4）第二个参数**
 
-jQuery的核心思想是“先选中某些网页元素，然后对其进行某种处理”（find something, do something），也就是说，先选择后处理。所以，绝大多数jQuery操作都是从选择器开始的。
-
-所谓选择器，就是指将CSS选择器传入jQuery构造函数，用于选中对应的网页元素。下面是一些例子。（本书不涉及CSS选择器的讲解，请读者参阅相关书籍或jQuery文档。）
-
-{% highlight javascript %}
-
-$('#myId'); 
-$('div.myClass'); 
-$('input[name=first_name]');
-$('a.external:first');
-$('tr:odd');
-$('#myForm :input');
-$('div:visible');
-$('div:gt(2)');
-$('div:animated');
-$("a[rel$='thinger']");
-
-{% endhighlight %}
-
-默认情况下，jQuery将文档的根元素（html）作为寻找匹配对象的起点。如果要指定某个网页元素作为寻找的起点，可以将它放在jQuery函数的第二个参数。
+默认情况下，jQuery将文档的根元素（html）作为寻找匹配对象的起点。如果要指定某个网页元素（比如某个div元素）作为寻找的起点，可以将它放在jQuery函数的第二个参数。
 
 {% highlight javascript %}
 
@@ -113,11 +125,13 @@ $('li', someElement);
 
 上面代码表示，只寻找属于someElement对象下属的li元素。someElement可以是jQuery对象的实例，也可以是DOM对象。
 
-### 选择器返回的结果
+### jQuery构造函数返回的结果集
+
+jQuery的核心思想是“先选中某些网页元素，然后对其进行某种处理”（find something, do something），也就是说，先选择后处理，这是jQuery的基本操作模式。所以，绝大多数jQuery操作都是从选择器开始的，返回一个选中的结果集。
 
 **（1）length属性**
 
-jQuery对象返回的是一个类似数组的对象，包含了所有被选中的网页元素。查看该对象的length属性，可以知道到底选中了多少个结果。
+jQuery对象返回的结果集是一个类似数组的对象，包含了所有被选中的网页元素。查看该对象的length属性，可以知道到底选中了多少个结果。
 
 {% highlight javascript %}
 
@@ -145,7 +159,20 @@ if ($('div.foo').length) { ... }
 
 {% endhighlight %}
 
-**（2）is方法**
+**（2）下标运算符**
+
+jQuery选择器返回的是一个类似数组的对象。但是，使用下标运算符取出的单个对象，并不是jQuery对象的实例，而是一个DOM对象。
+
+{% highlight javascript %}
+
+$('li')[0] instanceof jQuery // false
+$('li')[0] instanceof Element // true
+
+{% endhighlight %}
+
+上面代码表示，下标运算符取出的是Element节点的实例。所以，通常使用下标运算符将jQuery实例转回DOM对象。
+
+**（3）is方法**
 
 is方法返回一个布尔值，表示选中的结果是否符合某个条件。这个用来验证的条件，可以是CSS选择器，也可以是一个函数，或者DOM元素和jQuery实例。
 
@@ -162,19 +189,6 @@ $('li').is(function() {
 });
 
 {% endhighlight %}
-
-**（3）下标运算符**
-
-jQuery选择器返回的是一个类似数组的对象。需要注意的是，使用下标运算符取出的单个对象，并不是jQuery对象的实例，而是一个DOM对象。
-
-{% highlight javascript %}
-
-$('li')[0] instanceof jQuery // false
-$('li')[0] instanceof Element // true
-
-{% endhighlight %}
-
-上面代码表示，下标运算符取出的是Element节点的实例。所以，通常使用下标运算符将jQuery实例转回DOM对象。
 
 **（4）get方法**
 
