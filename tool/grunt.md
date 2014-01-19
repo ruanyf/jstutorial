@@ -296,15 +296,20 @@ grunt cssmin
 
 ## 常用模块设置
 
-以下选几个常用模块，看看它们配置参数的写法，也就是说如何在grunt.initConfig方法中配置各个模块。
+grunt的[模块](http://gruntjs.com/plugins)已经超过了2000个，且还在快速增加。下面是一些常用的模块（按字母排序）。
 
-- **grunt-contrib-jshint**：检查JavaScript语法。
+- **grunt-contrib-clean**：删除文件。
+- **grunt-contrib-compass**：使用compass编译sass文件。
 - **grunt-contrib-concat**：合并文件。
-- **grunt-contrib-uglify**：合并文件，然后将其最小化。
 - **grunt-contrib-copy**：复制文件。
+- **grunt-contrib-imagemin**：图像压缩模块。
+- **grunt-contrib-jshint**：检查JavaScript语法。
+- **grunt-contrib-uglify**：合并文件，然后将其最小化。
 - **grunt-contrib-watch**：监视文件变动，做出相应动作。
 
-模块的前缀如果是grunt-contrib，就表示该模块由grunt开发团队维护；如果前缀是grunt（比如grunt-pakmanager），就表示由第三方开发者维护。目前，Grunt项目主页上的[模块总数](http://gruntjs.com/plugins)，已经达到了几百个。
+模块的前缀如果是grunt-contrib，就表示该模块由grunt开发团队维护；如果前缀是grunt（比如grunt-pakmanager），就表示由第三方开发者维护。
+
+以下选几个模块，看看它们配置参数的写法，也就是说如何在grunt.initConfig方法中配置各个模块。
 
 ### grunt-contrib-jshint
 
@@ -359,14 +364,16 @@ uglify: {
     sourceMapUrl: name+'.min.js.map'
   },
   target : {
-    src : ['src/**/*.js'],
-    dest : 'distrib/' + name + '.min.js'
+	expand: true,
+	cwd: 'js/origin',
+	src : '*.js',
+	dest : 'js/'
   }
 },
 
 {% endhighlight %}
 
-options属性指定压缩后文件的文件头，以及sourceMap设置；target目标指定输入和输出文件。
+上面代码中的options属性指定压缩后文件的文件头，以及sourceMap设置；target目标指定输入和输出文件。
 
 ### grunt-contrib-copy
 

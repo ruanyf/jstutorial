@@ -251,7 +251,19 @@ window.onbeforeunload = function() {
 
 **（4）resize事件**
 
-改变浏览器窗口大小时会触发该事件。能够触发它的元素包括window、body、frameset。
+改变浏览器窗口大小时会触发resize事件。能够触发它的元素包括window、body、frameset。
+
+{% highlight javascript %}
+
+var resizeMethod = function(){
+    if (document.body.clientWidth < 768) {
+        console.log('移动设备');
+    }
+};
+
+window.addEventListener("resize", resizeMethod, true);
+
+{% endhighlight %}
 
 **（5）abort事件**
 

@@ -1,0 +1,26 @@
+{
+  "name": "jstutorial",
+  "version": "0.5.0",
+  "description": "JavaScript 标准参考教程",
+  "main": "index.md",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ruanyf/jstutorial.git"
+  },
+  "keywords": [
+    "JavaScript"
+  ],
+  "author": "阮一峰",
+  "license": "Creative Commons Attribution-NonCommercial license",
+  "bugs": {
+    "url": "https://github.com/ruanyf/jstutorial/issues"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-contrib-uglify": "~0.3.0"
+  }
+}
