@@ -186,15 +186,17 @@ module.exports = function(grunt) {
 
 {% endhighlight %}
 
-下面详细解释上面代码中的三个方法。
+下面详细解释上面代码中的三个方法，下面一个个来看。
 
 **（1）grunt.initConfig**
 
-grunt.initConfig方法用于模块配置。一个模块可以完成多种目标（target）。上面代码里面，cssmin模块共有两个目标，一个是“minify”，用于压缩css文件；另一个是“combine”，用于将多个css文件合并一个文件。
+grunt.initConfig方法用于模块配置，它接受一个对象作为参数。该对象的成员与使用的同名模块一一对应。由于我们要配置的是cssmin模块，所以里面有一个cssmin成员（属性）。
+
+cssmin（属性）指向一个对象，该对象又包含多个成员。除了一些系统设定的成员（比如options），其他自定义的成员称为目标（target）。一个模块可以有多个目标（target），上面代码里面，cssmin模块共有两个目标，一个是“minify”，用于压缩css文件；另一个是“combine”，用于将多个css文件合并一个文件。
 
 每个目标的具体设置，需要参考该模板的文档。就cssmin来讲，minify目标的参数具体含义如下：
 
-- **expand**：如果设为true，就表示下面文件名的占位符都要扩展成具体的文件名。
+- **expand**：如果设为true，就表示下面文件名的占位符（即\*号）都要扩展成具体的文件名。
 
 - **cwd**：需要处理的文件（input）所在的目录。
 
@@ -226,7 +228,7 @@ grunt.initConfig方法用于模块配置。一个模块可以完成多种目标�
 
 {% highlight javascript %}
 
-{src: 'foo/th*.js'}
+{src: 'foo/th*.js'}grunt-contrib-uglify
 
 {src: 'foo/{a,b}*.js'}
 
@@ -302,9 +304,10 @@ grunt的[模块](http://gruntjs.com/plugins)已经超过了2000个，且还在�
 - **grunt-contrib-compass**：使用compass编译sass文件。
 - **grunt-contrib-concat**：合并文件。
 - **grunt-contrib-copy**：复制文件。
+- **grunt-contrib-cssmin**：压缩以及合并CSS文件。
 - **grunt-contrib-imagemin**：图像压缩模块。
 - **grunt-contrib-jshint**：检查JavaScript语法。
-- **grunt-contrib-uglify**：合并文件，然后将其最小化。
+- **grunt-contrib-uglify**：压缩以及合并JavaScript文件。
 - **grunt-contrib-watch**：监视文件变动，做出相应动作。
 
 模块的前缀如果是grunt-contrib，就表示该模块由grunt开发团队维护；如果前缀是grunt（比如grunt-pakmanager），就表示由第三方开发者维护。
@@ -592,3 +595,4 @@ markdown: {
 - Grunt Documentation, [Configuring tasks](http://gruntjs.com/configuring-tasks)
 - Landon Schropp, [Writing an Awesome Build Script with Grunt](http://www.sitepoint.com/writing-awesome-build-script-grunt/)
 - Mike Cunsolo, [Get Up And Running With Grunt](http://coding.smashingmagazine.com/2013/10/29/get-up-running-grunt/)
+- Matt Bailey, [A Beginner’s Guide to Using Grunt With Magento](http://www.gpmd.co.uk/blog/a-beginners-guide-to-using-grunt-with-magento/)
