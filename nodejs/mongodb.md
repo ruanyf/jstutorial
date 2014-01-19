@@ -18,7 +18,7 @@ MongoDB是目前最流行的noSQL数据库之一，它是专为node.js而开发�
 
 npm install mongoose --save
 
-{% highlight %}
+{% endhighlight %}
 
 然后，就可以在node.js脚本中连接MongoDB数据库了。
 
@@ -28,6 +28,6 @@ var mongoose = require('mongoose');
 
 mongoose.connect('mongodb://localhost/<数据库名>');
 
-{% highlight %}
+{% endhighlight %}
 
 注意，运行上面这个脚本时，必须确保MongoDB处于运行中。
