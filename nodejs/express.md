@@ -10,7 +10,9 @@ Express是目前最流行的基于Node.js的Web开发框架。它可以快速地
 
 ## 安装和新建项目
 
-首先，将Express安装为全局模块。
+### 安装
+
+Express是一个node.js模块，采用npm全局模块。
 
 {% highlight bash %}
 
@@ -18,7 +20,51 @@ npm install -g express
 
 {% endhighlight %}
 
-然后，建立一个项目目录（假定这个目录叫做demo）。进入该目录，新建一个package.json文件，写入项目的配置信息。
+### 自动生成新项目
+
+安装完成后，在工作目录新建一个新项目。
+
+{% highlight bash %}
+
+express <Project Name>
+
+{% endhighlight %}
+
+这时，工作目录中就会生成一个项目子目录。接着，进入该子目录，安装所需要的模块。
+
+{% highlight bash %}
+
+cd <Project Name>
+npm installl
+
+{% endhighlight %}
+
+如果浏览这个子目录，就会发现express自动生成了以下的子目录和文件。
+
+- node_modules子目录：用于安装本地模块。
+- public子目录：用于存放用户可以下载到的文件，比如图片、脚本、样式表等。
+- routes子目录：用于存放路由文件。
+- views子目录：用于存放网页的模板。
+- app.js文件：应用程序的启动脚本。
+- package.json文件：项目的配置文件。
+
+然后，在命令行下运行下面的命令，就可以在浏览器中访问项目网站了。
+
+{% highlight bash %}
+
+node app
+
+{% endhighlight %}
+
+默认情况下，网站运行在本机的3000端口，网页显示Welcome to Express。
+
+## 项目开发实例
+
+### 编写启动脚本
+
+上一节使用express命令自动建立项目，也可以不使用这个命令，手动新建所有文件。
+
+先建立一个项目目录（假定这个目录叫做demo）。进入该目录，新建一个package.json文件，写入项目的配置信息。
 
 {% highlight javascript %}
 
@@ -54,7 +100,7 @@ node app.js
 
 这时，网页提示“Cannot GET /”，表示没有为网站的根路径指定可以显示的内容。所以，下一步就是配置路由。
 
-## 配置路由
+### 配置路由
 
 所谓“路由”，就是指为不同的访问路径，指定不同的处理方法。
 
@@ -68,7 +114,9 @@ app.get('/', function(req, res) {
 
 {% endhighlight %}
 
-上面代码的get方法，表示处理客户端发出的GET请求。它的第一个参数是访问路径，正斜杠（/）就代表根路径；第二个参数是回调函数，它的req参数表示客户端发来的HTTP请求，res参数代表发向客户端的HTTP回应，这两个参数都是对象。在回调函数内部，使用HTTP回应的send方法，表示向浏览器发送一个字符串。然后，运行下面的命令。
+上面代码的get方法，表示处理客户端发出的GET请求。相应的，还有app.post、app.put、app.del（delete是JavaScript保留字，所以改叫del）方法。
+
+get方法的第一个参数是访问路径，正斜杠（/）就代表根路径；第二个参数是回调函数，它的req参数表示客户端发来的HTTP请求，res参数代表发向客户端的HTTP回应，这两个参数都是对象。在回调函数内部，使用HTTP回应的send方法，表示向浏览器发送一个字符串。然后，运行下面的命令。
 
 {% highlight bash %}
 
@@ -114,9 +162,34 @@ app.get('/api', function(request, response) {
 
 {% endhighlight %}
 
+我们也可以把app.get的回调函数，封装成模块。先在routes目录下面建立一个api.js文件。
+
+{% highlight javascript %}
+
+// routes/api.js
+
+exports.index = function(req, res) {
+  res.json(200, {name:"张三",age:40});
+}
+
+{% endhighlight %}
+
+然后，在app.js中加载这个模块。
+
+{% highlight javascript %}
+
+// app.js
+
+var api = require(./routes/app);
+app.get('/api', api.index);
+
+{% endhighlight %}
+
+现在访问时，就会显示与上一次同样的结果。
+
 如果只向浏览器发送简单的文本信息，上面的方法已经够用；但是如果要向浏览器发送复杂的内容，还是应该使用网页模板。
 
-## 静态网页模板
+### 静态网页模板
 
 在项目目录之中，建立一个子目录views，用于存放网页模板。
 
@@ -171,6 +244,8 @@ app.listen(3000);
 上面代码是一个静态网页。如果想要展示动态内容，就必须使用动态网页模板。
 
 ## 动态网页模板
+
+网站真正的魅力在于动态网页，下面我们来看看，如何制作一个动态网页的网站。
 
 ### 安装模板引擎
 
