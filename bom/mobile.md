@@ -125,7 +125,7 @@ navigator.geolocation.clearWatch(watchID);
 
 Vibration接口用于在浏览器中发出命令，使得设备振动。由于该操作很耗电，在低电量时最好取消该操作。
 
-使用下面的代码检查该接口是否可用。目前，只有Chrome和Firefox的最新版本支持它。
+使用下面的代码检查该接口是否可用。目前，只有Chrome和Firefox的Android平台最新版本支持它。
 
 {% highlight javascript %}
 
@@ -168,8 +168,43 @@ navigator.vibrate(0);
 
 {% endhighlight %}
 
+## 亮度调节
+
+当移动设备的亮度传感器，感知外部亮度发生显著变化时，会触发devicelight事件。目前，只有Firefox部署了这个API。
+
+{% highlight javascript %}
+
+window.addEventListener('devicelight', function(event) {
+  console.log(event.value + 'lux');
+});
+
+{% endhighlight %}
+
+上面代码表示，devicelight事件的回调函数，接受一个事件对象作为参数。该对象的value属性就是亮度的流明值。
+
+这个API的一种应用是，如果亮度变强，网页可以显示黑底白字，如果亮度变弱，网页可以显示白底黑字。
+
+{% highlight javascript %}
+
+window.addEventListener('devicelight', function(e) {
+  var lux = e.value;
+
+  if(lux < 50) {
+    document.body.className = 'dim';
+  }
+  if(lux >= 50 && lux <= 1000) {
+    document.body.className = 'normal';
+  }
+  if(lux > 1000)  {
+    document.body.className = 'bright';
+  } 
+});
+
+{% endhighlight %}
+
 ## 参考链接
 
 - Ryan Stewart, [Using the Geolocation API](http://www.adobe.com/devnet/html5/articles/using-geolocation-api.html)
 - Rathnakanya K. Srinivasan, [HTML5 Geolocation](http://www.sitepoint.com/html5-geolocation/)
 - Craig Buckler, [How to Use the HTML5 Vibration API](http://www.sitepoint.com/use-html5-vibration-api/)
+- Tomomi Imura, [Responsive UI with Luminosity Level](http://girliemac.com/blog/2014/01/12/luminosity/)

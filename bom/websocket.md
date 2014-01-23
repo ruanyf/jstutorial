@@ -329,3 +329,4 @@ io.sockets.on('connection', function (socket) {
 - Jesse Cravens, [Introduction to WebSockets](http://tech.pro/tutorial/1167/introduction-to-websockets)
 - Matt West, [An Introduction to WebSockets](http://blog.teamtreehouse.com/an-introduction-to-websockets)
 - Maciej Sopyło, [Node.js: Better Performance With Socket.IO and doT](http://net.tutsplus.com/tutorials/javascript-ajax/node-js-better-performance-with-socket-io-and-dot/)
+- Jos Dirksen, [Capture Canvas and WebGL output as video using websockets](http://www.smartjava.org/content/capture-canvas-and-webgl-output-video-using-websockets)
