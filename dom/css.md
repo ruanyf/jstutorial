@@ -1,12 +1,108 @@
 ---
-title: 样式表操作
+title: CSS操作
 layout: page
 category: dom
 date: 2013-07-05
-modifiedOn: 2014-01-18
+modifiedOn: 2014-01-31
 ---
 
-本节介绍JavaScript如何操作CSS样式。
+CSS与JavaScript是两个有着明确分工的领域，前者负责页面的视觉效果，后者负责与用户的行为互动。但是，它们毕竟同属网页开发的前端，因此不可避免有着交叉和互相配合。本节介绍如果通过JavaScript操作CSS。
+
+## DOM元素的style属性
+
+style属性用来读写页面元素的行内CSS样式。
+
+{% highlight javascript %}
+
+var divStyle = document.querySelector('div').style; 
+
+divStyle.backgroundColor = 'red';
+divStyle.border = '1px solid black';
+divStyle.width = '100px';
+divStyle.height = '100px';
+
+divStyle.backgroundColor // red
+divStyle.border // 1px solid black 
+divStyle.height // 100px
+divStyle.width // 100px
+
+{% endhighlight %}
+
+从上面代码可以看到，style属性指向一个对象（简称style对象），该对象的属性与css规则名一一对应，但是需要改写。具体规则是将横杠从CSS规则名中去除，然后将横杠后的第一个字母大写，比如background-color写成backgroundColor。如果CSS规则名是JavaScript保留字，则规则名之前需要加上字符串“css”，比如float写成cssFloat。
+
+注意，style对象的属性值都是字符串，而且包括单位。所以，divStyle.width不能设置为100，而要设置为'100px'。
+
+style对象的cssText可以用来读写或删除整个style属性。
+
+{% highlight javascript %}
+
+divStyle.cssText = 'background-color:red;border:1px solid black;height:100px;width:100px;';
+
+{% endhighlight %}
+
+使用Element对象的getAttribute方法、setAttribute方法和removeAttribute方法，也能达到读写或删除整个style属性的目的。
+
+{% highlight javascript %}
+
+div.setAttribute('style','background-color:red;border:1px solid black;height:100px;width:100px;');
+
+{% endhighlight %}
+
+style对象有以下三个方法，也可以用来设置、读取和删除行内CSS规则，而且不必改写CSS规则名。
+
+- setPropertyValue(propertyName)
+- getPropertyValue(propertyName,value)
+- removeProperty(propertyName)
+
+{% highlight javascript %}
+
+divStyle.setProperty('background-color','red');
+divStyle.getPropertyValue('background-color');
+divStyle.removeProperty('background-color');
+
+{% endhighlight %}
+
+可以利用style对象，检查浏览器是否支持某个CSS属性。
+
+{% highlight javascript %}
+
+function isPropertySupported(property){
+
+	if (property in document.body.style) return true;
+
+	var prefixes = ['Moz', 'Webkit', 'O', 'ms', 'Khtml'];
+
+	var prefProperty = property.charAt(0).toUpperCase() + property.substr(1);
+
+	for(var i=0; i<prefixes.length; i++){
+		if((prefixes[i] + prefProperty) in document.body.style) return true;
+	}
+
+	return false;
+}
+
+isPropertySupported('background-clip')
+// true
+
+{% endhighlight %}
+
+## 获取伪元素的样式
+
+style属性无法读写伪元素的样式，因为伪元素依存于特定的DOM元素，这时就要用到window对象的getComputedStyle方法。
+
+{% highlight javascript %}
+
+var color = window.getComputedStyle(
+	document.querySelector('.element'), ':before'
+).getPropertyValue('color');
+
+var content = window.getComputedStyle(
+	document.querySelector('.element'), ':before'
+).getPropertyValue('content');
+
+{% endhighlight %}
+
+上面代码读取了伪元素.element:before的color和content属性。
 
 ## 样式表
 
@@ -33,6 +129,8 @@ document.querySelector('#linkElement').sheet
 document.querySelector('#styleElement').sheet
 
 {% endhighlight %}
+
+### 样式表对象
 
 样式表对象主要有以下属性和方法。
 
@@ -133,6 +231,7 @@ var style = document.createElement("style");
 style.setAttribute("media", "screen");
 
 // 或者
+
 style.setAttribute("media", "@media only screen and (max-width : 1024px)");
 
 style.innerHTML = 'body{color:red}';

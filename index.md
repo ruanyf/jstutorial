@@ -48,7 +48,7 @@ modifiedOn: 2014-01-18
 
 - [DOM API 概述](dom/basic.html)
 - [DOM 事件](dom/event.html)
-- [样式表操作](dom/stylesheet.html)
+- [CSS操作](dom/css.html)
 - [拖放操作](dom/dragndrop.html)
 - [Mutation Observer](dom/mutationobserver.html)
 

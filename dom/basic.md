@@ -477,9 +477,7 @@ IE 9不支持dataset属性，可以用 getAttribute('data-foo')、removeAttribut
 
 需要注意的是，dataset属性使用骆驼拼写法表示属性名，这意味着data-hello-world会用dataset.helloWorld表示。而如果此时存在一个data-helloWorld属性，该属性将无法读取，也就是说，data属性本身只能使用连词号，不能使用骆驼拼写法。
 
-### CSS相关属性
-
-Element对象提供一系列与CSS相关的属性，用来提供HTML元素的样式信息。
+### 页面位置相关属性
 
 **（1）offsetParent属性、offsetTop属性和offsetLeft属性**
 
@@ -538,84 +536,9 @@ element.scrollHeight - element.scrollTop === element.clientHeight
 
 {% endhighlight %}
 
-**（5）style属性**
+### style属性
 
-style属性用来读写HTML元素的行内CSS属性。
-
-{% highlight javascript %}
-
-var divStyle = document.querySelector('div').style; 
-
-divStyle.backgroundColor = 'red';
-divStyle.border = '1px solid black';
-divStyle.width = '100px';
-divStyle.height = '100px';
-
-divStyle.backgroundColor // red
-divStyle.border // 1px solid black 
-divStyle.height // 100px
-divStyle.width // 100px
-
-{% endhighlight %}
-
-从上面代码可以看到，style属性指向一个对象（简称style对象），该对象的属性与css规则名一一对应，但是需要改写。具体规则是将横杠从CSS规则名中去除，然后将横杠后的第一个字母大写，比如background-color写成backgroundColor。如果CSS规则名是JavaScript保留字，则规则名之前需要加上字符串“css”，比如float写成cssFloat。
-
-注意，style对象的属性值都是字符串，而且包括单位。所以，divStyle.width不能设置为100，而要设置为'100px'。
-
-style对象的cssText可以用来读写或删除整个style属性。
-
-{% highlight javascript %}
-
-divStyle.cssText = 'background-color:red;border:1px solid black;height:100px;width:100px;';
-
-{% endhighlight %}
-
-使用Element对象的getAttribute方法、setAttribute方法和removeAttribute方法，也能达到读写或删除整个style属性的目的。
-
-{% highlight javascript %}
-
-div.setAttribute('style','background-color:red;border:1px solid black;height:100px;width:100px;');
-
-{% endhighlight %}
-
-style对象有以下三个方法，也可以用来设置、读取和删除行内CSS规则，而且不必改写CSS规则名。
-
-- setPropertyValue(propertyName)
-- getPropertyValue(propertyName,value)
-- removeProperty(propertyName)
-
-{% highlight javascript %}
-
-divStyle.setProperty('background-color','red');
-divStyle.getPropertyValue('background-color');
-divStyle.removeProperty('background-color');
-
-{% endhighlight %}
-
-可以利用style对象，检查浏览器是否支持某个CSS属性。
-
-
-{% highlight javascript %}
-
-function isPropertySupported(property){
-
-	if (property in document.body.style) return true;
-
-	var prefixes = ['Moz', 'Webkit', 'O', 'ms', 'Khtml'];
-
-	var prefProperty = property.charAt(0).toUpperCase() + property.substr(1);
-
-	for(var i=0; i<prefixes.length; i++){
-		if((prefixes[i] + prefProperty) in document.body.style) return true;
-	}
-
-	return false;
-}
-
-isPropertySupported('background-clip')
-// true
-
-{% endhighlight %}
+style属性用来读写页面元素的行内CSS属性，详见本章《CSS操作》一节。
 
 ### Element对象的方法
 
