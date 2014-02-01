@@ -54,7 +54,7 @@ modifiedOn: 2014-01-09
 
 进入“控制台”，有两种方法。
 
-- 在Chrome浏览器中，直接按Option + J（Mac）或者Ctrl + Shift + J（Windows/Linux）。
+- 在Chrome浏览器中，直接按Option + Command + J（Mac）或者Ctrl + Shift + J（Windows/Linux）。
 
 - 从“工具”（Tools）菜单中打开“开发者工具”，然后点击Console选项卡。“开发者工具”的快捷键是F12，或者Option + I（Mac）以及Ctrl+Shift+I（Windows/Linux）。
 
