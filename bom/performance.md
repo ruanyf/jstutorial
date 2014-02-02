@@ -104,6 +104,26 @@ console.log('耗时：' + (end - start) + '微秒。');
 
 {% endhighlight %}
 
+## mark方法
+
+mark方法用于为相应的视点做标记。
+
+{% highlight javascript %}
+
+window.performance.mark('mark_fully_loaded');
+
+{% endhighlight %}
+
+clearMarks方法用于清除标记，如果不加参数，就表示清除所有标记。
+
+{% highlight javascript %}
+
+window.peformance.clearMarks('mark_fully_loaded');
+
+window.performance.clearMarks();
+
+{% endhighlight %}
+
 ## performance.navigation对象
 
 除了时间信息，performance还可以提供一些用户行为信息，主要都存放在performance.navigation对象上面。

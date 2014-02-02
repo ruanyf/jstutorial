@@ -14,9 +14,13 @@ Web Worker的目的，就是为JavaScript创造多线程环境，允许主线程
 
 Web Worker有以下几个特点：
 
-- 同域限制，即子线程加载的脚本文件，必须与主线程的脚本文件在同一个域。
-- 子线程无法读取网页的DOM对象，即document、window、parent这些对象，子线程都无法得到。（但是，navigator对象和location对象可以获得。）
-- 子线程无法读取本地文件，即子线程无法打开本机的文件系统（file://），它所加载的脚本，必须来自网络。
+- **同域限制**。子线程加载的脚本文件，必须与主线程的脚本文件在同一个域。
+
+- **DOM限制**。子线程无法读取网页的DOM对象，即document、window、parent这些对象，子线程都无法得到。（但是，navigator对象和location对象可以获得。）
+
+- **脚本限制**。子线程无法读取网页的全局变量和函数，也不能执行alert和confirm方法，不过可以执行setInterval和setTimeout，以及使用XMLHttpRequest对象发出AJAX请求。
+
+- **文件限制**。子线程无法读取本地文件，即子线程无法打开本机的文件系统（file://），它所加载的脚本，必须来自网络。
 
 使用之前，检查浏览器是否支持这个API。支持的浏览器包括IE10、Firefox (从3.6版本开始)、Safari (从4.0版本开始)、Chrome 和 Opera 11，但是手机浏览器还不支持。
 
@@ -52,7 +56,7 @@ var worker = new Worker('work.js');
 
 {% endhighlight %}
 
-Worker方法的参数是一个脚本文件，这个文件就是子线程所要完成的任务，上面的代码中是work.js。由于子线程不能读取本地文件系统，所以这个脚本文件必须来自网络端。如果下载成功，比如出现404错误，这个子线程就会默默地失败。
+Worker方法的参数是一个脚本文件，这个文件就是子线程所要完成的任务，上面代码中是work.js。由于子线程不能读取本地文件系统，所以这个脚本文件必须来自网络端。如果下载没有成功，比如出现404错误，这个子线程就会默默地失败。
 
 子线程新建之后，并没有启动，必需等待主线程调用postMessage方法，即发出信号之后才会启动。
 
@@ -113,9 +117,7 @@ self.onmessage = function(event) {
 /* File: main.js */
 
 worker.addEventListener('message', function(e) {
-
-			console.log(e.data);
-			
+	console.log(e.data);
 }, false);
 
 {% endhighlight %}
@@ -263,11 +265,14 @@ worker.postMessage('');
 
 {% endhighlight %}
 
-可以看到，主线程和子线程的代码都在同一个网页上面。除此之外，还有一种Web Worker，允许多个浏览器窗口共享同一个worker，这里就省略了。
+可以看到，主线程和子线程的代码都在同一个网页上面。
+
+上面所讲的Web Worker都是专属于某个网页的，当该网页关闭，worker就自动结束。除此之外，还有一种共享式的Web Worker，允许多个浏览器窗口共享同一个worker，只有当所有网口关闭，它才会结束。这种共享式的Worker用SharedWorker对象来建立，因为适用场合不多，这里就省略了。
 
 ## 参考链接
 
 - Matt West, [Using Web Workers to Speed-Up Your JavaScript Applications](http://blog.teamtreehouse.com/using-web-workers-to-speed-up-your-javascript-applications)
-- Eric Bidelman，[The Basics of Web Workers](http://www.html5rocks.com/en/tutorials/workers/basics/)
-- Eric Bidelman，[Transferable Objects: Lightning Fast!](http://updates.html5rocks.com/2011/12/Transferable-Objects-Lightning-Fast)
-- Jesse Cravens，[Web Worker Patterns](http://tech.pro/tutorial/1487/web-worker-patterns)
+- Eric Bidelman, [The Basics of Web Workers](http://www.html5rocks.com/en/tutorials/workers/basics/)
+- Eric Bidelman, [Transferable Objects: Lightning Fast!](http://updates.html5rocks.com/2011/12/Transferable-Objects-Lightning-Fast)
+- Jesse Cravens, [Web Worker Patterns](http://tech.pro/tutorial/1487/web-worker-patterns)
+- Bipin Joshi, [7 Things You Need To Know About Web Workers](http://www.developer.com/lang/jscript/7-things-you-need-to-know-about-web-workers.html)
