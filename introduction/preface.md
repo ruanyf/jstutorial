@@ -54,9 +54,9 @@ modifiedOn: 2014-01-09
 
 进入“控制台”，有两种方法。
 
-- 在Chrome浏览器中，直接按Option + J（Mac）或者Ctrl + Shift + J（Windows/Linux）。
+- 在Chrome浏览器中，直接按Option + Command + J（Mac）或者Ctrl + Shift + J（Windows/Linux）。
 
-- 从“工具”（Tools）菜单中打开“开发者工具”，然后点击Console选项卡。“开发者工具”的快捷键是F12，或者Option + I（Mac）以及Ctrl+Shift+I（Windows/Linux）。
+- 从“工具”（Tools）菜单中打开“开发者工具”，然后点击Console选项卡。“开发者工具”的快捷键是F12，或者Option + Command + I（Mac）以及Ctrl+Shift+I（Windows/Linux）。
 
 进入控制台以后，就可以在提示符后输入代码，然后按Enter键，代码就会执行。如果按Shift+Enter键，就是代码换行，不会触发执行。建议阅读本书时，将代码复制到控制台进行实验。
 
