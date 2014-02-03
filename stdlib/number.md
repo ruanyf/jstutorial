@@ -147,3 +147,21 @@ toPrecision方法用于将一个数转为指定位数的有效数字。
 {% endhighlight %}
 
 toPrecision方法提供的有效数字位数的范围是1到21。
+
+toPrecision方法用于四舍五入时不太可靠，可能跟浮点数不是精确储存有关。
+
+{% highlight javascript %}
+
+(12.35).toPrecision(3)
+// "12.3"
+
+(12.25).toPrecision(3)
+// "12.3"
+
+(12.15).toPrecision(3)
+// "12.2"
+
+(12.45).toPrecision(3)
+// "12.4"
+
+{% endhighlight %}

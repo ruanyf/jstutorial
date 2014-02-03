@@ -389,9 +389,9 @@ console.log('Server running on port 8080.');
 
 {% endhighlight %}
 
-第一行 var http = require("http")，表示加载http模块。然后，调用http模块的createServer方法，创造一个服务器实例，将它赋给变量app。
+第一行 var http = require("http")，表示加载http模块。然后，调用http模块的createServer方法，创造一个服务器实例，将它赋给变量http。
 
-ceateServer方法接受一个函数作为参数，该函数的req参数是一个对象，表示客户端的HTTP请求；res参数也是一个对象，表示服务器端的HTTP回应。rese.writeHead方法表示，服务器端回应一个HTTP头信息；response.end方法表示，服务器端回应的具体内容，以及回应完成后关闭本次对话。最后的listen(8080)表示启动服务器实例，监听本机的1337端口。
+ceateServer方法接受一个函数作为参数，该函数的req参数是一个对象，表示客户端的HTTP请求；res参数也是一个对象，表示服务器端的HTTP回应。rese.writeHead方法表示，服务器端回应一个HTTP头信息；response.end方法表示，服务器端回应的具体内容，以及回应完成后关闭本次对话。最后的listen(8080)表示启动服务器实例，监听本机的8080端口。
 
 将上面这几行代码保存成文件app.js，然后用node调用这个文件，服务器就开始运行了。
 
