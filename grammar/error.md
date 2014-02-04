@@ -163,27 +163,6 @@ try {
 
 {% endhighlight %}
 
-不过更好的方法，是在try代码块的后面跟多个catch代码块。
-
-{% highlight javascript %}
-
-try {
-   foo.bar();
-} catch (e if e instanceof TypeError) {
-   // 处理TypeError
-} catch (e if e instanceof RangeError) {
-   // 处理RangeError
-} catch (e if e instanceof EvalError) {
-   // 处理EvalError
-} catch (e) {
-   // 处理其他错误
-   logMyErrors(e); 
-}
-
-{% endhighlight %}
-
-上面代码的try代码块后面跟了4个catch代码块，前面三个各自捕捉一种类型的错误，最后一个用来捕捉所有其他类型的错误。
-
 try...catch结构是JavaScript语言受到Java语言影响的一个明显的例子。这种结构多多少少是对结构化编程原则一种破坏，处理不当就会变成类似goto语句的效果，应该谨慎使用。
 
 ## finally代码块

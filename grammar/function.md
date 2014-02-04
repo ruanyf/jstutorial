@@ -616,7 +616,7 @@ f()
 
 ### 闭包
 
-闭包（closure）就是定义在函数体内部的函数。
+闭包（closure）就是定义在函数体内部的函数。更理论性的表达是，闭包是函数与其生成时所在的作用域对象（scope object）的一种结合。
 
 {% highlight javascript %}
 

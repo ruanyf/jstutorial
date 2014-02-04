@@ -811,6 +811,19 @@ console.log(("a", "b"))
 
 {% endhighlight %}
 
+## 运算顺序
+
+JavaScript表达式符合算术运算顺序，一般情况下是从左到右运算，圆括号用来提高运算的优先级。
+
+不同的运算顺序，可能导致不同的结果。
+
+{% highlight javascript %}
+
+"3" + 4 + 5 // "345"
+3 + 4 + "5" // "75"
+
+{% endhighlight %}
+
 ## 参考链接
 
 - Michal Budzynski, [JavaScript: The less known parts. Bitwise Operators](http://michalbe.blogspot.co.uk/2013/03/javascript-less-known-parts-bitwise.html)
