@@ -118,7 +118,7 @@ var callback = function (error, value) {
 
 callback的第一个参数是一个Error对象，第二个参数才是真正的数据。如果没有发生错误，第一个参数就传入null。这种写法有一个很大的好处，就是说只要判断回调函数的第一个参数，就知道有没有出错，如果不是null，就肯定出错了。
 
-### 全局对象
+### 全局对象和全局变量
 
 Node提供以下一些全局对象，它们是所有模块都可以调用的。
 
@@ -128,9 +128,13 @@ Node提供以下一些全局对象，它们是所有模块都可以调用的。
 
 - **console**：指向Node内置的console模块，提供命令行环境中的标准输入、标准输出功能。
 
+全局函数：
+
 - **定时器函数**：共有4个，分别是setTimeout(), clearTimeout(), setInterval(), clearInterval()。
 
 - **require**：用于加载模块。
+
+全局变量：
 
 - **_filename**：指向当前运行的脚本文件名。
 
@@ -138,11 +142,71 @@ Node提供以下一些全局对象，它们是所有模块都可以调用的。
 
 除此之外，还有一些对象实际上是模块内部的局部变量，指向的对象根据模块不同而不同，但是所有模块都适用，可以看作是伪全局变量，主要为module, module.exports, exports等。
 
-### 模块化结构
+module变量指代当前模块。module.exports变量表示当前模块对外输出的接口，其他文件加载该模块，实际上就是读取module.exports变量。
+
+- module.id 模块的识别符，通常是模块的文件名。
+- module.filename 模块的文件名。
+- module.loaded 返回一个布尔值，表示模块是否已经完成加载。
+- module.parent 返回使用该模块的模块。
+- module.children 返回一个数组，表示该模块要用到的其他模块。
+
+这里需要特别指出的是，exports变量实际上是一个指向module.exports对象的链接，等同在每个模块头部，有一行这样的命令。
+
+{% highlight javascript %}
+
+var exports = module.exports;
+
+{% endhighlight %}
+
+这造成的结果是，在对外输出模块接口时，可以向exports对象添加方法，但是不能直接将exports变量指向一个函数。 
+
+{% highlight javascript %}
+
+exports = function (x){ console.log(x);};
+
+{% endhighlight %}
+
+上面这样的写法是无效的，因为它切断了exports与module.exports之间的链接。但是，下面这样写是可以的。
+
+{% highlight javascript %}
+
+exports.area = function (r) {
+  return Math.PI * r * r;
+};
+
+exports.circumference = function (r) {
+  return 2 * Math.PI * r;
+};
+
+{% endhighlight %}
+
+如果你觉得，exports与module.exports之间的区别很难分清，一个简单的处理方法，就是放弃使用exports，只使用module.exports。
+
+## 模块化结构
+
+### 概述
 
 Node.js采用模块化结构，按照[CommonJS规范](http://wiki.commonjs.org/wiki/CommonJS)定义和使用模块。
 
+模块与文件是一一对应关系，即加载一个模块，实际上就是加载对应的一个模块文件。
+
 require方法用于指定加载模块。
+
+{% highlight javascript %}
+
+var circle = require('./circle.js');
+
+{% endhighlight %}
+
+上面代码表明，从当前目录下的circle.js文件，加载circle模块。因为require方法默认加载的就是js文件，因此可以把js后缀名省略。
+
+{% highlight javascript %}
+
+var circle = require('./circle');
+
+{% endhighlight %}
+
+下面是其他一些模块加载的例子。
 
 {% highlight javascript %}
 
@@ -152,9 +216,43 @@ var routes = require('./app/routes');
 
 {% endhighlight %}
 
-上面代码分别用require方法加载了三个模块。如果require方法的参数只是一个模块名，不带有路径，则表示该模块为核心模块或全局模块。比如，上面代码中的http为node.js自带的核心模块，express为npm命令安装的全局模块。如果require方法的参数带有路径，则表示该模块为项目自带的本地模块，必须告诉require该模块的路径，比如上面代码的routes模块的位置在项目的app子目录下。
+上面代码分别用require方法加载了三个模块。如果require方法的参数只是一个模块名，不带有路径，则表示该模块为核心模块或全局模块。比如，上面代码中的http为node.js自带的核心模块，express为npm命令安装的全局模块。如果require方法的参数带有路径，则表示该模块为项目自带的本地模块，必须告诉require该模块的路径。路径可以是绝对路径（以斜杠/开头），也可以是相对路径（以非斜杠开头），表示模块文件相对于当前调用require方法的脚本文件的位置，比如上面代码的routes模块的位置，在当前脚本文件所在目录的app子目录下。
+
+如果require方法的参数不带有路径，而且加载的也不是核心模块与原生模块，则node.js按照以下从上到下的顺序，去寻找模块文件。比如，假定有一个位于/home/aaa/projects/目录下的脚本文件，包含了一行下面这样的加载命令。
+
+{% highlight javascript %}
+
+var bar = require('bar.js');
+
+{% endhighlight %}
+
+node.js依次到下面的目录，去寻找bar.js。
+
+- /home/aaa/projects/node_modules/bar.js
+- /home/aaa/node_modules/bar.js
+- /home/node_modules/bar.js
+- /node_modules/bar.js
+
+可以看到，如果没有指明模块文件所在位置，node.js会依次从当前目录向上，一级级在node_modules子目录下寻找模块文件。这样做的好处下，不同的项目可以依赖不同版本的某个模块，而不会发生版本冲突。
+
+如果没有找到该模块，会抛出一个错误。
+
+有时候，一个模块本身就是一个目录，目录中包含多个文件。这时候，需要在模块目录下的package.json文件中，用main属性指明模块的入口文件。下面就是一个例子，假定该模块的所有文件包含在some-library目录中。
+
+{% highlight javascript %}
+
+{ "name" : "some-library",
+  "main" : "./lib/some-library.js" }
+
+{% endhighlight %}
+
+当使用require('./some-library')命令加载该模块时，实际上加载的是./some-library/lib/some-library.js文件。
+
+如果模块目录中没有package.json文件，node.js会尝试在模块目录中寻找index.js或index.node文件进行加载。
 
 加载模块以后，就可以调用模块中定义的方法了。
+
+模块一旦被加载以后，就会被系统缓存。如果第二次还加载该模块，则会返回缓存中的版本，这意味着模块实际上只会执行一次。如果希望模块执行多次，则可以让模块返回一个函数，然后多次调用该函数。
 
 ### 核心模块
 
@@ -168,6 +266,8 @@ Node.js自带一系列的核心模块，下面就是其中的一部分：
 - **util**：提供一系列实用小工具。
 - **path**：处理文件路径。
 - **crypto**：提供加密和解密功能，基本上是对OpenSSL的包装。
+
+这些模块可以不用安装就使用。
 
 除了使用核心模块，还可以使用第三方模块，以及自定义模块。
 
@@ -187,7 +287,9 @@ module.exports = function(x) {
 
 {% endhighlight %}
 
-上面代码就是一个模块，它通过module.exports变量，对外输出一个方法。这个模块的使用方法如下。
+上面代码就是一个模块，它通过module.exports变量，对外输出一个方法。
+
+这个模块的使用方法如下。
 
 {% highlight javascript %}
 
@@ -1305,3 +1407,4 @@ require('moduleA')
 - Andrew Burgess, [Using Node's Event Module](http://dev.tutsplus.com/tutorials/using-nodes-event-module--net-35941)
 - James Halliday, [task automation with npm run](http://substack.net/task_automation_with_npm_run)- Romain Prieto, [Working on related Node.js modules locally](http://www.asyncdev.net/2013/12/working-on-related-node-modules-locally/)
 - Alon Salant, [Export This: Interface Design Patterns for Node.js Modules](http://bites.goodeggs.com/posts/export-this/)
+- Node.js Manual & Documentation, [Modules](http://nodejs.org/api/modules.html)
