@@ -27,7 +27,9 @@ SVG插入HTML网页，可以用在img标签、embed标签、CSS的background-ima
 
 {% endhighlight %}
 
-下面是在其他DOM元素中插入SVG文件的一个例子。
+上面是四种插入SVG图像的方式。
+
+下面是在其他DOM元素中插入SVG文件的一个例子。先在HTML网页中建立一个容器。
 
 {% highlight html %}
 
@@ -35,7 +37,7 @@ SVG插入HTML网页，可以用在img标签、embed标签、CSS的background-ima
 
 {% endhighlight %}
 
-然后，使用jQuery将其插入。
+然后，使用jQuery将SVG图像插入网页元素。
 
 {% highlight javascript %}
 
@@ -53,6 +55,35 @@ $("#stage").load('interactive.svg',function(response){
 });
 
 {% endhighlight %}
+
+## svg格式
+
+下面是一个简单的SVG文件。
+
+{% highlight html %}
+
+<svg  xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink">
+
+      <rect x="0" y="0" height="100" width="200" style="stroke: #70d5dd; fill: #dd524b" />
+
+</svg>
+
+{% endhighlight %}
+
+上面代码画出一个长100像素、宽200像素的矩形。
+
+可以看到SVG文件是一个XML文件，首先需要声明名称空间的URI。在SVG文件中，有各种元素，上面代码中是rect元素，表示画出一个矩形。该元素有下列属性：
+
+- x：水平坐标。
+- y：垂直坐标。
+- height：高度
+- width：宽度。
+- style：定义元素的样式。
+- style/stroke：边框颜色。
+- style/fill：填充色。
+
+其他元素还包括path（画出路径）、animate（动画）等。
 
 ## svg操作
 
@@ -98,3 +129,4 @@ document.getElementById("theCircle").addEventListener("click", function() {
 
 - Jon McPartland, [An introduction to SVG animation](http://bigbitecreative.com/introduction-svg-animation/)
 - Alexander Goedde, [SVG - Super Vector Graphics](http://tavendo.com/blog/post/super-vector-graphics/)
+- Joseph Wegner, [Learning SVG](http://flippinawesome.org/2014/02/03/learning-svg/)
