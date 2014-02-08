@@ -31,3 +31,7 @@ mongoose.connect('mongodb://localhost/<数据库名>');
 {% endhighlight %}
 
 注意，运行上面这个脚本时，必须确保MongoDB处于运行中。
+
+## 参考链接
+
+- Christopher Buecheler, [Creating a Simple RESTful Web App with Node.js, Express, and MongoDB](http://cwbuecheler.com/web/tutorials/2014/restful-web-app-node-express-mongodb/)

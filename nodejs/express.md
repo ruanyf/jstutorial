@@ -6,35 +6,31 @@ date: 2013-09-13
 modifiedOn: 2013-10-04
 ---
 
+## 概述
+
 Express是目前最流行的基于Node.js的Web开发框架。它可以快速地搭建网站原型。
-
-## 安装和新建项目
-
-### 安装
 
 Express是一个node.js模块，采用npm全局模块。
 
 {% highlight bash %}
 
-npm install -g express
+sudo npm install -g express
 
 {% endhighlight %}
 
-### 自动生成新项目
-
-安装完成后，在工作目录新建一个新项目。
+安装完成后，在工作目录新建一个新项目，假定叫做node-demo。
 
 {% highlight bash %}
 
-express <Project Name>
+express node-demo
 
 {% endhighlight %}
 
-这时，工作目录中就会生成一个项目子目录。接着，进入该子目录，安装所需要的模块。
+这时，工作目录中就会生成一个node-demo子目录。进入该目录，安装所需要的模块。
 
 {% highlight bash %}
 
-cd <Project Name>
+cd node-demo
 npm installl
 
 {% endhighlight %}
@@ -85,8 +81,42 @@ node app
 
 var express = require('express');
 var app = express();
- 
-app.listen(3000);
+
+{% endhighlight %}
+
+上面代码首先加载express模块，赋给变量express。然后，生成express实例，赋给变量app。
+
+接着，设定express实例的参数。
+
+{% highlight javascript %}
+
+// 设定port变量，意为访问端口
+app.set('port', process.env.PORT || 3000);
+
+// 设定views变量，意为视图存放的目录
+app.set('views', path.join(__dirname, 'views'));
+
+// 设定view engine变量，意为网页模板引擎
+app.set('view engine', 'jade');
+
+app.use(express.favicon());
+app.use(express.logger('dev'));
+app.use(express.bodyParser());
+app.use(express.methodOverride());
+app.use(app.router);
+
+// 设定静态文件目录，比如本地文件
+// 目录为demo/public/images，访问
+// 网址则显示为http://localhost:3000/images
+app.use(express.static(path.join(__dirname, 'public')));
+
+{% endhighlight %}
+
+最后，调用实例方法listen，让其监听事先设定的端口（3000）。
+
+{% highlight javascript %}
+
+app.listen(app.get('port'));
 
 {% endhighlight %}
 
@@ -98,11 +128,13 @@ node app.js
 
 {% endhighlight %}
 
-这时，网页提示“Cannot GET /”，表示没有为网站的根路径指定可以显示的内容。所以，下一步就是配置路由。
+网页提示“Cannot GET /”，表示没有为网站的根路径指定可以显示的内容。所以，下一步就是配置路由。
 
 ### 配置路由
 
 所谓“路由”，就是指为不同的访问路径，指定不同的处理方法。
+
+**（1）指定根路径**
 
 在app.js之中，先指定根路径的处理方法。
 
@@ -139,9 +171,9 @@ app.get('/', function(req, res){
 
 {% endhighlight %}
 
-上面是处理根目录的情况，下面再举一个例子。
+**（2）指定特定路径**
 
-假定用户访问/api路径，希望返回一个JSON字符串。这时，get可以这样写。
+上面是处理根目录的情况，下面再举一个例子。假定用户访问/api路径，希望返回一个JSON字符串。这时，get可以这样写。
 
 {% highlight javascript %}
 
@@ -168,7 +200,7 @@ app.get('/api', function(request, response) {
 
 // routes/api.js
 
-exports.index = function(req, res) {
+exports.index = function (req, res){
   res.json(200, {name:"张三",age:40});
 }
 
@@ -180,7 +212,7 @@ exports.index = function(req, res) {
 
 // app.js
 
-var api = require(./routes/app);
+var api = require('./routes/api');
 app.get('/api', api.index);
 
 {% endhighlight %}
@@ -279,8 +311,6 @@ npm install hbs --save-dev
 
 {% endhighlight %}
 
-上面代码的devDependencies属性表示，列入其中的模板都是本地安装的模块，而不是全局模板。
-
 安装模板引擎之后，就要改写app.js。
 
 {% highlight javascript %}
@@ -299,7 +329,7 @@ app.set('view engine', 'html');
 // 运行hbs模块
 app.engine('html', hbs.__express);
 
-app.get('/', function(req, res) {
+app.get('/', function (req, res){
 	res.render('index');
 });
 
@@ -334,12 +364,12 @@ var entries = [
 	{"id":6, "title":"第六篇", "body":"正文", "published":"6/12/2013"}
 ];
 
-exports.getBlogEntries = function() {
+exports.getBlogEntries = function (){
    return entries;
 }
  
-exports.getBlogEntry = function(id) {
-   for(var i=0; i < entries.length; i++) {
+exports.getBlogEntry = function (id){
+   for(var i=0; i < entries.length; i++){
       if(entries[i].id == id) return entries[i];
    }
 }
@@ -491,3 +521,4 @@ app.use(express.static('public'));
 ## 参考链接
 
 - Raymond Camden, [Introduction to Express](http://net.tutsplus.com/tutorials/javascript-ajax/introduction-to-express/)
+- Christopher Buecheler, [Getting Started With Node.js, Express, MongoDB](http://cwbuecheler.com/web/tutorials/2013/node-express-mongo/)
