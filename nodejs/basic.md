@@ -1136,7 +1136,9 @@ npm install express --save-dev
 
 ### npm简介
 
-npm是Node.js默认的模块管理器，用来安装和管理node模块。在安装node的时候，会连带一起安装npm。node安装完成后，可以用下面的命令，查看一下npm的帮助文件。
+npm有两层含义。一层含义是Node.js的开放式模块登记和管理系统，网址为[http://npmjs.org](http://npmjs.org)。另一层含义是Node.js默认的模块管理器，是一个命令行下的软件，用来安装和管理node模块。
+
+npm不需要单独安装。在安装node的时候，会连带一起安装npm。node安装完成后，可以用下面的命令，查看一下npm的帮助文件。
 
 {% highlight bash %}
 
@@ -1232,7 +1234,16 @@ npm install [package name]
 
 {% endhighlight %}
 
-使用上面的命令，模块文件将下载到当前目录的 node_modules 子目录。
+npm也支持直接输入github地址。
+
+{% highlight bash %}
+
+npm install git://github.com/package/path.git
+npm install git://github.com/package/path.git#0.1.0
+
+{% endhighlight %}
+
+使用安装命令以后，模块文件将下载到当前目录的 node_modules 子目录。
 
 使用global参数，可以“全局安装”某个模块。
 
@@ -1400,6 +1411,90 @@ require('moduleA')
 
 {% endhighlight %}
 
+### 模块的发布
+
+在发布你的模块之前，需要先设定个人信息。
+
+{% highlight bash %}
+
+npm set init.author.name "xxx"
+npm set init.author.email "xxx@gmail.com"
+npm set init.author.url "http://xxx.com"
+
+{% endhighlight %}
+
+然后，请npm系统申请用户名。
+
+{% highlight bash %}
+
+npm adduser
+
+{% endhighlight %}
+
+运行上面的命令之后，屏幕上会提示输入用户名，然后是输入Email地址和密码。
+
+上面所有的这些个人信息，全部保存在~/.npmrc文件之中。
+
+npm模块就是一个遵循CommonJS规范的JavaScript脚本文件。此外，在模块目录中还必须有一个提供自身信息的package.json文件，一般采用npm init命令生成这个文件。
+
+{% highlight bash %}
+
+npm init
+
+{% endhighlight %}
+
+运行上面的命令，会提示回答一系列问题，结束后自动生成package.json文件。
+
+package.json文件中的main属性，指定模块加载的入口文件，默认是index.js。在index.js文件中，除了模块代码以外，主要使用require命令加载其他模块，使用module.exports变量输出模块接口。
+
+下面是一个例子，将HTML文件中的特殊字符转为HTML实体。
+
+{% highlight javascript %}
+
+/**
+ * Escape special characters in the given string of html.
+ *
+ * @param  {String} html
+ * @return {String}
+ */
+module.exports = {
+  escape: function(html) {
+    return String(html)
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  },
+
+  /**
+   * Unescape special characters in the given string of html.
+   *
+   * @param  {String} html
+   * @return {String}
+   */
+  unescape: function(html) {
+    return String(html)
+      .replace(/&amp;/g, '&')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, '\'')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>');
+  }
+};
+
+{% endhighlight %}
+
+完成代码以后，再加一个README.md文件，用来给出说明文本。
+
+最后，使用npm publish命令发布。
+
+{% highlight bash %}
+
+npm publish
+
+{% endhighlight %}
+
 ## 参考链接
 
 - Cody Lindley, [Package Managers: An Introductory Guide For The Uninitiated Front-End Developer](http://tech.pro/tutorial/1190/package-managers-an-introductory-guide-for-the-uninitiated-front-end-developer)
@@ -1408,3 +1503,4 @@ require('moduleA')
 - James Halliday, [task automation with npm run](http://substack.net/task_automation_with_npm_run)- Romain Prieto, [Working on related Node.js modules locally](http://www.asyncdev.net/2013/12/working-on-related-node-modules-locally/)
 - Alon Salant, [Export This: Interface Design Patterns for Node.js Modules](http://bites.goodeggs.com/posts/export-this/)
 - Node.js Manual & Documentation, [Modules](http://nodejs.org/api/modules.html)
+- Brent Ertz, [Creating and publishing a node.js module](http://quickleft.com/blog/creating-and-publishing-a-node-js-module)

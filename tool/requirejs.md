@@ -8,25 +8,11 @@ modifiedOn: 2013-11-30
 
 ## 概述
 
-RequireJS是一个工具库，主要用于客户端的模块管理，它遵守[AMD规范](https://github.com/amdjs/amdjs-api/wiki/AMD)（Asynchronous Module Definition）。
+RequireJS是一个工具库，主要用于客户端的模块管理。它可以让客户端的代码分成一个个模块，实现异步或动态加载，从而提高代码的性能和可维护性。它的模块管理遵守[AMD规范](https://github.com/amdjs/amdjs-api/wiki/AMD)（Asynchronous Module Definition）。
 
-RequireJS的基本思想是，通过一个函数，将所需要的模块放入，然后返回一个新的模块，后者就在函数内部完成操作。
+RequireJS的基本思想是，通过define方法，将代码定义为模块；通过require方法，实现代码的模块加载。
 
-{% highlight javascript %}
-
-function(dep1, dep2, dep3) {
-
-	var module  = ...
-
-	return module;
-
-}
-
-{% endhighlight %}
-
-上面代码中的dep1、dep2和dep3，是新模块所依赖的模块，将它们放入一个函数，然后返回一个新模块。
-
-首先，使用下面的格式将其嵌入网页，然后就能在网页中进行模块化编程了。
+首先，将require.js嵌入网页，然后就能在网页中进行模块化编程了。
 
 {% highlight javascript %}
 
@@ -34,15 +20,13 @@ function(dep1, dep2, dep3) {
 
 {% endhighlight %}
 
-上面代码的data-main属性用于指定主代码所在的脚本文件，在上例中为scripts子目录下的main.js文件。
-
-RequireJS主要提供define和require两个方法，前者用于定义模块，后者用于调用模块。
+上面代码的data-main属性不可省略，用于指定主代码所在的脚本文件，在上例中为scripts子目录下的main.js文件。用户自定义的代码就放在这个main.js文件中。
 
 ### define方法：定义模块
 
 define方法用于定义模块，RequireJS要求每个模块放在一个单独的文件里。
 
-按照是否依赖其他模块，可以分成两种情况讨论。第一种情况是独立模块，即该模块不依赖其他模块；第二种情况是非独立模块，即该模块依赖于其他模块。
+按照是否依赖其他模块，可以分成两种情况讨论。第一种情况是定义独立模块，即所定义的模块不依赖其他模块；第二种情况是定义非独立模块，即所定义的模块依赖于其他模块。
 
 **（1）独立模块**
 
@@ -74,6 +58,8 @@ define(function () {
 
 后一种写法的自由度更高一点，可以在函数体内写一些模块初始化代码。
 
+值得指出的是，define定义的模块可以返回任何值，不限于对象。
+
 **（2）非独立模块**
 
 如果被定义的模块需要依赖其他模块，则define方法必须采用下面的格式。
@@ -86,7 +72,7 @@ define(['module1', 'module2'], function(m1, m2) {
 
 {% endhighlight %}
 
-define方法的第一个参数是一个数组，它的成员是当前模块所依赖的模块。比如，['module1', 'module2']表示我们定义的这个新模块依赖于module1模块和module2模块，只有先加载这两个模块，新模块才能正常运行。一般情况下，module1模块和module2模块指的是，当前目录下的module1.js文件和module2.js文件。
+define方法的第一个参数是一个数组，它的成员是当前模块所依赖的模块。比如，['module1', 'module2']表示我们定义的这个新模块依赖于module1模块和module2模块，只有先加载这两个模块，新模块才能正常运行。一般情况下，module1模块和module2模块指的是，当前目录下的module1.js文件和module2.js文件，等同于写成['./module1', './module2']。
 
 define方法的第二个参数是一个函数，当前面数组的所有成员加载成功后，它将被调用。它的参数与数组的成员一一对应，比如function(m1, m2)就表示，这个函数的第一个参数m1对应module1模块，第二个参数m2对应module2模块。这个函数必须返回一个对象，供其他模块调用。
 
@@ -186,7 +172,7 @@ require(['foo', 'bar'], function ( foo, bar ) {
 
 {% endhighlight %}
 
-上面方法表示加载foo和bar两个模块，当这两个模块都加载成功后，执行一个回调函数。该回调函数就用来完成具体的部分。
+上面方法表示加载foo和bar两个模块，当这两个模块都加载成功后，执行一个回调函数。该回调函数就用来完成具体的任务。
 
 require方法的第一个参数，是一个表示依赖关系的数组。这个数组可以写得很灵活，请看下面的例子。
 
@@ -202,11 +188,11 @@ require( [ window.JSON ? undefined : 'util/json2' ], function ( JSON ) {
 
 上面代码加载JSON模块时，首先判断浏览器是否原生支持JSON对象。如果是的，则将undefined传入回调函数，否则加载util目录下的json2模块。
 
-define方法内部也可以调用模块。
+require方法也可以用在define方法内部。
 
 {% highlight javascript %}
 
-define(function(require) {
+define(function (require) {
    var otherModule = require('otherModule');
 });
 
@@ -280,7 +266,7 @@ require(
 
 {% endhighlight %}
 
-错误处理的回调函数，接受一个error对象作为参数。
+require方法的第三个参数，即处理错误的回调函数，接受一个error对象作为参数。
 
 require对象还允许指定一个全局性的Error事件的监听函数。所有没有被上面的方法捕获的错误，都会被触发这个监听函数。
 
