@@ -144,7 +144,7 @@ AMD规范允许输出的模块兼容CommonJS规范，这时define方法需要写
 
 {% highlight javascript %}
 
-define(function( require, exports, module )
+define(function( require, exports, module ) {
     var someModule = require( "someModule" );
     var anotherModule = require( "anotherModule" );    
 
