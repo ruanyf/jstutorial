@@ -3,7 +3,7 @@ title: MVC框架与Backbone.js
 layout: page
 category: advanced
 date: 2014-01-15
-modifiedOn: 2014-01-15
+modifiedOn: 2014-02-09
 ---
 
 ## MVC框架
@@ -40,3 +40,28 @@ appView.render();
 {% endhighlight %}
 
 上面代码新建视图类AppView的实例appView，然后调用appView.render，网页上就会显示指定的内容。
+
+## 模板
+
+模板用来按照变量生成网页内容。一般将模板放在script标签中，为了防止浏览器按照JavaScript代码解析，type属性设为text/template。
+
+{% highlight html %}
+
+<script type="text/template" data-name="templateName">
+    <!-- template contents goes here -->
+</script>
+
+{% endhighlight %}
+
+可以使用下面的代码编译模板。
+
+{% highlight html %}
+
+window.templates = {};
+  var $sources = $('script[type="text/template"]');
+  $sources.each(function(index, el) {
+    var $el = $(el);
+    templates[$el.data('name')] = _.template($el.html());
+  });
+
+{% endhighlight %}

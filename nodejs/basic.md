@@ -981,7 +981,7 @@ child_process模块用于新建子进程。子进程的运行结果储存在系�
 
 {% highlight javascript %}
 
-var childProcess = require('child_process')；
+var childProcess = require('child_process');
 
 var ls = childProcess.exec('ls -l', function (error, stdout, stderr) {
    if (error) {

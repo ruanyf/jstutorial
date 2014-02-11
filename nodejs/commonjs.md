@@ -88,7 +88,7 @@ function foobar(){
         this.foo = function(){
                 console.log('Hello foo');
         }
- 
+
         this.bar = function(){
                 console.log('Hello bar');
         }
@@ -144,14 +144,14 @@ AMD规范允许输出的模块兼容CommonJS规范，这时define方法需要写
 
 {% highlight javascript %}
 
-define(function( require, exports, module )
-    var someModule = require( "someModule" );
-    var anotherModule = require( "anotherModule" );    
+define(function (require, exports, module){
+    var someModule = require("someModule");
+    var anotherModule = require("anotherModule");    
 
     someModule.doTehAwesome();
     anotherModule.doMoarAwesome();
 
-    exports.asplode = function() {
+    exports.asplode = function (){
         someModule.doTehAwesome();
         anotherModule.doMoarAwesome();
     };
