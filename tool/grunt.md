@@ -3,7 +3,7 @@ title: Grunt：任务自动管理工具
 category: tool
 layout: page
 date: 2013-04-21
-modifiedOn: 2013-12-01
+modifiedOn: 2014-02-14
 ---
 
 在Javascript的开发过程中，经常会遇到一些重复性的任务，比如合并文件、压缩代码、检查语法错误、将Sass代码转成CSS代码等等。通常，我们需要使用不同的工具，来完成不同的任务，既重复劳动又非常耗时。Grunt就是为了解决这个问题而发明的工具，可以帮助我们自动管理和运行各种任务。
@@ -188,7 +188,29 @@ module.exports = function(grunt) {
 
 下面详细解释上面代码中的三个方法，下面一个个来看。
 
-**（1）grunt.initConfig**
+**（1）grunt.loadNpmTasks**
+
+grunt.loadNpmTasks方法载入模块文件。
+
+{% highlight javascript %}
+
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
+
+{% endhighlight %}
+
+你需要使用几个模块，这里就要写几条grunt.loadNpmTasks语句，将各个模块一一加载。
+
+如果加载模块很多，这部分会非常冗长。而且，还存在一个问题，就是凡是在这里加载的模块，也同时出现在package.json文件中。如果使用npm命令卸载模块以后，模块会自动从package.json文件中消失，但是必须手动从Gruntfile.js文件中清除，这样很不方便，一旦忘记，还会出现运行错误。这里有一个解决办法，就是安装load-grunt-tasks模块，然后在Gruntfile.js文件中，用下面的语句替代所有的grunt.loadNpmTasks语句。
+
+{% highlight javascript %}
+
+require('load-grunt-tasks')(grunt);
+
+{% endhighlight %}
+
+这条语句的作用是自动分析package.json文件，自动加载所找到的grunt模块。
+
+**（2）grunt.initConfig**
 
 grunt.initConfig方法用于模块配置，它接受一个对象作为参数。该对象的成员与使用的同名模块一一对应。由于我们要配置的是cssmin模块，所以里面有一个cssmin成员（属性）。
 
@@ -269,10 +291,6 @@ files: [
   });
 
 {% endhighlight %}
-
-**（2）grunt.loadNpmTasks**
-
-grunt.loadNpmTasks方法载入模块文件。
 
 **（3）grunt.registerTask**
 
@@ -596,3 +614,4 @@ markdown: {
 - Landon Schropp, [Writing an Awesome Build Script with Grunt](http://www.sitepoint.com/writing-awesome-build-script-grunt/)
 - Mike Cunsolo, [Get Up And Running With Grunt](http://coding.smashingmagazine.com/2013/10/29/get-up-running-grunt/)
 - Matt Bailey, [A Beginner’s Guide to Using Grunt With Magento](http://www.gpmd.co.uk/blog/a-beginners-guide-to-using-grunt-with-magento/)
+- Paul Bakaus, [Supercharging your Gruntfile](http://www.html5rocks.com/en/tutorials/tooling/supercharging-your-gruntfile/)
