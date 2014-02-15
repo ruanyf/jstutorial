@@ -758,7 +758,7 @@ a
 
 // 等同于
 
-var a = 3;
+var a = 3
 
 "abc"
 .length
