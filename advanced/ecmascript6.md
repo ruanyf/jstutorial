@@ -402,11 +402,98 @@ for (var i in range){
 
 上一部分的遍历器，用来依次取出集合中的每一个成员，但是某些情况下，我们需要的是一个内部状态的遍历器。也就是说，每调用一次遍历器，对象的内部状态发生一次改变（可以理解成发生某些事件）。ECMAScript 6 引入了generator函数，作用就是返回一个内部状态的遍历器，主要特征是内部使用了yield语句。
 
-当调用generator函数的时候，该函数并不执行，而是返回一个遍历器。以后，每次调用这个遍历器的next方法，就从函数体的头部或者上一次停下来的地方开始执行，直到遇到下一个yield语句为止，并返回该yield语句的值。如果遇到函数执行完毕或者return语句，就会抛出一个StopIteration异常。
+当调用generator函数的时候，该函数并不执行，而是返回一个遍历器（可以理解成暂停执行）。以后，每次调用这个遍历器的next方法，就从函数体的头部或者上一次停下来的地方开始执行（可以理解成恢复执行），直到遇到下一个yield语句为止，并返回该yield语句的值。如果遇到函数执行完毕或者return语句，就会抛出一个StopIteration异常。
 
 目前，generator有两种形式。一种是Mozilla在Firefox浏览器中已经部署的形式，另一种是ECMAScript 6草案中的形式。
 
-**（1）Mozill版本的generator**
+**（1）ECMAScript 6草案的generator**
+
+ECMAScript 6草案定义的generator函数，需要在function关键字后面，加一个星号。然后，函数内部使用yield关键字，定义遍历器的每个成员。
+
+yield有点类似于return关键字，都能返回一个值。区别在于每次遇到yield，函数返回紧跟在yield后面的那个表达式的值，然后暂停执行。
+
+{% highlight javascript %}
+
+function* helloWorldGenerator() {
+    yield 'hello';
+    yield 'world';
+}
+
+{% endhighlight %}
+
+上面代码定义了一个generator函数helloWorldGenerator，它的遍历器有两个成员“hello”和“world”。调用这个函数，就会得到遍历器。
+
+{% highlight javascript %}
+
+var hw = helloWorldGenerator();
+
+{% endhighlight %}
+
+执行遍历器的next方法，则会依次遍历每个成员。
+
+{% highlight javascript %}
+
+console.log(hw.next()); // { value: 'hello', done: false }
+console.log(hw.next()); // { value: 'world', done: false }
+console.log(hw.next()); // { value: undefined, done: true }
+
+{% endhighlight %}
+
+上面代码每次调用遍历器的next方法，就会返回一个对象。它的value属性就是遍历器当前成员的值（即当前yield语句的值），done属性表示遍历是否结束。直到遍历完最后一个成员，done属性才会从false变为true，这时value属性为undefined，表示此处没有遍历器的成员。
+
+遍历器的本质，其实是使用yield语句暂停执行它后面的操作，当调用next方法时，返回yield语句的值，然后再继续往下执行，直到遇到下一个yield语句。如果直到运行结束，也没有发现其他yield语句，则返回的对象的value属性为undefined，done变为true。某种程度上，yield语句很像return语句，只不过记得返回时位置，下次从该位置继续执行。
+
+yield语句的返回值，就是它后面那个表达式的值。如果next方法带一个参数，该参数就会被当作上一个yield语句的返回值。
+
+{% highlight javascript %}
+
+function* f() {
+  for(var i=0; true; i++) {
+    var reset = yield i;
+    if(reset) { i = -1; }
+  }
+}
+
+var g = f();
+
+g.next() // { value: 0, done: false }
+g.next() // { value: 1, done: false }
+g.next(true) // { value: 0, done: false }
+
+{% endhighlight %}
+
+上面代码先定义了一个可以无限运行的generator函数f，如果next方法没有参数，正常情况下返回一个递增的i；如果next方法有参数，则上一次yield语句的返回值将会等于该参数。如果该参数为true，则会重置i的值。
+
+generator函数的这种暂停执行的效果，意味着可以把异步操作写在yield语句里面，等到调用next方法时再往后执行。这实际上等同于不需要写回调函数了，因为异步操作的后续操作可以放在yield语句下面，反正要等到next方法时再执行。所以，generator函数的一个重要实际意义就是用来处理异步操作，改写回调函数。
+
+另外一种遍历器循环的方法是使用for...of语句。
+
+{% highlight javascript %}
+
+function* fibonacci() {
+    let [prev, curr] = [0, 1];
+    for (;;) {
+        [prev, curr] = [curr, prev + curr];
+        yield curr;
+    }
+}
+
+{% endhighlight %}
+
+上面代码定义了斐波那契数列，然后使用for..of语句完成循环。
+
+{% highlight javascript %}
+
+for (n of fibonacci()) {
+    if (n > 1000) break;
+    console.log(n);
+}
+
+{% endhighlight %}
+
+从上面代码可见，使用for...of语句时不需要使用next方法。
+
+**（2）Mozill版本的generator**
 
 Mozill版本的gernerator，只要在函数体内使用yield关键字就可以生成。
 
@@ -558,92 +645,6 @@ function f() {
 };
 
 {% endhighlight %}
-
-**（2）ECMAScript 6草案的generator**
-
-ECMAScript 6草案定义的generator函数，需要在function关键字后面，加一个星号。然后，函数内部使用yield关键字，定义遍历器的每个成员。
-
-{% highlight javascript %}
-
-function* helloWorldGenerator() {
-    yield 'hello';
-    yield 'world';
-}
-
-{% endhighlight %}
-
-上面代码定义了一个generator函数helloWorldGenerator，它的遍历器有两个成员“hello”和“world”。调用这个函数，就会得到遍历器。
-
-{% highlight javascript %}
-
-var hw = helloWorldGenerator();
-
-{% endhighlight %}
-
-执行遍历器的next方法，则会依次遍历每个成员。
-
-{% highlight javascript %}
-
-console.log(hw.next()); // { value: 'hello', done: false }
-console.log(hw.next()); // { value: 'world', done: false }
-console.log(hw.next()); // { value: undefined, done: true }
-
-{% endhighlight %}
-
-上面代码每次调用遍历器的next方法，就会返回一个对象。它的value属性就是遍历器当前成员的值（即当前yield语句的值），done属性表示遍历是否结束。直到遍历完最后一个成员，done属性才会从false变为true，这时value属性为undefined，表示此处没有遍历器的成员。
-
-遍历器的本质，其实是使用yield语句暂停执行它后面的操作，当调用next方法时，返回yield语句的值，然后再继续往下执行，直到遇到下一个yield语句。如果直到运行结束，也没有发现其他yield语句，则返回的对象的value属性为undefined，done变为true。某种程序上，yield语句很像return语句，只不过记得返回时位置，下次从该位置继续执行。
-
-{% highlight javascript %}
-
-function* powersOfTwo(maxExponent) {
-    var exponent = 0;
-    while (exponent <= maxExponent) {
-        yield Math.pow(2, exponent);
-        exponent++;
-    }
-}
-
-var it = powersOfTwo(10),
-    result = it.next();
-
-while (!result.done) {
-    console.log(result.value);
-    result = it.next();
-}
-
-{% endhighlight %}
-
-上面代码定义的powerOfTwo函数，第一次执行的时候，只会执行到yield语句为止，然后调用next方法时，再执行下去。通过判断遍历器的done属性，完成遍历器的循环。
-
-这种暂停执行的效果，意味着可以把异步操作写在yield语句里面，等到调用next方法时再往后执行。这实际上等同于不需要写回调函数了，因为异步操作的后续操作可以放在yield语句下面，反正要等到next方法时再执行。所以，generator函数的一个重要实际意义就是用来处理异步操作，改写回调函数。
-
-另外一种遍历器循环的方法是使用for...of语句。
-
-{% highlight javascript %}
-
-function* fibonacci() {
-    let [prev, curr] = [0, 1];
-    for (;;) {
-        [prev, curr] = [curr, prev + curr];
-        yield curr;
-    }
-}
-
-{% endhighlight %}
-
-上面代码定义了斐波那契数列，然后使用for..of语句完成循环。
-
-{% highlight javascript %}
-
-for (n of fibonacci()) {
-    if (n > 1000) break;
-    console.log(n);
-}
-
-{% endhighlight %}
-
-从上面代码可见，使用for...of语句时不需要使用next方法。
 
 ## 语法糖
 
@@ -1145,3 +1146,4 @@ ECMAScript 7可能包括的功能有：
 - Dale Schouten, [10 Ecmascript-6 tricks you can perform right now](http://html5hub.com/10-ecmascript-6-tricks-you-can-perform-right-now/)
 - Mozilla Developer Network, [Iterators and generators](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Iterators_and_Generators)
 - Steven Sanderson, [Experiments with Koa and JavaScript Generators](http://blog.stevensanderson.com/2013/12/21/experiments-with-koa-and-javascript-generators/)
+- Matt Baker, [Replacing callbacks with ES6 Generators](http://flippinawesome.org/2014/02/10/replacing-callbacks-with-es6-generators/)
