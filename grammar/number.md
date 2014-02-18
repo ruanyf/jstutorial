@@ -76,9 +76,9 @@ Math.pow(2, 53)
 
 ### 数值范围
 
-另一方面，64位浮点数的指数部分的长度是11个二进制位，意味着指数部分的最大值是2047（2的11次方减1）。所以，JavaScript能够表示的数值范围为(-2<sup>2048</sup>, 2<sup>2048</sup>)，超出这个范围的数无法表示。
+另一方面，64位浮点数的指数部分的长度是11个二进制位，意味着指数部分的最大值是2047（2的11次方减1）。也就是说，64位浮点数的指数部分的值最大为2047，分出一半表示负数，则JavaScript能够表示的数值范围为2<sup>1024</sup>到2<sup>-1023</sup>)，超出这个范围的数无法表示。
 
-如果超过指数部分的最大正值，JavaScript会返回Infinity（参见下文）；如果超出最小负值（即非常接近0），JavaScript会直接把这个数转为0。
+如果指数部分超过最大正值1024，JavaScript会返回Infinity（参见下文）；如果超出最小负值-1023（即非常接近0），JavaScript会直接把这个数转为0。
 
 {% highlight javascript %}
 
@@ -438,3 +438,4 @@ parseFloat("FF2")
 ## 参考链接
 
 - Dr. Axel Rauschmayer, [How numbers are encoded in JavaScript](http://www.2ality.com/2012/04/number-encoding.html)
+- Humphry, [JavaScript中Number的一些表示上/下限](http://blog.segmentfault.com/humphry/1190000000407658)
