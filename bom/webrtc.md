@@ -95,9 +95,8 @@ function onSuccess(stream) {
 function onSuccess(stream) {
 
     var video = document.getElementById('webcam');
-     
-    video.src = stream;
-
+    var url = window.URL || window.webkitURL;
+    v.src = url ? url.createObjectURL(stream) : stream;
 	video.autoplay = true;
 
 }

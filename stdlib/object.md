@@ -442,12 +442,12 @@ Object.keys(Object.prototype)
 
 Object.getOwnPropertyNames(Object.prototype)
 // ['hasOwnProperty',
-    'valueOf',
-    'constructor',
-    'toLocaleString',
-    'isPrototypeOf',
-    'propertyIsEnumerable',
-    'toString']
+//  'valueOf',
+//  'constructor',
+//  'toLocaleString',
+//  'isPrototypeOf',
+//  'propertyIsEnumerable',
+//  'toString']
 
 {% endhighlight %}
 

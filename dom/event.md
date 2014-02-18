@@ -596,7 +596,7 @@ myEvent.initCustomEvent('myevent',true,false,{name:'张三'});
 
 上面两种自定义事件的写法是等价的。但是，IE 9只支持第二种写法，不支持第一种写法。
 
-定义事件对象以后，就可以用addEventListener方法为时事件指定回调函数，用dispatchEvent方法触发该时间。
+定义事件对象以后，就可以用addEventListener方法为该事件指定回调函数，用dispatchEvent方法触发该事件。
 
 {% highlight javascript %}
 

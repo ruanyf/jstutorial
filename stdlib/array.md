@@ -411,9 +411,9 @@ a.sort(f)
 
 {% endhighlight %}
 
-## EcmaScript 5 新加入的数组方法
+## ECMAScript 5 新加入的数组方法
 
-EcmaScript 5新增了9个数组实例的方法，分别是map、forEach、filter、every、some、reduce、reduceRight、indexOf和lastIndexOf。其中，前7个与函数式（functional）操作有关。
+ECMAScript 5新增了9个数组实例的方法，分别是map、forEach、filter、every、some、reduce、reduceRight、indexOf和lastIndexOf。其中，前7个与函数式（functional）操作有关。
 
 这些方法可以在数组上使用，也可以在字符串和类似数组的对象上使用，这是它们不同于传统数组方法的一个地方。
 
