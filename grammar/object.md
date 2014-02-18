@@ -274,7 +274,7 @@ y // 1
 
 ### in运算符
 
-in运算符用于检查对象是否包含某个属性，如果包含就返回true。
+in运算符用于检查对象是否包含某个属性（注意，检查的是键名，不是键值），如果包含就返回true。
 
 {% highlight javascript %}
 
@@ -306,6 +306,18 @@ var a = ["hello", "world"];
 {% endhighlight %}
 
 上面代码表示，数字键0和1都在数组之中。
+
+由于对象的键名都是字符串，因此也可以用字符串判断数组的成员。
+
+{% highlight javascript %}
+
+var a = ["hello", "world"];
+
+'0' in a // true
+'1' in a // true
+'2' in a // false
+
+{% endhighlight %}
 
 在JavaScript语言中，所有全局变量都是顶层对象（浏览器环境的顶层对象为window）的属性，因此可以用in运算符判断一个全局变量是否存在。
 
