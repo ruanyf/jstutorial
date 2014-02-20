@@ -146,7 +146,7 @@ mo.observe(document.body, option);
 {% highlight javascript %}
 
 var callback = function(records){
-    records.map(functions(record){
+    records.map(function(record){
     	console.log('Previous attribute value: ' + record.oldValue);  
     });
 };
