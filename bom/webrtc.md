@@ -8,9 +8,21 @@ modifiedOn: 2013-10-04
 
 ## 概述
 
-WebRTC是“网络实时通信”（Web Real Time Communication）的缩写，它主要用来让浏览器获取多媒体设备的实时信息，比如摄像头和麦克风。
+WebRTC是“网络实时通信”（Web Real Time Communication）的缩写，它主要用来让浏览器实时获取和交换视频、音频和数据。
 
-它的主要方法是getUserMedia。首先，检查浏览器是否支持这个方法。
+WebRTC共分成三个API。
+
+- MediaStream （又称getUserMedia）
+- RTCPeerConnection
+- RTCDataChannel
+
+getUserMedia主要用于获取视频和音频信息，后两个API用于浏览器之间的数据交换。
+
+## getUserMedia
+
+### 简介
+
+首先，检查浏览器是否支持getUserMedia方法。
 
 {% highlight javascript %}
 
@@ -21,16 +33,14 @@ navigator.getUserMedia ||
 if (navigator.getUserMedia) {
     // do something
 } else {
-    alert('getUserMedia is not supported in this browser.');
+    alert('您的浏览器不支持getUserMedia');
 }
 
 {% endhighlight %}
 
-需要注意的是，IE还不支持这个API，所以上面代码中的msGetUserMedia，只是为了确保将来的兼容。
+Chrome 21, Opera 18和Firefox 17，支持该方法。目前，IE还不支持，上面代码中的msGetUserMedia，只是为了确保将来的兼容。
 
-## getUserMedia方法
-
-这个方法接受三个参数。
+getUserMedia方法接受三个参数。
 
 {% highlight javascript %}
 
@@ -65,7 +75,7 @@ navigator.getUserMedia({
 - **NOT_SUPPORTED_ERROR**：浏览器不支持硬件设备。
 - **MANDATORY_UNSATISFIED_ERROR**：无法发现指定的硬件设备。
 
-## 展示摄像头图像
+### 展示摄像头图像
 
 将用户的摄像头拍摄的图像展示在网页上，需要先在网页上放置一个video元素。图像就展示在这个元素中。
 
@@ -95,9 +105,15 @@ function onSuccess(stream) {
 function onSuccess(stream) {
 
     var video = document.getElementById('webcam');
-    var url = window.URL || window.webkitURL;
-    v.src = url ? url.createObjectURL(stream) : stream;
-	video.autoplay = true;
+
+    if (window.URL) {
+	    video.src = window.URL.createObjectURL(stream);
+	} else {
+		video.src = stream;
+	}
+
+	video.autoplay = true; 
+	// 或者 video.play();
 
 }
 
@@ -105,7 +121,7 @@ function onSuccess(stream) {
 
 它的主要用途是让用户使用摄影头为自己拍照。
 
-## 捕获麦克风声音
+### 捕获麦克风声音
 
 通过浏览器捕获声音，相对复杂，需要借助Web Audio API。
 
@@ -155,8 +171,48 @@ function onSuccess(stream) {
 
 {% endhighlight %}
 
+## 实时数据交换
+
+WebRTC的另外两个API，RTCPeerConnection用于浏览器之间点对点的连接，RTCDataChannel用于点对点的数据通信。
+
+RTCPeerConnection带有浏览器前缀，Chrome浏览器中为webkitRTCPeerConnection，Firefox浏览器中为mozRTCPeerConnection。Google维护一个函数库[adapter.js](https://apprtc.appspot.com/js/adapter.js)，用来抽象掉浏览器之间的差异。
+
+{% highlight javascript %}
+
+var dataChannelOptions = {
+  ordered: false, // do not guarantee order
+  maxRetransmitTime: 3000, // in milliseconds
+};
+
+var peerConnection = new RTCPeerConnection();
+
+// Establish your peer connection using your signaling channel here
+var dataChannel =
+  peerConnection.createDataChannel("myLabel", dataChannelOptions);
+
+dataChannel.onerror = function (error) {
+  console.log("Data Channel Error:", error);
+};
+
+dataChannel.onmessage = function (event) {
+  console.log("Got Data Channel Message:", event.data);
+};
+
+dataChannel.onopen = function () {
+  dataChannel.send("Hello World!");
+};
+
+dataChannel.onclose = function () {
+  console.log("The Data Channel is Closed");
+};
+
+{% endhighlight %}
+
 ## 参考链接
 
 - Andi Smith，[Get Started with WebRTC](http://www.netmagazine.com/tutorials/get-started-webrtc)
 - Thibault Imbert, [From microphone to .WAV with: getUserMedia and Web Audio](http://typedarray.org/from-microphone-to-wav-with-getusermedia-and-web-audio/)
 - Ian Devlin, [Using the getUserMedia API with the HTML5 video and canvas elements](http://html5hub.com/using-the-getusermedia-api-with-the-html5-video-and-canvas-elements/#i.bz41ehmmhd3311)
+- Eric Bidelman, [Capturing Audio & Video in HTML5](http://www.html5rocks.com/en/tutorials/getusermedia/intro/)
+- Sam Dutton, [Getting Started with WebRTC](http://www.html5rocks.com/en/tutorials/webrtc/basics/)
+- Dan Ristic, [WebRTC data channels](http://www.html5rocks.com/en/tutorials/webrtc/datachannels/)
