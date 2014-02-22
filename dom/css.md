@@ -50,8 +50,8 @@ div.setAttribute('style','background-color:red;border:1px solid black;height:100
 
 style对象有以下三个方法，也可以用来设置、读取和删除行内CSS规则，而且不必改写CSS规则名。
 
-- setPropertyValue(propertyName)
-- getPropertyValue(propertyName,value)
+- setPropertyValue(propertyName,value)
+- getPropertyValue(propertyName)
 - removeProperty(propertyName)
 
 {% highlight javascript %}

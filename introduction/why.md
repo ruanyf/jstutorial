@@ -34,7 +34,7 @@ JavaScript的发明目的，就是作为浏览器的内置脚本语言，为网�
 
 （4）PhoneGap项目使得JavaScript可以开发在多种移动平台（iOS和Android）上使用的应用程序。Mozilla基金会的手机操作系统Firefox OS，更是直接将JavaScript作为操作系统的平台语言。
 
-（5）越来越多的应用程序，将JavaScript作为内嵌的脚本语言，比如Adobe公司的著名PDF阅读器Acrobat、Linuxe桌面环境GNOME 3。
+（5）越来越多的应用程序，将JavaScript作为内嵌的脚本语言，比如Adobe公司的著名PDF阅读器Acrobat、Linux桌面环境GNOME 3。
 
 （6） Chromium OS、Windows 8等操作系统直接支持JavaScript编写应用程序。Mozilla的Open Web Apps项目，可以用来编写运行于Windows、Mac OS和Android等多个桌面平台的程序，不依赖浏览器。
 
