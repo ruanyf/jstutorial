@@ -12,7 +12,7 @@ jQuery是最流行的JavaScript工具库。据[统计](http://w3techs.com/techno
 
 jQuery如此受欢迎，以至于有被滥用的趋势。许多开发者不管什么样的项目，都一股脑使用jQuery。但是，jQuery本质只是一个中间层，提供一套统一易用的DOM操作接口，消除浏览器之间的差异。多了这一层中间层，操作的性能和效率多多少少会打一些折扣。
 
-2006年，jQuery诞生的时候，主要是为了解决IE6与标准的不兼容问题。如今的[情况](http://en.wikipedia.org/wiki/Usage_share_of_web_browsers)已经发生了很大的变化。IE的市场份额不断下降，以ECMAScript为基础的JavaScript标准语法，正得到越来越广泛的支持，不同浏览器对标准的支持越来越好、越来越趋同。开发者直接使用JavScript标准语法，就能同时在各大浏览器运行，不再需要通过jQuery获取兼容性。
+2006年，jQuery诞生的时候，主要是为了解决IE6与标准的不兼容问题。如今的[情况](http://en.wikipedia.org/wiki/Usage_share_of_web_browsers)已经发生了很大的变化。IE的市场份额不断下降，以ECMAScript为基础的JavaScript标准语法，正得到越来越广泛的支持，不同浏览器对标准的支持越来越好、越来越趋同。开发者直接使用JavaScript标准语法，就能同时在各大浏览器运行，不再需要通过jQuery获取兼容性。
 
 另一方面，jQuery臃肿的[体积](http://mathiasbynens.be/demo/jquery-size)也让人头痛不已。jQuery 2.0的原始大小为235KB，优化后为81KB；如果是支持IE6、7、8的jQuery 1.8.3，原始大小为261KB，优化后为91KB。即使有CDN，浏览器加载这样大小的脚本，也会产生不小的开销。
 

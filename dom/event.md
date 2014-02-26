@@ -28,25 +28,29 @@ Element对象有事件属性，可以定义回调函数。
 
 {% highlight javascript %}
 
-document.querySelector('div').onclick = function(){
-	console.log('触发事件')
+div.onclick = function(event){
+	console.log('触发事件');
 };
 
 {% endhighlight %}
 
-**（3）addEventListener方法**
+**（3）addEventListener方法，removeEventListener方法**
 
 通过Element对象的addEventListener方法，也可以定义事件的回调函数。
 
 {% highlight javascript %}
 
-document.querySelector('div').addEventListener('click',function(){
-			console.log('fire/trigger addEventListener')
-}, false);
+button.addEventListener('click', 
+		function(){console.log('Hello world');}, 
+		false);
 
 {% endhighlight %}
 
-addEventListener方法有三个参数，第一个是事件名称，第二个是回调函数，第三个是一个布尔值，表示回调函数是否在捕获阶段（capture）触发，如果设为false，则回调函数只在冒泡阶段被触发。如果不提供第三个参数，则默认为false。
+addEventListener方法有三个参数，依次为
+
+- 事件名称，上面代码中为click。
+- 回调函数，上面代码中为在控制台显示“Hello world”。
+- 布尔值，表示回调函数是否在捕获阶段（capture）触发，默认为false，表示回调函数只在冒泡阶段被触发。
 
 IE 8及以下版本不支持该方法。
 
@@ -504,9 +508,18 @@ function onTransitionEnd() {
 
 目前，该事件需要添加浏览器前缀。另外，它与其他CSS事件一样，也存在向上传播的冒泡阶段。
 
-（2）animationiteration事件
+**（2）animationstart事件，animationend事件，animationiteration事件**
 
-当CSS动画结束一次循环，就会触发该事件。
+animation动画开始时，触发animationstart事件；结束时，触发animationend事件。
+
+{% highlight javascript %}
+
+var anim = document.getElementById("anim");
+anim.addEventListener("animationstart", AnimationListener, false);
+
+{% endhighlight %}
+
+当CSS动画开始新一轮循环时，就会触发animationiteration事件。也就是说，除了CSS动画的第一轮播放，其他每轮的开始时，都会触发该事件。
 
 {% highlight javascript %}
 
@@ -516,9 +529,37 @@ div.addEventListener('animationiteration', function() {
 
 {% endhighlight %}
 
-（3）animationEnd事件
+这三个事件，除了Firefox浏览器不需要前缀，Chrome、Opera和IE都需要浏览器前缀，且大小写不一致。
 
-animation动画结束时触发该事件。
+- animationstart：写为animationstart、webkitAnimationStart、oanimationstart和MSAnimationStart。
+- animationiteration：写为animationiteration、webkitAnimationIteration、oanimationiteration和MSAnimationIteration。
+- animationend：写为animationend、webkitAnimationEnd、oanimationend和MSAnimationEnd。
+
+下面是一个解决浏览器前缀的函数。
+
+{% highlight javascript %}
+
+var pfx = ["webkit", "moz", "MS", "o", ""];
+
+function PrefixedEvent(element, type, callback) {
+	for (var p = 0; p < pfx.length; p++) {
+		if (!pfx[p]) type = type.toLowerCase();
+		element.addEventListener(pfx[p]+type, callback, false);
+	}
+}
+
+// 用法
+
+PrefixedEvent(anim, "AnimationStart", AnimationListener);
+PrefixedEvent(anim, "AnimationIteration", AnimationListener);
+PrefixedEvent(anim, "AnimationEnd", AnimationListener);
+
+{% endhighlight %}
+
+这三个事件的回调函数，接受一个事件对象作为参数。该事件对象除了标准属性以外，还有两个与动画相关的属性。
+
+- animationName：动画的名称。
+- elapsedTime：从动画开始播放，到事件发生时所持续的秒数。
 
 ## event对象
 
@@ -625,3 +666,4 @@ divElement.dispatchEvent(simulateDivClick);
 
 - Wilson Page, [An Introduction To DOM Events](http://coding.smashingmagazine.com/2013/11/12/an-introduction-to-dom-events/)
 - Mozilla Developer Network, [Using Firefox 1.5 caching](https://developer.mozilla.org/en-US/docs/Using_Firefox_1.5_caching)
+- Craig Buckler, [How to Capture CSS3 Animation Events in JavaScript](http://www.sitepoint.com/css3-animation-javascript-event-handlers/)
