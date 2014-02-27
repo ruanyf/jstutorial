@@ -3,7 +3,7 @@ title: Ajax
 layout: page
 category: bom
 date: 2013-02-16
-modifiedOn: 2013-09-04
+modifiedOn: 2014-02-27
 ---
 
 ## XMLHttpRequest对象
@@ -306,6 +306,85 @@ xhr.send();
 
 如果将这个属性设为“json”，支持JSON的浏览器（Firefox>9，chrome>30），就会自动对返回数据调用JSON.parse() 方法。也就是说，你从xhr.response属性（注意，不是xhr.responseText属性）得到的不是文本，而是一个JSON对象。
 
+## 文件上传
+
+通常，我们使用file控件实现文件上传。
+
+{% highlight html %}
+
+<form id="file-form" action="handler.php" method="POST">
+  <input type="file" id="file-select" name="photos[]" multiple/>
+  <button type="submit" id="upload-button">上传</button>
+</form>
+
+{% endhighlight %}
+
+上面HTML代码中，file控件的multiple属性，指定可以一次选择多个文件；如果没有这个属性，则一次只能选择一个文件。
+
+file对象的files属性，返回一个FileList对象，包含了用户选中的文件。
+
+{% highlight javascript %}
+
+var fileSelect = document.getElementById('file-select');
+var files = fileSelect.files;
+
+{% endhighlight %}
+
+然后，新建一个FormData对象的实例，用来模拟发送到服务器的表单数据，把选中的文件添加到这个对象上面。
+
+{% highlight javascript %}
+
+var formData = new FormData();
+
+for (var i = 0; i < files.length; i++) {
+  var file = files[i];
+
+  if (!file.type.match('image.*')) {
+    continue;
+  }
+
+  formData.append('photos[]', file, file.name);
+}
+
+{% endhighlight %}
+
+上面代码中的FormData对象的append方法，除了可以添加文件，还可以添加二进制对象（Blob）或者字符串。
+
+{% highlight javascript %}
+
+// Files
+formData.append(name, file, filename);
+
+// Blobs
+formData.append(name, blob, filename);
+
+// Strings
+formData.append(name, value);    
+
+{% endhighlight %}
+
+append方法的第一个参数是表单的控件名，第二个参数是实际的值，第三个参数是可选的，通常是文件名。
+
+最后，使用Ajax方法向服务器上传文件。
+
+{% highlight javascript %}
+
+var xhr = new XMLHttpRequest();
+
+xhr.open('POST', 'handler.php', true);
+
+xhr.onload = function () {
+  if (xhr.status !== 200) {
+    alert('An error occurred!');
+  }
+};
+
+xhr.send(formData);
+
+{% endhighlight %}
+
+目前，各大浏览器（包括IE 10）都支持Ajax上传文件。
+
 ## JSONP
 
 越来越多的服务器返回JSON格式的数据，但是从数据性质上来看，它属于字符串。这时就需要用JSON.parse方法将文本数据转为JSON对象。为了方便起见，许多服务器也支持指定回调函数的名称，直接将JSON数据放入回调函数的参数，如此一来就省略将字符串解析为JSON对象的步骤。这种方法就被称为JSONP。
@@ -397,3 +476,4 @@ CORS机制与JSONP模式的使用目的相同，而且更强大。JSONP只支持
 - MDN, [Using XMLHttpRequest](https://developer.mozilla.org/en-US/docs/DOM/XMLHttpRequest/Using_XMLHttpRequest)
 - Mathias Bynens, [Loading JSON-formatted data with Ajax and xhr.responseType='json'](http://mathiasbynens.be/notes/xhr-responsetype-json)
 - Eric Bidelman, [New Tricks in XMLHttpRequest2](http://www.html5rocks.com/en/tutorials/file/xhr2/)
+- Matt West, [Uploading Files with AJAX](http://blog.teamtreehouse.com/uploading-files-ajax)
