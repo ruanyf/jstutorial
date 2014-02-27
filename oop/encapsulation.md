@@ -160,7 +160,7 @@ RegExp.prototype.constructor === RegExp
 
 上面代码的Foo和RegExp都是构造函数，它们的prototype.constructor属性默认指回Foo和RegExp。
 
-从实例对象的contructor属性，可以返回它的构造函数。
+从实例对象的constructor属性，可以返回它的构造函数。
 
 {% highlight javascript %}
 
