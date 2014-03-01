@@ -8,13 +8,13 @@ modifiedOn: 2013-12-04
 
 ## 简介
 
-### 什么是Node.js
+Node.js是JavaScript在服务器端的一个运行环境，也是一个工具库，用来与服务器端其他软件互动。它的JavaScript解释器，采用了Google公司的V8引擎。
 
-Node.js是JavaScript在服务器端的一个运行环境，也是一个工具库，用来与服务器端其他软件互动。
+### 安装与更新
 
-**（1）安装与更新**
+访问官方网站[nodejs.org](http://nodejs.org)了解安装细节。
 
-访问官方网站[nodejs.org](http://nodejs.org)了解安装细节。安装完成以后，运行下面的命令，查看是否能正常运行。
+安装完成以后，运行下面的命令，查看是否能正常运行。
 
 {% highlight bash %}
 
@@ -31,13 +31,101 @@ sudo n stable
 
 {% endhighlight %}
 
-**（2）运行脚本程序**
+上面代码通过n模块，将node.js更新为最新发布的稳定版。
 
-运行node.js程序，就是使用node命令读取JavaScript脚本。
+### 版本管理工具nvm
+
+如果想在同一台机器，同时运行多个版本的node.js，就需要用到版本管理工具nvm。
+
+首先，需要安装nvm。
 
 {% highlight bash %}
 
-node file.js
+git clone https://github.com/creationix/nvm.git ~/.nvm
+
+{% endhighlight %}
+
+然后使用下面的命令，激活nvm。
+
+{% highlight bash %}
+
+source ~/.nvm/nvm.sh
+
+{% endhighlight %}
+
+上面这条命令，每次使用nvm前都要输入，建议将其加入~/.bashrc文件（假定你所使用的shell是bash）。
+
+激活nvm之后，就可以安装指定版本的node.js。
+
+{% highlight bash %}
+
+nvm install 0.10
+
+{% endhighlight %}
+
+上面这条命令，安装最新的v0.10.x版本的node.js。
+
+安装后，就可以指定使用该版本。
+
+{% highlight bash %}
+
+nvm use 0.10
+
+{% endhighlight %}
+
+或者，直接进入该版本的REPL环境。
+
+{% highlight bash %}
+
+nvm run 0.10
+
+{% endhighlight %}
+
+如果在项目根目录下新建一个.nvmrc文件，将版本号写入其中，则nvm use命令就不再需要附加版本号。
+
+{% highlight bash %}
+
+nvm use
+
+{% endhighlight %}
+
+ls命令用于查看本地所安装的版本。
+
+{% highlight bash %}
+
+nvm ls
+
+{% endhighlight %}
+
+ls-remote命令用于查看服务器上所有可供安装的版本。
+
+{% highlight bash %}
+
+nvm ls-remote
+
+{% endhighlight %}
+
+如果要退出已经激活的nvm，使用deactivate命令。
+
+{% highlight bash %}
+
+nvm deactivate
+
+{% endhighlight %}
+
+### 基本用法
+
+安装完成后，运行node.js程序，就是使用node命令读取JavaScript脚本。
+
+假定当前目录有一个demo.js的脚本文件，运行时这样写。
+
+{% highlight bash %}
+
+node demo
+
+// 或者
+
+node demo.js
 
 {% endhighlight %}
 
@@ -1040,68 +1128,55 @@ if (cluster.isMaster){
 
 {% endhighlight %}
 
-从上面代码可以看到，package.json文件内部就是一个json对象，该对象的每一个成员就是当前项目的一项设置。比如上面代码的name就是项目名称，version是项目版本（遵守“主要版本.次要版本.补丁号”的格式）。
+上面代码说明，package.json文件内部就是一个json对象，该对象的每一个成员就是当前项目的一项设置。比如name就是项目名称，version是版本（遵守“大版本.次要版本.小版本”的格式）。
 
-下面是一个更完成的package.json文件。
+下面是一个更完整的package.json文件。
 
 {% highlight javascript %}
 
 {
-	"name": "...",
-	"version": "0.0.0",
-	"author": "...",
-	"description": "...",
-	"keywords":["...","..."],
+	"name": "Hello World",
+	"version": "0.0.1",
+	"author": "张三",
+	"description": "第一个node.js程序",
+	"keywords":["node.js","javascript"],
 	"repository": {
 		"type": "git",
-		"url": "https://..."
+		"url": "https://path/to/url"
 	},
 	"license":"MIT",
 	"engines": {"node": "0.10.x"},
-	"bugs":{"url":"http://...","email":"..."},
-	"contributors":[{"name":"...","email":"..."}],
+	"bugs":{"url":"http://path/to/bug","email":"bug@example.com"},
+	"contributors":[{"name":"李四","email":"lisi@example.com"}],
+	"dependencies": {
+		"express": "latest",
+		"mongoose": "~3.8.3",
+		"handlebars-runtime": "~1.0.12",
+		"express3-handlebars": "~0.5.0",
+		"MD5": "~1.2.0"
+	},
+	"devDependencies": {
+		"bower": "~1.2.8",
+		"grunt": "~0.4.1",
+		"grunt-contrib-concat": "~0.3.0",
+		"grunt-contrib-jshint": "~0.7.2",
+		"grunt-contrib-uglify": "~0.2.7",
+		"grunt-contrib-clean": "~0.5.0",
+		"browserify": "2.36.1",
+		"grunt-browserify": "~1.3.0",
+	}
 }
 
 {% endhighlight %}
 
-上面代码各个成员的含义都很明显，比较需要注意的是engines这一项，它指明了node.js运行所需要的版本。
+上面代码中，前面部分各个成员的含义都很明显，需要注意的是engines这一项，它指明了该项目所需要的node.js版本。后面的dependencies和devDependencies两项，分别指定了项目运行所依赖的模块、项目开发所需要的模块。
 
-除了上面几项，还有两个package.json的成员需要单独讲解。
+dependencies和devDependencies这两项，都指向一个对象。该对象的各个成员，分别由模块名和对应的版本要求组成。对应的版本可以加上各种限定，主要有以下几种：
 
-一个是dependencies属性，它指定项目运行所需要的模块。
-
-{% highlight javascript %}
-
-"dependencies": {
-	"express": "latest",
-	"mongoose": "~3.8.3",
-	"handlebars-runtime": "~1.0.12",
-	"express3-handlebars": "~0.5.0",
-	"MD5": "~1.2.0"
-},
-
-{% endhighlight %}
-
-上面代码指定，项目运行需要的五个模块及其版本，其中express需要最新版。
-
-另一个是devDependencies属性，它指定项目开发所需要的模块。
-
-{% highlight javascript %}
-
-"devDependencies": {
-    "bower": "~1.2.8",
-    "grunt": "~0.4.1",
-    "grunt-contrib-concat": "~0.3.0",
-    "grunt-contrib-jshint": "~0.7.2",
-    "grunt-contrib-uglify": "~0.2.7",
-    "grunt-contrib-clean": "~0.5.0",
-    "browserify": "2.36.1",
-    "grunt-browserify": "~1.3.0",
-}
-
-{% endhighlight %}
-
-上面代码指定项目开发时需要用到的模块，大部分是grunt模块。
+- 指定版本：比如1.2.2，遵循“大版本.次要版本.小版本”的格式规定，安装时只安装指定版本。
+- 波浪号+指定版本：比如~1.2.2，表示安装1.2.x的最新版本（不低于1.2.2），但是不安装1.3.x，也就是说安装时不改变大版本号和次要版本号。
+- 插入号+指定版本：比如&#7101.2.2，表示安装1.x.x的最新版本（不低于1.2.2），但是不安装2.x.x，也就是说安装时不改变大版本号。需要注意的是，如果大版本号为0，则插入号的行为与波浪号相同，这是因为此时处于开发阶段，即使是次要版本号变动，也可能带来程序的不兼容。
+- latest：安装最新版本。
 
 package.json文件可以手工编写，也可以使用npm init命令自动生成。
 
@@ -1504,3 +1579,4 @@ npm publish
 - Alon Salant, [Export This: Interface Design Patterns for Node.js Modules](http://bites.goodeggs.com/posts/export-this/)
 - Node.js Manual & Documentation, [Modules](http://nodejs.org/api/modules.html)
 - Brent Ertz, [Creating and publishing a node.js module](http://quickleft.com/blog/creating-and-publishing-a-node-js-module)
+- Fred K Schott, ["npm install --save" No Longer Using Tildes](http://fredkschott.com/post/2014/02/npm-no-longer-defaults-to-tildes/)
