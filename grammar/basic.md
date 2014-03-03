@@ -242,38 +242,56 @@ JavaScript允许对区块加上标签（label）。
 
 {% highlight javascript %}
 
-function test(printTwo) {
-    printing: {
-        console.log("One");
-        if (!printTwo) break printing;
-        console.log("Two");
-    }
-    console.log("Three");
+test:{
+	console.log("进入区块");
+	break test; 
+	console.log("该行不会执行");
 }
-
-test(false)
-// One
-// Three
+// 进入区块
 
 {% endhighlight %}
 
-上面代码有一个标签为printing的区块，当不满足条件时，可以使用break命令跳出该区块。所以，运行结果为One和Three，没有输出Two。
+上面代码为区块起名为test（注意，test不用加引号），然后半途跳出区块。
 
 ### 条件语句
 
+JavaScript提供if结构和switch结构，完成条件判断。
+
 **（1）if 结构**
 
-if结构先判断一个表达式的布尔值，如果为true，则执行后面代码块中的代码，如果为false，则跳过代码块中的代码。
+if结构先判断一个表达式的布尔值，然后根据布尔值的真伪，执行不同的语句。
+
+{% highlight javascript %}
+
+if (expression) 
+  statement
+
+{% endhighlight %}
+
+上面是if结构的基本形式。需要注意的是，expression（表达式）必须放在圆括号中，表示对表达式求值。如果结果为true，就执行紧跟在后面的statement（语句）；如果结果为false，则跳过statement。
+
+{% highlight javascript %}
+
+if (m === 3) 
+  m += 1;	
+
+{% endhighlight %}
+
+上面代码表示，只有在m等于3时，才会将其值加上1。
+
+这种写法要求statement只能有一个语句。如果想将多个语句放在statement之中，必须在if的条件判断之后，加上大括号。
 
 {% highlight javascript %}
 
 if (m === 3) {
-     // then
+  m += 1;	
 }
 
 {% endhighlight %}
 
-上面代码表示，代码块只有在m等于3时，才会得到执行。
+建议总是在if语句中使用大括号，因为这样方便插入语句。
+
+**（2）if...else结构**
 
 if代码块后面，还可以跟一个else代码块，表示括号中的表示式为false时，所要执行的代码。
 
@@ -305,7 +323,49 @@ if (m === 0) {
 
 {% endhighlight %}
 
-**（2）switch结构**
+else代码块总是跟随离自己最近的那个if语句。
+
+{% highlight javascript %}
+
+var m = 1;
+var n = 2;
+
+if (m !== 1) 
+if (n === 2) console.log('hello');	
+else console.log('world');
+
+{% endhighlight %}
+
+上面代码不会有任何输出，else代码块也不会得到执行，因为它跟着的是最近的那个if语句，相当于下面这样。
+
+{% highlight javascript %}
+
+if (m !== 1) {
+	if (n === 2) {
+		console.log('hello');	
+	} else {
+		console.log('world');
+	}
+}
+
+{% endhighlight %}
+
+如果想让else代码块跟随最上面的那个if语句，就要改变大括号的位置。
+
+{% highlight javascript %}
+
+if (m !== 1) {
+	if (n === 2) {
+		console.log('hello');	
+	} 
+} else {
+		console.log('world');
+} 
+// world
+
+{% endhighlight %}
+
+**（3）switch结构**
 
 多个if...else连在一起使用的时候，可以转为使用更方便的switch结构。
 
@@ -341,6 +401,8 @@ switch(1 + 3) {
 {% endhighlight %}
 
 上面代码的default部分，是永远不会执行到的。
+
+需要注意的是，switch语句后面的表达式与case语句后面的表示式，在比较运行结果时，采用的是严格相等运算符（===），而不是相等运算符（==），这意味着比较时不会发生类型转换。
 
 switch结构不利于代码重用，往往可以用对象形式重写。
 

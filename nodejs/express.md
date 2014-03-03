@@ -112,6 +112,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 {% endhighlight %}
 
+上面代码中的set方法用于设定内部变量，use方法用于调用express的中间件。
+
 最后，调用实例方法listen，让其监听事先设定的端口（3000）。
 
 {% highlight javascript %}
