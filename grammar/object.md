@@ -338,6 +338,25 @@ if ('x' in window) { return 1; }
 
 上面三种写法之中，如果x不存在，第一种写法会报错；如果x的值对应布尔值false（比如x等于空字符串），第二种写法无法得到正确结果；只有第三种写法，才是判断变量x是否存在的正确写法。
 
+### for...in循环
+
+for...in循环用来遍历一个对象的全部属性。
+
+{% highlight javascript %}
+
+var o = {a:1, b:2, c:3};
+
+for (i in o){
+	console.log(o[i]);
+}
+// 1
+// 2
+// 3
+
+{% endhighlight %}
+
+需要注意的是，for...in循环只能遍历对象本身的属性（更准确的说，是对象本身可enumberable的属性），而不能遍历继承自原型对象（prototype）的属性，详见《面向对象编程》一章。
+
 ## 类似数组的对象
 
 在JavaScript中，有些对象被称为“类似数组的对象”（array-like object）。意思是，它们看上去很像数组，可以使用length属性，但是它们并不是数组，所以无法使用一些数组的方法。

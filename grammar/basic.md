@@ -432,6 +432,25 @@ While语句包括一个循环条件，只要该条件为真，就不断循环。
 
 {% highlight javascript %}
 
+while (expression)	
+statement
+
+{% endhighlight %}
+
+while语句的循环条件是一个表达式（express），必须放在圆括号中。语句（statement）部分默认只能写一条语句，如果需要包括多条语句，必须添加大括号。
+
+{% highlight javascript %}
+
+while (expression){	
+	statement
+}
+
+{% endhighlight %}
+
+下面是while语句的一个例子。
+
+{% highlight javascript %}
+
 var i = 0;
 
 while (i<100){
@@ -445,21 +464,28 @@ while (i<100){
 
 **（2）for循环**
 
-for语句分成三步：
-
-- 确定初始值;
-- 检查循环条件，只要为真就进行后续操作;
-- 后续操作完成，返回上一步，检查循环条件。
-
-它的格式如下：
+for语句是循环命令的另一种形式。
 
 {% highlight javascript %}
 
-for(初值; 循环条件; 下一步)
+for(initialize; test; increment)
+statement
+
+// 或者
+
+for(initialize; test; increment){
+	statement
+}
 
 {% endhighlight %}
 
-用法：
+它分成三步：
+
+- 初始化（initialize）：确定循环的初始值，只在循环开始时执行一次;
+- 测试（test）：检查循环条件，只要为真就进行后续操作;
+- 递增（increment）：完成后续操作，然后返回上一步，再一次检查循环条件。
+
+下面是一个循环打印数组每个元素的例子。
 
 {% highlight javascript %}
 
@@ -482,15 +508,33 @@ while (i < arr.length) {
 
 {% endhighlight %}
 
+for语句表达式的三个部分（initialize，test，increment），可以省略任何一个，也可以全部省略。
+
+{% highlight javascript %}
+
+for (;;){
+	console.log('Hello World');
+}
+
+{% endhighlight %}
+
+上面代码省略了for语句表达式的三个部分，结果就导致了一个无限循环。
+
 **（3）do...while循环**
 
 do...while循环与while循环类似，唯一的区别就是先运行一次循环体，然后判断循环条件。
 
 {% highlight javascript %}
 
-do {
-	// ...
-} while(condition);
+do 
+statement
+while(expression);
+
+// 或者
+
+do { 
+	statement
+} while(expression);
 
 {% endhighlight %}
 
