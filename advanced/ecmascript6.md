@@ -3,7 +3,7 @@ title: ECMAScript 6 介绍
 layout: page
 category: advanced
 date: 2013-05-09
-modifiedOn: 2013-12-15
+modifiedOn: 2014-02-27
 ---
 
 ## 概述
@@ -373,8 +373,6 @@ RangeIterator.prototype.next = function(){
 
 如果使用下一节要讲到的generator函数，__iterator__方法的代码可以大大简化。
 
-如果使用下一部分要讲到的yield语句，上面函数
-
 {% highlight javascript %}
 
 Range.prototype.__iterator__ = function(){
@@ -400,17 +398,15 @@ for (var i in range){
 
 ### generator 函数
 
-上一部分的遍历器，用来依次取出集合中的每一个成员，但是某些情况下，我们需要的是一个内部状态的遍历器。也就是说，每调用一次遍历器，对象的内部状态发生一次改变（可以理解成发生某些事件）。ECMAScript 6 引入了generator函数，作用就是返回一个内部状态的遍历器，主要特征是内部使用了yield语句。
+上一部分的遍历器，用来依次取出集合中的每一个成员，但是某些情况下，我们需要的是一个内部状态的遍历器。也就是说，每调用一次遍历器，对象的内部状态发生一次改变（可以理解成发生某些事件）。ECMAScript 6 引入了generator函数，作用就是返回一个内部状态的遍历器，主要特征是函数内部使用了yield语句。
 
 当调用generator函数的时候，该函数并不执行，而是返回一个遍历器（可以理解成暂停执行）。以后，每次调用这个遍历器的next方法，就从函数体的头部或者上一次停下来的地方开始执行（可以理解成恢复执行），直到遇到下一个yield语句为止，并返回该yield语句的值。如果遇到函数执行完毕或者return语句，就会抛出一个StopIteration异常。
 
-目前，generator有两种形式。一种是Mozilla在Firefox浏览器中已经部署的形式，另一种是ECMAScript 6草案中的形式。
+目前，generator有两种形式。一种是ECMAScript 6草案中的形式，另一种是Mozilla在Firefox浏览器中已经部署的形式，。
 
 **（1）ECMAScript 6草案的generator**
 
-ECMAScript 6草案定义的generator函数，需要在function关键字后面，加一个星号。然后，函数内部使用yield关键字，定义遍历器的每个成员。
-
-yield有点类似于return关键字，都能返回一个值。区别在于每次遇到yield，函数返回紧跟在yield后面的那个表达式的值，然后暂停执行。
+ECMAScript 6草案定义的generator函数，需要在function关键字后面，加一个星号。然后，函数内部使用yield语句，定义遍历器的每个成员。
 
 {% highlight javascript %}
 
@@ -420,6 +416,8 @@ function* helloWorldGenerator() {
 }
 
 {% endhighlight %}
+
+yield有点类似于return语句，都能返回一个值。区别在于每次遇到yield，函数返回紧跟在yield后面的那个表达式的值，然后暂停执行，下一次从该位置继续向后执行，而return语句不具备位置记忆的功能。
 
 上面代码定义了一个generator函数helloWorldGenerator，它的遍历器有两个成员“hello”和“world”。调用这个函数，就会得到遍历器。
 
@@ -441,7 +439,7 @@ console.log(hw.next()); // { value: undefined, done: true }
 
 上面代码每次调用遍历器的next方法，就会返回一个对象。它的value属性就是遍历器当前成员的值（即当前yield语句的值），done属性表示遍历是否结束。直到遍历完最后一个成员，done属性才会从false变为true，这时value属性为undefined，表示此处没有遍历器的成员。
 
-遍历器的本质，其实是使用yield语句暂停执行它后面的操作，当调用next方法时，返回yield语句的值，然后再继续往下执行，直到遇到下一个yield语句。如果直到运行结束，也没有发现其他yield语句，则返回的对象的value属性为undefined，done变为true。某种程度上，yield语句很像return语句，只不过记得返回时位置，下次从该位置继续执行。
+遍历器的本质，其实是使用yield语句暂停执行它后面的操作，当调用next方法时，再继续往下执行，直到遇到下一个yield语句，并返回该语句的值，如果直到运行结束。
 
 yield语句的返回值，就是它后面那个表达式的值。如果next方法带一个参数，该参数就会被当作上一个yield语句的返回值。
 
@@ -464,9 +462,42 @@ g.next(true) // { value: 0, done: false }
 
 上面代码先定义了一个可以无限运行的generator函数f，如果next方法没有参数，正常情况下返回一个递增的i；如果next方法有参数，则上一次yield语句的返回值将会等于该参数。如果该参数为true，则会重置i的值。
 
-generator函数的这种暂停执行的效果，意味着可以把异步操作写在yield语句里面，等到调用next方法时再往后执行。这实际上等同于不需要写回调函数了，因为异步操作的后续操作可以放在yield语句下面，反正要等到next方法时再执行。所以，generator函数的一个重要实际意义就是用来处理异步操作，改写回调函数。
+generator函数的这种暂停执行的效果，意味着可以把异步操作写在yield语句里面，等到调用next方法时再往后执行。这实际上等同于不需要写回调函数了，因为异步操作的后续操作可以放在yield语句下面，反正要等到调用next方法时再执行。所以，generator函数的一个重要实际意义就是用来处理异步操作，改写回调函数。
 
-另外一种遍历器循环的方法是使用for...of语句。
+{% highlight javascript %}
+
+function* loadUI() { 
+	showLoadingScreen(); 
+	yield loadUIDataAsynchronously(); 
+	hideLoadingScreen(); 
+} 
+
+{% endhighlight %}
+
+上面代码表示，第一次调用loadUI函数时，该函数不会执行，仅返回一个遍历器。下一次对该遍历器调用next方法，则会显示登录窗口，并且异步加载数据。再一次使用next方法，则会隐藏登录窗口。可以看到，这种写法的好处是所有登录窗口的逻辑，都被封装在一个函数，按部就班非常清晰。
+
+下面是一个利用generator函数，实现斐波那契数列的例子。
+
+{% highlight javascript %}
+
+function* fibonacci() {
+	var previous = 0, current = 1; 
+	while (true) { 
+		var temp = previous; 
+		previous = current; 
+		current = temp + current; 
+		yield current; 
+	} 
+} 
+
+for (var i of fibonacci()) { 
+	console.log(i); 
+} 
+// 1, 2, 3, 5, 8, 13, ..., 
+
+{% endhighlight %}
+
+下面是利用for...of语句，对斐波那契数列的另一种实现。
 
 {% highlight javascript %}
 
@@ -477,12 +508,6 @@ function* fibonacci() {
         yield curr;
     }
 }
-
-{% endhighlight %}
-
-上面代码定义了斐波那契数列，然后使用for..of语句完成循环。
-
-{% highlight javascript %}
 
 for (n of fibonacci()) {
     if (n > 1000) break;
@@ -1147,3 +1172,4 @@ ECMAScript 7可能包括的功能有：
 - Mozilla Developer Network, [Iterators and generators](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Iterators_and_Generators)
 - Steven Sanderson, [Experiments with Koa and JavaScript Generators](http://blog.stevensanderson.com/2013/12/21/experiments-with-koa-and-javascript-generators/)
 - Matt Baker, [Replacing callbacks with ES6 Generators](http://flippinawesome.org/2014/02/10/replacing-callbacks-with-es6-generators/)
+- Domenic Denicola, [ES6: The Awesome Parts](http://www.slideshare.net/domenicdenicola/es6-the-awesome-parts)

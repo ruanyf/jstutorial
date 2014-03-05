@@ -12,6 +12,18 @@ modifiedOn: 2014-02-09
 
 （……MVC介绍。）
 
+**（1）Model**
+
+Model表示数据层，也就是程序需要的数据源，通常使用JSON格式表示。
+
+**（2）View**
+
+View表示表现层，也就是用户界面，对于网页来说，就是用户看到的网页HTML代码。
+
+**（3）Controller**
+
+Controller表示控制层，用来对原始数据（Model）进行加工，传送到View。
+
 由于网页编程不同于客户端编程，在MVC的基础上，JavaScript社区产生了各种变体框架MVP（Model-View-Presenter）、MVVM（Model-View-ViewModel）等等，有人就把所有这一类框架的各种模式统称为MV*。
 
 ## Backbone.View

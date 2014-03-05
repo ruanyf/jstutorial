@@ -242,38 +242,56 @@ JavaScript允许对区块加上标签（label）。
 
 {% highlight javascript %}
 
-function test(printTwo) {
-    printing: {
-        console.log("One");
-        if (!printTwo) break printing;
-        console.log("Two");
-    }
-    console.log("Three");
+test:{
+	console.log("进入区块");
+	break test; 
+	console.log("该行不会执行");
 }
-
-test(false)
-// One
-// Three
+// 进入区块
 
 {% endhighlight %}
 
-上面代码有一个标签为printing的区块，当不满足条件时，可以使用break命令跳出该区块。所以，运行结果为One和Three，没有输出Two。
+上面代码为区块起名为test（注意，test不用加引号），然后半途跳出区块。
 
 ### 条件语句
 
+JavaScript提供if结构和switch结构，完成条件判断。
+
 **（1）if 结构**
 
-if结构先判断一个表达式的布尔值，如果为true，则执行后面代码块中的代码，如果为false，则跳过代码块中的代码。
+if结构先判断一个表达式的布尔值，然后根据布尔值的真伪，执行不同的语句。
+
+{% highlight javascript %}
+
+if (expression) 
+  statement
+
+{% endhighlight %}
+
+上面是if结构的基本形式。需要注意的是，expression（表达式）必须放在圆括号中，表示对表达式求值。如果结果为true，就执行紧跟在后面的statement（语句）；如果结果为false，则跳过statement。
+
+{% highlight javascript %}
+
+if (m === 3) 
+  m += 1;	
+
+{% endhighlight %}
+
+上面代码表示，只有在m等于3时，才会将其值加上1。
+
+这种写法要求statement只能有一个语句。如果想将多个语句放在statement之中，必须在if的条件判断之后，加上大括号。
 
 {% highlight javascript %}
 
 if (m === 3) {
-     // then
+  m += 1;	
 }
 
 {% endhighlight %}
 
-上面代码表示，代码块只有在m等于3时，才会得到执行。
+建议总是在if语句中使用大括号，因为这样方便插入语句。
+
+**（2）if...else结构**
 
 if代码块后面，还可以跟一个else代码块，表示括号中的表示式为false时，所要执行的代码。
 
@@ -305,7 +323,49 @@ if (m === 0) {
 
 {% endhighlight %}
 
-**（2）switch结构**
+else代码块总是跟随离自己最近的那个if语句。
+
+{% highlight javascript %}
+
+var m = 1;
+var n = 2;
+
+if (m !== 1) 
+if (n === 2) console.log('hello');	
+else console.log('world');
+
+{% endhighlight %}
+
+上面代码不会有任何输出，else代码块也不会得到执行，因为它跟着的是最近的那个if语句，相当于下面这样。
+
+{% highlight javascript %}
+
+if (m !== 1) {
+	if (n === 2) {
+		console.log('hello');	
+	} else {
+		console.log('world');
+	}
+}
+
+{% endhighlight %}
+
+如果想让else代码块跟随最上面的那个if语句，就要改变大括号的位置。
+
+{% highlight javascript %}
+
+if (m !== 1) {
+	if (n === 2) {
+		console.log('hello');	
+	} 
+} else {
+		console.log('world');
+} 
+// world
+
+{% endhighlight %}
+
+**（3）switch结构**
 
 多个if...else连在一起使用的时候，可以转为使用更方便的switch结构。
 
@@ -342,6 +402,8 @@ switch(1 + 3) {
 
 上面代码的default部分，是永远不会执行到的。
 
+需要注意的是，switch语句后面的表达式与case语句后面的表示式，在比较运行结果时，采用的是严格相等运算符（===），而不是相等运算符（==），这意味着比较时不会发生类型转换。
+
 switch结构不利于代码重用，往往可以用对象形式重写。
 
 {% highlight javascript %}
@@ -370,6 +432,25 @@ While语句包括一个循环条件，只要该条件为真，就不断循环。
 
 {% highlight javascript %}
 
+while (expression)	
+statement
+
+{% endhighlight %}
+
+while语句的循环条件是一个表达式（express），必须放在圆括号中。语句（statement）部分默认只能写一条语句，如果需要包括多条语句，必须添加大括号。
+
+{% highlight javascript %}
+
+while (expression){	
+	statement
+}
+
+{% endhighlight %}
+
+下面是while语句的一个例子。
+
+{% highlight javascript %}
+
 var i = 0;
 
 while (i<100){
@@ -383,21 +464,28 @@ while (i<100){
 
 **（2）for循环**
 
-for语句分成三步：
-
-- 确定初始值;
-- 检查循环条件，只要为真就进行后续操作;
-- 后续操作完成，返回上一步，检查循环条件。
-
-它的格式如下：
+for语句是循环命令的另一种形式。
 
 {% highlight javascript %}
 
-for(初值; 循环条件; 下一步)
+for(initialize; test; increment)
+statement
+
+// 或者
+
+for(initialize; test; increment){
+	statement
+}
 
 {% endhighlight %}
 
-用法：
+它分成三步：
+
+- 初始化（initialize）：确定循环的初始值，只在循环开始时执行一次;
+- 测试（test）：检查循环条件，只要为真就进行后续操作;
+- 递增（increment）：完成后续操作，然后返回上一步，再一次检查循环条件。
+
+下面是一个循环打印数组每个元素的例子。
 
 {% highlight javascript %}
 
@@ -420,15 +508,33 @@ while (i < arr.length) {
 
 {% endhighlight %}
 
+for语句表达式的三个部分（initialize，test，increment），可以省略任何一个，也可以全部省略。
+
+{% highlight javascript %}
+
+for (;;){
+	console.log('Hello World');
+}
+
+{% endhighlight %}
+
+上面代码省略了for语句表达式的三个部分，结果就导致了一个无限循环。
+
 **（3）do...while循环**
 
 do...while循环与while循环类似，唯一的区别就是先运行一次循环体，然后判断循环条件。
 
 {% highlight javascript %}
 
-do {
-	// ...
-} while(condition);
+do 
+statement
+while(expression);
+
+// 或者
+
+do { 
+	statement
+} while(expression);
 
 {% endhighlight %}
 

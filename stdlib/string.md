@@ -206,6 +206,44 @@ s1
 
 {% endhighlight %}
 
+**（4）substring方法**
+
+substring方法的第一个参数表示子字符串的开始位置，第二个位置表示结束结果。因此，第二个参数应该大于第一个参数。如果出现第一个参数大于第二个参数的情况，substring方法会自动更换两个参数的位置。
+
+{% highlight javascript %}
+
+var a = 'The Three Musketeers';
+a.substring(4, 9) // 'Three'
+a.substring(9, 4) // 'Three'
+
+{% endhighlight %}
+
+上面代码中，调换substring方法的两个参数，都得到同样的结果。
+
+**（5）substr方法**
+
+substr方法的第一个参数是子字符串的开始位置，第二个参数是子字符串的长度。
+
+{% highlight javascript %}
+
+var b = 'The Three Musketeers';
+b.substr(4, 9) // 'Three Mus'
+b.substr(9, 4) // ' Mus'
+
+{% endhighlight %}
+
+**（6）slice方法**
+
+slice方法的第一个参数是子字符串的开始位置，第二个参数是子字符串的结束位置。与substring方法不同的是，如果第一个参数大于第二个参数，slice方法并不会自动调换参数位置，而是返回一个空字符串。
+
+{% highlight javascript %}
+
+var c = 'The Three Musketeers';
+c.slice(4, 9) // 'Three'
+c.slice(9, 4) // ''
+
+{% endhighlight %}
+
 ### indexOf 和 lastIndexOf 方法
 
 这两个方法用于确定一个字符串在另一个字符串中的位置，如果返回-1，就表示不匹配。两者的区别在于，indexOf从字符串头部开始匹配，lastIndexOf从尾部开始匹配。
@@ -366,3 +404,7 @@ split方法还可以接受第二个参数，限定返回数组的最大成员数
 "a|b|c".split("|", 4) // ["a", "b", "c"]
 
 {% endhighlight %}
+
+## 参考链接
+
+- Ariya Hidayat, [JavaScript String: substring, substr, slice](http://ariya.ofilabs.com/2014/02/javascript-string-substring-substr-slice.html) 

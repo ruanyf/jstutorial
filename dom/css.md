@@ -10,7 +10,9 @@ CSS与JavaScript是两个有着明确分工的领域，前者负责页面的视�
 
 ## DOM元素的style属性
 
-style属性用来读写页面元素的行内CSS样式。
+### 简介
+
+DOM元素的style属性用来读写页面元素的行内CSS样式。
 
 {% highlight javascript %}
 
@@ -40,28 +42,6 @@ divStyle.cssText = 'background-color:red;border:1px solid black;height:100px;wid
 
 {% endhighlight %}
 
-使用Element对象的getAttribute方法、setAttribute方法和removeAttribute方法，也能达到读写或删除整个style属性的目的。
-
-{% highlight javascript %}
-
-div.setAttribute('style','background-color:red;border:1px solid black;height:100px;width:100px;');
-
-{% endhighlight %}
-
-style对象有以下三个方法，也可以用来设置、读取和删除行内CSS规则，而且不必改写CSS规则名。
-
-- setPropertyValue(propertyName,value)
-- getPropertyValue(propertyName)
-- removeProperty(propertyName)
-
-{% highlight javascript %}
-
-divStyle.setProperty('background-color','red');
-divStyle.getPropertyValue('background-color');
-divStyle.removeProperty('background-color');
-
-{% endhighlight %}
-
 可以利用style对象，检查浏览器是否支持某个CSS属性。
 
 {% highlight javascript %}
@@ -83,6 +63,46 @@ function isPropertySupported(property){
 
 isPropertySupported('background-clip')
 // true
+
+{% endhighlight %}
+
+### 读写HTML元素的style属性
+
+使用Element对象的getAttribute方法、setAttribute方法和removeAttribute方法，也能达到读写或删除整个style属性的目的。
+
+{% highlight javascript %}
+
+div.setAttribute('style',
+	'background-color:red;border:1px solid black;height:100px;width:100px;');
+
+{% endhighlight %}
+
+### style对象的方法
+
+style对象有以下三个方法，也可以用来设置、读取和删除行内CSS规则，而且不必改写CSS规则名。
+
+- setPropertyValue(propertyName,value)
+- getPropertyValue(propertyName)
+- removeProperty(propertyName)
+
+{% highlight javascript %}
+
+divStyle.setProperty('background-color','red');
+divStyle.getPropertyValue('background-color');
+divStyle.removeProperty('background-color');
+
+{% endhighlight %}
+
+### 特殊的CSS属性介绍
+
+**（1）animation-play-state**
+
+animation-play-state属性用来控制暂停动画的播放。该属性需要加上浏览器前缀。
+
+{% highlight javascript %}
+
+element.style.webkitAnimationPlayState = "paused";
+element.style.webkitAnimationPlayState = "running";
 
 {% endhighlight %}
 
