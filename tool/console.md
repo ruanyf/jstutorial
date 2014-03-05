@@ -30,7 +30,7 @@ Chrome浏览器自带的“开发者工具”（Developer Tools），是网页�
 
 - **Timeline**：查看各种网页行为随时间变化的情况。
 
-- **Profiles**：查看网页的性能情况，比如CPU和内容消耗。
+- **Profiles**：查看网页的性能情况，比如CPU和内存消耗。
 
 - **Audits**：提供网页优化的建议。
 

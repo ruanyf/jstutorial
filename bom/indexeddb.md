@@ -8,7 +8,7 @@ modifiedOn: 2013-11-09
 
 ## 概述
 
-随着浏览器的处理能力不能增强，越来越多的网站开始考虑，将大量数据储存在客户端，这样可以减少用户等待从服务器获取数据的时间。
+随着浏览器的处理能力不断增强，越来越多的网站开始考虑，将大量数据储存在客户端，这样可以减少用户等待从服务器获取数据的时间。
 
 现有的浏览器端数据储存方案，都不适合储存大量数据：cookie不超过4KB，且每次请求都会发送回服务器端；Window.name属性缺乏安全性，且没有统一的标准；localStorage在2.5MB到10MB之间（各家浏览器不同）。所以，需要一种新的解决方案，这就是IndexedDB诞生的背景。
 
@@ -25,10 +25,9 @@ IndexedDB也受到同域限制，每一个数据库对应创建该数据库的�
 {% highlight javascript %}
 
 if("indexedDB" in window) {
-        console.log("支持");
-    } else {
-        console.log("不支持");
-    }
+    console.log("支持");
+} else {
+    console.log("不支持");
 }
 
 {% endhighlight %}
@@ -47,7 +46,7 @@ var openRequest = indexedDB.open("test",1);
 
 {% endhighlight %}
 
-open方法的第一个参数是数据库名称，第二个参数是数据库版本。上面代码代码表示，打开一个名为test、版本为1的数据库。
+open方法的第一个参数是数据库名称，第二个参数是数据库版本。上面代码表示，打开一个名为test、版本为1的数据库。
 
 打开数据库的结果是，有可能触发4种事件。
 
