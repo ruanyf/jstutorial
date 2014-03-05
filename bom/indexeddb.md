@@ -25,10 +25,9 @@ IndexedDB也受到同域限制，每一个数据库对应创建该数据库的�
 {% highlight javascript %}
 
 if("indexedDB" in window) {
-        console.log("支持");
-    } else {
-        console.log("不支持");
-    }
+    console.log("支持");
+} else {
+    console.log("不支持");
 }
 
 {% endhighlight %}
