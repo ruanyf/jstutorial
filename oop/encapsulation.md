@@ -92,7 +92,7 @@ Animal.prototype.walk = function () {
 
 “原型链”的作用在于，当读取对象的某个属性时，JavaScript引擎先寻找对象本身的属性，如果找不到，就到它的原型去找，如果还是找不到，就到原型的原型去找。以此类推，如果直到最顶层的Object.prototype还是找不到，则返回undefined。
 
-举例来说，如果让某个函数的prototype属性指向一个数组，就意味着该函数可以用作数组的构造函数，因为它生生成的实例对象都可以通过prototype属性调用数组方法。
+举例来说，如果让某个函数的prototype属性指向一个数组，就意味着该函数可以用作数组的构造函数，因为它生成的实例对象都可以通过prototype属性调用数组方法。
 
 {% highlight javascript %}
 

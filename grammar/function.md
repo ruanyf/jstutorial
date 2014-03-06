@@ -10,7 +10,7 @@ modifiedOn: 2013-12-19
 
 ### 函数的声明
 
-函数就是使用function命令进行命名的、有名称的代码区块，便于反复调用。
+函数就是使用function命令命名的代码区块，便于反复调用。
 
 {% highlight javascript %}
 
@@ -78,12 +78,11 @@ function add(x,y) {
 	return x+y;
 }
 
-add(1,1)
-// 2
+add(1,1) // 2
 
 {% endhighlight %}
 
-函数体内部的return语句，表示返回。JavaScript引擎遇到return语句，就直接返回return后面的那个表达式的值，下面即使还有语句，也不会得到执行。
+函数体内部的return语句，表示返回。JavaScript引擎遇到return语句，就直接返回return后面的那个表达式的值，后面即使还有语句，也不会得到执行。
 
 函数可以调用自身，这就是递归（recursion）。下面就是使用递归，计算斐波那契数列的代码。
 

@@ -196,6 +196,99 @@ target.addEventListener('drop', function(e) {
 
 {% endhighlight %}
 
+## 自定义网页元素（Custom Element）
+
+除了HTML语言预定义的网页元素，通过JavaScript还可以自定义网页元素。举例来说，你可以自定义一个叫做super-button的网页元素。注意，自定义网页元素的名称中必须含有连字符（-）。
+
+{% highlight html %}
+
+<super-button></super-button>
+
+{% endhighlight %}
+
+在使用该元素前，必须用document对象的registerElement方法登记该元素，registerElement方法返回一个这个自定义元素的构造函数。
+
+{% highlight javascript %}
+
+var SuperButton = document.registerElement('super-button');
+
+document.body.appendChild(new SuperButton());
+
+{% endhighlight %}
+
+上面代码生成自定义网页元素的构造函数，然后通过构造函数生成一个实例，将其插入网页。
+
+registerElement方法接受第二个参数，用来指定自定义网页元素的原型对象，默认就是HTMLElement对象的原型，即写成下面这样。
+
+{% highlight javascript %}
+
+var SuperButton = document.registerElement('super-button', {
+  prototype: Object.create(HTMLElement.prototype)
+});
+
+{% endhighlight %}
+
+但是，如果写成上面这样，自定义网页元素就跟普通元素没有太大区别。自定义元素的真正优势在于，可以自定义它的API。
+
+{% highlight javascript %}
+
+var buttonProto = Object.create(HTMLElement.prototype);
+
+buttonProto.print = function() {
+	console.log('Super Button!');
+}
+
+var SuperButton = document.registerElement('super-button', {
+  prototype: buttonProto
+});
+
+var supperButton = document.querySelector('super-button');
+
+supperButton.print();
+
+{% endhighlight %}
+
+上面代码在网页元素的原型对象上定义了一个print方法，然后将其指定为super-button元素的原型。因此，所以supper-button元素的实例因此都可以调用print这个方法。
+
+registerElement方法的第二个参数，还可以延伸现有元素。
+
+{% highlight javascript %}
+
+var SuperButton = document.registerElement('super-button', {
+  prototype: buttonProto,
+  extends: 'button'
+});
+
+{% endhighlight %}
+
+上面代码指定super-button元素延伸button元素。因此，button元素就可以通过is属性，继承super-button元素的API。
+
+{% highlight html %}
+
+<button is="supper-button"></button>
+
+{% endhighlight %}
+
+上面代码指定button元素为supper-button元素的实例。
+
+自定义元素有一系列事件，可供指定回调函数。
+
+- createdCallback：元素实例生成
+- attachedCallback：元素实例加入DOM结构
+- detachedCallback：元素实例被剥离出DOM结构
+- attributeChangedCallback：元素实例的属性发生改变 
+
+下面是一个指定回调函数的例子。
+
+{% highlight javascript %}
+
+supperButton.createdCallback = function () {…};
+
+{% endhighlight %}
+
+自定义元素（custom element）是一个非常新的API，目前只有Firefox和Chrome浏览器的最新版本支持。
+
 ## 参考链接
 
 - Matt West, [Implementing Native Drag and Drop](http://blog.teamtreehouse.com/implementing-native-drag-and-drop)
+- Peter Gasston, [A Detailed Introduction To Custom Elements](http://coding.smashingmagazine.com/2014/03/04/introduction-to-custom-elements/)

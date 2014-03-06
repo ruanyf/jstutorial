@@ -20,7 +20,7 @@ Mutation Observer有以下特点：
 
 - 它把DOM变动记录封装成一个数组进行处理，而不是一条条地个别处理DOM变动。
 
-- 它观察发生在DOM节点的所有变动，而不是只观察某一类变动。
+- 它既可以观察发生在DOM节点的所有变动，也可以观察某一类变动。
 
 目前，Firefox（14+）、 Chrome(26+)、Opera（15+）、IE（11+）和Safari（6.1+）支持这个API。Safari 6.0和Chrome 18-25使用这个API的时候，需要加上WebKit前缀（WebKitMutationObserver）。可以使用下面的表达式，检查当前浏览器是否支持这个API。
 

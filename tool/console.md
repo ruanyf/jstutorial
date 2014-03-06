@@ -30,7 +30,7 @@ Chrome浏览器自带的“开发者工具”（Developer Tools），是网页�
 
 - **Timeline**：查看各种网页行为随时间变化的情况。
 
-- **Profiles**：查看网页的性能情况，比如CPU和内容消耗。
+- **Profiles**：查看网页的性能情况，比如CPU和内存消耗。
 
 - **Audits**：提供网页优化的建议。
 
@@ -222,7 +222,9 @@ time方法表示计时开始，timeEnd方法表示计时结束。它们的参数
 
 ## debugger语句
 
-debugger语句的作用是，当代码运行到这一行时，就会暂停运行，自动打开console界面。它通常用于代码除错，作用类似于设置断点。
+debugger语句必须与除错工具配合使用，如果没有除错工具，debugger语句不会产生任何结果。
+
+在chrome浏览器中，当代码运行到debugger指定的行时，就会暂停运行，自动打开console界面。它的作用类似于设置断点。
 
 {% highlight javascript %}
 
