@@ -238,21 +238,6 @@ a
 
 上面代码在区块内部，声明并赋值了变量a，然后在区块外部变量a依然有效，这说明区块不构成单独的作用域。
 
-JavaScript允许对区块加上标签（label）。
-
-{% highlight javascript %}
-
-test:{
-	console.log("进入区块");
-	break test; 
-	console.log("该行不会执行");
-}
-// 进入区块
-
-{% endhighlight %}
-
-上面代码为区块起名为test（注意，test不用加引号），然后半途跳出区块。
-
 ### 条件语句
 
 JavaScript提供if结构和switch结构，完成条件判断。
@@ -542,7 +527,9 @@ do {
 
 **（4）break语句和continue语句**
 
-如果在循环的中途，想要跳出循环，可以使用break语句。如果想不再进行本次循环的后续操作，直接进入下一轮循环，可以使用continue语句。
+break语句和continue语句都具有跳转作用，可以让代码不按既有的顺序执行。
+
+break语句用于跳出代码块或循环。
 
 {% highlight javascript %}
 
@@ -558,6 +545,23 @@ while (i<100){
 
 上面代码只会执行10次循环，一旦i等于10，就会跳出循环。
 
+JavaScript语言允许，语句的前面有标签（label）。标签通常与break语句配合使用。
+
+{% highlight javascript %}
+
+test:{
+	console.log("进入区块");
+	break test; 
+	console.log("该行不会执行");
+}
+// 进入区块
+
+{% endhighlight %}
+
+上面代码为区块加上test标签（注意，test不用加引号），然后半途跳出区块。
+
+continue语句用于立即终止本次循环，返回循环结构的头部，开始下一次循环。
+
 {% highlight javascript %}
 
 var i = 0;
@@ -571,6 +575,24 @@ while (i<100){
 {% endhighlight %}
 
 上面代码只有在i为奇数时，才会输出i的值。如果i为偶数，则直接进入下一轮循环。
+
+continue语句也可以与标签配合使用。
+
+{% highlight javascript %}
+
+var i = 0;
+
+mainloop: while(condition === true){
+  i**;
+  if (i===5) continue mainloop;
+  // some code
+}
+
+{% endhighlight %}
+
+上面代码在i等于5时，会结束本次循环，不进行下面的语句，直接从头开始下一轮循环。
+
+如果存在多重循环，break语句和continue语句都只针对最内层循环。
 
 ## 数据类型
 

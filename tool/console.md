@@ -222,7 +222,9 @@ time方法表示计时开始，timeEnd方法表示计时结束。它们的参数
 
 ## debugger语句
 
-debugger语句的作用是，当代码运行到这一行时，就会暂停运行，自动打开console界面。它通常用于代码除错，作用类似于设置断点。
+debugger语句必须与除错工具配合使用，如果没有除错工具，debugger语句不会产生任何结果。
+
+在chrome浏览器中，当代码运行到debugger指定的行时，就会暂停运行，自动打开console界面。它的作用类似于设置断点。
 
 {% highlight javascript %}
 
