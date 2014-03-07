@@ -545,21 +545,6 @@ while (i<100){
 
 上面代码只会执行10次循环，一旦i等于10，就会跳出循环。
 
-JavaScript语言允许，语句的前面有标签（label）。标签通常与break语句配合使用。
-
-{% highlight javascript %}
-
-test:{
-	console.log("进入区块");
-	break test; 
-	console.log("该行不会执行");
-}
-// 进入区块
-
-{% endhighlight %}
-
-上面代码为区块加上test标签（注意，test不用加引号），然后半途跳出区块。
-
 continue语句用于立即终止本次循环，返回循环结构的头部，开始下一次循环。
 
 {% highlight javascript %}
@@ -576,23 +561,52 @@ while (i<100){
 
 上面代码只有在i为奇数时，才会输出i的值。如果i为偶数，则直接进入下一轮循环。
 
+如果存在多重循环，不带参数的break语句和continue语句都只针对最内层循环。
+
+**（5）标签（label）**
+
+JavaScript语言允许，语句的前面有标签（label）。标签通常与break语句和continue语句配合使用，跳出特定的循环。
+
+{% highlight javascript %}
+
+top:
+	for (var i=0;i<3;i++){
+		for (var j=0;j<3;j++){
+			if (i===1 && j===1) break top;
+			console.log("i="+i+",j="+j);
+		}
+}
+// i=0,j=0
+// i=0,j=1
+// i=0,j=2
+// i=1,j=0
+
+{% endhighlight %}
+
+上面代码为一个双重循环区块，加上了top标签（注意，top不用加引号）。当满足一定条件时，使用break语句加上标签名，直接跳出双层循环。如果break语句后面不使用标签，则只能跳出内层循环，进入下一次的外层循环。
+
 continue语句也可以与标签配合使用。
 
 {% highlight javascript %}
 
-var i = 0;
-
-mainloop: while(condition === true){
-  i**;
-  if (i===5) continue mainloop;
-  // some code
+top:
+	for (var i=0;i<3;i++){
+		for (var j=0;j<3;j++){
+			if (i===1 && j===1) continue top;
+			console.log("i="+i+",j="+j);
+		}
 }
+// i=0,j=0
+// i=0,j=1
+// i=0,j=2
+// i=1,j=0
+// i=2,j=0
+// i=2,j=1
+// i=2,j=2
 
 {% endhighlight %}
 
-上面代码在i等于5时，会结束本次循环，不进行下面的语句，直接从头开始下一轮循环。
-
-如果存在多重循环，break语句和continue语句都只针对最内层循环。
+上面代码在满足一定条件时，使用continue语句加上标签名，直接进入下一轮外层循环。如果continue语句后面不使用标签，则只能进入下一轮的内层循环。
 
 ## 数据类型
 
