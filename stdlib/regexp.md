@@ -347,11 +347,11 @@ str.split(separator, [limit])
 
 ## 匹配规则
 
-正则表达式对字符串的匹配有很复杂的规则。
+正则表达式对字符串的匹配有很复杂的规则。下面一一介绍这些规则。
 
-### 字面量匹配
+### 字面量字符和元字符
 
-如果不使用任何匹配规则和特殊字符，正则表达式就是单纯的字面量匹配。
+大部分字符在正则表达式中，就是字面的含义，比如/a/匹配a，/b/匹配b。它们都叫做“字面量字符”（literal characters）。
 
 {% highlight javascript %}
 
@@ -359,11 +359,51 @@ str.split(separator, [limit])
 
 {% endhighlight %}
 
-上面代码表示，/dog/匹配old dog，因为它就表示匹配d、o、g三个字母连在一起。
+上面代码中正则表达式的dog，就是字面量字符，所以/dog/匹配old dog，因为它就表示d、o、g三个字母连在一起。
+
+除了字面量字符以外，还有一部分字符有特殊含义，不代表字面的意思。它们叫做“元字符”（metacharacters），主要有以下几个。
+
+**（1）点字符（.)**
+
+点字符（.）匹配除回车（\r）、换行(\n) 、行分隔符（\u2028）和段分隔符（\u2029）以外的所有字符。
+
+{% highlight javascript %}
+
+/c.t/
+
+{% endhighlight %}
+
+上面代码中的c.t匹配c和t之间包含任意一个字符的情况，只要这三个字符在同一行，比如cat、c2t、c-t等等，但是不匹配coot。
+
+**（2）位置字符**
+
+位置字符用来提示字符所处的位置，主要有两个字符。
+
+- ^ 表示字符串的起首。
+- $ 表示字符串的行尾。
+
+{% highlight javascript %}
+
+/^test/.test("test123") // true
+/test$/.test("new test") // true
+/^test$/.test("test") // true
+/^test$/.test("test test") // false
+
+{% endhighlight %}
+
+**（3）选择符（|）**
+
+竖线符号（|）在正则表达式中表示“或关系”（OR），即 cat|dog 表示匹配cat或dog。
+
+{% highlight javascript %}
+
+/11|22/.test("911") // true
+
+{% endhighlight %}
 
 ### 字符类
 
-字符类（class）表示有一系列字符可供选择，只要匹配其中一个就可以了，所有可供选择的字符都放在方括号内。比如[xyz] 表示x、y、z之中任选一个匹配。
+字符类（class）表示有一系列字符可供选择，只要匹配其中一个就可以了。所有可供选择的字符都放在方括号内，比如[xyz] 表示x、y、z之中任选一个匹配。
 
 {% highlight javascript %}
 
@@ -374,7 +414,11 @@ str.split(separator, [limit])
 
 上面代码表示，字符串hello world不包含abc这三个字母中的任一个，而字符串apple包含字母a。
 
-如果在字符类的开头，加上一个插入符号（&#94;），则表示除了字符类之中的字符，其他字符都可以匹配。比如，[&#94;xyz] 表示除了x、y、z之外都可以匹配。
+有两个字符在字符类中有特殊含义。
+
+**（1）脱字符（&#94;）**
+
+如果方括号内的第一个字符是[&#94;]，则表示除了字符类之中的字符，其他字符都可以匹配。比如，[&#94;xyz] 表示除了x、y、z之外都可以匹配。
 
 {% highlight javascript %}
 
@@ -385,7 +429,11 @@ str.split(separator, [limit])
 
 上面代码表示，字符串hello world不包含字母abc中的任一个，所以返回true；字符串bbc不包含abc以外的字母，所以返回false。
 
-某些情况下，对于连续序列的字符，字符类提供简写形式。比如，[abc]可以写成[a-c]，[0123456789]可以写成[0-9]，同理[A-Z]表示26个大写字母。这就是说，当连字号（\-）出现在方括号（[ ]）之中时，就代表字符类的简写形式，表示字符的范围。
+> 注意，脱字符只有在字符类的第一个位置才有特殊含义，否则就是字面含义。
+
+**（2）连字符（-）**
+
+某些情况下，对于连续序列的字符，连字符（-）用来提供简写形式，表示字符的连续范围。比如，[abc]可以写成[a-c]，[0123456789]可以写成[0-9]，同理[A-Z]表示26个大写字母。
 
 {% highlight javascript %}
 
@@ -395,6 +443,21 @@ str.split(separator, [limit])
 {% endhighlight %}
 
 上面代码中，当连字号（dash）不出现在方括号之中，就不具备简写的作用，只代表字面的含义，所以不匹配字符b。只有当连字号用在方括号之中，才表示连续的字符序列。
+
+以下都是合法的字符类简写形式。
+
+{% highlight javascript %}
+
+[0-9.,]
+[0-9a-fA-F]
+[a-zA-Z0-9-]
+[1-31]
+
+{% endhighlight %}
+
+上面代码中最后一个字符类[1-31]，不代表1到31，只代表1到3。
+
+> 注意，字符类的连字符必须在头尾两个字符中间，才有特殊含义，否则就是字面含义。
 
 ### 重复类
 
@@ -407,29 +470,7 @@ str.split(separator, [limit])
 
 {% endhighlight %}
 
-### 元字符
-
-元字符表示在正则表达式中具有特殊涵义的字符，主要有以下这些：
-
-（1）位置字符
-
-- ^ 表示一行的起首。但是如果用在方括号内的第一个字符[&#94;]时，则表示方括号中的其他字符一个都不出现。
-- $ 表示一行的行尾。
-
-{% highlight javascript %}
-
-/^test/.test("test123") // true
-/test$/.test("new test") // true
-/^test$/.test("test") // true
-/^test$/.test("test test") // false
-
-{% endhighlight %}
-
-（2）通配符
-
-- . 匹配除回车（\r）、换行(\n) 、行分隔符（\u2028）和段分隔符（\u2029）以外的所有字符。
-
-（3）量词符
+### 量词符
 
 - ? 表示某个模式出现1次或0次，等同于{0, 1}。
 - \* 表示某个模式出现0次或多次，等同于 {0,}。
@@ -454,19 +495,9 @@ str.split(separator, [limit])
 
 以上三个量词符，默认情况下的匹配规则都是贪婪模式，即最大可能匹配，直到下一个字符不满足匹配规则为止。比如，对于字符串“aaa”来说，/a+/将会匹配“aaa”，而不会匹配“aa”。为了将贪婪模式改为非贪婪模式，可以在量词符后面加一个问号，/a+?/将会只匹配“a”。
 
-（4）选择符
-
-- x|y 表示匹配x或y。
-
-{% highlight javascript %}
-
-/11|22/.test("911") // true
-
-{% endhighlight %}
-
 ### 转义符
 
-如果要匹配元字符本身，则在元字符前面要加上反斜杠。比如要匹配加号，就要写成\\+。
+正则表达式中那些有特殊含义的字符，如果要匹配它们本身，就需要在它们前面要加上反斜杠。比如要匹配加号，就要写成\\+。
 
 {% highlight javascript %}
 
@@ -705,3 +736,4 @@ m[1] // undefined
 - Axel Rauschmayer, [JavaScript: an overview of the regular expression API](http://www.2ality.com/2011/04/javascript-overview-of-regular.html)
 - Mozilla Developer Network, [Regular Expressions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions)
 - Axel Rauschmayer, [The flag /g of JavaScript’s regular expressions](http://www.2ality.com/2013/08/regexp-g.html)
+- Sam Hughes, [Learn regular expressions in about 55 minutes](http://qntm.org/files/re/re.html)
