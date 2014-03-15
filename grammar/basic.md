@@ -741,7 +741,9 @@ instanceof运算符放在《面向对象编程》一章介绍，Object.prototype
 
 typeof运算符可以返回一个值的数据类型，可能有以下结果：
 
-**（1）数值、字符串、布尔值分别返回number、string、boolean。**
+**（1）原始类型**
+
+数值、字符串、布尔值分别返回number、string、boolean。
 
 {% highlight javascript %}
 
@@ -751,7 +753,9 @@ typeof false // "boolean"
 
 {% endhighlight %}
 
-**（2）函数返回function。**
+**（2）函数**
+
+函数返回function。
 
 {% highlight javascript %}
 
@@ -763,7 +767,9 @@ typeof f
 
 {% endhighlight %}
 
-**（3）undefined返回undefined。**
+**（3）undefined**
+
+undefined返回undefined。
 
 {% highlight javascript %}
 
@@ -801,7 +807,9 @@ if (typeof v === "undefined"){
 
 {% endhighlight %}
 
-**（4）除此以外，都返回object。**
+**（4）其他**
+
+除此以外，都返回object。
 
 {% highlight javascript %}
 
@@ -812,7 +820,7 @@ typeof null // "object"
 
 {% endhighlight %}
 
-从上面代码可以看到，空数组（[]）的类型也是object，这表示在JavaScript内部，数组本质上只是一种特殊的对象。另外，null的类型也是object，说明它不是一种的数据类型。
+从上面代码可以看到，空数组（[]）的类型也是object，这表示在JavaScript内部，数组本质上只是一种特殊的对象。另外，null的类型也是object，这是由于历史原因造成的，为了兼容以前的代码，后来就没法修改了，并不是说null就属于对象，本质上null是一个类似于undefined的特殊值。
 
 既然typeof对数组（array）和对象（object）的显示结果都是object，那么怎么区分它们呢？instanceof运算符可以做到。
 

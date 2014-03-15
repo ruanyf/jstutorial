@@ -184,7 +184,13 @@ input[0].isEqualNode(input[1])
 
 document对象是文档的根节点，window.document属性就指向这个对象。也就是说，只要浏览器开始载入HTML文档，这个对象就开始存在了，可以直接调用。
 
-一般来说，document对象有两个子节点。第一个子节点是文档类型节点（DocumentType），对于HTML5文档来说，该节点就代表\<!DOCTYPE html\>，document.doctype属性指向该节点。第二个子节点是元素节点（Element），代表\<html lang="en"\>，document.documentElement 属性指向该节点。这两个子节点肯定包括在document.childNodes之中。
+一般来说，document对象有两个子节点。
+
+- 第一个子节点是文档类型节点（DocumentType），对于HTML5文档来说，该节点就代表&lt;!DOCTYPE html&gt;，document.doctype属性指向该节点。
+
+- 第二个子节点是元素节点（Element），代表&lt;html lang="en"&gt;，document.documentElement 属性指向该节点。
+
+这两个子节点肯定包括在document.childNodes之中。
 
 ### document对象的属性
 
@@ -818,9 +824,9 @@ document.queryselector('ul').appendChild(docFrag);
 
 {% endhighlight %}
 
-上面代码创建了一个DocumentFragment节点，然后将一个li节点添加在它里面，最后将DocumentFragment节点加入原文档。
+上面代码创建了一个DocumentFragment节点，然后将一个li节点添加在它里面，最后将DocumentFragment节点移动到原文档。
 
-一旦DocumentFragment节点被添加进原文档，它自身就变成了空节点。如果想要保存DocumentFragment节点的内容，可以使用cloneNode方法。
+一旦DocumentFragment节点被添加进原文档，它自身就变成了空节点（textContent属性为空字符串）。如果想要保存DocumentFragment节点的内容，可以使用cloneNode方法。
 
 {% highlight javascript %}
 

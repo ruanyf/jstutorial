@@ -75,7 +75,7 @@ window.addEventListener("message", receiveMessage, false);
 
 {% endhighlight %}
 
-上面代码有几个地方需要注意。首先，receiveMessage函数里面没有过滤信息的来源，任意网址发来的信息都会被处理。其次，postMessage方法中指定的目标窗口的网址是一个星号，表示该信息可以向任意网址发送。通常来说，这两种做法是不推荐的，因为不够安全，可能会被对象。
+上面代码有几个地方需要注意。首先，receiveMessage函数里面没有过滤信息的来源，任意网址发来的信息都会被处理。其次，postMessage方法中指定的目标窗口的网址是一个星号，表示该信息可以向任意网址发送。通常来说，这两种做法是不推荐的，因为不够安全，可能会被恶意利用。
 
 所有浏览器都支持这个方法，但是IE 8和IE 9只允许postMessage方法与iFrame窗口通信，不能与新窗口通信。IE 10允许与新窗口通信，但是只能使用IE特有的[MessageChannel对象](http://msdn.microsoft.com/en-us/library/windows/apps/hh441303.aspx)。
 

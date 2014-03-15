@@ -171,7 +171,7 @@ console.table(languages);
 
 ### console.assert方法
 
-assert方法用来验证某个条件是否为真。如果为假，则显示一条事先指定的错误信息。它的格式如下：
+assert方法用来验证某个条件是否为真。如果为假，则显示一条事先指定的错误信息。它的格式如下。
 
 {% highlight javascript %}
 
@@ -179,11 +179,20 @@ console.assert(条件判断，输出信息)
 
 {% endhighlight %}
 
-使用方法如下：
+使用方法如下。
 
 {% highlight javascript %}
 
-console.assert(list.childNodes.length < 500, "Node count is > 500");
+console.assert(true === false,"判断条件不成立")
+// Assertion failed: 判断条件不成立
+
+{% endhighlight %}
+
+下面是另一个例子，判断子节点的个数是否大于等于500。
+
+{% highlight javascript %}
+
+console.assert(list.childNodes.length < 500, "节点个数大于等于500")
 
 {% endhighlight %}
 

@@ -6,7 +6,9 @@ date: 2013-09-09
 modifiedOn: 2013-09-17
 ---
 
-## draggable属性
+## 拖放操作
+
+### 网页元素的draggable属性
 
 如果网页元素的draggable属性为true，这个元素就是可以拖动的。
 
@@ -18,7 +20,7 @@ modifiedOn: 2013-09-17
 
 在大多数浏览器中，a元素和img元素默认就是可以拖放的，但是为了保险起见，最好还是加上draggable属性。
 
-## 事件
+### 事件
 
 拖动过程会触发很多事件，主要有下面这些：
 
@@ -44,7 +46,7 @@ draggableElement.addEventListener('dragstart', function(e) {
 
 > 需要注意的是，拖放过程中，鼠标移动事件（mousemove）不会触发。
 
-## dataTransfer对象
+### dataTransfer对象
 
 拖动过程中，回调函数接受的事件参数，有一个dataTransfer属性。它指向一个对象，包含了与拖动相关的各种信息。
 
@@ -80,7 +82,7 @@ dataTransfer对象的方法：
 
 dataTransfer对象允许在其上储存数据，这使得在被拖动元素与目标元素之间传送信息成为可能。
 
-## 实例：拖动网页元素
+### 实例：拖动网页元素
 
 首先，获取网页元素。
 
@@ -144,7 +146,7 @@ target.addEventListener('drop', function(e) {
 
 {% endhighlight %}
 
-## 实例：拖放文件
+### 实例：拖放文件
 
 假定我们要从文件系统拖动一个txt文本，在浏览器中展示内容。
 
@@ -198,7 +200,7 @@ target.addEventListener('drop', function(e) {
 
 ## 自定义网页元素（Custom Element）
 
-除了HTML语言预定义的网页元素，通过JavaScript还可以自定义网页元素。举例来说，你可以自定义一个叫做super-button的网页元素。注意，自定义网页元素的名称中必须含有连字符（-）。
+除了HTML语言预定义的网页元素，通过JavaScript还可以自定义网页元素。举例来说，你可以自定义一个叫做super-button的网页元素。
 
 {% highlight html %}
 
@@ -206,7 +208,9 @@ target.addEventListener('drop', function(e) {
 
 {% endhighlight %}
 
-在使用该元素前，必须用document对象的registerElement方法登记该元素，registerElement方法返回一个这个自定义元素的构造函数。
+注意，自定义网页元素的名称中必须含有连字符（-）。这是因为标准预定义的HTML元素名称，都不含有连字符，自定义网页元素加入连字符，可以有效显示区别。
+
+在使用自定义元素前，必须用document对象的registerElement方法登记该元素，registerElement方法返回一个这个自定义元素的构造函数。
 
 {% highlight javascript %}
 
@@ -248,7 +252,7 @@ supperButton.print();
 
 {% endhighlight %}
 
-上面代码在网页元素的原型对象上定义了一个print方法，然后将其指定为super-button元素的原型。因此，所以supper-button元素的实例因此都可以调用print这个方法。
+上面代码在网页元素的原型对象上定义了一个print方法，然后将其指定为super-button元素的原型。因此，所有supper-button元素的实例因此都可以调用print这个方法。
 
 registerElement方法的第二个参数，还可以延伸现有元素。
 

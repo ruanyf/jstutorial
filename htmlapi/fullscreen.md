@@ -49,15 +49,15 @@ exitFullscreen方法用于取消全屏（带有浏览器前缀）。
 {% highlight javascript %}
 
 function exitFullscreen() {
-  if(document.exitFullscreen) {
-    document.exitFullscreen();
-  } else if(document.mozexitFullscreen) {
-    document.mozexitFullscreen();
-  } else if(document.msexitFullscreen) {
-	document.msexitFullscreen(); 
-  } else if(document.webkitexitFullscreen) {
-    document.webkitexitFullscreen();
-  }
+	if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    }
 }
 
 exitFullscreen();
@@ -73,9 +73,9 @@ exitFullscreen();
 {% highlight javascript %}
 
 var fullscreenElement =
-	document.fullScreenElement ||
+	document.fullscreenElement ||
 	document.mozFullScreenElement ||
-	document.webkitFullScreenElement;
+	document.webkitFullscreenElement;
 
 {% endhighlight %}
 
@@ -87,8 +87,8 @@ var fullscreenElement =
 
 var fullscreenEnabled =
 	document.fullscreenEnabled ||
-	document.mozScreenEnabled ||
-	document.webkitScreenEnabled ||
+	document.mozFullScreenEnabled ||
+	document.webkitFullscreenEnabled ||
 	document.msFullscreenEnabled;
 
 {% endhighlight %}
@@ -102,12 +102,27 @@ var fullscreenEnabled =
 :-webkit-full-screen {
   /* properties */
 }
+
 :-moz-full-screen {
   /* properties */
 }
 
-:full-screen {
+:-ms-fullscreen {
   /* properties */
+}
+
+:full-screen { /*pre-spec */
+  /* properties */
+}
+
+:fullscreen { /* spec */
+  /* properties */
+}
+
+/* deeper elements */
+:-webkit-full-screen video {
+  width: 100%;
+  height: 100%;
 }
 
 {% endhighlight %}
