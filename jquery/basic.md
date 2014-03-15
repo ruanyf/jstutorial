@@ -752,11 +752,11 @@ $("p").prepend("Hello ")
 
 {% highlight javascript %}
 
-$("p").prepend("Hello ")
+$("p").prepend("strong")
 
-// <p>World</p>
+// <strong>Hello </strong><p>World</p>
 // 变为
-// <p>Hello World</p>
+// <p><strong>Hello </strong>World</p>
 
 {% endhighlight %}
 
@@ -766,7 +766,7 @@ prependTo方法将当前元素变为参数中的元素的第一个子元素。
 
 {% highlight javascript %}
 
-$("<p></p>").prepend("div")
+$("<p></p>").prependTo("div")
 
 // <div></div>
 // 变为
