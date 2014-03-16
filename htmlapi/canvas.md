@@ -8,9 +8,7 @@ modifiedOn: 2013-06-10
 
 ## 概述
 
-Canvas用于在网页展示图像，并且可以定制内容，基本上它是一个可以用JavaScript操作的位图（bitmap）。
-
-Canvas API用于网页实时生成图像，JavaScript通过API来操作图像内容。这样做的优点是：减少HTTP请求数，减少下载的数据，加快网页载入时间，可以对图像进行实时处理。
+Canvas API（画布）用于在网页实时生成图像，并且可以操作图像内容，基本上它是一个可以用JavaScript操作的位图（bitmap）。
 
 使用前，首先需要新建一个canvas网页元素。
 
@@ -22,59 +20,55 @@ Canvas API用于网页实时生成图像，JavaScript通过API来操作图像内
 
 {% endhighlight %}
 
-如果浏览器不支持这个API，则就会显示canvas标签中间的文字——“您的浏览器不支持canvas！”。
+上面代码中，如果浏览器不支持这个API，则就会显示canvas标签中间的文字——“您的浏览器不支持canvas！”。
 
-然后，使用JavaScript获取canvas的DOM对象。
+每个canvas元素都有一个对应的context对象（上下文对象），Canvas API定义在这个context对象上面，所以需要获取这个对象，方法是使用getContext方法。
 
 {% highlight javascript %}
 
 var canvas = document.getElementById('myCanvas');
 
-{% endhighlight %}
-
-接着，检查浏览器是否支持Canvas API，方法是看有没有部署getContext方法。
-
-{% highlight javascript %}
-
 if (canvas.getContext) {
-	// some code here
+	var ctx = canvas.getContext('2d');
 }
 
 {% endhighlight %}
 
-使用getContext('2d')方法，初始化平面图像的上下文环境。
-
-{% highlight javascript %}
-
-var ctx = canvas.getContext('2d');
-
-{% endhighlight %}
-
-现在就在canvas中间生成平面图像了。
+上面代码中，getContext方法指定参数2d，表示该canvas对象用于生成2D图案（即平面图案）。如果参数是3d，就表示用于生成3D图像（即立体图案），这部分实际上单独叫做WebGL API（本书不涉及）。
 
 ## 绘图方法
 
-（1）填充颜色
+canvas画布提供了一个用来作图的平面空间，该空间的每个点都有自己的坐标，x表示横坐标，y表示竖坐标。原点(0, 0)位于图像左上角，x轴的正向是原点向右，y轴的正向是原点向下。
 
-设置填充颜色。
+**（1）绘制路径**
 
-{% highlight javascript %}
-
-ctx.fillStyle = "#000000"; // 设置填充色为黑色
-
-{% endhighlight %}
-
-（2）绘制矩形
-
-绘制实心矩形。
+beginPath方法表示开始绘制路径，moveTo(x, y)方法设置线段的起点，lineTo(x, y)方法设置线段的终点，stroke方法用来给透明的线段着色。
 
 {% highlight javascript %}
 
-ctx.fillRect(10,10,200,100); 
+ctx.beginPath(); // 开始路径绘制
+ctx.moveTo(20, 20); // 设置路径起点
+ctx.lineTo(200, 20); // 绘制一条到200, 20的直线
+ctx.lineWidth = 1.0; // 设置线宽
+ctx.strokeStyle = "#CC0000"; // 设置线的颜色
+ctx.stroke(); // 进行线的着色，这时整条线才变得可见
 
 {% endhighlight %}
 
-绘制空心矩形。
+moveto和lineto方法可以多次使用。最后，还可以使用closePath方法，自动绘制一条当前点到起点的直线，形成一个封闭图形，省却使用一次lineto方法。
+
+**（2）绘制矩形**
+
+fillRect(x, y, width, height)方法用来绘制矩形，它的四个参数分别为矩形左上角顶点的x坐标、y坐标，以及举行的宽和高。fillStyle属性用来设置矩形的填充色。
+
+{% highlight javascript %}
+
+ctx.fillStyle = 'yellow';
+ctx.fillRect(50, 50, 200, 100); 
+
+{% endhighlight %}
+
+strokeRect方法与fillRect类似，用来绘制空心矩形。
 
 {% highlight javascript %}
 
@@ -82,7 +76,7 @@ ctx.strokeRect(10,10,200,100);
 
 {% endhighlight %}
 
-清除某个矩形区域的内容。
+clearRect方法用来清除某个矩形区域的内容。
 
 {% highlight javascript %}
 
@@ -90,29 +84,30 @@ ctx.clearRect(100,50,50,50);
 
 {% endhighlight %}
 
-（3）绘制路径
+**（3）绘制文本**
+
+fillText(string, x, y) 用来绘制文本，它的三个参数分别为文本内容、起点的x坐标、y坐标。使用之前，需用font设置字体、大小、样式（写法类似与CSS的font属性）。与此类似的还有strokeText方法，用来添加空心字。
 
 {% highlight javascript %}
 
-ctx.beginPath(); // 开始路径绘制
-
-ctx.moveTo(20, 20); // 设置路径起点
-
-ctx.lineTo(200, 20); // 绘制一条到200, 20的直线
-
-ctx.lineWidth = 1.0; // 设置线宽
-
-ctx.strokeStyle = "#CC0000"; // 设置线的颜色
-
-ctx.stroke(); // 进行线的着色，这时整条线才变得可见
+// 设置字体
+ctx.font = "Bold 20px Arial"; 
+// 设置对齐方式
+ctx.textAlign = "left";
+// 设置填充颜色
+ctx.fillStyle = "#008600"; 
+// 设置字体内容，以及在画布上的位置
+ctx.fillText("Hello!", 10, 50); 
+// 绘制空心字
+ctx.strokeText('Hello!", 10, 100); 
 
 {% endhighlight %}
 
-moveto和lineto方法可以多次使用。最后，还可以使用closePath方法，自动绘制一条当前点到起点的直线，形成一个封闭图形，省却使用以此lineto方法。
+fillText方法不支持文本断行，即所有文本出现在一行内。所以，如果要生成多行文本，只有调用多次fillText方法。
 
-（4）绘制圆形和扇形
+**（4）绘制圆形和扇形**
 
-绘制扇形的方法。
+arc方法用来绘制扇形。
 
 {% highlight javascript %}
 
@@ -122,55 +117,28 @@ ctx.arc(x, y, radius, startAngle, endAngle, anticlockwise);
 
 arc方法的x和y参数是圆心坐标，radius是半径，startAngle和endAngle则是扇形的起始角度和终止角度（以弧度表示），anticlockwise表示做图时应该逆时针画（true）还是顺时针画（false）。
 
-绘制实心的圆形。
+下面是如何绘制实心的圆形。
 
 {% highlight javascript %}
 
 ctx.beginPath(); 
-
 ctx.arc(60, 60, 50, 0, Math.PI*2, true); 
-
 ctx.fillStyle = "#000000"; 
-
 ctx.fill();
 
 {% endhighlight %}
 
-绘制空心圆形。
+绘制空心圆形的例子。
 
 {% highlight javascript %}
 
 ctx.beginPath(); 
-
 ctx.arc(60, 60, 50, 0, Math.PI*2, true); 
-
 ctx.lineWidth = 1.0; 
-
 ctx.strokeStyle = "#000"; 
-
 ctx.stroke();
 
 {% endhighlight %}
-
-（5）绘制文本
-
-fillText方法用于添加文本，strokeText方法用于添加空心字。使用之前，需设定字体、对齐方向、颜色等属性。
-
-{% highlight javascript %}
-
-ctx.font = "Bold 20px Arial"; // 设置字体
-
-ctx.textAlign = "left"; // 设置对齐方式
-
-ctx.fillStyle = "#008600"; // 设置填充颜色
-
-ctx.fillText("Hello!", 10, 50); // 设置字体内容，以及在画布上的位置
-
-ctx.strokeText('Hello!", 10, 100); // 绘制空心字
-
-{% endhighlight %}
-
-fillText方法不支持文本断行，即所有文本出现在一行内。所以，如果你要生成多行文本，只有调用多次fillText方法。
 
 ### 渐变
 
@@ -454,3 +422,4 @@ ctx.fillRect(180,10,150,100);
 - David Walsh, [JavaScript Canvas Image Conversion](http://davidwalsh.name/convert-canvas-image)
 - Matt West, [Getting Started With The Canvas API](http://blog.teamtreehouse.com/getting-started-with-the-canvas-api)
 - John Robinson, [How You Can Do Cool Image Effects Using HTML5 Canvas](http://www.storminthecastle.com/2013/04/06/how-you-can-do-cool-image-effects-using-html5-canvas/)
+- Ivaylo Gerchev, [HTML5 Canvas Tutorial: An Introduction](http://www.sitepoint.com/html5-canvas-tutorial-introduction/)

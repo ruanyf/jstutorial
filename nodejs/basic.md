@@ -1164,6 +1164,9 @@ if (cluster.isMaster){
 	"engines": {"node": "0.10.x"},
 	"bugs":{"url":"http://path/to/bug","email":"bug@example.com"},
 	"contributors":[{"name":"李四","email":"lisi@example.com"}],
+	"scripts": {
+		"start": "node index.js"
+	},
 	"dependencies": {
 		"express": "latest",
 		"mongoose": "~3.8.3",
@@ -1185,7 +1188,32 @@ if (cluster.isMaster){
 
 {% endhighlight %}
 
-上面代码中，前面部分各个成员的含义都很明显，需要注意的是engines这一项，它指明了该项目所需要的node.js版本。后面的dependencies和devDependencies两项，分别指定了项目运行所依赖的模块、项目开发所需要的模块。
+上面代码中，有些成员的含义很明显，但有几项需要解释一下。
+
+**（1）engines**
+
+engines指明了该项目所需要的node.js版本。
+
+**（2）scripts**
+
+scripts指定了运行脚本命令的命令行缩写，比如start指定了运行npm start时，所要执行的命令。
+
+下面的设置指定了npm preinstall、npm postinstall、npm start、npm test时，所要执行的命令。
+
+{% highlight javascript %}
+
+"scripts": {
+    "preinstall": "echo here it comes!",
+    "postinstall": "echo there it goes!",
+    "start": "node index.js",
+    "test": "tap test/*.js"
+}
+
+{% endhighlight %}
+
+**（3）dependencies，devDependencies**
+
+dependencies和devDependencies两项，分别指定了项目运行所依赖的模块、项目开发所需要的模块。
 
 dependencies和devDependencies这两项，都指向一个对象。该对象的各个成员，分别由模块名和对应的版本要求组成。对应的版本可以加上各种限定，主要有以下几种：
 
