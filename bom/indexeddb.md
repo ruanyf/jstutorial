@@ -98,7 +98,7 @@ db.createObjectStore("firstOS");
 
 上面代码创建了一个名为firstOS的对象仓库，如果该对象仓库已经存在，就会抛出一个错误。为了避免出错，需要用到下文的objectStoreNames属性，检查已有哪些对象仓库。
 
-createObject方法还可以接受第二个对象参数，用来设置“对象仓库”的属性。
+createObjectStore方法还可以接受第二个对象参数，用来设置“对象仓库”的属性。
 
 {% highlight javascript %}
 
@@ -281,7 +281,7 @@ cursor.onsuccess = function(e) {
 
 {% endhighlight %}
 
-对象函数接受一个事件对象作为参数，该对象的target.result属性指向当前数据对象。当前数据对象的key和value分别返回键名和键值（即实际存入的数据）。continue方法将光标移到下一个数据对象，如果当前数据对象已经是最后一个数据了，则光标指向null。
+回调函数接受一个事件对象作为参数，该对象的target.result属性指向当前数据对象。当前数据对象的key和value分别返回键名和键值（即实际存入的数据）。continue方法将光标移到下一个数据对象，如果当前数据对象已经是最后一个数据了，则光标指向null。
 
 ### createIndex方法
 

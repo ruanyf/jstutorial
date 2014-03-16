@@ -752,11 +752,11 @@ $("p").prepend("Hello ")
 
 {% highlight javascript %}
 
-$("p").prepend("Hello ")
+$("p").prepend("strong")
 
-// <p>World</p>
+// <strong>Hello </strong><p>World</p>
 // 变为
-// <p>Hello World</p>
+// <p><strong>Hello </strong>World</p>
 
 {% endhighlight %}
 
@@ -766,7 +766,7 @@ prependTo方法将当前元素变为参数中的元素的第一个子元素。
 
 {% highlight javascript %}
 
-$("<p></p>").prepend("div")
+$("<p></p>").prependTo("div")
 
 // <div></div>
 // 变为
@@ -1121,7 +1121,7 @@ $(selector).mouseenter(handlerIn).mouseleave(handlerOut)
 
 **（1）on方法**
 
-事件绑定的那些简便方法，其实都是on方法的简写形式。on方法是jQuery事件绑定的统一接口。
+on方法是jQuery事件绑定的统一接口。事件绑定的那些简便方法，其实都是on方法的简写形式。
 
 on方法接受两个参数，第一个是事件名称，第二个是回调函数。
 
@@ -1161,7 +1161,7 @@ $('ul').on('click', 'li', function (e){
 
 上面代码为ul的子元素li绑定click事件的回调函数。采用这种写法时，on方法接受三个参数，子元素选择器作为第二个参数，夹在事件名称和回调函数之间。
 
-这种写法有两个好处。首先，click事件还是在ul元素上触发回调函数，但是会检查event.target属性是否为li子元素，如果为true，再调用回调函数。这样就比为li元素一一绑定回调函数，节省了内存空间。其次，这种绑定的回调函数，对于在此后生成的li元素依然有效。
+这种写法有两个好处。首先，click事件还是在ul元素上触发回调函数，但是会检查event.target属性是否为li子元素，如果为true，再调用回调函数。这样就比为li元素一一绑定回调函数，节省了内存空间。其次，这种绑定的回调函数，对于在绑定后生成的li元素依然有效。
 
 on方法还允许向回调函数传入数据。
 

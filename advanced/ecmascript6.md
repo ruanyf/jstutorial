@@ -16,6 +16,34 @@ ECMAScript 6的目标，是使得JavaScript可以用来编写复杂的应用程�
 
 下面对ECMAScript 6新增的语法特性逐一介绍。由于ECMAScript 6的正式标准还未出台，所以以下内容随时可能发生变化，不一定是最后的版本。
 
+## 使用ECMAScript 6的方法
+
+目前，V8引擎已经部署了ECMAScript 6的部分特性。使用node.js 0.11版，就可以体验这些特性。
+
+node.js 0.11版的一种比较方便的使用方法，是使用版本管理工具[nvm](https://github.com/creationix/nvm)。下载nvm以后，进入项目目录，运行下面的命令，激活nvm。
+
+{% highlight bash %}
+
+source nvm.sh
+
+{% endhighlight %}
+
+然后，指定node运行版本。
+
+{% highlight bash %}
+
+nvm use 0.11
+
+{% endhighlight %}
+
+最后，用--harmony参数进入node运行环境，就可以在命令行下体验ECMAScript 6了。
+
+{% highlight bash %}
+
+node --harmony
+
+{% endhighlight %}
+
 ## 数据类型
 
 ### let命令
@@ -36,17 +64,18 @@ b //1
 
 上面代码在代码块之中，分别用let和var声明了两个变量。然后在代码块之外调用这两个变量，结果let声明的变量报错，var声明的变量返回了正确的值。这表明，let声明的变量只在它所在的代码块有效。
 
-下面的代码如果使用var，最后输出的是10。
+下面的代码如果使用var，最后输出的是9。
 
 {% highlight javascript %}
 
 var a = [];
 for (var i = 0; i < 10; i++) {
+  var c = i;
   a[i] = function () {
-    console.log(i);
+    console.log(c);
   };
 }
-a[6](); // 10
+a[6](); // 9
 
 {% endhighlight %}
 
@@ -147,16 +176,17 @@ set数据结构有以下属性和方法：
 
 {% highlight javascript %}
 
-s.add("1"); 
-s.add("2");
-e.add("2"); // 注意“2”被加入了两次
+s.add("1").add("2").add("2"); 
+// 注意“2”被加入了两次
 
-e.has("1")    // true
-e.has("2")    // true
-e.has("3")   // false
+s.size // 2
 
-e.delete("2");
-e.has("2")    // false
+s.has("1")    // true
+s.has("2")    // true
+s.has("3")   // false
+
+s.delete("2");
+s.has("2")    // false
 
 {% endhighlight %}
 
@@ -211,9 +241,29 @@ m.get("edition")  // 6
 
 {% endhighlight %}
 
-### rest运算符
+### rest（...）运算符
 
 ECMAScript 6引入rest运算符（...），用于获取函数的多余参数，这样就不需要通过arguments对象，获取函数的参数个数了。rest运算符后面是一个数组变量，该变量将多余的参数放入数组中。
+
+{% highlight javascript %}
+
+function add(...values) {
+   let sum = 0;
+
+   for (var val of values) {
+      sum += val;
+   }
+
+   return sum;
+}
+
+add(2, 5, 3) // 10
+
+{% endhighlight %}
+
+上面代码的add函数是一个求和函数，利用rest运算符，可以向该函数传入任意数目的参数。
+
+下面是一个利用rest运算符改写数组push方法的例子。
 
 {% highlight javascript %}
 
@@ -239,11 +289,12 @@ function f(s1, s2, s3, s4, s5) {
 
 var a = ["a2", "a3", "a4", "a5"];
 
-f("a1", ...a);
+f("a1", ...a)
+// a1a2a3a4a5
 
 {% endhighlight %}
 
-从上面的例子可以看出，rest运算符的另一个重要作用是，可以将数组转变成正常的参数序列。
+从上面的例子可以看出，rest运算符的另一个重要作用是，可以将数组转变成正常的参数序列。利用这一点，可以简化求出一个数组最大元素的写法。
 
 {% highlight javascript %}
 
@@ -258,141 +309,56 @@ Math.max(14, 3, 77);
 
 {% endhighlight %}
 
-上面代码表示，用于JavaScript不提供求数组最大元素的函数，所以只能套用Math.max函数，将数组转为一个参数序列，然后求最大值。有了rest运算符以后，就可以直接用Math.max了。
+上面代码表示，由于JavaScript不提供求数组最大元素的函数，所以只能套用Math.max函数，将数组转为一个参数序列，然后求最大值。有了rest运算符以后，就可以直接用Math.max了。
 
 ### 遍历器（Iterator）
 
-遍历器（Iterator）是一个对象，用于从一个集合中按照某种顺序一次取出一个成员，而且还保持当前位置的记录。遍历器自带的next方法，用于返回当前位置的成员，然后把指针移到下一个成员。
+遍历器（Iterator）是一种协议，任何对象都可以部署遍历器协议，从而使得for...of循环可以遍历这个对象。
+
+遍历器协议规定，任意对象只要部署了next方法，就可以作为遍历器，但是next方法必须返回一个包含value和done两个属性的对象。其中，value属性当前遍历位置的值，done属性是一个布尔值，表示遍历是否结束。
 
 {% highlight javascript %}
 
-var o = { p1: 1, p2: 2 };
-var i = Iterator(o);
-
-i.next() // ["p1", 1]
-i.next() // ["p2", 2]
-i.next() // 抛出一个StopIteration异常
-
-{% endhighlight %}
-
-上面代码表示，next方法返回一个数组，数组成员分别是原对象当前位置的键和值。当原对象所有成员都取出以后，再调用next方法，将抛出一个StopIteration意外。
-
-除了使用next方法，for...in也可以通过遍历器取出所有成员。
-
-{% highlight javascript %}
-
-var i = Iterator(o);
-for (var item in i){
-  console.log(item);
+function makeIterator(array){
+    var nextIndex = 0;
+    
+    return {
+       next: function(){
+           return nextIndex < array.length ?
+               {value: array[nextIndex++], done: false} :
+               {done: true};
+       }
+    }
 }
 
-{% endhighlight %}
+var it = makeIterator(['a', 'b']);
 
-上面代码通过for...in结构使用遍历器，与前一段使用next方法的代码是等价的。
-
-Iterator方法除了用于对象，还可以用于数组。
-
-{% highlight javascript %}
-
-var a = ['a', 'b', 'c'];
-var i = Iterator(a);
-
-for (var item in i){
-  console.log(item); 
-}
-// [0, "a"]
-// [1, "b"]
-// [2, "c"]
+it.next().value // 'a'
+it.next().value // 'b'
+it.next().done  // true
 
 {% endhighlight %}
 
-上面代码表示，通过遍历器取出的每一个数组成员，也是数组形式，包括数字键名和键值。
-
-Iterator构造函数可以接受第二个参数，类型为布尔值，默认为false。如果为true，表示只返回非数组形式的键名，不返回键值。
+下面是一个无限运行的遍历器的例子。
 
 {% highlight javascript %}
 
-var a = ['a', 'b', 'c'];
-var i = Iterator(a, true);
-
-for (var item in i){
-  console.log(item); 
-}
-// 0
-// 1
-// 2
-
-{% endhighlight %}
-
-上面代码对Iterator构造函数加入了第二个参数，使得遍历器只返回键名。
-
-默认的遍历器逻辑是依次取出集合的每个成员，你也可以自定义遍历器逻辑。
-
-{% highlight javascript %}
-
-function Range(low, high){
-  this.low = low;
-  this.high = high;
+function idMaker(){
+    var index = 0;
+    
+    return {
+       next: function(){
+           return {value: index++, done: false};
+       }
+    }
 }
 
-{% endhighlight %}
+var it = idMaker();
 
-上面代码定义了一个Range构造函数，通过这个构造函数生成的对象实例，都有low和high两个属性。对于自定义遍历器逻辑，这两个属性是必须的。
-
-然后在这个对象的prototype属性上面，加上一个__iterator__（注意前后各两个下划线）方法。
-
-{% highlight javascript %}
-
-Range.prototype.__iterator__ = function(){
-  return new RangeIterator(this);
-};
-
-{% endhighlight %}
-
-上面代码中的__iterator__方法表示该对象内部调用的遍历器逻辑。
-
-最后，定义对象内部的遍历器对象。
-
-{% highlight javascript %}
-
-function RangeIterator(range){
-  this.range = range;
-  this.current = this.range.low;
-}
-
-RangeIterator.prototype.next = function(){
-  if (this.current > this.range.high)
-    throw StopIteration;
-  else
-    return this.current++;
-};
-
-{% endhighlight %}
-
-上面代码中的遍历器实例，需要定义range属性、current属性和next方法。
-
-如果使用下一节要讲到的generator函数，__iterator__方法的代码可以大大简化。
-
-{% highlight javascript %}
-
-Range.prototype.__iterator__ = function(){
-  for (var i = this.low; i <= this.high; i++)
-    yield i;
-};
-
-{% endhighlight %}
-
-定义完成以后，上面这个Range对象就具备了自定义的遍历器逻辑。
-
-{% highlight javascript %}
-
-var range = new Range(3, 5);
-for (var i in range){
-  console.log(i); 
-}
-// 3
-// 4
-// 5
+it.next().value // '0'
+it.next().value // '1'
+it.next().value // '2'
+// ...
 
 {% endhighlight %}
 
@@ -400,11 +366,7 @@ for (var i in range){
 
 上一部分的遍历器，用来依次取出集合中的每一个成员，但是某些情况下，我们需要的是一个内部状态的遍历器。也就是说，每调用一次遍历器，对象的内部状态发生一次改变（可以理解成发生某些事件）。ECMAScript 6 引入了generator函数，作用就是返回一个内部状态的遍历器，主要特征是函数内部使用了yield语句。
 
-当调用generator函数的时候，该函数并不执行，而是返回一个遍历器（可以理解成暂停执行）。以后，每次调用这个遍历器的next方法，就从函数体的头部或者上一次停下来的地方开始执行（可以理解成恢复执行），直到遇到下一个yield语句为止，并返回该yield语句的值。如果遇到函数执行完毕或者return语句，就会抛出一个StopIteration异常。
-
-目前，generator有两种形式。一种是ECMAScript 6草案中的形式，另一种是Mozilla在Firefox浏览器中已经部署的形式，。
-
-**（1）ECMAScript 6草案的generator**
+当调用generator函数的时候，该函数并不执行，而是返回一个遍历器（可以理解成暂停执行）。以后，每次调用这个遍历器的next方法，就从函数体的头部或者上一次停下来的地方开始执行（可以理解成恢复执行），直到遇到下一个yield语句为止，并返回该yield语句的值。
 
 ECMAScript 6草案定义的generator函数，需要在function关键字后面，加一个星号。然后，函数内部使用yield语句，定义遍历器的每个成员。
 
@@ -431,17 +393,37 @@ var hw = helloWorldGenerator();
 
 {% highlight javascript %}
 
-console.log(hw.next()); // { value: 'hello', done: false }
-console.log(hw.next()); // { value: 'world', done: false }
-console.log(hw.next()); // { value: undefined, done: true }
+hw.next() 
+// { value: 'hello', done: false }
+
+hw.next()
+// { value: 'world', done: false }
+
+hw.next()
+// { value: undefined, done: true }
+
+hw.next()
+// Error: Generator has already finished
+//	at GeneratorFunctionPrototype.next (native)
+//	at repl:1:3
+//  at REPLServer.defaultEval (repl.js:129:27)
+//  ... 
 
 {% endhighlight %}
 
-上面代码每次调用遍历器的next方法，就会返回一个对象。它的value属性就是遍历器当前成员的值（即当前yield语句的值），done属性表示遍历是否结束。直到遍历完最后一个成员，done属性才会从false变为true，这时value属性为undefined，表示此处没有遍历器的成员。
+上面代码一共调用了四次next方法。
+
+- 第一次调用：函数开始执行，直到遇到第一句yield语句为止。next方法返回一个对象，它的value属性就是当前yield语句的值hello，done属性的值false，表示遍历还没有结束。
+
+- 第二次调用：函数从上次yield语句停下的地方，一直执行到下一个yield语句。next方法返回一个对象，它的value属性就是当前yield语句的值world，done属性的值false，表示遍历还没有结束。
+
+- 第三次调用：函数从上次yield语句停下的地方，一直执行到函数结束。next方法返回一个对象，它的value属性就是函数最后的返回值，由于上例的函数没有return语句（即没有返回值），所以value属性的值为undefined，done属性的值true，表示遍历已经结束。
+
+- 第四次调用：由于此时函数已经运行完毕，next方法直接抛出一个错误。
 
 遍历器的本质，其实是使用yield语句暂停执行它后面的操作，当调用next方法时，再继续往下执行，直到遇到下一个yield语句，并返回该语句的值，如果直到运行结束。
 
-yield语句的返回值，就是它后面那个表达式的值。如果next方法带一个参数，该参数就会被当作上一个yield语句的返回值。
+如果next方法带一个参数，该参数就会被当作上一个yield语句的返回值。
 
 {% highlight javascript %}
 
@@ -518,116 +500,6 @@ for (n of fibonacci()) {
 
 从上面代码可见，使用for...of语句时不需要使用next方法。
 
-**（2）Mozill版本的generator**
-
-Mozill版本的gernerator，只要在函数体内使用yield关键字就可以生成。
-
-{% highlight javascript %}
-
-function simpleGenerator(){
-  yield "first";
-  yield "second";
-  yield "third";
-}
-
-var g = simpleGenerator();
-
-g.next() // "first"
-g.next() // "second"
-g.next() // "third"
-g.next() // StopIteration异常
-
-{% endhighlight %}
-
-上面代码依次执行了四次next方法，前三次都依次返回一个yield语句的值，最后一次返回一个StopIteration异常。
-
-斐波那契数列使用generator函数的写法如下。
-
-{% highlight javascript %}
-
-function fibonacci() {
-    let [prev, curr] = [0, 1];
-    for (;;) {
-        [prev, curr] = [curr, prev + curr];
-        yield curr;
-    }
-}
-
-var f = fibonacci();
-f.next() // 1
-f.next() // 2
-f.next() // 3
-f.next() // 5
-f.next() // 8
-f.next() // 13
-f.next() // 21
-
-{% endhighlight %}
-
-由于generator函数返回的是一个遍历器，因此除了next方法，还可以使用for...of结构。上面的斐波那契函数，也可以使用for...of结构进行运行。
-
-{% highlight javascript %}
-
-var f = fibonacci();
-for (n of f) {
-    if (n > 8) break;
-    console.log(n);
-}
-// 1
-// 2
-// 3
-// 5
-// 8
-
-{% endhighlight %}
-
-如果generator函数带有参数，该参数只在第一次执行的时候传入函数体。
-
-{% highlight javascript %}
-
-function fibonacci(limit) {
-    let [prev, curr] = [0, 1];
-    for (;;) {
-        [prev, curr] = [curr, prev + curr];
-		if (limit && current > limit){
-			return;
-		}
-        yield curr;
-    }
-}
-
-{% endhighlight %}
-
-上面代码为斐波那契函数设置了一个极限值，如果当前值超过极限值，就不再往下计算了。
-
-generator函数还支持send方法，该方法的参数将作为上一次yield语句的值，然后返回下一个yield语句的值。
-
-{% highlight javascript %}
-
-function simpleGenerator (){
-	var a = 1;
-	var b = a+1;
-	yield a;
-	var cond = yield b;
-	if (cond){ 
-		b = a+2; 
-	}
-	yield b;
-}
-
-var g = simpleGenerator(); 
-g.next() // 1
-g.next() // 2
-g.send(true) // 3
-
-{% endhighlight %}
-
-上面代码使用send方法重置了上一个yield语句的值，所以返回值为3，而不是2。需要注意的是，send方法必须在next方法之后使用，否则会报错。
-
-generator函数还有一个close方法，用于立即终止函数的运行。
-
-yield语句具有分阶段执行函数的效果，这意味着可以把异步操作写在yield语句里面，等到调用next方法时再往后执行。这实际上等同于不需要写回调函数了，因为异步操作的后续操作可以放在yield语句下面，反正要等到next方法时再执行。所以，generator函数的一个重要实际意义就是用来处理异步操作，改写回调函数。
-
 这里需要注意的是，yield语句运行的时候是同步运行，而不是异步运行（否则就失去了取代回调函数的设计目的了）。实际操作中，一般让yield语句返回Promises对象。
 
 {% highlight javascript %}
@@ -640,7 +512,7 @@ function delay(milliseconds) {
     return deferred.promise;
 }
 
-function f(){
+function *f(){
     yield delay(100);
 };
 
@@ -652,7 +524,7 @@ function f(){
 
 {% highlight javascript %}
 
-function f() {
+function *f() {
     var urls = [
         'http://example.com/',
         'http://twitter.com/',
@@ -681,10 +553,9 @@ ECMAScript 6 允许直接写入函数，作为对象的方法。这样的书写�
 
 {% highlight javascript %}
 
-// ES 6
 var Person = {
-  name: 'Joe',
-  hello() { console.log('Hello, my name is', this.name); }
+  name: '张三',
+  hello() { console.log('我的名字是', this.name); }
 };
 
 {% endhighlight %}
@@ -808,11 +679,106 @@ ECMAScript 6 允许为函数的参数设置默认值。
 
 {% highlight javascript %}
 
-function history(lang = "C", year = 1972) {
-  return lang + " was created around the year " + year;
+function Point(x = 0, y = 0) {
+   this.x = x;
+   this.y = y;
 }
 
+var p = new Point(); 
+// p = { x:0, y:0 }
+
 {% endhighlight %}
+
+### 模板字符串
+
+模板字符串（template string）是增强版的字符串，即可以当作普通字符串使用，也可以在字符串中嵌入变量。它用反引号（`）标识。
+
+{% highlight javascript %}
+
+// 普通字符串
+`In JavaScript '\n' is a line-feed.`
+
+// 多行字符串
+`In JavaScript this is
+ not legal.`
+
+// 字符串中嵌入变量
+var name = "Bob", time = "today";
+`Hello ${name}, how are you ${time}?`
+
+var x = 1;
+var y = 2;
+console.log(`${ x } + ${ y } = ${ x + y}`) 
+// "1 + 2 = 3"
+
+{% endhighlight %}
+
+### for...of循环
+
+JavaScript原有的for...in循环，只能获得对象的键名，不能直接获取键值。
+
+{% highlight javascript %}
+
+var planets = ["Mercury", "Venus", "Earth", "Mars"];
+for (p in planets) {
+  console.log(p);
+}
+// 0
+// 1
+// 2
+// 3
+
+var es6 = {
+  edition: 6,
+  committee: "TC39",
+  standard: "ECMA-262"
+};
+for (e in es6) {
+  console.log(e);
+}
+// edition
+// committee
+// standard
+
+{% endhighlight %}
+
+上面代码是for...in循环用来遍历数组和对象的两个例子。可以看到，for...in循环直接读出的都是键名。
+
+ECMAScript 6 提供for...of循环，允许遍历获得键值。
+
+{% highlight javascript %}
+
+var planets = ["Mercury", "Venus", "Earth", "Mars"];
+for (p of planets) {
+  console.log(p); 
+}
+// Mercury
+// Venus
+// Earth
+// Mars
+
+var engines = Set(["Gecko", "Trident", "Webkit", "Webkit"]);
+for (var e of engines) {
+    console.log(e);
+}
+// Gecko
+// Trident
+// Webkit
+
+var es6 = new Map();
+es6.set("edition", 6);
+es6.set("committee", "TC39");
+es6.set("standard", "ECMA-262");
+for (var [name, value] of es6) {
+  console.log(name + ": " + value);
+}
+// edition: 6
+// committee: TC39
+// standard: ECMA-262
+
+{% endhighlight %}
+
+上面代码一共包含for...of循环的三个例子，前两个例子是遍历数组和对象的键值，最后一个例子是同时遍历对象的键名和键值。
 
 ### 数组推导
 
@@ -842,6 +808,8 @@ a2 // [2, 4, 6, 8]
 [1,4,2,3,-8].filter(function(i) { return i < 3 });
 
 {% endhighlight %}
+
+上面代码说明，模拟map功能只要单纯的for...of循环就行了，模拟filter功能除了for...of循环，还必须加上if语句。
 
 新引入的for...of结构，可以直接跟在表达式的前面或后面，甚至可以在一个数组推导中，使用多个for...of结构。
 
@@ -1006,53 +974,6 @@ jQuery.ajax = function (url, {
 
 {% endhighlight %}
 
-### for...of结构
-
-JavaScript的for...in结构，只能获得键，不能直接获取值。
-
-{% highlight javascript %}
-
-var planets = ["Mercury", "Venus", "Earth", "Mars"];
-for (p in planets) {
-  console.log(p); // 0,1,2,3
-}
- 
-var es6 = {
-  edition: 6,
-  committee: "TC39",
-  standard: "ECMA-262"
-};
-for (e in es6) {
-  console.log(e); // edition, committee, standard
-}
-
-{% endhighlight %}
-
-ECMAScript 6 提供for...of结构，允许获得值。
-
-{% highlight javascript %}
-
-var planets = ["Mercury", "Venus", "Earth", "Mars"];
-for (p of planets) {
-  console.log(p); // Mercury, Venus, Earth, Mars
-}
- 
-var engines = Set(["Gecko", "Trident", "Webkit", "Webkit"]);
-for (var e of engines) {
-    console.log(e);
-    // Set only has unique values, hence Webkit shows only once
-}
- 
-var es6 = new Map();
-es6.set("edition", 6);
-es6.set("committee", "TC39");
-es6.set("standard", "ECMA-262");
-for (var [name, value] of es6) {
-  console.log(name + ": " + value);
-}
-
-{% endhighlight %}
-
 ## 数据结构
 
 ### class结构
@@ -1075,6 +996,8 @@ Language.prototype.summary = function() {
 
 {% endhighlight %}
 
+上面代码定义了一个Language构造函数，这是ECMAScript 5的典型写法。
+
 ECMAScript 6 允许使用class结构，达到同样的效果。
 
 {% highlight javascript %}
@@ -1087,6 +1010,7 @@ class Language {
     this.founder = founder;
     this.year = year;
   }
+
   summary() {
     return this.name + " was created by " + this.founder + " in " + this.year;
   }
@@ -1127,10 +1051,12 @@ ECMAScript 6 允许定义模块。也就是说，允许一个JavaScript脚本文
 export function area(radius) {
   return Math.PI * radius * radius;
 }
- 
+
 export function circumference(radius) {
   return 2 * Math.PI * radius;
 }
+
+export var e = 2.71828182846;
 
 {% endhighlight %}
 
@@ -1144,6 +1070,41 @@ import { area, circumference } from 'circle';
  
 console.log("圆面积：" + area(4));
 console.log("圆周长：" + circumference(14));
+
+{% endhighlight %}
+
+另一种写法是整体加载circle.js。
+
+{% highlight javascript %}
+
+// main.js
+
+module circle from 'circle';
+
+console.log("圆面积：" + circle.area(4));
+console.log("圆周长：" + circle.circumference(14));
+
+{% endhighlight %}
+
+一个模块也可以输出另一个模块的方法。
+
+{% highlight javascript %}
+
+// main.js
+
+export * from 'circle';
+
+{% endhighlight %}
+
+还可以为模块定义初始化方法。
+
+{% highlight javascript %}
+
+// main.js
+
+export default function(x) {
+    return Math.exp(x);
+}
 
 {% endhighlight %}
 
@@ -1173,3 +1134,5 @@ ECMAScript 7可能包括的功能有：
 - Steven Sanderson, [Experiments with Koa and JavaScript Generators](http://blog.stevensanderson.com/2013/12/21/experiments-with-koa-and-javascript-generators/)
 - Matt Baker, [Replacing callbacks with ES6 Generators](http://flippinawesome.org/2014/02/10/replacing-callbacks-with-es6-generators/)
 - Domenic Denicola, [ES6: The Awesome Parts](http://www.slideshare.net/domenicdenicola/es6-the-awesome-parts)
+- Casper Beyer, [ECMAScript 6 Features and Tools](http://caspervonb.github.io/2014/03/05/ecmascript6-features-and-tools.html)
+- Luke Hoban, [ES6 features](https://github.com/lukehoban/es6features)

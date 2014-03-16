@@ -241,7 +241,7 @@ connection.on('close', function(reasonCode, description) {
 
 ## Socket.io简介
 
-[Socket.io](http://socket.io/)是目前最流行的WebSocket实现，包括服务器和浏览器两个部分。它不仅简化了接口，使得操作更容易，而且对于那些不支持WebSocket的浏览器，会自动降为Ajax连接，最大限度地保证了兼容性。
+[Socket.io](http://socket.io/)是目前最流行的WebSocket实现，包括服务器和客户端两个部分。它不仅简化了接口，使得操作更容易，而且对于那些不支持WebSocket的浏览器，会自动降为Ajax连接，最大限度地保证了兼容性。
 
 第一步，在服务器端的项目根目录下，安装socket.io模块。
 

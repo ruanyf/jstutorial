@@ -57,7 +57,7 @@ var newBuffer = buffer.slice(0,3);
 
 {% endhighlight %}
 
-上面代码拷贝buffer对象的前3个字节，生成一个新的ArrayBuffer对象。slice方法其实包含两步，第一步是先分配一段新内容，第二步是将原来那个ArrayBuffer对象拷贝过去。
+上面代码拷贝buffer对象的前3个字节，生成一个新的ArrayBuffer对象。slice方法其实包含两步，第一步是先分配一段新内存，第二步是将原来那个ArrayBuffer对象拷贝过去。
 
 slice方法接受两个参数，第一个参数表示拷贝开始的字节序号，第二个参数表示拷贝截止的字节序号。如果省略第二个参数，则默认到原ArrayBuffer对象的结尾。
 
