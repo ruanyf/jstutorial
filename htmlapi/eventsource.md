@@ -43,15 +43,7 @@ var source = EventSource(url);
 
 {% endhighlight %}
 
-参数url就是服务器网址，必须在网页的网址在同一个网域（domain），而且协议和端口都必须相同。
-
-关闭连接使用close方法。
-
-{% highlight javascript %}
-
-source.close();
-
-{% endhighlight %}
+参数url就是服务器网址，必须与当前网页的网址在同一个网域（domain），而且协议和端口都必须相同。
 
 下面是一个建立连接的实例。
 
@@ -60,6 +52,14 @@ source.close();
 if (!!window.EventSource) {
   var source = new EventSource('http://127.0.0.1/sses/');
 }
+
+{% endhighlight %}
+
+close方法用于关闭连接。
+
+{% highlight javascript %}
+
+source.close();
 
 {% endhighlight %}
 

@@ -8,7 +8,7 @@ modifiedOn: 2013-12-19
 
 ## 概述
 
-deferred对象是jQuery对Promises接口的实现。它是非同步操作的通用接口，可以被看作是一个等待完成的任务，开发者通过一些通过的接口对其进行设置。事实上，它扮演代理人（proxy）的角色，将那些非同步操作包装成具有某些统一特性的对象，典型例子就是Ajax操作、网页动画、web worker等等。
+deferred对象是jQuery对Promises接口的实现。简单说，Promises是异步操作的通用接口，扮演代理人（proxy）的角色，将异步操作包装成具有同步操作特性的特殊对象。异步操作的典型例子就是Ajax操作、网页动画、web worker等等。
 
 jQuery的所有Ajax操作函数，默认返回的就是一个deferred对象。
 

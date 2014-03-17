@@ -154,21 +154,26 @@ var fileType = selected_file.type;
 
 ## FileReader对象
 
-FileReader对象接收File对象或Blob对象作为参数，用于读取文件的实际内容，即把文件内容读入内存。对于不同类型的文件，FileReader使用不同的方法读取。
+FileReader对象用于读取文件，即把文件内容读入内存。它接收File对象或Blob对象，作为参数。
 
-- FileReader.readAsBinaryString(Blob|File) ：读取结果为二进制字符串，每个字节包含一个0到255之间的整数。
-- FileReader.readAsText(Blob|File, opt_encoding) ：读取结果是一个文本字符串。默认情况下，文本编码格式是'UTF-8'，可以通过可选的格式参数，指定其他编码格式的文本。
-- FileReader.readAsDataURL(Blob|File) ： 读取结果是一个基于Base64编码的 data-uri 对象。
-- FileReader.readAsArrayBuffer(Blob|File) ：读取结果是一个 ArrayBuffer 对象。
+对于不同类型的文件，FileReader使用不同的方法读取。
 
-FileReader采用异步方式读取文件，可以为一系列事件指定回调函数。
+- **readAsBinaryString(Blob|File)**：返回二进制字符串，该字符串每个字节包含一个0到255之间的整数。
 
-- onabort：读取中断或调用reader.abort()方法时触发。
-- onerror：读取出错时触发。
-- onload：读取成功后触发。
-- onloadend：读取完成后触发，不管是否成功。触发顺序排在 onload 或 onerror 后面。
-- onloadstart：读取将要开始时触发。
-- onprogress：读取过程中周期性触发。
+- **readAsText(Blob|File, opt_encoding)** ：返回文本字符串。默认情况下，文本编码格式是'UTF-8'，可以通过可选的格式参数，指定其他编码格式的文本。
+
+- **readAsDataURL(Blob|File)**：返回一个基于Base64编码的data-uri对象。
+
+- **readAsArrayBuffer(Blob|File)** ：返回一个ArrayBuffer对象。
+
+FileReader对象采用异步方式读取文件，可以为一系列事件指定回调函数。
+
+- onabort方法：读取中断或调用reader.abort()方法时触发。
+- onerror方法：读取出错时触发。
+- onload方法：读取成功后触发。
+- onloadend方法：读取完成后触发，不管是否成功。触发顺序排在 onload 或 onerror 后面。
+- onloadstart方法：读取将要开始时触发。
+- onprogress方法：读取过程中周期性触发。
 
 下面的代码是如何展示文本文件的内容。
 
