@@ -1,5 +1,5 @@
 ---
-title: Chrome开发者工具和console对象
+title: 浏览器控制台（console对象）
 layout: page
 category: tool
 date: 2013-03-10
@@ -8,7 +8,7 @@ modifiedOn: 2013-12-03
 
 ## 开发者工具
 
-Chrome浏览器自带的“开发者工具”（Developer Tools），是网页开发调试的利器。打开它的方法有三种：
+目前，各大浏览器都自带开发工具。以Chrome浏览器为例，打开它的“开发者工具”（Developer Tools）的方法有三种。
 
 1. 按F12或者Control+Shift+i。
 
@@ -36,11 +36,11 @@ Chrome浏览器自带的“开发者工具”（Developer Tools），是网页�
 
 - **Console**：用来运行JavaScript命令。
 
-这八个面板都有各自的用途，以下详细介绍Console面板。
+这八个面板都有各自的用途，以下详细介绍Console面板，也就是控制台。
 
 ## console对象
 
-目前，各大浏览器的JavaScript引擎都原生提供一个console对象，代表浏览器的JavaScript控制窗口。虽然它不是JavaScript语言的一部分，但是已经成为事实上的标准。Chrome浏览器的console对象，就是指开发者工具中的Console窗口。
+console对象代表浏览器的JavaScript控制台。虽然它还不是标准，但是各大浏览器都原生支持，已经成为事实上的标准。
 
 console对象主要有两个作用：
 
@@ -229,6 +229,138 @@ time方法表示计时开始，timeEnd方法表示计时结束。它们的参数
 
 - **console.trace**：当前执行的代码在堆栈中的调用路径。
 
+## 命令行API
+
+在控制台中，除了使用console对象，还可以使用一些控制台自带的命令行方法。
+
+**（1）$_ **
+
+$_属性返回上一个表达式的值。
+
+{% highlight javascript %}
+
+2+2
+// 4
+$_
+// 4
+
+{% endhighlight %}
+
+**（2）$0 - $4 **
+
+控制台保存了最近5个在Elements面板选中的DOM元素，$0代表倒数第一个，$1代表倒数第二个，以此类推直到$4。
+
+**（3）$(selector) **
+
+$(selector)返回一个数组，包括特定的CSS选择器匹配的所有DOM元素。该方法实际上是document.querySelectorAll方法的别名。
+
+{% highlight javascript %}
+
+var images = $('img');
+for (each in images) {
+    console.log(images[each].src);
+}
+
+{% endhighlight %}
+
+上面代码打印出网页中所有img元素的src属性。
+
+**（4）$x(path) **
+
+$x(path)方法返回一个数组，包含匹配特定XPath表达式的所有DOM元素。
+
+{% highlight javascript %}
+
+$x("//p[a]")
+
+{% endhighlight %}
+
+上面代码返回所有包含a元素的p元素。
+
+**（5）inspect(object) **
+
+inspect(object)方法打开相关面板，并选中相应的元素：DOM元素在Elements面板中显示，JavaScript对象在Profiles中显示。
+
+**（6）getEventListeners(object) **
+
+getEventListeners(object)方法返回一个对象，该对象的成员为登记了回调函数的各种事件（比如click或keydown），每个事件对应一个数组，数组的成员为该事件的回调函数。
+
+**（7）keys(object)，values(object) **
+
+keys(object)方法返回一个数组，包含特定对象的所有键名。
+
+values(object)方法返回一个数组，包含特定对象的所有键值。
+
+{% highlight javascript %}
+
+var o = {'p1':'a', 'p2':'b'};
+
+keys(o)
+// ["p1", "p2"]
+values(o)
+// ["a", "b"]
+
+{% endhighlight %}
+
+**（8）monitorEvents(object[, events]) ，unmonitorEvents(object[, events])**
+
+monitorEvents(object[, events])方法监听特定对象上发生的特定事件。当这种情况发生时，会返回一个Event对象，包含该事件的相关信息。unmonitorEvents方法用于停止监听。
+
+{% highlight javascript %}
+
+monitorEvents(window, "resize");
+
+monitorEvents(window, ["resize", "scroll"])
+
+{% endhighlight %}
+
+上面代码分别表示单个事件和多个事件的监听方法。
+
+{% highlight javascript %}
+
+monitorEvents($0, "mouse");
+unmonitorEvents($0, "mousemove");
+
+{% endhighlight %}
+
+上面代码表示如何停止监听。
+
+monitorEvents允许监听同一大类的事件。所有事件可以分成四个大类。
+
+- mouse："mousedown", "mouseup", "click", "dblclick", "mousemove", "mouseover", "mouseout", "mousewheel"
+- key："keydown", "keyup", "keypress", "textInput"
+- touch："touchstart", "touchmove", "touchend", "touchcancel"
+- control："resize", "scroll", "zoom", "focus", "blur", "select", "change", "submit", "reset"
+
+{% highlight javascript %}
+
+monitorEvents($("#msg"), "key");
+
+{% endhighlight %}
+
+上面代码表示监听所有key大类的事件。
+
+**（9）profile([name])，profileEnd() **
+
+profile方法用于启动一个特定名称的CPU性能测试，profileEnd方法用于结束该性能测试。
+
+{% highlight javascript %}
+
+profile("My profile")
+
+profileEnd("My profile")
+
+{% endhighlight %}
+
+**（10）其他方法 **
+
+命令行API还提供以下方法。
+
+- clear()方法清除控制台的历史。
+- copy(object)方法复制特定DOM元素到剪贴板。
+- dir(object)方法显示特定对象的所有属性，是console.dir方法的别名。
+- dirxml(object)方法显示特定对象的XML形式，是console.dirxml方法的别名。
+
 ## debugger语句
 
 debugger语句必须与除错工具配合使用，如果没有除错工具，debugger语句不会产生任何结果。
@@ -401,3 +533,4 @@ hz = 1 / period;
 - Firebug Wiki, [Console API](https://getfirebug.com/wiki/index.php/Console_API)
 - Axel Rauschmayer, [The JavaScript console API](http://www.2ality.com/2013/10/console-api.html)
 - Marius Schulz, [Advanced JavaScript Debugging with console.table()](http://blog.mariusschulz.com/2013/11/13/advanced-javascript-debugging-with-consoletable)
+- Google Developer, [Command Line API Reference](https://developers.google.com/chrome-developer-tools/docs/commandline-api)
