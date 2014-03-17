@@ -99,7 +99,7 @@ ctx.fillStyle = "#008600";
 // 设置字体内容，以及在画布上的位置
 ctx.fillText("Hello!", 10, 50); 
 // 绘制空心字
-ctx.strokeText('Hello!", 10, 100); 
+ctx.strokeText("Hello!", 10, 100); 
 
 {% endhighlight %}
 
@@ -140,9 +140,9 @@ ctx.stroke();
 
 {% endhighlight %}
 
-### 渐变
+**（5）设置渐变色**
 
-设置渐变色。
+createLinearGradient方法用来设置渐变色。
 
 {% highlight javascript %}
 
@@ -165,7 +165,9 @@ ctx.fillRect(10,10,200,100);
 
 {% endhighlight %}
 
-### 阴影
+**（6）设置阴影**
+
+一系列与阴影相关的方法，可以用来设置阴影。
 
 {% highlight javascript %}
 
@@ -240,7 +242,48 @@ context.putImageData(imageData, 0, 0);
 
 {% endhighlight %}
 
-### 像素处理
+### 将Canvas转化为图像文件
+
+对图像数据做出修改以后，可以使用toDataURL方法，将Canvas数据重新转化成一般的图像文件形式。
+
+{% highlight javascript %}
+
+function convertCanvasToImage(canvas) {
+  var image = new Image();
+  image.src = canvas.toDataURL("image/png");
+  return image;
+}
+
+{% endhighlight %}
+
+上面的代码将Canvas数据，转化成PNG data URI。
+
+### 保存和恢复上下文
+
+save方法用于保存上下文环境，restore方法用于恢复到上一次保存的上下文环境。
+
+{% highlight javascript %}
+
+ctx.save(); 
+
+ctx.shadowOffsetX = 10;
+ctx.shadowOffsetY = 10;
+ctx.shadowBlur = 5;
+ctx.shadowColor = "rgba(0,0,0,0.5)";
+
+ctx.fillStyle = "#CC0000";
+ctx.fillRect(10,10,150,100);
+
+ctx.restore(); 
+
+ctx.fillStyle = "#000000";
+ctx.fillRect(180,10,150,100); 
+
+{% endhighlight %}
+
+上面的代码一共绘制了两个矩形，前一个有阴影，后一个没有。
+
+## 像素处理
 
 假定filter是一个处理像素的函数，那么整个对Canvas的处理流程，可以用下面的代码表示。
 
@@ -260,7 +303,7 @@ if (canvas.width > 0 && canvas.height > 0) {
 
 以下是几种常见的处理方法。
 
-（1）灰度效果
+### 灰度效果
 
 灰度图（grayscale）就是取红、绿、蓝三个像素值的算术平均值，这实际上将图像转成了黑白形式。假定d[i]是像素数组中一个象素的红色值，则d[i+1]为绿色值，d[i+2]为蓝色值，d[i+3]就是alpha通道值。转成灰度的算法，就是将红、绿、蓝三个值相加后除以3，再将结果写回数组。
 
@@ -283,7 +326,7 @@ grayscale = function (pixels) {
 
 {% endhighlight %}
 
-（2）复古效果
+### 复古效果
 
 复古效果（sepia）则是将红、绿、蓝三个像素，分别取这三个值的某种加权平均值，使得图像有一种古旧的效果。
 
@@ -308,7 +351,7 @@ sepia = function (pixels) {
 
 {% endhighlight %}
 
-（3）红色蒙版效果
+### 红色蒙版效果
 
 红色蒙版指的是，让图像呈现一种偏红的效果。算法是将红色通道设为红、绿、蓝三个值的平均值，而将绿色通道和蓝色通道都设为0。
 
@@ -332,7 +375,7 @@ red = function (pixels) {
 
 {% endhighlight %}
 
-（4）亮度效果
+### 亮度效果
 
 亮度效果（brightness）是指让图像变得更亮或更暗。算法将红色通道、绿色通道、蓝色通道，同时加上一个正值或负值。
 
@@ -354,9 +397,9 @@ brightness = function (pixels, delta) {
 
 {% endhighlight %}
 
-（5）反转效果
+### 反转效果
 
-反转效果（invert）是值图片呈现一种色彩颠倒的效果。算法为红、绿、蓝通道都取各自的相反值（255-原值）。
+反转效果（invert）是指图片呈现一种色彩颠倒的效果。算法为红、绿、蓝通道都取各自的相反值（255-原值）。
 
 {% highlight javascript %}
 
@@ -375,47 +418,6 @@ invert = function (pixels) {
 };
 
 {% endhighlight %}
-
-### 将Canvas转化为图像文件
-
-对图像数据做出修改以后，可以使用toDataURL方法，将Canvas数据重新转化成一般的图像文件形式。
-
-{% highlight javascript %}
-
-function convertCanvasToImage(canvas) {
-  var image = new Image();
-  image.src = canvas.toDataURL("image/png");
-  return image;
-}
-
-{% endhighlight %}
-
-上面的代码将Canvas数据，转化成PNG data URI。
-
-## 保存和恢复上下文
-
-save方法用于保存上下文环境，restore方法用于恢复到上一次保存的上下文环境。
-
-{% highlight javascript %}
-
-ctx.save(); 
-
-ctx.shadowOffsetX = 10;
-ctx.shadowOffsetY = 10;
-ctx.shadowBlur = 5;
-ctx.shadowColor = "rgba(0,0,0,0.5)";
-
-ctx.fillStyle = "#CC0000";
-ctx.fillRect(10,10,150,100);
-
-ctx.restore(); 
-
-ctx.fillStyle = "#000000";
-ctx.fillRect(180,10,150,100); 
-
-{% endhighlight %}
-
-上面的代码一共绘制了两个矩形，前一个有阴影，后一个没有。
 
 ## 参考链接
 
