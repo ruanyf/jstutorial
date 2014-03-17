@@ -10,6 +10,23 @@ jQuery是目前使用最广泛的JavaScript函数库。据[统计](http://w3tech
 
 jQuery的最大优势有两个。首先，它基本是一个DOM操作工具，可以使操作DOM对象变得异常容易。其次，它统一了不同浏览器的API接口，使得代码在所有现代浏览器均能运行，开发者不用担心浏览器之间的差异。
 
+## jQuery的加载
+
+一般采用下面的写法，在网页中加载jQuery。
+
+{% highlight html %}
+
+<script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery-1.11.0.min.js" type="text/javascript"><\/script>')
+</script>
+
+{% endhighlight %}
+
+上面代码有两点需要注意。一是采用[CDN](http://jquery.com/download/#using-jquery-with-a-cdn)加载。如果CDN加载失败，则退回到本地加载。二是采用协议无关的加载网址，同时支持http协议和https协议。
+
+这段代码最好放到网页尾部。如果需要支持IE 6/7/8，就使用jQuery 1.x版，否则使用最新版。.
+
 ## jQuery基础
 
 ### jQuery对象
@@ -345,6 +362,8 @@ jQuery使用美元符号（$）指代jQuery对象。某些情况下，其他函�
 
 上面代码就是$.noConflict方法的一般用法。在加载jQuery之后，立即调用该方法，会使得美元符号还给前面一个函数库。这意味着，其后再调用jQuery，只能写成jQuery.methond的形式，而不能用$.method了。
 
+为了避免冲突，可以考虑从一开始就只使用jQuery代替美元符号。
+
 ## jQuery实例对象的方法
 
 除了上一节提到的is、get、eq方法，jQuery实例还有许多其他方法。
@@ -402,6 +421,11 @@ children方法返回选中元素的所有子元素。
 $("div").children()
 $("div").children(".selected")
 
+// 等同于
+
+$('div > *')
+$('div > .selected')
+
 {% endhighlight %}
 
 上面这三个方法都接受一个选择器作为参数。
@@ -441,6 +465,18 @@ find方法返回当前元素的所有符合条件的下级元素。
 {% highlight javascript %}
 
 $("div").find(".selected")
+
+// 等同于
+
+$(".selected", "div")
+
+{% endhighlight %}
+
+上面代码选中所有div元素下面的“.selected”对象。由于这样写缩小了搜索范围，所以要优于下面的写法。
+
+{% highlight javascript %}
+
+$("div .selected")
 
 {% endhighlight %}
 

@@ -346,7 +346,11 @@ $.ajax({
   timeout: 30000,
   success: successCallback,
   error: errorCallback,
-  complete: completeCallback
+  complete: completeCallback,
+  statusCode: {
+        404: handler404,
+        500: handler500
+  }
 })
 
 function successCallback(json) {
@@ -375,6 +379,7 @@ function completeCallback(xhr, status){
 - timeout: 等待的最长毫秒数。如果过了这个时间，请求还没有返回，则自动将请求状态改为失败。
 - error：请求失败时的回调函数，函数参数为发出请求的原始对象以及返回的状态信息。
 - complete：不管请求成功或失败，都会执行的回调函数，函数参数为发出请求的原始对象以及返回的状态信息。
+- statusCode：为服务器返回的某些状态码，指定特别的回调函数。
 
 这些参数之中，url可以独立出来，作为ajax方法的第一个参数。也就是说，上面代码还可以写成下面这样。
 
