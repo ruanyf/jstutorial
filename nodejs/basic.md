@@ -430,6 +430,8 @@ m.print("这是自定义模块");
 
 fs是filesystem的缩写，该模块提供本地文件的读写能力。
 
+**（1）readfile方法**
+
 {% highlight javascript %}
 
 var fs = require('fs');
@@ -456,6 +458,8 @@ fs.readFile('example_log.txt', 'utf8', function (err, logData) {
 
 可用的文件编码包括“ascii”、“utf8”和“base64”。如果这个参数没有提供，默认是utf8。
 
+**（2）readFileSync方法**
+
 如果想要同步读取文件，可以使用readFileSync方法。
 
 {% highlight javascript %}
@@ -463,6 +467,8 @@ fs.readFile('example_log.txt', 'utf8', function (err, logData) {
 var data = fs.readFileSync('./file.json');
 
 {% endhighlight %}
+
+**（3）writeFile方法**
 
 写入文件要使用writeFile方法。
 
@@ -478,6 +484,8 @@ fs.writeFile('./file.txt', data, function (err) {
 
 {% endhighlight %}
 
+**（4）readdir方法**
+
 readdir方法用于读取目录，返回一个所包含的文件和子目录的数组。
 
 {% highlight javascript %}
@@ -489,6 +497,33 @@ fs.readdir(process.cwd(), function (err, files) {
   }
   console.log(files);
 });
+
+{% endhighlight %}
+
+**（5）fs.exists(path, callback)**
+
+exists方法用来判断给定路径是否存在，然后不管结果如何，都会调用回调函数。
+
+{% highlight javascript %}
+
+fs.exists('/path/to/file', function (exists) {
+  util.debug(exists ? "it's there" : "no file!");
+});
+
+{% endhighlight %}
+
+上面代码表明，回调函数的参数是一个表示文件是否存在的布尔值。
+
+需要注意的是，不要在open方法之前调用exists方法，open方法本身就能检查文件是否存在。
+
+下面的例子是如果给定目录存在，就删除它。
+
+{% highlight javascript %}
+
+if(fs.exists(outputFolder)) {
+  console.log("Removing "+outputFolder);
+  fs.rmdir(outputFolder);
+}
 
 {% endhighlight %}
 
