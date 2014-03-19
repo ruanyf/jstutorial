@@ -61,7 +61,7 @@ o.print() // Object
 
 ### Object工具方法
 
-Object本身当作工具方法使用时，可以将原始类型的值转为对应的包装对象（参见《原始类型的包装对象》一节）。
+Object本身当作工具方法使用时，可以将任意值转为对象。其中，原始类型的值转为对应的包装对象（参见《原始类型的包装对象》一节）。
 
 {% highlight javascript %}
 
@@ -69,7 +69,13 @@ Object(1) instanceof Number // true
 Object('foo') instanceof String // true
 Object(true) instanceof Boolean // true
 
+Object([]) instanceof Array // true
+Object({}) instanceof Object // true
+Object(function(){}) instanceof Function // true
+
 {% endhighlight %}
+
+上面代码表示Object方法将各种值，转为对应的构造函数的实例。
 
 ### Object.keys方法，Object.getOwnPropertyNames方法
 
@@ -112,7 +118,16 @@ Object.create方法的详细介绍，请参见《面向对象编程》一章。
 
 ## Object实例对象的方法
 
-Object实例对象继承的两种最主要的方法是valueOf和toString。
+Object实例对象继承了Object.prototype对象上的以下方法。
+
+- hasOwnProperty
+- isPrototypeOf
+- propertyIsEnumerable
+- toLocalString
+- toString
+- valueOf
+
+其中，两种最主要的方法是valueOf和toString。
 
 ### valueOf方法
 
