@@ -10,7 +10,7 @@ modifiedOn: 2013-10-24
 
 [Underscore.js](http://underscorejs.org/)是一个很精干的库，压缩后只有4KB。它提供了几十种函数式编程的方法，弥补了标准库的不足，大大方便了JavaScript的编程。MVC框架Backbone.js就将这个库作为自己的工具库。除了可以在浏览器环境使用，Underscore.js还可以用于Node.js。
 
-Underscor.js定义了一个下划线（_）对象，函数库的所有方法都属于这个对象。这些方法大致上可以分成：集合（collection）、数组（array）、函数（function）、对象（object）和工具（utility）五大类。
+Underscore.js定义了一个下划线（_）对象，函数库的所有方法都属于这个对象。这些方法大致上可以分成：集合（collection）、数组（array）、函数（function）、对象（object）和工具（utility）五大类。
 
 ## 集合相关方法
 

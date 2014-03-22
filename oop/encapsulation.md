@@ -8,6 +8,8 @@ modifiedOn: 2013-11-23
 
 ## 原型prototype对象
 
+JavaScript继承机制的基本思想是，每一个对象都关联一个原型对象，定义在后者上的属性和方法，都可以被前者继承。这个原型对象就叫做prototype对象。
+
 JavaScript通过构造函数生成新对象，因此构造函数可以视为对象的模板。实例对象的属性和方法，可以定义在构造函数内部。
 
 {% highlight javascript %}

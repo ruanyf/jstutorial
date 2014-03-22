@@ -459,7 +459,7 @@ Access-Control-Allow-Origin: *
 
 {% endhighlight %}
 
-由于整个过程都是浏览器自动后台完成，不用用户参与，所以对于开发者来说，使用Ajax跨域请求与同域请求没有区别，代码完全一样。但是，这需要服务端的支持，所以在使用CORS之前，要查看一下所请求的网站是否支持。
+由于整个过程都是浏览器自动后台完成，不用用户参与，所以对于开发者来说，使用Ajax跨域请求与同域请求没有区别，代码完全一样。但是，这需要服务器的支持，所以在使用CORS之前，要查看一下所请求的网站是否支持。
 
 CORS机制默认不发送cookie和HTTP认证信息，除非打开withCredentials属性。
 
@@ -469,6 +469,16 @@ request.withCredentials = "true";
 
 {% endhighlight %}
 
+同时，服务器返回HTTP头信息，也必须打开Access-Control-Allow-Credentials选项。
+
+{% highlight http %}
+
+Access-Control-Allow-Credentials: true
+
+{% endhighlight %}
+
+需要注意的是，此时cookie依然遵循同源政策，只有该远程域名设置的cookie才会上传，其他域名下的cookie并不会上传，且网页代码中的document.cookie也无法读取远程域名下的cookie。
+
 CORS机制与JSONP模式的使用目的相同，而且更强大。JSONP只支持GET请求，CORS可以支持所有类型的HTTP请求。在发生错误的情况下，CORS可以得到更详细的错误信息，部署更有针对性的错误处理代码。JSONP的优势在于可以用于老式浏览器，以及可以向不支持CORS的网站请求数据。
 
 ## 参考链接
@@ -477,3 +487,4 @@ CORS机制与JSONP模式的使用目的相同，而且更强大。JSONP只支持
 - Mathias Bynens, [Loading JSON-formatted data with Ajax and xhr.responseType='json'](http://mathiasbynens.be/notes/xhr-responsetype-json)
 - Eric Bidelman, [New Tricks in XMLHttpRequest2](http://www.html5rocks.com/en/tutorials/file/xhr2/)
 - Matt West, [Uploading Files with AJAX](http://blog.teamtreehouse.com/uploading-files-ajax)
+- Monsur Hossain, [Using CORS](http://www.html5rocks.com/en/tutorials/cors/)

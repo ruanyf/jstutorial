@@ -59,7 +59,7 @@ moveto和lineto方法可以多次使用。最后，还可以使用closePath方�
 
 **（2）绘制矩形**
 
-fillRect(x, y, width, height)方法用来绘制矩形，它的四个参数分别为矩形左上角顶点的x坐标、y坐标，以及举行的宽和高。fillStyle属性用来设置矩形的填充色。
+fillRect(x, y, width, height)方法用来绘制矩形，它的四个参数分别为矩形左上角顶点的x坐标、y坐标，以及矩形的宽和高。fillStyle属性用来设置矩形的填充色。
 
 {% highlight javascript %}
 
