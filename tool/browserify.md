@@ -49,6 +49,10 @@ browserify main.js > compiled.js
 
 # 或者
 
+browserify main > compiled.js
+
+# 或者
+
 browserify main.js -o compiled.js
 
 {% endhighlight %}
@@ -113,6 +117,31 @@ app.js就可以直接插入HTML网页了。
 
 注意，只要插入app.js一个文件就可以了，完全不需要再加载backbone.js和jQuery了。
 
+## 生成模块
+
+有时，我们只是希望将node.js的模块，移植到浏览器，使得浏览器端可以调用。这时，可以采用browserify的-r参数（--require的简写）。
+
+{% highlight bash %}
+
+browserify -r through -r ./my-file.js:my-module > bundle.js
+
+{% endhighlight %}
+
+上面代码将through和my-file.js（后面的冒号表示指定模块名为my-module）都做成了模块，可以在其他script标签中调用。
+
+{% highlight html %}
+
+<script src="bundle.js"></script>
+<script>
+  var through = require('through');
+  var myModule = require('my-module');
+  /* ... */
+</script>
+
+{% endhighlight %}
+
+可以看到，-r参数的另一个作用，就是为浏览器端提供require方法。
+
 ## browserify-middleware模块
 
 上面是将服务器端模块直接转为客户端脚本，然后在网页中调用这个转化后的脚本文件。还有一种思路是，在运行时动态转换模块，这就需要用到[browserify-middleware模块](https://github.com/ForbesLindesay/browserify-middleware)。
@@ -147,3 +176,4 @@ app.get('/', function(req, res){
 
 - Jack Franklin, [Dependency Management with Browserify](http://javascriptplayground.com/blog/2013/09/browserify/)
 - Seth Vincent, [Using Browserify with Express](http://learnjs.io/blog/2013/12/22/express-and-browserify/)
+- Patrick Mulder, [Browserify - Unix in the browser](http://thinkingonthinking.com/unix-in-the-browser/)
