@@ -116,6 +116,30 @@ var object = new Object();
 
 Object.create方法的详细介绍，请参见《面向对象编程》一章。
 
+## Object.observe方法
+
+Object.observe方法用于观察对象属性的变化。
+
+{% highlight javascript %}
+
+var o = {};
+
+Object.observe(o, function(changes) {
+  changes.forEach(function(change) {
+    console.log(change.type, change.name, change.oldValue);
+  });
+});
+
+o.foo = 1; // add, 'foo', undefined
+o.foo = 2; // update, 'foo', 1
+delete o.foo; // delete, 'foo', 2
+
+{% endhighlight %}
+
+上面代码表示，通过Object.observe函数，对o对象指定回调函数。一旦o对象的属性出现任何变化，就会调用回调函数，回调函数通过一个参数对象读取o的属性变化的信息。
+
+该方法非常新，只有Chrome浏览器的最新版本才部署。
+
 ## Object实例对象的方法
 
 Object实例对象继承了Object.prototype对象上的以下方法。

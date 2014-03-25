@@ -674,6 +674,12 @@ http.createServer(function(req, res) {
 
 {% endhighlight %}
 
+回调函数的req（request）对象，拥有以下属性。
+
+- url：发出请求的网址。
+- method：HTTP请求的方法。
+- headers：HTTP请求的所有HTTP头信息。
+
 ### 处理POST请求
 
 当客户端采用POST方法发送数据时，服务器端可以对data和end两个事件，设立监听函数。
