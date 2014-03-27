@@ -125,8 +125,63 @@ document.getElementById("theCircle").addEventListener("click", function() {
 
 {% endhighlight %}
 
+## svg文件处理
+
+### 读取svg源码
+
+由于svg文件就是一个XML代码的文本文件，因此可以通过读取XML代码的方式，读取svg源码。
+
+假定网页中有一个svg元素。
+
+{% highlight html %}
+
+<div id="svg-container">
+	<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" width="500" height="440">
+		<!-- svg code -->
+	</svg>
+</div>
+
+{% endhighlight %}
+
+使用XMLSerializer实例的serializeToString方法，获取svg元素的代码。
+
+{% highlight javascript %}
+
+var svgString = new XMLSerializer().serializeToString(document.querySelector('svg'));
+
+{% endhighlight %}
+
+### 将svg图像转为canvas图像
+
+首先，需要新建一个img对象，将svg图像指定到该img对象的src属性。
+
+{% highlight javascript %}
+
+var img = new Image();
+var svg = new Blob([svgString], {type: "image/svg+xml;charset=utf-8"});
+
+var DOMURL = self.URL || self.webkitURL || self;
+var url = DOMURL.createObjectURL(svg);
+
+img.src = url;
+
+{% endhighlight %}
+
+然后，当图像加载完成后，再将它绘制到canvas元素。
+
+{% highlight javascript %}
+
+img.onload = function() {
+	var canvas = document.getElementById("canvas");
+	var ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+};
+
+{% endhighlight %}
+
 ## 参考链接
 
 - Jon McPartland, [An introduction to SVG animation](http://bigbitecreative.com/introduction-svg-animation/)
 - Alexander Goedde, [SVG - Super Vector Graphics](http://tavendo.com/blog/post/super-vector-graphics/)
 - Joseph Wegner, [Learning SVG](http://flippinawesome.org/2014/02/03/learning-svg/)
+- biovisualize, [Direct svg to canvas to png conversion](http://bl.ocks.org/biovisualize/8187844)

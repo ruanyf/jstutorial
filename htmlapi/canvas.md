@@ -172,11 +172,8 @@ ctx.fillRect(10,10,200,100);
 {% highlight javascript %}
 
 ctx.shadowOffsetX = 10; // 设置水平位移
-
 ctx.shadowOffsetY = 10; // 设置垂直位移
-
 ctx.shadowBlur = 5; // 设置模糊度
-
 ctx.shadowColor = "rgba(0,0,0,0.5)"; // 设置阴影颜色
 
 ctx.fillStyle = "#CC0000"; 
@@ -186,7 +183,7 @@ ctx.fillRect(10,10,200,100);
 
 ## 图像处理方法
 
-### 插入图像
+### drawImage方法
 
 canvas允许将图像文件插入画布，做法是读取图片后，使用drawImage方法在画布内进行重绘。
 
@@ -224,7 +221,7 @@ image.src = "image.png";
 
 drawImage()方法接受三个参数，第一个参数是图像文件的DOM元素（即img标签），第二个和第三个参数是图像左上角在Canvas元素中的坐标，上例中的（0, 0）就表示将图像左上角放置在Canvas元素的左上角。
 
-### 读取Canvas的内容
+### getImageData方法，putImageData方法
 
 getImageData方法可以用来读取Canvas的内容，返回一个对象，包含了每个像素的信息。
 
@@ -242,7 +239,7 @@ context.putImageData(imageData, 0, 0);
 
 {% endhighlight %}
 
-### 将Canvas转化为图像文件
+### toDataURL方法
 
 对图像数据做出修改以后，可以使用toDataURL方法，将Canvas数据重新转化成一般的图像文件形式。
 
@@ -258,7 +255,7 @@ function convertCanvasToImage(canvas) {
 
 上面的代码将Canvas数据，转化成PNG data URI。
 
-### 保存和恢复上下文
+### save方法，restore方法
 
 save方法用于保存上下文环境，restore方法用于恢复到上一次保存的上下文环境。
 
@@ -281,9 +278,11 @@ ctx.fillRect(180,10,150,100);
 
 {% endhighlight %}
 
-上面的代码一共绘制了两个矩形，前一个有阴影，后一个没有。
+上面代码先用save方法，保存了当前设置，然后绘制了一个有阴影的矩形。接着，使用restore方法，恢复了保存前的设置，绘制了一个没有阴影的矩形。
 
 ## 像素处理
+
+通过getImageData方法和putImageData方法，可以处理每个像素，进而操作图像内容。
 
 假定filter是一个处理像素的函数，那么整个对Canvas的处理流程，可以用下面的代码表示。
 
