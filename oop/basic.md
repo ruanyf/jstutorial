@@ -176,11 +176,29 @@ instanceof运算符的实质是，找出instanceof运算符左侧的实例对象
 
 ### 涵义
 
-上面已经提到，构造函数内部需要用到this关键字。这个关键字有多种含义，用法很灵活，下面就是详细解释。
+构造函数内部需要用到this关键字。那么，this关键字到底是什么意思呢？
 
-JavaScript语言允许动态调用对象的属性。也就是说，假定a对象和b对象都有一个m属性，JavaScript允许在调用时m属性动态切换，即完全有可能它一会属于a对象，一会属于b对象，这就要靠this关键字来办到。
+this有多种含义，用法很灵活。理解this，需要理解JavaScript语言允许动态调用对象的属性。也就是说，假定a对象和b对象都有一个属性，指向同一个f函数，JavaScript允许在调用f函数时，运行环境动态切换，即f函数一会属于a对象，一会属于b对象，这就要靠this关键字来办到。
 
-简单说，this关键字就是指属性所处的那个对象，即写成this.m。由于this的指向可变，所以达到了m属性的动态切换。如果处在全局环境，this就是指顶层对象（在浏览器中为window对象）；如果不处在全局环境，this就是指对属性求值时所在的对象。
+{% highlight javascript %}
+
+var a = new Object();
+var b = new Object();
+
+function f(){ console.log(this); };
+
+a.m = f;
+b.m = f;
+
+{% endhighlight %}
+
+上面代码中，a对象和b对象的m属性都指向f函数。那么，f函数内部的this关键字，就代表不同的运行环境。
+
+简单说，this关键字就是指f函数运行时所处的那个对象，如果f在a对象中运行，则this指向a，如果f在b对象中运行，则this指向b。由于this的指向可变，所以达到了运行环境动态切换的目的。
+
+如果一个函数在全局环境中运行，this就是指顶层对象（在浏览器中为window对象）；如果不在全局环境中运行，this就是指运行时所处的那个对象。
+
+### 详细解释
 
 我们分成几种情况来讨论。
 
@@ -219,7 +237,6 @@ O.prototype.m = function() {
 var o = new O("Hello World!");
 
 o.p // "Hello World!"
-
 o.m() // "Hello World!"
 
 {% endhighlight %}
@@ -292,12 +309,12 @@ o2.f() // 1
 {% highlight javascript %}
 
 var a = {
-	b : {
-		m : function() {
-			console.log(this.p);
-		},
-		p : 'Hello'
-	}
+		b : {
+			m : function() {
+				console.log(this.p);
+			},
+			p : 'Hello'
+		}
 };
 
 var hello = a.b.m;
@@ -317,6 +334,10 @@ hello.m() // Hello
 **（4）结论**
 
 综合上面三种情况，可以看到this就是运行时变量或方法所在的对象。如果在全局环境下运行，就代表全局对象window；如果在某个对象中运行，就代表该对象。
+
+### 使用时的注意点
+
+**（1）避免多层this**
 
 由于this的指向是不确定的，所以切勿在函数中包含多层的this。
 
@@ -359,7 +380,74 @@ o.f1()
 
 上面代码定义了变量that，固定指向外层的this，然后在内层使用that，就不会发生this指向的改变。
 
-这种不确定的this指向，会给编程带来一些麻烦。
+**（2）避免数组处理方法中的this**
+
+数组的map和foreach方法，允许提供一个函数作为参数。这个函数内部不应该使用this。
+
+{% highlight javascript %}
+
+var o = {
+	v: 'hello',
+    p: [ 'a1', 'a2' ],
+    f: function f() {
+        this.p.forEach(function (item) {
+            console.log(this.v+item);
+        });
+    }
+}
+
+o.f()
+// undefined a1
+// undefined a2
+
+{% endhighlight %}
+
+上面代码中，foreach方法的参数函数中的this，其实是指向window对象，因此取不到o.v的值。
+
+解决这个问题的一种方法，是使用中间变量。
+
+{% highlight javascript %}
+
+var o = {
+	v: 'hello',
+    p: [ 'a1', 'a2' ],
+    f: function f() {
+		var that = this;
+        this.p.forEach(function (item) {
+            console.log(that.v+' '+item);
+        });
+    }
+}
+
+o.f()
+// hello a1
+// hello a2
+
+{% endhighlight %}
+
+另一种方法是将this当作foreach方法的第二个参数，固定它的运行环境。
+
+{% highlight javascript %}
+
+var o = {
+	v: 'hello',
+    p: [ 'a1', 'a2' ],
+    f: function f() {
+        this.p.forEach(function (item) {
+            console.log(this.v+' '+item);
+        }, this);
+    }
+}
+
+o.f()
+// hello a1
+// hello a2
+
+{% endhighlight %}
+
+**（3）避免回调函数中的this**
+
+回调函数中的this往往会改变指向，最好避免使用。
 
 {% highlight javascript %}
 
