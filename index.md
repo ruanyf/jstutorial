@@ -57,7 +57,6 @@ modifiedOn: 2014-03-17
 - [浏览器的JavaScript引擎](bom/engine.html)
 - [window对象](bom/window.html)
 - [History对象](bom/history.html)
-- [CSS](bom/css.html)
 - [Ajax](bom/ajax.html)
 - [同域限制与window.postMessage方法](bom/windowpostmessage.html)
 - [Web Storage：浏览器端数据储存机制](bom/webstorage.html)

@@ -480,8 +480,12 @@ if(result.matches) {
 var result = window.matchMedia("(max-width: 700px)");
 
 if (result.matches){
-  document.write('<link rel="stylesheet" 
-                  href="small.css">');
+	var linkElm = document.createElement('link');
+	linkElm.setAttribute('rel', 'stylesheet');
+	linkElm.setAttribute('type', 'text/css');
+	linkElm.setAttribute('href', 'small.css');
+
+	document.head.appendChild(linkElm);
 }
 
 {% endhighlight %}
