@@ -84,7 +84,7 @@ longString
 
 {% highlight javascript %}
 
-"\a251" // "©"
+"\251" // "©"
 "\xA9" // "©"
 "\u00A9" // "©"
 

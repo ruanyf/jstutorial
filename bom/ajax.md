@@ -6,9 +6,11 @@ date: 2013-02-16
 modifiedOn: 2014-02-27
 ---
 
+Ajax指的是不刷新页面，发出异步请求，向服务器端要求数据，然后再进行处理的方法。
+
 ## XMLHttpRequest对象
 
-该对象用于从JavaScript发出HTTP请求，下面是典型用法。
+XMLHttpRequest对象用于从JavaScript发出HTTP请求，下面是典型用法。
 
 {% highlight javascript %}
 
@@ -387,7 +389,7 @@ xhr.send(formData);
 
 ## JSONP
 
-越来越多的服务器返回JSON格式的数据，但是从数据性质上来看，它属于字符串。这时就需要用JSON.parse方法将文本数据转为JSON对象。为了方便起见，许多服务器也支持指定回调函数的名称，直接将JSON数据放入回调函数的参数，如此一来就省略将字符串解析为JSON对象的步骤。这种方法就被称为JSONP。
+越来越多的服务器返回JSON格式的数据，但是从数据性质上来看，返回的其实是一个字符串。这时就需要用JSON.parse方法将文本数据转为JSON对象。为了方便起见，许多服务器支持指定回调函数的名称，直接将JSON数据放入回调函数的参数，如此一来就省略了将字符串解析为JSON对象的步骤。这种方法就被称为JSONP。
 
 请看下面的例子，假定访问 http://example.com/ip ，返回如下JSON数据：
 
@@ -397,7 +399,7 @@ xhr.send(formData);
 
 {% endhighlight %}
 
-现在服务器端允许使用callback参数指定回调函数。访问 http://example.com/ip?callback=foo ，返回的数据变成：
+现在服务器允许客户端请求时使用callback参数指定回调函数。访问 http://example.com/ip?callback=foo ，返回的数据变成：
 
 {% highlight javascript %}
 
@@ -410,10 +412,33 @@ foo({"ip":"8.8.8.8"})
 {% highlight javascript %}
 
 function foo(data) {
-    alert('Your public IP address is: ' + data.ip);
+    console.log('Your public IP address is: ' + data.ip);
 };
 
 {% endhighlight %}
+
+JSONP还有一个重要的作用，就是规避Ajax的同域限制。Ajax只能向当前网页所在的域名，发出HTTP请求，除非使用下文要提到的CORS。但并不是所有服务器都支持CORS，传统的规避同域限制的方法，还是动态插入script标签。
+
+{% highlight javascript %}
+
+function addScriptTag(src){
+	var script = document.createElement('script');
+	script.setAttribute("type","text/javascript");
+	script.src = src;
+	document.body.appendChild(script);
+}
+
+window.onload = function(){
+	addScriptTag("http://example.com/ip?callback=foo");
+}
+
+function foo(data) {
+    console.log('Your public IP address is: ' + data.ip);
+};
+
+{% endhighlight %}
+
+上面代码使用了JSONP，就可以直接处理example.com返回的数据了。
 
 ## CORS
 

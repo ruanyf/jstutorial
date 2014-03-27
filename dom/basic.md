@@ -325,7 +325,7 @@ Element对象特有的属性：
 - dataset
 - attributes
 
-（1）与标签代码相关的属性
+**（1）innerHTML属性，outerHTML属性，textContent属性，innerText属性，outerText属性**
 
 innerHTML属性用来读取或设置某个节点内的HTML代码。
 
@@ -335,7 +335,7 @@ textContent属性用来读取或设置节点包含的文本内容。
 
 innerText属性和outerText属性在读取元素节点的文本内容时，得到的值是不一样的。它们的不同之处在于设置一个节点的文本属性时，outerText属性会使得原来的元素节点被文本节点替换掉。
 
-（2）tagName属性
+**（2）tagName属性**
 
 tagName属性返回该节点的HTML标签名，与nodeName属性相同。
 
@@ -343,7 +343,7 @@ tagName属性返回该节点的HTML标签名，与nodeName属性相同。
 
 document.querySelector('a').tagName // A
 
-document.querySelector('a').nodeName) // A
+document.querySelector('a').nodeName // A
 
 {% endhighlight %}
 
