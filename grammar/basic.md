@@ -636,7 +636,114 @@ JavaScript的值的类型共有六个类别和两个特殊值。
 
 除了上面这六个类别，JavaScript还定义了两个特殊值null和undefined。
 
-以下将分别详细介绍这六个类别和两个特殊值。其中，两个特殊值和布尔类型比较简单，将在本节介绍，其他类型将各自有一个单独的章节。
+本书将分别详细介绍这六个类别和两个特殊值。其中，两个特殊值和布尔类型比较简单，将在本节介绍，其他类型将各自有单独的一节。
+
+### typeof运算符
+
+JavaScript有三种方法，可以确定一个值到底是什么类型。
+
+- typeof运算符
+- instanceof运算符
+- Object.prototype.toString方法
+
+instanceof运算符放在《面向对象编程》一章介绍，Object.prototype.toString方法放在《标准库》的Object 一节介绍。下面介绍typeof 运算符。
+
+typeof运算符可以返回一个值的数据类型，可能有以下结果：
+
+**（1）原始类型**
+
+数值、字符串、布尔值分别返回number、string、boolean。
+
+{% highlight javascript %}
+
+typeof 123 // "number"
+typeof "123" // "string"
+typeof false // "boolean"
+
+{% endhighlight %}
+
+**（2）函数**
+
+函数返回function。
+
+{% highlight javascript %}
+
+// 定义一个空函数
+function f(){}
+
+typeof f
+// "function"
+
+{% endhighlight %}
+
+**（3）undefined**
+
+undefined返回undefined。
+
+{% highlight javascript %}
+
+typeof undefined
+// "undefined"
+
+{% endhighlight %}
+
+利用这一点，typeof可以用来检查一个没有声明的变量，而不报错。
+
+{% highlight javascript %}
+
+v
+// ReferenceError: v is not defined
+
+typeof v
+// "undefined"
+
+{% endhighlight %}
+
+实际编程中，这个特点通常用在判断语句。
+
+{% highlight javascript %}
+
+// 错误的写法
+if (v){
+	// ...
+}
+// ReferenceError: v is not defined
+
+// 正确的写法
+if (typeof v === "undefined"){
+	// ...
+}
+
+{% endhighlight %}
+
+**（4）其他**
+
+除此以外，都返回object。
+
+{% highlight javascript %}
+
+typeof window // "object"
+typeof {} // "object"
+typeof [] // "object"
+typeof null // "object"
+
+{% endhighlight %}
+
+从上面代码可以看到，空数组（[]）的类型也是object，这表示在JavaScript内部，数组本质上只是一种特殊的对象。另外，null的类型也是object，这是由于历史原因造成的，为了兼容以前的代码，后来就没法修改了，并不是说null就属于对象，本质上null是一个类似于undefined的特殊值。
+
+既然typeof对数组（array）和对象（object）的显示结果都是object，那么怎么区分它们呢？instanceof运算符可以做到。
+
+{% highlight javascript %}
+
+var o = {};
+var a = [];
+
+o instanceof Array // false
+a instanceof Array // true
+
+{% endhighlight %}
+
+instanceof运算符的详细解释，请见《面向对象编程》一章。
 
 ### null和undefined
 
@@ -808,113 +915,6 @@ if ({}){ console.log(true);}
 {% endhighlight %}
 
 更多关于数据类型转换的介绍，参见《数据类型转换》一节。
-
-### typeof运算符
-
-JavaScript有三种方法，可以确定一个值到底是什么类型。
-
-- typeof运算符
-- instanceof运算符
-- Object.prototype.toString方法
-
-instanceof运算符放在《面向对象编程》一章介绍，Object.prototype.toString方法放在《标准库》的Object 一节介绍。下面介绍typeof 运算符。
-
-typeof运算符可以返回一个值的数据类型，可能有以下结果：
-
-**（1）原始类型**
-
-数值、字符串、布尔值分别返回number、string、boolean。
-
-{% highlight javascript %}
-
-typeof 123 // "number"
-typeof "123" // "string"
-typeof false // "boolean"
-
-{% endhighlight %}
-
-**（2）函数**
-
-函数返回function。
-
-{% highlight javascript %}
-
-// 定义一个空函数
-function f(){}
-
-typeof f
-// "function"
-
-{% endhighlight %}
-
-**（3）undefined**
-
-undefined返回undefined。
-
-{% highlight javascript %}
-
-typeof undefined
-// "undefined"
-
-{% endhighlight %}
-
-利用这一点，typeof可以用来检查一个没有声明的变量，而不报错。
-
-{% highlight javascript %}
-
-v
-// ReferenceError: v is not defined
-
-typeof v
-// "undefined"
-
-{% endhighlight %}
-
-实际编程中，这个特点通常用在判断语句。
-
-{% highlight javascript %}
-
-// 错误的写法
-if (v){
-	// ...
-}
-// ReferenceError: v is not defined
-
-// 正确的写法
-if (typeof v === "undefined"){
-	// ...
-}
-
-{% endhighlight %}
-
-**（4）其他**
-
-除此以外，都返回object。
-
-{% highlight javascript %}
-
-typeof window // "object"
-typeof {} // "object"
-typeof [] // "object"
-typeof null // "object"
-
-{% endhighlight %}
-
-从上面代码可以看到，空数组（[]）的类型也是object，这表示在JavaScript内部，数组本质上只是一种特殊的对象。另外，null的类型也是object，这是由于历史原因造成的，为了兼容以前的代码，后来就没法修改了，并不是说null就属于对象，本质上null是一个类似于undefined的特殊值。
-
-既然typeof对数组（array）和对象（object）的显示结果都是object，那么怎么区分它们呢？instanceof运算符可以做到。
-
-{% highlight javascript %}
-
-var o = {};
-var a = [];
-
-o instanceof Array // false
-a instanceof Array // true
-
-{% endhighlight %}
-
-instanceof运算符的详细解释，请见《面向对象编程》一章。
 
 ## 结尾的分号
 
