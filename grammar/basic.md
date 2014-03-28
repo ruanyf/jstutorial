@@ -640,11 +640,116 @@ JavaScript的值的类型共有六个类别和两个特殊值。
 
 ### null和undefined
 
-null表示“没有值”，即该处不应该有值；undefined表示“未定义”，即该处应该有值，但是还没定义。关于null和undefined的区别，可以理解成null表示什么也没有（nothing），undefined表示缺少一个值。
+**（1）相似性**
 
-**（1）null**
+首先，null与undefined都可以表示“无”，含义非常相似。将一个变量赋值为undefined或null，老实说，几乎没区别。
 
-null的特别之处在于，JavaScript把它包含在对象类型（object）之中。
+{% highlight javascript %}
+
+var a = undefined;
+
+// 或者
+
+var a = null;
+
+{% endhighlight %}
+
+上面代码中，a变量分别被赋值为undefined和null，这两种写法几乎等价。
+
+在if语句中，都会被自动转为false，相等运算符甚至直接报告两者相等。
+
+{% highlight javascript %}
+
+if (!undefined) 
+    console.log('undefined is false');
+// undefined is false
+
+if (!null) 
+    console.log('null is false');
+// null is false
+
+undefined == null
+// true
+
+{% endhighlight %}
+
+上面代码说明，两者的行为是何等相似！Google公司开发的JavaScript语言的替代品Dart语言，就明确规定只有null，没有undefined！
+
+既然含义与用法都差不多，为什么要同时设置两个这样的值，这不是无端增加复杂度，令初学者困扰吗？这与历史原因有关。
+
+**（2）历史原因**
+
+1995年JavaScript诞生时，最初像Java一样，只设置了null作为表示"无"的值。根据C语言的传统，null被设计成可以自动转为0。
+
+{% highlight javascript %}
+
+Number(null)
+// 0
+
+5 + null
+// 5
+
+{% endhighlight %}
+
+但是，JavaScript的设计者Brendan Eich，觉得这样做还不够，有两个原因。
+
+首先，null像在Java里一样，被当成一个对象。但是，JavaScript的数据类型分成原始类型和合成类型两大类，Brendan Eich觉得表示"无"的值最好不是对象。
+
+其次，JavaScript的最初版本没有包括错误处理机制，发生数据类型不匹配时，往往是自动转换类型或者默默地失败。Brendan Eich觉得，如果null自动转为0，很不容易发现错误。
+
+因此，Brendan Eich又设计了一个undefined。他是这样区分的：null是一个表示"无"的对象，转为数值时为0；undefined是一个表示"无"的原始值，转为数值时为NaN。
+
+{% highlight javascript %}
+
+Number(undefined)
+// NaN
+
+5 + undefined
+// NaN
+
+{% endhighlight %}
+
+但是，这样的区分在实践中很快就被证明不可行。目前，null和undefined基本是同义的，只有一些细微的差别。
+
+**（3）用法和含义**
+
+对于null和undefined，可以大致上像下面这样理解。
+
+null表示"没有对象"，即该处不应该有值。典型用法是：
+
+- 作为函数的参数，表示该函数的参数不是对象。
+
+- 作为对象原型链的终点。
+
+undefined表示"缺少值"，就是此处应该有一个值，但是还未定义。典型用法是：
+
+- 变量被声明了，但没有赋值时，就等于undefined。
+
+- 调用函数时，应该提供的参数没有提供，该参数等于undefined。
+
+- 对象没有赋值的属性，该属性的值为undefined。
+
+- 函数没有返回值时，默认返回undefined。
+
+{% highlight javascript %}
+
+var i;
+i // undefined
+
+function f(x){console.log(x)}
+f() // undefined
+
+var  o = new Object();
+o.p // undefined
+
+var x = f();
+x // undefined
+
+{% endhighlight %}
+
+**（4）null的特殊之处**
+
+null的特殊之处在于，JavaScript把它包含在对象类型（object）之中。
 
 {% highlight javascript %}
 
@@ -656,32 +761,7 @@ typeof null // "object"
 
 这并不是说null的数据类型就是对象，而是JavaScript早期部署中的一个约定俗成，其实不完全正确，后来再想改已经太晚了，会破坏现存代码，所以一直保留至今。
 
-**（2）undefined**
-
-undefined表示“未定义”，即还没有确定数据类型。如果一个变量只是被声明，没有被赋值，那么它的值默认就是undefined。
-
-以下是三种常见的得到undefined的情况。
-
-- 变量声明但没有赋值。
-- 读取对象不存在的属性。
-- 运行没有返回语句的函数。
-
-请看下面的例子。
-
-{% highlight javascript %}
-
-var v;
-v // undefined
-
-this.foo // undefined
-
-(function f(){})() // undefined
-
-{% endhighlight %}
-
-上面代码分别表示三种得到undefined的典型情况。
-
-**（3）注意点**
+**（5）注意点**
 
 JavaScript的标识名区分大小写，所以undefined和null不同于Undefined和Null（或者其他仅仅大小写不同的词形），后者只是普通的变量名。
 

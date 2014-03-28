@@ -6,7 +6,9 @@ date: 2012-12-14
 modifiedOn: 2013-11-23
 ---
 
-## 原型prototype对象
+## 原型：prototype对象
+
+### 概述
 
 JavaScript继承机制的基本思想是，每一个对象都关联一个原型对象，定义在后者上的属性和方法，都可以被前者继承。这个原型对象就叫做prototype对象。
 
@@ -91,6 +93,15 @@ Animal.prototype.walk = function () {
 由于JavaScript的所有对象都有构造函数，而所有构造函数都有prototype属性（其实是所有函数都有prototype属性），所以所有对象都有自己的prototype原型对象。
 
 因此，一个对象的属性和方法，有可能是定义它自身上面，也有可能定义在它的原型对象上面（就像上面代码中的walk方法）。由于原型本身也是对象，又有自己的原型，所以形成了一条原型链（prototype chain）。比如，a对象是b对象的原型，b对象是c对象的原型，以此类推。因为追根溯源，最源头的对象都是从Object构造函数生成（使用new Object()命令），所以如果一层层地上溯，所有对象的原型最终都可以上溯到Object.prototype。那么，Object.prototype有没有原型呢？回答可以是有，也可以是没有，因为Object.prototype的原型是没有任何属性和方法的null。
+
+{% highlight javascript %}
+
+Object.getPrototypeOf(Object.prototype)
+// null
+
+{% endhighlight %}
+
+上面代码表示Object.prototype对象的原型是null，由于null没有任何属性，所以原型链到此为止。
 
 “原型链”的作用在于，当读取对象的某个属性时，JavaScript引擎先寻找对象本身的属性，如果找不到，就到它的原型去找，如果还是找不到，就到原型的原型去找。以此类推，如果直到最顶层的Object.prototype还是找不到，则返回undefined。
 
