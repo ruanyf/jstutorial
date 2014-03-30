@@ -529,6 +529,23 @@ false || 0 || '' || 4 || 'foo' || true
 
 上面代码中第一个布尔值为true的表达式是第四个表达式，所以得到数值4。
 
+或运算符常用于为一个变量设置默认值。
+
+{% highlight javascript %}
+
+function saveText(text) {
+    text = text || '';
+    // ...
+}
+
+// 或者写成
+
+saveText(this.text||'')
+
+{% endhighlight %}
+
+上面代码表示，如果函数调用时，没有提供参数，则该参数默认设置为空字符串。
+
 ### 三元条件运算符（ ? :）
 
 三元条件运算符用问号（？）和冒号（：），分隔三个表达式。如果第一个表达式的布尔值为true，则返回第二个表达式的值，否则返回第三个表达式的值。
@@ -877,23 +894,36 @@ void运算符的作用是执行一个表达式，然后返回undefined。
 
 {% highlight javascript %}
 
-void expr
-
-// or
-
-void(expr)
+void 0 // undefined
+void (0) // undefined
 
 {% endhighlight %}
 
 上面是void运算符的两种写法，都正确。建议采用后一种形式，即总是使用括号。因为void运算符的优先性很高，如果不使用括号，容易造成错误的结果。比如，void 4+7 实际上等同于 (void 4) +7 。
 
-这个运算符号主要是用于书签工具（bookmarklet）或者用于在超级链接中插入代码，目的是返回undefined可以防止网页跳转。
+下面是void运算符的一个例子。
 
-比如，下面这样的写法是常用的触发鼠标点击事件的写法。
+{% highlight javascript %}
+
+var x = 3;
+void (x = 5) //undefined
+x // 5
+
+{% endhighlight %}
+
+这个运算符主要是用于书签工具（bookmarklet）或者用于在超级链接中插入代码，目的是返回undefined可以防止网页跳转。
+
+{% highlight javascript %}
+
+javascript:void window.open("http://example.com/")
+
+{% endhighlight %}
+
+比如，下面是常用于网页链接的触发鼠标点击事件的写法。
 
 {% highlight html %}
 
-<a href="#" onclick="f();">运行代码</a>
+<a href="#" onclick="f();">文字</a>
 
 {% endhighlight %}
 
@@ -912,15 +942,15 @@ function f(){
 
 {% highlight html %}
 
-<a href="#" onclick="f();return false;">运行代码</a>
+<a href="#" onclick="f();return false;">文字</a>
 
 {% endhighlight %}
 
-完全可以使用void运算符，取代上面两种写法。
+void运算符可以取代上面两种写法。
 
 {% highlight html %}
 
-<a href="javascript:void(0)" onclick="f();">运行代码</a>
+<a href="javascript:void(0)" onclick="f();">文字</a>
 
 {% endhighlight %}
 
@@ -930,15 +960,12 @@ function f(){
 
 {% highlight javascript %}
 
-"a", "b"
-// "b"
+"a", "b" // "b"
 
-var x = ("a", "b")
-x
-// "b"
-
-console.log(("a", "b"))
-// b
+var x = 0;
+var y = (x++, 10);
+x // 1
+y // 10
 
 {% endhighlight %}
 
