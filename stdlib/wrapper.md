@@ -1,5 +1,5 @@
 ---
-title: 原始类型的包装对象和Boolean对象
+title: 包装对象和Boolean对象
 layout: page
 category: stdlib
 date: 2013-04-30
@@ -216,7 +216,7 @@ if (new Boolean(false).valueOf()) {
 
 上面代码的第一个例子之所以得到true，是因为false对应的包装对象实例是一个对象，进行逻辑运算时，被自动转化成布尔值true（所有对象对应的布尔值都是true）。而实例的valueOf方法，则返回实例对应的原始类型值，本例为false。
 
-## Boolean函数的类型转换作用
+### Boolean函数的类型转换作用
 
 Boolean构造函数除了生成对象实例以外，还可以将任何值转为布尔值。这时Boolean就是一个单纯的工具方法。
 

@@ -28,7 +28,7 @@ modifiedOn: 2014-03-30
 
 - [Object对象](stdlib/object.html)
 - [Array 对象](stdlib/array.html)
-- [原始类型的包装对象和Boolean对象](stdlib/wrapper.html)（基本完成）
+- [包装对象和Boolean对象](stdlib/wrapper.html)（基本完成）
 - [Number对象](stdlib/number.html)
 - [String对象](stdlib/string.html)
 - [Math对象](stdlib/math.html)
