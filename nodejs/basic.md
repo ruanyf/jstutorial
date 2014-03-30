@@ -1237,9 +1237,9 @@ engines指明了该项目所需要的node.js版本。
 
 **（2）scripts**
 
-scripts指定了运行脚本命令的命令行缩写，比如start指定了运行npm start时，所要执行的命令。
+scripts指定了运行脚本命令的npm命令行缩写，比如start指定了运行npm run start时，所要执行的命令。
 
-下面的设置指定了npm preinstall、npm postinstall、npm start、npm test时，所要执行的命令。
+下面的设置指定了npm run preinstall、npm run postinstall、npm run start、npm run test时，所要执行的命令。
 
 {% highlight javascript %}
 
@@ -1473,7 +1473,7 @@ sudo npm uninstall [package name] -global
 
 {% endhighlight %}
 
-### 模块的查看和搜索
+### npm list：列出当前项目的模块
 
 npm list命令，默认列出当前目录安装的所有模块。如果使用global参数，就是列出全局安装的模块。
 
@@ -1484,6 +1484,8 @@ npm list
 npm -global list
 
 {% endhighlight %}
+
+### npm search：模块搜索
 
 向服务器端搜索某个模块，使用search命令（可使用正则搜索）。
 
@@ -1504,7 +1506,8 @@ npm search [搜索词]
 "scripts": {
     "watch": "watchify client/main.js -o public/app.js -v",
     "build": "browserify client/main.js -o public/app.js",
-    "start": "npm run watch & nodemon server.js"
+    "start": "npm run watch & nodemon server.js",
+	"test": "node test/all.js"
   },
 
 {% endhighlight %}
@@ -1516,6 +1519,16 @@ npm search [搜索词]
 npm run watch
 npm run build
 npm run start
+npm run test
+
+{% endhighlight %}
+
+其中，start和test属于特殊命令，可以省略run。
+
+{% highlight bash %}
+
+npm start
+npm test
 
 {% endhighlight %}
 

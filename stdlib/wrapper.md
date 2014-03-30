@@ -1,67 +1,64 @@
 ---
-title: 原始类型的包装对象
+title: 原始类型的包装对象和Boolean对象
 layout: page
 category: stdlib
 date: 2013-04-30
 modifiedOn: 2014-01-01
 ---
 
-## 概述
+## 包装对象
 
-在JavaScript中，“一切皆对象”，数组和函数本质上都是对象，就连三种原始类型的值——数字、字符串、布尔值——也有自己对应的包装对象。所谓“包装对象”，就是说可以通过原生的Number、String、Boolean对象，获得相应的原始类型的值。
+在JavaScript中，“一切皆对象”，数组和函数本质上都是对象，就连三种原始类型的值——数值、字符串、布尔值——在一定条件下，也会自动转为对象，也就是原始类型的“包装对象”。
 
-以下分别用原始类型和包装对象两种形式，获取同一个值。
-
-{% highlight javascript %}
-
-var v = 123;
-var v = new Number(123);
-
-var v = "abc";
-var v = new String("abc");
-
-var v = true;
-var v = new Boolean(true);
-
-{% endhighlight %}
-
-这两种定义值的方法，虽然都对应同一个值，但是值的类型不一样。包装对象的值属于Object类型，用typeof运算符就可以看出来。
+所谓“包装对象”，就是分别与数值、字符串、布尔值相对应的Number、String、Boolean三个原生对象。这三个原生对象可以把原始类型的值变成（包装成）对象。
 
 {% highlight javascript %}
 
-typeof "abc"
-//  'string'
- 
-typeof new String("abc")
-// 'object'
+var v1 = new Number(123);
+var v2 = new String("abc");
+var v3 = new Boolean(true);
 
 {% endhighlight %}
 
-而且，包装对象的值都是Object对象的实例（即Object对象是它们的原型），原始类型则不是。
+上面代码根据原始类型的值，生成了三个对象，与原始值的类型不同。这用typeof运算符就可以看出来。
 
 {% highlight javascript %}
 
-"abc" instanceof Object
-// false
- 
-new String("abc") instanceof Object
-// true
+typeof v1 // "object"
+typeof v2 // "object"
+typeof v3 // "object"
+
+v1 === 123 // false
+v2 === "abc" // false
+v3 === true // false
 
 {% endhighlight %}
-
-上面代码中的instanceof是判断一个对象是否为另一个对象的实例的运算符，详见《面向对象编程》一章。
-
-## 包装对象的目的
 
 JavaScript设计包装对象的最大目的，首先是使得JavaScript的“对象”涵盖所有的值。其次，使得原始类型的值可以方便地调用特定方法。
 
-### Object对象提供的方法
+### 包装对象的构造函数
 
-包装对象可以使用Object对象提供的原生方法，主要是 valueOf 方法和 toString 方法。
+Number、String和Boolean这三个原生对象，既可以当作构造函数使用（即加上new关键字，生成包装对象实例），也可以当作工具方法使用（即不加new关键字，直接调用），这相当于生成实例后再调用valueOf方法，常常用于将任意类型的值转为某种原始类型的值。
 
-（1）valueOf方法
+{% highlight javascript %}
 
-valueOf方法返回该对象对应的原始类型的值。
+Number(123) // 123
+
+String("abc") // "abc"
+
+Boolean(true) // true
+
+{% endhighlight %}
+
+工具方法的详细介绍参见第二章的《数据类型转换》一节。
+
+## 包装对象实例的方法
+
+包装对象实例可以使用Object对象提供的原生方法，主要是 valueOf 方法和 toString 方法。
+
+**（1）valueOf方法**
+
+valueOf方法返回包装对象实例对应的原始类型的值。
 
 {% highlight javascript %}
 
@@ -76,9 +73,9 @@ new Boolean("true").valueOf()
 
 {% endhighlight %}
 
-（2）toString方法
+**（2）toString方法**
 
-toString方法返回该对象的原始类型值的字符串形式。
+toString方法返回该实例对应的原始类型值的字符串形式。
 
 {% highlight javascript %}
 
@@ -93,67 +90,57 @@ new Boolean("true").toString()
 
 {% endhighlight %}
 
-（3）包装对象构造函数的工具方法
+### 原始类型的自动转换
 
-如果不加new关键字，直接调用包装对象的构造函数，则相当于把构造函数当作工具函数用。作用是生成实例后再调用valueOf方法，常常用于将任意类型的值转为某种原始类型的值。
-
-{% highlight javascript %}
-
-Number(123) // 123
-
-String("abc") // "abc"
-
-Boolean(true) // true
-
-{% endhighlight %}
-
-（4）length属性
-
-除了valueOf和toString方法，字符串对象还有length属性，返回字符串的长度。
+原始类型可以自动调用定义在包装对象上的方法和属性。比如String对象的实例有一个length属性，返回字符串的长度。
 
 {% highlight javascript %}
 
 var v = new String("abc");
-
 v.length // 3
+
+{% endhighlight %}
+
+所有原始类型的字符串，都可以直接使用这个length属性。
+
+{% highlight javascript %}
 
 "abc".length // 3
 
 {% endhighlight %}
 
-上面代码对字符串abc调用length属性，实际上是将“字符串”自动转为“字符串对象”，再在其上调用length属性。
+上面代码对字符串abc调用length属性，实际上是将“字符串”自动转为String对象的实例，再在其上调用length属性。这就叫原始类型的自动转换。
 
-### 包装对象提供的方法
+abc是一个字符串，属于原始类型，本身不能调用任何方法和属性。但当对abc调用length属性时，JavaScript引擎自动将abc转化为一个包装对象实例，然后再对这个实例调用length属性，在得到返回值后，再自动销毁这个临时生成的包装对象实例。
 
-三种包装对象自身还带有一些方法，可以直接调用。
+这种原始类型值可以直接调用的方法还有很多（详见后文对各包装对象的介绍），除了前面介绍过的valueOf和stringOf方法，还包括三个包装对象各自定义在实例上的方法。。
 
 {% highlight javascript %}
 
-var s1 = "some text";
-
-s1.substring(2)
-// "me text"
+'abc'.charAt === String.prototype.charAt
+// true
 
 {% endhighlight %}
 
-上面代码的s1是一个字符串，属于原始类型，本身不能调用任何方法。当对s1调用substring方法时，JavaScript引擎自动将s1转化为一个包装对象实例，然后再对这个实例调用substring方法。在将得到的值返回后，再自动销毁这个临时生成的包装对象实例。
+上面代码表示，字符串abc的charAt方法，实际上就是定义在String对象实例上的方法（关于prototype对象的介绍参见《面向对象编程》一章）。
 
-但是，这种自动生成包装对象实例的机制，只对原型方法有效。如果直接对原始类型的变量添加属性，则无效。
+如果包装对象与原始类型值进行混合运算，包装对象会转化为原始类型（实际是调用自身的valueOf方法）。
 
 {% highlight javascript %}
 
-var s1 = "some text";
+new Number(123) + 123
+// 246
 
-s1.p = 123;
-
-s1.p
-// undefined
+new String("abc") + "abc"
+// "abcabc"
 
 {% endhighlight %}
 
 ### 自定义方法
 
-三种包装对象还可以在原型上添加自定义方法（原型prototype的含义详见《面向对象编程》一章）。比如，我们可以新增一个double方法，使得字符串和数字翻倍。
+三种包装对象还可以在原型上添加自定义方法和属性，供原始类型的值直接调用。
+
+比如，我们可以新增一个double方法，使得字符串和数字翻倍。
 
 {% highlight javascript %}
 
@@ -173,47 +160,47 @@ Number.prototype.double = function (){
 
 {% endhighlight %}
 
-## 原始类型值的自动转化
+上面代码在123外面必须要加上圆括号，否则后面的点运算符（.）会被解释成小数点。
 
-可以直接在原始类型的值上使用包装对象的方法，这时原始类型的值会自动转化成包装对象。
-
-{% highlight javascript %}
-
-var v = 123;
-
-v.valueOf() // 123
-
-{% endhighlight %}
-
-如果使用的不是定义在包装对象原型上的方法或属性，原始类型的值不会自动转化为对象。
+但是，这种自定义方法和属性的机制，只能定义在包装对象的原型上，如果直接对原始类型的变量添加属性，则无效。
 
 {% highlight javascript %}
 
-var v = 123;
+var s = "abc";
 
-v.x = 246;
-
-v.x // undefined
-
-v.x = function (){};
-
-v.x() // 报错
+s.p = 123;
+s.p // undefined
 
 {% endhighlight %}
 
-如果包装对象与原始类型进行混合运算，包装对象会转化为原始类型（实际是调用自身的valueOf方法）。
+上面代码直接对支付串abc添加属性，结果无效。
+
+## Boolean对象
+
+### 概述
+
+Boolean对象是JavaScript的三个包装对象之一。作为构造函数，它主要用于生成布尔值的包装对象的实例。
 
 {% highlight javascript %}
 
-new Number(123) + 123
-// 246
+var b = new Boolean(true);
 
-new String("abc") + "abc"
-// "abcabc"
+typeof b // "object"
+b.valueOf() // true
 
 {% endhighlight %}
 
-特别要注意的是，除了null以外，所有对象的布尔运算结果都是true，所以false的包装对象的布尔运算结果也是true。
+上面代码的变量b是一个Boolean对象的实例，属性为对象，值为布尔值true。这种写法太繁琐，几乎无人使用，直接对变量赋值更简单清晰。
+
+{% highlight javascript %}
+
+var b = true;
+
+{% endhighlight %}
+
+### Boolean对象实例的布尔值
+
+特别要注意的是，所有对象的布尔运算结果都是true。因此，false对应的包装对象实例，布尔运算结果也是true。
 
 {% highlight javascript %}
 
@@ -227,16 +214,56 @@ if (new Boolean(false).valueOf()) {
 
 {% endhighlight %}
 
-如果要获得一个变量对应的布尔值，有多种写法。
+上面代码的第一个例子之所以得到true，是因为false对应的包装对象实例是一个对象，进行逻辑运算时，被自动转化成布尔值true（所有对象对应的布尔值都是true）。而实例的valueOf方法，则返回实例对应的原始类型值，本例为false。
+
+## Boolean函数的类型转换作用
+
+Boolean构造函数除了生成对象实例以外，还可以将任何值转为布尔值。这时Boolean就是一个单纯的工具方法。
 
 {% highlight javascript %}
 
-var a = "";
+Boolean(undefined) // false
+Boolean(null) // false
+Boolean(0) // false
+Boolean('') // false
+Boolean(NaN) // false
+Boolean(1) // true
+Boolean('false') // true
+Boolean([]) // true
+Boolean({}) // true
+Boolean(function(){}) // true
+Boolean(/foo/) // true
 
-new Boolean(a).valueOf() //false
+{% endhighlight %}
 
-Boolean(a) //false
+上面代码中几种得到true的情况，都值得认真记住。
 
-!!a //false
+使用not运算符（!）也可以达到同样效果。
+
+{% highlight javascript %}
+
+!!undefined // false
+!!null // false
+!!0 // false
+!!'' // false
+!!NaN // false
+!!1 // true
+!!'false' // true
+!![] // true
+!!{} // true
+!!function(){} // true
+!!/foo/ // true
+
+{% endhighlight %}
+
+综上所述，如果要获得一个变量对应的布尔值，有多种写法。
+
+{% highlight javascript %}
+
+var a = "hello world";
+
+new Boolean(a).valueOf() // true
+Boolean(a) // true
+!!a // true
 
 {% endhighlight %}
