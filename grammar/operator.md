@@ -106,6 +106,26 @@ typeof (now - 1) // "number"
 
 {% endhighlight %}
 
+为了得到正确的负数的余数值，需要先使用绝对值函数。
+
+{% highlight javascript %}
+
+// 错误的写法
+function isOdd(n) {
+    return n % 2 === 1;
+}
+isOdd(-5) // false
+isOdd(-4) // false
+
+// 正确的写法
+function isOdd(n) {
+    return Math.abs(n % 2) === 1;
+}
+isOdd(-5) // true
+isOdd(-4) // false
+
+{% endhighlight %}
+
 余数运算符还可以用于浮点数的运算。但是，由于浮点数不是精确的值，无法得到完全准确的结果。
 
 {% highlight javascript %}
@@ -594,7 +614,7 @@ console.log(true ? 'T' : 'F');
 
 这些位运算符直接处理每一个比特位，所以是非常底层的运算，好处是速度极快，缺点是很不直观，许多场合不能使用它们，否则会带来过度的复杂性。
 
-有一点需要特别注意，位运算符只对整数起作用，如果一个运算子不是整数，会自动转为整数后再运行。另外，虽然在JavaScript内部，数值都是以64位浮点数的形式储存，但是做位运算的时候，是以32位带符号的整数进行运算的。
+有一点需要特别注意，位运算符只对整数起作用，如果一个运算子不是整数，会自动转为整数后再运行。另外，虽然在JavaScript内部，数值都是以64位浮点数的形式储存，但是做位运算的时候，是以32位带符号的整数进行运算的，并且返回值也是一个32位带符号的整数。
 
 {% highlight javascript %}
 

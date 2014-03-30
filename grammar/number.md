@@ -78,7 +78,7 @@ Math.pow(2, 53)
 
 另一方面，64位浮点数的指数部分的长度是11个二进制位，意味着指数部分的最大值是2047（2的11次方减1）。也就是说，64位浮点数的指数部分的值最大为2047，分出一半表示负数，则JavaScript能够表示的数值范围为2<sup>1024</sup>到2<sup>-1023</sup>（开区间），超出这个范围的数无法表示。
 
-如果指数部分等于或超过最大正值1024，JavaScript会返回Infinity（关于Infinity的介绍参见下文），这称为“正向溢出”；如果等于或超过最小负值-1023（即非常接近0），JavaScript会直接把这个数转为0，这称为“负向溢出”。事实上，JavaScript对指数部分的两个极端值（11111111111和00000000000）做了定义，11111111111的一个含义就是Infinity，00000000000的一个含义就是0。
+如果指数部分等于或超过最大正值1024，JavaScript会返回Infinity（关于Infinity的介绍参见下文），这称为“正向溢出”；如果等于或超过最小负值-1023（即非常接近0），JavaScript会直接把这个数转为0，这称为“负向溢出”。事实上，JavaScript对指数部分的两个极端值（11111111111和00000000000）做了定义，11111111111表示NaN和Infinity，00000000000表示0。
 
 {% highlight javascript %}
 
@@ -164,6 +164,8 @@ JavaScript提供几个特殊的数值。
 
 ### NaN
 
+**（1）含义**
+
 NaN是JavaScript的特殊值，表示“非数字”（Not a Number），主要出现在将字符串解析成数字出错的场合。
 
 {% highlight javascript %}
@@ -175,6 +177,24 @@ NaN是JavaScript的特殊值，表示“非数字”（Not a Number），主要�
 
 上面代码运行时，会自动将字符串“x”转为数值，但是由于x不是数字，所以最后得到结果为NaN，表示它是“非数字”（NaN）。
 
+另外，一些数学函数的运算结果会出现NaN。
+
+{% highlight javascript %}
+
+Math.acos(2) // NaN
+Math.log(-1) // NaN
+Math.sqrt(-1) // NaN
+
+{% endhighlight %}
+
+0除以0也会得到NaN。
+
+{% highlight javascript %}
+
+0 / 0 // NaN
+
+{% endhighlight %}
+
 需要注意的是，NaN不是一种独立的数据类型，而是一种特殊数值，它的数据类型依然属于Number，使用typeof运算符可以看得很清楚。
 
 {% highlight javascript %}
@@ -183,21 +203,29 @@ typeof NaN // 'number'
 
 {% endhighlight %}
 
-NaN不等于任何值，包括它本身。NaN在布尔运算时被当作false。
+**（2）运算规则**
+
+NaN不等于任何值，包括它本身。
 
 {% highlight javascript %}
 
 NaN === NaN // false
 
-Boolean(NaN) // false
-
 {% endhighlight %}
 
-0除以0会得到NaN。
+由于数组的indexOf方法，内部使用的是严格相等运算符，所以该方法对NaN不成立。
 
 {% highlight javascript %}
 
-0 / 0 // NaN
+[NaN].indexOf(NaN) // -1
+
+{% endhighlight %}
+
+NaN在布尔运算时被当作false。
+
+{% highlight javascript %}
+
+Boolean(NaN) // false
 
 {% endhighlight %}
 
@@ -212,12 +240,14 @@ NaN / 32 // NaN
 
 {% endhighlight %}
 
+**（3）判断NaN的方法**
+
 isNaN方法可以用来判断一个值是否为NaN。
 
 {% highlight javascript %}
 
-isNaN(NaN)
-// true
+isNaN(NaN) // true
+isNaN(123) // false
 
 {% endhighlight %}
 
@@ -225,12 +255,9 @@ isNaN(NaN)
 
 {% highlight javascript %}
 
-isNaN("Hello")
-// true
-
+isNaN("Hello") // true
 // 相当于
-isNaN(Number("Hello"))
-// true
+isNaN(Number("Hello")) // true
 
 {% endhighlight %}
 
@@ -239,7 +266,20 @@ isNaN(Number("Hello"))
 {% highlight javascript %}
 
 isNaN({}) // true
+isNaN(Number({})) // true
+
 isNaN(["xzy"]) // true
+isNaN(Number(["xzy"])) // true
+
+{% endhighlight %}
+
+因此，使用isNaN之前，最好判断一下数据类型。
+
+{% highlight javascript %}
+
+function myIsNaN(value) {
+	return typeof value === 'number' && isNaN(value);
+}
 
 {% endhighlight %}
 
@@ -251,15 +291,11 @@ function myIsNaN(value) {
     return value !== value;
 }
 
-// 或者
-
-function myIsNaN2(value) {
-	return typeof value === 'number' && isNaN(value);
-}
-
 {% endhighlight %}
 
 ### Infinity
+
+**（1）定义**
 
 Infinity表示“无穷”。除了0除以0得到NaN，其他任意数除以0，得到Infinity。
 
@@ -293,6 +329,8 @@ Math.pow(2, 2048) // Infinity
 
 由于数值正向溢出（overflow）、负向溢出（underflow）和被0除，JavaScript都不报错，所以单纯的数学运算几乎没有可能抛出错误。
 
+**（2）运算规则**
+
 Infinity的四则运算，符合无穷的数学计算规则。
 
 {% highlight javascript %}
@@ -314,7 +352,7 @@ Infinity / Infinity // NaN
 
 {% endhighlight %}
 
-Infinity可以用于布尔运算。
+Infinity可以用于布尔运算。可以记住，Infinity是JavaScript中最大的值（NaN除外），-Infinity是最小的值（NaN除外）。
 
 {% highlight javascript %}
 
@@ -322,6 +360,8 @@ Infinity可以用于布尔运算。
 5 > Infinity // false
 
 {% endhighlight %}
+
+**（3）isFinite函数**
 
 isFinite函数返回一个布尔值，检查某个值是否为正常值，而不是Infinity。
 
@@ -346,7 +386,8 @@ parseInt方法可以将字符串或小数转化为整数。如果字符串头部
 
 parseInt("123") // 123
 parseInt(1.23) // 1
-
+parseInt('   81') // 81
+			
 {% endhighlight %}
 
 如果字符串包含不能转化为数字的字符，则不再进行转化，返回已经转好的部分。
@@ -354,6 +395,8 @@ parseInt(1.23) // 1
 {% highlight javascript %}
 
 parseInt("8a") // 8
+parseInt("12**") // 12
+parseInt("12.34") // 12
 
 {% endhighlight %}
 
@@ -363,6 +406,7 @@ parseInt("8a") // 8
 
 parseInt("abc") // NaN
 parseInt(".3") // NaN
+parseInt("") // NaN
 
 {% endhighlight %}
 
@@ -409,6 +453,20 @@ parseInt("010",8) // 8
 
 可以看到，parseInt的很多复杂行为，都是由八进制的前缀0引发的。因此，ECMAScript 5不再允许parseInt将带有前缀0的数字，视为八进制数。但是，为了保证兼容性，大部分浏览器并没有部署这一条规定。
 
+另外，对于那些会自动转为科学计数法的数字，parseInt会出现一些奇怪的错误。
+
+{% highlight javascript %}
+
+parseInt(1000000000000000000000.5, 10) // 1
+// 等同于
+parseInt('1e+21', 10) // 1
+
+parseInt(0.0000008, 10) // 8
+// 等同于
+parseInt('8e-7', 10) // 8
+
+{% endhighlight %}
+
 ### parseFloat方法
 
 parseFloat方法用于将一个字符串转为浮点数。
@@ -426,12 +484,41 @@ parseFloat("3.14more non-digit characters");
 
 上面四个表达式都返回3.14。
 
+parseFloat方法会自动过滤字符串前导的空格。
+
+{% highlight javascript %}
+
+parseFloat("\t\v\r12.34\n ")
+// 12.34
+
+{% endhighlight %}
+
 如果第一个字符不能转化为浮点数，则返回NaN。
 
 {% highlight javascript %}
 
-parseFloat("FF2")
-// NaN
+parseFloat("FF2") // NaN
+parseFloat("") // NaN
+
+{% endhighlight %}
+
+上面代码说明，parseFloat将空字符串转为NaN。
+
+这使得parseFloat的转换结果不同于Number函数。
+
+{% highlight javascript %}
+
+parseFloat(true)  // NaN
+Number(true) // 1
+
+parseFloat(null) // NaN
+Number(null) // 0
+
+parseFloat('') // NaN
+Number('') // 0
+
+parseFloat('123.45#') // 123.45
+Number('123.45#') // NaN
 
 {% endhighlight %}
 

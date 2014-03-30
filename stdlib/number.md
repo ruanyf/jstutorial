@@ -6,9 +6,9 @@ date: 2013-03-16
 modifiedOn: 2014-01-01
 ---
 
-Number是数值对应的包装对象，用于生成值为数值的对象。
+## 概述
 
-Number当作工具函数使用时，可以将任何类型的值转为数值。
+Number对象是数值对应的包装对象。作为构造函数时，用于生成值为数值的对象；作为工具函数时，可以将任何类型的值转为数值。
 
 {% highlight javascript %}
 
@@ -16,9 +16,9 @@ Number(true) // 1
 
 {% endhighlight %}
 
-上面代码将布尔值true转为数值1。
+上面代码将布尔值true转为数值1。Number对象的工具方法，详细介绍参见上一章的《数据类型转换》一节。
 
-## 属性
+## Number对象的属性
 
 Number对象拥有一些特别的属性。
 
@@ -38,7 +38,7 @@ Number.MIN_VALUE // 5e-324
 
 {% endhighlight %}
 
-## Number实例对象的方法
+## Number对象实例的方法
 
 ### toString方法
 
@@ -89,6 +89,8 @@ Number对象部署了单独的toString方法，可以接受一个参数，表示
 10['toString'](2) // "1010"
 
 {% endhighlight %}
+
+将其他进制的数，转回十进制，需要使用parseInt方法。
 
 ### toFixed方法
 

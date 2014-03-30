@@ -10,11 +10,13 @@ JavaScript是一种动态类型语言，变量是没有类型的，可以随时�
 
 ## 强制转换
 
-强制转换主要指手动将各种类型的值，转换成数字、字符串或者布尔值。
+强制转换主要指使用Number、String和Boolean三个构造函数，手动将各种类型的值，转换成数字、字符串或者布尔值。
 
-### 强制转换成数值
+### Number函数：强制转换成数值
 
-使用Number方法，可以将任意类型的值转化成数字。规则如下：
+使用Number函数，可以将任意类型的值转化成数字。
+
+**（1）原始类型值的转换规则**
 
 - **数值**：转换后还是原来的值。
 
@@ -41,6 +43,16 @@ Number(undefined) // NaN
 Number(null) // 0
 
 {% endhighlight %}
+
+Number函数会自动过滤一个字符串前导和后缀的空格。
+
+{% highlight javascript %}
+
+Number('\t\v\r12.34\n ') 
+
+{% endhighlight %}
+
+**（2）对象的转换规则**
 
 对象的转换规则比较复杂：先调用对象自身的valueOf方法，如果该方法返回原始类型的值（数值、字符串和布尔值），则直接对该值使用Number方法；否则再调用对象自身的toString方法，如果toString方法返回的还不是原始类型的值，则报错。
 
@@ -104,9 +116,11 @@ Number(obj)
 
 {% endhighlight %}
 
-### 强制转换成字符串
+### String函数：强制转换成字符串
 
-使用String方法，可以将任意类型的值转化成字符串。规则如下：
+使用String函数，可以将任意类型的值转化成字符串。规则如下：
+
+**（1）原始类型值的转换规则**
 
 - **数值**：转为相应的字符串。
 
@@ -131,6 +145,8 @@ String(undefined) // "undefined"
 String(null) // "null"
 
 {% endhighlight %}
+
+**（2）对象的转换规则**
 
 对于对象，则是先调用toString方法；如果toString方法返回的不是原始类型的值，再调用valueOf方法；如果valueOf方法返回的还不是原始类型的值，则报错。它的调用顺序正好与Number方法相反。
 
@@ -178,9 +194,13 @@ String(obj)
 
 {% endhighlight %}
 
-### 强制转换成布尔值
+### Boolean函数：强制转换成布尔值
 
-使用Boolean方法，可以将任意类型的变量转为布尔值。以下六个值的转化结果为false，其他的值全部为true。
+使用Boolean函数，可以将任意类型的变量转为布尔值。
+
+**（1）原始类型值的转换方法**
+
+以下六个值的转化结果为false，其他的值全部为true。
 
 - undefined
 - null
@@ -203,15 +223,7 @@ Boolean('') // false
 
 {% endhighlight %}
 
-请注意，空对象{}和空数组[]都会被转成true。
-
-{% highlight javascript %}
-
-Boolean([]) // true
-
-Boolean({}) // true
-
-{% endhighlight %}
+**（2）对象的转换规则**
 
 所有对象的布尔值都是true，甚至连false对应的布尔对象也是true。
 
@@ -219,6 +231,16 @@ Boolean({}) // true
 
 Boolean(new Boolean(false))
 // true
+
+{% endhighlight %}
+
+请注意，空对象{}和空数组[]也会被转成true。
+
+{% highlight javascript %}
+
+Boolean([]) // true
+
+Boolean({}) // true
 
 {% endhighlight %}
 
