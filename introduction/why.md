@@ -78,7 +78,7 @@ JavaScript的语法很类似C/C++和Java，如果学过这些语言（事实上�
 
 首先，它涉及大量的外部API。JavaScript要发挥作用，必须与其他组件配合，这些外部组件五花八门，数量极其庞大，几乎涉及网络应用的各个方面，掌握它们绝非易事。
 
-其次，JavaScript语言有一些设计缺陷。某些地方相当不合理，另一些地方则会出现怪异的运行结果。学习JavaScript，很大一部分时间是用来搞清楚哪些地方有陷阱。Douglas Crockford写过一本有名的书，名字就叫[《JavaScript: The Good Parts》](http://javascript.crockford.com/)，言下之意就是这本语言不好的地方很多，必须写一本书才能讲清楚。另外一些程序员则感到，为了更合理地编写JavaScript程序，就不能用JavaScript来写，而必须发明新的语言，比如CoffeeScript、TypeScript、Dart这些新语言的发明目的，多多少少都有这个因素。
+其次，JavaScript语言有一些设计缺陷。某些地方相当不合理，另一些地方则会出现怪异的运行结果。学习JavaScript，很大一部分时间是用来搞清楚哪些地方有陷阱。Douglas Crockford写过一本有名的书，名字就叫[《JavaScript: The Good Parts》](http://javascript.crockford.com/)，言下之意就是这门语言不好的地方很多，必须写一本书才能讲清楚。另外一些程序员则感到，为了更合理地编写JavaScript程序，就不能用JavaScript来写，而必须发明新的语言，比如CoffeeScript、TypeScript、Dart这些新语言的发明目的，多多少少都有这个因素。
 
 尽管如此，目前看来，JavaScript的地位还是无法动摇。加之，语言标准的快速进化，使得JavaScript功能日益增强，而语法缺陷和怪异之处得到了弥补。所以，JavaScript还是值得学习，况且它的入门真的不难。
 
