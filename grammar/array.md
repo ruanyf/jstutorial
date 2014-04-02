@@ -331,6 +331,24 @@ for (var i in a){
 
 {% endhighlight %}
 
+需要注意的是，for-in会遍历数组所有的键，即使是非数字键。
+
+{% highlight javascript %}
+
+var a = [1,2,3];
+a.foo = true;
+for (var key in a) { 
+	console.log(key); 
+}
+// 0
+// 1
+// 2
+// foo
+
+{% endhighlight %}
+
+所以，使用for-in遍历数组的时候，一定要小心。
+
 另一种遍历的做法是用for循环或者while循环结合length属性。
 
 {% highlight javascript %}

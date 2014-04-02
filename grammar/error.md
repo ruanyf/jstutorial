@@ -14,8 +14,9 @@ Error对象的实例有两个最基本的属性：
 
 - **name**：错误名称
 - **message**：错误提示信息
+- **stack**：错误的堆栈（非标准属性，但是大多数平台支持）
 
-利用这两个属性，可以对发生什么错误有一个大概的了解。
+利用name和message这两个属性，可以对发生什么错误有一个大概的了解。
 
 {% highlight javascript %}
 
@@ -27,14 +28,94 @@ if (error.name){
 
 上面代码表示，显示错误的名称以及出错提示信息。 
 
-除了Error对象，JavaScript还定义了其他6种错误，也就是说，存在Error的6个衍生对象。
+stack属性用来查看错误发生时的堆栈。
 
-- **EvalError**：执行代码时发生的错误。
-- **RangeError**：当一个数值型变量或参数超出有效范围时发生的错误。
-- **ReferenceError**：引用一个不存在的变量时发生的错误。
-- **SyntaxError**：解析代码时发生的语法错误。
-- **TypeError**：变量或参数的类型无效时发生的错误。
-- **URIError**：向encodeURI() 或者 decodeURI() 传入无效参数时发生的错误。
+{% highlight javascript %}
+
+function throwit() {
+    throw new Error('');
+}
+
+function catchit() {
+    try {
+        throwit();
+    } catch(e) {
+        console.log(e.stack); // print stack trace
+    }
+}
+
+catchit()
+// Error
+//    at throwit (~/examples/throwcatch.js:9:11)
+//    at catchit (~/examples/throwcatch.js:3:9)
+//    at repl:1:5
+
+{% endhighlight %}
+
+上面代码显示，抛出错误首先是在throwit函数，然后是在catchit函数，最后是在函数的运行环境中。
+
+## JavaScript的原生错误类型
+
+Error对象是最一般的错误类型，在它的基础上，JavaScript还定义了其他6种错误，也就是说，存在Error的6个衍生对象。
+
+**（1）EvalError**
+
+EvalError是执行代码时发生的错误。该错误类型已经不再使用了，只是为了保证与以前代码兼容，才继续保留。
+
+**（2）RangeError**
+
+RangeError是当一个值超出有效范围时发生的错误。
+
+{% highlight javascript %}
+
+new Array(-1)
+// RangeError: Invalid array length
+
+{% endhighlight %}
+
+**（3）ReferenceError**
+
+ReferenceError是引用一个不存在的变量时发生的错误。
+
+{% highlight javascript %}
+
+unknownVariable
+// ReferenceError: unknownVariable is not defined
+
+{% endhighlight %}
+
+**（4）SyntaxError**
+
+SyntaxError是解析代码时发生的语法错误。
+
+{% highlight javascript %}
+
+eval('3 +')
+// SyntaxError: Unexpected end of file
+
+{% endhighlight %}
+
+**（5）TypeError**
+
+TypeError是变量或参数的类型无效时发生的错误。
+
+{% highlight javascript %}
+
+undefined.foo
+// TypeError: Cannot read property 'foo' of undefined
+
+{% endhighlight %}
+
+**（6）URIError**
+
+URIError是向encodeURI() 或者 decodeURI() 传入无效参数时发生的错误。
+
+{% highlight javascript %}
+
+decodeURI('%2')
+// URIError: URI malformed
+
+{% endhighlight %}
 
 这6种衍生错误，连同原始的Error对象，都是构造函数。开发者可以使用它们，人为生成错误对象的实例。
 
@@ -129,6 +210,25 @@ try {
 
 try代码块用来运行某段可能出错的代码，一旦出错（包括用throw语句抛出错误），就被catch代码块捕获。catch接受一个参数，表示try代码块传入的错误对象。
 
+{% highlight javascript %}
+
+function throwIt(exception) {
+    try {
+        throw exception;
+    } catch (e) {
+        console.log('Caught: '+e);
+    }
+}
+
+throwIt(3);
+// Caught: 3
+throwIt('hello');
+// Caught: hello
+throwIt(new Error('An error happened'));
+// Caught: Error: An error happened
+
+{% endhighlight %}
+
 catch代码块之中，还可以再抛出错误，甚至使用嵌套的try...catch结构。
 
 {% highlight javascript %}
@@ -168,6 +268,68 @@ try...catch结构是JavaScript语言受到Java语言影响的一个明显的例�
 ## finally代码块
 
 try...catch结构允许在最后添加一个finally代码块，表示不管是否出现错误，都必需在最后运行的语句。
+
+{% highlight javascript %}
+
+function cleansUp() {
+    try {
+        throw new Error('Sorry...');
+    } finally {
+        console.log('Performing clean-up');
+    }
+}
+
+cleansUp()
+// Performing clean-up
+// Error: Sorry...
+
+{% endhighlight %}
+
+上面代码说明，throw语句抛出错误以后，finanlly继续得到执行。
+
+{% highlight javascript %}
+
+function idle(x) {
+    try {
+        console.log(x);
+        return 'result';
+    } finally {
+        console.log("FINALLY");
+    }
+}
+
+idle('hello')
+// hello
+// FINALLY
+// "result"
+
+{% endhighlight %}
+
+上面代码说明，即使有return语句在前，finally代码块依然会得到执行，且在其执行完毕后，才会显示return语句的值。
+
+下面的例子说明，return语句的执行是排在finanlly代码之前，只是等finnally代码执行完毕后才返回。
+
+{% highlight javascript %}
+
+var count = 0;
+function countUp() {
+    try {
+        return count;
+    } finally {
+        count++;
+    }
+}
+
+countUp()
+// 0
+count
+// 1
+
+{% endhighlight %}
+
+上面代码说明，return语句的count的值，是在finally代码块运行之前，就获取完成了。
+
+下面是另一个例子。
 
 {% highlight javascript %}
 

@@ -357,7 +357,40 @@ for (i in o){
 
 {% endhighlight %}
 
-需要注意的是，for...in循环只能遍历对象本身的属性（更准确的说，是对象本身可enumberable的属性），而不能遍历继承自原型对象（prototype）的属性，详见《面向对象编程》一章。
+注意，for...in循环遍历的是对象所有可enumberable的属性，其中不仅包括定义在对象本身的属性，还包括对象继承的属性。
+
+{% highlight javascript %}
+
+function Person(name) {
+    this.name = name;
+}
+Person.prototype.describe = function () {
+    return 'Name: '+this.name;
+};
+
+var person = new Person('Jane');
+for (var key in person) {
+    console.log(key);
+}
+// name
+// describe
+
+{% endhighlight %}
+
+上面代码中，name是对象本身的属性，describe是对象继承的属性，for-in循环的遍历会包括这两者。
+
+如果只想遍历对象本身的属性，可以使用hasOwnProperty方法，在循环内部做一个判断。
+
+{% highlight javascript %}
+
+for (var key in person) {
+    if (person.hasOwnProperty(key)) {
+        console.log(key);
+    }
+}
+// name
+
+{% endhighlight %}
 
 ## 类似数组的对象
 
