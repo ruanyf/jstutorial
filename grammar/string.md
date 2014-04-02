@@ -8,7 +8,7 @@ modifiedOn: 2014-01-05
 
 ## 概述
 
-### 表示方法
+### 定义
 
 字符串就是若干个排在一起的字符，放在单引号或双引号之中。
 
@@ -28,7 +28,29 @@ modifiedOn: 2014-01-05
 
 {% endhighlight %}
 
-反斜杠可以将一行字符串拆成多行。
+在单引号字符串内，使用单引号（或者在双引号字符串内，使用双引号），必须在内部的单引号（或者双引号）前面加上反斜杠，用来转义。
+
+{% highlight javascript %}
+
+'Did she say \'Hello\'?'
+"Did she say \"Hello\"?"
+
+{% endhighlight %}
+
+字符串默认只能写在一行内，分成多行将会报错。
+
+{% highlight javascript %}
+
+'a
+b
+c'
+// SyntaxError: Unexpected token ILLEGAL
+
+{% endhighlight %}
+
+上面代码将一个字符串分成三行，JavaScript就会报错。
+
+如果长字符串必须分成多行，可以在每一行的尾部使用反斜杠。
 
 {% highlight javascript %}
 
@@ -42,29 +64,26 @@ longString
 
 {% endhighlight %}
 
-上面代码表示，加了反斜杠以后，原来写在一行的字符串，可以分成多行，效果与写在同一行完全一样。但是，这种写法有两个注意点，首先，它是ECMAScript 5新添加的，浏览器IE 8不支持，其次，反斜杠的后面必须是换行符，而不能有其他字符（比如空格），否则会报错。
+上面代码表示，加了反斜杠以后，原来写在一行的字符串，可以分成多行，效果与写在同一行完全一样。
+
+但是，这种写法有两个注意点，首先，它是ECMAScript 5新添加的，老式浏览器（如IE 8）不支持，其次，反斜杠的后面必须是换行符，而不能有其他字符（比如空格），否则会报错。
+
+连接运算符可以连接多个单行字符串，用来模拟多行字符串。
+
+{% highlight javascript %}
+
+var longString = "Long " + 
+"long " +
+"long " +
+"string";
+
+{% endhighlight %}
 
 ### 转义
 
-如果单引号表示字符串内需要出现单引号（或双引号表示的字符串内需要出现双引号），必须在它的前面加上反斜杠，用来转义。
+反斜杠在字符串内有特殊含义，用来表示一些特殊字符，所以又称为转义符。
 
-{% highlight javascript %}
-
-'Did she say "Hello"?'
-"Did she say \"Hello\"?"
-
-{% endhighlight %}
-
-这就说明，反斜杠在字符串内有特殊含义，用来表示一些特殊字符。如果字符串的内容包含需要出现反斜杠，则它前面需要再加一个反斜杠，用来对自身转义。
-
-{% highlight javascript %}
-
-'Prev \\ Next'
-// "Prev \ Next"
-
-{% endhighlight %}
-
-需要用反斜杠转义的字符串，主要有下面这些：
+需要用反斜杠转义的特殊字符，主要有下面这些：
 
 - \0	代表没有内容的字符（\u0000）
 - \b	后退键（\u0008）
@@ -94,15 +113,25 @@ longString
 
 {% highlight javascript %}
 
-"\a" // "a"
+"\a" 
+// "a"
 
 {% endhighlight %}
 
 上面代码表示a是一个正常字符，前面加反斜杠没有特殊含义，则反斜杠会被自动省略。
 
+如果字符串的正常内容之中，需要包含反斜杠，则反斜杠前需要再加一个反斜杠，用来对自身转义。
+
+{% highlight javascript %}
+
+"Prev \\ Next"
+// "Prev \ Next"
+
+{% endhighlight %}
+
 ### 字符串与数组
 
-在JavaScript内部，字符串可以被视为字符数组，因此接受数组的方括号运算符，表示返回某个位置的字符（从0开始）。
+字符串可以被视为字符数组，因此可以使用数组的方括号运算符，用来返回某个位置的字符（从0开始）。
 
 {% highlight javascript %}
 
@@ -126,24 +155,29 @@ s[4] // "o"
 
 {% endhighlight %}
 
-但是，字符串与数组的相似性仅此而已，JavaScript事实上是把字符串当作类似数组的对象，而且无法改变字符串之中某个字符的值。
+但是，字符串与数组的相似性仅此而已。实际上，字符串是类似数组的对象，且无法改变字符串之中的单个字符。
 
 {% highlight javascript %}
 
 var s = 'hello';
 
 delete s[0];
-s // "hello"
+s 
+// "hello"
 
 s[1] = 'a';
-s // "hello"
+s 
+// "hello"
 
 s[5] = '!';
-s // "hello"
+s 
+// "hello"
 
 {% endhighlight %}
 
 上面代码表示，字符串内部的单个字符无法改变和增删，这些操作会默默地失败。
+
+length属性返回字符串的长度，该属性也是无法改变的。
 
 {% highlight javascript %}
 
@@ -158,7 +192,7 @@ s.length // 5
 
 {% endhighlight %}
 
-上面代码表示字符串的length属性也是无法改变的。
+上面代码表示字符串的length属性无法改变，但是不会报错。
 
 ## 字符集
 

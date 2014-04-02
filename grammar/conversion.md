@@ -54,24 +54,13 @@ Number('\t\v\r12.34\n ')
 
 **（2）对象的转换规则**
 
-对象的转换规则比较复杂：先调用对象自身的valueOf方法，如果该方法返回原始类型的值（数值、字符串和布尔值），则直接对该值使用Number方法；否则再调用对象自身的toString方法，如果toString方法返回的还不是原始类型的值，则报错。
+对象的转换规则比较复杂。
 
-{% highlight javascript %}
+1. 先调用对象自身的valueOf方法，如果该方法返回原始类型的值（数值、字符串和布尔值），则直接对该值使用Number方法，不再进行后续步骤。
 
-Number({valueOf:function (){return 2;}})
-// 2
+2. 如果valueOf方法返回复合类型的值，再调用对象自身的toString方法，如果toString方法返回原始类型的值，则对该值使用Number方法，不再进行后续步骤。
 
-Number({toString:function(){return 3;}})
-// 3
-
-Number({valueOf:function (){return 2;},toString:function(){return 3;}})
-// 2
-
-{% endhighlight %}
-
-上面代码对三个对象使用Number方法。第一个对象返回valueOf方法的值，第二个对象返回toString方法的值，第三个对象表示valueOf方法先于toString方法执行。
-
-对于那些没有自定义valueOf和toString方法的对象，就使用默认的方法。
+3. 如果toString方法返回的是复合类型的值，则报错。
 
 {% highlight javascript %}
 
@@ -89,8 +78,6 @@ if (typeof {a:1}.valueOf() === 'object'){
 } else {
 	Number({a:1}.valueOf());
 }
-
-Number(({a:1}).valueOf().toString())
 
 {% endhighlight %}
 
@@ -115,6 +102,25 @@ Number(obj)
 // TypeError: Cannot convert object to primitive value
 
 {% endhighlight %}
+
+上面代码的valueOf和toString方法，返回的都是对象，所以转成数值时会报错。
+
+从上面的例子可以看出，valueOf和toString方法，都是可以自定义的。
+
+{% highlight javascript %}
+
+Number({valueOf:function (){return 2;}})
+// 2
+
+Number({toString:function(){return 3;}})
+// 3
+
+Number({valueOf:function (){return 2;},toString:function(){return 3;}})
+// 2
+
+{% endhighlight %}
+
+上面代码对三个对象使用Number方法。第一个对象返回valueOf方法的值，第二个对象返回toString方法的值，第三个对象表示valueOf方法先于toString方法执行。
 
 ### String函数：强制转换成字符串
 
@@ -148,28 +154,28 @@ String(null) // "null"
 
 **（2）对象的转换规则**
 
-对于对象，则是先调用toString方法；如果toString方法返回的不是原始类型的值，再调用valueOf方法；如果valueOf方法返回的还不是原始类型的值，则报错。它的调用顺序正好与Number方法相反。
+如果要将对象转为字符串，则是采用以下步骤。
 
-{% highlight javascript %}
+1. 先调用toString方法，如果toString方法返回的是原始类型的值，则对该值使用String方法，不再进行以下步骤。
 
-String({toString:function(){return 3;}})
-// "3"
+2. 如果toString方法返回的是复合类型的值，再调用valueOf方法，如果valueOf方法返回的是原始类型的值，则对该值使用String方法，不再进行以下步骤。
 
-String({valueOf:function (){return 2;}})
-// "[object Object]"
+3. 如果valueOf方法返回的是复合类型的值，则报错。
 
-String({valueOf:function (){return 2;},toString:function(){return 3;}})
-// "3"
-
-{% endhighlight %}
-
-上面代码对三个对象使用String方法。第一个对象返回toString方法的值（3），然后对其使用String方法，得到“3”；第二个对象返回的还是toString方法的值（"[object Object]"），这次直接就是字符串；第三个对象表示toString方法先于valueOf方法执行。
-
-对于那些没有自定义valueOf和toString方法的对象，就使用默认的方法。
+String方法的这种过程正好与Number方法相反。
 
 {% highlight javascript %}
 
 String({a:1})
+// "[object Object]"
+
+{% endhighlight %}
+
+上面代码相当于下面这样。
+
+{% highlight javascript %}
+
+String({a:1}.toString())
 // "[object Object]"
 
 {% endhighlight %}
@@ -193,6 +199,23 @@ String(obj)
 // TypeError: Cannot convert object to primitive value
 
 {% endhighlight %}
+
+下面是一个自定义toString方法的例子。
+
+{% highlight javascript %}
+
+String({toString:function(){return 3;}})
+// "3"
+
+String({valueOf:function (){return 2;}})
+// "[object Object]"
+
+String({valueOf:function (){return 2;},toString:function(){return 3;}})
+// "3"
+
+{% endhighlight %}
+
+上面代码对三个对象使用String方法。第一个对象返回toString方法的值（数值3），然后对其使用String方法，得到字符串“3”；第二个对象返回的还是toString方法的值（"[object Object]"），这次直接就是字符串；第三个对象表示toString方法先于valueOf方法执行。
 
 ### Boolean函数：强制转换成布尔值
 

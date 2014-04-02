@@ -318,21 +318,30 @@ str.split(separator, [limit])
 
 {% highlight javascript %}
 
-"aaa*a*".split(/a*/)
-// [ '', '*', '*' ]
+'a,  b,c, d'.split(',') 
+// [ 'a', '  b', 'c', ' d' ]
+
+'a,  b,c, d'.split(/, */)
+// [ 'a', 'b', 'c', 'd' ]
+
+'a,  b,c, d'.split(/, */, 2)
+[ 'a', 'b' ]
 
 {% endhighlight %}
 
-上面代码的分割规则是出现0次或多次的a，所以第一个分隔符是“aaa”，第二个分割符是“a”，将整个字符串分成三个部分。出现0次的a，意味着只要没有a就可以分割，实际上就是按字符分割。
+上面代码使用正则表达式，去除了子字符串的逗号前面的空格。
 
 {% highlight javascript %}
+
+"aaa*a*".split(/a*/)
+// [ '', '*', '*' ]
 
 "aaa**a*".split(/a*/)
 // ["", "*", "*", "*"]
 
 {% endhighlight %}
 
-上面代码中，由于0个a也是分割符，所以连续的两个星号被分割成了数组的两个成员。
+上面代码的分割规则是出现0次或多次的a，所以第一个分隔符是“aaa”，第二个分割符是“a”，将整个字符串分成三个部分。出现0次的a，意味着只要没有a就可以分割，实际上就是按字符分割。
 
 如果正则表达式带有括号，则括号匹配的部分也会作为数组成员返回。
 
@@ -344,6 +353,18 @@ str.split(separator, [limit])
 {% endhighlight %}
 
 上面代码的正则表达式使用了括号，第一个组匹配是“aaa”，第二个组匹配是“a”，它们都作为数组成员返回。
+
+下面是另一个组匹配的例子。
+
+{% highlight javascript %}
+
+'a,  b  ,  '.split(/(,)/)
+// ["a", ",", "  b  ", ",", "  "]
+
+'a,  b  ,  '.split(/ *(,) */)
+// ["a", ",", "b", ",", ""]
+
+{% endhighlight %}
 
 ## 匹配规则
 
@@ -631,22 +652,31 @@ var regex = /test/ig;
 
 ### 组匹配
 
-（1）概述
+**（1）概述**
 
 正则表达式的括号表示分组匹配，括号中的模式可以用来捕获分组的内容。
 
 {% highlight javascript %}
 
-/(.)b(.)/.test("abc") // true
-
-var m = "abc".match(/(.)b(.)/);
-
-m[1] // "a"
-m[2] // "c"
+var m = "abcabc".match(/(.)b(.)/);
+m 
+// ["abc", "a", "c"]
 
 {% endhighlight %}
 
 上面代码中，正则表达式/(.)b(.)/一共使用两个括号，第一个括号捕获a，第二个括号捕获c。
+
+注意，使用组匹配时，不宜同时使用g修饰符，否则match方法不会捕获分组的内容。
+
+{% highlight javascript %}
+
+var m = "abcabc".match(/(.)b(.)/g);
+m
+// ["abc", "abc"]
+
+{% endhighlight %}
+
+上面代码使用带g修饰符的正则表达式，结果match方法只捕获了匹配整个表达式的部分。
 
 在正则表达式内部，可以用\n引用括号匹配的内容，n是从1开始的自然数，表示对应顺序的括号。
 
@@ -669,7 +699,7 @@ tagName.exec("<b>bold</b>")[1]
 
 {% endhighlight %}
 
-（2）非捕获组
+**（2）非捕获组**
 
 (?:x)称为非捕获组（Non-capturing group），表示不返回该组匹配的内容，即匹配的结果中不计入这个括号。
 
@@ -702,31 +732,29 @@ url.exec("http://google.com/");
 
 上面的代码中，前一个正则表达式是正常匹配，第一个括号返回网络协议；后一个正则表达式是非捕获匹配，返回结果中不包括网络协议。
 
-（3）先行断言
+**（3）先行断言**
 
 x(?=y)称为先行断言（Positive look-ahead），x只有在y前面才匹配，y不会被计入返回结果。
 
 {% highlight javascript %}
 
 var m = "abc".match(/b(?=c)/);
-
-m[0] // "b"
-m[1] // undefined
+m 
+// "b"
 
 {% endhighlight %}
 
 上面的代码使用了先行断言，b在c前面所以被匹配，但是括号对应的c不会被返回。
 
-（4）后行断言
+**（4）后行断言**
 
 x(?!y)称为后行断言（Negative look-ahead），x只有不在y前面才匹配，y不会被计入返回结果。
 
 {% highlight javascript %}
 
 var m = "abd".match(/b(?!c)/);
-
-m[0] // "b"
-m[1] // undefined
+m
+// ["b"]
 
 {% endhighlight %}
 
