@@ -178,31 +178,34 @@ instanceof运算符的实质是，找出instanceof运算符左侧的实例对象
 
 构造函数内部需要用到this关键字。那么，this关键字到底是什么意思呢？
 
-this有多种含义，用法很灵活。理解this，需要理解JavaScript语言允许动态调用对象的属性。也就是说，假定a对象和b对象都有一个属性，指向同一个f函数，JavaScript允许在调用f函数时，运行环境动态切换，即f函数一会属于a对象，一会属于b对象，这就要靠this关键字来办到。
+简单说，this就是指当前函数的运行环境。由于JavaScript支持运行环境的动态切换，所以this的指向是动态的。
+
+举例来说，有一个函数f，它同时属于a对象和b对象。JavaScript允许函数f的运行环境动态切换，即一会属于a对象，一会属于b对象，这就要靠this关键字来办到。
 
 {% highlight javascript %}
 
-var a = new Object();
-var b = new Object();
+function f(){ console.log(this.x); };
 
-function f(){ console.log(this); };
+var a = {x:'a'};
+a.f = f;
 
-a.m = f;
-b.m = f;
+var b = {x:'b'};
+b.f = f;
+
+a.f() // a
+b.f() // b
 
 {% endhighlight %}
 
-上面代码中，a对象和b对象的m属性都指向f函数。那么，f函数内部的this关键字，就代表不同的运行环境。
+上面代码中，函数f可以打印出当前运行环境中x变量的值。当f属于a对象时，this指向a；当f属于b对象时，this指向b，因此打印出了不同的值。由于this的指向可变，所以达到了运行环境动态切换的目的。
 
-简单说，this关键字就是指f函数运行时所处的那个对象，如果f在a对象中运行，则this指向a，如果f在b对象中运行，则this指向b。由于this的指向可变，所以达到了运行环境动态切换的目的。
+由于JavaScript语言中的一切都是对象，所以运行环境也是对象。可以理解成，this指函数运行时所在的那个对象。如果一个函数在全局环境中运行，this就是指顶层对象（在浏览器中为window对象）；如果一个函数作为某个对象的方法运行，this就是指运行时所处的那个对象。
 
-如果一个函数在全局环境中运行，this就是指顶层对象（在浏览器中为window对象）；如果不在全局环境中运行，this就是指运行时所处的那个对象。
+### 使用场合
 
-### 详细解释
+总结一下，this的使用可以分成以下几个场合。
 
-我们分成几种情况来讨论。
-
-**（1）全局环境**
+**（1）指代全局环境**
 
 在全局环境使用this，它指的就是顶层对象window。
 
@@ -211,8 +214,6 @@ b.m = f;
 this === window // true
 
 {% endhighlight %}
-
-在浏览器全局环境中，顶层对象就是window，所以this等于window。
 
 **（2）构造函数**
 
@@ -241,36 +242,7 @@ o.m() // "Hello World!"
 
 {% endhighlight %}
 
-**（3）普通函数**
-
-普通函数（非构造函数）内部的this，指的是函数运行时所在的对象。
-
-{% highlight javascript %}
-
-function f(){
-	console.log(this.m);
-}
-
-var m = 1;
-f() // 1
-
-{% endhighlight %}
-
-上面代码定义了一个函数f，当它在全局环境中运行，this的指向就是全局对象window，所以可以读取全局变量m的值。
-
-{% highlight javascript %}
-
-var o1 = { m : 1 };
-o1.f = f;
-o1.f() // 1
-
-var o2 = { m : 2 };
-o2.f = f;
-o2.f() // 2
-
-{% endhighlight %}
-
-上面代码表示，当f在o1下运行时，this指向o1，当f在o2下运行时，this指向o2。
+**（3）对象的方法**
 
 由于this取决于运行时所在的对象，所以如果将某个对象的方法赋值给另一个对象，会改变this的指向。这一点要特别小心。
 
@@ -331,11 +303,7 @@ hello.m() // Hello
 
 {% endhighlight %}
 
-**（4）结论**
-
-综合上面三种情况，可以看到this就是运行时变量或方法所在的对象。如果在全局环境下运行，就代表全局对象window；如果在某个对象中运行，就代表该对象。
-
-### 使用时的注意点
+### 使用注意点
 
 **（1）避免多层this**
 
@@ -475,13 +443,19 @@ $("#button").on("click", o.f);
 
 为了解决这个问题，可以采用下面的一些方法对this进行绑定，也就是使得this固定指向某个对象，减少不确定性。
 
+## 固定this指向的方法
+
+this的动态切换，固然为JavaScript创造了巨大的灵活性，但也使得编程变得困难和模糊。有时，需要把this固定下来，反正出现意想不到的情况。
+
+JavaScript提供了call、apply、bind这三个方法，来固定this的指向。
+
 ### call方法
 
-正常情况下，函数体内部的this关键字，总是指向函数运行时所在的那个对象。函数的call方法可以改变this指向的对象，然后再调用该函数。
+函数的call方法，可以改变指定该函数内部this的指向，然后再调用该函数。它的使用格式如下。
 
 {% highlight javascript %}
 
-func.call(context, [arg1], [arg2], ...)
+func.call(thisValue, arg1, arg2, ...)
 
 {% endhighlight %}
 
@@ -509,15 +483,17 @@ a.call(o) // 456
 
 ### apply方法
 
-apply方法的作用与call方法类似，也是改变this关键字指向的对象。区别在于，apply方法的第二个参数是一个数组，该数组的所有成员依次作为参数，传入原函数。
+apply方法的作用与call方法类似，也是改变this指向，然后再调用该函数。它的使用格式如下。
 
 {% highlight javascript %}
 
-func.apply(context, [arg1, arg2, ...])
+func.apply(thisValue, [arg1, arg2, ...])
 
 {% endhighlight %}
 
-原函数的参数，在call方法中必须一个个添加，但是在apply方法中，必须以数组形式添加。下面的例子是一个参数数组的例子。
+apply方法的第一个参数也是this所要指向的那个对象，如果设为null或undefined，则等同于指定全局对象。第二个参数则是一个数组，该数组的所有成员依次作为参数，传入原函数。原函数的参数，在call方法中必须一个个添加，但是在apply方法中，必须以数组形式添加。
+
+请看下面的例子。
 
 {% highlight javascript %}
 
@@ -530,7 +506,11 @@ f.apply(null,[1,1]) // 2
 
 上面的f函数本来接受两个参数，使用apply方法以后，就变成可以接受一个数组作为参数。
 
-利用这一点，可以做一些有趣的应用。比如，JavaScript不提供找出数组最大元素的函数，Math.max方法只能返回它的所有参数的最大值，使用apply方法，就可以返回数组的最大元素。
+利用这一点，可以做一些有趣的应用。
+
+**（1）找出数组最大元素**
+
+JavaScript不提供找出数组最大元素的函数。结合使用apply方法和Math.max方法，就可以返回数组的最大元素。
 
 {% highlight javascript %}
 
@@ -541,7 +521,9 @@ Math.max.apply(null, a)
 
 {% endhighlight %}
 
-另一个应用是，通过apply方法，利用构造函数Array将数组的空元素变成undefined。
+**（2）将数组的空元素变为undefined**
+
+通过apply方法，利用Array构造函数将数组的空元素变成undefined。
 
 {% highlight javascript %}
 
@@ -571,6 +553,8 @@ Array.apply(null,a).forEach(print)
 
 {% endhighlight %}
 
+**（3）转换类似数组的对象**
+
 另外，利用数组对象的slice方法，可以将一个类似数组的对象（比如arguments对象）转为真正的数组。
 
 {% highlight javascript %}
@@ -591,7 +575,9 @@ Array.prototype.slice.apply({length:1})
 
 上面代码的apply方法的参数都是对象，但是返回结果都是数组，这就起到了将对象转成数组的目的。从上面代码可以看到，这个方法起作用的前提是，被处理的对象必须有length属性，以及相对应的数字键。
 
-最后，上一节按钮点击事件的例子，可以改写成
+**（4）绑定回调函数的对象**
+
+上一节按钮点击事件的例子，可以改写成
 
 {% highlight javascript %}
 
@@ -614,13 +600,15 @@ $("#button").on("click", f);
 
 ### bind方法
 
-bind方法就是单纯地将函数体内的this绑定到某个对象，然后返回一个新函数。它比call方法和apply方法更进一步的是，除了绑定this以外，还可以绑定原函数的参数。
+bind方法就是单纯地将函数体内的this绑定到某个对象，然后返回一个新函数。它的使用格式如下。
 
 {% highlight javascript %}
 
-func.bind(contexti [, arg1] [, arg2] ...)
+func.bind(thisValue, arg1, arg2,...)
 
 {% endhighlight %}
+
+它比call方法和apply方法更进一步的是，除了绑定this以外，还可以绑定原函数的参数。
 
 请看下面的例子。
 
@@ -661,6 +649,10 @@ plus5(10) // 15
 
 上面代码除了将add函数的运行环境绑定为全局对象，还将add函数的第一个参数绑定为5，然后返回一个新函数。以后，每次运行这个新函数，就只需要提供另一个参数就够了。
 
+bind方法有一些使用注意点。
+
+**（1）每一次返回一个新函数**
+
 bind方法每运行一次，就返回一个新函数，这会产生一些问题。比如，监听事件的时候，不能写成下面这样。
 
 {% highlight javascript %}
@@ -688,6 +680,8 @@ element.removeEventListener('click', listener);
 
 {% endhighlight %}
 
+**（2）bind方法的自定义代码**
+
 对于那些不支持bind方法的老式浏览器，可以自行定义bind方法。
 
 {% highlight javascript %}
@@ -705,6 +699,8 @@ if(!('bind' in Function.prototype)){
 
 {% endhighlight %}
 
+**（3）jQuery的proxy方法**
+
 除了用bind方法绑定函数运行时所在的对象，还可以使用jQuery的$.proxy方法，它与bind方法的作用基本相同。
 
 {% highlight javascript %}
@@ -714,6 +710,8 @@ $("#button").on("click", $.proxy(o.f, o));
 {% endhighlight %}
 
 上面代码表示，$.proxy方法将o.f方法绑定到o对象。
+
+**（4）结合call方法使用**
 
 利用bind方法，可以改写一些JavaScript原生方法的使用形式，以数组的slice方法为例。
 

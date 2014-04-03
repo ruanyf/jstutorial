@@ -96,6 +96,9 @@ function fib(num) {
         }
 }
 
+fib(6)
+// 8
+
 {% endhighlight %}
 
 ### 第一等公民
@@ -220,6 +223,25 @@ f
 
 {% endhighlight %}
 
+### name属性
+
+大多数JavaScript引擎，支持函数的非标准的name属性。该属性返回函数名。
+
+{% highlight javascript %}
+
+function f1() {}
+f1.name // 'f1'
+
+var f2 = function () {};
+f2.name // ''
+
+var f3 = function myName() {};
+f3.name // 'myName'
+
+{% endhighlight %}
+
+上面代码说明，对于函数语句，name属性返回函数名；对于函数表达式，返回表达式中的函数名（对于匿名函数，就是返回空字符串）。 
+
 ## 函数作用域
 
 ### 定义
@@ -303,6 +325,8 @@ function foo(x) {
 {% endhighlight %}
 
 ## 参数
+
+### 概述
 
 函数运行的时候，有时需要提供外部数据，不同的外部数据会得到不同的结果，这种外部数据就叫参数。
 
@@ -518,6 +542,8 @@ f(1)
 
 ### arguments对象
 
+**（1）定义**
+
 由于JavaScript允许函数有不定数目的参数，所以我们需要一种机制，可以在函数体内部读取所有参数。这就是arguments对象的由来。
 
 arguments对象包含了函数运行时的所有参数，arguments[0]就是第一个参数，arguments[1]就是第二个参数，依次类推。这个对象只有在函数体内部，才可以使用。
@@ -537,7 +563,7 @@ f(1, 2, 3)
 
 {% endhighlight %}
 
-arguments对象除了可以读取参数，还可以为参数赋值。
+arguments对象除了可以读取参数，还可以为参数赋值（严格模式不允许这种用法）。
 
 {% highlight javascript %}
 
@@ -560,30 +586,29 @@ function f(){
 	return arguments.length;
 }
 
-f(1,2,3)
-// 3
-
-f(1)
-// 1
-
-f()
-// 0
+f(1,2,3) // 3
+f(1) // 1
+f() // 0
 
 {% endhighlight %}
 
-需要注意的是，虽然arguments很像数组，但它是一个对象。某些用于数组的方法，可以直接用于arguments对象，比如函数的apply方法，或者数组合并的concat方法。
+**（2）与数组的关系**
+
+需要注意的是，虽然arguments很像数组，但它是一个对象。某些用于数组的方法（比如slice和forEach方法），不能在arguments对象上使用。
+
+但是，有时arguments可以像数组一样，用在某些只用于数组的方法。比如，用在apply方法中，或使用concat方法完成数组合并。
 
 {% highlight javascript %}
 
-// 用于函数的apply方法
+// 用于apply方法
 myfunction.apply(obj, arguments).
 
-// 与另一个数组合并
-Array.prototype.concat.apply([1,2,3], arguments).
+// 使用与另一个数组合并
+Array.prototype.concat.apply([1,2,3], arguments)
 
 {% endhighlight %}
 
-不过，大多数的数组方法，不能直接用于arguments对象，比如arguments.sort() 会报出TypeError。解决方法是将arguments转为真正的数组。下面是两种常用的转换方法：slice方法和逐一填入新数组。
+要让arguments对象使用数组方法，真正的解决方法是将arguments转为真正的数组。下面是两种常用的转换方法：slice方法和逐一填入新数组。
 
 {% highlight javascript %}
 
@@ -597,6 +622,8 @@ for(var i = 0; i < arguments.length; i++) {
 }
 
 {% endhighlight %}
+
+**（3）callee属性**
 
 arguments对象带有一个callee属性，返回它所对应的原函数。
 
