@@ -710,25 +710,23 @@ function(){ /* code */ }();
 
 {% endhighlight %}
 
-产生这个错误的原因是，Javascript解释器看到function关键字之后，认为后面跟的是函数定义，不应该以圆括号结尾。
+产生这个错误的原因是，Javascript引擎看到function关键字之后，认为后面跟的是函数定义语句，不应该以圆括号结尾。
 
-解决方法就是让解释器知道，圆括号前面的部分不是函数定义，而是一个表达式，可以对此进行运算。你可以这样写：
+解决方法就是让引擎知道，圆括号前面的部分不是函数定义语句，而是一个表达式，可以对此进行运算。你可以这样写：
 
 {% highlight javascript %}
 
 (function(){ /* code */ }()); 
 
-{% endhighlight %}
-
-也可以这样写：
-
-{% highlight javascript %}
+// 或者
 
 (function(){ /* code */ })(); 
 
 {% endhighlight %}
 
-这两种写法都是以圆括号开头，解释器就会认为后面跟的是一个表示式，而不是函数定义，所以就避免了错误。这就叫做“立即调用的函数表达式”（Immediately-Invoked Function Expression），简称IIFE。
+这两种写法都是以圆括号开头，引擎就会认为后面跟的是一个表示式，而不是函数定义，所以就避免了错误。这就叫做“立即调用的函数表达式”（Immediately-Invoked Function Expression），简称IIFE。
+
+> 注意，上面的两种写法的结尾，都必须加上分号。
 
 推而广之，任何让解释器以表达式来处理函数定义的方法，都能产生同样的效果，比如下面三种写法。
 
@@ -766,7 +764,25 @@ new function(){ /* code */ }() // 只有传递参数时，才需要最后那个�
 
 {% endhighlight %}
 
-通常情况下，只对匿名函数使用这种“立即执行的函数表达式”。它的好处在于，因为调用的时候不必指定函数名，所以避免了污染全局变量。
+通常情况下，只对匿名函数使用这种“立即执行的函数表达式”。它的目的有两个：一是不必为函数命名，避免了污染全局变量；二是IIFE内部形成了一个单独的作用域，可以封装一些外部无法读取的私有变量。
+
+{% highlight javascript %}
+
+// 写法一
+var tmp = newData;
+processData(tmp);
+storeData(tmp);
+
+// 写法二
+(function (){
+  var tmp = newData;
+  processData(tmp);
+  storeData(tmp);
+}()); 
+
+{% endhighlight %}
+
+上面代码中，写法二比写法一更好，因为完全避免了污染全局变量。
 
 ## eval命令
 
