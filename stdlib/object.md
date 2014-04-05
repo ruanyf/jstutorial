@@ -116,7 +116,7 @@ var object = new Object();
 
 Object.create方法的详细介绍，请参见《面向对象编程》一章。
 
-## Object.observe方法
+### Object.observe方法
 
 Object.observe方法用于观察对象属性的变化。
 
@@ -140,16 +140,40 @@ delete o.foo; // delete, 'foo', 2
 
 该方法非常新，只有Chrome浏览器的最新版本才部署。
 
+### 其他方法
+
+以下方法在后面的《对象属性模型》部分详细介绍。
+
+- Object.getOwnPropertyDescriptor方法：获取对象的某个属性的attributes对象。
+
+- Object.defineProperty方法：通过attributes对象，定义对象的某个属性。
+
+- Object.defineProperties方法：通过attributes对象，定义对象的多个属性。
+
+- Object.getPrototypeOf方法：获取对象的Prototype对象。
+
+- Object.isExtensible方法：判断对象是否可扩展。
+
+- Object.preventExtensions方法：防止对象扩展。
+
+- Object.isSealed方法：判断一个对象是否可配置。
+
+- Object.seal方法：禁止对象配置。
+
+- Object.isFrozen方法：判断一个对象是否被冻结。
+
+- Object.freeze方法：冻结一个对象。
+
 ## Object实例对象的方法
 
 Object实例对象继承了Object.prototype对象上的以下方法。
 
+- valueOf
+- toString
+- toLocalString
 - hasOwnProperty
 - isPrototypeOf
 - propertyIsEnumerable
-- toLocalString
-- toString
-- valueOf
 
 其中，两种最主要的方法是valueOf和toString。
 
@@ -219,6 +243,18 @@ o + ' ' + 'world' // "hello world"
 {% endhighlight %}
 
 上面代码表示，当对象用于字符串加法时，会自动调用toString方法。由于自定义了toString方法，所以返回字符串hello world。
+
+数组、字符串和函数都分别部署了自己版本的toString方法。
+
+{% highlight javascript %}
+
+[1,2,3].toString() // "1,2,3"
+
+'123'.toString() // "123"
+
+(function (){return 123}).toString() // "function (){return 123}"
+
+{% endhighlight %}
 
 toString方法的主要用途是返回对象的字符串形式，除此之外，还有一个重要的作用，就是判断一个值的类型。使用call方法，可以在任意值上调用Object.prototype.toString方法，并返回这个值的构造函数，从而帮助我们判断这个值的类型。具体的返回值如下：
 
@@ -325,9 +361,46 @@ o.p = 123;
 
 {% endhighlight %}
 
-### 属性的attributes对象
+存取函数往往用于某个属性的值，需要依赖对象内部数据的场合。
 
-在JavaScript内部，每个属性都有一个对应的attributes对象，保存该属性的一些元信息。
+{% highlight javascript %}
+
+var o ={
+	$n:5,
+	get next(){return this.$n++ },
+	set next(n) {
+		if (n >= this.$n) this.$n = n;
+		else throw "新的值必须大于当前值";
+	}
+};
+
+o.next // 5
+
+o.next = 10;
+o.next //10
+
+{% endhighlight %}
+
+上面代码中，next属性的存值函数和取值函数，都依赖于对内部属性$n的操作。
+
+### 属性的attributes对象，Object.getOwnPropertyDescriptor方法
+
+在JavaScript内部，每个属性都有一个对应的attributes对象，保存该属性的一些元信息。使用Object.getOwnPropertyDescriptor方法，可以读取attributes对象。
+
+{% highlight javascript %}
+
+var o = { p: 'a' };
+
+Object.getOwnPropertyDescriptor(o, 'p') 
+// Object { value: "a", 
+//			writable: true, 
+//			enumerable: true, 
+//			configurable: true
+//	}
+
+{% endhighlight %}
+
+上面代码表示，使用Object.getOwnPropertyDescriptor方法，读取o对象的p属性的attributes对象。
 
 attributes对象包含如下元信息：
 
@@ -342,19 +415,6 @@ attributes对象包含如下元信息：
 - **get**：表示该属性的取值函数（getter），默认为undefined。
 
 - **set**：表示该属性的存值函数（setter），默认为undefined。
-
-有了attributes对象，就可以精确描述其对应的属性。前面代码中o对象的p属性，它的attributes对像就是像下面这样：
-
-{% highlight javascript %}
-
-    {
-        value: 123,
-        writable: false,
-        enumerable: true,
-        configurable: false
-    }
-
-{% endhighlight %}
 
 ### Object.defineProperty方法，Object.defineProperties方法
 
@@ -393,37 +453,25 @@ o.p
 
 var o = Object.defineProperties({}, {
 		p1: { value: 123, enumerable: true },
-        p2: { value: "abc", enumerable: true }
+        p2: { value: "abc", enumerable: true },
+		p3: {
+				get: function() { return this.p1+this.p2 },
+				enumerable:true,
+				configurable:true
+		}
 });
 
-o.p1
-// 123
-
-o.p2
-// "abc"
+o.p1 // 123
+o.p2 // "abc"
+o.p3 // "123abc"
 
 {% endhighlight %}
 
 对于没有定义的属性特征，Object.defineProperty() 和Object.defineProperties() 的默认设置为enumerable、configurable、writeable都为true。
 
-### Object.getOwnPropertyDescriptor方法
-
-Object.getOwnPropertyDescriptor方法可以读取attributes对象。
-
-{% highlight javascript %}
-
-var o = { p: 'a' };
-
-Object.getOwnPropertyDescriptor(o, 'p') 
-// Object {value: "a", writable: true, enumerable: true, configurable: true}
-
-{% endhighlight %}
-
 ### 可枚举性enumerable
 
-**（1）for...in和Object.keys**
-
-可枚举性（enumerable）与两个操作有关：for...in和Object.keys。如果某个属性的可枚举性为true，则这两个操作的循环过程都包括该属性；如果为false，就不包括。
+可枚举性（enumerable）与两个操作有关：for...in和Object.keys。如果某个属性的可枚举性为true，则这两个操作过程都会包括该属性；如果为false，就不包括。
 
 假定，对象o有两个属性p1和p2，可枚举性分别为true和false。
 
@@ -450,9 +498,9 @@ Object.keys(o)
 
 除了上面两个操作，其他操作都不受可枚举性的影响。
 
-**（2）Object.getOwnPropertyNames方法**
+### Object.getOwnPropertyNames方法
 
-该方法返回直接定义在某个对象上面的全部属性的名称，而不管该属性是否可枚举。
+Object.getOwnPropertyNames方法返回直接定义在某个对象上面的全部属性的名称，而不管该属性是否可枚举。
 
 {% highlight javascript %}
 
@@ -472,7 +520,7 @@ Object.getOwnPropertyNames(o)
 
 Object.keys([])
 // []
- 
+
 Object.getOwnPropertyNames([])
 // [ 'length' ]
 
@@ -492,9 +540,9 @@ Object.getOwnPropertyNames(Object.prototype)
 
 上面代码可以看到，空数组（[]）没有可枚举属性，不可枚举属性有length；Object.prototype对象也没有可枚举属性，但是有不少不可枚举属性。
 
-**（3）propertyIsEnumerable方法**
+### 对象实例的propertyIsEnumerable方法
 
-该方法用来判断一个属性是否可枚举。
+对象实例的propertyIsEnumerable方法用来判断一个属性是否可枚举。
 
 {% highlight javascript %}
 
@@ -638,11 +686,13 @@ o.a
 
 这里需要注意的是，当对a属性重新赋值的时候，并不会抛出错误，只是静静地失败。但是，如果在严格模式下，这里就会抛出一个错误，即使是对a属性重新赋予一个同样的值。
 
-### 控制对象状态
+## 控制对象状态
 
-**(1) Object.preventExtensions方法**
+JavaScript提供了一些方法，借助对象属性模型，精确控制一个对象的读写状态。 
 
-该方法可以使得一个对象无法再添加新的属性。
+###  Object.preventExtensions方法
+
+Object.preventExtensions方法可以使得一个对象无法再添加新的属性。
 
 {% highlight javascript %}
 
@@ -661,7 +711,7 @@ Object.defineProperty(o, "p", { value: "hello" });
 
 {% endhighlight %}
 
-如果是在严格状态，则会抛出一个错误。
+如果是在严格模式下，则会抛出一个错误。
 
 {% highlight javascript %}
 
@@ -687,7 +737,7 @@ o.p
 
 {% endhighlight %}
 
-**（2）Object.isExtensible方法**
+### Object.isExtensible方法
 
 Object.isExtensible方法用于检查一个对象是否使用了preventExtensions方法。也就是说，该方法可以用来检查是否可以为一个对象添加属性。
 
@@ -706,7 +756,7 @@ Object.isExtensible(o)
 
 上面代码新生成了一个o对象，对该对象使用Object.isExtensible方法，返回true，表示可以添加新属性。对该对象使用Object.preventExtensions方法以后，再使用Object.isExtensible方法，返回false，表示已经不能添加新属性了。
 
-**(3) Object.seal方法**
+###  Object.seal方法
 
 该方法可以使得一个对象既无法添加新属性，也无法删除旧属性。
 
@@ -761,6 +811,8 @@ o.p
 
 {% endhighlight %}
 
+### Object.isSealed方法
+
 Object.isSealed方法用于检查一个对象是否使用了Object.seal方法。
 
 {% highlight javascript %}
@@ -787,7 +839,7 @@ Object.isExtensible(o)
 
 {% endhighlight %}		
 
-**(4) Object.freeze方法**
+### Object.freeze方法
 
 该方法可以使得一个对象无法添加新属性、无法删除旧属性、也无法改变属性的值，使得这个对象实际上变成了常量。
 
@@ -820,6 +872,8 @@ Object.freeze(o);
 
 {% endhighlight %}
 
+### Object.isFrozen方法
+
 Object.isFrozen方法用于检查一个对象是否使用了Object.freeze()方法。
 
 {% highlight javascript %}
@@ -847,6 +901,20 @@ proto.t = "hello";
 
 o.t
 // hello
+
+{% endhighlight %}
+
+一种解决方案是，把原型也冻结住。
+
+{% highlight javascript %}
+
+var o = Object.seal(
+			Object.create(Object.freeze({x:1}),
+				{y: {value: 2, writable: true}})
+);
+
+Object.getPrototypeOf(o).t = "hello";
+o.hello // undefined
 
 {% endhighlight %}
 

@@ -8,23 +8,34 @@ category: oop
 
 ## \__proto__属性
 
-每个对象都有一个内部属性\__proto__（注意，前后各两个下划线），指向这个对象的原型对象。通过这个内部属性，可以从实例对象读取原型对象的属性。
+除了IE浏览器，其他浏览器都在对象实例上，部署了一个非标准的\__proto__属性（前后各两个下划线），指向该对象的原型对象prototype。
 
-正常情况下，\__proto__属性的指向与constructor.prototype属性是一致的。
+{% highlight javascript %}
+
+var o = new Object();
+
+o.__proto__ === o.constructor.prototype 
+// true
+
+{% endhighlight %}
+
+上面代码说明，如果要读取对象o的prototype对象，标准方法是通过constructor属性间接读取，但是使用\__proto__属性可以直接读取。
+
+下面是一个实例，通过\__proto__属性与constructor.prototype两种方法，分别读取定义在原型对象上的属性。
 
 {% highlight javascript %}
 
 Array.prototype.p = 'abc';
 var a = new Array();
 
-console.log(a.__proto__.p) // abc
-console.log(a.constructor.prototype.p)	// abc	
+a.__proto__.p // abc
+a.constructor.prototype.p // abc	
 
 {% endhighlight %}
 
-上面代码表示，\__proto_属性和constructor.prototype属性都可以用来读取原型对象。显然，\__proto__看上去更简洁一些。
+显然，\__proto__看上去更简洁一些。
 
-必须说明的是，这个属性目前还不是标准，所以不应该在生产代码中使用。我们这里用它，只是因为它可以帮助理解继承。
+因为这个属性目前还不是标准，所以不应该在生产代码中使用。我们这里用它，只是因为它可以帮助理解继承。
 
 {% highlight javascript %}
 
@@ -32,12 +43,12 @@ var a = { x: 1};
 
 var b = { __proto__: a};
 
-b.x
+b.x 
 // 1
 
 {% endhighlight %}
 
-上面的代码中，b对象本身并没有x属性，但是JavaScript引擎通过\__proto__属性，找到它的原型对象a，然后读取a的x属性。
+上面代码中，b对象本身并没有x属性，但是JavaScript引擎通过\__proto__属性，找到它的原型对象a，然后读取a的x属性。
 
 原型对象自己的\__proto__属性，也可以指向其他对象，从而一级一级地形成“原型链”（prototype chain）。
 

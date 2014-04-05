@@ -16,7 +16,7 @@ JSON格式（JavaScript Object Notation的缩写）是一种用于数据交换�
 
 1. 数组或对象的每个成员的值，可以是简单值，也可以是复合值。
 
-2. 简单值分为四种：字符串、数值（必须以十进制表示）、布尔值和null。
+2. 简单值分为四种：字符串、数值（必须以十进制表示）、布尔值和null（NaN, Infinity, -Infinity和undefined都会被转为null）。
 
 3. 复合值分为两种：符合JSON格式的对象和符合JSON格式的数组。
 
@@ -187,12 +187,21 @@ JSON.stringify({ p1:1, p2:2 }, null, "|-");
 
 {% endhighlight %}
 
-如果JSON.stringify处理的对象，包含一个toJSON方法，则它会使用这个方法得到一个值，然后再转成字符串。
+如果JSON.stringify处理的对象，包含一个toJSON方法，则它会使用这个方法得到一个值，然后再转成字符串。也就是说，toJSON方法应该返回一个值。
 
 {% highlight javascript %}
 
 JSON.stringify({ toJSON: function() { return "Cool" } })
 // ""Cool""
+
+var obj = {
+  foo: 'foo',
+  toJSON: function () {
+    return 'bar';
+  }
+};
+var json = JSON.stringify({x: obj}); 
+// '{"x":"bar"}'.
 
 {% endhighlight %}
 

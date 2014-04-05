@@ -166,6 +166,16 @@ FileReader对象用于读取文件，即把文件内容读入内存。它接收F
 
 - **readAsArrayBuffer(Blob|File)** ：返回一个ArrayBuffer对象。
 
+除了以上四种不同的读取文件方法，FileReader对象还有一个abort方法，用于中止文件上传。
+
+{% highlight javascript %}
+
+var reader = new FileReader();
+
+reader.abort();
+
+{% endhighlight %}
+
 FileReader对象采用异步方式读取文件，可以为一系列事件指定回调函数。
 
 - onabort方法：读取中断或调用reader.abort()方法时触发。

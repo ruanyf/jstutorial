@@ -6,7 +6,7 @@ date: 2012-12-14
 modifiedOn: 2013-11-23
 ---
 
-## 原型：prototype对象
+## prototype对象
 
 ### 概述
 
@@ -147,11 +147,14 @@ prototype对象有一个constructor属性，默认指向prototype对象所在的
 
 var a = new Array();
 
-a.hasOwnProperty('constructor')
-// false
+a.constructor
+// function Array() { [native code] }
 
 a.constructor === Array.prototype.constructor
 // true
+
+a.hasOwnProperty('constructor')
+// false
 
 {% endhighlight %}
 
@@ -306,7 +309,7 @@ o.p2 // "abc"
 
 ## isPrototypeOf方法
 
-该方法用来判断一个对象是否是另一个对象的原型。
+isPrototypeOf方法用来判断一个对象是否是另一个对象的原型。
 
 {% highlight javascript %}
 
