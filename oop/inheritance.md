@@ -8,7 +8,7 @@ category: oop
 
 ## \__proto__属性
 
-除了IE浏览器，其他浏览器都在对象实例上，部署了一个非标准的\__proto__属性（前后各两个下划线），指向该对象的原型对象prototype。
+除了IE浏览器，其他浏览器都在Object对象的实例上，部署了一个非标准的\__proto__属性（前后各两个下划线），指向该对象的原型对象prototype。
 
 {% highlight javascript %}
 
@@ -19,7 +19,15 @@ o.__proto__ === o.constructor.prototype
 
 {% endhighlight %}
 
-上面代码说明，如果要读取对象o的prototype对象，标准方法是通过constructor属性间接读取，但是使用\__proto__属性可以直接读取。
+上面代码说明，对象o的\__proto__属性，直接指向它的原型对象constructor.prototype（这是间接获取原型对象的方法）。
+
+可以用下面的代码，检查浏览器是否支持该属性。
+
+{% highlight javascript %}
+
+Object.getPrototypeOf({ __proto__: null }) === null
+
+{% endhighlight %}
 
 下面是一个实例，通过\__proto__属性与constructor.prototype两种方法，分别读取定义在原型对象上的属性。
 

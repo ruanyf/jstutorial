@@ -10,7 +10,7 @@ modifiedOn: 2013-11-23
 
 ### 概述
 
-JavaScript继承机制的基本思想是，每一个对象都关联一个原型对象，定义在后者上的属性和方法，都可以被前者继承。这个原型对象就叫做prototype对象。
+在JavaScript语言中，每一个对象都有一个对应的原型对象，被称为prototype对象。定义在原型对象上的所有属性和方法，都能被派生对象继承。这就是JavaScript继承机制的基本设计。
 
 JavaScript通过构造函数生成新对象，因此构造函数可以视为对象的模板。实例对象的属性和方法，可以定义在构造函数内部。
 
@@ -194,22 +194,27 @@ getPrototypeOf方法返回一个对象的原型。
 
 {% highlight javascript %}
 
+// 空对象的原型是Object.prototype
 Object.getPrototypeOf({}) === Object.prototype
 // true
 
-function F() {}
-Object.getPrototypeOf(F) === Function.prototype
+// 函数的原型是Function.prototype
+function f() {}
+Object.getPrototypeOf(f) === Function.prototype
 // true
 
+
+// 假定F为构造函数，f为F的实例对象
+// f的原型是F.prototype
 var f = new F();
 Object.getPrototypeOf(f) === F.prototype
 // true
-	
+
 {% endhighlight %}
 
 ## Object.create方法
 
-Object对象的create方法用于生成新的对象。它接受一个原型对象作为参数，返回一个新对象，后者完全继承前者的属性。
+Object.create方法用于生成新的对象。它接受一个原型对象作为参数，返回一个新对象，后者完全继承前者的属性。
 
 {% highlight javascript %}
 
@@ -219,6 +224,8 @@ var o2 = Object.create(o1);
 o2.p // 1
 
 {% endhighlight %}
+
+上面代码中，o1是o2的原型对象，o2继承了o1的属性。
 
 Object.create方法基本等同于下面的代码，如果老式浏览器不支持Object.create方法，可以用下面代码自己部署。
 
@@ -268,7 +275,7 @@ Object.create()
 
 {% endhighlight %}
 
-总之，Object.create方法生成的新对象继承了对象原型。
+Object.create方法生成的新对象，动态继承了原型。在原型上添加任何方法，会立刻反映在新对象之上。
 
 {% highlight javascript %}
 
@@ -276,24 +283,14 @@ var o1 = { p: 1 };
 var o2 = Object.create(o1);
 
 o1.p = 2; 
-o2.p // 2 
-
-o2.p = 1; 
-o1.p // 2 
+o2.p 
+// 2 
 
 {% endhighlight %}
 
-上面代码表示，修改对象原型会影响到新生成的对象，反之不成立。
+上面代码表示，修改对象原型会影响到新生成的对象。
 
-Object.create方法可以接受两个参数，第一个是对象的原型，第二个是描述属性的attributes对象。
-
-{% highlight javascript %}
-
-Object.create(proto, propDescObj)
-
-{% endhighlight %}
-
-用法如下：
+Object.create方法可以接受两个参数，第一个是对象的原型，第二个是描述属性的attributes对象。第二个参数所描述的对象属性，会添加到新对象。
 
 {% highlight javascript %}
 
@@ -316,7 +313,8 @@ isPrototypeOf方法用来判断一个对象是否是另一个对象的原型。
 var o1 = {};
 var o2 = Object.create(o1);
 var o3 = Object.create(o2);
-console.log(o2.isPrototypeOf(o3)); // true
-console.log(o1.isPrototypeOf(o3)); // true
+
+o2.isPrototypeOf(o3) // true
+o1.isPrototypeOf(o3) // true
 
 {% endhighlight %}

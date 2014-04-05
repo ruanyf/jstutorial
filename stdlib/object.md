@@ -14,13 +14,22 @@ JavaScript原生提供一个Object对象（注意起首的O是大写），所有
 
 var o = new Object();
 
-typeof o // "object"
+{% endhighlight %}
+
+Object作为构造函数使用时，可以接受一个参数。如果该参数是一个对象，则直接返回这个对象；如果是一个原始类型的值，则返回该值对应的包装对象。
+
+{% highlight javascript %}
+
+var o1 = {a:1};
+var o2 = new Object(o1);
+o1 === o2 // true
+
+new Object(123) instanceof Number
+// true
 
 {% endhighlight %}
 
-上面代码表示，通过Object构造函数生成的新对象（又称“实例”），类型就是object。
-
-> 注意，通过new Object() 的写法生成新对象，与字面量的写法 o = {} 是等价的。建议采用前者，因为这能更清楚地显示目的。
+> 注意，通过new Object() 的写法生成新对象，与字面量的写法 o = {} 是等价的。
 
 与其他构造函数一样，如果要在Object对象上面部署一个方法，有两种做法。
 
@@ -59,23 +68,37 @@ o.print() // Object
 
 ## Object对象的方法
 
-### Object工具方法
+### Object函数
 
 Object本身当作工具方法使用时，可以将任意值转为对象。其中，原始类型的值转为对应的包装对象（参见《原始类型的包装对象》一节）。
 
 {% highlight javascript %}
 
-Object(1) instanceof Number // true
-Object('foo') instanceof String // true
-Object(true) instanceof Boolean // true
+Object() // 返回一个空对象
+Object(undefined) // 返回一个空对象
+Object(null) // 返回一个空对象
 
-Object([]) instanceof Array // true
-Object({}) instanceof Object // true
-Object(function(){}) instanceof Function // true
+Object(1) // 等同于 new Number(1)
+Object('foo') // 等同于 new String('foo')
+Object(true) // 等同于 new Boolean(true)
+
+Object([]) // 返回原数组
+Object({}) // 返回原对象
+Object(function(){}) // 返回原函数
 
 {% endhighlight %}
 
-上面代码表示Object方法将各种值，转为对应的构造函数的实例。
+上面代码表示Object函数将各种值，转为对应的对象。
+
+如果Object函数的参数是一个对象，它总是返回原对象。利用这一点，可以写一个判断变量是否为对象的函数。
+
+{% highlight javascript %}
+
+function isObject(value) {
+    return value === Object(value);
+}
+
+{% endhighlight %}
 
 ### Object.keys方法，Object.getOwnPropertyNames方法
 
@@ -97,6 +120,16 @@ Object.getOwnPropertyNames(o)
 {% endhighlight %}
 
 上面的代码表示，对于一般的对象来说，这两个方法返回的结果是一样的。只有涉及不可枚举对象时，才会有不一样的结果，具体的例子请看下文《对象的属性模型》一节。
+
+由于JavaScript没有提供计算对象属性个数的方法，所以可以用这两个方法代替。
+
+{% highlight javascript %}
+
+Object.keys(o).length
+
+Object.getOwnPropertyNames(o).length
+
+{% endhighlight %}
 
 ### Object.create方法
 
@@ -361,7 +394,7 @@ o.p = 123;
 
 {% endhighlight %}
 
-存取函数往往用于某个属性的值，需要依赖对象内部数据的场合。
+存取函数往往用于，某个属性的值需要依赖对象内部数据的场合。
 
 {% highlight javascript %}
 
@@ -382,6 +415,25 @@ o.next //10
 {% endhighlight %}
 
 上面代码中，next属性的存值函数和取值函数，都依赖于对内部属性$n的操作。
+
+存取函数也可以使用Object.create方法定义。
+
+{% highlight javascript %}
+
+var o = Object.create(
+    Object.prototype, {  
+        foo: { 
+            get: function () {
+                return 'getter';
+            },
+            set: function (value) {
+                console.log('setter: '+value);
+            }
+        }
+    }
+);
+
+{% endhighlight %}
 
 ### 属性的attributes对象，Object.getOwnPropertyDescriptor方法
 
@@ -496,7 +548,7 @@ Object.keys(o)
 
 {% endhighlight %}
 
-除了上面两个操作，其他操作都不受可枚举性的影响。
+除了上面两个操作，其他操作都不受可枚举性的影响。这两个操作的区别在于，for...in循环包括对象继承自原型对象的属性，而Object.keys方法只包括对象本身的属性。
 
 ### Object.getOwnPropertyNames方法
 
