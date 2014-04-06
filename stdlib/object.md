@@ -288,14 +288,27 @@ o + ' ' + 'world' // "hello world"
 
 {% endhighlight %}
 
-toString方法的主要用途是返回对象的字符串形式，除此之外，还有一个重要的作用，就是判断一个值的类型。使用call方法，可以在任意值上调用Object.prototype.toString方法，并返回这个值的构造函数，从而帮助我们判断这个值的类型。具体的返回值如下：
+### toString方法的应用：判断数据类型
 
-- 对于数值，返回[object Number]。
-- 对于字符串，返回[object String]。
-- 对于布尔值，返回[object Boolean]。
-- 对于undefined，返回[object Undefined]。
-- 对于null，返回[object Null]。
-- 对于各种对象，返回"[object " + 构造函数的名称 + "]" 。
+toString方法的主要用途是返回对象的字符串形式，除此之外，还有一个重要的作用，就是判断一个值的类型。
+
+{% highlight javascript %}
+
+var o = {};
+o.toString() // "[object Object]"
+
+{% endhighlight %}
+
+上面代码调用空对象的toString方法，结果返回一个字符串“object Object”，其中第二个Object表示该值的准确类型。这是一个十分有用的判断数据类型的方法。
+
+实例对象的toString方法，实际上是调用Object.prototype.toString方法。使用call方法，可以在任意值上调用Object.prototype.toString方法，从而帮助我们判断这个值的类型。不同数据类型的toString方法返回值如下：
+
+- 数值：返回[object Number]。
+- 字符串：返回[object String]。
+- 布尔值：返回[object Boolean]。
+- undefined：返回[object Undefined]。
+- null：返回[object Null]。
+- 对象：返回"[object " + 构造函数的名称 + "]" 。
 
 {% highlight javascript %}
 
@@ -360,7 +373,7 @@ type.isRegExp(/abc/); // true
 
 ## 对象的属性模型
 
-ECMAScript 5对于对象的属性，提出了一个更精确的模型。
+ECMAScript 5对于对象的属性，提出了一个精确的描述模型。
 
 ### 存取函数（accessor）
 

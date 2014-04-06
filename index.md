@@ -42,6 +42,7 @@ modifiedOn: 2014-03-30
 - [概述](oop/basic.html)
 - [封装](oop/encapsulation.html)
 - [继承](oop/inheritance.html)
+- [模块化编程](oop/module.html)
 
 <h2 id="dom">DOM</h2>
 

@@ -8,9 +8,7 @@ modifiedOn: 2013-11-23
 
 ## prototype对象
 
-### 概述
-
-在JavaScript语言中，每一个对象都有一个对应的原型对象，被称为prototype对象。定义在原型对象上的所有属性和方法，都能被派生对象继承。这就是JavaScript继承机制的基本设计。
+### 构造函数的缺点
 
 JavaScript通过构造函数生成新对象，因此构造函数可以视为对象的模板。实例对象的属性和方法，可以定义在构造函数内部。
 
@@ -30,7 +28,13 @@ cat1.color // 'white'
 
 上面代码的Animal函数是一个构造函数，函数内部定义了name属性和color属性，所有实例对象都会生成这两个属性。
 
-除了这种方法，JavaScript还提供了另一种定义实例对象的方法。我们知道，构造函数是一个函数，同时也是一个对象，也有自己的属性和方法，其中有一个prototype属性指向另一个对象，一般称为prototype对象。该对象非常特别，只要定义在它上面的属性和方法，能被所有实例对象共享。
+但是，这样做是对系统资源的浪费，因为同一个构造函数的对象实例之间，无法共享属性。
+
+### prototype属性的作用
+
+在JavaScript语言中，每一个对象都有一个对应的原型对象，被称为prototype对象。定义在原型对象上的所有属性和方法，都能被派生对象继承。这就是JavaScript继承机制的基本设计。
+
+除了这种方法，JavaScript还提供了另一种定义实例对象的方法。我们知道，构造函数是一个函数，同时也是一个对象，也有自己的属性和方法，其中有一个prototype属性指向另一个对象，一般称为prototype对象。该对象非常特别，只要定义在它上面的属性和方法，能被所有实例对象共享。也就是说，构造函数生成实例对象时，自动为实例对象分配了一个prototype属性。
 
 {% highlight javascript %}
 
@@ -141,56 +145,56 @@ Array in [
 
 ### constructor属性
 
-prototype对象有一个constructor属性，默认指向prototype对象所在的构造函数。由于这个属性定义在prototype对象上面，意味着可以被所有实例对象继承。
+prototype对象有一个constructor属性，默认指向prototype对象所在的构造函数。
 
 {% highlight javascript %}
 
-var a = new Array();
+function P() {}
 
-a.constructor
-// function Array() { [native code] }
-
-a.constructor === Array.prototype.constructor
+P.prototype.constructor === p
 // true
 
-a.hasOwnProperty('constructor')
+{% endhighlight %}
+
+由于constructor属性定义在prototype对象上面，意味着可以被所有实例对象继承。
+
+{% highlight javascript %}
+
+function P() {}
+
+var p = new P();
+
+p.constructor
+// function P() {}
+
+p.constructor === P.prototype.constructor
+// true
+
+p.hasOwnProperty('constructor')
 // false
 
 {% endhighlight %}
 
-上面代码表示a是构造函数Array的实例对象，但是a自身没有contructor属性，该属性其实是读取原型链上面的Array.prototype.constructor属性。
+上面代码表示p是构造函数P的实例对象，但是p自身没有contructor属性，该属性其实是读取原型链上面的P.prototype.constructor属性。
 
 constructor属性的作用是分辨prototype对象到底定义在哪个构造函数上面。
 
 {% highlight javascript %}
 
-function Foo(){ }
+function F(){};
 
-Foo.prototype.constructor === Foo
-// true
+var f = new F();
 
-RegExp.prototype.constructor === RegExp
-// true
-
-{% endhighlight %}
-
-上面代码的Foo和RegExp都是构造函数，它们的prototype.constructor属性默认指回Foo和RegExp。
-
-从实例对象的constructor属性，可以返回它的构造函数。
-
-{% highlight javascript %}
-
-(new Foo()).constructor
-// [Function: Foo]
-
-/abc/.constructor
-// [Function: RegExp]
+f.constructor === F // true
+f.constructor === RegExp // false
 
 {% endhighlight %}
+
+上面代码表示，使用constructor属性，确定变量f的构造函数是F，而不是RegExp。
 
 ## Object.getPrototypeOf方法
 
-getPrototypeOf方法返回一个对象的原型。
+Object.getPrototypeOf方法返回一个对象的原型。
 
 {% highlight javascript %}
 
@@ -203,9 +207,8 @@ function f() {}
 Object.getPrototypeOf(f) === Function.prototype
 // true
 
-
 // 假定F为构造函数，f为F的实例对象
-// f的原型是F.prototype
+// 那么，f的原型是F.prototype
 var f = new F();
 Object.getPrototypeOf(f) === F.prototype
 // true

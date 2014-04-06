@@ -28,19 +28,17 @@ modifiedOn: 2014-02-04
 
 虽然不同于传统的面向对象编程语言，但是JavaScript具有很强的面向对象编程能力。本章介绍JavaScript如何进行“面向对象编程”。
 
-### 类和构造函数
+### 构造函数
 
 “面向对象编程”的第一步，就是要生成对象。
 
 前面说过，“对象”是单个实物的抽象。所以，通常需要一个模板，表示某一类实物的共同特征，然后“对象”根据这个模板生成。
 
-典型的面向对象编程语言（比如C++和Java），存在“类”（class）这样一个概念。所谓“类”就是对象的模板，对象就是“类”的实例。
-
-JavaScript语言没有“类”，而改用构造函数（constructor）作为对象的模板。
+典型的面向对象编程语言（比如C++和Java），存在“类”（class）这样一个概念。所谓“类”就是对象的模板，对象就是“类”的实例。JavaScript语言没有“类”，而改用构造函数（constructor）作为对象的模板。
 
 所谓“构造函数”，就是专门用来生成“对象”的函数。它提供模板，作为对象的基本结构。一个构造函数，可以生成多个对象，这些对象都有相同的结构。
 
-下面就是一个构造函数：
+构造函数是一个正常的函数，但是它的特征和用法与普通函数不一样。下面就是一个构造函数：
 
 {% highlight javascript %}
 
@@ -50,27 +48,13 @@ var Vehicle = function() {
 
 {% endhighlight %}
 
-Vehicle就是构造函数，它提供模板，用来生成车辆对象。
+上面代码中，Vehicle就是构造函数，它提供模板，用来生成车辆对象。
 
-构造函数的最大特点就是，函数体内部使用了this关键字，代表了所要生成的对象实例。
-
-生成对象的时候，必需用new命令，调用Vehicle函数。
-
-{% highlight javascript %}
-
-var v = new Vehicle();
-
-{% endhighlight %}
-
-new命令的作用，就是让构造函数生成一个对象的实例。此时，构造函数内部的this代表被生成的实例对象，this.price表示实例对象有一个price属性，它的值是1000。
-
-以上就是使用构造函数生成对象的最简单步骤。下面是详细的讲解。
-
-## 基本用法
+构造函数的最大特点就是，函数体内部使用了this关键字，代表了所要生成的对象实例。生成对象的时候，必需用new命令，调用Vehicle函数。
 
 ### new命令
 
-new命令的作用，是让构造函数返回一个实例对象。我们可以把返回的实例对象其保存在一个变量中。
+new命令的作用，就是执行构造函数，返回一个实例对象。
 
 {% highlight javascript %}
 
@@ -79,20 +63,17 @@ var Vehicle = function() {
 };
 
 var v = new Vehicle();
-
-v.price
-// 1000
+v.price // 1000
 
 {% endhighlight %}
 
-变量v就是新生成的实例对象，它从构造函数Vehicle继承了price属性。
+上面代码通过new命令，让构造函数Vehicle生成一个实例对象，保存在变量v中。这个新生成的实例对象，从构造函数Vehicle继承了price属性。在new命令执行时，构造函数内部的this，就代表了新生成的实例对象，this.price表示实例对象有一个price属性，它的值是1000。
 
 new命令本身就可以执行构造函数，所以后面的构造函数可以带括号，也可以不带括号。下面两行代码是等价的。
 
 {% highlight javascript %}
 
 var v = new Vehicle();
-
 var v = new Vehicle;
 
 {% endhighlight %}
@@ -163,7 +144,6 @@ instanceof运算符的左边放置对象，右边放置构造函数。在JavaScr
 var a = [];
 
 a instanceof Array // true
-
 a instanceof Object // true
 
 {% endhighlight %}

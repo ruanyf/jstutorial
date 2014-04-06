@@ -167,15 +167,17 @@ console.info(x); // 2
 
 ### 增强的安全措施
 
-（1）禁止this关键字指向全局对象
+**（1）禁止this关键字指向全局对象**
 
 {% highlight javascript %}
 
+// 正常模式
 function f(){
     return !this;
 } 
 // 返回false，因为“this”指向全局对象，“!this”就是false
 
+// 严格模式
 function f(){   
     "use strict";
     return !this;
