@@ -222,6 +222,36 @@ inheritedPropertyNames(Date)
 
 {% endhighlight %}
 
+## 对象的拷贝
+
+如果要拷贝一个对象，需要做到下面两件事情。
+
+- 确保拷贝后的对象，与原对象具有同样的prototype原型对象。
+
+- 确保拷贝后的对象，与原对象具有同样的属性。
+
+下面就是根据上面两点，编写的对象拷贝的函数。
+
+{% highlight javascript %}
+
+function copyObject(orig) {
+
+	var copy = Object.create(Object.getPrototypeOf(orig));
+    copyOwnPropertiesFrom(copy, orig);
+    return copy;
+}
+
+function copyOwnPropertiesFrom(target, source) {
+    Object.getOwnPropertyNames(source) 
+    .forEach(function(propKey) { 
+        var desc = Object.getOwnPropertyDescriptor(source, propKey);
+        Object.defineProperty(target, propKey, desc);
+    });
+    return target;
+};
+
+{% endhighlight %}
+
 ## 参考链接
 
 - Dr. Axel Rauschmayer, [JavaScript properties: inheritance and enumerability](http://www.2ality.com/2011/07/js-properties.html)

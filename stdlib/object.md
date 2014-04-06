@@ -102,7 +102,7 @@ function isObject(value) {
 
 ### Object.keys方法，Object.getOwnPropertyNames方法
 
-这两个方法很相似，它们的参数都是一个对象，都返回一个数组，成员都是是对象自身的（而不是继承的）所有属性名。它们的区别在于，Object.keys方法不返回不可枚举的属性（关于可枚举性的详细解释见后文），Object.getOwnPropertyNames方法返回不可枚举的属性名。
+这两个方法很相似，它们的参数都是一个对象，都返回一个数组，成员都是是对象自身的（而不是继承的）所有属性名。它们的区别在于，Object.keys方法只返回可枚举的属性（关于可枚举性的详细解释见后文），Object.getOwnPropertyNames方法还返回不可枚举的属性名。
 
 {% highlight javascript %}
 
@@ -131,24 +131,6 @@ Object.getOwnPropertyNames(o).length
 
 {% endhighlight %}
 
-### Object.create方法
-
-Object.create方法用于生成新的对象。
-
-{% highlight javascript %}
-
-var object = Object.create(Object.prototype);
-
-// 等同于
-
-var object = {};
-
-var object = new Object();
-
-{% endhighlight %}
-
-Object.create方法的详细介绍，请参见《面向对象编程》一章。
-
 ### Object.observe方法
 
 Object.observe方法用于观察对象属性的变化。
@@ -175,40 +157,57 @@ delete o.foo; // delete, 'foo', 2
 
 ### 其他方法
 
-以下方法在后面的《对象属性模型》部分详细介绍。
+除了上面提到的方法，Object还有不少其他方法，将在后文逐一详细介绍。
 
-- Object.getOwnPropertyDescriptor方法：获取对象的某个属性的attributes对象。
+**（1）对象属性模型的相关方法**
 
-- Object.defineProperty方法：通过attributes对象，定义对象的某个属性。
+- Object.getOwnPropertyDescriptor：获取某个属性的attributes对象。
 
-- Object.defineProperties方法：通过attributes对象，定义对象的多个属性。
+- Object.defineProperty：通过attributes对象，定义某个属性。
 
-- Object.getPrototypeOf方法：获取对象的Prototype对象。
+- Object.defineProperties：通过attributes对象，定义多个属性。
 
-- Object.isExtensible方法：判断对象是否可扩展。
+- Object.getOwnPropertyNames：返回直接定义在某个对象上面的全部属性的名称。
 
-- Object.preventExtensions方法：防止对象扩展。
+**（2）控制对象状态的方法**
+
+- Object.preventExtensions：防止对象扩展。
+
+- Object.isExtensible：判断对象是否可扩展。
+
+- Object.seal：禁止对象配置。
 
 - Object.isSealed方法：判断一个对象是否可配置。
 
-- Object.seal方法：禁止对象配置。
+- Object.freeze：冻结一个对象。
 
-- Object.isFrozen方法：判断一个对象是否被冻结。
+- Object.isFrozen：判断一个对象是否被冻结。
 
-- Object.freeze方法：冻结一个对象。
+**（3）原型链相关方法**
+
+- Object.create：生成一个新对象，并该对象的原型。
+
+- Object.getPrototypeOf：获取对象的Prototype对象。
 
 ## Object实例对象的方法
 
-Object实例对象继承了Object.prototype对象上的以下方法。
+除了Object对象本身的方法，还有不少方法是部署在Object.prototype对象上的，所有Object的实例对象都继承了这些方法。
 
-- valueOf
-- toString
-- toLocalString
-- hasOwnProperty
-- isPrototypeOf
-- propertyIsEnumerable
+Object实例对象的方法，主要有以下六个。
 
-其中，两种最主要的方法是valueOf和toString。
+- valueOf：返回当前对象对应的值。
+
+- toString：返回当前对象对应的字符串形式。
+
+- toLocalString：返回当前对象对应的本地字符串形式。
+
+- hasOwnProperty：判断某个属性是否为当前对象自身的属性，还是继承自原型对象的属性。
+
+- isPrototypeOf：判断当前对象是否为另一个对象的原型。
+
+- propertyIsEnumerable：判断某个属性是否可枚举。
+
+本节介绍前两个方法，其他方法将在后文相关章节介绍。
 
 ### valueOf方法
 
@@ -462,7 +461,7 @@ attributes对象包含如下元信息：
 
 - **enumerable**： 表示该属性是否可枚举，默认为true，也就是该属性会出现在for...in和Object.keys()等操作中。
 
-- **configurable**：该属性是否可配置，默认为true，也就是你可以删除该属性，可以改变该属性的各种性质（比如writable和enumerable等），即configurable控制该属性“元信息”的读写状态。
+- **configurable**：表示“可配置性”，默认为true。如果设为false，表示无法删除该属性，也不得改变attributes对象（value属性除外），也就是configurable属性控制了attributes对象的可写性。
 
 - **get**：表示该属性的取值函数（getter），默认为undefined。
 
@@ -523,7 +522,7 @@ o.p3 // "123abc"
 
 ### 可枚举性enumerable
 
-可枚举性（enumerable）与两个操作有关：for...in和Object.keys。如果某个属性的可枚举性为true，则这两个操作过程都会包括该属性；如果为false，就不包括。
+可枚举性（enumerable）与两个操作有关：for...in和Object.keys。如果某个属性的可枚举性为true，则这两个操作过程都会包括该属性；如果为false，就不包括。总体上，设计可枚举性的目的就是，告诉for...in循环，哪些属性应该被忽视。
 
 假定，对象o有两个属性p1和p2，可枚举性分别为true和false。
 
@@ -590,7 +589,7 @@ Object.getOwnPropertyNames(Object.prototype)
 
 {% endhighlight %}
 
-上面代码可以看到，空数组（[]）没有可枚举属性，不可枚举属性有length；Object.prototype对象也没有可枚举属性，但是有不少不可枚举属性。
+上面代码可以看到，数组的实例对象（[]）没有可枚举属性，不可枚举属性有length；Object.prototype对象也没有可枚举属性，但是有不少不可枚举属性。
 
 ### 对象实例的propertyIsEnumerable方法
 
@@ -598,10 +597,15 @@ Object.getOwnPropertyNames(Object.prototype)
 
 {% highlight javascript %}
 
-Object.prototype.propertyIsEnumerable("toString")
-// false
+var o = {};
+o.p = 123;
+
+o.propertyIsEnumerable("p") // true
+o.propertyIsEnumerable("toString") // false
 
 {% endhighlight %}
+
+上面代码中，用户自定义的p属性是可枚举的，而继承自原型对象的toString属性是不可枚举的。
 
 ### 可配置性configurable
 
@@ -699,7 +703,7 @@ Object.getOwnPropertyDescriptor(this,'a3')
 
 上面代码中的this.a3 = 1，与a3 =1 是等价的写法。this指的是当前的作用域，更多关于this的解释，参见《面向对象编程》一章。
 
-这种差异意味着，如果一个变量是使用var命令生成的，就无法用delete命令删除，否则就可以。
+这种差异意味着，如果一个变量是使用var命令生成的，就无法用delete命令删除。也就是说，delete只能删除对象的属性。
 
 {% highlight javascript %}
 
@@ -724,13 +728,9 @@ var o = {};
 
 Object.defineProperty(o, "a", { value : 37, writable : false });
 
-o.a
-// 37
-
+o.a // 37
 o.a = 25;
-
-o.a
-// 37
+o.a // 37
 
 {% endhighlight %}
 
@@ -738,9 +738,35 @@ o.a
 
 这里需要注意的是，当对a属性重新赋值的时候，并不会抛出错误，只是静静地失败。但是，如果在严格模式下，这里就会抛出一个错误，即使是对a属性重新赋予一个同样的值。
 
+关于可写性，还有一种特殊情况。就是如果原型对象的某个属性的可写性为false，那么派生对象将无法自定义这个属性。
+
+{% highlight javascript %}
+
+var proto = Object.defineProperty({}, 'foo', {
+    value: 'a',
+    writable: false
+});
+
+var o = Object.create(proto);
+
+o.foo = 'b';
+o.foo // 'a'
+
+{% endhighlight %}
+
+上面代码中，对象proto的foo属性不可写，结果proto的派生对象o，也不可以再自定义这个属性了。在严格模式下，这样做还会抛出一个错误。但是，有一个规避方法，就是通过覆盖attributes对象，绕过这个限制，原因是这种情况下，原型链会被完全忽视。
+
+{% highlight javascript %}
+
+Object.defineProperty(o, 'foo', { value: 'b' });
+
+o.foo // 'b'
+
+{% endhighlight %}
+
 ## 控制对象状态
 
-JavaScript提供了一些方法，借助对象属性模型，精确控制一个对象的读写状态。 
+JavaScript提供了三种方法，精确控制一个对象的读写状态，防止对象被改变。最弱一层的保护是preventExtensions，其次是seal，最强的freeze。 
 
 ###  Object.preventExtensions方法
 
@@ -752,14 +778,11 @@ var o = new Object();
 
 Object.preventExtensions(o);
 
-o.p = 1;
-
-o.p
-// undefined
-
 Object.defineProperty(o, "p", { value: "hello" });
-
 // TypeError: Cannot define property:p, object is not extensible.
+
+o.p = 1;
+o.p // undefined
 
 {% endhighlight %}
 
@@ -777,15 +800,12 @@ Object.defineProperty(o, "p", { value: "hello" });
 {% highlight javascript %}
 
 var o = new Object();
-
 o.p = 1;
 
 Object.preventExtensions(o);
 
 delete o.p;
-
-o.p
-// undefined
+o.p // undefined
 
 {% endhighlight %}
 
@@ -810,7 +830,7 @@ Object.isExtensible(o)
 
 ###  Object.seal方法
 
-该方法可以使得一个对象既无法添加新属性，也无法删除旧属性。
+Object.seal方法使得一个对象既无法添加新属性，也无法删除旧属性。
 
 {% highlight javascript %}
 
@@ -819,13 +839,11 @@ var o = { p:"hello" };
 Object.seal(o);
 
 delete o.p;
-
-o.p
-// "hello"
+o.p // "hello"
 
 {% endhighlight %}
 
-Object.seal还把现有属性的元信息对象attributes的configurable设为false，使得attributes对象不再能改变（只读属性保持只读，可枚举属性保持可枚举）。
+Object.seal还把现有属性的attributes对象的configurable属性设为false，使得attributes对象不再能改变。
 
 {% highlight javascript %}
 
@@ -846,9 +864,9 @@ Object.defineProperty(o, 'p', { enumerable: false })
 
 {% endhighlight %}
 
-从上面代码可以看到，使用seal方法之后，attributes对象的configurable就变成了false，然后如果想改变enumerable就会报错。（但是，出于历史原因，这时依然可以将writable从true变成false。）
+从上面代码可以看到，使用seal方法之后，attributes对象的configurable就变成了false，然后如果想改变enumerable就会报错。
 
-需要注意的是，使用seal方法之后，依然可以对现有属性重新赋值。
+但是，出于历史原因，这时依然可以将writable从true变成false，即可以对现有属性重新赋值。
 
 {% highlight javascript %}
 
@@ -857,9 +875,7 @@ var o = { p: 'a' };
 Object.seal(o);
 
 o.p = 'b';
-
-o.p
-// 'b'
+o.p // 'b'
 
 {% endhighlight %}
 
@@ -872,9 +888,7 @@ Object.isSealed方法用于检查一个对象是否使用了Object.seal方法。
 var o = { p: 'a' };
 
 Object.seal(o);
-
-Object.isSealed(o)
-// true
+Object.isSealed(o) // true
 
 {% endhighlight %}
 
@@ -885,15 +899,13 @@ Object.isSealed(o)
 var o = { p: 'a' };
 
 Object.seal(o);
-
-Object.isExtensible(o)
-// false
+Object.isExtensible(o) // false
 
 {% endhighlight %}		
 
 ### Object.freeze方法
 
-该方法可以使得一个对象无法添加新属性、无法删除旧属性、也无法改变属性的值，使得这个对象实际上变成了常量。
+Object.freeze方法可以使得一个对象无法添加新属性、无法删除旧属性、也无法改变属性的值，使得这个对象实际上变成了常量。
 
 {% highlight javascript %}
 
@@ -902,13 +914,14 @@ var o = {p:"hello"};
 Object.freeze(o);
 
 o.p = "world";
+o.p // hello
 
-o.p
-// hello
+o.t = "hello";
+o.t // undefined
 
 {% endhighlight %}
 
-上面代码中，对现有属性重新赋值（o.p = "world"），并不会报错，只是默默地失败。但是，如果是在严格模式下，就会报错。
+上面代码中，对现有属性重新赋值（o.p = "world"）或者添加一个新属性，并不会报错，只是默默地失败。但是，如果是在严格模式下，就会报错。
 
 {% highlight javascript %}
 
@@ -916,9 +929,11 @@ var o = {p:"hello"};
 
 Object.freeze(o);
 
+// 对现有属性重新赋值
 (function () { 'use strict'; o.p = "world";}())
 // TypeError: Cannot assign to read only property 'p' of #<Object>
 
+// 添加不存在的属性
 (function () { 'use strict'; o.t = 123;}())
 // TypeError: Can't add property t, object is not extensible
 
@@ -933,13 +948,13 @@ Object.isFrozen方法用于检查一个对象是否使用了Object.freeze()方�
 var o = {p:"hello"};
 
 Object.freeze(o);
-
-Object.isFrozen(o)
-// true
+Object.isFrozen(o) // true
 
 {% endhighlight %}
 
-需要注意的是，即使使用上面这些方法锁定对象的可写性，我们依然可以通过改变该对象的原型对象，来为它增加属性。
+### 局限性
+
+需要注意的是，使用上面这些方法锁定对象的可写性，但是依然可以通过改变该对象的原型对象，来为它增加属性。
 
 {% highlight javascript %}
 
