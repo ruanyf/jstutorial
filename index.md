@@ -72,7 +72,7 @@ modifiedOn: 2014-03-30
 - [SVG图像](htmlapi/svg.html)
 - [文件与二进制数据的操作](htmlapi/file.html)
 - [Web Worker](htmlapi/webworker.html)
-- [服务器端发送事件](htmlapi/eventsource.html)
+- [SSE：服务器发送事件](htmlapi/eventsource.html)（基本完成）
 - [Page Visiblity](htmlapi/pagevisibility.html)
 - [FullScreen](htmlapi/fullscreen.html)
 - [Web Speech](htmlapi/webspeech.html)
