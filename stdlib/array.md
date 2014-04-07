@@ -171,6 +171,15 @@ a.join("|") // "1|2|3|4"
 
 {% endhighlight %}
 
+通过函数的call方法，join方法（即Array.prototype.join）也可以用于字符串。
+
+{% highlight javascript %}
+
+Array.prototype.join.call('hello', '-')
+// "h-e-l-l-o"
+
+{% endhighlight %}
+
 concat方法将新数组的成员，添加到原数组的尾部，然后返回一个新数组，常用于连接多个数组。
 
 {% highlight javascript %}
@@ -431,6 +440,20 @@ map方法对所有元素依次调用一个函数，根据函数结果返回一�
     return elem * elem;
 });
 // [1, 4, 9]
+
+{% endhighlight %}
+
+通过函数的call方法，map方法可以用于字符串。
+
+{% highlight javascript %}
+
+[].map.call('abc', function (x) { return x.toUpperCase() })
+// [ 'A', 'B', 'C' ]
+
+// 或者
+
+'abc'.split('').map(function (x) { return x.toUpperCase() })
+// [ 'A', 'B', 'C' ]
 
 {% endhighlight %}
 

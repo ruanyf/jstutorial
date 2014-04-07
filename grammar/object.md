@@ -440,6 +440,56 @@ a.length // 3
 
 典型的类似数组的对象是函数的arguments对象，以及大多数DOM元素集，还有字符串。
 
+{% highlight javascript %}
+
+// arguments对象
+function args() { return arguments }
+var arrayLike = args('a', 'b');
+
+arrayLike[0] // 'a'
+arrayLike.length // 2
+arrayLike instanceof Array // false
+
+// DOM元素集
+var elts = document.getElementsByTagName('h3');
+elts.length // 3
+elts instanceof Array // false
+
+// 字符串
+'abc'[1] // 'b'
+'abc'.length // 3
+'abc' instanceof Array // false
+
+{% endhighlight %}
+
+通过函数的call方法，可以用slice方法将类似数组的对象，变成真正的数组。
+
+{% highlight javascript %}
+
+var arr = Array.prototype.slice.call(arguments);
+
+{% endhighlight %}
+
+遍历类似数组的对象，可以采用for循环，也可以采用数组的forEach方法。
+
+{% highlight javascript %}
+
+// for循环
+function logArgs() {
+    for (var i=0; i<arguments.length; i++) {
+        console.log(i+'. '+arguments[i]);
+    }
+}
+
+// forEach方法
+function logArgs() {
+    Array.prototype.forEach.call(arguments, function (elem, i) {
+        console.log(i+'. '+elem);
+    });
+}
+
+{% endhighlight %}
+
 ## with语句
 
 with语句的格式如下：
