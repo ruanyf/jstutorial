@@ -339,7 +339,7 @@ var o = {
     p: [ 'a1', 'a2' ],
     f: function f() {
         this.p.forEach(function (item) {
-            console.log(this.v+item);
+            console.log(this.v+' '+item);
         });
     }
 }

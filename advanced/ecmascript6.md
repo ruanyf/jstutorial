@@ -48,6 +48,8 @@ node --harmony
 
 ### let命令
 
+**（1）概述**
+
 ECMAScript 6新增了let命令，用来声明变量。它的用法类似于var，但是所声明的变量，只在let命令所在的代码块内有效。
 
 {% highlight javascript %}
@@ -94,6 +96,8 @@ a[6](); // 6
 
 {% endhighlight %}
 
+**（2）块级作用域**
+
 let实际上为JavaScript新增了块级作用域。
 
 {% highlight javascript %}
@@ -110,7 +114,27 @@ function f1() {
 
 上面的函数有两个代码块，都声明了变量n，运行后输出5。这表示外层代码块不受内层代码块的影响。如果使用var定义变量n，最后输出的值就是10。
 
-> 需要注意的是，let声明的变量不存在“变量提升”现象。
+块级作用域的出现，实际上使得获得广泛应用的立即执行函数（IIFE）不再必要了。
+
+{% highlight javascript %}
+
+// IIFE写法
+(function () { 
+	var tmp = ...;
+	...
+}()); 
+
+// 块级作用域写法
+{
+	let tmp = ...;
+	...
+}
+
+{% endhighlight %}
+
+**（3）不存在变量提升**
+
+需要注意的是，let声明的变量不存在“变量提升”现象。
 
 {% highlight javascript %}
 

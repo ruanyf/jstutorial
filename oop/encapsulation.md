@@ -116,6 +116,7 @@ Object.getPrototypeOf(Object.prototype)
 function MyArray (){}
 
 MyArray.prototype = new Array();
+MyArray.prototype.constructor = MyArray;
 
 var mine = new MyArray();
 mine.push(1, 2, 3);
@@ -133,15 +134,13 @@ mine instanceof Array
 
 // 等同于
 
-Array in [
-	MyArray.prototype.constructor, // 即MyArray 
-	Array.prototype.constructor, // 即Array
-	Object.prototype.constructor // 即Object
-]
+(Array === MyArray.prototype.constructor) ||
+(Array === Array.prototype.constructor) ||
+(Array === Object.prototype.constructor )
 
 {% endhighlight %}
 
-上面代码说明了instanceof运算符的实质，它生成一个数组，里面是实例对象的所有原型对象的constructor属性（关于该属性的介绍，请看下一节）。如果instanceof运算符右侧的构造函数，在这个数组之中，则返回true，否则返回false。
+上面代码说明了instanceof运算符的实质，它依次与实例对象的所有原型对象的constructor属性（关于该属性的介绍，请看下一节）进行比较，只要有一个符合就返回true，否则返回false。
 
 ### constructor属性
 
@@ -151,7 +150,7 @@ prototype对象有一个constructor属性，默认指向prototype对象所在的
 
 function P() {}
 
-P.prototype.constructor === p
+P.prototype.constructor === P
 // true
 
 {% endhighlight %}

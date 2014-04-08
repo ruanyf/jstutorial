@@ -192,7 +192,7 @@ b.valueOf() // true
 
 {% endhighlight %}
 
-上面代码的变量b是一个Boolean对象的实例，属性为对象，值为布尔值true。这种写法太繁琐，几乎无人使用，直接对变量赋值更简单清晰。
+上面代码的变量b是一个Boolean对象的实例，它的类型是对象，值为布尔值true。这种写法太繁琐，几乎无人使用，直接对变量赋值更简单清晰。
 
 {% highlight javascript %}
 
@@ -200,7 +200,7 @@ var b = true;
 
 {% endhighlight %}
 
-### Boolean对象实例的布尔值
+### Boolean实例对象的布尔值
 
 特别要注意的是，所有对象的布尔运算结果都是true。因此，false对应的包装对象实例，布尔运算结果也是true。
 
@@ -220,7 +220,7 @@ if (new Boolean(false).valueOf()) {
 
 ### Boolean函数的类型转换作用
 
-Boolean构造函数除了生成对象实例以外，还可以将任何值转为布尔值。这时Boolean就是一个单纯的工具方法。
+Boolean对象除了可以作为构造函数，还可以单独使用，将任意值转为布尔值。这时Boolean就是一个单纯的工具方法。
 
 {% highlight javascript %}
 
@@ -267,5 +267,23 @@ var a = "hello world";
 new Boolean(a).valueOf() // true
 Boolean(a) // true
 !!a // true
+
+{% endhighlight %}
+
+最后，对于一些特殊值，Boolean对象前面加不加new，会得到完全相反的结果，必须小心。
+
+{% highlight javascript %}
+
+if (Boolean(false)) 
+		console.log('true'); // 无输出
+
+if (new Boolean(false))
+		console.log('true'); // true
+
+if (Boolean(null)) 
+		console.log('true'); // 无输出
+
+if (new Boolean(null))
+		console.log('true'); // true
 
 {% endhighlight %}

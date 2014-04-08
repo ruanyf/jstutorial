@@ -165,6 +165,8 @@ JavaScript 1.1版对应ECMAScript 1.0，但是直到JavaScript 1.4版才完全�
 
 2013年，ECMA正式推出JSON的[国际标准](http://www.ecma-international.org/publications/standards/Ecma-404.htm)，这意味着JSON格式已经变得与XML格式一样重要和正式了。
 
+2014年，微软推出JavaScript的Windows库WinJS，标志微软公司全面支持JavaScript与Windows操作系统的融合。
+
 ## 参考链接
 
 - Axel Rauschmayer, [The Past, Present, and Future of JavaScript](http://oreilly.com/javascript/radarreports/past-present-future-javascript.csp)
