@@ -44,6 +44,21 @@ node --harmony
 
 {% endhighlight %}
 
+另外，可以使用Google的[Traceur](https://github.com/google/traceur-compiler)（[在线转换工具](http://google.github.io/traceur-compiler/demo/repl.html)），将ES6代码编译为ES5。
+
+{% highlight bash %}
+
+# 安装
+npm install -g traceur
+
+# 运行ES6文件
+traceur /path/to/es6
+
+# 将ES6文件转为ES5文件
+traceur --script /path/to/es6 --out /path/to/es5
+
+{% endhighlight %}
+
 ## 数据类型
 
 ### let命令
