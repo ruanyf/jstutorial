@@ -111,6 +111,24 @@ a[6](); // 6
 
 {% endhighlight %}
 
+注意，let不允许在相同作用域内，重复声明同一个变量。
+
+{% highlight javascript %}
+
+// 报错
+{
+    let a = 10;
+    var a = 1;
+}
+
+// 报错
+{
+    let a = 10;
+    let a = 1;
+}
+
+{% endhighlight %}
+
 **（2）块级作用域**
 
 let实际上为JavaScript新增了块级作用域。
@@ -189,7 +207,7 @@ PI
 
 ### Set数据结构
 
-ECMAScript 6 提供了新的数据结构Set。它类似于数组，但是成员的值都是唯一的，没有重复的值。
+ES6提供了新的数据结构Set。它类似于数组，但是成员的值都是唯一的，没有重复的值。
 
 Set本身是一个构造函数，用来生成Set数据结构。
 
@@ -231,7 +249,7 @@ s.has("2")    // false
 
 ### Map数据结构
 
-ECMAScript 6还提供了map数据结构。它类似于对象，就是一个键值对的集合，但是“键”的范围不限于字符串，甚至对象也可以当作键。。
+ES6还提供了map数据结构。它类似于对象，就是一个键值对的集合，但是“键”的范围不限于字符串，甚至对象也可以当作键。
 
 {% highlight javascript %}
 
@@ -282,7 +300,9 @@ m.get("edition")  // 6
 
 ### rest（...）运算符
 
-ECMAScript 6引入rest运算符（...），用于获取函数的多余参数，这样就不需要通过arguments对象，获取函数的参数个数了。rest运算符后面是一个数组变量，该变量将多余的参数放入数组中。
+**（1）基本用法**
+
+ES6引入rest运算符（...），用于获取函数的多余参数，这样就不需要使用arguments.length了。rest运算符后面是一个数组变量，该变量将多余的参数放入数组中。
 
 {% highlight javascript %}
 
@@ -318,6 +338,8 @@ push(a, "a1", "a2", "a3", "a4");
 
 {% endhighlight %}
 
+**（2）将数组转为参数序列**
+
 rest运算符不仅可以用于函数定义，还可以用于函数调用。
 
 {% highlight javascript %}
@@ -337,10 +359,10 @@ f("a1", ...a)
 
 {% highlight javascript %}
 
-// ES5写法
+// ES5
 Math.max.apply(null, [14, 3, 77])
 
-// ES6写法
+// ES6
 Math.max(...[14, 3, 77])
 
 // 等同于
@@ -582,26 +604,71 @@ function *f() {
 
 {% endhighlight %}
 
+### 原生对象的扩展
+
+ES6对JavaScript的原生对象，进行了扩展，提供了一系列新的属性和方法。
+
+{% highlight javascript %}
+
+Number.EPSILON
+Number.isInteger(Infinity) // false
+Number.isNaN("NaN") // false
+
+Math.acosh(3) // 1.762747174039086
+Math.hypot(3, 4) // 5
+Math.imul(Math.pow(2, 32) - 1, Math.pow(2, 32) - 2) // 2
+
+"abcde".contains("cd") // true
+"abc".repeat(3) // "abcabcabc"
+
+Array.from(document.querySelectorAll('*')) // Returns a real Array
+Array.of(1, 2, 3) // Similar to new Array(...), but without special one-arg behavior
+[0, 0, 0].fill(7, 1) // [0,7,7]
+[1,2,3].findIndex(x => x == 2) // 1
+["a", "b", "c"].entries() // iterator [0, "a"], [1,"b"], [2,"c"]
+["a", "b", "c"].keys() // iterator 0, 1, 2
+["a", "b", "c"].values() // iterator "a", "b", "c"
+
+Object.assign(Point, { origin: new Point(0,0) })
+
+{% endhighlight %}
+
 ## 语法糖
 
 ECMAScript 6提供了很多JavaScript语法的便捷写法。
 
-### 简洁的方法定义
+### 二进制和八进制表示法
 
-ECMAScript 6 允许直接写入函数，作为对象的方法。这样的书写更加简洁。
+ES6提供了二进制和八进制数值的新的写法，分别用前缀0b和0o表示。
+
+{% highlight javascript %}
+
+0b111110111 === 503 // true
+0o767 === 503 // true
+
+{% endhighlight %}
+
+### 增强的对象写法
+
+ES6允许直接写入变量和函数，作为对象的属性和方法。这样的书写更加简洁。
 
 {% highlight javascript %}
 
 var Person = {
   name: '张三',
+  //等同于birth: birth
+  birth,
+  // 等同于hello: function ()...
   hello() { console.log('我的名字是', this.name); }
 };
 
 {% endhighlight %}
 
-### 箭头函数
+### 箭头函数（arrow）
 
-ECMAScript 6允许使用“箭头”（=>）定义函数。
+**（1）定义**
+
+ES6允许使用“箭头”（=>）定义函数。
 
 {% highlight javascript %}
 
@@ -624,15 +691,11 @@ var f = function(v) {
 {% highlight javascript %}
 
 var f = () => 5; 
+// 等同于
+var f = function (){ return 5 };
 
 var sum = (num1, num2) => num1 + num2;
-
-{% endhighlight %}
-
-上面的箭头函数等同于
-
-{% highlight javascript %}
-
+// 等同于
 var sum = function(num1, num2) {
     return num1 + num2;
 };
@@ -655,36 +718,9 @@ var getTempItem = id => ({ id: id, name: "Temp" });
 
 {% endhighlight %}
 
-箭头函数有几个特点。
+**（2）实例：回调函数的简化**
 
-- 函数体内的this对象，绑定定义时所在的对象，而不是使用时所在的对象。
-- 不可以当作构造函数，也就是说，不可以使用new命令，否则会抛出一个错误。
-- 不可以使用arguments对象，该对象在函数体内不存在。 
-
-关于this对象，下面的代码将它绑定定义时的对象。
-
-{% highlight javascript %}
-
-var handler = {
-
-    id: "123456",
-
-    init: function() {
-		// 使用箭头函数，绑定this对象
-        document.addEventListener("click",
-                event => this.doSomething(event.type), false);
-    },
-
-    doSomething: function(type) {
-        console.log("Handling " + type  + " for " + this.id);
-    }
-};
-
-{% endhighlight %}
-
-上面代码如果没有箭头函数，doSomething方法内部的this对象指向全局对象，运行时会报错。
-
-箭头函数的另一个用处是简化回调函数。
+箭头函数的一个用处是简化回调函数。
 
 {% highlight javascript %}
 
@@ -711,6 +747,36 @@ var result = values.sort(function(a, b) {
 var result = values.sort((a, b) => a - b);
 
 {% endhighlight %}
+
+**（3）注意点**
+
+箭头函数有几个使用注意点。
+
+- 函数体内的this对象，绑定定义时所在的对象，而不是使用时所在的对象。
+- 不可以当作构造函数，也就是说，不可以使用new命令，否则会抛出一个错误。
+- 不可以使用arguments对象，该对象在函数体内不存在。 
+
+关于this对象，下面的代码将它绑定定义时的对象。
+
+{% highlight javascript %}
+
+var handler = {
+
+    id: "123456",
+
+    init: function() {
+        document.addEventListener("click",
+                event => this.doSomething(event.type), false);
+    },
+
+    doSomething: function(type) {
+        console.log("Handling " + type  + " for " + this.id);
+    }
+};
+
+{% endhighlight %}
+
+上面代码的init和doSomething方法中，都使用了箭头函数，它们中的this都绑定handler对象。否则，doSomething方法内部的this对象就指向全局对象，运行时会报错。
 
 ### 函数参数的默认值
 
@@ -754,47 +820,47 @@ console.log(`${ x } + ${ y } = ${ x + y}`)
 
 ### for...of循环
 
-JavaScript原有的for...in循环，只能获得对象的键名，不能直接获取键值。
+JavaScript原有的for...in循环，只能获得对象的键名，不能直接获取键值。ES6提供for...of循环，允许遍历获得键值。
 
 {% highlight javascript %}
 
-var planets = ["Mercury", "Venus", "Earth", "Mars"];
-for (p in planets) {
-  console.log(p);
+var arr = ["a", "b", "c", "d"];
+for (a in arr) {
+  console.log(a);
 }
 // 0
 // 1
 // 2
 // 3
 
+for (a of arr) {
+  console.log(a); 
+}
+// a
+// b
+// c
+// d
+
+{% endhighlight %}
+
+上面代码表明，for...in循环读取键名，for...of循环读取键值。
+
+for...of循环还可以遍历对象。
+
+{% highlight javascript %}
+
 var es6 = {
   edition: 6,
   committee: "TC39",
   standard: "ECMA-262"
 };
+
 for (e in es6) {
   console.log(e);
 }
 // edition
 // committee
 // standard
-
-{% endhighlight %}
-
-上面代码是for...in循环用来遍历数组和对象的两个例子。可以看到，for...in循环直接读出的都是键名。
-
-ECMAScript 6 提供for...of循环，允许遍历获得键值。
-
-{% highlight javascript %}
-
-var planets = ["Mercury", "Venus", "Earth", "Mars"];
-for (p of planets) {
-  console.log(p); 
-}
-// Mercury
-// Venus
-// Earth
-// Mars
 
 var engines = Set(["Gecko", "Trident", "Webkit", "Webkit"]);
 for (var e of engines) {
@@ -817,11 +883,13 @@ for (var [name, value] of es6) {
 
 {% endhighlight %}
 
-上面代码一共包含for...of循环的三个例子，前两个例子是遍历数组和对象的键值，最后一个例子是同时遍历对象的键名和键值。
+上面代码一共包含三个例子，第一个是for...in循环的例子，后两个是for...of循环的例子。最后一个例子是同时遍历对象的键名和键值。
 
 ### 数组推导
 
-ECMAScript 6提供简洁写法，允许直接通过现有数组生成新数组，这被称为数组推导（array comprehension）。
+**（1）基本用法**
+
+ES6提供简洁写法，允许直接通过现有数组生成新数组，这被称为数组推导（array comprehension）。
 
 {% highlight javascript %}
 
@@ -850,6 +918,8 @@ a2 // [2, 4, 6, 8]
 
 上面代码说明，模拟map功能只要单纯的for...of循环就行了，模拟filter功能除了for...of循环，还必须加上if语句。
 
+**（2）多重推导**
+
 新引入的for...of结构，可以直接跟在表达式的前面或后面，甚至可以在一个数组推导中，使用多个for...of结构。
 
 {% highlight javascript %}
@@ -874,6 +944,8 @@ var a3 = ["x3", "y3"];
 
 需要注意的是，数组推导的方括号构成了一个单独的作用域，在这个方括号中声明的变量类似于使用let语句声明的变量。
 
+**（3）字符串推导**
+
 由于字符串可以视为数组，因此字符串也可以直接用于数组推导。
 
 {% highlight javascript %}
@@ -890,7 +962,7 @@ var a3 = ["x3", "y3"];
 
 ### 多变量赋值
 
-ECMAScript 6 允许简洁地对多变量赋值。正常情况下，将数组元素赋值给多个变量，只能一次次分开赋值。
+ES6允许简洁地对多变量赋值。正常情况下，将数组元素赋值给多个变量，只能一次次分开赋值。
 
 {% highlight javascript %}
 
@@ -900,7 +972,7 @@ var c = 3;
 
 {% endhighlight %}
 
-在ECMAScript 6 中可以写成
+ES6允许写成下面这样。
 
 {% highlight javascript %}
 
@@ -940,11 +1012,8 @@ console.log(x)
 
 var { foo, bar } = { foo: "lorem", bar: "ipsum" };
 
-console.log(foo)
-// "lorem"
-
-console.log(bar)
-// "ipsum"
+foo // "lorem"
+bar // "ipsum"
 
 var o = {
   p1: [
@@ -1017,32 +1086,24 @@ jQuery.ajax = function (url, {
 
 ### class结构
 
-ECMAScript 6 提供了“类”。在此之前，一般用构造函数模拟“类”。
+**（1）基本用法**
+
+ES6提供了“类”（class）。此前，一般用构造函数模拟“类”。
 
 {% highlight javascript %}
 
 // ES5
-
 var Language = function(config) {
   this.name = config.name;
   this.founder = config.founder;
   this.year = config.year;
 };
- 
+
 Language.prototype.summary = function() {
-  return this.name + " was created by " + this.founder + " in " + this.year;
+  return this.name+"由"+this.founder+"在"+this.year+"创造";
 };
 
-{% endhighlight %}
-
-上面代码定义了一个Language构造函数，这是ECMAScript 5的典型写法。
-
-ECMAScript 6 允许使用class结构，达到同样的效果。
-
-{% highlight javascript %}
-
 // ES6
-
 class Language {
   constructor(name, founder, year) {
     this.name = name;
@@ -1051,18 +1112,17 @@ class Language {
   }
 
   summary() {
-    return this.name + " was created by " + this.founder + " in " + this.year;
+    return this.name+"由"+this.founder+"在"+this.year+"创造";
   }
 }
 
-// 生成实例
-var js = new Language；
-
 {% endhighlight %}
 
-上面代码的constructor方法，就是类的构造函数。
+在上面代码中，ES6用constructor方法，代替ES5的构造函数。
 
-class结构还允许使用extends关键字，表示继承。
+**（2）继承**
+
+ES6的class结构还允许使用extends关键字，表示继承。
 
 {% highlight javascript %}
 
@@ -1070,6 +1130,10 @@ class MetaLanguage extends Language {
   constructor(x, y, z, version) {
     super(x, y, z);
     this.version = version;
+  }
+  summary() {
+    //...
+    super.summary();
   }
 }
 
@@ -1079,7 +1143,9 @@ class MetaLanguage extends Language {
 
 ### module定义
 
-ECMAScript 6 允许定义模块。也就是说，允许一个JavaScript脚本文件调用另一个脚本文件。
+**（1）基本用法**
+
+ES6允许定义模块。也就是说，允许一个JavaScript脚本文件调用另一个脚本文件。
 
 假设有一个circle.js，它是一个单独模块。
 
@@ -1095,8 +1161,6 @@ export function circumference(radius) {
   return 2 * Math.PI * radius;
 }
 
-export var e = 2.71828182846;
-
 {% endhighlight %}
 
 然后，main.js引用这个模块。
@@ -1106,7 +1170,7 @@ export var e = 2.71828182846;
 // main.js
 
 import { area, circumference } from 'circle';
- 
+
 console.log("圆面积：" + area(4));
 console.log("圆周长：" + circumference(14));
 
@@ -1125,21 +1189,41 @@ console.log("圆周长：" + circle.circumference(14));
 
 {% endhighlight %}
 
-一个模块也可以输出另一个模块的方法。
+**（2）模块的继承**
+
+一个模块也可以继承另一个模块。
 
 {% highlight javascript %}
 
-// main.js
+// circleplus.js
 
 export * from 'circle';
+export var e = 2.71828182846;
+export default function(x) {
+    return Math.exp(x);
+}
 
 {% endhighlight %}
 
-还可以为模块定义初始化方法。
+加载上面的模块。
 
 {% highlight javascript %}
 
 // main.js
+
+module math from "circleplus";
+import exp from "circleplus";
+console.log(exp(math.pi);
+
+{% endhighlight %}
+
+**（3）模块的默认方法**
+
+还可以为模块定义默认方法。
+
+{% highlight javascript %}
+
+// circleplus.js
 
 export default function(x) {
     return Math.exp(x);

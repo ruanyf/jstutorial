@@ -19,10 +19,12 @@ Node.js是JavaScript在服务器端的一个运行环境，也是一个工具库
 {% highlight bash %}
 
 node --version
+// 或者
+node -v
 
 {% endhighlight %}
 
-更新node.js版本，可以使用下面的命令。
+更新node.js版本，可以通过node.js的n模块完成。
 
 {% highlight bash %}
 
@@ -32,6 +34,14 @@ sudo n stable
 {% endhighlight %}
 
 上面代码通过n模块，将node.js更新为最新发布的稳定版。
+
+n模块也可以指定安装的版本。
+
+{% highlight bash %}
+
+sudo n 0.8.21
+
+{% endhighlight %}
 
 ### 版本管理工具nvm
 
