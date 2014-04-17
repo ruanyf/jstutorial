@@ -303,7 +303,7 @@ jQuery提供一系列工具方法，用来判断数据类型，以弥补JavaScri
 - jQuery.isArray()：是否为数组。
 - jQuery.isEmptyObject()：是否为空对象（不含可枚举的属性）。
 - jQuery.isFunction()：是否为函数。
-- jQuery.isNumeric()：是否为数组。
+- jQuery.isNumeric()：是否为数值（整数或浮点数）。
 - jQuery.isPlainObject()：是否为使用“{}”或“new Object”生成的对象，而不是浏览器原生提供的对象。
 - jQuery.isWindow()：是否为window对象。
 - jQuery.isXMLDoc()：判断一个DOM节点是否处于XML文档之中。

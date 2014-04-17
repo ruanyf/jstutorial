@@ -1197,19 +1197,19 @@ $('ul').on('click', 'li', function (e){
 
 上面代码为ul的子元素li绑定click事件的回调函数。采用这种写法时，on方法接受三个参数，子元素选择器作为第二个参数，夹在事件名称和回调函数之间。
 
-这种写法有两个好处。首先，click事件还是在ul元素上触发回调函数，但是会检查event.target属性是否为li子元素，如果为true，再调用回调函数。这样就比为li元素一一绑定回调函数，节省了内存空间。其次，这种绑定的回调函数，对于在绑定后生成的li元素依然有效。
+这种写法有两个好处。首先，click事件还是在ul元素上触发回调函数，但是会检查event对象的target属性是否为li子元素，如果为true，再调用回调函数。这样就比为li元素一一绑定回调函数，节省了内存空间。其次，这种绑定的回调函数，对于在绑定后生成的li元素依然有效。
 
 on方法还允许向回调函数传入数据。
 
 {% highlight javascript %}
 
-$("ul" ).on("click", {name: "张三"}, function (){
+$("ul" ).on("click", {name: "张三"}, function (event){
 	console.log(event.data.name);
 });
 
 {% endhighlight %}
 
-上面代码在发生click事件之后，会在控制台打印出所传入的数据（即“张三”）。
+上面代码在发生click事件之后，会通过event对象的data属性，在控制台打印出所传入的数据（即“张三”）。
 
 **（2）trigger方法**
 
