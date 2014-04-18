@@ -888,7 +888,9 @@ events模块的作用，还表示在其他模块可以继承这个模块，因�
 var util = require("util");
 var EventEmitter = require("events").EventEmitter;
 
-function UserList (){}
+function UserList (){
+    EventEmitter.call(this);
+}
 
 util.inherits(UserList, EventEmitter);
 
