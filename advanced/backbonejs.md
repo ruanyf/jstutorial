@@ -26,6 +26,20 @@ Controller表示控制层，用来对原始数据（Model）进行加工，传�
 
 由于网页编程不同于客户端编程，在MVC的基础上，JavaScript社区产生了各种变体框架MVP（Model-View-Presenter）、MVVM（Model-View-ViewModel）等等，有人就把所有这一类框架的各种模式统称为MV*。
 
+## Backbone的加载
+
+{% highlight html %}
+
+<script src="/javascripts/lib/jquery.js"></script>
+<script src="/javascripts/lib/underscore.js"></script>
+<script src="/javascripts/lib/backbone.js"></script>
+<script src="/javascripts/jst.js"></script>
+
+<script src="/javascripts/router.js"></script>
+<script src="/javascripts/init.js"></script>
+
+{% endhighlight %}
+
 ## Backbone.View
 
 Backbone.View用于定义视图类。
@@ -41,6 +55,16 @@ var AppView = Backbone.View.extend({
 {% endhighlight %}
 
 上面代码通过Backbone.View的extend方法，定义了一个视图类AppView。该类内部有一个render方法，用于将视图放置在网页上。
+
+render方法的其他常用写法。
+
+{% highlight javascript %}
+
+render: function () {
+        this.$el.html(template('template_string'));
+}
+
+{% endhighlight %}
 
 使用的时候，需要先新建视图类的实例，然后通过实例，调用render方法，从而让视图在网页上显示。
 
@@ -67,7 +91,7 @@ appView.render();
 
 可以使用下面的代码编译模板。
 
-{% highlight html %}
+{% highlight javascript %}
 
 window.templates = {};
   var $sources = $('script[type="text/template"]');
@@ -77,3 +101,46 @@ window.templates = {};
   });
 
 {% endhighlight %}
+
+## Backbone.Router
+
+Router是Backbone提供的路由对象，用来将用户请求的网址与后端的处理函数一一对应。
+
+首先，新定义一个Router类。
+
+{% highlight javascript %}
+
+Router = Backbone.Router.extend({
+ 
+    routes: {
+    }
+});
+
+{% endhighlight %}
+
+设置根路径。
+
+{% highlight javascript %}
+
+routes: {
+        '': 'phonesIndex',
+},
+
+phonesIndex: function () {
+        new PhonesIndexView({ el: 'section#main' });
+}
+
+{% endhighlight %}
+
+## 启动代码
+
+{% highlight javascript %}
+
+App = new Router();
+
+$(document).ready(function () {
+    Backbone.history.start({ pushState: true });
+});
+
+{% endhighlight %}
+

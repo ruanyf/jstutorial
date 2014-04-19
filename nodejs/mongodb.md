@@ -8,6 +8,19 @@ modifiedOn: 2014-01-19
 
 MongoDB是目前最流行的noSQL数据库之一，它是专为node.js而开发的。
 
+## 安装
+
+安装完成后，使用mongod命令启动MongoDB。
+
+{% highlight bash %}
+
+mongod
+
+# 或者指定配置文件
+mongod --config /etc/mongodb.conf
+
+{% endhighlight %}
+
 ## Mongoose
 
 多种中间件可以用于连接node.js与MongoDB，目前比较常用的Mongoose。
