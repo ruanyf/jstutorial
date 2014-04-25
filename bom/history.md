@@ -8,7 +8,13 @@ modifiedOn: 2013-12-20
 
 ## 概述
 
-浏览器窗口有一个history对象，用来保存浏览历史。
+浏览器窗口有一个history对象，用来保存浏览历史。比如，该窗口先后访问了三个地址，那么history对象就包括三项，length属性等于3。
+
+{% highlight javascript %}
+
+window.history.length // 3
+
+{% endhighlight %}
 
 比如，返回前一个浏览的页面，可以使用下面的方法：
 

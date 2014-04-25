@@ -6,6 +6,8 @@ date: 2013-05-09
 modifiedOn: 2014-02-27
 ---
 
+> 本节不再更新，变为一个独立项目，请访问[《ECMAScript 6入门》](http://es6.ruanyifeng.com/)。（2014年4月25日）
+
 ## 概述
 
 ECMAScript 6 是JavaScript的下一代标准，正处在快速开发之中，大部分已经完成了，预计将在2014年正式发布。Mozilla将在这个标准的基础上，推出JavaScript 2.0。

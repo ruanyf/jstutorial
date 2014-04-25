@@ -42,6 +42,8 @@ Controller表示控制层，用来对原始数据（Model）进行加工，传�
 
 ## Backbone.View
 
+### 基本用法
+
 Backbone.View用于定义视图类。
 
 {% highlight javascript %}
@@ -76,6 +78,23 @@ appView.render();
 {% endhighlight %}
 
 上面代码新建视图类AppView的实例appView，然后调用appView.render，网页上就会显示指定的内容。
+
+### 子视图（subview）
+
+在父视图中可以调用子视图。下面就是一种写法。
+
+{% highlight javascript %}
+
+render : function () {
+
+    this.$el.html(this.template());
+
+    this.child = new Child();
+
+    this.child.appendTo($.('.container-placeholder').render();
+}
+
+{% endhighlight %}
 
 ## 模板
 

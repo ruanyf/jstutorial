@@ -26,40 +26,42 @@ var regex = new RegExp("xyz");
 
 {% endhighlight %}
 
-上面两种写法是等价的，都建立了一个内容为xyz的正则表达式，也就是对应某种文本模式的对象。
+上面两种写法是等价的，都建立了一个内容为xyz的正则表达式对象。
 
 RegExp构造函数还可以接受第二个参数，表示修饰符（详细解释见下文）。
 
 {% highlight javascript %}
 
 var regex = new RegExp("xyz", "i");
-
 // 等价于
-
 var regex = /xyz/i;
 
 {% endhighlight %}
 
-这两种写法在运行时有一个细微的区别。采用第一种字面量的写法，正则对象在代码载入时（即编译时）生成；采用第二种构造函数的方法，正则对象在代码运行时生成。考虑到书写的便利和直观，实际应用中，基本上都采用第一种方法。
+这两种写法在运行时有一个细微的区别。采用字面量的写法，正则对象在代码载入时（即编译时）生成；采用构造函数的方法，正则对象在代码运行时生成。考虑到书写的便利和直观，实际应用中，基本上都采用字面量的写法。
 
 正则对象生成以后，有两种使用方式：
 
-- 使用正则对象本身的方法，比如regex.test()。
+- 使用正则对象本身的方法，将字符串作为参数，比如regex.test(string)。
 
-- 使用字符串对象的方法，将正则对象作为参数，比如string.match()。
+- 使用字符串对象的方法，将正则对象作为参数，比如string.match(regex)。
 
 下面逐一介绍这两种使用方式。
 
-## 正则对象的实例的属性和方法
+## 正则对象的属性和方法
 
-正则对象与其他对象一样，也有自己的属性和方法。
+### 属性
 
 正则对象的属性主要如下：
 
 - **ignoreCase**：返回一个布尔值，表示是否设置了i修饰符，该属性只读。
+
 - **global**：返回一个布尔值，表示是否设置了g修饰符，该属性只读。
+
 - **lastIndex**：返回下一次开始搜索的位置。该属性可读写，但是只在设置了g修饰符时有意义。
+
 - **source**：返回正则表达式的字符串形式（不包括反斜杠），该属性只读。
+
 - **multiline**：返回一个布尔值，表示是否设置了m修饰符，该属性只读。
 
 下面是属性应用的实例。
@@ -76,16 +78,9 @@ r.source // "abc"
 
 {% endhighlight %}
 
-正则对象的方法主要有2种：
-
-- **test**：测试字符串是否匹配给定模式。
-- **exec**：对字符串进行匹配。
-
-下面逐一介绍。
-
 ### test方法
 
-test方法用来验证字符串是否符合某个模式，返回true或false。
+test方法返回布尔值，用来验证字符串是否符合某个模式。
 
 {% highlight javascript %}
 
@@ -99,17 +94,17 @@ test方法用来验证字符串是否符合某个模式，返回true或false。
 
 {% highlight javascript %}
 
-var regex = /x/g;
-var str = '_x_x';
+var r = /x/g;
+var s = '_x_x';
 
-regex.lastIndex // 0
-regex.test(str) // true
+r.lastIndex // 0
+r.test(s) // true
 
-regex.lastIndex // 2
-regex.test(str) // true
+r.lastIndex // 2
+r.test(s) // true
 
-regex.lastIndex // 4
-regex.test(str) // false
+r.lastIndex // 4
+r.test(s) // false
 
 {% endhighlight %}
 
@@ -126,90 +121,121 @@ new RegExp("").test("abc")
 
 ### exec方法
 
-exec方法返回一个字符串中所有匹配正则模式的结果。
-
-如果没有匹配，该方法返回null，否则返回一个数组。返回数组的length属性等于匹配成功的组数+1，即数组的第一个元素是整个被匹配的字符串，后面的元素就是匹配成功的组，也就是说第二个元素就对应第一个括号，第三个元素对应第二个括号，以此类推。
-
-此外，该数组还包含以下两个属性：
-
-- input：被匹配的字符串。
-- index：整个模式匹配成功的开始位置。
+exec方法返回匹配结果。
 
 {% highlight javascript %}
 
-var regex = /a(b+)a/;
+var s = '_x_x';
+var r1 = /x/;
+var r2 = /y/;
 
-regex.exec("_abbba_aba_")
-// [ 'abbba'
-//    , 'bbb'
-//    , index: 1
-//    , input: '_abbba_aba_'
-// ]
-
-regex.lastIndex
-// 0
+r1.exec(s) // ["x"]
+r2.exec(s) // null
 
 {% endhighlight %}
 
-如果加上g修饰符，则下一次搜索的位置从上一次匹配成功结束的位置开始。
+上面代码表示，如果匹配成功，exec方法返回一个数组，里面是匹配结果。如果匹配失败，返回null。
+
+如果正则表示式包含圆括号，则返回的数组会包括多个元素。其中，第一个元素是整个匹配成功的结果，后面的元素就是圆括号对应的匹配成功的组，也就是说第二个元素就对应第一个括号，第三个元素对应第二个括号，以此类推。整个返回数组的length属性等于匹配成功的组数+1。
 
 {% highlight javascript %}
 
-var regex = /a(b+)a/g;
+var s = '_x_x';
+var r = /_(x)/;
 
-regex.exec("_abbba_aba_")
-// [ 'abbba'
-//    , 'bbb'
-//    , index: 1
-//    , input: '_abbba_aba_'
-// ]
-
-regex.lastIndex
-// 6
-
-regex.exec("_abbba_aba_")
-//    [ 'aba'
-//    , 'b'
-//    , index: 7
-//    , input: '_abbba_aba_'
-//    ]
-
-regex.lastIndex
-// 10
-
-regex.exec("_abbba_aba_")
-// null
+r.exec(s) // ["_x", "x"]
 
 {% endhighlight %}
+
+上面代码的exex方法，返回一个数组。第一个元素是整个匹配的结果，第二个元素是圆括号匹配的结果。
+
+exec方法的返回数组还包含以下两个属性：
+
+- **input**：整个原字符串。
+- **index**：整个模式匹配成功的开始位置。
+
+{% highlight javascript %}
+
+var r = /a(b+)a/;
+
+var arr = regex.exec("_abbba_aba_");
+
+arr
+// ["abbba", "bbb"]
+
+arr.index
+// 1
+
+arr.input
+// "_abbba_aba_"
+
+{% endhighlight %}
+
+上面代码中的index属性等于1，是因为从原字符串的第二个位置开始匹配成功。
+
+如果正则表达式加上g修饰符，则可以使用多次exec方法，下一次搜索的位置从上一次匹配成功结束的位置开始。
+
+{% highlight javascript %}
+
+var r = /a(b+)a/g;
+
+var a1 = r.exec("_abbba_aba_");
+a1 // ["abbba", "bbb"]
+a1.index // 1
+r.lastIndex // 6
+
+var a2 = r.exec("_abbba_aba_");
+a2 // ["aba", "b"]
+a2.index // 7
+r.lastIndex // 10
+
+var a3 = r.exec("_abbba_aba_");
+a3 // null
+a3.index // TypeError: Cannot read property 'index' of null
+r.lastIndex // 0
+
+var a4 = r.exec("_abbba_aba_");
+a4 // ["abbba", "bbb"]
+a4.index // 1
+r.lastIndex // 6
+
+{% endhighlight %}
+
+上面代码连续用了四次exec方法，前三次都是从上一次匹配结束的位置向后匹配。当第三次匹配结束以后，整个字符串已经到达尾部，正则对象的lastIndex属性重置为0，意味着第四次匹配将从头开始。
 
 利用g修饰符允许多次匹配的特点，可以用一个循环完成全部匹配。
 
 {% highlight javascript %}
 
-var regex = /a(b+)a/g;
+var r = /a(b+)a/g;
 
-var str = "_abbba_aba_";
+var s = "_abbba_aba_";
 
 while(true) {
-        var match = regex.exec(str);
-        if (!match) break;
-        console.log(match[1]);
+	var match = r.exec(s);
+	if (!match) break;
+	console.log(match[1]);
 }
-
 // bbb
 // b
 
 {% endhighlight %}
 
-如果正则对象是一个空字符串，则exec的结果如下：
+如果正则对象是一个空字符串，则exec方法会匹配成功，但返回的也是空字符串。
 
 {% highlight javascript %}
 
-new RegExp("").exec("abc")
-// [ '', index: 0, input: 'abc' ]
+var r1 = new RegExp("");
+var a1 = r1.exec("abc");
+a1 // [""]
+a1.index // 0
+r1.lastIndex // 0 
 
-/()/.exec("abc")
-// [ '', '', index: 0, input: 'abc' ]
+var r2 = new RegExp("()");
+var a2 = r2.exec("abc");
+a2 // ["", ""]
+a2.index // 0
+r2.lastIndex // 0
 
 {% endhighlight %}
 
@@ -218,8 +244,11 @@ new RegExp("").exec("abc")
 字符串对象的方法之中，有4种与正则对象有关。
 
 - **match**：返回匹配的子字符串。
+
 - **search**：按照给定的正则规则进行搜索。
+
 - **replace**：按照给定的正则规则进行替换。
+
 - **split**：按照给定规则进行字符串分割。
 
 下面逐一介绍。
@@ -228,15 +257,28 @@ new RegExp("").exec("abc")
 
 match方法对字符串进行正则匹配，返回匹配结果。
 
-如果正则表达式没有g修饰符，则该方法返回结果与正则对象的exec方法相同；如果有g修饰符，则返回一个数组，包含所有匹配成功的子字符串。
+{% highlight javascript %}
+
+var s = '_x_x';
+var r1 = /x/;
+var r2 = /y/;
+
+s.match(r1) // ["x"]
+s.match(r2) // null
+
+{% endhighlight %}
+
+从上面代码可以看到，字符串的match方法与正则对象的exec方法非常类似：匹配成功返回一个数组，匹配失败返回null。
+
+如果正则表达式带有g修饰符，则该方法与正则对象的exec方法行为不同，会返回所有匹配成功的结果。
 
 {% highlight javascript %}
 
-'abba'.match(/a/)
-// [ 'a', index: 0, input: 'abba' ]
+var s = "abba";
+var r = /a/g;
 
-'abba'.match(/a/g)
-// [ 'a', 'a' ]
+s.match(r) // ["a", "a"]
+r.exec(s) // ["a"]
 
 {% endhighlight %}
 
