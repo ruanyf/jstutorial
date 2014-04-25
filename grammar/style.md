@@ -438,9 +438,13 @@ function doAction(action) {
 
 ### eval函数
 
-eval函数的作用是，将一段字符串当作语句执行。问题是eval不提供单独的作用域，而是直接在全局作用域运行。这会造成eval中的语句创建或修改全局变量，使得恶意代码有机可乘。
+eval函数的作用是将一段字符串当作语句执行。问题是eval不提供单独的作用域，而是直接在当前作用域运行。这会造成在不知不觉中，eval中的语句在当前作用域创建新变量、修改已有的变量，使得恶意代码有机可乘。下面就是一个例子。
 
-更好的替代方法是：（1）将字符串传入Function() 构造函数。（2）将字符串传入 setTimeout() 或 setInterval() ，作为回调函数。
+{% highlight javascript %}
+
+eval('var x = 10');
+
+{% endhighlight %}
 
 因此，避免使用eval函数。
 

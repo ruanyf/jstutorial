@@ -6,7 +6,7 @@ date: 2013-05-09
 modifiedOn: 2014-02-27
 ---
 
-> 本节不再更新，变为一个独立项目，请访问[《ECMAScript 6入门》](http://es6.ruanyifeng.com/)。（2014年4月25日）
+> **[公告] 本节不再更新，变为一个独立项目，请访问[《ECMAScript 6入门》](http://es6.ruanyifeng.com/)。（2014年4月25日）**
 
 ## 概述
 

@@ -628,14 +628,14 @@ $('h1').css('fontSize');
 
 {% endhighlight %}
 
-这时需要注意，必须将CSS规则的名称改为骆驼拼写法，即第二个单词（及其后的单词）的首字母大写，比如font-size写作fontSize。
+css方法的参数是css属性名。这里需要注意，CSS属性名的CSS写法和DOM写法，两者都可以接受，比如font-size和fontSize都行。
 
-该方法也可以作为赋值器使用。
+css方法也可以作为赋值器使用。
 
 {% highlight javascript %}
 
 $('li').css('padding-left', '20px')
-
+// 或者
 $('li').css({
   'padding-left': '20px'
 });

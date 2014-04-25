@@ -150,8 +150,6 @@ a instanceof Object // true
 
 上面代码表示，a是一个数组，所以它是Array的实例；同时，a也是一个对象，所以它也是Object的实例。
 
-instanceof运算符的实质是，找出instanceof运算符左侧的实例对象的原型链上各个原型的constructor属性，然后确定这些属性之中是否包含instanceof运算符右侧的构造函数。下一节讲解原型链、prototype对象和constructor属性时，对instanceof会有进一步的讨论。
-
 ## this关键字
 
 ### 涵义
