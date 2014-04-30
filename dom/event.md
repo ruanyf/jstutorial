@@ -335,13 +335,28 @@ window.addEventListener("resize", resizeMethod, true);
 
 ### 鼠标事件
 
-（1）click事件
+**（1）click事件**
 
-用户在element、document、window对象上用鼠标单击（或者按下回车键）时触发。
+用户在网页元素（element、document、window对象）上，单击鼠标（或者按下回车键）时触发click事件。
 
-单击被定义鼠标在同一个位置完成一次mousedown动作和mouseup动作。它们的触发顺序是：mousedown首先触发，mouseup接着触发，click最后触发。
+“鼠标单击”定义为在同一个位置完成一次mousedown动作和mouseup动作。它们的触发顺序是：mousedown首先触发，mouseup接着触发，click最后触发。
 
-（2）dblclick事件
+下面的代码是利用click事件进行CSRF攻击（Cross-site request forgery）的一个例子。
+
+{% highlight html %}
+
+<a href="http://www.harmless.com/" onclick="
+  var f = document.createElement('form');
+  f.style.display = 'none';
+  this.parentNode.appendChild(f);
+  f.method = 'POST';
+  f.action = 'http://www.example.com/account/destroy';
+  f.submit();
+  return false;">伪装的链接</a>
+
+{% endhighlight %}
+
+**（2）dblclick事件**
 
 用户在element、document、window对象上用鼠标双击时触发。该事件会在mousedown、mouseup、click之后触发。
 
