@@ -307,6 +307,8 @@ hasFocus()方法返回一个布尔值，表示当前文档之中是否有元素�
 
 ## Element对象
 
+### 属性
+
 每一个HTML标签元素，都会转化成一个Element对象节点。所有的Element节点的nodeType属性都是1，但是不同标签生成的节点是不一样的。JavaScript内部使用不同的构造函数，生成不同的Element节点，比如a标签的节点由HTMLAnchorElement()构造函数生成，button标签的节点由HTMLButtonElement()构造函数生成。因此，Element对象不是一种对象，而是一组对象。
 
 Element对象特有的属性：
@@ -442,6 +444,20 @@ myDiv.classList.toString();
 {% endhighlight %}
 
 各大浏览器（包括IE 10）都支持classList属性。
+
+### html元素
+
+html元素是网页的根元素，document.documentElement就指向这个元素。
+
+**（1）clientWidth属性，clientHeight属性**
+
+这两个属性返回视口（viewport）的大小，单位为像素。所谓“视口”，是指用户当前能够看见的那部分网页的大小
+
+document.documentElement.clientWidth和document.documentElement.clientHeight，基本上与window.innerWidth和window.innerHeight同义。只有一个区别，前者不将滚动条计算在内（很显然，滚动条和工具栏会减小视口大小），而后者包括了滚动条的高度和宽度。
+
+**（2）offsetWidth属性，offsetHeight属性**
+
+这两个属性返回html元素的宽度和高度，即网页的总宽度和总高度。
 
 ### dataset属性
 

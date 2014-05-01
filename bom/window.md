@@ -38,6 +38,16 @@ console.log(window.name);
 
 该属性只能保存字符串，且当浏览器窗口关闭后，所保存的值就会消失。因此局限性比较大，但是与iFrame窗口通信时，非常有用。
 
+### window.innerHeight属性，window.innerWidth属性
+
+这两个属性返回网页的CSS布局占据的浏览器窗口的高度和宽度，单位为像素。很显然，当用户放大网页的时候（比如将网页从100%的大小放大为200%），这两个属性会变小。
+
+注意，这两个属性值包括滚动条的高度和宽度。
+
+### window.pageXOffset属性，window.pageYOffset属性
+
+window.pageXOffset属性返回页面的水平滚动距离，window.pageYOffset属性返回页面的垂直滚动距离。这两个属性的单位为像素。
+
 ### iframe元素
 
 window.frames返回一个类似数组的对象，成员为页面内的所有框架，包括frame元素和iframe元素。需要注意的是，window.frames的每个成员对应的是框架内的窗口（即框架的window对象），获取每个框架的DOM树，需要使用window.frames[0].document。
@@ -55,7 +65,7 @@ iframe元素遵守同源政策，只有当父页面与框架页面来自同一�
 
 在iframe框架内部，使用window.parent指向父页面。
 
-### Navigator属性
+### Navigator对象
 
 Window对象的Navigator属性，指向一个包含浏览器相关信息的对象。
 
@@ -91,6 +101,27 @@ if (/mobi/i.test(ua)) {
 {% highlight javascript %}
 
 /mobi|android|touch|mini/i.test(ua)
+
+{% endhighlight %}
+
+### screen对象
+
+screen对象包含了显示设备的信息。
+
+- screen.height：显示设备的高度，单位为像素。
+- screen.width：显示设备的宽度，单位为像素。
+
+以上两个属性，除非调整显示设备的分辨率，否则看作是常量，不会发生变化。
+
+下面是根据屏幕分辨率，将用户导向不同网页的代码。
+
+{% highlight javascript %}
+
+if ((screen.width<=800) && (screen.height<=600)) {
+	window.location.replace('small.html');
+} else {
+	window.location.replace('wide.html');
+}
 
 {% endhighlight %}
 

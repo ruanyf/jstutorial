@@ -443,7 +443,19 @@ mediaQuery有点像if语句，只要显示网页的媒介（包括浏览器和�
 
 {% endhighlight %}
 
-上面的CSS代码表示，该区块对所有媒介（media）有效，且媒介必须满足最大宽度不超过700像素。如果条件满足，则body元素的背景设为#FF0。
+上面的CSS代码表示，该区块对所有媒介（media）有效，且视口必须满足最大宽度不超过700像素。如果条件满足，则body元素的背景设为#FF0。
+
+需要注意的是，mediaQuery接受两种宽度/高度的度量，一种是上例的“视口”的宽度/高度，还有一种是“设备”的宽度/高度，下面就是一个例子。
+
+{% highlight javascript %}
+
+@media all and (max-device-width: 700px) {
+
+}
+
+{% endhighlight %}
+
+视口的宽度/高度（width/height）使用documentElement.clientWidth/Height来衡量，单位是CSS像素；设备的宽度/高度（device-width/device-height）使用screen.width/height来衡量，单位是设备硬件的像素。一般来说，应该总是使用视口的宽度/高度，来设置mediaQuery。
 
 window.matchMedia方法接受mediaQuery语句作为参数，返回一个[MediaQueryList](https://developer.mozilla.org/en-US/docs/DOM/MediaQueryList)对象。该对象有以下两个属性。
 

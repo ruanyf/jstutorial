@@ -1,4 +1,4 @@
-markdown: rdiscount
+markdown: redcarpet
 pygments: true
 permalink: none
 sitename: JavaScript 标准参考教程（alpha）

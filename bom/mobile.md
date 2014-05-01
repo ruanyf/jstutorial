@@ -10,7 +10,7 @@ modifiedOn: 2013-12-20
 
 ## Geolocation API
 
-Geolocation接口用于获取用户的地理位置。它使用的方法基于GPS或者其他机制（比如IP地址、Wifi热点等）。
+Geolocation接口用于获取用户的地理位置。它使用的方法基于GPS或者其他机制（比如IP地址、Wifi热点、手机基站等）。
 
 下面的方法，可以检查浏览器是否支持这个接口。
 
@@ -23,6 +23,8 @@ if(navigator.geolocation) {
 }
 
 {% endhighlight %}
+
+这个API的支持情况非常好，所有浏览器都支持（包括IE 9+），所以上面的代码不是很必要。
 
 ### getCurrentPosition方法
 
@@ -42,13 +44,13 @@ navigator.geolocation.getCurrentPosition(geoSuccess,geoError);
 
 {% highlight javascript %}
 
-function geoSuccess(event) {       
-   alert(event.coords.latitude + ', ' + event.coords.longitude);
+function geoSuccess(event) { 
+   console.log(event.coords.latitude + ', ' + event.coords.longitude);
 }
 
 {% endhighlight %}
 
-geoSuccess的参数是一个event对象。event.coords属性指向一个对象，包含了用户的位置信息，主要是以下几个值：
+geoSuccess的参数是一个event对象。event有两个属性：timestamp和coords。timestamp属性是一个时间戳，返回获得位置信息的具体时间。coords属性指向一个对象，包含了用户的位置信息，主要是以下几个值：
 
 - **coords.latitude**：纬度
 - **coords.longitude**：经度
@@ -57,6 +59,8 @@ geoSuccess的参数是一个event对象。event.coords属性指向一个对象�
 - **coords.altitudeAccuracy**：海拔精度（单位：米）
 - **coords.heading**：以360度表示的方向
 - **coords.speed**：每秒的速度（单位：米）
+
+大多数桌面浏览器不提供上面列表的后四个值。
 
 **（2）拒绝授权**
 
@@ -107,13 +111,13 @@ watchPosition方法可以用来监听用户位置的持续改变，使用方法�
 
 {% highlight javascript %}
 
-var watchID = navigator.geolocation.watchPosition(geoSuccess,geoError);   
+var watchID = navigator.geolocation.watchPosition(geoSuccess,geoError, option);
 
 {% endhighlight %}
 
-一旦用户位置发生变化，就会调用回调函数geoSuccess。
+一旦用户位置发生变化，就会调用回调函数geoSuccess。这个回调函数的事件对象，也包含timestamp和coords属性。
 
-如果要取消监听，则使用clearWatch方法。
+watchPosition和getCurrentPosition方法的不同之处在于，前者返回一个表示符，后者什么都不返回。watchPosition方法返回的标识符，用于供clearWatch方法取消监听。
 
 {% highlight javascript %}
 
@@ -208,3 +212,4 @@ window.addEventListener('devicelight', function(e) {
 - Rathnakanya K. Srinivasan, [HTML5 Geolocation](http://www.sitepoint.com/html5-geolocation/)
 - Craig Buckler, [How to Use the HTML5 Vibration API](http://www.sitepoint.com/use-html5-vibration-api/)
 - Tomomi Imura, [Responsive UI with Luminosity Level](http://girliemac.com/blog/2014/01/12/luminosity/)
+- Aurelio De Rosa, [An Introduction to the Geolocation API](http://code.tutsplus.com/tutorials/an-introduction-to-the-geolocation-api--cms-20071)

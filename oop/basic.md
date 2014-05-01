@@ -40,13 +40,13 @@ modifiedOn: 2014-02-04
 
 构造函数是一个正常的函数，但是它的特征和用法与普通函数不一样。下面就是一个构造函数：
 
-{% highlight javascript %}
+```javascript
 
 var Vehicle = function() {
 	this.price = 1000;
 };
 
-{% endhighlight %}
+```
 
 上面代码中，Vehicle就是构造函数，它提供模板，用来生成车辆对象。
 

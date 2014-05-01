@@ -597,6 +597,16 @@ PrefixedEvent(anim, "AnimationEnd", AnimationListener);
 
 除了上面这些属性，特定事件还会有一些独特的属性。比如，click事件的event对象就有clientX和clientY属性，表示事件发生的位置相对于视口左上角的水平坐标和垂直坐标。
 
+### click事件
+
+当用户点击以后，event对象会包含以下属性。
+
+- pageX，pageY：点击位置相对于html元素的坐标，单位为CSS像素。
+- clientX，clientY：点击位置相对于视口（viewport）的坐标，单位为CSS像素。
+- screenX，screenY：点击位置相对于设备显示屏幕的坐标，单位为设备硬件的像素。
+
+一般来说，为了确定点击位置，大部分时候应该使用pageX/Y属性，只有小部分时候，才考虑使用clientX/Y属性，而screenX/Y属性很少使用。
+
 ### event对象的方法
 
 **（1）preventDefault方法**
