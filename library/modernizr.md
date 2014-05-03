@@ -94,7 +94,7 @@ Modernizr允许根据Javascript侦测的不同结果，加载不同的脚本文�
 Modernizr.load({
   test :        Modernizr.localstorage,
   yep  :        'localStorage.js',
-  nope :        'alt-storageSystem.js'
+  nope :        'alt-storageSystem.js',
   complete :    function () { enableStorgeSaveUI();}
 });
 

@@ -127,7 +127,7 @@ navigator.geolocation.clearWatch(watchID);
 
 ## Vibration API
 
-Vibration接口用于在浏览器中发出命令，使得设备振动。由于该操作很耗电，在低电量时最好取消该操作。
+Vibration接口用于在浏览器中发出命令，使得设备振动。显然，这个API主要针对手机，适用场合是向用户发出提示或警告，游戏中尤其会大量使用。由于振动操作很耗电，在低电量时最好取消该操作。
 
 使用下面的代码检查该接口是否可用。目前，只有Chrome和Firefox的Android平台最新版本支持它。
 
@@ -164,17 +164,41 @@ navigator.vibrate([500, 300, 100]);
 
 上面代码表示，设备先振动500毫秒，然后等待300毫秒，再接着振动500毫秒。
 
-vibrate是一个非阻塞式的操作，即手机振动的同时，JavaScript代码继续向下运行。要停止振动，只有将0毫秒传入vibrate方法。
+vibrate是一个非阻塞式的操作，即手机振动的同时，JavaScript代码继续向下运行。要停止振动，只有将0毫秒或者一个空数组传入vibrate方法。
 
-{% highlight javascript %}
+```javascript
 
 navigator.vibrate(0);
+navigator.vibrate([]);
 
-{% endhighlight %}
+```
 
-## 亮度调节
+如果要让振动一直持续，可以使用setInterval不断调用vibrate。
 
-当移动设备的亮度传感器，感知外部亮度发生显著变化时，会触发devicelight事件。目前，只有Firefox部署了这个API。
+```javascript
+
+var vibrateInterval;
+
+function startVibrate(duration) {
+	navigator.vibrate(duration);
+}
+
+function stopVibrate() {
+	if(vibrateInterval) clearInterval(vibrateInterval);
+	navigator.vibrate(0);
+}
+
+function startPeristentVibrate(duration, interval) {
+	vibrateInterval = setInterval(function() {
+		startVibrate(duration);
+	}, interval);
+}
+
+```
+
+## Luminosity API
+
+该API用于屏幕亮度调节，当移动设备的亮度传感器感知外部亮度发生显著变化时，会触发devicelight事件。目前，只有Firefox部署了这个API。
 
 {% highlight javascript %}
 
@@ -213,3 +237,4 @@ window.addEventListener('devicelight', function(e) {
 - Craig Buckler, [How to Use the HTML5 Vibration API](http://www.sitepoint.com/use-html5-vibration-api/)
 - Tomomi Imura, [Responsive UI with Luminosity Level](http://girliemac.com/blog/2014/01/12/luminosity/)
 - Aurelio De Rosa, [An Introduction to the Geolocation API](http://code.tutsplus.com/tutorials/an-introduction-to-the-geolocation-api--cms-20071)
+- David Walsh, [Vibration API](http://davidwalsh.name/vibration-api)

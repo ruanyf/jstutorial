@@ -455,7 +455,7 @@ mediaQuery有点像if语句，只要显示网页的媒介（包括浏览器和�
 
 {% endhighlight %}
 
-视口的宽度/高度（width/height）使用documentElement.clientWidth/Height来衡量，单位是CSS像素；设备的宽度/高度（device-width/device-height）使用screen.width/height来衡量，单位是设备硬件的像素。一般来说，应该总是使用视口的宽度/高度，来设置mediaQuery。
+视口的宽度/高度（width/height）使用documentElement.clientWidth/Height来衡量，单位是CSS像素；设备的宽度/高度（device-width/device-height）使用screen.width/height来衡量，单位是设备硬件的像素。
 
 window.matchMedia方法接受mediaQuery语句作为参数，返回一个[MediaQueryList](https://developer.mozilla.org/en-US/docs/DOM/MediaQueryList)对象。该对象有以下两个属性。
 
