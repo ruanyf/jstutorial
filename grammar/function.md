@@ -186,14 +186,17 @@ function f(){
 	console.log(1);
 }
 
+f() // 2
+
 function f(){
 	console.log(2);
 }
 
-f()
-// 2
+f() // 2
 
 {% endhighlight %}
+
+上面代码说明，由于存在函数名的提升，前面的声明在任何时候都是无效的，这一点要特别注意。
 
 ### 不能在条件语句中声明函数
 

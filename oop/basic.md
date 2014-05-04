@@ -158,40 +158,46 @@ a instanceof Object // true
 
 简单说，this就是指当前函数的运行环境。由于JavaScript支持运行环境的动态切换，所以this的指向是动态的。
 
-举例来说，有一个函数f，它同时属于a对象和b对象。JavaScript允许函数f的运行环境动态切换，即一会属于a对象，一会属于b对象，这就要靠this关键字来办到。
+举例来说，有一个函数f，它同时充当a对象和b对象的方法。JavaScript允许函数f的运行环境动态切换，即一会属于a对象，一会属于b对象，这就要靠this关键字来办到。
 
 {% highlight javascript %}
 
 function f(){ console.log(this.x); };
 
 var a = {x:'a'};
-a.f = f;
+a.m = f;
 
 var b = {x:'b'};
-b.f = f;
+b.m = f;
 
-a.f() // a
-b.f() // b
+a.m() // a
+b.m() // b
 
 {% endhighlight %}
 
 上面代码中，函数f可以打印出当前运行环境中x变量的值。当f属于a对象时，this指向a；当f属于b对象时，this指向b，因此打印出了不同的值。由于this的指向可变，所以达到了运行环境动态切换的目的。
 
-由于JavaScript语言中的一切都是对象，所以运行环境也是对象。可以理解成，this指函数运行时所在的那个对象。如果一个函数在全局环境中运行，this就是指顶层对象（在浏览器中为window对象）；如果一个函数作为某个对象的方法运行，this就是指运行时所处的那个对象。
+从上面的例子可以看出，所谓“运行环境”其实就是对象。可以理解成，this指函数运行时所在的那个对象。如果一个函数在全局环境中运行，this就是指顶层对象（浏览器中为window对象）；如果一个函数作为某个对象的方法运行，this就是指那个对象。
 
 ### 使用场合
 
-总结一下，this的使用可以分成以下几个场合。
+this的使用可以分成以下几个场合。
 
-**（1）指代全局环境**
+**（1）全局环境**
 
 在全局环境使用this，它指的就是顶层对象window。
 
 {% highlight javascript %}
 
-this === window // true
+this === window // true 
+
+function f() {
+	console.log(this === window); // true
+}
 
 {% endhighlight %}
+
+上面代码说明，不管是不是在函数内部，只要是在全局环境下运行，this就是指全局对象window。
 
 **（2）构造函数**
 
@@ -222,7 +228,7 @@ o.m() // "Hello World!"
 
 **（3）对象的方法**
 
-由于this取决于运行时所在的对象，所以如果将某个对象的方法赋值给另一个对象，会改变this的指向。这一点要特别小心。
+当a对象的方法被赋予b对象，该方法就变成了普通函数，其中的this就从指向a对象变成了指向b对象。这就是this取决于运行时所在的对象的含义，所以要特别小心。如果将某个对象的方法赋值给另一个对象，会改变this的指向。
 
 {% highlight javascript %}
 
@@ -280,6 +286,20 @@ var hello = a.b;
 hello.m() // Hello
 
 {% endhighlight %}
+
+**（4）Node.js**
+
+在Node.js中，this的指向又分成两种情况。全局环境中，this指向全局对象global；模块环境中，this指向module.exports。
+
+```javascript
+
+// 全局环境
+this === global // true
+
+// 模块环境
+this === module.exports // true
+
+```
 
 ### 使用注意点
 
@@ -755,3 +775,4 @@ bind(f,o)() // 123
 
 - Jonathan Creamer, [Avoiding the "this" problem in JavaScript](http://tech.pro/tutorial/1192/avoiding-the-this-problem-in-javascript)
 - Erik Kronberg, [Bind, Call and Apply in JavaScript](https://variadic.me/posts/2013-10-22-bind-call-and-apply-in-javascript.html)
+- Axel Rauschmayer, [JavaScript’s this: how it works, where it can trip you up](http://www.2ality.com/2014/05/this.html)
