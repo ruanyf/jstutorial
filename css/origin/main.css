@@ -123,10 +123,17 @@ article.bookPage>div>div>ul:not(.reference-list){
 	list-style-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAKCAYAAACXDi8zAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAScAAAEnABIZuYagAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAACSSURBVAiZVY0hDsJQEERfG+RW9wRIBA4DAgMKg6nZIkg4B6fgAFUEw5UQiG1CQNSSDILSfEbOy8zLwq0CKJvuTJIcuAGnti62KUAS4TYPt1e4bSQh6Qt6uOzhWhKZpGHd1sUKuADHnP/cgTcwTq+m4daG22FwhNss3B7hthvk4bYIt2e4Vb9SEiNgAuzLprumsg/n8VnjsKqsSQAAAABJRU5ErkJggg==);
 }
 
-article.bookpage p>code,
-article.bookpage li>code{
-    color: #c7254e;
-    background: #f9f2f4;
+article.bookPage p>code,
+article.bookPage li>code{
+    background-color: transparent;
+	font-size: inherit;
+	color: #c7254e;
+	font-weight: normal;
+	font-family: Consolas,"Courier New",Courier,FreeMono,monospace;
+	background: #f9f2f4;
+	padding-right: 5px;
+	padding-left: 5px;
+	border-radius: 2px;
 }
 
 /* feature section */
