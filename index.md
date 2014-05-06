@@ -63,6 +63,7 @@ modifiedOn: 2014-03-30
 - [IndexedDB：浏览器端数据库](bom/indexeddb.html)
 - [WebSocket](bom/websocket.html)（基本完成）
 - [WebRTC](bom/webrtc.html)
+- [Web Notification API](bom/notification.html)
 - [performance对象：高精度时间戳](bom/performance.html)
 - [移动设备API](bom/mobile.html)
 		

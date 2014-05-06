@@ -20,7 +20,7 @@ history对象提供了一系列方法，允许在浏览历史之间移动。
 
 - back()：移动到上一个访问页面，等同于浏览器的后退键。
 - forward()：移动到下一个访问页面，等同于浏览器的前进键。
-- go()：接受一个整数作为参数，移动到该整数指定的页面，比如`go(1)`相当于`forward()`，`go(-1)`相当于`back()`。
+- go()：接受一个整数作为参数，移动到该整数指定的页面，比如go(1)相当于forward()，go(-1)相当于back()。
 
 {% highlight javascript %}
 
@@ -66,7 +66,7 @@ history.pushState(stateObj, "page 2", "2.html");
 
 如果 pushState 的url参数，设置了一个当前网页的#号值（即hash），并不会触发hashchange事件。
 
-replaceState 的参数与 pushState 一模一样，它修改浏览历史中当前页面的值。假定当前网页是`http://example.com/example.html`。
+replaceState 的参数与 pushState 一模一样，它修改浏览历史中当前页面的值。假定当前网页是http://example.com/example.html。
 
 {% highlight javascript %}
 
