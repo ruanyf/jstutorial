@@ -95,7 +95,7 @@ parent.insertBefore(child, parent.childNodes[0])
 {% highlight javascript %}
 
 // jQuery写法
-$("p")
+$("<p>")
 
 // DOM写法
 document.createElement("p")

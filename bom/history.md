@@ -3,7 +3,7 @@ title: history对象
 layout: page
 category: bom 
 date: 2012-12-22
-modifiedOn: 2013-12-20
+modifiedOn: 2014-05-06
 ---
 
 ## 概述
@@ -12,61 +12,43 @@ modifiedOn: 2013-12-20
 
 {% highlight javascript %}
 
-window.history.length // 3
+history.length // 3
 
 {% endhighlight %}
 
-比如，返回前一个浏览的页面，可以使用下面的方法：
+history对象提供了一系列方法，允许在浏览历史之间移动。
+
+- back()：移动到上一个访问页面，等同于浏览器的后退键。
+- forward()：移动到下一个访问页面，等同于浏览器的前进键。
+- go()：接受一个整数作为参数，移动到该整数指定的页面，比如`go(1)`相当于`forward()`，`go(-1)`相当于`back()`。
 
 {% highlight javascript %}
 
-window.history.back();
+history.back();
+history.forward();
+history.go(-2);
 
 {% endhighlight %}
 
-它的效果等同于点击浏览器的倒退按钮。
+如果移动的位置超出了访问历史的边界，以上三个方法并不报错，而是默默的失败。
 
-如果倒退之后，再想回到倒退之前浏览的页面，则可以使用forward()方法。
+以下命令相当于刷新当前页面。
 
-{% highlight javascript %}
+```javascript
 
-window.history.forward();
+history.go(0);
 
-{% endhighlight %}
-
-根据当前所处的页面，返回浏览历史中的其他页面，可以使用go()方法。back()相当于go(-1)。
-
-{% highlight javascript %}
-
-window.history.go(-1);
-
-{% endhighlight %}
-
-forward()相当于go(1)。
-
-{% highlight javascript %}
-
-window.history.go(1);
-
-{% endhighlight %}
-
-当前窗口的浏览历史总长度，保存在length属性。
-
-{% highlight javascript %}
-
-var numberOfEntries = window.history.length;
-
-{% endhighlight %}
+```
 
 ## pushState方法和replaceState方法
 
-HTML5为history对象添加了两个新方法，history.pushState() 和 history.replaceState()，用来在浏览历史中添加和修改记录。
+HTML5为history对象添加了两个新方法，history.pushState() 和 history.replaceState()，用来在浏览历史中添加和修改记录。所有主流浏览器都支持该方法（包括IE10）。
 
 pushState方法接受三个参数，依次为：
 
-- state对象：一个与当前网址相关的对象。如果不输入这个值，此处填null。
-- title：新页面的标题，但是所有浏览器目前都忽略这个值。如果不输入这个值，此处填null。
-- url：新的网址，必须与当前页面处在同一个域。
+- **state**：一个与当前网址相关的对象。如果不输入这个值，此处填null。
+- **title**：新页面的标题，但是所有浏览器目前都忽略这个值。如果不输入这个值，此处填null。
+- **url**：新的网址，必须与当前页面处在同一个域。
 
 假定当前网址是1.html，我们使用pushState方法在浏览记录中添加一个新记录。
 
@@ -78,13 +60,13 @@ history.pushState(stateObj, "page 2", "2.html");
 
 {% endhighlight %}
 
-添加这个新记录后，浏览器并不会跳转到2.html，甚至也不会检查2.html是否存在，它只是成为浏览历史中的最新记录。假定这时你访问了google.com，然后点击了倒退按钮，页面的url将显示2.html，但是内容还是原来的1.html。你再点击一次倒退按钮，url将显示1.html，内容不变。
+添加上面这个新记录后，浏览器并不会跳转到2.html，甚至也不会检查2.html是否存在，它只是成为浏览历史中的最新记录。假定这时你访问了google.com，然后点击了倒退按钮，页面的url将显示2.html，但是内容还是原来的1.html。你再点击一次倒退按钮，url将显示1.html，内容不变。
+
+> 注意，pushState方法不会触发页面刷新。
 
 如果 pushState 的url参数，设置了一个当前网页的#号值（即hash），并不会触发hashchange事件。
 
-replaceState 的参数与 pushState 一模一样，它修改浏览历史中当前页面的值。
-
-假定当前网页是http://example.com/example.html。
+replaceState 的参数与 pushState 一模一样，它修改浏览历史中当前页面的值。假定当前网页是`http://example.com/example.html`。
 
 {% highlight javascript %}
 
@@ -99,15 +81,23 @@ history.go(2);  // url显示为http://example.com/example.html?page=3
 
 ## popstate事件
 
-每当同一个文档的浏览历史（即history对象）出现变化时，就会触发popstate事件。需要注意的是，仅仅调用history.pushState()或history.replaceState() ，并不会触发该事件，只有用户点击倒退按钮或用JavaScript调用 history.back()时才会触发。另外，该事件只针对同一个文档，如果浏览历史的切换，导致加载不同的文档，该事件也不会触发。
+每当同一个文档的浏览历史（即history对象）出现变化时，就会触发popstate事件。需要注意的是，仅仅调用pushState方法或replaceState方法 ，并不会触发该事件，只有用户点击浏览器倒退按钮和前进按钮，或者使用JavaScript调用back、forward、go方法时才会触发。另外，该事件只针对同一个文档，如果浏览历史的切换，导致加载不同的文档，该事件也不会触发。
 
 可以为popstate事件指定回调函数。这个回调函数的参数是一个event事件对象，它的state属性指向pushState和replaceState方法为当前url所提供的state对象（也就是这两个方法的第一个参数）。
 
 {% highlight javascript %}
 
 window.onpopstate = function(event) {
-  alert("location: " + document.location + ", state: " + JSON.stringify(event.state));
+  console.log("location: " + document.location);
+  console.log("state: " + JSON.stringify(event.state));
 };
+
+// 或者
+
+window.addEventListener('popstate', function(event) {  
+  console.log("location: " + document.location);
+  console.log("state: " + JSON.stringify(event.state));  
+}); 
 
 {% endhighlight %}
 
@@ -128,3 +118,4 @@ var currentState = history.state;
 - MOZILLA DEVELOPER NETWORK，[Manipulating the browser history](https://developer.mozilla.org/en-US/docs/DOM/Manipulating_the_browser_history)
 - MOZILLA DEVELOPER NETWORK，[window.onpopstate](https://developer.mozilla.org/en-US/docs/DOM/window.onpopstate)
 - Johnny Simpson, [Controlling History: The HTML5 History API And ‘Selective’ Loading](http://www.inserthtml.com/2013/06/history-api/)
+- Louis Lazaris, [HTML5 History API: A Syntax Primer](http://www.impressivewebs.com/html5-history-api-syntax/)
