@@ -156,11 +156,11 @@ navigator.vibrate(1000);
 
 vibrate方法还可以接受一个数组作为参数，表示振动的模式。偶数位置的数组成员表示振动的毫秒数，奇数位置的数组成员表示等待的毫秒数。
 
-{% highlight javascript %}
+```javascript
 
 navigator.vibrate([500, 300, 100]);
 
-{% endhighlight %}
+```
 
 上面代码表示，设备先振动500毫秒，然后等待300毫秒，再接着振动500毫秒。
 
@@ -230,6 +230,48 @@ window.addEventListener('devicelight', function(e) {
 
 {% endhighlight %}
 
+## Orientation API
+
+Orientation API用于检测手机的摆放方向（竖放或横放）。
+
+使用下面的代码检测浏览器是否支持该API。
+
+```javascript
+
+if (window.DeviceOrientationEvent) {
+  // 支持
+} else {
+  // 不支持
+}
+
+```
+
+一旦设备的方向发生变化，会触发deviceorientation事件，可以对该事件指定回调函数。
+
+```javascript
+
+window.addEventListener("deviceorientation", callback);
+
+```
+
+回调函数接受一个event对象作为参数。
+
+```javascript
+
+function callback(event){
+	console.log(event.alpha);
+	console.log(event.beta);
+	console.log(event.gamma);
+}
+
+```
+
+上面代码中，event事件对象有alpha、beta和gamma三个属性，它们分别对应手机摆放的三维倾角变化。要理解它们，就要理解手机的方向模型。当手机水平摆放时，使用三个轴标示它的空间位置：x轴代表横轴、y轴代表竖轴、z轴代表垂直轴。event对象的三个属性就对应这三根轴的旋转角度。
+
+- alpha：表示围绕z轴的旋转，从0到360度。当设备水平摆放时，顶部指向地球的北极，alpha此时为0。
+- beta：表示围绕x轴的旋转，从-180度到180度。当设备水平摆放时，beta此时为0。
+- gramma：表示围绕y轴的选择，从-90到90度。当设备水平摆放时，gramma此时为0。
+
 ## 参考链接
 
 - Ryan Stewart, [Using the Geolocation API](http://www.adobe.com/devnet/html5/articles/using-geolocation-api.html)
@@ -238,3 +280,4 @@ window.addEventListener('devicelight', function(e) {
 - Tomomi Imura, [Responsive UI with Luminosity Level](http://girliemac.com/blog/2014/01/12/luminosity/)
 - Aurelio De Rosa, [An Introduction to the Geolocation API](http://code.tutsplus.com/tutorials/an-introduction-to-the-geolocation-api--cms-20071)
 - David Walsh, [Vibration API](http://davidwalsh.name/vibration-api)
+- Ahmet Mermerkaya, [Using Device Orientation in HTML5](http://www.sitepoint.com/using-device-orientation-html5/)
