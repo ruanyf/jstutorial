@@ -10,6 +10,8 @@ modifiedOn: 2013-12-19
 
 ### 函数的声明
 
+**（1）function命令**
+
 函数就是使用function命令命名的代码区块，便于反复调用。
 
 {% highlight javascript %}
@@ -20,7 +22,11 @@ function print(){
 
 {% endhighlight %}
 
-上面的代码命名了一个print函数，以后使用print()这种形式，就可以调用相应的代码。这叫做函数的声明（Function Declaration）。除了用function命令声明函数，还可以采用变量赋值的写法。
+上面的代码命名了一个print函数，以后使用print()这种形式，就可以调用相应的代码。这叫做函数的声明（Function Declaration）。
+
+**（2）函数表达式**
+
+除了用function命令声明函数，还可以采用变量赋值的写法。
 
 {% highlight javascript %}
 
@@ -58,7 +64,9 @@ var f = function f(){};
 
 需要注意的是，函数的表达式需要在语句的结尾加上分号，表示语句结束。而函数的声明在结尾的大括号后面不用加分号。总的来说，这两种声明函数的方式，差别很细微（参阅后文《变量提升》一节），这里可以近似认为是等价的。
 
-除此之外，还有第三种声明函数的方式：通过Function构造函数声明。
+**（3）Function构造函数**
+
+还有第三种声明函数的方式：通过Function构造函数声明。
 
 {% highlight javascript %}
 
@@ -67,6 +75,28 @@ var add = new Function("x","y","return (x+y)");
 {% endhighlight %}
 
 在上面代码中，Function对象接受若干个参数，除了最后一个参数是add函数的“函数体”，其他参数都是add函数的参数。这种声明函数的方式非常不直观，几乎无人使用。
+
+**（4）函数的重复声明**
+
+如果多次采用function命令，重复声明同一个函数，则后面的声明会覆盖前面的声明。
+
+{% highlight javascript %}
+
+function f(){ 
+	console.log(1);
+}
+
+f() // 2
+
+function f(){
+	console.log(2);
+}
+
+f() // 2
+
+{% endhighlight %}
+
+上面代码说明，由于存在函数名的提升，前面的声明在任何时候都是无效的，这一点要特别注意。
 
 ### 圆括号运算符和return语句
 
@@ -127,37 +157,32 @@ a(add)(1,1)
 
 JavaScript引擎将函数名视同变量名，所以采用function命令声明函数时，整个函数会被提升到代码头部。所以，下面的代码不会报错。
 
-{% highlight javascript %}
+```javascript
 
 f();
-
 function f(){}
 
-{% endhighlight %}
+```
 
 表面上，上面代码好像在声明之前就调用了函数f。但是实际上，由于“变量提升”，函数f被提升到了代码头部，也就是在调用之前已经声明了。但是，如果采用赋值语句定义函数，JavaScript就会报错。
 
-{% highlight javascript %}
+```javascript
 
 f();
-
 var f = function (){};
-
 // TypeError: undefined is not a function
 
-{% endhighlight %}
+```
 
 上面的代码等同于
 
-{% highlight javascript %}
+```javascript
 
 var f;
-
 f();
-
 f = function (){};
 
-{% endhighlight %}
+```
 
 当调用f的时候，f只是被声明，还没有被赋值，等于undefined，所以会报错。因此，如果同时采用function命令和赋值语句声明同一个函数，最后总是采用赋值语句的定义。
 
@@ -176,31 +201,25 @@ f()
 
 {% endhighlight %}
 
-### 函数的重复声明
-
-如果多次采用function命令，重复声明同一个函数，则后面的声明会覆盖前面的声明。
-
-{% highlight javascript %}
-
-function f(){ 
-	console.log(1);
-}
-
-f() // 2
-
-function f(){
-	console.log(2);
-}
-
-f() // 2
-
-{% endhighlight %}
-
-上面代码说明，由于存在函数名的提升，前面的声明在任何时候都是无效的，这一点要特别注意。
-
 ### 不能在条件语句中声明函数
 
-同样由于函数名的提升，所以在条件语句中声明函数是无效的。
+根据ECMAScript的规范，不得在代码块中声明函数。最常见的情况就是if和try语句。
+
+```javascript
+
+if (foo) {
+    function x() { return; }
+}
+
+try {
+  function x() {return; }
+} catch(e) { console.log(e) }
+
+```
+
+上面代码分别在if代码块和try代码块中声明了两个函数，按照语言规范，这是不合法的。但是，实际情况是各家浏览器往往并不报错，能够运行。
+
+但是由于存在函数名的提升，所以在条件语句中声明函数是无效的，这是非常容易出错的地方。
 
 {% highlight javascript %}
 
@@ -208,7 +227,7 @@ if (false){
 	function f(){}
 }
 
-f
+f()
 // 不报错
 
 {% endhighlight %}
@@ -221,7 +240,7 @@ if (false){
 	var f = function (){};
 }
 
-f
+f()
 // undefined
 
 {% endhighlight %}
