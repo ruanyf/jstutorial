@@ -389,7 +389,30 @@ xhr.send(formData);
 
 ## JSONP
 
-越来越多的服务器返回JSON格式的数据，但是从数据性质上来看，返回的其实是一个字符串。这时就需要用JSON.parse方法将文本数据转为JSON对象。为了方便起见，许多服务器支持指定回调函数的名称，直接将JSON数据放入回调函数的参数，如此一来就省略了将字符串解析为JSON对象的步骤。这种方法就被称为JSONP。
+JSONP是一种常见做法，用于服务器与客户端之间的数据传输，主要为了规避浏览器的同域限制。因为Ajax只能向当前网页所在的域名发出HTTP请求（除非使用下文要提到的CORS，但并不是所有服务器都支持CORS），所以JSONP就采用在网页中动态插入script元素的做法，向服务器请求脚本文件。
+
+{% highlight javascript %}
+
+function addScriptTag(src){
+	var script = document.createElement('script');
+	script.setAttribute("type","text/javascript");
+	script.src = src;
+	document.body.appendChild(script);
+}
+
+window.onload = function(){
+	addScriptTag("http://example.com/ip?callback=foo");
+}
+
+function foo(data) {
+    console.log('Your public IP address is: ' + data.ip);
+};
+
+{% endhighlight %}
+
+上面代码使用了JSONP，运行以后当前网页就可以直接处理example.com返回的数据了。
+
+由于script元素返回的脚本文件，是直接作为代码运行的，不像Ajax请求返回的是JSON字符串，需要用JSON.parse方法将字符串转为JSON对象。于是，为了方便起见，许多服务器支持JSONP指定回调函数的名称，直接将JSON数据放入回调函数的参数，如此一来就省略了将字符串解析为JSON对象的步骤。
 
 请看下面的例子，假定访问 http://example.com/ip ，返回如下JSON数据：
 
@@ -417,32 +440,19 @@ function foo(data) {
 
 {% endhighlight %}
 
-JSONP还有一个重要的作用，就是规避Ajax的同域限制。Ajax只能向当前网页所在的域名，发出HTTP请求，除非使用下文要提到的CORS。但并不是所有服务器都支持CORS，传统的规避同域限制的方法，还是动态插入script标签。
+jQuery的getJSON方法就是JSONP的一个应用。
 
-{% highlight javascript %}
+```javascript
 
-function addScriptTag(src){
-	var script = document.createElement('script');
-	script.setAttribute("type","text/javascript");
-	script.src = src;
-	document.body.appendChild(script);
-}
+$.getJSON( "http://example.com/api", function (data){ .... })
 
-window.onload = function(){
-	addScriptTag("http://example.com/ip?callback=foo");
-}
+```
 
-function foo(data) {
-    console.log('Your public IP address is: ' + data.ip);
-};
-
-{% endhighlight %}
-
-上面代码使用了JSONP，就可以直接处理example.com返回的数据了。
+$.getJSON方法的第一个参数是服务器网址，第二个参数是回调函数，该回调函数的参数就是服务器返回的JSON数据。
 
 ## CORS
 
-CORS的全称是“跨域资源共享”（Cross-origin resource sharing），它提出一种方法，允许网页JavaScript代码向另一个域名发出XMLHttpRequests请求，从而克服了传统上Ajax只能在同一个域名下使用的限制（same origin security policy）。
+CORS的全称是“跨域资源共享”（Cross-origin resource sharing），它提出一种方法，允许JavaScript代码向另一个域名发出XMLHttpRequests请求，从而克服了传统上Ajax只能在同一个域名下使用的限制（same origin security policy）。
 
 所有主流浏览器都支持该方法，不过IE8和IE9的该方法不是部署在XMLHttpRequest对象，而是部署在XDomainRequest对象。检查浏览器是否支持的代码如下：
 
