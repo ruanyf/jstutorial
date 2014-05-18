@@ -25,18 +25,6 @@ DOCUMENT_TYPE_NODE | 文档类型节点 | 文档的类型（比如&lt;!DOCTYPE h
 
 ### Node对象的属性
 
-Node对象有以下属性：
-
-- firstChild：第一个子节点。
-- lastChild：最后一个子节点。
-- nextSibling：下一个同级节点。
-- parentNode：父节点。
-- previousSibling：上一个同级节点。
-- firstElementChild：第一个类型为HTML元素的子节点。
-- lastElementChild：最后一个类型为HTML元素的子节点。
-- nextElementSibling：下一个类型为HTML元素的同级节点。
-- previousElementSibling：上一个类型为HTML元素的同级节点。
-
 **（1）nodeName属性和nodeType属性**
 
 nodeName属性返回节点的名称，nodeType属性返回节点的常数值。具体的返回值，可查阅下方的表格。
@@ -90,6 +78,20 @@ var ulElementChildNodes = document.querySelector('ul').childNodes;
 children属性返回一个类似数组的对象，该对象的成员为HTML元素类型的子节点。如果没有HTML元素类型的子节点，则返回一个空数组。
 
 childNodes属性和children属性返回的节点都是动态的。一旦原节点发生变化，立刻会反映在返回结果之中。
+
+**（4）指向其他节点的属性**
+
+以下属性指向其他的相关节点，用于遍历文档节点时非常方便。
+
+- firstChild：第一个子节点。
+- lastChild：最后一个子节点。
+- parentNode：父节点。
+- nextSibling：下一个同级节点。
+- previousSibling：上一个同级节点。
+- firstElementChild：第一个类型为HTML元素的子节点。
+- lastElementChild：最后一个类型为HTML元素的子节点。
+- nextElementSibling：下一个类型为HTML元素的同级节点。
+- previousElementSibling：上一个类型为HTML元素的同级节点。
 
 ### Node对象的方法
 

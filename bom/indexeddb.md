@@ -14,31 +14,37 @@ modifiedOn: 2013-11-09
 
 通俗地说，IndexedDB就是浏览器端数据库，可以被网页脚本程序创建和操作。它允许储存大量数据，提供查找接口，还能建立索引。这些都是localStorage所不具备的。就数据库类型而言，IndexedDB不属于关系型数据库（不支持SQL查询语句），更接近NoSQL数据库。
 
-IndexedDB内部采用对象仓库（object store）存放数据。所有类型的数据都可以直接存入，包括JavaScript对象。在对象仓库中，数据以“键值对”的形式保存，每一个数据都有对应的键名，键名是独一无二的，不能有重复，否则会抛出一个错误。
+IndexedDB具有以下特点。
 
-IndexedDB也受到同域限制，每一个数据库对应创建该数据库的域名。来自不同域名的网页，只能访问自身域名下的数据库，而不能访问其他域名下的数据库。
+**（1）键值对储存。** IndexedDB内部采用对象仓库（object store）存放数据。所有类型的数据都可以直接存入，包括JavaScript对象。在对象仓库中，数据以“键值对”的形式保存，每一个数据都有对应的键名，键名是独一无二的，不能有重复，否则会抛出一个错误。
 
-目前，Chrome 27+、Firefox 21+、Opera 15+和IE 10+支持这个API。可以说，它在桌面端有良好的支持，但是移动端支持这个API的浏览器还不多。
+**（2）异步。**  IndexedDB操作时不会锁死浏览器，用户依然可以进行其他操作，这与localStorage形成对比，后者的操作是同步的。异步设计是为了防止大量数据的读写，拖慢网页的表现。
+
+**（3）支持事务。** IndexedDB支持事务（transaction），这意味着一系列操作步骤之中，只要有一步失败，整个事务就都取消，数据库回到事务发生之前的状态，不存在只改写一部分数据的情况。
+
+**（4）同域限制** IndexedDB也受到同域限制，每一个数据库对应创建该数据库的域名。来自不同域名的网页，只能访问自身域名下的数据库，而不能访问其他域名下的数据库。
+
+**（5）储存空间大** IndexedDB的储存空间比localStorage大得多，一般来说不少于250MB。IE的储存上限是250MB，Chrome和Opera是剩余空间的某个百分比，Firefox则没有上限。
+
+**（6）支持二进制储存。** IndexedDB不仅可以储存字符串，还可以储存二进制数据。
+
+目前，Chrome 27+、Firefox 21+、Opera 15+和IE 10+支持这个API，但是Safari完全不支持。
 
 下面的代码用来检查浏览器是否支持这个API。
 
 {% highlight javascript %}
 
 if("indexedDB" in window) {
-    console.log("支持");
+    // 支持
 } else {
-    console.log("不支持");
+    // 不支持
 }
 
 {% endhighlight %}
 
-## indexedDB对象
+## indexedDB.open方法
 
-浏览器原生提供indexedDB对象，作为开发者的操作接口。
-
-### open方法
-
-indexedDB.open方法用于打开数据库。
+浏览器原生提供indexedDB对象，作为开发者的操作接口。indexedDB.open方法用于打开数据库。
 
 {% highlight javascript %}
 
@@ -46,7 +52,7 @@ var openRequest = indexedDB.open("test",1);
 
 {% endhighlight %}
 
-open方法的第一个参数是数据库名称，第二个参数是数据库版本。上面代码表示，打开一个名为test、版本为1的数据库。
+open方法的第一个参数是数据库名称，格式为字符串，不可省略；第二个参数是数据库版本，是一个大于0的正整数（0将报错）。上面代码表示，打开一个名为test、版本为1的数据库。如果该数据库不存在，则会新建该数据库。如果省略第二个参数，则会自动创建版本为1的该数据库。
 
 打开数据库的结果是，有可能触发4种事件。
 
@@ -80,7 +86,7 @@ openRequest.onerror = function(e) {
 
 {% endhighlight %}
 
-上面代码显示，回调函数接受一个事件对象event作为参数。event对象的target.result属性就指向IndexedDB数据库。
+上面代码有两个地方需要注意。首先，open方法返回的是一个对象（IDBOpenDBRequest），回调函数定义在这个对象上面。其次，回调函数接受一个事件对象event作为参数，它的target.result属性就指向打开的IndexedDB数据库。
 
 ## indexedDB实例对象的方法
 
@@ -107,7 +113,7 @@ db.createObjectStore("test2", { autoIncrement: true });
 
 {% endhighlight %}
 
-上面代码的createObjectStore方法的第二个参数，对键名做出了规定。第一行规定，键名是所存入对象的email属性（由于键名不能重复，所以存入之前必须保证数据的email属性值都是不一样的）；第二行规定，键名为自动递增，即第一个数据为1，第二个数据为2，以此类推。
+上面代码中的keyPath属性表示，所存入对象的email属性用作每条记录的键名（由于键名不能重复，所以存入之前必须保证数据的email属性值都是不一样的），默认值为null；autoIncrement属性表示，是否使用自动递增的整数作为键名（第一个数据为1，第二个数据为2，以此类推），默认为false。一般来说，keyPath和autoIncrement属性只要使用一个就够了，如果两个同时使用，表示键名为递增的整数，且对象不得缺少指定属性。
 
 ### objectStoreNames属性
 
@@ -236,7 +242,7 @@ put方法的用法与add方法相近。
 {% highlight javascript %}
 
 var o = { p:456 };
-var request = store.put(person);
+var request = store.put(o, 1);
 
 {% endhighlight %}
 
@@ -283,6 +289,8 @@ cursor.onsuccess = function(e) {
 
 回调函数接受一个事件对象作为参数，该对象的target.result属性指向当前数据对象。当前数据对象的key和value分别返回键名和键值（即实际存入的数据）。continue方法将光标移到下一个数据对象，如果当前数据对象已经是最后一个数据了，则光标指向null。
 
+openCursor方法还可以接受第二个参数，表示遍历方向，默认值为next，其他可能的值为prev、nextunique和prevunique。后两个值表示如果遇到重复值，会自动跳过。
+
 ### createIndex方法
 
 createIndex方法用于创建索引。
@@ -310,7 +318,7 @@ store.createIndex("email","email", {unique:true});
 
 {% endhighlight %}
 
-createIndex方法接受三个参数，第一个是索引名称，第二个是建立索引的属性名，第三个是参数对象，用来设置索引特性。unique表示索引所在的属性是否有唯一值，上面代码表示name属性没有唯一值，email属性有。
+createIndex方法接受三个参数，第一个是索引名称，第二个是建立索引的属性名，第三个是参数对象，用来设置索引特性。unique表示索引所在的属性是否有唯一值，上面代码表示name属性不是唯一值，email属性是唯一值。
 
 有了索引以后，就可以针对索引所在的属性读取数据。
 
@@ -382,7 +390,7 @@ var t = db.transaction(["people"],"readonly");
 var store = t.objectStore("people");
 var index = store.index("name");
 
-var range = IDBKeyRange.bound(start, end);
+var range = IDBKeyRange.bound('B', 'D');
 
 index.openCursor(range).onsuccess = function(e) {
         var cursor = e.target.result;
@@ -401,3 +409,4 @@ index.openCursor(range).onsuccess = function(e) {
 
 - Raymond Camden, [Working With IndexedDB – Part 1](http://net.tutsplus.com/tutorials/javascript-ajax/working-with-indexeddb/)
 - Raymond Camden, [Working With IndexedDB – Part 2](http://net.tutsplus.com/tutorials/javascript-ajax/working-with-indexeddb-part-2/)
+- Tiffany Brown, [An Introduction to IndexedDB](http://dev.opera.com/articles/introduction-to-indexeddb/)  
