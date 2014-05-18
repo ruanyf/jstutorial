@@ -16,12 +16,14 @@ DOM的最小单位是节点（node），一个文档的树形结构就是由各�
 
 对于HTML文档，节点有以下类型：
 
-- DOCUMENT_NODE：文档节点，代表整个文档（window.document）。
-- ELEMENT_NODE：元素节点，代表HTML元素（比如&lt;body&gt;、&lt;a&gt;等）。
-- ATTRIBUTE_NODE：属性节点，代表HTML元素的属性（比如class="right"）。
-- TEXT_NODE：文本节点，代表HTML文档中出现的文本。
-- DOCUMENT_FRAGMENT_NODE：文档碎片节点，代表文档的片段。
-- DOCUMENT_TYPE_NODE：文档类型节点，代表文档的类型（比如&lt;!DOCTYPE html&gt;）。
+节点|名称|含义
+----|----|----
+DOCUMENT_NODE | 文档节点 | 整个文档（window.document）
+ELEMENT_NODE | 元素节点 | HTML元素（比如&lt;body&gt;、&lt;a&gt;等）
+ATTRIBUTE_NODE | 属性节点| HTML元素的属性（比如class="right"）
+TEXT_NODE | 文本节点 | HTML文档中出现的文本
+DOCUMENT_FRAGMENT_NODE | 文档碎片节点 | 文档的片段
+DOCUMENT_TYPE_NODE | 文档类型节点 | 文档的类型（比如&lt;!DOCTYPE html&gt;）
 
 浏览器原生提供一个Node对象，上面所有类型的节点都是Node对象派生出来的，也就是说它们都继承了Node的属性和方法。
 

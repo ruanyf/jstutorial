@@ -1,5 +1,7 @@
 markdown: redcarpet
-pygments: true
+redcarpet:
+  extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "tables", "with_toc_data"]   
+highlighter: pygments
 permalink: none
 sitename: JavaScript 标准参考教程（alpha）
 

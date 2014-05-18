@@ -430,7 +430,7 @@ $('div > .selected')
 
 上面这三个方法都接受一个选择器作为参数。
 
-**（4）siblings方法，nextAll方法，prevAll方法，closest方法**
+**（4）siblings方法，nextAll方法，prevAll方法**
 
 siblings方法返回当前元素的所有同级元素。
 
@@ -450,35 +450,20 @@ $('li').last().prevAll()
 
 {% endhighlight %}
 
-closest方法返回当前元素，以及当前元素的所有上级元素之中，第一个符合条件的元素。
+**（5）closest方法，find方法**
 
-{% highlight javascript %}
+closest方法返回当前元素，以及当前元素的所有上级元素之中，第一个符合条件的元素。find方法返回当前元素的所有符合条件的下级元素。
+
+```javascript
 
 $('li').closest('div')
+$('div').find('li')
 
-{% endhighlight %}
+```
 
-**（5）find方法，add方法，addBack方法，end方法**
+上面代码中的find方法，选中所有div元素下面的li元素，等同于$('li', 'div')。由于这样写缩小了搜索范围，所以要优于$('div li')的写法。
 
-find方法返回当前元素的所有符合条件的下级元素。
-
-{% highlight javascript %}
-
-$("div").find(".selected")
-
-// 等同于
-
-$(".selected", "div")
-
-{% endhighlight %}
-
-上面代码选中所有div元素下面的“.selected”对象。由于这样写缩小了搜索范围，所以要优于下面的写法。
-
-{% highlight javascript %}
-
-$("div .selected")
-
-{% endhighlight %}
+**（6）find方法，add方法，addBack方法，end方法**
 
 add方法用于为结果集添加元素。
 
@@ -504,7 +489,7 @@ $('li').first().end()
 
 {% endhighlight %}
 
-**（6）filter方法，not方法，has方法**
+**（7）filter方法，not方法，has方法**
 
 filter方法用于过滤结果集，它可以接受多种类型的参数，只返回与参数一致的结果。
 
