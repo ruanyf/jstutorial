@@ -1,14 +1,10 @@
 ---
-title: DOM概述
+title: Node对象
 layout: page
 category: dom
 date: 2013-10-07
-modifiedOn: 2014-01-10
+modifiedOn: 2014-05-18
 ---
-
-DOM是文档对象模型（Document Object Model）的简称，它的基本思想是把结构化文档（比如HTML和XML）解析成一系列的节点，再由这些节点组成一个树状结构。所有的节点和最终的树状结构，都有规范的对外接口，以达到使用编程语言操作文档的目的（比如增删内容）。所以，DOM可以理解成文档的编程接口。
-
-DOM有自己的国际标准，目前的通用版本是[DOM 3](http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/core.html)，下一代版本[DOM 4](http://www.w3.org/TR/dom/)正在拟定中。本章介绍的就是JavaScript对DOM标准的实现和用法。
 
 ## Node节点对象
 
@@ -45,23 +41,27 @@ Node对象有以下属性：
 
 nodeName属性返回节点的名称，nodeType属性返回节点的常数值。具体的返回值，可查阅下方的表格。
 
-<table class="responsive">
-  <thead>
-    <tr><th>类型</th><th>nodeName</th><th>nodeType</th></tr>
-  </thead>
-  <tbody>
-<tr><td>DOCUMENT_NODE</td><td>#document</td><td>9</td></tr>
-<tr><td>ELEMENT_NODE</td><td>大写的HTML元素名</td><td>1</td></tr>
-<tr><td>ATTRIBUTE_NODE</td><td>等同于Attr.name</td><td>2</td></tr>
-<tr><td>TEXT_NODE</td><td>#text</td><td>3</td></tr>
-<tr><td>DOCUMENT_FRAGMENT_NODE</td><td>#document-fragment</td><td>11</td></tr>
-<tr><td>DOCUMENT_TYPE_NODE</td><td>等同于DocumentType.name</td><td>10</td></tr>
-  </tbody>
-</table>
+类型 | nodeName | nodeType 
+-----|----------|---------
+DOCUMENT_NODE | #document | 9
+ELEMENT_NODE | 大写的HTML元素名 | 1
+ATTRIBUTE_NODE | 等同于Attr.name | 2
+TEXT_NODE | #text | 3
+DOCUMENT_FRAGMENT_NODE | #document-fragment | 11
+DOCUMENT_TYPE_NODE | 等同于DocumentType.name |10
+
+以document节点为例，它的nodeName属性等于#document，nodeType属性等于9。
+
+```javascript
+
+document.nodeName // "#document"
+document.nodeType // 9
+
+```
 
 通常来说，使用nodeType属性确定一个节点的类型，比较方便。
 
-{% highlight javascript %}
+```javascript
 
 document.querySelector('a').nodeType === 1
 // true
@@ -69,7 +69,7 @@ document.querySelector('a').nodeType === 1
 document.querySelector('a').nodeType === Node.ELEMENT_NODE
 // true
 
-{% endhighlight %}
+```
 
 上面两种写法是等价的。
 
@@ -180,132 +180,7 @@ input[0].isEqualNode(input[1])
 
 ### NodeList对象
 
-当使用querySelectorAll()方法选择一组对象时，会返回一个NodeList对象（比如document.querySelectorAll('*')的返回结果）或者HTMLCollection对象（比如document.scripts）。它们是类似数组的对象，即可以使用length属性，但是不能使用pop或push之类数组特有的方法。 
-
-## document对象
-
-document对象是文档的根节点，window.document属性就指向这个对象。也就是说，只要浏览器开始载入HTML文档，这个对象就开始存在了，可以直接调用。
-
-一般来说，document对象有两个子节点。
-
-- 第一个子节点是文档类型节点（DocumentType），对于HTML5文档来说，该节点就代表&lt;!DOCTYPE html&gt;，document.doctype属性指向该节点。
-
-- 第二个子节点是元素节点（Element），代表&lt;html lang="en"&gt;，document.documentElement 属性指向该节点。
-
-这两个子节点肯定包括在document.childNodes之中。
-
-### document对象的属性
-
-document对象有很多属性，用得比较多的是下面这样。
-
-（1）提供文档信息的属性。
-
-- title：文档的标题。
-- lastModified：文档文件的上一次修改时间。
-- referrer：文档的访问来源。
-- URL：文档的URL。
-- compatMode：浏览器处理文档的模式，可能的值为BackCompat（向后兼容模式）和 CSS1Compat（严格模式）。
-
-（2）指向其他节点或对象的属性
-
-- doctype：指向文档类型节点。
-- documentElement：指向html元素节点。
-- head：指向文档的head元素节点。
-- body：指向文档的body元素节点。
-- activeElement：指向文档中被激活（focused/active）的元素。
-- defaultView：指向当前文档的JavaScript顶层对象，即window对象。
-
-{% highlight javascript %}
-
-document.doctype // <!DOCTYPE html>
-document.documentElement // <html>...</html>
-document.head // <head>...</head>
-document.body // <body>...</body>
-document.defaultView // window
-
-document.querySelector('textarea').focus();
-document.activeElement // <textarea>
-
-{% endhighlight %}
-
-（3）implementation属性
-
-该属性指向一个对象，提供浏览器支持的模块信息，它的hasFeature方法返回一个布尔值，表示是否支持某个模块。
-
-{% highlight javascript %}
-
-document.implementation.hasFeature('MutationEvents','2.0')
-// true
-
-{% endhighlight %}
-
-上面代码表示，当前浏览器支持MutationEvents模块的2.0版本。
-
-### 特定元素的集合属性
-
-document对象有一些属性，指向特定元素的集合。
-
-- document.all ：文档中所有的元素，Firefox不支持该属性。
-- document.forms ：所有的form元素。
-- document.images：所有的img元素。
-- document.links：所有的a元素。
-- document.scripts：所有的script元素。
-- document.styleSheets：所有的link或者style元素。
-
-上面所有的元素集合都是动态的，原节点有任何变化，立刻会反映在这些集合中。
-
-### document对象的方法
-
-**（1）querySelector方法和getElementById方法**
-
-这两个方法用于获取一个Element节点。它们的不同之处是，querySelector方法的参数使用CSS选择器语法，getElementById方法的参数是HTML标签元素的id属性。
-
-{% highlight javascript %}
-
-document.querySelector('li')
-document.getElementById('last')
-
-{% endhighlight %}
-
-如果有多个节点满足querySelector方法的条件，则返回第一个匹配的节点。
-
-**（2）querySelectorAll方法、getElementsByTagName方法和getElementsByClassName方法**
-
-这三个方法都返回一个NodeList对象，也就是返回一组符合条件的节点对象。它们的不同之处在于，querySelectorAll方法的参数使用CSS选择器，getElementsByTagName方法的参数是HTML元素名，getElementsByClassName方法的参数是HTML标签元素的class属性。
-
-{% highlight javascript %}
-
-document.querySelectorAll('li')
-document.getElementsByTagName('li')
-document.getElementsByClassName('liClass')
-
-{% endhighlight %}
-
-getElementsByTagName方法和getElementsByClassName方法返回的是对象的指针，当对象发生变化时，返回的结果集会跟着变化，querySelectorAll方法返回的结果集没有这种特性。
-
-如果querySelectorAll方法和getElementsByTagName方法的参数是字符串“*”，则会返回文档中的所有HTML元素节点。
-
-**（3）getElementsByName方法**
-
-getElementsByName方法用于选择拥有name属性的HTML元素，比如form、img、frame、embed和object。
-
-**（4）createElement方法和createTextNode方法**
-
-createElement() 方法接受一个字符串参数，表示要创造哪一种HTML元素。传入的字符串应该等同于元素节点的tagName属性。
-
-createTextNode()方法的参数，就是所要生成的文本节点的内容。
-
-{% highlight javascript %}
-
-var elementNode = document.createElement('div');
-
-var textNode = document.createTextNode('Hi');
-
-{% endhighlight %}
-
-**（5）hasFocus方法**
-
-hasFocus()方法返回一个布尔值，表示当前文档之中是否有元素被激活或获得焦点。
+当使用querySelectorAll()方法选择一组对象时，会返回一个NodeList对象（比如document.querySelectorAll('*')的返回结果）或者HTMLCollection对象（比如document.scripts）。它们是类似数组的对象，即可以使用length属性，但是不能使用pop或push之类数组特有的方法。
 
 ## Element对象
 

@@ -2,7 +2,7 @@
 layout: homepage
 title: JavaScript 标准参考教程（alpha）
 date: 2012-11-18
-modifiedOn: 2014-03-30
+modifiedOn: 2014-05-18
 ---
 	
 <h2 id="introduction">导论</h2>
@@ -46,7 +46,8 @@ modifiedOn: 2014-03-30
 
 <h2 id="dom">DOM</h2>
 
-- [DOM API 概述](dom/basic.html)
+- [document对象](dom/document.html)
+- [Node对象](dom/node.html)
 - [DOM 事件](dom/event.html)
 - [CSS操作](dom/css.html)
 - [拖放操作](dom/dragndrop.html)
