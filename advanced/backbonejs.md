@@ -40,7 +40,7 @@ Controller表示控制层，用来对原始数据（Model）进行加工，传�
 
 {% endhighlight %}
 
-## Backbone.View()
+## Backbone.View
 
 ### 基本用法
 
@@ -69,6 +69,16 @@ appView.render();
 
 上面代码新建视图类AppView的实例appView，然后调用appView.render，网页上就会显示指定的内容。
 
+新建视图实例时，通常需要指定Model。
+
+```javascript
+
+var document = new Document({
+  model: doc
+});
+
+```
+
 ### initialize方法
 
 视图还可以定义initialize方法，生成实例的时候，会自动调用该方法对实例初始化。
@@ -90,7 +100,7 @@ var appView = new AppView();
 
 上面代码定义了initialize方法之后，就省去了生成实例后，手动调用appView.render()的步骤。
 
-### el属性
+### el属性，$el属性
 
 除了直接在render方法中，指定“视图”所绑定的网页元素，还可以用视图的el属性指定网页元素。
 
@@ -106,6 +116,22 @@ var AppView = Backbone.View.extend({
 {% endhighlight %}
 
 上面的代码与render方法直接绑定网页元素，效果完全一样。上面代码中，除了el属性，还是$el属性，前者代表指定的DOM元素，后者则表示该DOM元素对应的jQuery对象。
+
+### tagName属性，className属性
+
+如果不指定el属性，也可以通过tagName属性和className属性指定。
+
+```javascript
+
+var Document = Backbone.View.extend({
+  tagName: "li",
+  className: "document",
+  render: function() {
+   // ...
+  }
+});
+
+```
 
 ### template方法
 
@@ -162,6 +188,53 @@ $sources.each(function(index, el) {
 });
 
 {% endhighlight %}
+
+### events属性
+
+events属性用于指定视图的事件及其对应的处理函数。
+
+```javascript
+
+var Document = Backbone.View.extend({
+  events: {
+    "click .icon":          "open",
+    "click .button.edit":   "openEditDialog",
+    "click .button.delete": "destroy"
+  }
+});
+
+```
+
+上面代码中一个指定了三个CSS选择器的单击事件，及其对应的三个处理函数。
+
+### listento方法
+
+listento方法用于为特定事件指定回调函数。
+
+```javascript
+
+var Document = Backbone.View.extend({
+  initialize: function() {
+    this.listenTo(this.model, "change", this.render);
+  }
+});
+
+```
+
+上面代码为model的change事件，指定了回调函数为render。
+
+### remove方法
+
+remove方法用于移除一个视图。
+
+```javascript
+
+updateView: function() {
+  view.remove();
+  view.render();
+};
+
+```
 
 ### 子视图（subview）
 
