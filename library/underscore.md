@@ -16,9 +16,11 @@ Underscore.js定义了一个下划线（_）对象，函数库的所有方法都
 
 Javascript语言的数据集合，包括两种结构：数组和对象。以下的方法同时适用于这两种结构。
 
-### 数组处理
+### 集合处理
 
 数组处理指的是对数组元素进行加工。
+
+**（1）map**
 
 map方法对集合的每个成员依次进行某种操作，将返回的值依次存入一个新的数组。
 
@@ -32,6 +34,8 @@ _.map({one : 1, two : 2, three : 3}, function(num, key){ return num * 3; });
 
 {% endhighlight %}
 
+**（2）each**
+
 each方法与map类似，依次对数组所有元素进行某种操作，不返回任何值。
 
 {% highlight javascript %}
@@ -41,6 +45,8 @@ _.each([1, 2, 3], alert);
 _.each({one : 1, two : 2, three : 3}, alert);
 
 {% endhighlight %}
+
+**（3）reduce**
 
 reduce方法依次对集合的每个成员进行某种操作，然后将操作结果累计在某一个初始值之上，全部操作结束之后，返回累计的值。该方法接受三个参数。第一个参数是被处理的集合，第二个参数是对每个成员进行操作的函数，第三个参数是累计用的变量。
 
@@ -53,6 +59,20 @@ _.reduce([1, 2, 3], function(memo, num){ return memo + num; }, 0);
 
 reduce方法的第二个参数是操作函数，它本身又接受两个参数，第一个是累计用的变量，第二个是集合每个成员的值。
 
+**（4）reduceRight**
+
+reduceRight是逆向的reduce，表示从集合的最后一个元素向前进行处理。
+
+```javascript
+
+var list = [[0, 1], [2, 3], [4, 5]];
+var flat = _.reduceRight(list, function(a, b) { return a.concat(b); }, []);
+// [4, 5, 2, 3, 0, 1]
+
+```
+
+**（5）shuffle**
+
 shuffle方法返回一个打乱次序的集合。
 
 {% highlight javascript %}
@@ -62,9 +82,46 @@ _.shuffle([1, 2, 3, 4, 5, 6]);
 
 {% endhighlight %}
 
-### 数组特征
+**（6）invoke**
+
+invoke方法对集合的每个成员执行指定的操作。
+
+```javascript
+
+_.invoke([[5, 1, 7], [3, 2, 1]], 'sort')
+// [[1, 5, 7], [1, 2, 3]]
+
+```
+
+**（7）sortBy**
+
+sortBy方法根据处理函数的返回值，返回一个排序后的集合，以升序排列。
+
+```javascript
+
+_.sortBy([1, 2, 3, 4, 5, 6], function(num){ return Math.sin(num); });
+// [5, 4, 6, 3, 1, 2]
+
+```
+
+**（8）indexBy**
+
+indexBy方法返回一个对象，根据指定键名，对集合生成一个索引。
+
+```javascript
+
+var person = [{name: 'John', age: 40}, {name: 'larry', age: 50}, {name: 'curly', age: 60}];
+_.indexBy(person, 'age');
+// { "50": {name: 'larry', age: 50},
+     "60": {name: 'curly', age: 60} }
+
+```
+
+### 集合特征
 
 Underscore.js提供了一系列方法，判断数组元素的特征。这些方法都返回一个布尔值，表示是否满足条件。
+
+**（1）every**
 
 every方法判断数组的所有元素是否都满足某个条件。如果都满足则返回true，否则返回false。
 
@@ -75,6 +132,8 @@ _.every([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
 
 {% endhighlight %}
 
+**（2）some**
+
 some方法则是只要有一个元素满足，就返回true，否则返回false。
 
 {% highlight javascript %}
@@ -82,7 +141,12 @@ some方法则是只要有一个元素满足，就返回true，否则返回false�
 _.some([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
 // true
 
+_.some([null, 0, 'yes', false])
+// true
+
 {% endhighlight %}
+
+**（3）size**
 
 size方法返回集合的成员数量。
 
@@ -93,9 +157,22 @@ _.size({one : 1, two : 2, three : 3});
 
 {% endhighlight %}
 
-### 数组过滤
+**（4）sample**
+
+sample方法用于从集合中随机取样。
+
+```javascript
+
+_.sample([1, 2, 3, 4, 5, 6])
+// 4
+
+```
+
+### 集合过滤
 
 Underscore.js提供了一系列方法，用于过滤数组，找到符合要求的成员。
+
+**（1）filter**
 
 filter方法依次对集合的每个成员进行某种操作，只返回操作结果为true的成员。
 
@@ -106,6 +183,8 @@ _.filter([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
 
 {% endhighlight %}
 
+**（2）reject**
+
 reject方法只返回操作结果为false的成员。
 
 {% highlight javascript %}
@@ -114,6 +193,8 @@ _.reject([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
 // [1, 3, 5]
 
 {% endhighlight %}
+
+**（3）find**
 
 find方法依次对集合的每个成员进行某种操作，返回第一个操作结果为true的成员。如果所有成员的操作结果都为false，则返回undefined。
 
@@ -124,6 +205,8 @@ _.find([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
 
 {% endhighlight %}
 
+**（4）contains**
+
 contains方法表示如果某个值在数组内，则返回true，否则返回false。
 
 {% highlight javascript %}
@@ -132,6 +215,8 @@ _.contains([1, 2, 3], 3);
 // true
 
 {% endhighlight %}
+
+**（5）countBy**
 
 countBy方法依次对集合的每个成员进行某种操作，将操作结果相同的成员算作一类，最后返回一个对象，表明每种操作结果对应的成员数量。
 
@@ -144,7 +229,45 @@ _.countBy([1, 2, 3, 4, 5], function(num) {
 
 {% endhighlight %}
 
+**（6）where**
+
+where方法检查集合中的每个值，返回一个数组，其中的每个成员都包含指定的键值对。
+
+```javascript
+
+_.where(listOfPlays, {author: "Shakespeare", year: 1611});
+// [{title: "Cymbeline", author: "Shakespeare", year: 1611},
+//  {title: "The Tempest", author: "Shakespeare", year: 1611}]
+
+```
+
+**（7）max，min**
+
+max方法返回集合中的最大值。如果提供一个处理函数，则该函数的返回值用作排名标准。
+
+```javascript
+
+var person = [{name: 'John', age: 40}, 
+              {name: 'larry', age: 50}, 
+              {name: 'curly', age: 60}];
+_.max(person, function(per){ return per.age; });
+// {name: 'curly', age: 60};
+
+```
+
+min方法返回集合中的最小值。如果提供一个处理函数，则该函数的返回值用作排名标准。
+
+```javascript
+
+var numbers = [10, 5, 100, 2, 1000];
+_.min(numbers)
+// 2
+
+```
+
 ## 对象相关方法
+
+**（1）toArray**
 
 toArray方法将对象转为数组，只包含对象成员的值。典型应用是将对类似数组的对象转为真正的数组。
 
@@ -155,13 +278,17 @@ toArray方法将对象转为数组，只包含对象成员的值。典型应用�
 
 {% endhighlight %}
 
+**（2）pluck**
+
 pluck方法将多个对象的某一个属性的值，提取成一个数组。
 
 {% highlight javascript %}
 
-var stooges = [{name : 'moe', age : 40}, {name : 'larry', age : 50}, {name : 'curly', age : 60}];
+var person = [{name: 'John', age: 40}, 
+              {name: 'larry', age: 50}, 
+              {name: 'curly', age: 60}];
 
-_.pluck(stooges, 'name');
+_.pluck(person, 'name');
 // ["moe", "larry", "curly"]
 
 {% endhighlight %}
@@ -172,7 +299,7 @@ _.pluck(stooges, 'name');
 
 在不同的运行环境下，JavaScript函数内部的变量所在的上下文是不同的。这种特性会给程序带来不确定性，为了解决这个问题，Underscore.js提供了两个方法，用来给函数绑定上下文。
 
-（1）bind方法
+**（1）bind方法**
 
 该方法绑定函数运行时的上下文，返回一个新函数。
 
@@ -208,7 +335,7 @@ _.bind(add, {sum:1}, 1, 1, 1)()
 
 上面代码中bind方法有5个参数，最后那三个是给定add方法的运行参数，所以运行结果为4。
 
-（2）bindall方法
+**（2）bindall方法**
 
 该方法可以一次将多个方法，绑定在某个对象上面。
 
@@ -227,7 +354,7 @@ _.bindAll(o, 'm1', 'm2');
 
 上面代码一次性将两个方法（m1和m2）绑定在o对象上面。
 
-（3）partial方法
+**（3）partial方法**
 
 除了绑定上下文，Underscore.js还允许绑定参数。partial方法将函数与某个参数绑定，然后作为一个新函数返回。
 
@@ -242,7 +369,7 @@ add5(10);
 
 {% endhighlight %}
 
-（4）wrap方法
+**（4）wrap方法**
 
 该方法将一个函数作为参数，传入另一个函数，最终返回前者的一个新版本。
 
@@ -261,7 +388,7 @@ hello();
 
 上面代码先定义hello函数，然后将hello传入一个匿名定义，返回一个新版本的hello函数。
 
-（5）compose方法
+**（5）compose方法**
 
 该方法接受一系列函数作为参数，由后向前依次运行，上一个函数的运行结果，作为后一个函数的运行参数。也就是说，将f(g(),h())的形式转化为f(g(h()))。
 
@@ -281,7 +408,7 @@ welcome('moe');
 
 Underscore.js允许对函数运行行为进行控制。
 
-（1）memoize方法
+**（1）memoize方法**
 
 该方法缓存一个函数针对某个参数的运行结果。
 
@@ -293,7 +420,7 @@ var fibonacci = _.memoize(function(n) {
 
 {% endhighlight %}
 
-（2）delay方法
+**（2）delay方法**
 
 该方法可以将函数推迟指定的时间再运行。
 
@@ -308,7 +435,7 @@ _.delay(log, 1000, 'logged later');
 
 上面代码推迟1000毫秒，再运行console.log方法，并且指定参数为“logged later”。
 
-（3）defer方法
+**（3）defer方法**
 
 该方法可以将函数推迟到待运行的任务数为0时再运行，类似于setTimeout推迟0秒运行的效果。
 
@@ -318,7 +445,7 @@ _.defer(function(){ alert('deferred'); });
 
 {% endhighlight %}
 
-（4）throttle方法
+**（4）throttle方法**
 
 该方法返回一个函数的新版本。连续调用这个新版本的函数时，必须等待一定时间才会触发下一次执行。
 
@@ -332,7 +459,7 @@ $(window).scroll(throttled);
 
 {% endhighlight %}
 
-（5）debounce方法
+**（5）debounce方法**
 
 该方法返回的新函数有调用的时间限制，每次调用必须与上一次调用间隔一定的时间，否则就无效。它的典型应用是防止用户双击某个按钮，导致两次提交表单。
 
@@ -344,7 +471,7 @@ $("button").on("click", _.debounce(submitForm, 1000, true));
 
 上面代码表示click事件发生后，调用函数submitForm的新版本。该版本的两次运行时间，必须间隔1000毫秒以上，否则第二次调用无效。最后那个参数true，表示click事件发生后，立刻触发第一次submitForm函数，否则就是等1000毫秒再触发。
 
-（6）once方法
+**（6）once方法**
 
 该方法返回一个只能运行一次的新函数。该方法主要用于对象的初始化。
 
@@ -357,7 +484,7 @@ initialize();
 
 {% endhighlight %}
 
-（7）after方法
+**（7）after方法**
 
 该方法返回的新版本函数，只有在被调用一定次数后才会运行，主要用于确认一组操作全部完成后，再做出反应。
 
