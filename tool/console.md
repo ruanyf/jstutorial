@@ -1,5 +1,5 @@
 ---
-title: 浏览器控制台（console对象）
+title: console对象
 layout: page
 category: tool
 date: 2013-03-10
@@ -8,7 +8,9 @@ modifiedOn: 2013-12-03
 
 ## 开发者工具
 
-目前，各大浏览器都自带开发工具。以Chrome浏览器为例，打开它的“开发者工具”（Developer Tools）的方法有三种。
+目前，各大浏览器都自带开发工具。以Chrome浏览器为例，它有一个“开发者工具”（Developer Tools）用来调试网页。
+
+打开“开发者工具”的方法有三种。
 
 1. 按F12或者Control+Shift+i。
 
@@ -50,7 +52,7 @@ console对象主要有两个作用：
 
 console对象的接口有很多方法，可供开发者调用。
 
-### console.log方法
+### console.log()
 
 log方法用于在console窗口显示信息。
 
@@ -91,7 +93,25 @@ console.log(" %s + %s ", 1, 1, "= 2")
 
 {% endhighlight %}
 
-### 其他输出方法：debug，info，warn，error方法
+console对象的所有方法，都可以被覆盖。因此，可以按照自己的需要，定义console.log方法。
+
+```javascript
+
+["log", "warn", "error"].forEach(function(method) {
+    console[method] = console[method].bind(
+        console,
+        new Date().toISOString()
+    );
+});
+
+console.log("出错了！");
+// 2014-05-18T09:00.000Z 出错了！
+
+```
+
+上面代码表示，使用自定义的console.log方法，可以在显示结果添加当前时间。
+
+### console.debug()，console.info()，console.warn()，console.error()
 
 除了log，console对象还有四个输出信息的方法：
 
@@ -115,7 +135,7 @@ console.warn('Warning! Too few nodes (%d)', document.childNodes.length)
 
 {% endhighlight %}
 
-### console.table方法
+### console.table()
 
 对于某些复合类型的数据，console.table方法可以将其转为表格显示。
 
@@ -133,16 +153,11 @@ console.table(languages);
 
 上面代码的language，转为表格显示如下。
 
-<table class="responsive">
-<thead>
-<tr><td>(index)</td><td>name</td><td>fileExtension</td></tr>
-</thead>
-<tbody>
-<tr><td>0</td><td>"JavaScript"</td><td>".js"</td></tr>
-<tr><td>1</td><td>"TypeScript"</td><td>".ts"</td></tr>
-<tr><td>2</td><td>"CoffeeScript"</td><td>".coffee"</td></tr>
-</tbody>
-</table>
+(index)|name|fileExtension
+-------|----|-------------
+0|"JavaScript"|".js"
+1|"TypeScript"|".ts"
+2|"CoffeeScript"|".coffee"
 
 复合型数据转为表格显示的条件是，必须拥有主键。对于上面的数组来说，主键就是数字键。对于对象来说，主键就是它的最外层键。
 
@@ -159,17 +174,12 @@ console.table(languages);
 
 上面代码的language，转为表格显示如下。
 
-<table class="responsive">
-<thead>
-<tr><td>(index)</td><td>name</td><td>paradigm</td></tr>
-</thead>
-<tbody>
-<tr><td>csharp</td><td>"C#"</td><td>"object-oriented"</td></tr>
-<tr><td>fsharp</td><td>"F#"</td><td>"functional"</td></tr>
-</tbody>
-</table>
+(index)|name|paradigm
+-------|----|--------
+csharp|"C#"|"object-oriented"
+fsharp|"F#"|"functional"
 
-### console.assert方法
+### console.assert()
 
 assert方法用来验证某个条件是否为真。如果为假，则显示一条事先指定的错误信息。它的格式如下。
 
@@ -196,7 +206,7 @@ console.assert(list.childNodes.length < 500, "节点个数大于等于500")
 
 {% endhighlight %}
 
-### time和timeEnd方法
+### console.time()，console.timeEnd()
 
 这两个方法用于计时，可以算出一个操作所花费的准确时间。
 
@@ -217,17 +227,17 @@ console.timeEnd("Array initialize");
 
 time方法表示计时开始，timeEnd方法表示计时结束。它们的参数是计时器的名称。调用timeEnd方法之后，console窗口会显示“计时器名称: 所耗费的时间”。
 
-### 分组方法：group和groupend
+### console.group()，console.groupend()
 
 这两个方法用于将显示的信息分组。它只在输出大量信息时有用，分在一组的信息，可以用鼠标折叠/展开。
 
 ### 其他方法
 
-- **console.dir**：输出对象的信息，用于显示一个对象的所有属性。
+- **console.dir()**：输出对象的信息，用于显示一个对象的所有属性。
 
-- **console.clear**：对console窗口进行清屏，光标回到第一行。
+- **console.clear()**：对console窗口进行清屏，光标回到第一行。
 
-- **console.trace**：当前执行的代码在堆栈中的调用路径。
+- **console.trace()**：当前执行的代码在堆栈中的调用路径。
 
 ## 命令行API
 

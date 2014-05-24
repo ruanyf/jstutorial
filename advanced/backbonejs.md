@@ -40,33 +40,23 @@ Controller表示控制层，用来对原始数据（Model）进行加工，传�
 
 {% endhighlight %}
 
-## Backbone.View
+## Backbone.View()
 
 ### 基本用法
 
-Backbone.View用于定义视图类。
+Backbone.View方法用于定义视图类。
 
 {% highlight javascript %}
 
 var AppView = Backbone.View.extend({
   render: function(){
-    $('main').append('<h1>Browserify is a great tool.</h1>');
+    $('main').append('<h1>一级标题</h1>');
   }
 });
 
 {% endhighlight %}
 
 上面代码通过Backbone.View的extend方法，定义了一个视图类AppView。该类内部有一个render方法，用于将视图放置在网页上。
-
-render方法的其他常用写法。
-
-{% highlight javascript %}
-
-render: function () {
-        this.$el.html(template('template_string'));
-}
-
-{% endhighlight %}
 
 使用的时候，需要先新建视图类的实例，然后通过实例，调用render方法，从而让视图在网页上显示。
 
@@ -79,13 +69,82 @@ appView.render();
 
 上面代码新建视图类AppView的实例appView，然后调用appView.render，网页上就会显示指定的内容。
 
+### initialize方法
+
+视图还可以定义initialize方法，生成实例的时候，会自动调用该方法对实例初始化。
+
+```javascript
+
+var AppView = Backbone.View.extend({
+  initialize: function(){
+    this.render();
+  },
+  render: function(){
+    $('main').append('<h1>一级标题</h1>');
+  }
+});
+
+var appView = new AppView();
+
+```
+
+上面代码定义了initialize方法之后，就省去了生成实例后，手动调用appView.render()的步骤。
+
+### el属性
+
+除了直接在render方法中，指定“视图”所绑定的网页元素，还可以用视图的el属性指定网页元素。
+
+{% highlight javascript %}
+
+var AppView = Backbone.View.extend({
+  el: $('main'),
+  render: function(){
+    this.$el.append('<h1>一级标题</h1>');
+  }
+});
+
+{% endhighlight %}
+
+上面的代码与render方法直接绑定网页元素，效果完全一样。上面代码中，除了el属性，还是$el属性，前者代表指定的DOM元素，后者则表示该DOM元素对应的jQuery对象。
+
+### template方法
+
+视图的template属性用来指定网页模板。
+
+```javascript
+
+var AppView = Backbone.View.extend({
+      template: _.template("<h3>Hello <%= who %><h3>"),
+});
+
+```
+
+上面代码中，underscore函数库的template函数，接受一个模板字符串作为参数，返回对应的模板函数。有了这个模板函数，只要提供具体的值，就能生成网页代码。
+
+```javascript
+
+var AppView = Backbone.View.extend({
+      el: $('#container'),
+      template: _.template("<h3>Hello <%= who %><h3>"),
+      initialize: function(){
+        this.render();
+      },
+      render: function(){
+        this.$el.html(this.template({who: 'world!'}));
+         }
+});
+
+```
+
+上面代码的render就调用了template方法，从而生成具体的网页代码。
+
 ### 子视图（subview）
 
 在父视图中可以调用子视图。下面就是一种写法。
 
 {% highlight javascript %}
 
-render : function () {
+render : function (){
 
     this.$el.html(this.template());
 
@@ -163,3 +222,17 @@ $(document).ready(function () {
 
 {% endhighlight %}
 
+## Backbone.events
+
+```javascript
+
+var obj = {};
+_.extend(obj, Backbone.Events);
+
+obj.on("show-message", function(msg) {
+	$('#display').text(msg);
+});
+
+obj.trigger("show-message", "Hello World");
+
+```
