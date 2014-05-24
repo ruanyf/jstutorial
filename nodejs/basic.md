@@ -1143,30 +1143,6 @@ process.on('exit', function () {
 
 {% endhighlight %}
 
-## child_process模块
-
-child_process模块用于新建子进程。子进程的运行结果储存在系统缓存之中（最大200KB），等到子进程运行结束以后，主进程再用回调函数读取子进程的运行结果。
-
-{% highlight javascript %}
-
-var childProcess = require('child_process');
-
-var ls = childProcess.exec('ls -l', function (error, stdout, stderr) {
-   if (error) {
-     console.log(error.stack);
-     console.log('Error code: '+error.code);
-   }
-   console.log('Child Process STDOUT: '+stdout);
-});
-
-ls.on('exit', function (code) {
-   console.log('Child process exited with exit code '+code);
-});
-
-{% endhighlight %}
-
-上面代码的exec方法会新建一个子进程，然后缓存它的运行结果，运行结束后调用回调函数。由于上面运行的是ls命令，它会自然结束，所以不会触发exit事件，因此上面代码最后监听exit事件的部分，其实是多余的。
-
 ## cluster模块
 
 Node.js默认单进程运行，对于多核CPU的计算机来说，这样做效率很低，因为只有一个核在运行，其他核都在闲置。cluster模块就是为了解决这个问题而提出的。
