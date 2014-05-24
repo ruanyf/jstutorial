@@ -131,12 +131,37 @@ var AppView = Backbone.View.extend({
       },
       render: function(){
         this.$el.html(this.template({who: 'world!'}));
-         }
+      }
 });
 
 ```
 
 上面代码的render就调用了template方法，从而生成具体的网页代码。
+
+实际应用中，一般将模板放在script标签中，为了防止浏览器按照JavaScript代码解析，type属性设为text/template。
+
+{% highlight html %}
+
+<script type="text/template" data-name="templateName">
+    <!-- template contents goes here -->
+</script>
+
+{% endhighlight %}
+
+可以使用下面的代码编译模板。
+
+{% highlight javascript %}
+
+window.templates = {};
+
+var $sources = $('script[type="text/template"]');
+
+$sources.each(function(index, el) {
+    var $el = $(el);
+    templates[$el.data('name')] = _.template($el.html());
+});
+
+{% endhighlight %}
 
 ### 子视图（subview）
 
@@ -152,31 +177,6 @@ render : function (){
 
     this.child.appendTo($.('.container-placeholder').render();
 }
-
-{% endhighlight %}
-
-## 模板
-
-模板用来按照变量生成网页内容。一般将模板放在script标签中，为了防止浏览器按照JavaScript代码解析，type属性设为text/template。
-
-{% highlight html %}
-
-<script type="text/template" data-name="templateName">
-    <!-- template contents goes here -->
-</script>
-
-{% endhighlight %}
-
-可以使用下面的代码编译模板。
-
-{% highlight javascript %}
-
-window.templates = {};
-  var $sources = $('script[type="text/template"]');
-  $sources.each(function(index, el) {
-    var $el = $(el);
-    templates[$el.data('name')] = _.template($el.html());
-  });
 
 {% endhighlight %}
 
@@ -210,7 +210,7 @@ phonesIndex: function () {
 
 {% endhighlight %}
 
-## 启动代码
+设置了router以后，就可以启动应用程序。
 
 {% highlight javascript %}
 
@@ -221,6 +221,190 @@ $(document).ready(function () {
 });
 
 {% endhighlight %}
+
+## Backbone.Model
+
+Model代表单个的对象实体。
+
+```javascript
+
+var User = Backbone.Model.extend({
+        defaults: {
+            name: '',
+            email: ''
+        }
+});
+
+var user = new User();
+
+```
+
+上面代码使用extend方法，生成了一个User类，它代表model的模板。然后，使用new命令，生成一个Model的实例。defaults属性用来设置默认属性，上面代码表示user对象默认有name和email两个属性，它们的值都等于空字符串。
+
+生成实例时，可以提供各个属性的具体值。
+
+```javascript
+
+var user = new User ({
+    id: 1,
+    name: 'name',
+    email: 'name@email.com'
+});
+
+```
+
+上面代码在生成实例时，提供了各个属性的具体值。
+
+### get方法
+
+get方法用于返回Model实例的某个属性的值。
+
+```javascript
+
+var user = new User({ name: "name", age: 24});
+var age = user.get("age"); // 24
+var name = user.get("name"); // "name"
+
+```
+
+### set方法
+
+set方法用于设置Model实例的某个属性的值。
+
+```javascript
+
+var User = Backbone.Model.extend({
+    buy: function(newCarsName){
+        this.set({car: newCarsName });
+    }
+});
+
+var user = new User({name: 'BMW',model:'i8',type:'car'});
+user.buy('Porsche');
+var car = user.get("car"); // ‘Porsche’
+
+```
+
+### on方法
+
+on方法用于监听对象的变化。
+
+```javascript
+
+var user = new User({name: 'BMW',model:'i8'});
+
+user.on("change:name", function(model){
+    var name = model.get("name"); // "Porsche"
+    console.log("Changed my car’s name to " + name);
+});
+
+user.set({name: 'Porsche'}); 
+// Changed my car’s name to Porsche
+
+```
+
+上面代码中的on方法用于监听事件，“change:name”表示name属性发生变化。
+
+### urlroot属性
+
+该属性用于指定服务器端对model进行操作的路径。
+
+```javascript
+
+var User = Backbone.Model.extend({
+    urlRoot: '/user'
+});
+
+```
+
+上面代码指定，服务器对应该Model的路径为/user。
+
+### fetch事件
+
+fetch事件用于从服务器取出Model。
+
+```javascript
+
+var user = new User ({id: 1});
+user.fetch({
+    success: function (user){
+        console.log(user.toJSON());
+    }
+})
+
+```
+
+上面代码中，user实例含有id属性（值为1），fetch方法使用HTTP动词GET，向网址“/user/1”发出请求，从服务器取出该实例。
+
+### save方法
+
+save方法用于通知服务器新建或更新Model。
+
+如果一个Model实例不含有id属性，则save方法将使用POST方法新建该实例。
+
+```javascript
+
+var User = Backbone.Model.extend({
+    urlRoot: '/user'
+});
+
+var user = new User ();
+var userDetails = {
+    name: 'name',
+    email: 'name@email.com'
+};
+
+user.save(userDetails, {
+    success: function (user) {
+        console.log(user.toJSON());
+    }
+})
+
+```
+
+上面代码先在类中指定Model对应的网址是/user，然后新建一个实例，最后调用save方法。它有两个参数，第一个是实例对象的具体属性，第二个参数是一个回调函数对象，设定success事件（保存成功）的回调函数。具体来说，save方法会向/user发出一个POST请求，并将{name: 'name', email: 'name@email.com'}作为数据提供。
+
+如果一个Model实例含有id属性，则save方法将使用PUT方法更新该实例。
+
+```javascript
+
+var user = new User ({
+    id: 1,
+    name: '张三',
+    email: 'name@email.com'
+});
+
+user.save({name: '李四'}, {
+    success: function (model) {
+        console.log(user.toJSON());
+    }
+}); 
+
+```
+
+上面代码中，对象实例含有id属性（值为1），save将使用PUT方法向网址“/user/1”发出请求，从而更新该实例。
+
+### destroy方法
+
+destroy方法用于在服务器上删除该实例。
+
+```javascript
+
+var user = new User ({
+    id: 1,
+    name: 'name',
+    email: 'name@email.com'
+});
+
+user.destroy({
+    success: function () {
+       console.log('Destroyed');
+    }
+});
+
+```
+
+上面代码的destroy方法，将使用HTTP动词DELETE，向网址“/user/1”发出请求，删除对应的Model实例。
 
 ## Backbone.events
 
