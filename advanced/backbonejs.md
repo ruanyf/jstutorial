@@ -262,14 +262,19 @@ Router是Backbone提供的路由对象，用来将用户请求的网址与后端
 {% highlight javascript %}
 
 Router = Backbone.Router.extend({
- 
     routes: {
     }
 });
 
 {% endhighlight %}
 
-设置根路径。
+## routes属性
+
+Backbone.Router对象中，最重要的就是routes属性。它用来设置路径的处理方法。
+
+routes属性是一个对象，它的每个成员就代表一个路径处理规则，键名为路径规则，键值为处理方法。
+
+如果键名为空字符串，就代表根路径。
 
 {% highlight javascript %}
 
@@ -283,7 +288,60 @@ phonesIndex: function () {
 
 {% endhighlight %}
 
-设置了router以后，就可以启动应用程序。
+星号代表任意路径，可以设置路径参数，捕获具体的路径值。
+
+```javascript
+
+var AppRouter = Backbone.Router.extend({
+    routes: {
+        "*actions": "defaultRoute" 
+    }
+});
+
+var app_router = new AppRouter;
+
+app_router.on('route:defaultRoute', function(actions) {
+    console.log(actions);
+})
+
+```
+
+上面代码中，根路径后面的参数，都会被捕获，传入回调函数。
+
+路径规则的写法。
+
+```javascript
+
+var myrouter = Backbone.Router.extend({
+  routes: {
+    "help":                 "help",    
+    "search/:query":        "search" 
+  },
+
+  help: function() {
+    ...
+  },
+
+  search: function(query) {
+    ...
+  }
+});
+
+routes: {
+  "help/:page":         "help",
+  "download/*path":     "download",
+  "folder/:name":       "openFolder",
+  "folder/:name-:mode": "openFolder"
+}
+router.on("route:help", function(page) {
+  ...
+});
+
+```
+
+## Backbone.history
+
+设置了router以后，就可以启动应用程序。Backbone.history对象用来监控url的变化。
 
 {% highlight javascript %}
 
@@ -294,6 +352,14 @@ $(document).ready(function () {
 });
 
 {% endhighlight %}
+
+打开pushState方法。如果应用程序不在根目录，就需要指定根目录。
+
+```javascript
+
+Backbone.history.start({pushState: true, root: "/public/search/"})
+
+```
 
 ## Backbone.Model
 
@@ -327,6 +393,18 @@ var user = new User ({
 ```
 
 上面代码在生成实例时，提供了各个属性的具体值。
+
+### idAttribute属性
+
+Model实例必须有一个属性，作为区分其他实例的主键。这个属性的名称，由idAttribute属性设定，一般是设为id。
+
+```javascript
+
+var Music = Backbone.Model.extend({ 
+    idAttribute: 'id'
+});
+
+```
 
 ### get方法
 
@@ -479,6 +557,69 @@ user.destroy({
 
 上面代码的destroy方法，将使用HTTP动词DELETE，向网址“/user/1”发出请求，删除对应的Model实例。
 
+## Backbone.Collection
+
+Collection是同一类Model的集合，比如Model是动物，Collection就是动物园；Model是单个的人，Collection就是一家公司。
+
+```javascript
+
+var Song = Backbone.Model.extend({});
+
+var Album = Backbone.Collection.extend({
+    model: Song
+});
+
+```
+
+上面代码中，Song是Model，Album是Collection，而且Album有一个model属性等于Song，因此表明Album是Song的集合。
+
+### add方法，remove方法
+
+Model的实例可以直接放入Collection的实例，也可以用add方法添加。
+
+```javascript
+
+var song1 = new Song({ id: 1 ,name: "歌名1", artist: "张三" });
+var song2 = new Music ({id: 2,name: "歌名2", artist: "李四" });
+var myAlbum = new Album([song1, song2]);
+
+var song3 = new Music({ id: 3, name: "歌名3",artist:"赵五" });
+myAlbum.add(song3);
+
+```
+
+remove方法用于从Collection实例中移除一个Model实例。
+
+```javascript
+
+myAlbum.remove(1);
+
+```
+
+上面代码表明，remove方法的参数是model实例的id属性。
+
+### get方法，set方法
+
+get方法用于从Collection中获取指定id的Model实例。
+
+```javascript
+
+myAlbum.get(2))
+
+```
+
+### fetch方法
+
+fetch方法用于从服务器取出Collection数据。
+
+```javascript
+
+var songs = new Backbone.Collection;
+songs.url = '/songs';
+songs.fetch();
+
+```
+
 ## Backbone.events
 
 ```javascript
@@ -493,3 +634,7 @@ obj.on("show-message", function(msg) {
 obj.trigger("show-message", "Hello World");
 
 ```
+
+## 参考链接
+
+* Biswadeep Ghosh, [Introduction to Backbone.js](http://www.phloxblog.in/introduction-backbone-js/) 
