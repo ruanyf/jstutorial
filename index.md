@@ -72,6 +72,7 @@ modifiedOn: 2014-05-18
 
 - [Canvas](htmlapi/canvas.html)
 - [SVG图像](htmlapi/svg.html)
+- [表单](htmlapi/form.html)
 - [文件与二进制数据的操作](htmlapi/file.html)
 - [Web Worker](htmlapi/webworker.html)
 - [SSE：服务器发送事件](htmlapi/eventsource.html)（基本完成）

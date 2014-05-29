@@ -70,6 +70,8 @@ element.removeEventListener(event, callback, use-capture);
 
 ## 事件的传播
 
+### 传播的三个阶段
+
 当一个事件发生以后，它会在不同的DOM对象之间传播（propagation）。这种传播分成三个阶段：
 
 - **第一阶段**：从文档的根元素（html元素）传导到目标元素，称为“捕获阶段”（capture phase）。
@@ -131,18 +133,18 @@ function callback(event) {
 
 事件传播的最上层对象是window，接着依次是document，html（document.documentElement）和body（document.dody）。也就是说，如果body元素中有一个div元素，点击该元素。事件的传播顺序，在捕获阶段依次为window、document、html、body、div，在冒泡阶段依次为div、body、html、document、window。
 
-由于事件会在冒泡阶段向上传播到父元素，因此可以把子元素的回调函数定义在父元素上，由父元素的回调函数统一处理多个子元素的事件。这种方法叫做事件的代表（delegation）。
+### 事件的代理
+
+由于事件会在冒泡阶段向上传播到父元素，因此可以把子元素的回调函数定义在父元素上，由父元素的回调函数统一处理多个子元素的事件。这种方法叫做事件的代理（delegation）。
 
 {% highlight javascript %}
 
 var ul = document.querySelector('ul');
 
 ul.addEventListener('click', function(event) {
-
   if (event.target.tagName.toLowerCase() === 'li') {
     // some code
   }
-
 });
 
 {% endhighlight %}
