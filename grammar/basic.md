@@ -223,7 +223,7 @@ var 临时变量 = 1;
 
 JavaScript使用大括号，将相关的语句组合在一起，称为“区块”（block）。
 
-与大多数编程语言不一样，JavaScript的区块不构成单独的作用域（scope）。也就是说，区块中的变量就是全局变量。
+与大多数编程语言不一样，JavaScript的区块不构成单独的作用域（scope）。也就是说，区块中的变量就是自身所在作用域里的变量。
 
 {% highlight javascript %}
 
