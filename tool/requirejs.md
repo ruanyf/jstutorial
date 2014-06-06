@@ -303,9 +303,9 @@ require.config({
 
 config方法的参数对象有以下主要成员：
 
-**（1）path**
+**（1）paths**
 
-path参数指定各个模块的位置。这个位置可以是同一个服务器上的相对位置，也可以是外部网址。可以为每个模块定义多个位置，如果第一个位置加载失败，则加载第二个位置，上面的示例就表示如果CDN加载失败，则加载服务器上的备用脚本。需要注意的是，指定本地文件路径时，可以省略文件最后的js后缀名。
+paths参数指定各个模块的位置。这个位置可以是同一个服务器上的相对位置，也可以是外部网址。可以为每个模块定义多个位置，如果第一个位置加载失败，则加载第二个位置，上面的示例就表示如果CDN加载失败，则加载服务器上的备用脚本。需要注意的是，指定本地文件路径时，可以省略文件最后的js后缀名。
 
 {% highlight javascript %}
 
@@ -316,6 +316,11 @@ require(["mylibs/moduleX"], function(jquery, moduleX) {
 {% endhighlight %}
 
 上面代码使用require方法的时候，只指定了moduleX模块的位置，但是回调函数却有两个参数，其中一个是jquery。这是因为jquery模块的位置已经在config方法的path参数里面指定了。
+
+这是个错误的说法，paths只是定义一个路径的映射关系，和具体某模块的依赖没有关系。
+这里例子中即使jquery已经在paths中定义过，但是，此模块中require中如果没有依赖'jquery'，factory中就不会有jquery。就这个例子来看，这里factory执行的时候，jquery实参为'mylibs/moduleX'这个模块定义的exports，而modulex则是undefined。
+
+
 
 **（2）baseUrl**
 
