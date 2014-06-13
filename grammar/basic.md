@@ -473,7 +473,7 @@ for(initialize; test; increment){
 
 {% highlight javascript %}
 
-for (var i=0; i < arr.length; i++) {
+for (var i=0, len=arr.length; i < len; i++) {
 	console.log(arr[i]);
 }
 
