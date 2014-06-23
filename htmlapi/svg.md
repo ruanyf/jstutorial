@@ -60,30 +60,74 @@ $("#stage").load('interactive.svg',function(response){
 
 下面是一个简单的SVG文件。
 
+```html
+
+<svg>
+  <line x1="0" y1="0" x2="200" y2="0" style="stroke:rgb(0,0,0);stroke-width:1"/></line>
+</svg>
+
+```
+
+上面代码画出一根线条，x1和y1是起点的横坐标和纵坐标，x2是终点的横坐标和纵坐标。
+
+
+```html
+
+<svg>   
+	<circle cx="60" cy="60" r="50" stroke="black" stroke-width="5" fill="silver"/>
+</svg>
+
+```
+
+上面代码画出一个圆。cx和cy是圆心的坐标，r是圆的半径。
+
 {% highlight html %}
 
-<svg  xmlns="http://www.w3.org/2000/svg"
-      xmlns:xlink="http://www.w3.org/1999/xlink">
-
-      <rect x="0" y="0" height="100" width="200" style="stroke: #70d5dd; fill: #dd524b" />
-
+<svg>
+    <rect x="0" y="0" height="100" width="200" style="stroke: #70d5dd; fill: #dd524b" />
 </svg>
 
 {% endhighlight %}
 
 上面代码画出一个长100像素、宽200像素的矩形。
 
-可以看到SVG文件是一个XML文件，首先需要声明名称空间的URI。在SVG文件中，有各种元素，上面代码中是rect元素，表示画出一个矩形。该元素有下列属性：
+```html
 
-- x：水平坐标。
-- y：垂直坐标。
-- height：高度
-- width：宽度。
-- style：定义元素的样式。
-- style/stroke：边框颜色。
-- style/fill：填充色。
+<svg>
+ <ellipse cx="60" cy="60" ry="40" rx="20" stroke="black" stroke-width="5" fill="silver"/></ellipse>
+</svg>
 
-其他元素还包括path（画出路径）、animate（动画）等。
+```
+
+上面代码画出一个椭圆。
+
+```html
+
+<svg>
+	<polygon fill="green" stroke="orange" stroke-width="10" points="350, 75  379,161 469,161 397,215 423,301 350,250 277,301 303,215 231,161 321,161"/><polygon>
+</svg>
+
+```
+
+上面代码画出一个多边形。
+
+```html
+
+<text x="0" y="34" style="font-family: Helvetica,Arial,sans-serif;font-weight:bold;font-size:34; fill :#000; ">webdesigntuts+</text>
+
+```
+
+上面代码用来生成文字。
+
+```html
+
+<svg>  	
+	<path id="path1" d="M160.143,196c0,0,62.777-28.033,90-17.143c71.428,28.572,73.952-25.987,84.286-21.428" style="fill:none;stroke:2;"></path>  
+</svg>
+
+```
+
+上面代码绘制一条路径。
 
 ## svg操作
 

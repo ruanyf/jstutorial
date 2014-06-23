@@ -177,3 +177,4 @@ app.get('/', function(req, res){
 - Jack Franklin, [Dependency Management with Browserify](http://javascriptplayground.com/blog/2013/09/browserify/)
 - Seth Vincent, [Using Browserify with Express](http://learnjs.io/blog/2013/12/22/express-and-browserify/)
 - Patrick Mulder, [Browserify - Unix in the browser](http://thinkingonthinking.com/unix-in-the-browser/)
+- Patrick Catanzariti, [Getting Started with Browserify](http://www.sitepoint.com/getting-started-browserify/)

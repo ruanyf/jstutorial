@@ -88,17 +88,17 @@ observer.disconnect();
 
 {% endhighlight %}
 
-takeRecord 方法用来清除变动记录，即不再处理未处理的变动。
+takeRecords方法用来清除变动记录，即不再处理未处理的变动。
 
 {% highlight javascript %}
 
-observer.takeRecord();
+observer.takeRecords();
 
 {% endhighlight %}
 
 ### MutationRecord对象
 
-DOM对象每次发生变化，就会生成一条变动记录。这个变动记录对应一个MutationRecord对象，该对象包含了与变动相关的所有信息。Mutation Observer进行处理的一个个变动对象所组成的数组。
+DOM对象每次发生变化，就会生成一条变动记录。这个变动记录对应一个MutationRecord对象，该对象包含了与变动相关的所有信息。Mutation Observer处理的是一个个MutationRecord对象所组成的数组。
 
 MutationRecord对象包含了DOM的相关信息，有如下属性：
 
@@ -171,3 +171,4 @@ mo.observe(element, options);
 - Tiffany Brown, [Getting to know mutation observers](http://dev.opera.com/articles/view/mutation-observers-tutorial/)
 - Michal Budzynski, [JavaScript: The less known parts. DOM Mutations](http://michalbe.blogspot.com/2013/04/javascript-less-known-parts-dom.html)
 - Jeff Griffiths, [DOM MutationObserver – reacting to DOM changes without killing browser performance](https://hacks.mozilla.org/2012/05/dom-mutationobserver-reacting-to-dom-changes-without-killing-browser-performance/)
+- Addy Osmani, [Detect, Undo And Redo DOM Changes With Mutation Observers](http://addyosmani.com/blog/mutation-observers/)
