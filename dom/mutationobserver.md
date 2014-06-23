@@ -78,7 +78,7 @@ Mutation Observer所观察的DOM变动（即上面代码的option对象），包
 - **characterDataOldValue**：值为true或者false。如果为true，则表示需要记录变动的数据值。
 - **attributeFilter**：值为一个数组，表示需要观察的特定属性（比如['class','src']）。
 
-### disconnect方法和takeRecord方法
+### disconnect方法和takeRecords方法
 
 disconnect方法用来停止观察。发生相应变动时，不再调用回调函数。
 

@@ -79,6 +79,95 @@ window.addEventListener("message", receiveMessage, false);
 
 所有浏览器都支持这个方法，但是IE 8和IE 9只允许postMessage方法与iFrame窗口通信，不能与新窗口通信。IE 10允许与新窗口通信，但是只能使用IE特有的[MessageChannel对象](http://msdn.microsoft.com/en-us/library/windows/apps/hh441303.aspx)。
 
+## iframe与主页面的通信
+
+iframe中的网页，如果与主页面来自同一个域，通过设置document.domain属性，可以使用postMessage方法实现双向通信。
+
+下面是一个LocalStorage的例子。LocalStorage只能用同一个域名的网页读写，但是如果iframe是主页面的子域名，主页面就可以通过postMessage方法，读写iframe网页设置的LocalStorage数据。
+
+iframe页面的代码如下。
+
+```javascript
+
+document.domain = "domain.com";
+window.onmessage = function(e) {
+  if (e.origin !== "http://domain.com") {
+    return;
+  }
+  var payload = JSON.parse(e.data);
+  localStorage.setItem(payload.key, JSON.stringify(payload.data));
+};
+
+```
+
+主页面的代码如下。
+
+```javascript
+
+window.onload = function() {
+    var win = document.getElementsByTagName('iframe')[0].contentWindow;
+    var obj = {
+       name: "Jack"
+    };
+    win.postMessage(JSON.stringify({key: 'storage', data: obj}), "*");
+};
+
+```
+
+上面的代码已经可以实现，主页面向iframe传入数据。如果还想读取或删除数据，可以进一步加强代码。
+
+加强版的iframe代码如下。
+
+```javascript
+
+document.domain = "domain.com";
+window.onmessage = function(e) {
+    if (e.origin !== "http://domain.com") {
+        return;
+    }
+    var payload = JSON.parse(e.data);
+    switch(payload.method) {
+        case 'set':
+            localStorage.setItem(payload.key, JSON.stringify(payload.data));
+            break;
+        case 'get':
+            var parent = window.parent;
+            var data = localStorage.getItem(payload.key);
+            parent.postMessage(data, "*");
+            break;
+        case 'remove':
+            localStorage.removeItem(payload.key);
+            break;
+    }
+};
+
+```
+
+加强版的主页面代码如下。
+
+```javascript
+
+window.onload = function() {
+    var win = document.getElementsByTagName('iframe')[0].contentWindow;
+    var obj = {
+       name: "Jack"
+    };
+    // 存入对象
+    win.postMessage(JSON.stringify({key: 'storage', method: "set", data: obj}), "*");
+    // 读取以前存取的对象
+    win.postMessage(JSON.stringify({key: 'storage', method: "get"}), "*");
+    window.onmessage = function(e) {
+        if (e.origin != "http://sub.domain.com") {
+            return;
+        }
+        // 下面会输出"Jack"
+        console.log(JSON.parse(e.data).name);
+    };
+};
+
+```
+
 ## 参考链接
 
 - Mozilla Developer Network, [Window.postMessage](https://developer.mozilla.org/en-US/docs/Web/API/window.postMessage)
+- Jakub Jankiewicz, [Cross-Domain LocalStorage](http://jcubic.wordpress.com/2014/06/20/cross-domain-localstorage/)
