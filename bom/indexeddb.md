@@ -231,7 +231,10 @@ ob.onsuccess = function(e) {
 
 {% highlight javascript %}
 
-db.transaction(["test"], "readonly").objectStore("test").get(X).onsuccess = function(e) {}
+db.transaction(["test"], "readonly")
+  .objectStore("test")
+  .get(X)
+  .onsuccess = function(e){}
 
 {% endhighlight %}
 
@@ -320,9 +323,11 @@ store.createIndex("email","email", {unique:true});
 
 createIndex方法接受三个参数，第一个是索引名称，第二个是建立索引的属性名，第三个是参数对象，用来设置索引特性。unique表示索引所在的属性是否有唯一值，上面代码表示name属性不是唯一值，email属性是唯一值。
 
-有了索引以后，就可以针对索引所在的属性读取数据。
+### index方法
 
-{% highlight javascript %}
+有了索引以后，就可以针对索引所在的属性读取数据。index方法用于从对象仓库返回指定的索引。
+
+```javascript
 
 var t = db.transaction(["people"],"readonly");
 var store = t.objectStore("people");
@@ -330,7 +335,7 @@ var index = store.index("name");
 
 var request = index.get(name);
 
-{% endhighlight %}
+```
 
 上面代码打开对象仓库以后，先用index方法指定索引在name属性上面，然后用get方法读取某个name属性所在的数据。如果没有指定索引的那一行代码，get方法只能按照键名读取数据，而不能按照name属性读取数据。需要注意的是，这时get方法有可能取回多个数据对象，因为name属性没有唯一值。
 
@@ -409,4 +414,5 @@ index.openCursor(range).onsuccess = function(e) {
 
 - Raymond Camden, [Working With IndexedDB – Part 1](http://net.tutsplus.com/tutorials/javascript-ajax/working-with-indexeddb/)
 - Raymond Camden, [Working With IndexedDB – Part 2](http://net.tutsplus.com/tutorials/javascript-ajax/working-with-indexeddb-part-2/)
-- Tiffany Brown, [An Introduction to IndexedDB](http://dev.opera.com/articles/introduction-to-indexeddb/)  
+- Tiffany Brown, [An Introduction to IndexedDB](http://dev.opera.com/articles/introduction-to-indexeddb/)
+- David Fahlander, [Breaking the Borders of IndexedDB](https://hacks.mozilla.org/2014/06/breaking-the-borders-of-indexeddb/)

@@ -47,8 +47,8 @@ beginPath方法表示开始绘制路径，moveTo(x, y)方法设置线段的起�
 {% highlight javascript %}
 
 ctx.beginPath(); // 开始路径绘制
-ctx.moveTo(20, 20); // 设置路径起点
-ctx.lineTo(200, 20); // 绘制一条到200, 20的直线
+ctx.moveTo(20, 20); // 设置路径起点，坐标为(20,20)
+ctx.lineTo(200, 20); // 绘制一条到(200,20)的直线
 ctx.lineWidth = 1.0; // 设置线宽
 ctx.strokeStyle = "#CC0000"; // 设置线的颜色
 ctx.stroke(); // 进行线的着色，这时整条线才变得可见
@@ -280,6 +280,81 @@ ctx.fillRect(180,10,150,100);
 
 上面代码先用save方法，保存了当前设置，然后绘制了一个有阴影的矩形。接着，使用restore方法，恢复了保存前的设置，绘制了一个没有阴影的矩形。
 
+## 动画
+
+利用JavaScript，可以在canvas元素上很容易地产生动画效果。
+
+```javascript
+
+var posX = 20,
+    posY = 100;
+
+setInterval(function() {
+	context.fillStyle = "black";
+    context.fillRect(0,0,canvas.width, canvas.height);
+
+	posX += 1;
+	posY += 0.25;
+
+	context.beginPath();
+	context.fillStyle = "white";
+
+	context.arc(posX, posY, 10, 0, Math.PI*2, true); 
+	context.closePath();
+	context.fill();
+}, 30);
+
+```
+
+上面代码会产生一个小圆点，每隔30毫秒就向右下方移动的效果。setInterval函数的一开始，之所以要将画布重新渲染黑色底色，是为了抹去上一步的小圆点。
+
+通过设置圆心坐标，可以产生各种运动轨迹。
+
+先上升后下降。
+
+```javascript
+
+var vx = 10,
+    vy = -10,
+    gravity = 1;
+
+setInterval(function() {
+    posX += vx;
+    posY += vy;
+    vy += gravity;
+	// ...
+});
+
+```
+
+上面代码中，x坐标始终增大，表示持续向右运动。y坐标先变小，然后在重力作用下，不断增大，表示先上升后下降。
+
+小球不断反弹后，逐步趋于静止。
+
+```javascript
+
+var vx = 10,
+    vy = -10,
+    gravity = 1;
+
+setInterval(function() {
+    posX += vx;
+    posY += vy;
+
+	if (posY > canvas.height * 0.75) {
+          vy *= -0.6;
+          vx *= 0.75;
+          posY = canvas.height * 0.75;
+    }
+	
+    vy += gravity;
+	// ...
+});
+
+```
+
+上面代码表示，一旦小球的y坐标处于屏幕下方75%的位置，向x轴移动的速度变为原来的75%，而向y轴反弹上一次反弹高度的40%。
+
 ## 像素处理
 
 通过getImageData方法和putImageData方法，可以处理每个像素，进而操作图像内容。
@@ -424,3 +499,4 @@ invert = function (pixels) {
 - Matt West, [Getting Started With The Canvas API](http://blog.teamtreehouse.com/getting-started-with-the-canvas-api)
 - John Robinson, [How You Can Do Cool Image Effects Using HTML5 Canvas](http://www.storminthecastle.com/2013/04/06/how-you-can-do-cool-image-effects-using-html5-canvas/)
 - Ivaylo Gerchev, [HTML5 Canvas Tutorial: An Introduction](http://www.sitepoint.com/html5-canvas-tutorial-introduction/)
+- Donovan Hutchinson, [Particles in canvas](http://hop.ie/blog/particles/)

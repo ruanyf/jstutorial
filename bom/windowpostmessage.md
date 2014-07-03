@@ -59,7 +59,7 @@ popup.postMessage("Hello World!", "http://example.org");
 
 {% endhighlight %}
 
-上面代码的postMessage方法的第一个参数是实际发送的信息，第二个参数是指定发送对象的域名必须是http://example.org。如果对方窗口不是这个域名，信息不会发送出去。
+上面代码的postMessage方法的第一个参数是实际发送的信息，第二个参数是指定发送对象的域名必须是example.org。如果对方窗口不是这个域名，信息不会发送出去。
 
 最后，在popup窗口中部署下面的代码。
 
