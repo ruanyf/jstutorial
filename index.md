@@ -95,6 +95,7 @@ modifiedOn: 2014-05-18
 - [PhantomJS](tool/phantomjs.html)
 - [Bower：客户端库管理工具](tool/bower.html)
 - [Grunt：任务自动管理工具](tool/grunt.html)
+- [Gulp：任务自动管理工具](tool/gulp.html)
 - [Browserify：浏览器加载Node.js模块](tool/browserify.html)
 - [RequireJS和AMD规范](tool/requirejs.html)
 - [Source map](tool/sourcemap.html)
