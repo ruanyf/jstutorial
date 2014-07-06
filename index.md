@@ -62,8 +62,6 @@ modifiedOn: 2014-05-18
 - [同域限制与window.postMessage方法](bom/windowpostmessage.html)
 - [Web Storage：浏览器端数据储存机制](bom/webstorage.html)
 - [IndexedDB：浏览器端数据库](bom/indexeddb.html)
-- [WebSocket](bom/websocket.html)（基本完成）
-- [WebRTC](bom/webrtc.html)
 - [Web Notification API](bom/notification.html)
 - [performance对象：高精度时间戳](bom/performance.html)
 - [移动设备API](bom/mobile.html)
@@ -80,6 +78,8 @@ modifiedOn: 2014-05-18
 - [FullScreen](htmlapi/fullscreen.html)
 - [Web Speech](htmlapi/webspeech.html)
 - [requestAnimationFrame](htmlapi/requestanimationframe.html)
+- [WebSocket](htmlapi/websocket.html)（基本完成）
+- [WebRTC](htmlapi/webrtc.html)
 
 <h2 id="jquery">jQuery</h2>
 
