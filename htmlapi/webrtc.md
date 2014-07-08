@@ -8,7 +8,11 @@ modifiedOn: 2013-10-04
 
 ## 概述
 
-WebRTC是“网络实时通信”（Web Real Time Communication）的缩写。它主要让浏览器具备三个作用。
+WebRTC是“网络实时通信”（Web Real Time Communication）的缩写。它最初是为了解决浏览器上视频通话而提出的，即两个浏览器之间直接进行视频和音频的通信，不经过服务器。后来发展到除了音频和视频，还可以传输文字和其他数据。
+
+Google是WebRTC的主要支持者和开发者，它最初在Gmail上推出了视频聊天，后来在2011年推出了Hangouts，语序在浏览器中打电话。它推动了WebRTC标准的确立。
+
+WebRTC主要让浏览器具备三个作用。
 
 - 获取音频和视频
 - 进行音频和视频通信
@@ -24,7 +28,7 @@ WebRTC共分成三个API，分别对应上面三个作用。
 
 ### 概述
 
-navigator.getUserMedia方法主要用于，在浏览器中获取音频（通过麦克风）和视频（通过摄像头）。
+navigator.getUserMedia方法目前主要用于，在浏览器中获取音频（通过麦克风）和视频（通过摄像头），将来可以用于获取任意数据流，比如光盘和传感器。
 
 下面的代码用于检查浏览器是否支持getUserMedia方法。
 
@@ -77,7 +81,11 @@ navigator.getUserMedia(constraints, onSuccess, onError);
 
 ```
 
-如果网页使用了getUserMedia方法，浏览器就会询问用户，是否同意浏览器调用麦克风或摄像头。如果用户拒绝，就调用上面的回调函数onError，并传递一个Error对象作为参数。Error对象的code属性有如下取值，说明错误的类型。
+如果网页使用了getUserMedia方法，浏览器就会询问用户，是否同意浏览器调用麦克风或摄像头。如果用户同意，就调用回调函数onSuccess；如果用户拒绝，就调用回调函数onError。
+
+onSuccess回调函数的参数是一个数据流对象stream。stream.getAudioTracks方法和stream.getVideoTracks方法，分别返回一个数组，其成员是数据流包含的音轨和视轨（track）。使用的声音源和摄影头的数量，决定音轨和视轨的数量。比如，如果只使用一个摄像头获取视频，且不获取音频，那么视轨的数量为1，音轨的数量为0。每个音轨和视轨，有一个kind属性，表示种类（video或者audio），和一个label属性（比如FaceTime HD Camera (Built-in)）。
+
+onError回调函数接受一个Error对象作为参数。Error对象的code属性有如下取值，说明错误的类型。
 
 - **PERMISSION_DENIED**：用户拒绝提供信息。
 - **NOT_SUPPORTED_ERROR**：浏览器不支持硬件设备。
@@ -129,7 +137,9 @@ if (navigator.getUserMedia) {
 
 {% endhighlight %}
 
-它的主要用途是让用户使用摄影头为自己拍照。Canvas API有一个ctx.drawImage(video, 0, 0)方法，可以将视频的一个帧转为canvas元素。这使得截屏变得非常容易。
+在Chrome和Opera中，URL.createObjectURL方法将媒体数据流（MediaStream）转为一个二进制对象的URL（Blob URL），该URL可以作为video元素的src属性的值。 在Firefox中，媒体数据流可以直接作为src属性的值。Chrome和Opera还允许getUserMedia获取的音频数据，直接作为audio或者video元素的值，也就是说如果还获取了音频，上面代码播放出来的视频是有声音的。
+
+获取摄像头的主要用途之一，是让用户使用摄影头为自己拍照。Canvas API有一个ctx.drawImage(video, 0, 0)方法，可以将视频的一个帧转为canvas元素。这使得截屏变得非常容易。
 
 ```html
 
@@ -259,7 +269,7 @@ function sourceSelected(audioSource, videoSource) {
 
 ## RTCPeerConnection
 
-RTCPeerConnection的作用是音频和视频的“点对点”（peer to peer）通信，也就是将浏览器获取的麦克风或摄像头数据，传播给另一个浏览器。这里面包含了很多复杂的工作，比如信号处理、多媒体编码/解码、点对点通信、数据安全、带宽管理等等。
+RTCPeerConnection的作用是在浏览器之间建立数据的“点对点”（peer to peer）通信，也就是将浏览器获取的麦克风或摄像头数据，传播给另一个浏览器。这里面包含了很多复杂的工作，比如信号处理、多媒体编码/解码、点对点通信、数据安全、带宽管理等等。
 
 下面是一个RTCPeerConnection的示例。
 
@@ -351,6 +361,8 @@ document.querySelector("button#send").onclick = function (){
 
 ```
 
+Chrome 25、Opera 18和Firefox 22支持RTCDataChannel。
+
 由于这个API比较复杂，一般采用外部函数库进行操作。目前，视频聊天的函数库有[SimpleWebRTC](https://github.com/henrikjoreteg/SimpleWebRTC)、[easyRTC](https://github.com/priologic/easyrtc)、[webRTC.io](https://github.com/webRTC/webRTC.io)，点对点通信的函数库有[PeerJS](http://peerjs.com/)、[Sharefest](https://github.com/peer5/sharefest)。
 
 下面是SimpleWebRTC的示例。
@@ -398,4 +410,5 @@ conn.on('open', function(){
 - Eric Bidelman, [Capturing Audio & Video in HTML5](http://www.html5rocks.com/en/tutorials/getusermedia/intro/)
 - Sam Dutton, [Getting Started with WebRTC](http://www.html5rocks.com/en/tutorials/webrtc/basics/)
 - Dan Ristic, [WebRTC data channels](http://www.html5rocks.com/en/tutorials/webrtc/datachannels/)
-- Justin Uberti, Sam Dutton, [WebRTC: Plugin-free realtime communication](http://io13webrtc.appspot.com/) 
+- Justin Uberti, Sam Dutton, [WebRTC: Plugin-free realtime communication](http://io13webrtc.appspot.com/)
+- Mozilla Developer Network, [Taking webcam photos](https://developer.mozilla.org/en-US/docs/Web/Guide/API/WebRTC/Taking_webcam_photos)
