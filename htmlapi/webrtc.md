@@ -267,74 +267,74 @@ function sourceSelected(audioSource, videoSource) {
 
 上面代码表示，MediaStreamTrack.getSources方法的回调函数，可以得到一个本机的摄像头和麦克风的列表，然后指定使用最后一个摄像头和麦克风。
 
-## RTCPeerConnection
+## RTCPeerConnectionl，RTCDataChannel
+
+### RTCPeerConnectionl
 
 RTCPeerConnection的作用是在浏览器之间建立数据的“点对点”（peer to peer）通信，也就是将浏览器获取的麦克风或摄像头数据，传播给另一个浏览器。这里面包含了很多复杂的工作，比如信号处理、多媒体编码/解码、点对点通信、数据安全、带宽管理等等。
 
-下面是一个RTCPeerConnection的示例。
+不同客户端之间的音频/视频传递，是不用通过服务器的。但是，两个客户端之间建立联系，需要通过服务器。服务器主要转递两种数据。
+
+- 通信内容的元数据：打开/关闭对话（session）的命令、媒体文件的元数据（编码格式、媒体类型和带宽）等。
+- 网络通信的元数据：IP地址、NAT网络地址翻译和防火墙等。
+
+WebRTC协议没有规定与服务器的通信方式，因此可以采用各种方式，比如WebSocket。通过服务器，两个客户端按照Session Description Protocol（SDP协议）交换双方的元数据。
+
+下面是一个示例。
 
 ```javascript
 
-pc = new RTCPeerConnection(null);
+var signalingChannel = createSignalingChannel();
+var pc;
+var configuration = ...;
 
-// 获取本地数据
-pc.addStream(localStream);
+// run start(true) to initiate a call
+function start(isCaller) {
+    pc = new RTCPeerConnection(configuration);
 
-// 一旦成功，获取远程数据通道
-pc.onaddstream = gotRemoteStream;
+    // send any ice candidates to the other peer
+    pc.onicecandidate = function (evt) {
+        signalingChannel.send(JSON.stringify({ "candidate": evt.candidate }));
+    };
 
-// 向远程数据通道提供数据
-pc.createOffer(gotOffer);
+    // once remote stream arrives, show it in the remote video element
+    pc.onaddstream = function (evt) {
+        remoteView.src = URL.createObjectURL(evt.stream);
+    };
 
-function gotOffer(desc) {
-  pc.setLocalDescription(desc);
-  sendOffer(desc);
+    // get the local stream, show it in the local video element and send it
+    navigator.getUserMedia({ "audio": true, "video": true }, function (stream) {
+        selfView.src = URL.createObjectURL(stream);
+        pc.addStream(stream);
+
+        if (isCaller)
+            pc.createOffer(gotDescription);
+        else
+            pc.createAnswer(pc.remoteDescription, gotDescription);
+
+        function gotDescription(desc) {
+            pc.setLocalDescription(desc);
+            signalingChannel.send(JSON.stringify({ "sdp": desc }));
+        }
+    });
 }
 
-function gotAnswer(desc) {
-  pc.setRemoteDescription(desc);
-}
+signalingChannel.onmessage = function (evt) {
+    if (!pc)
+        start(false);
 
-function gotRemoteStream(e) {
-  attachMediaStream(remoteVideo, e.stream);
-}
+    var signal = JSON.parse(evt.data);
+    if (signal.sdp)
+        pc.setRemoteDescription(new RTCSessionDescription(signal.sdp));
+    else
+        pc.addIceCandidate(new RTCIceCandidate(signal.candidate));
+};
 
 ```
 
 RTCPeerConnection带有浏览器前缀，Chrome浏览器中为webkitRTCPeerConnection，Firefox浏览器中为mozRTCPeerConnection。Google维护一个函数库[adapter.js](https://apprtc.appspot.com/js/adapter.js)，用来抽象掉浏览器之间的差异。
 
-{% highlight javascript %}
-
-var dataChannelOptions = {
-  ordered: false, // 不保证按照次序传播
-  maxRetransmitTime: 3000, // 单位毫秒
-};
-
-var peerConnection = new RTCPeerConnection();
-
-// 建立一个数据通道
-var dataChannel =
-  peerConnection.createDataChannel("myLabel", dataChannelOptions);
-
-dataChannel.onerror = function (error) {
-  console.log("Data Channel Error:", error);
-};
-
-dataChannel.onmessage = function (event) {
-  console.log("Got Data Channel Message:", event.data);
-};
-
-dataChannel.onopen = function () {
-  dataChannel.send("Hello World!");
-};
-
-dataChannel.onclose = function () {
-  console.log("The Data Channel is Closed");
-};
-
-{% endhighlight %}
-
-## RTCDataChannel
+### RTCDataChannel
 
 RTCDataChannel的作用是在点对点之间，传播任意数据。它的API与WebSockets的API相同。
 
@@ -363,7 +363,9 @@ document.querySelector("button#send").onclick = function (){
 
 Chrome 25、Opera 18和Firefox 22支持RTCDataChannel。
 
-由于这个API比较复杂，一般采用外部函数库进行操作。目前，视频聊天的函数库有[SimpleWebRTC](https://github.com/henrikjoreteg/SimpleWebRTC)、[easyRTC](https://github.com/priologic/easyrtc)、[webRTC.io](https://github.com/webRTC/webRTC.io)，点对点通信的函数库有[PeerJS](http://peerjs.com/)、[Sharefest](https://github.com/peer5/sharefest)。
+### 外部函数库
+
+由于这两个API比较复杂，一般采用外部函数库进行操作。目前，视频聊天的函数库有[SimpleWebRTC](https://github.com/henrikjoreteg/SimpleWebRTC)、[easyRTC](https://github.com/priologic/easyrtc)、[webRTC.io](https://github.com/webRTC/webRTC.io)，点对点通信的函数库有[PeerJS](http://peerjs.com/)、[Sharefest](https://github.com/peer5/sharefest)。
 
 下面是SimpleWebRTC的示例。
 
@@ -412,3 +414,4 @@ conn.on('open', function(){
 - Dan Ristic, [WebRTC data channels](http://www.html5rocks.com/en/tutorials/webrtc/datachannels/)
 - Justin Uberti, Sam Dutton, [WebRTC: Plugin-free realtime communication](http://io13webrtc.appspot.com/)
 - Mozilla Developer Network, [Taking webcam photos](https://developer.mozilla.org/en-US/docs/Web/Guide/API/WebRTC/Taking_webcam_photos)
+- Sam Dutton, [WebRTC in the real world: STUN, TURN and signaling](http://www.html5rocks.com/en/tutorials/webrtc/infrastructure/)
