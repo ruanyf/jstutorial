@@ -95,7 +95,7 @@ if(window.WebSocket != undefined) {
 connection.onopen = wsOpen;
 
 function wsOpen (event) {
-	console.log("Connected");
+	console.log('Connected to: ' + event.currentTarget.URL);
 }
 
 {% endhighlight %}
@@ -106,7 +106,7 @@ function wsOpen (event) {
 
 connection.onclose = wsClose;
 
-function onClose () {
+function wsClose () {
 	console.log("Closed");
 }
 
@@ -155,6 +155,18 @@ function wsMessage (event) {
 {% endhighlight %}
 
 上面代码的回调函数wsMessage的参数为事件对象event，该对象的data属性包含了服务器返回的数据。
+
+如果接收的是二进制数据，需要将连接对象的格式设为blob或arraybuffer。
+
+```javascript
+
+connection.binaryType = 'arraybuffer';
+
+connection.onmessage = function(e) {
+  console.log(e.data.byteLength); // ArrayBuffer对象有byteLength属性
+};
+
+```
 
 ### 处理错误
 

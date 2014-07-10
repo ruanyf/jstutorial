@@ -81,6 +81,7 @@ modifiedOn: 2014-05-18
 - [requestAnimationFrame](htmlapi/requestanimationframe.html)
 - [WebSocket](htmlapi/websocket.html)（基本完成）
 - [WebRTC](htmlapi/webrtc.html)
+- [Web Components](htmlapi/webcomponents.html)
 
 <h2 id="jquery">jQuery</h2>
 
