@@ -8,7 +8,7 @@ modifiedOn: 2014-07-09
 
 不同的网站往往需要一些相同的模块，比如日历、调色板等等，这种模块就被称为“组件”（component）。未来的网站开发，可以像搭积木一样，把组件合在一起，就组成了一个网站。很显然，组件非常有利于代码的重复利用。
 
-Web Components就是网页组件的规范。它不是单一的规范，而是一系列的技术组成，包括template、custom element、shadowDOM等。
+Web Components就是网页组件的规范。它不是单一的规范，而是一系列的技术组成，包括Template、Custom Element、Shadow DOM、HTML Import等。
 
 ## template标签
 
@@ -182,20 +182,150 @@ shadow.appendChild(template.content.cloneNode());
 
 ## Polymer.js
 
-Web Components是非常新的技术，为了让老式浏览器也能使用，Google推出了一个函数库[Polymer.js](http://www.polymer-project.org/)。
+Web Components是非常新的技术，为了让老式浏览器也能使用，Google推出了一个函数库[Polymer.js](http://www.polymer-project.org/)。这个库不仅可以帮助开发者，定义自己的网页元素，还提供许多预先制作好的组件，可以直接使用。
+
+### 直接使用的组件
+
+Polymer.js提供的组件，可以直接插入网页，比如下面的google-map。。
 
 ```html
 
-<polymer-element name="my-element">
+<script src="components/platform/platform.js"></script>
+<link rel="import" href="google-map.html">
+<google-map lat="37.790" long="-122.390"></google-map>
+
+```
+
+再比如，在网页中插入一个时钟，可以直接使用下面的标签。
+
+```html
+
+<polymer-ui-clock></polymer-ui-clock>
+
+```
+
+自定义标签与其他标签的用法完全相同，也可以使用CSS指定它的样式。
+
+```css
+
+polymer-ui-clock {
+  width: 320px;
+  height: 320px;
+  display: inline-block;
+  background: url("../assets/glass.png") no-repeat;
+  background-size: cover;
+  border: 4px solid rgba(32, 32, 32, 0.3);
+}
+
+```
+
+### 安装
+
+如果使用bower安装，至少需要安装platform和core components这两个核心部分。
+
+```bash
+
+bower install --save Polymer/platform
+bower install --save Polymer/polymer
+
+```
+
+你还可以安装所有预先定义的界面组件。
+
+```bash
+
+bower install Polymer/core-elements
+bower install Polymer/polymer-ui-elements
+
+```
+
+还可以只安装单个组件。
+
+```bash
+
+bower install Polymer/polymer-ui-accordion
+
+```
+
+这时，组件根目录下的bower.json，会指明该组件的依赖的模块，这些模块会被自动安装。
+
+```javascript
+
+{
+  "name": "polymer-ui-accordion",
+  "private": true,
+  "dependencies": {
+    "polymer": "Polymer/polymer#0.2.0",
+    "polymer-selector": "Polymer/polymer-selector#0.2.0",
+    "polymer-ui-collapsible": "Polymer/polymer-ui-collapsible#0.2.0"
+  },
+  "version": "0.2.0"
+}
+
+```
+
+### 自定义组件
+
+下面是一个最简单的自定义组件的例子。
+
+```html
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+ 
+<polymer-element name="lorem-element">
   <template>
-    // take it away!
+    <p>Lorem ipsum</p>
   </template>
-  <script>
-    Polymer('my-element', {});
-  </script>
 </polymer-element>
 
-<my-element></my-element>
+```
+
+上面代码定义了lorem-element组件。它分成三个部分。
+
+**（1）import命令**
+
+import命令表示载入核心模块
+
+**（2）polymer-element标签**
+
+polymer-element标签定义了组件的名称（注意，组件名称中必须包含连字符）。它还可以使用extends属性，表示组件基于某种网页元素。
+
+```html
+
+<polymer-element name="w3c-disclosure" extends="button">
+
+```
+
+**（3）template标签**
+
+template标签定义了网页元素的模板。
+
+### 组件的使用方法
+
+在调用组件的网页中，首先加载polymer.js库和组件文件。
+
+```html
+
+<script src="components/platform/platform.js"></script>
+<link rel="import" href="w3c-disclosure.html">
+
+```
+
+然后，分成两种情况。如果组件不基于任何现有的HTML网页元素（即定义的时候没有使用extends属性），则可以直接使用组件。
+
+```html
+
+<lorem-element></lorem-element>
+
+```
+
+这时网页上就会显示一行字“Lorem ipsum”。
+
+如果组件是基于（extends）现有的网页元素，则必须在该种元素上使用is属性指定组件。
+
+```
+
+<button is="w3c-disclosure">Expand section 1</button>
 
 ```
 
@@ -204,3 +334,5 @@ Web Components是非常新的技术，为了让老式浏览器也能使用，Goo
 - Todd Motto, [Web Components and concepts, ShadowDOM, imports, templates, custom elements](http://toddmotto.com/web-components-concepts-shadow-dom-imports-templates-custom-elements/)
 - Dominic Cooney, [Shadow DOM 101](http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom/)
 - Eric Bidelman, [HTML's New Template Tag](http://www.html5rocks.com/en/tutorials/webcomponents/template/)
+- Rey Bango, [Using Polymer to Create Web Components](http://code.tutsplus.com/tutorials/using-polymer-to-create-web-components--cms-20475)
+- Cédric Trévisan, Building an Accessible Disclosure Button – using Web Components](http://blog.paciellogroup.com/2014/06/accessible-disclosure-button-using-web-components/)
