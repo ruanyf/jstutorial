@@ -100,6 +100,24 @@ var v = new Vehicle(500);
 
 这种情况下，构造函数就变成了普通函数，并不会生成实例对象。而且由于下面会说到的原因，this这时代表全局对象，将造成一些意想不到的结果。因此，应该避免出现不使用new命令、直接调用构造函数的情况。
 
+为了保证构造函数必须与new命令一起使用，一个解决办法是，在构造函数内部使用严格模式，即第一行加上“use strict”。
+
+```javascript
+
+function Fubar (foo, bar) {
+  "use strict"
+
+  this._foo = foo;
+  this._bar = bar;
+}
+
+Fubar()
+// TypeError: Cannot set property '_foo' of undefined
+
+```
+
+上面代码的Fubar为构造函数，use strict命令保证了该函数在严格模式下运行。由于在严格模式中，函数内部的this不能指向全局对象，默认等于undefined，导致不加new调用会报错（JavaScript不允许对undefined添加属性）。
+
 ### instanceof运算符
 
 instanceof运算符用来确定一个对象是否为某个构造函数的实例。
@@ -149,6 +167,23 @@ a instanceof Object // true
 {% endhighlight %}
 
 上面代码表示，a是一个数组，所以它是Array的实例；同时，a也是一个对象，所以它也是Object的实例。
+
+利用instanceof运算符，还可以巧妙地解决，调用构造函数时，忘了加new命令的问题。
+
+```javascript
+
+function Fubar (foo, bar) {
+
+  if (this instanceof Fubar) {
+    this._foo = foo;
+    this._bar = bar;
+  }
+  else return new Fubar(foo, bar);
+}
+
+```
+
+上面代码使用instanceof运算符，在函数体内部判断this关键字是否为构造函数Fubar的实例。如果不是，就表明忘了加new命令。
 
 ## this关键字
 
