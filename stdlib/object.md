@@ -482,15 +482,15 @@ attributes对象包含如下元信息：
 
 ### Object.defineProperty方法，Object.defineProperties方法
 
-defineProperty方法允许通过定义attributes对象，来定义或修改一个属性，然后返回修改后的对象。它的格式如下
+Object.defineProperty方法允许通过定义attributes对象，来定义或修改一个属性，然后返回修改后的对象。它的格式如下：
 
-{% highlight javascript %}
+```javascript
 
 Object.defineProperty(object, propertyName, attributesObject)
 
-{% endhighlight %}
+```
 
-比如，定义o对象的p属性可以这样写：
+Object.defineProperty方法接受三个参数，第一个是属性所在的对象，第二个是属性名（它应该是一个字符串），第三个是属性的描述对象。比如，新建一个o对象，并定义它的p属性，可以这样写：
 
 {% highlight javascript %}
 
@@ -518,10 +518,9 @@ o.p
 var o = Object.defineProperties({}, {
 		p1: { value: 123, enumerable: true },
         p2: { value: "abc", enumerable: true },
-		p3: {
-				get: function() { return this.p1+this.p2 },
-				enumerable:true,
-				configurable:true
+		p3: { get: function() { return this.p1+this.p2 },
+			  enumerable:true,
+			  configurable:true
 		}
 });
 
@@ -531,7 +530,88 @@ o.p3 // "123abc"
 
 {% endhighlight %}
 
-对于没有定义的属性特征，Object.defineProperty() 和Object.defineProperties() 的默认设置为enumerable、configurable、writeable都为true。
+上面代码中的p3属性，定义了取值函数get。这时需要注意的是，一旦定义了取值函数get（或存值函数set），就不能将writable设为true，或者同时定义value属性，否则会报错。
+
+```javascript
+
+var o = {};
+
+Object.defineProperty(o, "p", {
+	value: 123, 
+    get: function() { return 456; } 
+});
+// TypeError: Invalid property. 
+// A property cannot both have accessors and be writable or have a value,
+
+```
+
+上面代码同时定义了get属性和value属性，结果就报错。
+
+Object.defineProperty() 和Object.defineProperties() 的第三个参数，是一个属性对象。它的writable、configurable、enumerable这三个属性的默认值都为false。
+
+writable属性为false，表示对应的属性的值将不得改写。
+
+```javascript
+
+var o = {};
+
+Object.defineProperty(o, "p", {
+    value: "bar"
+});
+
+o.p // bar
+
+o.p = "foobar";
+o.p // bar
+
+Object.defineProperty(o, "p", {
+    value: "foobar",
+});
+// TypeError: Cannot redefine property: p
+
+```
+
+上面代码由于writable属性默认为false，导致无法对p属性重新赋值，但是不会报错（严格模式下会报错）。不过，如果再一次使用Object.defineProperty方法对value属性赋值，就会报错。
+
+configurable属性为false，将无法删除该属性，也无法修改attributes对象（value属性除外）。
+
+```javascript
+
+var o = {};
+
+Object.defineProperty(o, "p", {
+    value: "bar",
+});
+
+delete o.p
+o.p // bar
+
+```
+
+上面代码中，由于configurable属性默认为false，导致无法删除某个属性。
+
+enumerable属性为false，表示对应的属性不会出现在for...in循环和Object.keys方法中。
+
+```javascript
+
+var o = {
+    p1: 10,
+    p2: 13,
+};
+
+Object.defineProperty(o, "p3", {
+    value: 3,
+});
+
+for (var i in o) {
+    console.log(i, o[i]);
+}
+// p1 10 
+// p2 13
+
+```
+
+上面代码中，p3属性是用Object.defineProperty方法定义的，由于enumerable属性默认为false，所以不出现在for...in循环中。
 
 ### 可枚举性enumerable
 
@@ -561,6 +641,19 @@ Object.keys(o)
 {% endhighlight %}
 
 除了上面两个操作，其他操作都不受可枚举性的影响。这两个操作的区别在于，for...in循环包括对象继承自原型对象的属性，而Object.keys方法只包括对象本身的属性。
+
+对象实例有一个isPropertyEnumerable方法，用来判断某个属性是否可枚举。
+
+```javascript
+
+var o = {
+    p1: 10,
+    p2: 13,
+};
+
+o.propertyIsEnumerable("p1") // true
+
+```
 
 ### Object.getOwnPropertyNames方法
 
@@ -1007,3 +1100,4 @@ o.hello // undefined
 - kangax, [Understanding delete](http://perfectionkills.com/understanding-delete/)
 - Jon Bretman, [Type Checking in JavaScript](http://techblog.badoo.com/blog/2013/11/01/type-checking-in-javascript/)
 - Cody Lindley, [Thinking About ECMAScript 5 Parts](http://tech.pro/tutorial/1671/thinking-about-ecmascript-5-parts)
+- Bjorn Tipling, [Advanced objects in JavaScript](http://bjorn.tipling.com/advanced-objects-in-javascript)

@@ -216,7 +216,7 @@ Object.getPrototypeOf(f) === F.prototype
 
 ## Object.create方法
 
-Object.create方法用于生成新的对象。它接受一个原型对象作为参数，返回一个新对象，后者完全继承前者的属性。
+Object.create方法用于生成新的对象，可以替代new命令。它接受一个原型对象作为参数，返回一个新对象，后者完全继承前者的属性。
 
 {% highlight javascript %}
 
@@ -292,7 +292,7 @@ o2.p
 
 上面代码表示，修改对象原型会影响到新生成的对象。
 
-Object.create方法可以接受两个参数，第一个是对象的原型，第二个是描述属性的attributes对象。第二个参数所描述的对象属性，会添加到新对象。
+除了对象的原型，Object.create方法还可以接受第二个参数，表示描述属性的attributes对象，跟用在Object.defineProperties方法的格式是一样的。它所描述的对象属性，会添加到新对象。
 
 {% highlight javascript %}
 
@@ -305,6 +305,8 @@ o.p1 // 123
 o.p2 // "abc"
 
 {% endhighlight %}
+
+由于Object.create方法不使用构造函数，所以不能用instanceof运算符判断，对象是哪一个构造函数的实例。这时，可以使用下面的isPrototypeOf方法，判读原型是哪一个对象。
 
 ## isPrototypeOf方法
 
@@ -320,3 +322,5 @@ o2.isPrototypeOf(o3) // true
 o1.isPrototypeOf(o3) // true
 
 {% endhighlight %}
+
+上面代码表明，只要某个对象处在原型链上，isProtypeOf都返回true。
