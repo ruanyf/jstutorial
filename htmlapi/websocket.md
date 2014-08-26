@@ -297,7 +297,7 @@ var socket = io.connect('http://localhost');
 
 {% endhighlight %}
 
-由于本例假定WebSocket主机与客户端是同一台机器，所以connect方法的参数是http://localhost。接着，指定news事件（即服务器端发送news）的回调函数。
+由于本例假定WebSocket主机与客户端是同一台机器，所以connect方法的参数是`http://localhost`。接着，指定news事件（即服务器端发送news）的回调函数。
 
 {% highlight javascript	%}
 
@@ -342,3 +342,4 @@ io.sockets.on('connection', function (socket) {
 - Matt West, [An Introduction to WebSockets](http://blog.teamtreehouse.com/an-introduction-to-websockets)
 - Maciej Sopyło, [Node.js: Better Performance With Socket.IO and doT](http://net.tutsplus.com/tutorials/javascript-ajax/node-js-better-performance-with-socket-io-and-dot/)
 - Jos Dirksen, [Capture Canvas and WebGL output as video using websockets](http://www.smartjava.org/content/capture-canvas-and-webgl-output-video-using-websockets)
+- Fionn Kellehe, [Understanding Socket.IO](https://nodesource.com/blog/understanding-socketio)

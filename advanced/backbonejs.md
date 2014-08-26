@@ -26,6 +26,8 @@ Controller表示控制层，用来对原始数据（Model）进行加工，传�
 
 由于网页编程不同于客户端编程，在MVC的基础上，JavaScript社区产生了各种变体框架MVP（Model-View-Presenter）、MVVM（Model-View-ViewModel）等等，有人就把所有这一类框架的各种模式统称为MV*。
 
+框架的优点在于合理组织代码、便于团队合作和未来的维护，缺点在于有一定的学习成本，且限制你只能采取它的写法。
+
 ## Backbone的加载
 
 {% highlight html %}
