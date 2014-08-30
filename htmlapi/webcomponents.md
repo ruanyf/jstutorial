@@ -23,9 +23,9 @@ function supportsTemplate() {
 }
 
 if (supportsTemplate()) {
-  // Good to go!
+  // 支持
 } else {
-  // Use old templating techniques or libraries.
+  // 不支持
 }
 
 ```
@@ -86,34 +86,78 @@ document.body.appendChild(clone);
 
 HTML预定义的网页元素，有时并不符合我们的需要，这时可以自定义网页元素。这就叫做custom element。
 
-下面是定义自定义元素的代码。
+下面的代码用于测试浏览器是否支持自定义元素。
 
 ```javascript
 
-var MyElementProto = Object.create(HTMLElement.prototype);
+function supportsCustomElements() {
+  return 'registerElement' in document;
+}
 
-window.MyElement = document.registerElement('user-profile', {
-  prototype: MyElementProto
+if (supportsCustomElements()) {
+  // 支持
+} else {
+  // 不支持
+}
+
+```
+
+### document.registerElement方法
+
+document.registerElement方法用来注册新的网页元素，它返回一个构造函数。
+
+```javascript
+
+var XFoo = document.registerElement('x-foo');
+
+```
+
+上面代码注册了网页元素x-foo。可以看到，document.registerElement方法的第一个参数是一个字符串，表示自定义的网页元素的名称。需要注意的是，自定义元素的名称中，必须包含连字号（-），用来与预定义的网页元素相区分。连字号可以是一个也可以是多个。
+
+document.registerElement方法还可以接受第二个参数，表示自定义网页元素的原型对象。
+
+```javascript
+
+var MyElement = document.registerElement('user-profile', {
+  prototype: Object.create(HTMLElement.prototype)
 });
 
 ```
 
-上面代码通过document.registerElement方法，自定义了一个叫做user-profile的网页元素。document.registerElement方法的第一个参数是一个字符串，表示自定义的网页元素的名称；它的第二个参数是该元素的属性对象，其中需要指定它的原型对象是HTMLElement.prototype。
-
-如果想让自定义元素继承某种元素，就要指定extends属性。比如，想让某个元素继承h1元素，需要写成下面这样。
+上面代码注册了user-profile。document.registerElement方法的第二个参数，指定它的原型对象是HTMLElement.prototype（它是浏览器内部所有网页元素的原型）。如果想让自定义元素继承某种特定的网页元素，就要指定extends属性。比如，想让自定义元素继承h1元素，需要写成下面这样。
 
 ```javascript
 
-var MyElementProto = Object.create(HTMLElement.prototype);
-
-window.MyElement = document.registerElement('another-heading', {
-  prototype: MyElementProto,
+var MyElement = document.registerElement('another-heading', {
+  prototype: Object.create(HTMLElement.prototype),
   extends: 'h1' 
 });
 
 ```
 
-然后，使用的时候需要在网页元素中指定is属性。
+另一个是自定义按钮（button）元素的例子。
+
+```javascript
+
+var MyButton = document.registerElement('my-button', {
+  prototype: Object.create(HTMLButtonElement.prototype),
+  extends: 'button'
+});
+
+```
+
+如果要继承一个自定义元素，比如创造`x-foo-extended`继承`x-foo`，也是一样写法。
+
+```javascript
+
+var XFooExtended = document.registerElement('x-foo-extended', {
+  prototype: Object.create(HTMLElement.prototype),
+  extends: 'x-foo'
+});
+
+```
+
+总之，如果要自定义一个元素A继承元素B，那么元素A的原型必须是元素B的原型。使用的时候，需要把它写在所继承的网页元素的is属性之中，读起来就是B元素“is”A元素。
 
 ```html
 
@@ -121,11 +165,110 @@ window.MyElement = document.registerElement('another-heading', {
   Page title
 </h1>
 
+<button is="my-button">
+
+```
+
+自定义元素注册成功以后，document.registerElement方法返回一个构造函数。下一步就可以用这个构造函数，生成自定义元素的实例。
+
+```javascript
+
+document.body.appendChild(new XFoo());
+
+```
+
+上面代码中，XFoo是自定义元素的构造函数，appendChild将它的实例插入DOM。
+
+### 添加属性和方法
+
+自定义元素的强大之处，就是可以在它上面定义新的属性和方法。
+
+```javascript
+
+var XFooProto = Object.create(HTMLElement.prototype);
+
+var XFoo = document.registerElement('x-foo', {prototype: XFooProto});
+
+```
+
+上面代码注册了一个x-foo标签，并且指明原型继承HTMLElement.prototype。现在，我们就可以在原型上面，添加新的属性和方法。
+
+```javascript
+
+// 添加属性
+Object.defineProperty(XFooProto, "bar", {value: 5});
+
+// 添加方法
+XFooProto.foo = function() {
+  console.log('foo() called');
+};
+
+// 另一种写法
+var XFoo = document.registerElement('x-foo', {
+  prototype: Object.create(HTMLElement.prototype, {
+    bar: {
+      get: function() { return 5; }
+    },
+    foo: {
+      value: function() {
+        console.log('foo() called');
+      }
+    }
+  })
+});
+
+```
+
+原型上有一些属性，可以指定回调函数，在特定事件发生时触发。
+
+- **createdCallback**：实例生成时
+- **attachedCallback**：实例插入文档时
+- **detachedCallback**：实例从文档移除时
+- **attributeChangedCallback(attrName, oldVal, newVal)**：添加、移除、更新属性时
+
+下面是一个例子。
+
+```javascript
+
+var proto = Object.create(HTMLElement.prototype);
+
+proto.createdCallback = function() {...};
+proto.attachedCallback = function() {...};
+
+var XFoo = document.registerElement('x-foo', {prototype: proto});
+
+```
+
+利用回调函数，可以方便地在自定义元素中插入HTML语句。
+
+```javascript
+
+var XFooProto = Object.create(HTMLElement.prototype);
+
+XFooProto.createdCallback = function() {
+  this.innerHTML = "<b>I'm an x-foo-with-markup!</b>";
+};
+
+var XFoo = document.registerElement('x-foo-with-markup', 
+			{prototype: XFooProto});
+
+```
+
+上面代码定义了createdCallback回调函数，生成实例时，该函数运行，插入如下的HTML语句。
+
+```html
+
+<x-foo-with-markup>
+   <b>I'm an x-foo-with-markup!</b>
+</x-foo-with-markup>
+
 ```
 
 ## Shadow DOM
 
 所谓Shadow DOM指的是，浏览器将模板、样式表、属性、JavaScript代码等，封装成一个独立的DOM元素。外部的设置无法影响到其内部，而内部的设置也不会影响到外部。Chrome 35+支持Shadow DOM。
+
+Shadow DOM最大的好处有两个，一是可以向用户隐藏细节，直接提供组件，二是可以封装内部样式表，不会影响到外部。
 
 Shadow DOM需要通过createShadowRoot方法，造一个单独的root元素。
 
@@ -336,3 +479,4 @@ template标签定义了网页元素的模板。
 - Eric Bidelman, [HTML's New Template Tag](http://www.html5rocks.com/en/tutorials/webcomponents/template/)
 - Rey Bango, [Using Polymer to Create Web Components](http://code.tutsplus.com/tutorials/using-polymer-to-create-web-components--cms-20475)
 - Cédric Trévisan, Building an Accessible Disclosure Button – using Web Components](http://blog.paciellogroup.com/2014/06/accessible-disclosure-button-using-web-components/)
+- Eric Bidelman, [Custom Elements: defining new elements in HTML](http://www.html5rocks.com/en/tutorials/webcomponents/customelements/)
