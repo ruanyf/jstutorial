@@ -35,7 +35,7 @@ modifiedOn: 2014-05-18
 - [Date对象](stdlib/date.html)
 - [RegExp对象](stdlib/regexp.html)
 - [JSON对象](stdlib/json.html)
-- [类型化数组](stdlib/arraybuffer.html)
+- [ArrayBuffer：类型化数组](stdlib/arraybuffer.html)
 
 <h2 id="oop">面向对象编程</h2>
 

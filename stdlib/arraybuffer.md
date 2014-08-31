@@ -1,5 +1,5 @@
 ---
-title: 类型化数组
+title: ArrayBuffer：类型化数组
 category: stdlib
 layout: page
 date: 2013-09-07
@@ -206,6 +206,26 @@ for (var i=0; i<int16View.length; i++) {
 
 这并不意味大端字节序不重要，事实上，很多网络设备和特定的操作系统采用的是大端字节序。这就带来一个严重的问题：如果一段数据是大端字节序，类型化数组将无法正确解析，因为它只能处理小端字节序！为了解决这个问题，JavaScript引入DataView对象，可以设定字节序，下文会详细介绍。
 
+下面是另一个例子。
+
+```javascript
+
+// 假定某段buffer包含如下字节 [0x02, 0x01, 0x03, 0x07]
+// 计算机采用小端字节序
+var uInt16View = new Uint16Array(buffer);
+
+// 比较运算 
+if (bufView[0]===258) {
+     console.log("ok");
+}
+
+// 赋值运算
+uInt16View[0] = 255;    // 字节变为[0xFF, 0x00, 0x03, 0x07]
+uInt16View[0] = 0xff05; // 字节变为[0x05, 0xFF, 0x03, 0x07]
+uInt16View[1] = 0x0210; // 字节变为[0x05, 0xFF, 0x10, 0x02]
+
+```
+
 总之，与普通数组相比，类型化数组的最大优点就是可以直接操作内存，不需要数据类型转换，所以速度快得多。
 
 **（2）buffer属性**
@@ -295,6 +315,29 @@ b.byteLength // 2
 {% endhighlight %}
 
 subarray方法的第一个参数是起始的成员序号，第二个参数是结束的成员序号（不含该成员），如果省略则包含剩余的全部成员。所以，上面代码的a.subarray(2,3)，意味着b只包含a[2]一个成员，字节长度为2。
+
+**（6）ArrayBuffer与字符串的互相转换**
+
+ArrayBuffer转为字符串，或者字符串转为ArrayBuffer，有一个前提，即字符串的编码方法是确定的。假定字符串采用UTF-16编码（JavaScript的内部编码方式），可以自己编写转换函数。
+
+```javascript
+
+// ArrayBuffer转为字符串，参数为ArrayBuffer对象
+function ab2str(buf) {
+   return String.fromCharCode.apply(null, new Uint16Array(buf));
+}
+
+// 字符串转为ArrayBuffer对象，参数为字符串
+function str2ab(str) {
+    var buf = new ArrayBuffer(str.length*2); // 每个字符占用2个字节
+    var bufView = new Uint16Array(buf);
+    for (var i=0, strLen=str.length; i<strLen; i++) {
+         bufView[i] = str.charCodeAt(i);
+    }
+    return buf;
+}
+
+```
 
 ### 复合视图
 
@@ -582,3 +625,4 @@ bitmap.pixels = new Uint8Array(buffer, start);
 - Ilmari Heikkinen, [Typed Arrays: Binary Data in the Browser](http://www.html5rocks.com/en/tutorials/webgl/typed_arrays/)
 - Khronos, [Typed Array Specification](http://www.khronos.org/registry/typedarray/specs/latest/)
 - Ian Elliot, [Reading A BMP File In JavaScript](http://www.i-programmer.info/projects/36-web/6234-reading-a-bmp-file-in-javascript.html)	
+- Renato Mangini, [How to convert ArrayBuffer to and from String](http://updates.html5rocks.com/2012/06/How-to-convert-ArrayBuffer-to-and-from-String) 

@@ -32,7 +32,7 @@ function launchFullscreen(element) {
 
 {% endhighlight %}
 
-使用的时候，可以针对整个网页，也可以针对某个网页元素。
+使用的时候，可以针对整个网页，也可以针对某个网页元素（比如播放视频的video元素）。
 
 {% highlight javascript %}
 
@@ -41,6 +41,17 @@ launchFullscreen(document.documentElement);
 launchFullscreen(document.getElementById("videoElement")); 
 
 {% endhighlight %}
+
+当放大一个元素的时候，Firefox和Chrome在行为上略有不同。Firefox自动为该元素增加一条CSS规则，将该元素放大至全屏状态，`width: 100%; height: 100%`，而Chrome则是将该元素放在屏幕的中央，保持原来大小，其他部分变黑。为了让Chrome的行为与Firefox保持一致，需要自定义一条CSS规则。
+
+```css
+
+:-webkit-full-screen #myvideo {
+  width: 100%;
+  height: 100%;
+}
+
+```
 
 ### exitFullscreen()
 
