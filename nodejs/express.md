@@ -8,59 +8,99 @@ modifiedOn: 2013-10-04
 
 ## 概述
 
-Express是目前最流行的基于Node.js的Web开发框架。它可以快速地搭建网站原型。
+Express是目前最流行的基于Node.js的Web开发框架，提供各种模块，可以快速地搭建一个具有完整功能的网站。
 
-Express是一个node.js模块，采用npm全局模块。
-
-{% highlight bash %}
-
-sudo npm install -g express
-
-{% endhighlight %}
-
-安装完成后，在工作目录新建一个新项目，假定叫做node-demo。
+Express的上手非常简单，首先新建一个项目目录，假定叫做hello-world。
 
 {% highlight bash %}
 
-express node-demo
+$ mkdir hello-world
 
 {% endhighlight %}
 
-这时，工作目录中就会生成一个node-demo子目录。进入该目录，安装所需要的模块。
+进入该目录，新建一个package.json文件，内容如下。
 
-{% highlight bash %}
+```javascript
 
-cd node-demo
-npm installl
+{
+  "name": "hello-world",
+  "description": "hello world test app",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "express": "4.x"
+  }
+}
 
-{% endhighlight %}
+```
 
-如果浏览这个子目录，就会发现express自动生成了以下的子目录和文件。
+上面代码定义了项目的名称、描述、版本等，并且指定需要4.0版本以上的Express。
 
-- node_modules子目录：用于安装本地模块。
-- public子目录：用于存放用户可以下载到的文件，比如图片、脚本、样式表等。
-- routes子目录：用于存放路由文件。
-- views子目录：用于存放网页的模板。
-- app.js文件：应用程序的启动脚本。
-- package.json文件：项目的配置文件。
+然后，就可以安装了。
+
+```bash
+
+$ npm install
+
+```
+
+安装了Express及其依赖的模块以后，在项目根目录下，新建一个启动文件，假定叫做index.js。
+
+```javascript
+
+// index.js
+
+var express = require('express');
+var app = express();
+app.get('/', function (req, res) {  
+    res.send('Hello world!');
+});
+app.listen(3000);  
+
+```
 
 然后，在命令行下运行下面的命令，就可以在浏览器中访问项目网站了。
 
 {% highlight bash %}
 
-node app
+node index
 
 {% endhighlight %}
 
-默认情况下，网站运行在本机的3000端口，网页显示Welcome to Express。
+默认情况下，网站运行在本机的3000端口，网页显示Hello World。
+
+index.js中的`app.get`用于指定不同的访问路径所对应的回调函数，这叫做“路由”（routing）。上面代码只指定了根目录的回调函数，因此只有一个路由记录，实际应用中，可能有多个路由记录。这时，最好就把路由放到一个单独的文件中，比如新建一个routes子目录。
+
+```javascript
+
+// routes/index.js
+
+module.exports = function (app) {  
+    app.get('/', function (req, res) {  
+	    res.send('Hello world');
+	});
+};
+
+```
+
+然后，原来的index.js就变成下面这样。
+
+```javascript
+
+// index.js
+
+var express = require('express');  
+var app = express();  
+var routes = require('./routes')(app);  
+app.listen(3000);  
+
+```
 
 ## 运行原理
 
 ### 底层：http模块
 
-Express框架建立在node.js内置的http模块上。
-
-http模块生成服务器的原始代码如下。
+Express框架建立在node.js内置的http模块上。 http模块生成服务器的原始代码如下。
 
 {% highlight javascript %}
 
@@ -68,11 +108,10 @@ var http = require("http");
 
 var app = http.createServer(function(request, response) {
   response.writeHead(200, {"Content-Type": "text/plain"});
-  response.end("Hello world!\n");
+  response.end("Hello world!");
 });
 
-app.listen(1337, "localhost");
-console.log("Server running at http://localhost:1337/");
+app.listen(3000, "localhost");
 
 {% endhighlight %}
 
@@ -83,6 +122,13 @@ console.log("Server running at http://localhost:1337/");
 Express框架的核心是对http模块的再包装。上面的代码用Express改写如下。
 
 {% highlight javascript %}
+
+var express = require('express');
+var app = express();
+app.get('/', function (req, res) {  
+    res.send('Hello world!');
+});
+app.listen(3000);  
 
 var express = require("express");
 var http = require("http");
