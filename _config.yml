@@ -16,6 +16,7 @@ chapters:
 - jquery
 - tool
 - advanced
+- appendix
 - library
 - nodejs
 
@@ -31,3 +32,4 @@ library: 草稿一：函数库
 nodejs: 草稿二：Node.js
 tool: 开发工具
 advanced: 高级语法
+appendix: 附录

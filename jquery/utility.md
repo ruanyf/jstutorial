@@ -333,7 +333,16 @@ $.type(/test/) // "regexp"
 
 jQuery对象上面还定义了Ajax方法（$.ajax()），用来处理Ajax操作。调用该方法后，浏览器就会向服务器发出一个HTTP请求。
 
-$.ajax()的用法有多种，最常见的是提供一个对象参数。
+$.ajax()的用法主要有两种。
+
+```javascript
+
+$.ajax(url[, options])
+$.ajax([options])
+
+```
+
+上面代码中的url，指的是服务器网址，options则是一个对象参数，设置Ajax请求的具体参数。
 
 {% highlight javascript %}
 
@@ -369,17 +378,30 @@ function completeCallback(xhr, status){
 
 上面代码的对象参数有多个属性，含义如下：
 
+- accepts：将本机所能处理的数据类型，告诉服务器。
 - async：该项默认为true，如果设为false，则表示发出的是同步请求。
-- cache: 该项默认为true，如果设为false，则浏览器不缓存返回服务器返回的数据。注意，浏览器本身就不会缓存POST请求返回的数据，所以即使设为false，也只对HEAD和GET请求有效。
-- url：服务器端网址。这是唯一必需的一个属性，其他属性都可以省略。
-- type：向服务器发送信息所使用的HTTP动词，默认为GET，其他动词有POST、PUT、DELETE。
-- dataType：向服务器请求的数据类型，可以设为text、html、script、json、jsonp和xml。
+- beforeSend：指定发出请求前，所要调用的函数，通常用来对发出的数据进行修改。
+- cache：该项默认为true，如果设为false，则浏览器不缓存返回服务器返回的数据。注意，浏览器本身就不会缓存POST请求返回的数据，所以即使设为false，也只对HEAD和GET请求有效。
+- complete：指定当HTTP请求结束时（请求成功或请求失败的回调函数，此时已经运行完毕）的回调函数。不管请求成功或失败，该回调函数都会执行。它的参数为发出请求的原始对象以及返回的状态信息。
+- contentType：发送到服务器的数据类型。
+- context：指定一个对象，作为所有Ajax相关的回调函数的this对象。
+- crossDomain：该属性设为true，将强制向相同域名发送一个跨域请求（比如JSONP）。
 - data：向服务器发送的数据，如果使用GET方法，此项将转为查询字符串，附在网址的最后。
+- dataType：向服务器请求的数据类型，可以设为text、html、script、json、jsonp和xml。
+- error：请求失败时的回调函数，函数参数为发出请求的原始对象以及返回的状态信息。
+- headers：指定HTTP请求的头信息。
+- ifModified：如果该属性设为true，则只有当服务器端的内容与上次请求不一样时，才会发出本次请求。
+- jsonp：指定JSONP请求“callback=?”中的callback的名称。
+- jsonpCallback: 指定JSONP请求中回调函数的名称。
+- mimeType：指定HTTP请求的mime type。
+- password：指定HTTP认证所需要的密码。
+- statusCode：值为一个对象，为服务器返回的状态码，指定特别的回调函数。
 - success：请求成功时的回调函数，函数参数为服务器传回的数据、状态信息、发出请求的原始对象。
 - timeout: 等待的最长毫秒数。如果过了这个时间，请求还没有返回，则自动将请求状态改为失败。
-- error：请求失败时的回调函数，函数参数为发出请求的原始对象以及返回的状态信息。
-- complete：不管请求成功或失败，都会执行的回调函数，函数参数为发出请求的原始对象以及返回的状态信息。
-- statusCode：为服务器返回的某些状态码，指定特别的回调函数。
+- type：向服务器发送信息所使用的HTTP动词，默认为GET，其他动词有POST、PUT、DELETE。
+- url：服务器端网址。这是唯一必需的一个属性，其他属性都可以省略。
+- username：指定HTTP认证的用户名。
+- xhr：指定生成XMLHttpRequest对象时的回调函数。
 
 这些参数之中，url可以独立出来，作为ajax方法的第一个参数。也就是说，上面代码还可以写成下面这样。
 
@@ -422,7 +444,7 @@ $.post('/data/save', {name: 'Rebecca'}, function (resp){
 
 {% endhighlight %}
 
-get方法接受两个参数，分别为服务器端网址和请求成功后的回调函数。post方法在这两个参数中间，还有一个参数，表示发给服务器的数据。
+get方法和post方法的参数相同，第一个参数是服务器网址，该参数是必需的，其他参数都是可选的。第二个参数是发送给服务器的数据，第三个参数是操作成功后的回调函数。
 
 上面的post方法对应的ajax写法如下。
 
@@ -529,6 +551,48 @@ $('#newContent').load('/foo.html #myDiv h1:first',
 {% endhighlight %}
 
 上面代码只加载foo.html中匹配“#myDiv h1:first”的部分，加载完成后会运行指定的回调函数。
+
+```javascript
+
+$('#main-menu a').click(function(event) {
+   event.preventDefault();
+
+   $('#main').load(this.href + ' #main *');
+});
+
+```
+
+上面的代码将指定网页中匹配“#main *”，加载入当前的main元素。星号表示匹配main元素包含的所有子元素，如果不加这个星号，就会加载整个main元素（包括其本身），导致一个main元素中还有另一个main元素。
+
+load方法可以附加一个字符串或对象作为参数，一起向服务器提交。如果是字符串，则采用GET方法提交；如果是对象，则采用POST方法提交。
+
+```javascript
+
+$( "#feeds" ).load( "feeds.php", { limit: 25 }, function() {
+  console.log( "已经载入" );
+});
+
+```
+
+上面代码将`{ limit: 25 }`通过POST方法向服务器提交。
+
+load方法的回调函数，可以用来向用户提示操作已经完成。
+
+```javascript
+
+$('#main-menu a').click(function(event) {
+   event.preventDefault();
+ 
+   $('#main').load(this.href + ' #main *', function(responseText, status) {
+      if (status === 'success') {
+         $('#notification-bar').text('加载成功！');
+      } else {
+         $('#notification-bar').text('出错了！');
+      }
+   });
+});
+
+```
 
 ### Ajax事件
 
