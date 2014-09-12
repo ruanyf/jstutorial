@@ -12,6 +12,7 @@ modifiedOn: 2014-09-16
 - [GSAP](http://greensock.com/gsap/)：替代jQuery.animate()的函数库
 - [Attriboot-Text FX](http://www.attriboot.com/plugins/text-fx)：生成文字动画效果的插件
 - [Attriboot-Fx Plugin](http://www.attriboot.com/plugins/fx)：产生图片抖动和飞入效果的插件
+- [Animsition](http://git.blivesta.com/animsition/)：页面切换载入的动画库
 
 ## 图片
 
@@ -21,7 +22,16 @@ modifiedOn: 2014-09-16
 - [Attriboot-Image Zoom Plugin](http://www.attriboot.com/plugins/image-zoom)：图片放大效果的插件
 - [Attriboot-Image Fit Plugin](http://www.attriboot.com/plugins/image-fit)：使得图片适应容器大小的插件
 
-## 定位
+## 布局
 
 - [Attriboot-Vertical Align Plugin](http://www.attriboot.com/plugins/vertical-align)：网页元素垂直居中的插件
 - [Attriboot-Sticky Plugin](http://www.attriboot.com/plugins/sticky)：使得元素在页面上始终处于固定位置的插件
+
+## 组件
+
+- [Sensei Grid](https://github.com/datazenit/sensei-grid/tree/master)：生成可编辑数据表格
+- [hello.js](http://adodson.com/hello.js/)：客户端OAuth 2.0认证的库
+
+## 数据处理
+
+- [ineed](https://github.com/inikulin/ineed)：一个网页内容获取（Web scraping）的库

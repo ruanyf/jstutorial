@@ -102,7 +102,7 @@ function isObject(value) {
 
 ### Object.keys方法，Object.getOwnPropertyNames方法
 
-这两个方法很相似，它们的参数都是一个对象，都返回一个数组，成员都是是对象自身的（而不是继承的）所有属性名。它们的区别在于，Object.keys方法只返回可枚举的属性（关于可枚举性的详细解释见后文），Object.getOwnPropertyNames方法还返回不可枚举的属性名。
+Object.keys方法和Object.getOwnPropertyNames方法很相似，一般用来遍历对象的属性。它们的参数都是一个对象，都返回一个数组，该数组的成员都是对象自身的（而不是继承的）所有属性名。它们的区别在于，Object.keys方法只返回可枚举的属性（关于可枚举性的详细解释见后文），Object.getOwnPropertyNames方法还返回不可枚举的属性名。
 
 {% highlight javascript %}
 
@@ -119,17 +119,32 @@ Object.getOwnPropertyNames(o)
 
 {% endhighlight %}
 
-上面的代码表示，对于一般的对象来说，这两个方法返回的结果是一样的。只有涉及不可枚举属性时，才会有不一样的结果，具体的例子请看下文《对象的属性模型》一节。
+上面的代码表示，对于一般的对象来说，这两个方法返回的结果是一样的。只有涉及不可枚举属性时，才会有不一样的结果。
+
+```javascript
+
+var a = ["Hello", "World"];
+
+Object.keys(a) 
+// ["0", "1"]
+
+Object.getOwnPropertyNames(a)
+// ["0", "1", "length"]
+
+```
+
+上面代码中，数组的length属性是不可枚举的属性，所以只出现在Object.getOwnPropertyNames方法的返回结果中。
 
 由于JavaScript没有提供计算对象属性个数的方法，所以可以用这两个方法代替。
 
-{% highlight javascript %}
+```javascript
 
 Object.keys(o).length
-
 Object.getOwnPropertyNames(o).length
 
-{% endhighlight %}
+```
+
+一般情况下，几乎总是使用Object.keys方法，遍历数组的属性。
 
 ### Object.observe方法
 
