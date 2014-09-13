@@ -142,6 +142,27 @@ browserify -r through -r ./my-file.js:my-module > bundle.js
 
 可以看到，-r参数的另一个作用，就是为浏览器端提供require方法。
 
+## 脚本文件的实时生成
+
+Browserify还可以实时生成脚本文件。
+
+```javascript
+
+var browserify = require('browserify');
+var http = require('http');
+
+http.createServer(function (req, res) {
+    if (req.url === '/bundle.js') {
+        res.setHeader('content-type', 'application/javascript');
+        var b = browserify(__dirname + '/main.js').bundle();
+        b.on('error', console.error);
+        b.pipe(res);
+    }
+    else res.writeHead(404, 'not found')
+});
+
+```
+
 ## browserify-middleware模块
 
 上面是将服务器端模块直接转为客户端脚本，然后在网页中调用这个转化后的脚本文件。还有一种思路是，在运行时动态转换模块，这就需要用到[browserify-middleware模块](https://github.com/ForbesLindesay/browserify-middleware)。

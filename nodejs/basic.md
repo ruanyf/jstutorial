@@ -280,9 +280,7 @@ exports.circumference = function (r) {
 
 ### 概述
 
-Node.js采用模块化结构，按照[CommonJS规范](http://wiki.commonjs.org/wiki/CommonJS)定义和使用模块。
-
-模块与文件是一一对应关系，即加载一个模块，实际上就是加载对应的一个模块文件。
+Node.js采用模块化结构，按照[CommonJS规范](http://wiki.commonjs.org/wiki/CommonJS)定义和使用模块。模块与文件是一一对应关系，即加载一个模块，实际上就是加载对应的一个模块文件。
 
 require方法用于指定加载模块。
 
@@ -300,51 +298,45 @@ var circle = require('./circle');
 
 {% endhighlight %}
 
-下面是其他一些模块加载的例子。
+require方法的参数是模块文件的名字。它分成两种情况，第一种情况是参数中含有文件路径（比如上例），这时路径是相对于当前脚本所在的目录，第二种情况是参数中不含有文件路径（比如下例）。
 
 {% highlight javascript %}
 
-var http = require('http');
-var express = require('express');
-var routes = require('./app/routes');
+var bar = require('bar');
 
 {% endhighlight %}
 
-上面代码分别用require方法加载了三个模块。如果require方法的参数只是一个模块名，不带有路径，则表示该模块为核心模块或全局模块。比如，上面代码中的http为node.js自带的核心模块，express为npm命令安装的全局模块。如果require方法的参数带有路径，则表示该模块为项目自带的本地模块，必须告诉require该模块的路径。路径可以是绝对路径（以斜杠/开头），也可以是相对路径（以非斜杠开头），表示模块文件相对于当前调用require方法的脚本文件的位置，比如上面代码的routes模块的位置，在当前脚本文件所在目录的app子目录下。
+如果require方法的参数不带有路径，则node.js依次按照以下顺序，去寻找模块文件。
 
-如果require方法的参数不带有路径，而且加载的也不是核心模块与原生模块，则node.js按照以下从上到下的顺序，去寻找模块文件。比如，假定有一个位于/home/aaa/projects/目录下的脚本文件，包含了一行下面这样的加载命令。
+node.js依次到下面的目录，去寻找bar模块。
+
+- ./node_modules/bar
+- ../node_modules/bar
+- ../../node_modules/bar
+- /node_modules/bar
+
+可以看到，如果没有指明模块所在位置，Node会依次从当前目录向上，一级级在node_modules子目录下寻找模块。如果没有找到该模块，会抛出一个错误。这样做的好处是，不同的项目可以在自己的目录中，安装同一个模块的不同版本，而不会发生版本冲突。
+
+有时候，一个模块本身就是一个目录，目录中包含多个文件。这时候，Node在package.json文件中，寻找main属性所指明的模块入口文件。
 
 {% highlight javascript %}
 
-var bar = require('bar.js');
+{ 
+	"name" : "bar",
+	"main" : "./lib/bar.js" 
+}
 
 {% endhighlight %}
 
-node.js依次到下面的目录，去寻找bar.js。
+上面代码中，模块的启动文件为lib子目录下的bar.js。当使用require('bar')命令加载该模块时，实际上加载的是`bar/lib/some-library.js`文件。下面写法会起到同样效果。
 
-- /home/aaa/projects/node_modules/bar.js
-- /home/aaa/node_modules/bar.js
-- /home/node_modules/bar.js
-- /node_modules/bar.js
+```javascript
 
-可以看到，如果没有指明模块文件所在位置，node.js会依次从当前目录向上，一级级在node_modules子目录下寻找模块文件。这样做的好处下，不同的项目可以依赖不同版本的某个模块，而不会发生版本冲突。
+var bar = require('bar/lib/bar.js')
 
-如果没有找到该模块，会抛出一个错误。
-
-有时候，一个模块本身就是一个目录，目录中包含多个文件。这时候，需要在模块目录下的package.json文件中，用main属性指明模块的入口文件。下面就是一个例子，假定该模块的所有文件包含在some-library目录中。
-
-{% highlight javascript %}
-
-{ "name" : "some-library",
-  "main" : "./lib/some-library.js" }
-
-{% endhighlight %}
-
-当使用require('./some-library')命令加载该模块时，实际上加载的是./some-library/lib/some-library.js文件。
+```
 
 如果模块目录中没有package.json文件，node.js会尝试在模块目录中寻找index.js或index.node文件进行加载。
-
-加载模块以后，就可以调用模块中定义的方法了。
 
 模块一旦被加载以后，就会被系统缓存。如果第二次还加载该模块，则会返回缓存中的版本，这意味着模块实际上只会执行一次。如果希望模块执行多次，则可以让模块返回一个函数，然后多次调用该函数。
 

@@ -115,7 +115,6 @@ modifiedOn: 2014-05-18
 <h2 id="appendix">附录</h2>
 
 - [JavaScript API列表](appendix/api.html)
-- [函数库和插件列表](appendix/plugins.html)		
 
 <h2 id="library">草稿一：函数库</h2>
 

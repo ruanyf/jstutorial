@@ -31,7 +31,10 @@ modifiedOn: 2014-09-16
 
 - [Sensei Grid](https://github.com/datazenit/sensei-grid/tree/master)：生成可编辑数据表格
 - [hello.js](http://adodson.com/hello.js/)：客户端OAuth 2.0认证的库
+- [cross-storage](https://github.com/zendesk/cross-storage) ：跨域名在浏览器端储存数据的库
 
 ## 数据处理
 
 - [ineed](https://github.com/inikulin/ineed)：一个网页内容获取（Web scraping）的库
+- [lz-string](https://github.com/pieroxy/lz-string/)：客户端文本压缩的库
+
