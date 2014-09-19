@@ -416,6 +416,25 @@ $.ajax('/url/to/json',{
 
 {% endhighlight %}
 
+作为向服务器发送的数据，data属性也可以写成一个对象。
+
+```javascript
+
+    url: '/remote/url',
+    data: {
+        param1: 'value1',
+        param2: 'value2'
+        ...
+    }
+});
+
+// 相当于
+$.ajax({
+    url: '/remote/url?param1=value1&param2=value2...'
+}});
+
+```
+
 ### 简便写法
 
 ajax方法还有一些简便写法。
@@ -664,4 +683,4 @@ $.getJSON('/data/search.jsonp?q=a&callback=?',
 ## 参考链接
 
 - David Walsh, [Loading Scripts with jQuery](http://davidwalsh.name/loading-scripts-jquery)
-
+- Nguyen Huu Phuoc, [Best jQuery practices](http://programer.tips/2014/09/best-jquery-practices.html)

@@ -23,9 +23,17 @@ window.jQuery || document.write('<script src="js/jquery-1.11.0.min.js" type="tex
 
 {% endhighlight %}
 
-上面代码有两点需要注意。一是采用[CDN](http://jquery.com/download/#using-jquery-with-a-cdn)加载。如果CDN加载失败，则退回到本地加载。二是采用协议无关的加载网址，同时支持http协议和https协议。
+上面代码有两点需要注意。一是采用[CDN](http://jquery.com/download/#using-jquery-with-a-cdn)加载。如果CDN加载失败，则退回到本地加载。二是采用协议无关的加载网址（使用双斜线表示），同时支持http协议和https协议。
 
-这段代码最好放到网页尾部。如果需要支持IE 6/7/8，就使用jQuery 1.x版，否则使用最新版。.
+目前常用的jQuery CDN有以下这些。
+
+- [Google CDN](https://developers.google.com/speed/libraries/devguide#jquery)
+- [Microsoft CDN](http://www.asp.net/ajax/cdn#jQuery_Releases_on_the_CDN_0)
+- [jQuery CDN](http://jquery.com/download/#jquery-39-s-cdn-provided-by-maxcdn)
+- [CDNJS CDN](http://cdnjs.com/libraries/jquery/)
+- [jsDelivr CDN](http://www.jsdelivr.com/#!jquery)
+
+上面这段代码最好放到网页尾部。如果需要支持IE 6/7/8，就使用jQuery 1.x版，否则使用最新版。
 
 ## jQuery基础
 
@@ -129,6 +137,29 @@ $( '<li>', {
 {% endhighlight %}
 
 上面代码中，由于class是javaScript的保留字，所以只能放在引号中。
+
+通常来说，上面第二种写法是更好的写法。
+
+```javascript
+
+$('<input class="form-control" type="hidden" name="foo" value="bar" />')
+
+// 相当于
+$('<input/>', {
+	class: 'form-control',
+    type: 'hidden',
+    name: 'foo',
+    value: 'bar'
+})
+
+// 或者
+$('<input/>')
+.addClass('form-control')
+.attr('type', 'hidden')
+.attr('name', 'foo')
+.val('bar')
+
+```
 
 **（4）第二个参数**
 
@@ -421,7 +452,7 @@ children方法返回选中元素的所有子元素。
 $("div").children()
 $("div").children(".selected")
 
-// 等同于
+// 下面的写法结果相同，但是效率较低
 
 $('div > *')
 $('div > .selected')
