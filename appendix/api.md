@@ -9,6 +9,7 @@ modifiedOn: 2014-09-06
 ## Array
 
 - Array.prototype.push()
+- Array.prototype.slice()
 
 ## console
 
@@ -25,6 +26,7 @@ modifiedOn: 2014-09-06
 
 - navigator.appName
 - navigator.appVersion
+- navigator.registerProtocolHandler()
 
 ## Object
 
@@ -32,9 +34,14 @@ modifiedOn: 2014-09-06
 - Object.keys()
 - Object.prototype.hasOwnProperty()
 
+## String
+
+- String.prototype.replace()
+
 ## Node.js
 
 - process.versions
 - process.arch
 - process.platform
+- util.inherits()
 

@@ -344,7 +344,37 @@ replace方法的第二个参数可以使用美元符号$，用来指代所替换
 			return 2 * match; })
 // "6 and 10"
 
+var a = "The quick brown fox jumped over the lazy dog.";
+var pattern = /quick|brown|lazy/ig;
+a.replace( pattern, function replacer(match){
+    return match.toUpperCase();
+} );
+// The QUICK BROWN fox jumped over the LAZY dog.
+
 {% endhighlight %}
+
+作为replace方法第二个参数的替换函数，可以接受多个参数。它的第一个参数是捕捉到的内容，第二个参数是捕捉到的组匹配（有多少个组匹配，就有多少个对应的参数）。此外，最后还可以添加两个参数，倒数第二个参数是捕捉到的内容在整个字符串中的位置（比如从第五个位置开始），最后一个参数是原字符串。下面是一个网页模板替换的例子。
+
+```javascript
+
+var prices = {
+    "pr_1": "$1.99",
+    "pr_2": "$9.99",
+    "pr_3": "$5.00"
+};
+
+var template = ".."; // some ecommerce page template
+
+template.replace(
+    /(<span id=")(.*?)(">)(<\/span>)/g,
+    function(match,$1,$2,$3,$4){
+        return $1 + $2 + $3 + prices[$2] + $4;
+    }
+);
+
+```
+
+上面代码的捕捉模式中，有四个括号，所以会产生四个组匹配，在匹配函数中用$1到$4表示。匹配函数的作用是将价格插入模板中。
 
 ### split方法
 

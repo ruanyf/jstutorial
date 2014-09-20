@@ -544,7 +544,7 @@ if(fs.exists(outputFolder)) {
 
 Stream是数据处理的一种形式，可以用来取代回调函数。举例来说，传统形式的文件处理，必须先将文件全部读入内存，然后调用回调函数，如果遇到大文件，整个过程将非常耗时。Stream则是将文件分成小块读入内存，每读入一次，都会触发相应的事件。只要监听这些事件，就能掌握进展，做出相应处理，这样就提高了性能。Node内部的很多IO处理都采用Stream，比如HTTP连接、文件读写、标准输入输出。
 
-Stream既可以读取数据，也可以写入数据。读写数据时，每读入（或写入）一段数据，就会触发一次data事件，全部读取（或写入）完毕，触发end事件。如果发生错误，则触发error事件。
+Stream是一个抽象接口，定义了readable、writable、drain、data、end、close等事件。它既可以读取数据，也可以写入数据。读写数据时，每读入（或写入）一段数据，就会触发一次data事件，全部读取（或写入）完毕，触发end事件。如果发生错误，则触发error事件。
 
 fs模块的createReadStream方法用于新建读取数据流，createWriteStream方法用于新建写入数据流。使用这两个方法，可以做出一个用于文件复制的脚本copy.js。
 
@@ -893,7 +893,17 @@ UserList.prototype.save = function (obj) {
 
 {% endhighlight %}
 
-上面代码新建了一个构造函数UserList，然后让其继承EventEmitter，因此UserList就拥有了EventEmitter的接口。最后，为UserList的实例定义一个save方法，表示将数据储存进数据库，在储存完毕后，使用EventEmitter接口的emit方法，触发一个saved-user事件。
+上面代码新建了一个构造函数UserList，然后让其继承EventEmitter，因此UserList就拥有了EventEmitter的接口。最后，为UserList的实例定义一个save方法，表示将数据储存进数据库，在储存完毕后，使用EventEmitter接口的emit方法，触发一个saved-user事件。使用的时候，监听saved-user事件即可。
+
+```javascript
+
+var ul = new UserList();
+
+ul.on('saved-user', function(data){
+	console.log('保存成功');			
+})
+
+```
 
 ### 事件类型
 
