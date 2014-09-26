@@ -118,6 +118,23 @@ Fubar()
 
 上面代码的Fubar为构造函数，use strict命令保证了该函数在严格模式下运行。由于在严格模式中，函数内部的this不能指向全局对象，默认等于undefined，导致不加new调用会报错（JavaScript不允许对undefined添加属性）。
 
+另一个解决办法，是在构造函数内部判断是否使用new命令，如果发现没有使用，则直接返回一个实例对象。
+
+```javascript
+
+function Fubar (foo, bar) {
+  if (!(this instanceof Fubar)) {
+    return new Fubar(foo, bar);
+  } 
+
+  this._foo = foo;
+  this._bar = bar;
+}
+
+```
+
+上面代码中的构造函数，不管加不加new命令，都会得到同样的结果。
+
 ### instanceof运算符
 
 instanceof运算符用来确定一个对象是否为某个构造函数的实例。
