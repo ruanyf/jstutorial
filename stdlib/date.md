@@ -10,17 +10,19 @@ modifiedOn: 2014-01-05
 
 Date对象是JavaScript提供的日期和时间的操作接口。
 
-Date是一个构造函数，但是可以直接调用，这时会返回表示当前日期时间的一个长字符串。无论有没有参数，结果都一样
+Date是一个构造函数，但是可以直接调用，返回一个字符串，内容为当前的日期和时间。
 
 {% highlight javascript %}
 
 Date()
 // "Sat Mar 09 2013 08:46:54 GMT+0800 (CST)"
 
-Date(2013,2,9)
+Date(2000, 1, 1)
 // "Sat Mar 09 2013 08:46:54 GMT+0800 (CST)"
 
 {% endhighlight %}
+
+上面代码说明，无论有没有参数，直接调用Date总是返回当前时间。
 
 对Date对象使用new命令，会返回一个Date对象的实例。如果这时不提供参数，生成的就是代表当前时间的对象。
 
@@ -41,7 +43,7 @@ today.toString()
 
 {% highlight javascript %}
 
-var d1 = new Date( "January 6, 2013" );
+var d1 = new Date("January 6, 2013");
 var d2 = new Date(2013,0,6);
 
 d1 // "Sun Jan 06 2013 00:00:00 GMT+0800 (CST)"

@@ -62,6 +62,38 @@ db.once('open', function callback () {
 
 {% endhighlight %}
 
+mongoose.Schema方法用来定义数据集的格式（schema），mongoose.model方法将格式分配给指定的数据集。
+
+```javascript
+
+var Schema = mongoose.Schema;
+var userSchema = new Schema({
+  name : String,
+  age : Number,
+  DOB : Date,
+  isAlive : Boolean
+});
+
+var User = mongoose.model('User', userSchema);
+
+var arvind = new User({
+  name : 'Arvind',
+  age : 99,
+  DOB : '01/01/1915',
+  isAlive : true
+});
+
+arvind.save(function (err, data) {
+  if (err){
+    console.log(err);
+  } else {
+    console.log('Saved : ', data );
+  }
+});
+
+```
+
 ## 参考链接
 
 - Christopher Buecheler, [Creating a Simple RESTful Web App with Node.js, Express, and MongoDB](http://cwbuecheler.com/web/tutorials/2014/restful-web-app-node-express-mongodb/)
+- arvindr21, [Getting started with MongoDB and Mongoose](http://blog.mongodirector.com/getting-started-with-mongodb-and-mongoose/)
