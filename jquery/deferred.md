@@ -334,6 +334,20 @@ d1.resolve('World')
 
 pipe方法接受一个函数作为参数，表示在调用then方法、done方法、fail方法、always方法指定的回调函数之前，先运行pipe方法指定的回调函数。它通常用来对服务器返回的数据做初步处理。
 
+### 与Promise A+规格的差异
+
+Promise事实上的标准是社区提出的Promise A+规格，jQuery的实现并不完全符合Promise A+，主要是对错误的处理。
+
+```javascript
+
+var promise2 = promise1.then(function () {
+    throw new Error("boom!");
+});
+
+```
+
+上面代码在回调函数中抛出一个错误，Promise A+规定此时Promise实例的状态变为reject，该错误被下一个catch方法指定的回调函数捕获。但是，jQuery的Deferred对象此时不会改变状态，亦不会触发回调函数，该错误一般情况下会被window.onerror捕获。换句话说，在Deferred对象中，总是必须使用reject方法来改变状态。
+
 ## promise对象
 
 **（1）概念**
@@ -540,3 +554,4 @@ doSomething("uh oh").done(function() {
 - José F. Romaniello, [Understanding JQuery.Deferred and Promise](http://joseoncode.com/2011/09/26/a-walkthrough-jquery-deferred-and-promise/)
 - Julian Aubourg, Addy Osmani, [Creating Responsive Applications Using jQuery Deferred and Promises](http://msdn.microsoft.com/en-us/magazine/gg723713.aspx)
 - Graham Jenson, [JQuery Promises and Deferreds: I promise this will be short](http://maori.geek.nz/post/i_promise_this_will_be_short)
+- Q module document, [Coming from jQuery](https://github.com/kriskowal/q/wiki/Coming-from-jQuery) 
