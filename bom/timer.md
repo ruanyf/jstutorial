@@ -8,7 +8,7 @@ modifiedOn: 2014-10-12
 
 JavaScript提供定时执行代码的功能，叫做定时器（timer），主要由setTimeout()和setInterval()这两个函数来完成。
 
-### setTimeout()
+## setTimeout()
 
 setTimeout函数用来指定某个函数或某段代码，在多少毫秒之后执行。它返回一个整数，表示定时器的编号，以后可以用来取消这个定时器。
 
