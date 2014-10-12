@@ -32,7 +32,7 @@ modifiedOn: 2014-05-18
 - [Number对象](stdlib/number.html)
 - [String对象](stdlib/string.html)
 - [Math对象](stdlib/math.html)
-- [Date对象](stdlib/date.html)
+- [Date对象](stdlib/date.html)（基本完成）
 - [RegExp对象](stdlib/regexp.html)
 - [JSON对象](stdlib/json.html)
 - [ArrayBuffer：类型化数组](stdlib/arraybuffer.html)
