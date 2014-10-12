@@ -94,7 +94,7 @@ modifiedOn: 2014-05-18
 
 <h2 id="tool">开发工具</h2>
 
-- [浏览器控制台（console对象）](tool/console.html)
+- [console对象](tool/console.html)
 - [PhantomJS](tool/phantomjs.html)
 - [Bower：客户端库管理工具](tool/bower.html)
 - [Grunt：任务自动管理工具](tool/grunt.html)

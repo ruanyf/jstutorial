@@ -6,11 +6,17 @@ date: 2013-03-10
 modifiedOn: 2013-12-03
 ---
 
+console对象是JavaScript的原生对象，它的作用有点像Unix系统的标准输出stdout和标准错误stderr，在浏览器中，代表了JavaScript控制台。它的作用主要有两个。
+
+- 显示网页代码运行时的错误信息。
+
+- 提供了一个命令行接口，用来与网页代码互动。
+
+console对象提供了很多方法，可供开发者调用。
+
 ## 开发者工具
 
-目前，各大浏览器都自带开发工具。以Chrome浏览器为例，它有一个“开发者工具”（Developer Tools）用来调试网页。
-
-打开“开发者工具”的方法有三种。
+与console对象互动，需要通过浏览器自带的开发工具，以Chrome浏览器的“开发者工具”（Developer Tools）为例，打开它的方法有三种。
 
 1. 按F12或者Control+Shift+i。
 
@@ -20,7 +26,7 @@ modifiedOn: 2013-12-03
 
 ![开发者工具](https://developers.google.com/chrome-developer-tools/images/image03.png)
 
-打开以后，可以看到在顶端有八个面板卡可供选择，分别是：
+打开“开发者工具”以后，可以看到在顶端有八个面板卡可供选择，分别是：
 
 - **Elements**：用来调试网页的HTML源码和CSS代码。
 
@@ -38,21 +44,11 @@ modifiedOn: 2013-12-03
 
 - **Console**：用来运行JavaScript命令。
 
-这八个面板都有各自的用途，以下详细介绍Console面板，也就是控制台。
+这八个面板都有各自的用途，以下都针对Console面板，也就是控制台。这个面板基本上就是一个命令行窗口，你可以在提示符下，键入各种命令。
 
-## console对象
+下面介绍console对象提供的各种方法。
 
-console对象代表浏览器的JavaScript控制台。虽然它还不是标准，但是各大浏览器都原生支持，已经成为事实上的标准。
-
-console对象主要有两个作用：
-
-- 显示网页代码运行时的错误信息。
-
-- 提供了一个命令行接口，用来与网页代码互动。
-
-console对象的接口有很多方法，可供开发者调用。
-
-### console.log()
+## console.log()，console.info()，console.debug()
 
 log方法用于在console窗口显示信息。
 
@@ -86,18 +82,34 @@ console.log(" %s + %s = %s", 1, 1, 2)
 
 log方法的两种参数格式，可以结合在一起使用。
 
-{% highlight javascript %}
+```javascript
 
 console.log(" %s + %s ", 1, 1, "= 2")
 // 1 + 1  = 2
 
-{% endhighlight %}
+```
+
+如果参数是一个对象，console.log会显示该对象的值。
+
+```javascript
+
+console.log({foo: 'bar'})
+// Object {foo: "bar"} 
+
+console.log(Date)
+// function Date() { [native code] } 
+
+```
+
+上面代码输出Date对象的值，结果为一个构造函数。
+
+console.info()和console.debug()都是console.log方法的别名，它们完全一样。
 
 console对象的所有方法，都可以被覆盖。因此，可以按照自己的需要，定义console.log方法。
 
 ```javascript
 
-["log", "warn", "error"].forEach(function(method) {
+["log", "info", "warn", "error"].forEach(function(method) {
     console[method] = console[method].bind(
         console,
         new Date().toISOString()
@@ -111,19 +123,9 @@ console.log("出错了！");
 
 上面代码表示，使用自定义的console.log方法，可以在显示结果添加当前时间。
 
-### console.debug()，console.info()，console.warn()，console.error()
+## console.warn()，console.error()
 
-除了log，console对象还有四个输出信息的方法：
-
-- **debug**：等同于log。
-
-- **info**：等同于log。
-
-- **warn**：输出信息时，在最前面加一个黄色三角，表示警告。
-
-- **error**：输出信息时，在最前面加一个红色的叉，表示出错。
-
-这四个方法的用法与log完全一样。
+warn方法和error方法也是输出信息，它们与log方法的不同之处在于，warn方法输出信息时，在最前面加一个黄色三角，表示警告；error方法输出信息时，在最前面加一个红色的叉，表示出错。其他用法都一样。
 
 {% highlight javascript %}
 
@@ -135,7 +137,9 @@ console.warn('Warning! Too few nodes (%d)', document.childNodes.length)
 
 {% endhighlight %}
 
-### console.table()
+本质上，log方法是写入标准输出（stdout），warn方法和error方法是写入标准错误（stderr）。
+
+## console.table()
 
 对于某些复合类型的数据，console.table方法可以将其转为表格显示。
 
@@ -179,24 +183,35 @@ console.table(languages);
 csharp|"C#"|"object-oriented"
 fsharp|"F#"|"functional"
 
-### console.assert()
+## console.dir()，console.assert()
+
+dir方法用来对一个对象进行检查（inspect），并以易于阅读和打印的格式显示。
+
+```javascript
+
+console.dir({foo: 'bar'})
+> Object
+>  foo: "bar"
+>  __proto__: Object
+ 
+```
+
+上面代码显示dir方法的参数属于Object，该对像有一个属性foo，以及一个指向原型对象的\__proto\__的属性。
 
 assert方法用来验证某个条件是否为真。如果为假，则显示一条事先指定的错误信息。它的格式如下。
 
 {% highlight javascript %}
 
+// 用法格式
 console.assert(条件判断，输出信息)
 
-{% endhighlight %}
-
-使用方法如下。
-
-{% highlight javascript %}
-
+// 实例
 console.assert(true === false,"判断条件不成立")
 // Assertion failed: 判断条件不成立
 
 {% endhighlight %}
+
+上面代码表明，assert方法的第一个参数是判断条件，第二个参数是一个字符串，当判断条件不成立时，这个字符串就会显示。
 
 下面是另一个例子，判断子节点的个数是否大于等于500。
 
@@ -206,7 +221,7 @@ console.assert(list.childNodes.length < 500, "节点个数大于等于500")
 
 {% endhighlight %}
 
-### console.time()，console.timeEnd()
+## console.time()，console.timeEnd()
 
 这两个方法用于计时，可以算出一个操作所花费的准确时间。
 
@@ -227,11 +242,11 @@ console.timeEnd("Array initialize");
 
 time方法表示计时开始，timeEnd方法表示计时结束。它们的参数是计时器的名称。调用timeEnd方法之后，console窗口会显示“计时器名称: 所耗费的时间”。
 
-### console.group()，console.groupend()
+## console.group()，console.groupend()
 
 这两个方法用于将显示的信息分组。它只在输出大量信息时有用，分在一组的信息，可以用鼠标折叠/展开。
 
-### 其他方法
+## 其他方法
 
 - **console.dir()**：输出对象的信息，用于显示一个对象的所有属性。
 
