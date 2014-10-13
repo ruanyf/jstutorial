@@ -335,11 +335,25 @@ function timerTask(){
 
 ## setTimeout(f,0)
 
+### 含义
+
 setTimeout的作用是将代码推迟到指定时间执行，如果指定时间为0，即setTimeout(f,0)，那么会立刻执行吗？
 
-答案是不会。因为上一段说过，必须要等到当前脚本的同步任务和“任务队列”中已有的任务，全部完成后，才会执行setTimeout指定的任务。也就是说，setTimeout的真正作用是，在“任务队列”的现有任务的后面再添加一个任务，规定定时触发某段代码。
+答案是不会。因为上一段说过，必须要等到当前脚本的同步任务和“任务队列”中已有的事件，全部处理完以后，才会执行setTimeout指定的任务。也就是说，setTimeout的真正作用是，在“任务队列”的现有事件的后面再添加一个事件，规定在指定时间执行某段代码。setTimeout添加的事件，会在下一次Event Loop执行。
 
-setTimeout(f,0)只是让所指定的任务，在现有的任务一结束就立刻执行。也就是说，setTimeout(f,0)的作用是，尽可能早地执行指定的任务。
+setTimeout(f,0)将第二个参数设为0，作用是让f在现有的任务（脚本的同步任务和“任务队列”中已有的事件）一结束就立刻执行。也就是说，setTimeout(f,0)的作用是，尽可能早地执行指定的任务。
+
+{% highlight javascript %}
+
+setTimeout(function (){
+  console.log("你好！");
+}, 0);
+
+{% endhighlight %}
+
+上面代码的含义是，尽可能早地显示“你好！”。
+
+setTimeout(f,0)指定的任务，最早也要到下一次Event Loop才会执行。请看下面的例子。
 
 {% highlight javascript %}
 
@@ -376,20 +390,85 @@ console.log("当前任务结束");
 
 上面代码说明，setTimeout(f,0)必须要等到当前脚本的所有同步任务结束后才会执行。
 
-{% highlight javascript %}
+0毫秒实际上达不到的。根据[HTML 5标准](http://www.whatwg.org/specs/web-apps/current-work/multipage/timers.html#timers)，setTimeOut推迟执行的时间，最少是4毫秒。如果小于这个值，会被自动增加到4。另一方面，浏览器内部使用32位带符号的整数，来储存推迟执行的时间。这意味着setTimeout最多只能推迟执行2147483647毫秒（24.8天），超过这个时间会发生溢出，导致回调函数将在当前任务队列结束后立即执行，即等同于setTimeout(f,0)的效果
 
-setTimeout(function (){
-  console.log("你好！");
-}, 0);
+### 应用
 
-{% endhighlight %}
+setTimeout(f,0)有几个非常重要的用途。它的一大应用是，可以调整事件的发生顺序。比如，网页开发中，某个事件先发生在子元素，然后冒泡到父元素，即子元素的事件回调函数，会早于父元素的事件回调函数触发。如果，我们先让父元素的事件回调函数先发生，就要用到setTimeout(f, 0)。
 
-上面代码的含义是，尽可能早地显示“你好！”。
+```javascript
 
-跟据[HTML 5标准](http://www.whatwg.org/specs/web-apps/current-work/multipage/timers.html#timers)，setTimeOut推迟执行的时间，最少是4毫秒。如果小于这个值，会被自动增加到4。
+var input = document.getElementsByTagName('input[type=button]')[0];
+ 
+input.onclick = function A() {
+  setTimeout(function B() {
+    input.value +=' input'; 
+  }, 0)
+};
+ 
+document.body.onclick = function C() {
+  input.value += ' body'
+};
 
-另一方面，浏览器内部使用32位带符号的整数，来储存推迟执行的时间。这意味着setTimeout最多只能推迟执行2147483647毫秒（24.8天），超过这个时间会发生溢出，导致回调函数将在当前任务队列结束后立即执行，即等同于setTimeout(f,0)的效果。
+```
+
+上面代码在点击按钮后，先触发回调函数A，然后触发函数C。在函数A中，setTimeout将函数B推迟到下一轮Loop执行，这样就起到了，先触发父元素的回调函数C的目的了。
+
+用户自定义的回调函数，通常在浏览器的默认动作之前触发。比如，用户在输入框输入文本，keypress事件会在浏览器接收文本之前触发。因此，下面的回调函数是达不到目的的。
+
+```javascript
+
+document.getElementById('input-box').onkeypress = function(event) {
+  this.value = this.value.toUpperCase();
+}
+
+```
+
+上面代码想在用户输入文本后，立即将字符转为大写。但是实际上，它只能将上一个字符转为大写，因为浏览器此时还没接收到文本，所以`this.value`取不到最新输入的那个字符。只有用setTimeout改写，上面的代码才能发挥作用。
+
+```javascript
+
+document.getElementById('my-ok').onkeypress = function() {
+  var self = this;
+  setTimeout(function() {
+    self.value = self.value.toUpperCase();
+  }, 0);
+}
+
+```
+
+上面代码将代码放入setTimeout之中，就能使得它在浏览器接收到文本之后触发。
+
+由于setTimeout(f,0)实际上意味着，将任务放到浏览器最早可得的空闲时段执行，所以那些计算量大、耗时长的任务，常常会被放到几个小部分，分别放到setTimeout(f,0)里面执行。
+
+```javascript
+
+var div = document.getElementsByTagName('div')[0];
+
+// 写法一
+for(var i=0xA00000;i<0xFFFFFF;i++) {
+  div.style.backgroundColor = '#'+i.toString(16);
+}
+
+// 写法二
+var timer;
+var i=0x100000;
+
+function func() {
+  timer = setTimeout(func, 0);
+  div.style.backgroundColor = '#'+i.toString(16);
+  if (i++ == 0xFFFFFF) clearInterval(timer);
+}
+ 
+timer = setTimeout(func, 0);
+
+```
+
+上面代码有两种写法，都是改变一个网页元素的背景色。写法一会造成浏览器“堵塞”，而写法二就能就不会，这就是`setTimeout(f,0)`的好处。
+
+另一个使用这种技巧的例子是，代码高亮的处理。如果代码块很大，就会分成一个个小块，写成诸如`setTimeout(highlightNext, 50)`的样子，进行分块处理。
 
 ## 参考链接
 
 - Ilya Kantor, [Understanding timers: setTimeout and setInterval](http://javascript.info/tutorial/settimeout-setinterval)
+- Ilya Kantor, [Events and timing in-depth](http://javascript.info/tutorial/events-and-timing-depth)
