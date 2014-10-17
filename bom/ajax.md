@@ -468,15 +468,64 @@ if("withCredentials" in request) {
 
 CORS的原理其实很简单，就是增加一条HTTP头信息的查询，询问服务器端，当前请求的域名是否在许可名单之中，以及可以使用哪些HTTP动词。如果得到肯定的答复，就发出XMLHttpRequest请求。这种机制叫做“预检”（preflight）。
 
-“预检”的专用HTTP头信息是Origin。假定用户正在浏览来自www.example.com的网页，该网页需要向另一个域名请求数据，这时浏览器会向该域名询问是否同意跨域请求，发出的HTTP头信息如下：
+“预检”的专用HTTP头信息是Origin。假定用户正在浏览来自www.example.com的网页，该网页需要向Google请求数据，这时浏览器会向该域名询问是否同意跨域请求，发出的HTTP头信息如下：
 
 {% highlight http %}
 
+OPTIONS /resources/post-here/ HTTP/1.1
+Host: www.google.com
+User-Agent: Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.5; en-US; rv:1.9.1b3pre) Gecko/20081130 Minefield/3.1b3pre
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-us,en;q=0.5
+Accept-Encoding: gzip,deflate
+Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
+Connection: keep-alive
 Origin: http://www.example.com
+Access-Control-Request-Method: POST
+Access-Control-Request-Headers: X-PINGOTHER
 
 {% endhighlight %}
 
+上面的HTTP请求，它的动词是OPTIONS，表示这是一个“预检”请求。除了提供浏览器信息，里面关键的一行是Origin头信息。
+
+```http
+
+Origin: http://www.example.com
+
+```
+
 这行HTTP头信息表示，请求来自www.example.com。服务端如果同意，就返回一个Access-Control-Allow-Origin头信息。
+
+预检请求中，浏览器还告诉服务器，实际发出请求，将使用HTTP动词POST，以及一个自定义的头信息X-PINGOTHER。
+
+```http
+
+Access-Control-Request-Method: POST
+Access-Control-Request-Headers: X-PINGOTHER
+
+```
+
+服务器收到预检请求之后，做出了回应。
+
+```http
+
+HTTP/1.1 200 OK
+Date: Mon, 01 Dec 2008 01:15:39 GMT
+Server: Apache/2.0.61 (Unix)
+Access-Control-Allow-Origin: http://www.example.com
+Access-Control-Allow-Methods: POST, GET, OPTIONS
+Access-Control-Allow-Headers: X-PINGOTHER
+Access-Control-Max-Age: 1728000
+Vary: Accept-Encoding, Origin
+Content-Encoding: gzip
+Content-Length: 0
+Keep-Alive: timeout=2, max=100
+Connection: Keep-Alive
+Content-Type: text/plain
+
+```
+
+上面的HTTP回应里面，关键的是Access-Control-Allow-Origin头信息。这表示服务器同意www.example.com的跨域请求。
 
 {% highlight http %}
 
@@ -494,17 +543,30 @@ Access-Control-Allow-Origin: *
 
 {% endhighlight %}
 
+服务器还告诉浏览器，允许的HTTP动词是POST、GET、OPTIONS，也允许自定义的头信息X-PINGOTHER，
+
+```http
+
+Access-Control-Allow-Methods: POST, GET, OPTIONS
+Access-Control-Allow-Headers: X-PINGOTHER
+Access-Control-Max-Age: 1728000
+
+```
+
+如果服务器通过了预检请求，则以后每次浏览器正常的HTTP请求，都会有一个origin头信息；服务器的回应，也都会有一个Access-Control-Allow-Origin头信息。Access-Control-Max-Age头信息表示，允许缓存该条回应1728000秒（即20天），在此期间，不用发出另一条预检请求。
+
 由于整个过程都是浏览器自动后台完成，不用用户参与，所以对于开发者来说，使用Ajax跨域请求与同域请求没有区别，代码完全一样。但是，这需要服务器的支持，所以在使用CORS之前，要查看一下所请求的网站是否支持。
 
-CORS机制默认不发送cookie和HTTP认证信息，除非打开withCredentials属性。
+CORS机制默认不发送cookie和HTTP认证信息，除非在Ajax请求中打开withCredentials属性。
 
 {% highlight javascript %}
 
+var request = new XMLHttpRequest();
 request.withCredentials = "true";
 
 {% endhighlight %}
 
-同时，服务器返回HTTP头信息，也必须打开Access-Control-Allow-Credentials选项。
+同时，服务器返回HTTP头信息时，也必须打开Access-Control-Allow-Credentials选项。否则，浏览器会忽略服务器返回的回应。
 
 {% highlight http %}
 
@@ -512,7 +574,7 @@ Access-Control-Allow-Credentials: true
 
 {% endhighlight %}
 
-需要注意的是，此时cookie依然遵循同源政策，只有该远程域名设置的cookie才会上传，其他域名下的cookie并不会上传，且网页代码中的document.cookie也无法读取远程域名下的cookie。
+需要注意的是，此时Access-Control-Allow-Origin不能指定为星号，必须指定明确的、与请求网页一致的域名。同时，cookie依然遵循同源政策，只有用服务器域名（前例是www.google.com）设置的cookie才会上传，其他域名下的cookie并不会上传，且网页代码中的document.cookie也无法读取www.google.com域名下的cookie。
 
 CORS机制与JSONP模式的使用目的相同，而且更强大。JSONP只支持GET请求，CORS可以支持所有类型的HTTP请求。在发生错误的情况下，CORS可以得到更详细的错误信息，部署更有针对性的错误处理代码。JSONP的优势在于可以用于老式浏览器，以及可以向不支持CORS的网站请求数据。
 
@@ -523,3 +585,4 @@ CORS机制与JSONP模式的使用目的相同，而且更强大。JSONP只支持
 - Eric Bidelman, [New Tricks in XMLHttpRequest2](http://www.html5rocks.com/en/tutorials/file/xhr2/)
 - Matt West, [Uploading Files with AJAX](http://blog.teamtreehouse.com/uploading-files-ajax)
 - Monsur Hossain, [Using CORS](http://www.html5rocks.com/en/tutorials/cors/)
+- MDN, [HTTP access control (CORS)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS)

@@ -144,6 +144,62 @@ getComputedStyle方法接受一个HTML元素作为参数，返回一个包含该
 
 window.matchMedia方法用来检查CSS的mediaQuery语句。详见《DOM》一章的CSS章节。
 
+## window对象的事件
+
+### window.onerror
+
+浏览器脚本发生错误时，会触发window对象的error事件。我们可以通过`window.onerror`属性对该事件指定回调函数。
+
+```javascript
+
+window.onerror = function (message, filename, lineno, colno, error) {
+    console.log("出错了！--> %s", error.stack);
+};
+
+```
+
+error事件的回调函数，一共可以有五个参数，它们的含义依次如下。
+
+- 出错信息
+- 出错脚本的网址
+- 行号
+- 列号
+- 错误对象
+
+老式浏览器只支持前三个参数。
+
+需要注意的是，如果脚本网址与网页网址不在同一个域（比如使用了CDN），浏览器根本不会提供详细的出错信息，只会提示出错，错误类型是“Script error.”，行号为0，其他信息都没有。这是浏览器防止向外部脚本泄漏信息。一个解决方法是在脚本所在的服务器，设置Access-Control-Allow-Origin的HTTP头信息。
+
+
+```bash
+
+Access-Control-Allow-Origin:*
+
+```
+
+然后，在网页的script标签中设置crossorigin属性。
+
+```html
+
+<script crossorigin="anonymous" src="//example.com/file.js"></script>
+
+```
+
+上面代码的`crossorigin="anonymous"`表示，读取文件不需要身份信息，即不需要cookie和HTTP认证信息。如果设为`crossorigin="use-credentials"`，就表示浏览器会上传cookie和HTTP认证信息，同时还需要服务器端打开HTTP头信息Access-Control-Allow-Credentials。
+
+并不是所有的错误，都会触发JavaScript的error事件（即让JavaScript报错），只限于以下三类事件。
+
+- JavaScript语言错误
+- JavaScript脚本文件不存在
+- 图像文件不存在
+
+以下两类事件不会触发JavaScript的error事件。
+
+- CSS文件不存在
+- iframe文件不存在
+
 ## 参考链接
 
 - Karl Dubost, [User-Agent detection, history and checklist](https://hacks.mozilla.org/2013/09/user-agent-detection-history-and-checklist/)
+- Conrad Irwin, [JS stacktraces. The good, the bad, and the ugly](https://bugsnag.com/blog/js-stacktraces/)
+- Daniel Lee, [How to catch JavaScript Errors with window.onerror (even on Chrome and Firefox)](http://danlimerick.wordpress.com/2014/01/18/how-to-catch-javascript-errors-with-window-onerror-even-on-chrome-and-firefox/)
