@@ -258,7 +258,7 @@ time方法表示计时开始，timeEnd方法表示计时结束。它们的参数
 
 在控制台中，除了使用console对象，还可以使用一些控制台自带的命令行方法。
 
-__（1）$_ __
+（1）$_ 
 
 $_属性返回上一个表达式的值。
 
@@ -271,11 +271,11 @@ $_
 
 {% endhighlight %}
 
-__（2）$0 - $4 __
+（2）$0 - $4 
 
 控制台保存了最近5个在Elements面板选中的DOM元素，$0代表倒数第一个，$1代表倒数第二个，以此类推直到$4。
 
-__（3）$(selector) __
+（3）$(selector) 
 
 $(selector)返回一个数组，包括特定的CSS选择器匹配的所有DOM元素。该方法实际上是document.querySelectorAll方法的别名。
 
@@ -290,11 +290,11 @@ for (each in images) {
 
 上面代码打印出网页中所有img元素的src属性。
 
-__（4）$$(selector)__
+（4）$$(selector)
 
 $$(selector)返回一个选中的DOM对象，等同于document.querySelectorAll。
 
-__（5）$x(path) __
+（5）$x(path) 
 
 $x(path)方法返回一个数组，包含匹配特定XPath表达式的所有DOM元素。
 
@@ -306,15 +306,15 @@ $x("//p[a]")
 
 上面代码返回所有包含a元素的p元素。
 
-__（6）inspect(object) __
+（6）inspect(object) 
 
 inspect(object)方法打开相关面板，并选中相应的元素：DOM元素在Elements面板中显示，JavaScript对象在Profiles中显示。
 
-__（7）getEventListeners(object) __
+（7）getEventListeners(object)
 
 getEventListeners(object)方法返回一个对象，该对象的成员为登记了回调函数的各种事件（比如click或keydown），每个事件对应一个数组，数组的成员为该事件的回调函数。
 
-__（8）keys(object)，values(object) __
+（8）keys(object)，values(object)
 
 keys(object)方法返回一个数组，包含特定对象的所有键名。
 
@@ -331,7 +331,7 @@ values(o)
 
 {% endhighlight %}
 
-__（9）monitorEvents(object[, events]) ，unmonitorEvents(object[, events])__
+（9）monitorEvents(object[, events]) ，unmonitorEvents(object[, events])
 
 monitorEvents(object[, events])方法监听特定对象上发生的特定事件。当这种情况发生时，会返回一个Event对象，包含该事件的相关信息。unmonitorEvents方法用于停止监听。
 
@@ -369,7 +369,7 @@ monitorEvents($("#msg"), "key");
 
 上面代码表示监听所有key大类的事件。
 
-__（10）profile([name])，profileEnd() __
+（10）profile([name])，profileEnd()
 
 profile方法用于启动一个特定名称的CPU性能测试，profileEnd方法用于结束该性能测试。
 
@@ -381,7 +381,7 @@ profileEnd("My profile")
 
 {% endhighlight %}
 
-__（11）其他方法 __
+（11）其他方法
 
 命令行API还提供以下方法。
 

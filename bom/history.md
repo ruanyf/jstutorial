@@ -40,17 +40,30 @@ history.go(0);
 
 ```
 
-## pushState方法和replaceState方法
+## history.pushState()，history.replaceState()
 
 HTML5为history对象添加了两个新方法，history.pushState() 和 history.replaceState()，用来在浏览历史中添加和修改记录。所有主流浏览器都支持该方法（包括IE10）。
 
-pushState方法接受三个参数，依次为：
 
-- **state**：一个与当前网址相关的对象。如果不输入这个值，此处填null。
-- **title**：新页面的标题，但是所有浏览器目前都忽略这个值。如果不输入这个值，此处填null。
-- **url**：新的网址，必须与当前页面处在同一个域。
+```javascript
 
-假定当前网址是1.html，我们使用pushState方法在浏览记录中添加一个新记录。
+if (!!(window.history && history.pushState)){
+  // 支持History API
+} else {
+  // 不支持
+}
+
+```
+
+上面代码可以用来检查，当前浏览器是否支持History API。如果不支持的话，可以考虑使用Polyfill库[History.js]( https://github.com/browserstate/history.js/)。
+
+history.pushState方法接受三个参数，依次为：
+
+- **state**：一个与指定网址相关的状态对象，popstate事件触发时，该对象会传入回调函数。如果不需要这个对象，此处可以填null。
+- **title**：新页面的标题，但是所有浏览器目前都忽略这个值，因此这里可以填null。
+- **url**：新的网址，必须与当前页面处在同一个域。浏览器的地址栏将显示这个网址。
+
+假定当前网址是`example.com/1.html`，我们使用pushState方法在浏览记录（history对象）中添加一个新记录。
 
 {% highlight javascript %}
 
@@ -60,13 +73,13 @@ history.pushState(stateObj, "page 2", "2.html");
 
 {% endhighlight %}
 
-添加上面这个新记录后，浏览器并不会跳转到2.html，甚至也不会检查2.html是否存在，它只是成为浏览历史中的最新记录。假定这时你访问了google.com，然后点击了倒退按钮，页面的url将显示2.html，但是内容还是原来的1.html。你再点击一次倒退按钮，url将显示1.html，内容不变。
+添加上面这个新记录后，浏览器地址栏立刻显示`example.com/2.html`，但并不会跳转到2.html，甚至也不会检查2.html是否存在，它只是成为浏览历史中的最新记录。假定这时你访问了google.com，然后点击了倒退按钮，页面的url将显示2.html，但是内容还是原来的1.html。你再点击一次倒退按钮，url将显示1.html，内容不变。
 
 > 注意，pushState方法不会触发页面刷新。
 
 如果 pushState 的url参数，设置了一个当前网页的#号值（即hash），并不会触发hashchange事件。
 
-replaceState 的参数与 pushState 一模一样，它修改浏览历史中当前页面的值。假定当前网页是http://example.com/example.html。
+history.replaceState方法的参数与pushState方法一模一样，区别是它修改浏览历史中当前页面的值。假定当前网页是example.com/example.html。
 
 {% highlight javascript %}
 
@@ -83,7 +96,7 @@ history.go(2);  // url显示为http://example.com/example.html?page=3
 
 每当同一个文档的浏览历史（即history对象）出现变化时，就会触发popstate事件。需要注意的是，仅仅调用pushState方法或replaceState方法 ，并不会触发该事件，只有用户点击浏览器倒退按钮和前进按钮，或者使用JavaScript调用back、forward、go方法时才会触发。另外，该事件只针对同一个文档，如果浏览历史的切换，导致加载不同的文档，该事件也不会触发。
 
-可以为popstate事件指定回调函数。这个回调函数的参数是一个event事件对象，它的state属性指向pushState和replaceState方法为当前url所提供的state对象（也就是这两个方法的第一个参数）。
+使用的时候，可以为popstate事件指定回调函数。这个回调函数的参数是一个event事件对象，它的state属性指向pushState和replaceState方法为当前url所提供的状态对象（即这两个方法的第一个参数）。
 
 {% highlight javascript %}
 
@@ -111,7 +124,7 @@ var currentState = history.state;
 
 {% endhighlight %}
 
-当页面第一次加载的时候，Chrome和Safari浏览器会触发该事件，而Firefox浏览器不会。 
+另外，需要注意的是，当页面第一次加载的时候，在onload事件发生后，Chrome和Safari浏览器（Webkit核心）会触发popstate事件，而Firefox和IE浏览器不会。 
 
 ## 参考链接
 
