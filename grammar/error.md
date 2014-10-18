@@ -58,22 +58,21 @@ catchit()
 
 Error对象是最一般的错误类型，在它的基础上，JavaScript还定义了其他6种错误，也就是说，存在Error的6个派生对象。
 
-**（1）EvalError**
+**（1）SyntaxError**
 
-EvalError是执行代码时发生的错误。该错误类型已经不再使用了，只是为了保证与以前代码兼容，才继续保留。
-
-**（2）RangeError**
-
-RangeError是当一个值超出有效范围时发生的错误。
+SyntaxError是解析代码时发生的语法错误。
 
 {% highlight javascript %}
 
-new Array(-1)
-// RangeError: Invalid array length
+// 变量名错误
+var 1a;
+
+// 缺少括号
+console.log 'hello');
 
 {% endhighlight %}
 
-**（3）ReferenceError**
+**（2）ReferenceError**
 
 ReferenceError是引用一个不存在的变量时发生的错误。
 
@@ -84,31 +83,40 @@ unknownVariable
 
 {% endhighlight %}
 
-**（4）SyntaxError**
+**（3）RangeError**
 
-SyntaxError是解析代码时发生的语法错误。
-
-{% highlight javascript %}
-
-eval('3 +')
-// SyntaxError: Unexpected end of file
-
-{% endhighlight %}
-
-**（5）TypeError**
-
-TypeError是变量或参数的类型无效时发生的错误。
+RangeError是当一个值超出有效范围时发生的错误。主要有两种情况，一是数组长度为负数，二是Number对象的方法参数超出范围。
 
 {% highlight javascript %}
 
-undefined.foo
-// TypeError: Cannot read property 'foo' of undefined
+new Array(-1)
+// RangeError: Invalid array length
+
+(1234).toExponential(21)
+// RangeError: toExponential() argument must be between 0 and 20 
 
 {% endhighlight %}
 
-**（6）URIError**
+**（4）TypeError**
 
-URIError是向encodeURI() 或者 decodeURI() 传入无效参数时发生的错误。
+TypeError是变量或参数不是预期类型时发生的错误。比如，对字符串、布尔值、数值等原始类型的值使用new命令，就会抛出这种错误，因为new命令的参数应该是一个构造函数。
+
+{% highlight javascript %}
+
+new 123
+//TypeError: number is not a func
+
+var obj = {};
+obj.unknownMethod()
+// TypeError: undefined is not a function 
+
+{% endhighlight %}
+
+上面代码的第二种情况，调用对象不存在的方法，会抛出TypeError错误。
+
+**（5）URIError**
+
+URIError是URI相关函数的参数不正确时抛出的错误，主要涉及encodeURI()、decodeURI()、encodeURIComponent()、decodeURIComponent()、escape()和unescape()这六个函数。
 
 {% highlight javascript %}
 
@@ -117,7 +125,11 @@ decodeURI('%2')
 
 {% endhighlight %}
 
-这6种派生错误，连同原始的Error对象，都是构造函数。开发者可以使用它们，人为生成错误对象的实例。
+**（6）EvalError**
+
+eval函数没有被正确执行时，会抛出EvalError错误。该错误类型已经不再在ES5中出现了，只是为了保证与以前代码兼容，才继续保留。
+
+以上这6种派生错误，连同原始的Error对象，都是构造函数。开发者可以使用它们，人为生成错误对象的实例。
 
 {% highlight javascript %}
 

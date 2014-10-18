@@ -40,7 +40,7 @@ Number.MIN_VALUE // 5e-324
 
 ## Number对象实例的方法
 
-### toString方法
+### Number.prototype.toString()
 
 Number对象部署了单独的toString方法，可以接受一个参数，表示将一个数字转化成某个进制的字符串。
 
@@ -92,7 +92,7 @@ Number对象部署了单独的toString方法，可以接受一个参数，表示
 
 将其他进制的数，转回十进制，需要使用parseInt方法。
 
-### toFixed方法
+### Number.prototype.toFixed()
 
 toFixed方法用于将一个数转为指定位数的小数。
 
@@ -107,9 +107,9 @@ toFixed方法用于将一个数转为指定位数的小数。
 
 {% endhighlight %}
 
-toFixed的输出支持0到20位小数。
+toFixed方法的参数为小数的位数，有效范围为0到20，超出这个范围将抛出RangeError错误。。
 
-### toExponential方法
+### Number.prototype.toExponential()
 
 toExponential方法用于将一个数转为科学计数法形式。
 
@@ -123,9 +123,9 @@ toExponential方法用于将一个数转为科学计数法形式。
 
 {% endhighlight %}
 
-toExponential方法的参数表示小数点后有效数字的位数。
+toExponential方法的参数表示小数点后有效数字的位数，范围为0到20，超出这个范围，会抛出一个RangeError。
 
-### toPrecision方法
+### Number.prototype.toPrecision()
 
 toPrecision方法用于将一个数转为指定位数的有效数字。
 
@@ -148,7 +148,7 @@ toPrecision方法用于将一个数转为指定位数的有效数字。
 
 {% endhighlight %}
 
-toPrecision方法提供的有效数字位数的范围是1到21。
+toPrecision方法的参数为有效数字的位数，范围是1到21，超出这个范围会抛出RangeError错误。
 
 toPrecision方法用于四舍五入时不太可靠，可能跟浮点数不是精确储存有关。
 
