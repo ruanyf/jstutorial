@@ -1029,7 +1029,9 @@ var a = 3;
 var a = b + c
 (d+e).toString();
 /* 解释为c(d+e)，
-   即先进行乘法运算 */
+   这时c被视为一个函数，d+e是参数，
+   JavaScript引擎会报错
+*/
 
 a = b
 /hi/g.exec(c).map(d);
