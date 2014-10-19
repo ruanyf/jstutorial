@@ -1028,10 +1028,9 @@ var a = 3;
 
 var a = b + c
 (d+e).toString();
-/* 解释为c(d+e)，
-   这时c被视为一个函数，d+e是参数，
-   JavaScript引擎会报错
-*/
+/* 结果报错，因为两行连在一起，
+   解释为c(d+e)，
+   即对函数 c 的调用 */
 
 a = b
 /hi/g.exec(c).map(d);
