@@ -198,6 +198,64 @@ Access-Control-Allow-Origin:*
 - CSS文件不存在
 - iframe文件不存在
 
+## alert()，prompt()，confirm()
+
+alert()、prompt()、confirm()都是浏览器用来与用户互动的方法。它们会弹出不同的对话框，要求用户做出回应。
+
+需要注意的是，alert()、prompt()、confirm()这三个方法弹出的对话框，都是浏览器统一规定的式样，是无法定制的。
+
+alert方法弹出的对话框，只有一个“确定”按钮，往往用来通知用户某些信息。
+
+```javascript
+
+// 格式
+alert(message);
+
+// 实例
+alert("Hello World");
+
+```
+
+用户只有点击“确定”按钮，对话框才会消失。在对话框弹出期间，浏览器窗口处于冻结状态，如果不点“确定”按钮，用户什么也干不了。
+
+prompt方法弹出的对话框，在提示文字的下方，还有一个输入框，要求用户输入信息，并有“确定”和“取消”两个按钮。它往往用来获取用户输入的数据。
+
+```javascript
+
+// 格式
+var result = prompt(text[, default]);
+
+// 实例
+var result = prompt('您的年龄？', 25)
+
+```
+
+上面代码会跳出一个对话框，文字提示为“您的年龄？”，要求用户在对话框中输入自己的年龄（默认显示25）。
+
+prompt方法的返回值是一个字符串（有可能为空）或者null，具体分成三种情况。
+
+1. 用户输入信息，并点击“确定”，则用户输入的信息就是返回值。
+2. 用户没有输入信息，直接点击“确定”，则输入框的默认值就是返回值。
+3. 用户点击了“取消”（或者按了Escape按钮），则返回值是null。
+
+prompt方法的第二个参数是可选的，但是如果不提供的话，IE浏览器会在输入框中显示undefined。因此，最好总是提供第二个参数，作为输入框的默认值。
+
+confirm方法弹出的对话框，除了提示信息之外，只有“确定”和“取消”两个按钮，往往用来征询用户的意见。
+
+```javascript
+
+// 格式
+var result = confirm(message);
+
+// 实例
+var result = confirm("你最近好吗？");
+
+```
+
+上面代码弹出一个对话框，上面只有一行文字“你最近好吗？”，用户选择点击“确定”或“取消”。
+
+confirm方法返回一个布尔值，如果用户点击“确定”，则返回true；如果用户点击“取消”，则返回false。
+
 ## 参考链接
 
 - Karl Dubost, [User-Agent detection, history and checklist](https://hacks.mozilla.org/2013/09/user-agent-detection-history-and-checklist/)

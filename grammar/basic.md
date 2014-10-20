@@ -221,7 +221,7 @@ var 临时变量 = 1;
 
 ### 区块
 
-JavaScript使用大括号，将相关的语句组合在一起，称为“区块”（block）。
+JavaScript使用大括号，将多个相关的语句组合在一起，称为“区块”（block）。
 
 与大多数编程语言不一样，JavaScript的区块不构成单独的作用域（scope）。也就是说，区块中的变量与区块外的变量，属于同一个作用域。
 
@@ -235,7 +235,7 @@ a // 1
 
 {% endhighlight %}
 
-上面代码在区块内部，声明并赋值了变量a，然后在区块外部，变量a依然有效，这说明区块不构成单独的作用域。
+上面代码在区块内部，声明并赋值了变量a，然后在区块外部，变量a依然有效，这说明区块不构成单独的作用域，与不使用区块的情况没有任何区别。所以，单独使用的区块在JavaScript中意义不大，很少出现。区块往往用来构成其他更复杂的语法结构，比如for、if、while、functions等。
 
 ### 条件语句
 
@@ -611,7 +611,7 @@ top:
 
 ### 概述
 
-JavaScript的值的类型共有六个类别和两个特殊值。
+JavaScript语言的每一个值，都属于某一种数据类型。JavaScript的数据类型，共有六个类别和两个特殊值。
 
 六个类别的数据类型又可以分成两组：原始类型（primitive type）和合成类型（complex type）。
 
@@ -645,9 +645,9 @@ JavaScript有三种方法，可以确定一个值到底是什么类型。
 - instanceof运算符
 - Object.prototype.toString方法
 
-instanceof运算符放在《面向对象编程》一章介绍，Object.prototype.toString方法放在《标准库》的Object 一节介绍。下面介绍typeof 运算符。
+instanceof运算符和Object.prototype.toString方法，将在后文相关章节介绍。这里着重介绍typeof 运算符。
 
-typeof运算符可以返回一个值的数据类型，可能有以下结果：
+typeof运算符可以返回一个值的数据类型，可能有以下结果。
 
 **（1）原始类型**
 
