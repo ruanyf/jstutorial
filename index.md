@@ -131,6 +131,7 @@ modifiedOn: 2014-05-18
 - [概述](nodejs/basic.html)
 - [CommonJS规范](nodejs/commonjs.html)
 - [process对象](nodejs/process.html)
+- [events模块](nodejs/events.html)
 - [Child Process模块](nodejs/child-process.html)
 - [Express框架](nodejs/express.html)
 

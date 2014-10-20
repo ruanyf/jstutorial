@@ -822,190 +822,71 @@ curl -k https://localhost:8000
 
 {% endhighlight %}
 
-## events模块
+## Buffer对象
 
-### 基本用法
+Buffer对象是Node.js用来处理二进制数据的一个接口。它是一个构造函数，它的实例代表了V8引擎分配的一段内存。
 
-events模块是node.js对“发布/订阅”模式（publish/subscribe）的部署。也就说，通过events模块的EventEmitter属性，建立一个消息中心；然后通过on方法，为各种事件指定回调函数，从而将程序转为事件驱动型，各个模块之间通过事件联系。
-
-{% highlight javascript %}
-
-var EventEmitter = require("events").EventEmitter;
- 
-var ee = new EventEmitter();
-ee.on("someEvent", function () {
-        console.log("event has occured");
-});
- 
-ee.emit("someEvent");
-
-{% endhighlight %}
-
-上面代码在加载events模块后，通过EventEmitter属性建立了一个EventEmitter对象实例，这个实例就是消息中心。然后，通过on方法为someEvent事件指定回调函数。最后，通过emit方法触发someEvent事件。
-
-emit方法还接受第二个参数，用于向回调函数提供参数。
-
-{% highlight javascript %}
-
-ee.on("someEvent", function (data){
-        console.log(data);
-});
- 
-ee.emit("someEvent", data);
-
-{% endhighlight %}
-
-默认情况下，Node.js允许同一个事件最多可以触发10个回调函数。
-
-{% highlight javascript %}
-
-ee.on("someEvent", function () { console.log("event 1"); });
-ee.on("someEvent", function () { console.log("event 2"); });
-ee.on("someEvent", function () { console.log("event 3"); });
-
-{% endhighlight %}
-
-超过10个回调函数，会发出一个警告。这个门槛值可以通过setMaxListeners方法改变。 
-
-{% highlight javascript %}
-
-ee.setMaxListeners(20);
-
-{% endhighlight %}
-
-events模块的作用，还表示在其他模块可以继承这个模块，因此也就拥有了EventEmitter接口。
-
-{% highlight javascript %}
-
-var util = require("util");
-var EventEmitter = require("events").EventEmitter;
-
-function UserList (){
-    EventEmitter.call(this);
-}
-
-util.inherits(UserList, EventEmitter);
-
-UserList.prototype.save = function (obj) {
-	// save into database
-    this.emit("saved-user", obj);  
-};
-
-{% endhighlight %}
-
-上面代码新建了一个构造函数UserList，然后让其继承EventEmitter，因此UserList就拥有了EventEmitter的接口。最后，为UserList的实例定义一个save方法，表示将数据储存进数据库，在储存完毕后，使用EventEmitter接口的emit方法，触发一个saved-user事件。使用的时候，监听saved-user事件即可。
+Buffer对象可以用new命令生成一个实例，它的参数就是存入内存的数据。
 
 ```javascript
 
-var ul = new UserList();
+var hello = new Buffer('Hello');
 
-ul.on('saved-user', function(data){
-	console.log('保存成功');			
-})
+console.log(hello);
+// <Buffer 48 65 6c 6c 6f>
+
+console.log(hello.toString());
+// "Hello"
 
 ```
 
-### 事件类型
+上面代码表示，hello是一个Buffer，内容为储存在内存中的五个字符的二进制数据，使用toString方法可以看到对应的字符串。
 
-events模块默认支持一些事件。
+toString方法可以只返回指定位置内存的内容，它的第二个参数表示起始位置，第三个参数表示终止位置，两者都是从0开始计算。
 
-- newListener事件：添加新的回调函数时触发。
-- removeListener事件：移除回调时触发。
+```javascript
 
-{% highlight javascript %}
+var buf = new Buffer('just some data');
+console.log(buf.toString('ascii', 4, 9));
+// "some"
 
-ee.on("newListener", function (evtName){
-	console.log("New Listener: " + evtName);
-});
+```
 
-ee.on("removeListener", function (evtName){
-	console.log("Removed Listener: " + evtName);
-});
+除了使用字符串参数，生成Buffer实例，还可以使用十六进制数据。
 
-function foo (){}
+```javascript
 
-ee.on("save-user", foo);
-ee.removeListener("save-user", foo);
+var hello = new Buffer([0x48, 0x65, 0x6c, 0x6c, 0x6f]);
 
-// New Listener: removeListener
-// New Listener: save-user
-// Removed Listener: save-user
+```
 
-{% endhighlight %}
+构造函数Buffer的参数，如果是一个数值，就表示所生成的实例占据内存多少个字节。
 
-上面代码会触发两次newListener事件，以及一次removeListener事件。
+```javascript
 
-### EventEmitter对象的其他方法
+var buf = new Buffer(5);
+buf.write('He');
+buf.write('l', 2);
+buf.write('lo', 3);
+console.log(buf.toString());
+// "Hello"
 
-**（1）once方法**
+```
 
-该方法类似于on方法，但是回调函数只触发一次。
+Buffer实例的write方法，可以向所指定的内存写入数据。它的第一个参数是所写入的内容，第二个参数是所写入的起始位置（从0开始）。所以，上面代码最后写入内存的内容是Hello。
 
-{% highlight javascript %}
+Buffer实例的length属性，返回Buffer实例所占据的内存长度。如果想知道一个字符串所占据的字节长度，可以将其传入Buffer.byteLength方法。
 
-ee.once("firstConnection", function (){
-		console.log("本提示只出现一次"); 
-});
+Buffer实例的slice方法，返回一个按照指定位置、从原对象切割出来的Buffer实例。它的两个参数分别为切割的起始位置和终止位置。
 
-{% endhighlight %}
+```javascript
 
-**（2）removeListener方法**
+var buf = new Buffer('just some data');
+var chunk = buf.slice(4, 9);
+console.log(chunk.toString());
+// "some"
 
-该方法用于移除回调函数。它接受两个参数，第一个是事件名称，第二个是回调函数名称。这就是说，不能用于移除匿名函数。
-
-{% highlight javascript %}
-
-function onlyOnce () {
-	console.log("You'll never see this again");
-	ee.removeListener("firstConnection", onlyOnce);
-}
-
-ee.on("firstConnection", onlyOnce);
-
-{% endhighlight %}
-
-上面代码起到与once方法类似效果。
-
-**（3）removeAllListeners方法**
-
-该方法用于移除某个事件的所有回调函数。
-
-{% highlight javascript %}
-
-ee.removeAllListeners("firstConnection");
-
-{% endhighlight %}
-
-如果不带参数，则表示移除所有事件的所有回调函数。
-
-{% highlight javascript %}
-
-ee.removeAllListeners();
-
-{% endhighlight %}
-
-**（4）listener方法**
-
-该方法接受一个事件名称作为参数，返回该事件所有回调函数组成的数组。
-
-{% highlight javascript %}
-
-function onlyOnce () {
-	console.log(ee.listeners("firstConnection"));
-	ee.removeListener("firstConnection", onlyOnce);
-	console.log(ee.listeners("firstConnection"));
-}
-
-ee.on("firstConnection", onlyOnce)
-ee.emit("firstConnection");
-ee.emit("firstConnection");
-
-// [ [Function: onlyOnce] ]
-// []
-
-{% endhighlight %}
-
-上面代码显示两次回调函数组成的数组，第一次只有一个回调函数onlyOnce，第二次是一个空数组，因为removeListener方法取消了回调函数。
+```
 
 ## cluster模块
 
