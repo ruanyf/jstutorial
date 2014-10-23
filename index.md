@@ -132,6 +132,7 @@ modifiedOn: 2014-05-18
 - [CommonJS规范](nodejs/commonjs.html)
 - [process对象](nodejs/process.html)
 - [events模块](nodejs/events.html)
+- [Stream接口](nodejs/stream.html)
 - [Child Process模块](nodejs/child-process.html)
 - [Express框架](nodejs/express.html)
 
