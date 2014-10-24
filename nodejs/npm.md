@@ -54,7 +54,7 @@ npm info underscore
 
 上面命令返回一个JavaScript对象，包含了underscore模块的详细信息。
 
-{% highlight javascript %}
+```javascript
 
 { name: 'underscore',
   description: 'JavaScript\'s functional programming helper library.',
@@ -75,11 +75,11 @@ npm info underscore
      'LICENSE' ],
   readmeFilename: 'README.md'}
 
-{% endhighlight %}
+```
 
 上面这个JavaScript对象的每个成员，都可以直接从info命令查询。
 
-{% highlight bash %}
+```bash
 
 npm info underscore description
 # JavaScript's functional programming helper library.
@@ -90,7 +90,7 @@ npm info underscore homepage
 npm info underscore version
 # 1.5.2
 
-{% endhighlight %}
+```
 
 ## npm install
 
@@ -211,16 +211,18 @@ npm search [搜索词]
 
 ## npm run
 
-在package.json文件有一项scripts，用于指定脚本命令，供npm直接调用。
+package.json文件有一项scripts，用于指定脚本命令，供npm直接调用。scripts.test指定的内容，会被`npm test`命令执行；scripts.start指定的内容，会被`npm start`调用。
+
+`npm test`和`npm start`，其实只是`npm run test`和`npm run start`命令的简写。你可以用`npm run`命令，执行scripts属性的任何栏位。
 
 {% highlight javascript %}
 
 "scripts": {
-    "watch": "watchify client/main.js -o public/app.js -v",
-    "build": "browserify client/main.js -o public/app.js",
-    "start": "npm run watch & nodemon server.js",
+  "watch": "watchify client/main.js -o public/app.js -v",
+  "build": "browserify client/main.js -o public/app.js",
+  "start": "npm run watch & nodemon server.js",
 	"test": "node test/all.js"
-  },
+},
 
 {% endhighlight %}
 
@@ -243,6 +245,43 @@ npm start
 npm test
 
 {% endhighlight %}
+
+如果希望一个操作的输出，是另一个操作的输入，可以借用Linux系统的管道命令，将两个操作连在一起。
+
+```javascript
+
+"build-js": "browserify browser/main.js | uglifyjs -mc > static/bundle.js"
+
+```
+
+但是，更方便的写法是引用其他`npm run`命令。
+
+```javascript
+
+"build": "npm run build-js && npm run build-css"
+
+```
+
+上面的写法是先运行`npm run build-js`，然后再运行`npm run build-css`，两个命令中间用`&&`连接。如果希望两个命令同时平行执行，它们中间可以用`&`连接。
+
+写在scripts属性中的命令，也可以在`node_modules/.bin`目录中直接写成bash脚本。
+
+```javascript
+
+#!/bin/bash
+
+cd site/main; 
+browserify browser/main.js | uglifyjs -mc > static/bundle.js
+
+```
+
+假定上面的脚本文件名为build.sh，并且权限为可执行，就可以在scripts属性中引用该文件。
+
+```javascript
+
+"build-js": "bin/build.sh"
+
+```
 
 ## npm link
 
@@ -379,3 +418,7 @@ module.exports = {
 npm publish
 
 {% endhighlight %}
+
+## 参考链接
+
+- James Halliday, [task automation with npm run](http://substack.net/task_automation_with_npm_run): npm run命令（package.json文件的script属性）的用法
