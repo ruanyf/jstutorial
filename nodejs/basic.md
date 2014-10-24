@@ -430,63 +430,73 @@ m.print("这是自定义模块");
 
 ## fs模块
 
-fs是filesystem的缩写，该模块提供本地文件的读写能力。
+fs是filesystem的缩写，该模块提供本地文件的读写能力，基本上是POSIX文件操作命令的简单包装。但是，这个模块几乎对所有操作提供异步和同步两种操作方式，供开发者选择。
 
-**（1）readfile方法**
+### mkdir()
+
+mkdir方法用于新建目录。
+
+```javascript
+
+var fs = require('fs');
+
+fs.mkdir('./helloDir',0777, function (err) {
+  if (err) throw err;
+});
+
+```
+
+mkdir接受三个参数，第一个是目录名，第二个是权限值，第三个是回调函数。
+
+### writeFile()
+
+writeFile方法用于写入文件。
+
+```javascript
+
+var fs = require('fs');
+
+fs.writeFile('./helloDir/message.txt', 'Hello Node', function (err) {
+  if (err) throw err;
+  console.log('文件写入成功');
+});
+
+```
+
+### readfile()
+
+readfile方法用于读取文件内容。
 
 {% highlight javascript %}
 
 var fs = require('fs');
 
-fs.readFile('example_log.txt', function (err, logData) {
-
+fs.readFile('./helloDir/message.txt','UTF-8' ,function (err, data) {
   if (err) throw err;
-
-  var text = logData.toString();
-
+  console.log(data);
 });
 
 {% endhighlight %}
 
-上面代码使用readFile方法读取文件。readFile方法的第一个参数是文件名，第二个参数是回调函数。这两个参数中间，还可以插入一个可选参数，表示文件的编码。
+上面代码使用readFile方法读取文件。readFile方法的第一个参数是文件名，第二个参数是文件编码，第三个参数是回调函数。可用的文件编码包括“ascii”、“utf8”和“base64”，如果这个参数没有提供，默认是utf8。
+
+### mkdirSync()，writeFileSync()，readFileSync()
+
+这三个方法是建立目录、写入文件、读取文件的同步版本。
 
 {% highlight javascript %}
 
-fs.readFile('example_log.txt', 'utf8', function (err, logData) {
-	// ...
-});
+fs.mkdirSync('./helloDirSync',0777);
+fs.writeFileSync('./helloDirSync/message.txt', 'Hello Node');
+var data = fs.readFileSync('./helloDirSync/message.txt','UTF-8');
+console.log('file created with contents:');
+console.log(data);
 
 {% endhighlight %}
 
-可用的文件编码包括“ascii”、“utf8”和“base64”。如果这个参数没有提供，默认是utf8。
+对于流量较大的服务器，最好还是采用异步操作，因为同步操作时，只有前一个操作结束，才会开始后一个操作，如果某个操作特别耗时（常常发生在读写数据时），会导致整个程序停顿。
 
-**（2）readFileSync方法**
-
-如果想要同步读取文件，可以使用readFileSync方法。
-
-{% highlight javascript %}
-
-var data = fs.readFileSync('./file.json');
-
-{% endhighlight %}
-
-**（3）writeFile方法**
-
-写入文件要使用writeFile方法。
-
-{% highlight javascript %}
-
-fs.writeFile('./file.txt', data, function (err) {
-    if (err) {
-      console.log(err.message);
-      return;
-    }
-    console.log('Saved successfully.');
-  });
-
-{% endhighlight %}
-
-**（4）readdir方法**
+### readdir方法
 
 readdir方法用于读取目录，返回一个所包含的文件和子目录的数组。
 
@@ -513,7 +523,7 @@ fs.readdir(process.cwd(), function (err, files) {
 
 {% endhighlight %}
 
-**（5）fs.exists(path, callback)**
+### exists(path, callback)
 
 exists方法用来判断给定路径是否存在，然后不管结果如何，都会调用回调函数。
 
@@ -539,6 +549,56 @@ if(fs.exists(outputFolder)) {
 }
 
 {% endhighlight %}
+
+### stat()
+
+stat方法的参数是一个文件或目录，它产生一个对象，该对象包含了该文件或目录的具体信息。我们往往通过该方法，判断正在处理的到底是一个文件，还是一个目录。
+
+```javascript
+
+var fs = require('fs');
+
+fs.readdir('/etc/', function (err, files) {
+  if (err) throw err;
+
+  files.forEach( function (file) {
+    fs.stat('/etc/' + file, function (err, stats) {
+      if (err) throw err;
+
+      if (stats.isFile()) {
+        console.log("%s is file", file);
+      }
+      else if (stats.isDirectory ()) {
+      console.log("%s is a directory", file);
+      }    
+    console.log('stats:  %s',JSON.stringify(stats));
+    });
+  });
+});
+
+```
+
+### watchfile()，unwatchfile()
+
+watchfile方法监听一个文件，如果该文件发生变化，就会自动触发回调函数。
+
+```javascript
+
+var fs = require('fs');
+
+fs.watchFile('./testFile.txt', function (curr, prev) {
+  console.log('the current mtime is: ' + curr.mtime);
+  console.log('the previous mtime was: ' + prev.mtime);
+});
+
+fs.writeFile('./testFile.txt', "changed", function (err) {
+  if (err) throw err;
+
+  console.log("file write complete");   
+});
+
+```
+unwatchfile方法用于解除对文件的监听。
 
 ## http模块
 
