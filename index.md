@@ -130,6 +130,8 @@ modifiedOn: 2014-05-18
 
 - [概述](nodejs/basic.html)
 - [CommonJS规范](nodejs/commonjs.html)
+- [package.json文件](nodejs/packagejson.html)
+- [npm模块管理器](nodejs/npm.html)
 - [process对象](nodejs/process.html)
 - [events模块](nodejs/events.html)
 - [Stream接口](nodejs/stream.html)
