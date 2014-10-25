@@ -60,7 +60,7 @@ child_process.exec('ls -l ' + path, function (err, data) {
 
 ```
 
-上面代码表示，在bash环境下，`ls -l; user input`会直接运行。如果用户输入恶意代码，将会带来安全风险。因此，在有用户输入的情况下，最好不使用exec方法，而是使用execfile方法。
+上面代码表示，在bash环境下，`ls -l; user input`会直接运行。如果用户输入恶意代码，将会带来安全风险。因此，在有用户输入的情况下，最好不使用exec方法，而是使用execFile方法。
 
 ## execFile()
 
@@ -81,7 +81,7 @@ child_process.execFile('/bin/ls', ['-l', path], function (err, result) {
 
 ## spawn()
 
-spawn方法创建一个子进程来执行特定命令，用法与execfile方法类似，但是没有回调函数。
+spawn方法创建一个子进程来执行特定命令，用法与execFile方法类似，但是没有回调函数。
 
 ```javascript
 
@@ -128,5 +128,5 @@ process.send({ foo: 'bar' });
 
 ## 参考链接
 
-- ^Lift Security Team, [Avoiding Command Injection in Node.js](https://blog.liftsecurity.io/2014/08/19/Avoid-Command-Injection-Node.js): 为什么execfile()的安全性高于exec()
-- byvoid, [Node.js中的child_process及进程通信](https://www.byvoid.com/zhs/blog/node-child-process-ipc): exec()、execfile()、fork()、spawn()四种方法的简介
+- ^Lift Security Team, [Avoiding Command Injection in Node.js](https://blog.liftsecurity.io/2014/08/19/Avoid-Command-Injection-Node.js): 为什么execFile()的安全性高于exec()
+- byvoid, [Node.js中的child_process及进程通信](https://www.byvoid.com/zhs/blog/node-child-process-ipc): exec()、execFile()、fork()、spawn()四种方法的简介
