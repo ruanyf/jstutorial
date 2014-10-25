@@ -409,9 +409,7 @@ document.head.appendChild(linkElm);
 
 {% endhighlight %}
 
-## window对象的CSS相关方法
-
-### window.getComputedStyle方法
+## window.getComputedStyle方法
 
 getComputedStyle方法接受一个HTML元素作为参数，返回一个包含该HTML元素的最终样式信息的对象。所谓“最终样式信息”，指的是各种CSS规则叠加后的结果。
 
@@ -427,9 +425,11 @@ getComputedStyle方法只能读取CSS属性，而不能设置。它使用骆驼�
 
 getComputedStyle方法返回的颜色值一律都是rgb(#,#,#)格式。
 
-### window.matchMedia方法
+## window.matchMedia方法
 
 window.matchMedia方法用来检查CSS的[mediaQuery](https://developer.mozilla.org/en-US/docs/DOM/Using_media_queries_from_code)语句。各种浏览器的最新版本（包括IE 10+）都支持该方法，对于不支持该方法的老式浏览器，可以使用第三方函数库[matchMedia.js](https://github.com/paulirish/matchMedia.js/)。
+
+### mediaQuery语句
 
 mediaQuery有点像if语句，只要显示网页的媒介（包括浏览器和屏幕等）满足mediaQuery语句设定的条件，就会执行区块内部的语句。下面是mediaQuery语句的一个例子。
 
@@ -456,6 +456,8 @@ mediaQuery有点像if语句，只要显示网页的媒介（包括浏览器和�
 {% endhighlight %}
 
 视口的宽度/高度（width/height）使用documentElement.clientWidth/Height来衡量，单位是CSS像素；设备的宽度/高度（device-width/device-height）使用screen.width/height来衡量，单位是设备硬件的像素。
+
+### 属性
 
 window.matchMedia方法接受mediaQuery语句作为参数，返回一个[MediaQueryList](https://developer.mozilla.org/en-US/docs/DOM/MediaQueryList)对象。该对象有以下两个属性。
 
@@ -502,7 +504,9 @@ if (result.matches){
 
 {% endhighlight %}
 
-window.matchMedia方法返回的MediaQueryList对象，还可以监听事件。如果mediaQuery查询结果发生变化，就调用指定的回调函数。
+### 方法
+
+window.matchMedia方法返回的MediaQueryList对象有两个方法，用来监听事件：addListener方法和removeListener方法。如果mediaQuery查询结果发生变化，就调用指定的回调函数。
 
 {% highlight javascript %}
 

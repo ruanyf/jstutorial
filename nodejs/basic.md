@@ -432,7 +432,7 @@ m.print("这是自定义模块");
 
 fs是filesystem的缩写，该模块提供本地文件的读写能力，基本上是POSIX文件操作命令的简单包装。但是，这个模块几乎对所有操作提供异步和同步两种操作方式，供开发者选择。
 
-### mkdir()
+### mkdir()，writeFile()，readfile()
 
 mkdir方法用于新建目录。
 
@@ -448,8 +448,6 @@ fs.mkdir('./helloDir',0777, function (err) {
 
 mkdir接受三个参数，第一个是目录名，第二个是权限值，第三个是回调函数。
 
-### writeFile()
-
 writeFile方法用于写入文件。
 
 ```javascript
@@ -462,8 +460,6 @@ fs.writeFile('./helloDir/message.txt', 'Hello Node', function (err) {
 });
 
 ```
-
-### readfile()
 
 readfile方法用于读取文件内容。
 
@@ -496,7 +492,7 @@ console.log(data);
 
 对于流量较大的服务器，最好还是采用异步操作，因为同步操作时，只有前一个操作结束，才会开始后一个操作，如果某个操作特别耗时（常常发生在读写数据时），会导致整个程序停顿。
 
-### readdir方法
+### readdir()
 
 readdir方法用于读取目录，返回一个所包含的文件和子目录的数组。
 
