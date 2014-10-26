@@ -44,6 +44,22 @@ Number(null) // 0
 
 {% endhighlight %}
 
+Number函数将字符串转为数值，要比parseInt函数严格很多。基本上，只要有一个字符无法转成数值，整个字符串就会被转为NaN。
+
+```javascript
+
+parseInt('011') // 9
+parseInt('42 cats') // 42
+parseInt('0xcafebabe') // 3405691582
+
+Number('011') // 11
+Number('42 cats') // NaN
+Number('0xcafebabe') // 3405691582
+
+```
+
+上面代码比较了Number函数和parseInt函数，区别主要在于parseInt逐个解析字符，而Number函数整体转换字符串的类型。另外，Number会忽略八进制的前导0，而parseInt不会。
+
 Number函数会自动过滤一个字符串前导和后缀的空格。
 
 {% highlight javascript %}
