@@ -112,18 +112,18 @@ add(1,1) // 2
 
 {% endhighlight %}
 
-函数体内部的return语句，表示返回。JavaScript引擎遇到return语句，就直接返回return后面的那个表达式的值，后面即使还有语句，也不会得到执行。
+函数体内部的return语句，表示返回。JavaScript引擎遇到return语句，就直接返回return后面的那个表达式的值，后面即使还有语句，也不会得到执行。也就是说，return语句所带的那个表达式，就是函数的返回值。return语句不是必需的，如果没有的话，该函数就不返回任何值，或者说返回undefined。
 
 函数可以调用自身，这就是递归（recursion）。下面就是使用递归，计算斐波那契数列的代码。
 
 {% highlight javascript %}
 
 function fib(num) {
-        if (num > 2) {
-            return fib(num - 2) + fib(num - 1);
-        } else {
-            return 1;
-        }
+  if (num > 2) {
+    return fib(num - 2) + fib(num - 1);
+  } else {
+    return 1;
+  }
 }
 
 fib(6)

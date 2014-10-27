@@ -68,7 +68,7 @@ o.print() // Object
 
 ## Object对象的方法
 
-### Object函数
+### Object()
 
 Object本身当作工具方法使用时，可以将任意值转为对象。其中，原始类型的值转为对应的包装对象（参见《原始类型的包装对象》一节）。
 
@@ -100,7 +100,7 @@ function isObject(value) {
 
 {% endhighlight %}
 
-### Object.keys方法，Object.getOwnPropertyNames方法
+### Object.keys()，Object.getOwnPropertyNames()
 
 Object.keys方法和Object.getOwnPropertyNames方法很相似，一般用来遍历对象的属性。它们的参数都是一个对象，都返回一个数组，该数组的成员都是对象自身的（而不是继承的）所有属性名。它们的区别在于，Object.keys方法只返回可枚举的属性（关于可枚举性的详细解释见后文），Object.getOwnPropertyNames方法还返回不可枚举的属性名。
 
@@ -146,7 +146,7 @@ Object.getOwnPropertyNames(o).length
 
 一般情况下，几乎总是使用Object.keys方法，遍历数组的属性。
 
-### Object.observe方法
+### Object.observe()
 
 Object.observe方法用于观察对象属性的变化。
 
@@ -176,33 +176,24 @@ delete o.foo; // delete, 'foo', 2
 
 **（1）对象属性模型的相关方法**
 
-- Object.getOwnPropertyDescriptor：获取某个属性的attributes对象。
-
-- Object.defineProperty：通过attributes对象，定义某个属性。
-
-- Object.defineProperties：通过attributes对象，定义多个属性。
-
-- Object.getOwnPropertyNames：返回直接定义在某个对象上面的全部属性的名称。
+- Object.getOwnPropertyDescriptor()：获取某个属性的attributes对象。
+- Object.defineProperty()：通过attributes对象，定义某个属性。
+- Object.defineProperties()：通过attributes对象，定义多个属性。
+- Object.getOwnPropertyNames()：返回直接定义在某个对象上面的全部属性的名称。
 
 **（2）控制对象状态的方法**
 
-- Object.preventExtensions：防止对象扩展。
-
-- Object.isExtensible：判断对象是否可扩展。
-
-- Object.seal：禁止对象配置。
-
-- Object.isSealed方法：判断一个对象是否可配置。
-
-- Object.freeze：冻结一个对象。
-
-- Object.isFrozen：判断一个对象是否被冻结。
+- Object.preventExtensions()：防止对象扩展。
+- Object.isExtensible()：判断对象是否可扩展。
+- Object.seal()：禁止对象配置。
+- Object.isSealed()：判断一个对象是否可配置。
+- Object.freeze()：冻结一个对象。
+- Object.isFrozen()：判断一个对象是否被冻结。
 
 **（3）原型链相关方法**
 
-- Object.create：生成一个新对象，并该对象的原型。
-
-- Object.getPrototypeOf：获取对象的Prototype对象。
+- Object.create()：生成一个新对象，并该对象的原型。
+- Object.getPrototypeOf()：获取对象的Prototype对象。
 
 ## Object实例对象的方法
 
@@ -210,21 +201,16 @@ delete o.foo; // delete, 'foo', 2
 
 Object实例对象的方法，主要有以下六个。
 
-- valueOf：返回当前对象对应的值。
-
-- toString：返回当前对象对应的字符串形式。
-
-- toLocalString：返回当前对象对应的本地字符串形式。
-
-- hasOwnProperty：判断某个属性是否为当前对象自身的属性，还是继承自原型对象的属性。
-
-- isPrototypeOf：判断当前对象是否为另一个对象的原型。
-
-- propertyIsEnumerable：判断某个属性是否可枚举。
+- valueOf()：返回当前对象对应的值。
+- toString()：返回当前对象对应的字符串形式。
+- toLocalString()：返回当前对象对应的本地字符串形式。
+- hasOwnProperty()：判断某个属性是否为当前对象自身的属性，还是继承自原型对象的属性。
+- isPrototypeOf()：判断当前对象是否为另一个对象的原型。
+- propertyIsEnumerable()：判断某个属性是否可枚举。
 
 本节介绍前两个方法，其他方法将在后文相关章节介绍。
 
-### valueOf方法
+### Object.prototype.valueOf()
 
 valueOf方法的作用是返回一个对象的值，默认情况下返回对象本身。
 
@@ -261,7 +247,7 @@ o.valueOf = function (){return 2;};
 
 上面代码自定义了o对象的valueOf方法，于是1 + o就得到了3。这种方法就相当于用o.valueOf覆盖Object.prototype.valueOf。
 
-### toString方法
+### Object.prototype.toString()
 
 toString方法的作用是返回一个对象的字符串形式。
 
@@ -303,7 +289,7 @@ o + ' ' + 'world' // "hello world"
 
 {% endhighlight %}
 
-### toString方法的应用：判断数据类型
+### toString()的应用：判断数据类型
 
 toString方法的主要用途是返回对象的字符串形式，除此之外，还有一个重要的作用，就是判断一个值的类型。
 
@@ -462,7 +448,7 @@ var o = Object.create(
 
 {% endhighlight %}
 
-### 属性的attributes对象，Object.getOwnPropertyDescriptor方法
+### 属性的attributes对象，Object.getOwnPropertyDescriptor()
 
 在JavaScript内部，每个属性都有一个对应的attributes对象，保存该属性的一些元信息。使用Object.getOwnPropertyDescriptor方法，可以读取attributes对象。
 
@@ -495,7 +481,7 @@ attributes对象包含如下元信息：
 
 - **set**：表示该属性的存值函数（setter），默认为undefined。
 
-### Object.defineProperty方法，Object.defineProperties方法
+### Object.defineProperty()，Object.defineProperties()
 
 Object.defineProperty方法允许通过定义attributes对象，来定义或修改一个属性，然后返回修改后的对象。它的格式如下：
 
@@ -670,7 +656,7 @@ o.propertyIsEnumerable("p1") // true
 
 ```
 
-### Object.getOwnPropertyNames方法
+### Object.getOwnPropertyNames()
 
 Object.getOwnPropertyNames方法返回直接定义在某个对象上面的全部属性的名称，而不管该属性是否可枚举。
 
@@ -712,7 +698,7 @@ Object.getOwnPropertyNames(Object.prototype)
 
 上面代码可以看到，数组的实例对象（[]）没有可枚举属性，不可枚举属性有length；Object.prototype对象也没有可枚举属性，但是有不少不可枚举属性。
 
-### 对象实例的propertyIsEnumerable方法
+### Object.prototype.propertyIsEnumerable()
 
 对象实例的propertyIsEnumerable方法用来判断一个属性是否可枚举。
 
@@ -730,7 +716,7 @@ o.propertyIsEnumerable("toString") // false
 
 ### 可配置性configurable
 
-可配置性（configurable）决定了是否可以删除（delete）某个属性，以及是否可以更改该属性attributes对象中除了value以外的性质。
+可配置性（configurable）决定了是否可以删除（delete）某个属性，以及是否可以更改该属性attributes对象中除了value以外的性质（即writable，enumerable，configurable）。
 
 {% highlight javascript %}
 
@@ -990,18 +976,43 @@ Object.defineProperty(o, 'p', { enumerable: false })
 
 从上面代码可以看到，使用seal方法之后，attributes对象的configurable就变成了false，然后如果想改变enumerable就会报错。
 
-但是，出于历史原因，这时依然可以将writable从true变成false，即可以对现有属性重新赋值。
+但是，出于历史原因，这时依然可以将writable从true变成false，即seal方法对writable属性无效。
 
 {% highlight javascript %}
 
-var o = { p: 'a' };
-
+var o = {p : ""};
 Object.seal(o);
 
+Object.getOwnPropertyDescriptor(o, 'p')
+/* { value: '',
+  writable: true,
+  enumerable: true,
+  configurable: false } */
+
+Object.defineProperty(o, 'p', {writable: false});
+
+Object.getOwnPropertyDescriptor(o, 'p')
+/* { value: '',
+  writable: false,
+  enumerable: true,
+  configurable: false } */
+
+{% endhighlight %}
+
+上面代码中，对象o被seal以后，依然可以将p属性的writable从true改为false。
+
+此外，此时p属性的value也是可以重新赋值的。
+
+```javascript
+
+var o = { p: 'a' };
+Object.seal(o);
 o.p = 'b';
 o.p // 'b'
 
-{% endhighlight %}
+```
+
+因此，seal方法只对attributes对象的enumberable和configurable有效。
 
 ### Object.isSealed方法
 
