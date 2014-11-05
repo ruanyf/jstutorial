@@ -183,7 +183,7 @@ console.table(languages);
 csharp|"C#"|"object-oriented"
 fsharp|"F#"|"functional"
 
-## console.dir()，console.assert()
+## console.dir()
 
 dir方法用来对一个对象进行检查（inspect），并以易于阅读和打印的格式显示。
 
@@ -198,7 +198,9 @@ console.dir({foo: 'bar'})
 
 上面代码显示dir方法的参数属于Object，该对像有一个属性foo，以及一个指向原型对象的\__proto\__的属性。
 
-assert方法用来验证某个条件是否为真。如果为假，则显示一条事先指定的错误信息。它的格式如下。
+## console.assert()
+
+console.assert方法用来验证某个条件是否为真。如果为假，则显示一条事先指定的错误信息。它的格式如下。
 
 {% highlight javascript %}
 
@@ -241,6 +243,28 @@ console.timeEnd("Array initialize");
 {% endhighlight %}
 
 time方法表示计时开始，timeEnd方法表示计时结束。它们的参数是计时器的名称。调用timeEnd方法之后，console窗口会显示“计时器名称: 所耗费的时间”。
+
+## console.profile()，console.profileEnd()
+
+console.profile方法用来新建一个性能测试器（profile），它的参数是性能测试器的名字。
+
+```javascript
+
+console.profile('p')
+// Profile 'p' started. 
+
+```
+
+console.profileEnd方法用来结束正在运行的性能测试器。
+
+```javascript
+
+console.profileEnd()
+// Profile 'p' finished. 
+    
+```
+
+打开浏览器的开发者工具，在profile面板中，可以看到这个性能调试器的运行结果。
 
 ## console.group()，console.groupend()
 
