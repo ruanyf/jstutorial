@@ -860,7 +860,7 @@ Object.getOwnPropertyDescriptor(this,'a3')
 
 {% endhighlight %}
 
-上面代码中的`this.a3 = 1`与`a3 =1`是等价的写法。this指的是当前的作用域，更多关于this的解释，参见《面向对象编程》一章。
+上面代码中的`this.a3 = 1`与`a3 = 1`是等价的写法。this指的是当前的作用域，更多关于this的解释，参见《面向对象编程》一章。
 
 这种差异意味着，如果一个变量是使用var命令生成的，就无法用delete命令删除。也就是说，delete只能删除对象的属性。
 
@@ -1030,7 +1030,7 @@ Object.defineProperty(o, 'p', { enumerable: false })
 
 从上面代码可以看到，使用seal方法之后，attributes对象的configurable就变成了false，然后如果想改变enumerable就会报错。
 
-可写性（writable）有点特别。如果writable为false，使用Object.seal方法以后，将无法将其变成true；但是，如果writable为true，使用Object.seal方法以后，依然可以将其变成false。
+可写性（writable）有点特别。如果writable为false，使用Object.seal方法以后，将无法将其变成true；但是，如果writable为true，依然可以将其变成false。
 
 {% highlight javascript %}
 
@@ -1051,7 +1051,7 @@ Object.getOwnPropertyDescriptor(o2, 'p')
 
 {% endhighlight %}
 
-上面代码中，同样是使用了Object.seal方法，如果writable原为false，改变这个设置将报错；如果原为true，则改变这个设置不会有问题。
+上面代码中，同样是使用了Object.seal方法，如果writable原为false，改变这个设置将报错；如果原为true，则不会有问题。
 
 至于属性对象的value是否可改变，是由writable决定的。
 
@@ -1179,3 +1179,4 @@ o.hello // undefined
 - Jon Bretman, [Type Checking in JavaScript](http://techblog.badoo.com/blog/2013/11/01/type-checking-in-javascript/)
 - Cody Lindley, [Thinking About ECMAScript 5 Parts](http://tech.pro/tutorial/1671/thinking-about-ecmascript-5-parts)
 - Bjorn Tipling, [Advanced objects in JavaScript](http://bjorn.tipling.com/advanced-objects-in-javascript)
+- Javier Márquez, [Javascript properties are enumerable, writable and configurable](http://arqex.com/967/javascript-properties-enumerable-writable-configurable) 
