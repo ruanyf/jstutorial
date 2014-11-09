@@ -63,77 +63,115 @@ JSON格式（JavaScript Object Notation的缩写）是一种用于数据交换�
 
 ## JSON对象
 
-ECMAScript 5新增了JSON对象，用来处理JSON格式数据。它有两个方法：JSON.stringify和JSON.parse。
+ES5新增了JSON对象，用来处理JSON格式数据。它有两个方法：JSON.stringify和JSON.parse。
 
 ### JSON.stringify()
 
-该方法用于将对象转为JSON字符串。
+JSON.stringify方法用于将一个值转为字符串。该字符串符合JSON格式，并且可以被JSON.parse方法还原。
 
 {% highlight javascript %}
 
-JSON.stringify("abc");
-// ""abc""
+JSON.stringify("abc") // '"abc"'
+JSON.stringify(1) // "1"
+JSON.stringify(false) // "false"
+JSON.stringify([]) // "[]"
+JSON.stringify({}) // "{}"
 
-JSON.stringify({ name: "张三" });
-// {"name":"张三"}
+JSON.stringify([1, "false", false]) 
+// '[1,"false",false]'
+
+JSON.stringify({ name: "张三" }) 
+// '{"name":"张三"}'
 
 {% endhighlight %}
 
-如果一个值是undefined、函数或XML对象，这个值会被省略，除非该值是数组的成员，则返回null。
+上面代码将各种类型的值，转成JSON字符串。需要注意的是，对于原始类型的字符串，转换结果会带双引号，即字符串`abc`会被转成`"abc"`，这是因为将来还原的时候，双引号可以让JavaScript引擎知道，abc是一个字符串，而不是一个变量名。
+
+如果原始对象中，有一个成员的值是undefined、函数或XML对象，这个成员会被省略。如果该值是数组的成员，则返回null。
 
 {% highlight javascript %}
 
 JSON.stringify({
-    f: function() { },
-    a: [ function() {}, undefined ]
+    f: function(){},
+    a: [ function(){}, undefined ]
 });
 // "{"a":[null,null]}"
 
 {% endhighlight %}
 
-该方法还可以接受一个数组参数，表示需要转化的属性。
+上面代码中，原始对象的f属性是一个函数，JSON.stringify方法返回的字符串会将这个属性省略。而a属性是一个数组，成员分别为函数和undefined，它们都被转成了null。
+
+JSON.stringify方法还可以接受一个数组参数，指定需要转成字符串的属性。
 
 {% highlight javascript %}
 
-JSON.stringify({ a:1, b:2 }, ['a']);
-// "{"a":1}"
+JSON.stringify({ a:1, b:2 }, ['a'])
+// '{"a":1}'
 
 {% endhighlight %}
 
-该方法还可以接受一个函数作为参数，用来更改默认的串行化的行为。
+上面代码中，JSON.stringify方法的第二个参数指定，只转a属性。
 
-{% highlight javascript %}
-
-function f(key, value) {
-        if (typeof value === "number") {
-            value = 2 * value;
-        }
-        return value;
-    }
-
-JSON.stringify({ a:1, b:2 }, f)
-// "{"a":2,"b":4}"
-
-{% endhighlight %}
-
-上面代码中的f函数，接受两个参数，分别是被转化对象的键和值。这里需要特别注意的是，被处理的除了原有的键，还会新增一个空白的键，对应整个被转化的对象，所以处理之前，必需对键或值做一个判断。
+JSON.stringify方法还可以接受一个函数作为参数，用来更改默认的字符串化的行为。
 
 {% highlight javascript %}
 
 function f(key, value) {
-        console.log("["+ key +"]:" + value);
-		return value;
-    }
+  if (typeof value === "number") {
+    value = 2 * value;
+  }
+  return value;
+}
 
 JSON.stringify({ a:1, b:2 }, f)
-// []:[object Object]
-// [a]:1
-// [b]:2
-// "{"a":1,"b":2}"
+// '{"a":2,"b":4}'
 
 {% endhighlight %}
 
-如果经过处理，某个属性返回undefined或没有返回值，则该属性会被忽略。
+上面代码中的f函数，接受两个参数，分别是被转化对象的键和值。如果一个键的值是数值，就将它乘以2，否则就原样返回。
+
+注意，这个处理函数是递归处理所有的键。
+
+```javascript
+
+var o = {a: {b:1}};
+
+function f(key, value) {
+  console.log("["+ key +"]:" + value);
+  return value;
+}
+
+JSON.stringify(o, f)
+// []:[object Object] 
+// [a]:[object Object]
+// [b]:1
+// '{"a":{"b":1}}'
+
+```
+
+上面代码中，对象o一共会被f函数处理三次。第一次键名为空，键值是整个对象o；第二次键名为a，键值是`{b:1}`；第三次键名为b，键值为1。
+
+递归处理中，每一次处理的对象，都是前一次返回的值。
+
+```javascript
+
+var o = {a: 1};
+
+function f(key, value){
+  if (typeof value === "object"){
+    return {b: 2};
+  }
+  return value*2;
+}
+
+JSON.stringify(o,f)
+// '{"b":4}'
+
+```
+
+上面代码中，f函数修改了对象o，接着JSON.stringify方法就递归处理修改后的对象o。
+
+如果处理函数返回undefined或没有返回值，则该属性会被忽略。
 
 {% highlight javascript %}
 
@@ -145,29 +183,11 @@ function f(key, value) {
 }
 
 JSON.stringify({ a:"abc", b:123 }, f)
-// "{"b":123}"
+// '{"b":123}'
 
 {% endhighlight %}
 
-这里需要注意的是，如果某个属性的值是一个对象，则会展开这个对象，先处理它的内部属性。另外，前面说过，有一个键是空键，对应整个被转化的对象。最后真正进行串行化的，实际上就是空键对应的那个值，其他的键都是用来帮助空键完成那个值。
-
-{% highlight javascript %}
-
-function f(key, value) {
-
-  if ( key === ""){
-	  return value;
-  }
-	
-  if ( key === "a" ) {
-    return value + 10;
-  }
-}
-
-JSON.stringify({ a:1, b:2 }, f)
-// "{"a":11}"
-
-{% endhighlight %}
+上面代码中，a属性经过处理后，返回undefined，于是该属性被忽略了。
 
 JSON.stringify还可以接受第三个参数，用于增加返回的JSON字符串的可读性。如果是数字，表示每个属性前面添加的空格（最多不超过10个）；如果是字符串（不超过10个字符），则该字符串会添加在每行前面。
 
@@ -187,88 +207,83 @@ JSON.stringify({ p1:1, p2:2 }, null, "|-");
 
 {% endhighlight %}
 
-如果JSON.stringify处理的对象，包含一个toJSON方法，则它会使用这个方法得到一个值，然后再转成字符串。也就是说，toJSON方法应该返回一个值。
+如果JSON.stringify方法处理的对象，包含一个toJSON方法，则它会使用这个方法得到一个值，然后再将这个值转成字符串，而忽略其他成员。
 
 {% highlight javascript %}
 
-JSON.stringify({ toJSON: function() { return "Cool" } })
-// ""Cool""
+JSON.stringify({
+  toJSON: function() { 
+    return "Cool" 
+  } 
+})
+// "Cool""
 
-var obj = {
+var o = {
   foo: 'foo',
-  toJSON: function () {
+  toJSON: function() {
     return 'bar';
   }
 };
-var json = JSON.stringify({x: obj}); 
+var json = JSON.stringify({x: o}); 
 // '{"x":"bar"}'.
 
 {% endhighlight %}
 
-Date对象本身就部署了toJSON方法。
+Date对象就部署了一个自己的toJSON方法。
 
 {% highlight javascript %}
 
 JSON.stringify(new Date("2011-07-29"))
-// ""2011-07-29T00:00:00.000Z""
+// "2011-07-29T00:00:00.000Z"
 
 {% endhighlight %}
 
 ### JSON.parse()
 
-该方法用于将JSON字符串转化成对象。
+JSON.parse方法用于将JSON字符串转化成对象。
 
 {% highlight javascript %}
 
-JSON.parse('{}'); // {}
-JSON.parse('true'); // true
-JSON.parse('"foo"'); // "foo"
-JSON.parse('[1, 5, "false"]'); // [1, 5, "false"]
-JSON.parse('null'); // null
+JSON.parse('{}') // {}
+JSON.parse('true') // true
+JSON.parse('"foo"') // "foo"
+JSON.parse('[1, 5, "false"]') // [1, 5, "false"]
+JSON.parse('null') // null
 
 var o = JSON.parse('{"name":"张三"}');
-
-o.name
-// 张三
+o.name // 张三
 
 {% endhighlight %}
 
-如果传入的字符串不是有效的JSON格式，JSON.parse将报错。
+如果传入的字符串不是有效的JSON格式，JSON.parse方法将报错。
 
 {% highlight javascript %}
 
 JSON.parse("'String'") // illegal single quotes
 // SyntaxError: Unexpected token ILLEGAL
 
-JSON.parse('"String"')
-// "String"
-
 {% endhighlight %}
 
-为了处理解析错误，可以将JSON.parse放在try\catch代码块中。
+上面代码中，双引号字符串中是一个单引号字符串，因为单引号字符串不符合JSON格式，所以报错。
 
-该方法可以接受一个过滤函数，用法与JSON.stringify类似。
+为了处理解析错误，可以将JSON.parse方法放在try...catch代码块中。
+
+JSON.parse方法可以接受一个处理函数，用法与JSON.stringify方法类似。
 
 {% highlight javascript %}
 
 function f(key, value) {
-
   if ( key === ""){
 	  return value;
   }
-	
   if ( key === "a" ) {
     return value + 10;
   }
 }
 
 var o = JSON.parse('{"a":1,"b":2}', f);
-
-o.a
-// 11
-
-o.b
-// undefined
+o.a // 11
+o.b // undefined
 
 {% endhighlight %}
 
