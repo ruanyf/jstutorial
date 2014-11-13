@@ -60,7 +60,7 @@ modifiedOn: 2014-05-18
 - [window对象](bom/window.html)
 - [History对象](bom/history.html)
 - [Ajax](bom/ajax.html)
-- [同域限制与window.postMessage方法](bom/windowpostmessage.html)
+- [window.postMessage方法](bom/windowpostmessage.html)
 - [Web Storage：浏览器端数据储存机制](bom/webstorage.html)
 - [IndexedDB：浏览器端数据库](bom/indexeddb.html)
 - [Web Notification API](bom/notification.html)

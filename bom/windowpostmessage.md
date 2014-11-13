@@ -6,15 +6,11 @@ date: 2013-09-27
 modifiedOn: 2013-09-27
 ---
 
-## 同域限制
+## 概述
 
-所谓“同域限制”指的是，出于安全考虑，浏览器只允许脚本与同样协议、同样域名、同样端口的地址进行通信。比如，www1.example.com页面上面的脚本，只能与该域名（相同协议、相同端口）进行通信，如果与www2.example.com通信，浏览器就会报错。这是为了防止恶意脚本将用户信息发往第三方网站。
+所谓“同域限制”指的是，出于安全考虑，浏览器只允许脚本与同样协议、同样端口、同样域名的地址进行通信。比如，www1.example.com页面上面的脚本，只能与该域名（相同协议、相同端口）进行通信，如果与www2.example.com通信，浏览器就会报错（不过可以设置两者的document.domain为相同的值）。这是为了防止恶意脚本将用户信息发往第三方网站。
 
-## window.postMessage方法
-
-浏览器限制不同窗口（包括iFrame窗口）之间的通信，除非两个窗口装载的是同一个域名下的网页。window.postMessage方法就是为了解决这个问题而制定的API，可以让不同域名的窗口互相通信。
-
-postMessage方法的格式如下：
+window.postMessage方法就是用来在某种程度上，绕过同域限制，实现不同域名的窗口（包括iframe窗口）之间的通信。它的格式如下。
 
 {% highlight javascript %}
 
@@ -29,12 +25,6 @@ targetWindow.postMessage(message, targetURL[, transferObject]);
 {% highlight javascript %}
 
 var popup = window.open(...popup details...);
-
-{% endhighlight %}
-
-接着，在当前网页上使用postMessage方法对新窗口发送信息。
-
-{% highlight javascript %}
 
 popup.postMessage("Hello World!", "http://example.org");
 
@@ -62,7 +52,7 @@ function receiveMessage(event) {
 
 {% endhighlight %}
 
-上面代码指定message事件的回调函数为receiveMessage，一旦收到其他窗口发来的信息，receiveMessage函数就会被调用。receiveMessage函数接受一个event事件对象作为参数，该对象的origin属性表示信息的来源网址，如果该网址不符合要求，就立刻返回，不再进行下一步处理。event.data属性则包含了实际发送过来的信息，event.source属性，指向向当前网页发送信息的窗口对象。
+上面代码指定message事件的回调函数为receiveMessage，一旦收到其他窗口发来的信息，receiveMessage函数就会被调用。receiveMessage函数接受一个event事件对象作为参数，该对象的origin属性表示信息的来源网址，如果该网址不符合要求，就立刻返回，不再进行下一步处理。event.data属性则包含了实际发送过来的信息，event.source属性，指向当前网页发送信息的窗口对象。
 
 最后，在popup窗口中部署下面的代码。
 
@@ -174,3 +164,4 @@ window.onload = function() {
 
 - Mozilla Developer Network, [Window.postMessage](https://developer.mozilla.org/en-US/docs/Web/API/window.postMessage)
 - Jakub Jankiewicz, [Cross-Domain LocalStorage](http://jcubic.wordpress.com/2014/06/20/cross-domain-localstorage/)
+- David Baron, [setTimeout with a shorter delay](http://dbaron.org/log/20100309-faster-timeouts): 利用window.postMessage可以实现0毫秒触发回调函数
