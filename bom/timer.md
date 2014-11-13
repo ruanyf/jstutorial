@@ -46,7 +46,7 @@ setTimeout(function (){console.log(2)},1000);
 
 ```
 
-除了前两个参数，setTimeout还允许添加更多的参数。它们将被传入推迟执行的函数。
+除了前两个参数，setTimeout还允许添加更多的参数。它们将被传入推迟执行的函数（回调函数）。
 
 {% highlight javascript %}
 
@@ -58,9 +58,44 @@ setTimeout(function(a,b){
 
 上面代码中，setTimeout共有4个参数。最后那两个参数，将在1000毫秒之后回调函数执行时，作为回调函数的参数。
 
-IE 9.0以下版本，只允许setTimeout有两个参数，不支持更多的参数。这时有三种解决方法，第一种是自定义setTimeout，使用apply方法将参数输入回调函数；第二种是在一个匿名函数里面，让回调函数带参数运行，再把匿名函数输入setTimeout；第三种使用bind方法，把多余的参数绑定在回调函数上面，生成一个新的函数输入setTimeout。
+IE 9.0及以下版本，只允许setTimeout有两个参数，不支持更多的参数。这时有三种解决方法。第一种是在一个匿名函数里面，让回调函数带参数运行，再把匿名函数输入setTimeout。
 
-除了参数问题，setTimeout还有一个需要注意的地方：被setTimeout推迟执行的回调函数是在全局环境执行，这有可能不同于函数定义时的上下文环境。
+```javascript
+
+setTimeout(function() { 
+  myFunc("one", "two", "three"); 
+}, 1000);
+
+```
+
+上面代码中，myFunc是真正要推迟执行的函数，有三个参数。如果直接放入setTimeout，低版本的IE不能带参数，所以可以放在一个匿名函数。
+
+第二种解决方法是使用bind方法，把多余的参数绑定在回调函数上面，生成一个新的函数输入setTimeout。
+
+```javascript
+
+setTimeout(function(arg1){}.bind(undefined, 10), 1000);
+
+```
+
+上面代码中，bind方法第一个参数是undefined，表示将原函数的this绑定全局作用域，第二个参数是要传入原函数的参数。它运行后会返回一个新函数，该函数不带参数。
+
+第三种解决方法是自定义setTimeout，使用apply方法将参数输入回调函数。
+
+```html
+
+<!--[if lte IE 9]><script>
+(function(f){
+window.setTimeout =f(window.setTimeout);
+window.setInterval =f(window.setInterval);
+})(function(f){return function(c,t){
+var a=[].slice.call(arguments,2);return f(function(){c.apply(this,a)},t)}
+});
+</script><![endif]-->
+
+```
+
+除了参数问题，setTimeout还有一个需要注意的地方：如果被setTimeout推迟执行的回调函数是某个对象的方法，那么该方法中的this关键字将指向全局环境，而不是定义时所在的那个对象。
 
 {% highlight javascript %}
 
@@ -78,7 +113,7 @@ setTimeout(o.y,1000);
 
 {% endhighlight %}
 
-上面代码输出的是1，而不是2，这表示回调函数的运行环境已经变成了全局环境。
+上面代码输出的是1，而不是2，这表示o.y的this所指向的已经不是o，而是全局环境了。
 
 再看一个不容易发现错误的例子。
 
@@ -109,22 +144,15 @@ setTimeout(function() {
 
 ```
 
-上面代码中，user.sayHi是在函数作用域内执行，而不是在全局作用域内执行，所以能够显示正确的值。
+上面代码中，sayHi是在user作用域内执行，而不是在全局作用域内执行，所以能够显示正确的值。
 
-另一种更通用的解决方法，则是采用闭包，将this与当前运行环境绑定。
+另一种解决方法是，使用bind方法，将绑定sayHi绑定在user上面。
 
 ```javascript
 
-document.getElementById('click-ok').onclick = function() {
-  var self = this;
-  setTimeout(function() { 
-    self.value='OK';
-  }, 100);
-}
+setTimeout(user.sayHi.bind(user), 1000);
 
 ```
-
-上面代码中，setTimeout指定的函数中的this，总是指向定义时所在的DOM节点。
 
 ## setInterval()
 
@@ -229,7 +257,29 @@ clearInterval(id2);
 
 {% endhighlight %}
 
-下面是一个clearTimeout实际应用的例子。有些网站会实时将用户在文本框的输入，通过Ajax方法传回服务器，用jQuery表示就是下面的写法。
+setTimeout和setInterval返回的整数值是连续的，也就是说，第二个setTimeout方法返回的整数值，将比第一个的整数值大1。利用这一点，可以写一个函数，取消当前所有的setTimeout。
+
+```javascript
+
+(function() {
+  var gid = setInterval(clearAllTimeouts, 0);
+
+  function clearAllTimeouts() {
+    var id = setTimeout(function() {}, 0);
+    while (id > 0) {
+      if (id !== gid) {
+        clearTimeout(id);
+      }
+      id--;
+    }
+  }
+})();
+
+```
+
+运行上面代码后，实际上再设置任何setTimeout都无效了。
+
+下面是一个clearTimeout实际应用的例子。有些网站会实时将用户在文本框的输入，通过Ajax方法传回服务器，jQuery的写法如下。
 
 {% highlight javascript %}
 
@@ -390,7 +440,9 @@ console.log("当前任务结束");
 
 上面代码说明，setTimeout(f,0)必须要等到当前脚本的所有同步任务结束后才会执行。
 
-0毫秒实际上达不到的。根据[HTML 5标准](http://www.whatwg.org/specs/web-apps/current-work/multipage/timers.html#timers)，setTimeOut推迟执行的时间，最少是4毫秒。如果小于这个值，会被自动增加到4。另一方面，浏览器内部使用32位带符号的整数，来储存推迟执行的时间。这意味着setTimeout最多只能推迟执行2147483647毫秒（24.8天），超过这个时间会发生溢出，导致回调函数将在当前任务队列结束后立即执行，即等同于setTimeout(f,0)的效果
+0毫秒实际上达不到的。根据[HTML 5标准](http://www.whatwg.org/specs/web-apps/current-work/multipage/timers.html#timers)，setTimeOut推迟执行的时间，最少是4毫秒。如果小于这个值，会被自动增加到4。这是为了防止多个`setTimeout(f,0)`语句连续执行，造成性能问题。
+
+另一方面，浏览器内部使用32位带符号的整数，来储存推迟执行的时间。这意味着setTimeout最多只能推迟执行2147483647毫秒（24.8天），超过这个时间会发生溢出，导致回调函数将在当前任务队列结束后立即执行，即等同于setTimeout(f,0)的效果。
 
 ### 应用
 
@@ -472,3 +524,5 @@ timer = setTimeout(func, 0);
 
 - Ilya Kantor, [Understanding timers: setTimeout and setInterval](http://javascript.info/tutorial/settimeout-setinterval)
 - Ilya Kantor, [Events and timing in-depth](http://javascript.info/tutorial/events-and-timing-depth)
+- MDN, [WindowTimers.setTimeout()](https://developer.mozilla.org/en-US/docs/Web/API/WindowTimers.setTimeout)
+- Artem Tyurin, [Being evil with setTimeout](http://agentcooper.ghost.io/being-evil-with-settimeout/)
