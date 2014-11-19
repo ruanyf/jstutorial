@@ -780,7 +780,7 @@ appendTo方法将当前元素插入参数中的元素尾部。
 
 {% highlight javascript %}
 
-$("<p>World</p>").appendToe done via 3D Transforms. 3D Transforms leverage the computer’s GPU so everything will be extremely performant and smooth for the user. We’ll also be using 2D tran("div")
+$("<p>World</p>").appendTo("div")
 
 {% endhighlight %}
 
@@ -945,7 +945,7 @@ clone方法克隆当前元素。
 var clones = $('li').clone();
 
 {% endhighlight %}
-
+n
 对于那些有id属性的节点，clone方法会连id属性一起克隆。所以，要把克隆的节点插入文档的时候，务必要修改或移除id属性。
 
 **（7）remove方法，detach方法，replaceWith方法**
@@ -1188,7 +1188,7 @@ $(selector).mouseenter(handlerIn).mouseleave(handlerOut)
 
 **（1）on方法**
 
-on方法是jQuery事件绑定的统e done via 3D Transforms. 3D Transforms leverage the computer’s GPU so everything will be extremely performant and smooth for the user. We’ll also be using 2D tran一接口。事件绑定的那些简便方法，其实都是on方法的简写形式。
+on方法是jQuery事件绑定的统一接口。事件绑定的那些简便方法，其实都是on方法的简写形式。
 
 on方法接受两个参数，第一个是事件名称，第二个是回调函数。
 
