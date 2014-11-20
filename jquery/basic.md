@@ -945,7 +945,7 @@ clone方法克隆当前元素。
 var clones = $('li').clone();
 
 {% endhighlight %}
-n
+
 对于那些有id属性的节点，clone方法会连id属性一起克隆。所以，要把克隆的节点插入文档的时候，务必要修改或移除id属性。
 
 **（7）remove方法，detach方法，replaceWith方法**
