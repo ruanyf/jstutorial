@@ -1155,7 +1155,22 @@ $('li').click()
 
 需要注意的是，通过这种方法触发回调函数，将不会引发浏览器对该事件的默认行为。比如，对a元素调用click方法，将只触发事先绑定的回调函数，而不会导致浏览器将页面导向href属性指定的网址。
 
-上面列表的最后一个hover方法需要特别说明。它接受两个回调函数作为参数，分别代表mouseenter和mouseleave事件的回调函数。
+下面是一个捕捉用户按下escape键的函数。
+
+```javascript
+
+$(document).keyup(function(e) {
+  if (e.keyCode == 27) {
+    $('body').toggleClass('show-nav');
+    // $('body').removeClass('show-nav');
+  }
+});
+
+```
+
+上面代码中，用户按下escape键，jQuery就会为body元素添加/去除名为show-nav的class。
+
+hover方法需要特别说明。它接受两个回调函数作为参数，分别代表mouseenter和mouseleave事件的回调函数。
 
 {% highlight javascript %}
 

@@ -84,6 +84,46 @@ document.implementation.hasFeature('MutationEvents','2.0')
 
 ## document对象的方法
 
+### document.write()
+
+document.write方法用于向页面写入内容。
+
+```javascript
+
+document.addEventListener("DOMContentLoaded", function(event) {
+   document.write('<p>Hello World!</p>');
+});
+
+```
+
+需要注意的是，如果在页面已经渲染完成的情况下调用这个方法，会把原有的页面全部抹去，等于是在一个新建的页面上写入内容。上面的那段代码，实际执行效果如下。
+
+```javascript
+
+document.addEventListener("DOMContentLoaded", function(event) {
+  document.open();
+  document.write('<p>Hello World!</p>');
+  document.close();
+});
+
+```
+
+为了避免这种情况，一般document.write只能在页面渲染的过程中使用。
+
+```javascript
+
+<div> 
+  <script type="text/javascript"> 
+    document.write("<h1>Main title</h1>") 
+  </script> 
+</div>
+
+```
+
+上面的代码会在页面中插入一行h1，而不改变其他的代码。
+
+除了某些特殊情况，应该尽量避免使用这个方法。
+
 ### querySelector()，getElementById()
 
 这两个方法用于获取一个网页的元素节点。它们的不同之处是，querySelector方法的参数使用CSS选择器语法，getElementById方法的参数是HTML标签元素的id属性。

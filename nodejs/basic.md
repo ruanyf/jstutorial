@@ -615,15 +615,15 @@ console.log('Server running on port 8080.');
 
 {% endhighlight %}
 
-上面代码第一行 var http = require("http")，表示加载http模块。然后，调用http模块的createServer方法，创造一个服务器实例，将它赋给变量http。
+上面代码第一行`var http = require("http")`，表示加载http模块。然后，调用http模块的createServer方法，创造一个服务器实例，将它赋给变量http。
 
-ceateServer方法接受一个函数作为参数，该函数的req参数是一个对象，表示客户端的HTTP请求；res参数也是一个对象，表示服务器端的HTTP回应。rese.writeHead方法表示，服务器端回应一个HTTP头信息；response.end方法表示，服务器端回应的具体内容，以及回应完成后关闭本次对话。最后的listen(8080)表示启动服务器实例，监听本机的8080端口。
+ceateServer方法接受一个函数作为参数，该函数的request参数是一个对象，表示客户端的HTTP请求；response参数也是一个对象，表示服务器端的HTTP回应。response.writeHead方法表示，服务器端回应一个HTTP头信息；response.end方法表示，服务器端回应的具体内容，以及回应完成后关闭本次对话。最后的listen(8080)表示启动服务器实例，监听本机的8080端口。
 
 将上面这几行代码保存成文件app.js，然后用node调用这个文件，服务器就开始运行了。
 
 {% highlight bash %}
 
-node app.js
+$ node app.js
 
 {% endhighlight %}
 
@@ -637,12 +637,10 @@ var http = require('http');
 var fs = require('fs');
 
 http.createServer(function (request, response){
-
   fs.readFile('data.txt', function readData(err, data) {
     response.writeHead(200, {'Content-Type': 'text/plain'});
     response.end(data);
   });
-
 }).listen(8080, "127.0.0.1");
 
 console.log('Server running on port 8080.');
@@ -711,6 +709,38 @@ http.createServer(function (req, res) {
 {% endhighlight %}
 
 data事件会在数据接收过程中，每收到一段数据就触发一次，接收到的数据被传入回调函数。end事件则是在所有数据接收完成后触发。
+
+对上面代码稍加修改，就可以做出文件上传的功能。
+
+```javascript
+
+"use strict"; 
+
+var http = require('http'); 
+var fs = require('fs'); 
+var destinationFile, fileSize, uploadedBytes; 
+
+http.createServer(function (request, response) { 
+  response.writeHead(200); 
+  destinationFile = fs.createWriteStream("destination.md"); 
+  request.pipe(destinationFile); 
+  fileSize = request.headers['content-length']; 
+  uploadedBytes = 0; 
+  
+  request.on('data', function (d) { 
+    uploadedBytes += d.length; 
+    var p = (uploadedBytes / fileSize) * 100; 
+    response.write("Uploading " + parseInt(p, 0) + " %\n"); 
+  }); 
+  
+  request.on('end', function () { 
+    response.end("File Upload Complete"); 
+  });
+}).listen(3030, function () { 
+  console.log("server started"); 
+});
+
+```
 
 ### 发出请求：request方法
 

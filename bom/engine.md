@@ -225,6 +225,26 @@ defer属性和async属性到底应该使用哪一个？一般来说，如果脚�
 
 上面的代码依然不会阻塞页面渲染，而且可以保证2.js在1.js后面执行。不过需要注意的是，在这段代码后面加载的脚本文件，会因此都等待2.js执行完成后再执行。
 
+我们可以把上面的写法，封装成一个函数。
+
+```javascript
+
+(function() {
+  var script,
+  scripts = document.getElementsByTagName('script')[0];
+  function load(url) {
+    script = document.createElement('script');
+    script.async = true;
+    script.src = url;
+    scripts.parentNode.insertBefore(script, scripts);
+  }
+  load('//apis.google.com/js/plusone.js');
+  load('//platform.twitter.com/widgets.js');
+  load('//s.thirdpartywidget.com/widget.js');
+}());
+
+```
+
 此外，动态嵌入还有一个地方需要注意。动态嵌入必须等待CSS文件加载完成后，才会去下载外部脚本文件。静态加载就不存在这个问题，script标签指定的外部脚本文件，都是与CSS文件同时并发下载的。
 
 ### 加载使用的协议

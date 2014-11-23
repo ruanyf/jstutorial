@@ -376,78 +376,6 @@ type.isRegExp(/abc/); // true
 
 ECMAScript 5对于对象的属性，提出了一个精确的描述模型。
 
-### 存取函数（accessor）
-
-除了直接定义以外，属性还可以用存取函数（accessor）定义。其中，存值函数称为setter，使用set关键字；取值函数称为getter，使用get关键字。
-
-{% highlight javascript %}
-
-var o = {
-
-	get p() {
-		return "getter";
-    },
-
-    set p(value) {
-        console.log("setter: "+value);
-    }
-}
-
-{% endhighlight %}
-
-定义存取函数之后，引用该属性时，取值函数会自动调用；赋值该属性时，存值函数会自动调用。
-
-{% highlight javascript %}
-
-o.p
-// getter
-
-o.p = 123;
-// setter: 123
-
-{% endhighlight %}
-
-存取函数往往用于，某个属性的值需要依赖对象内部数据的场合。
-
-{% highlight javascript %}
-
-var o ={
-	$n:5,
-	get next(){return this.$n++ },
-	set next(n) {
-		if (n >= this.$n) this.$n = n;
-		else throw "新的值必须大于当前值";
-	}
-};
-
-o.next // 5
-
-o.next = 10;
-o.next //10
-
-{% endhighlight %}
-
-上面代码中，next属性的存值函数和取值函数，都依赖于对内部属性$n的操作。
-
-存取函数也可以使用Object.create方法定义。
-
-{% highlight javascript %}
-
-var o = Object.create(
-    Object.prototype, {  
-        foo: { 
-            get: function () {
-                return 'getter';
-            },
-            set: function (value) {
-                console.log('setter: '+value);
-            }
-        }
-    }
-);
-
-{% endhighlight %}
-
 ### 属性的attributes对象，Object.getOwnPropertyDescriptor()
 
 在JavaScript内部，每个属性都有一个对应的attributes对象，保存该属性的一些元信息。使用Object.getOwnPropertyDescriptor方法，可以读取attributes对象。
@@ -488,7 +416,7 @@ Object.defineProperty方法允许通过定义attributes对象，来定义或修�
 ```javascript
 
 Object.defineProperty(object, propertyName, attributesObject)
-
+股当
 ```
 
 Object.defineProperty方法接受三个参数，第一个是属性所在的对象，第二个是属性名（它应该是一个字符串），第三个是属性的描述对象。比如，新建一个o对象，并定义它的p属性，可以这样写：
@@ -601,11 +529,11 @@ var o = {
 };
 
 Object.defineProperty(o, "p3", {
-    value: 3,
+  value: 3,
 });
 
 for (var i in o) {
-    console.log(i, o[i]);
+  console.log(i, o[i]);
 }
 // p1 10 
 // p2 13
@@ -614,47 +542,67 @@ for (var i in o) {
 
 上面代码中，p3属性是用Object.defineProperty方法定义的，由于enumerable属性默认为false，所以不出现在for...in循环中。
 
-### 可枚举性enumerable
+### 可枚举性（enumerable）
 
-可枚举性（enumerable）与两个操作有关：for...in和Object.keys。如果某个属性的可枚举性为true，则这两个操作过程都会包括该属性；如果为false，就不包括。总体上，设计可枚举性的目的就是，告诉for...in循环，哪些属性应该被忽视。
+可枚举性（enumerable）用来控制所描述的属性，是否将被包括在for...in循环之中。具体来说，如果一个属性的enumerable为false，下面三个操作不会取到该属性。
 
-假定，对象o有两个属性p1和p2，可枚举性分别为true和false。
+- for..in循环
+- Object.keys方法
+- JSON.stringify方法
 
-{% highlight javascript %}
-
-var o = Object.defineProperties({}, {
-        p1: { value: 1, enumerable: true },
-        p2: { value: 2, enumerable: false }
-});
-
-{% endhighlight %}
-
-那么，for...in操作和Object.keys操作的循环过程，将不包括p2。
-
-{% highlight javascript %}
-
-for (var x in o) console.log(x);
-// p1
-
-Object.keys(o)
-// ["p1"]
-
-{% endhighlight %}
-
-除了上面两个操作，其他操作都不受可枚举性的影响。这两个操作的区别在于，for...in循环包括对象继承自原型对象的属性，而Object.keys方法只包括对象本身的属性。
-
-对象实例有一个isPropertyEnumerable方法，用来判断某个属性是否可枚举。
+因此，enumerable可以用来设置“秘密”属性。
 
 ```javascript
 
-var o = {
-    p1: 10,
-    p2: 13,
-};
-
-o.propertyIsEnumerable("p1") // true
+var o = {a:1, b:2};
+ 
+o.c = 3;
+Object.defineProperty(o, 'd', {
+  value: 4,
+  enumerable: false
+});
+    
+o.d
+// 4
+    
+for( var key in o ) console.log( o[key] ); 
+// 1
+// 2
+// 3
+     
+Object.keys(o)  // ["a", "b", "c"]
+     
+JSON.stringify(o // => "{a:1,b:2,c:3}"
 
 ```
+
+上面代码中，d属性的enumerable为false，所以一般的遍历操作都无法获取该属性，使得它有点像“秘密”属性，但还是可以直接获取它的值。
+
+至于for...in循环和Object.keys方法的区别，在于前者包括对象继承自原型对象的属性，而后者只包括对象本身的属性。如果需要获取对象自身的所有属性，不管enumerable的值，可以使用Object.getOwnPropertyNames方法，详见下文。
+
+考虑到JSON.stringify方法会排除enumerable为false的值，有时可以利用这一点，为对象添加注释信息。
+
+```javascript
+
+var car = {
+  id: 123,
+  color: red,
+  owner: 12
+};
+       
+var owner = {
+  id: 12,
+  name: Javi
+};
+         
+Object.defineProperty( car, 'ownerOb', {value: owner} );
+car.ownerOb // {id:12, name:Javi}
+         
+JSON.stringify(car) //  '{id: 123, color: "red", owner: 12}'
+
+```
+
+上面代码中，owner对象作为注释，加入car对象。由于ownerOb属性的enumerable为false，所以JSON.stringify最后正式输出car对象时，会忽略ownerOb属性。
 
 ### Object.getOwnPropertyNames()
 
@@ -676,15 +624,12 @@ Object.getOwnPropertyNames(o)
 
 {% highlight javascript %}
 
-Object.keys([])
-// []
+// 比如，数组实例自带length属性是不可枚举的
+Object.keys([]) // []
+Object.getOwnPropertyNames([]) // [ 'length' ]
 
-Object.getOwnPropertyNames([])
-// [ 'length' ]
-
-Object.keys(Object.prototype)
-// []
-
+// Object.prototype对象的自带属性也都是不可枚举的
+Object.keys(Object.prototype) // []
 Object.getOwnPropertyNames(Object.prototype)
 // ['hasOwnProperty',
 //  'valueOf',
@@ -714,13 +659,24 @@ o.propertyIsEnumerable("toString") // false
 
 上面代码中，用户自定义的p属性是可枚举的，而继承自原型对象的toString属性是不可枚举的。
 
-### 可配置性configurable
+### 可配置性（configurable）
 
-可配置性（configurable）决定了是否可以删除（delete）某个属性，以及是否可以更改该属性attributes对象中除了value以外的性质（即writable，enumerable，configurable）。
+可配置性（configurable）决定了是否可以修改属性的描述对象。也就是说，当configure为false的时候，value、writable、enumerable和configurable都不能被修改了。
 
-{% highlight javascript %}
+```javascript
 
-var o = Object.defineProperty({}, 'p', {value: 1, enumerable: false, configurable: false});
+var o = Object.defineProperty({}, 'p', {
+        value: 1,
+        writable: false, 
+        enumerable: false, 
+        configurable: false
+});
+
+Object.defineProperty(o,'p', {value: 2})
+// TypeError: Cannot redefine property: p
+
+Object.defineProperty(o,'p', {writable: true})
+// TypeError: Cannot redefine property: p
 
 Object.defineProperty(o,'p', {enumerable: true})
 // TypeError: Cannot redefine property: p
@@ -728,22 +684,57 @@ Object.defineProperty(o,'p', {enumerable: true})
 Object.defineProperties(o,'p',{configurable: true})
 // TypeError: Cannot redefine property: p
 
-{% endhighlight %}
+```user = {}
+nameValue = 'Joe';
+Object.defineProperty(user, 'name', {
+  get: function() { return nameValue }, 
+  set: function(newValue) { nameValue = newValue; },
+  configurable: true //to enable redefining the property later
+});
 
-上面代码首先生成对象o，并且定义它的属性p为不可枚举，也不可配置。然后，更改属性p为可枚举，这时解释引擎就会报错，表示不能更改该属性的enumerable性质，甚至也不能更改configurable性质。
+user.name //Joe 
+user.name = 'Bob'
+user.name //Bob
+nameValue //Bob
 
-但是，如果生成属性的时候，将可配置性configurable设为true，一切就不一样了。
+上面代码首先生成对象o，并且定义属性p的configurable为false。然后，逐一改动value、writable、enumerable、configurable，结果都报错。
 
-{% highlight javascript %}
+需要注意的是，writable只有在从false改为true会报错，从true改为false则是允许的。
 
-var o = Object.defineProperty({}, 'p', {value: 1, enumerable: false, configurable: true});
+```javascript
 
-Object.defineProperty(o,'p', {enumerable: true})
-// Object {p: 1}
+var o = Object.defineProperty({}, 'p', {
+        writable: true
+});
 
-{% endhighlight %}
+Object.defineProperty(o,'p', {writable: false})
+// 修改成功
 
-上面代码表示，当可配置性改为true以后，更改可枚举性就能成功。
+```
+
+至于value，只要writable和configurable有一个为true，就可以改动。
+
+```javascript
+
+var o1 = Object.defineProperty({}, 'p', {
+        value: 1,
+        writable: true,
+        configurable: false
+});
+
+Object.defineProperty(o1,'p', {value: 2})
+// 修改成功
+
+var o2 = Object.defineProperty({}, 'p', {
+        value: 1,
+        writable: false,
+        configurable: true
+});
+
+Object.defineProperty(o2,'p', {value: 2}) 
+// 修改成功
+
+```
 
 可配置性决定了一个变量是否可以被删除（delete）。
 
@@ -764,7 +755,7 @@ o.p2 // 2
 
 上面代码中的对象o有两个属性，p1是可配置的，p2是不可配置的。结果，p2就无法删除。
 
-需要注意的是，当使用var命令声明变量时（实际上是声明当前作用域的属性），变量的可配置性为false。
+需要注意的是，当使用var命令声明变量时，变量的configurable为false。
 
 {% highlight javascript %}
 
@@ -794,7 +785,7 @@ Object.getOwnPropertyDescriptor(this,'a2')
 //	configurable: true
 // }
 
-// or
+// 或者写成
 
 this.a3 = 1;
 
@@ -808,7 +799,7 @@ Object.getOwnPropertyDescriptor(this,'a3')
 
 {% endhighlight %}
 
-上面代码中的this.a3 = 1，与a3 =1 是等价的写法。this指的是当前的作用域，更多关于this的解释，参见《面向对象编程》一章。
+上面代码中的`this.a3 = 1`与`a3 = 1`是等价的写法。this指的是当前的作用域，更多关于this的解释，参见《面向对象编程》一章。
 
 这种差异意味着，如果一个变量是使用var命令生成的，就无法用delete命令删除。也就是说，delete只能删除对象的属性。
 
@@ -825,7 +816,7 @@ a2 // ReferenceError: a2 is not defined
 
 {% endhighlight %}
 
-### 可写性writable
+### 可写性（writable）
 
 可写性（writable）决定了属性的值（value）是否可以被改变。
 
@@ -842,6 +833,8 @@ o.a // 37
 {% endhighlight %}
 
 上面代码将o对象的a属性可写性设为false，然后改变这个属性的值，就不会有任何效果。
+
+这实际上将某个属性的值变成了常量。在ES6中，constant命令可以起到这个作用，但在ES5中，只有通过writable达到同样目的。
 
 这里需要注意的是，当对a属性重新赋值的时候，并不会抛出错误，只是静静地失败。但是，如果在严格模式下，这里就会抛出一个错误，即使是对a属性重新赋予一个同样的值。
 
@@ -870,6 +863,124 @@ Object.defineProperty(o, 'foo', { value: 'b' });
 o.foo // 'b'
 
 {% endhighlight %}
+
+### 存取函数（accessor）
+
+除了直接定义以外，属性还可以用存取函数（accessor）定义。其中，存值函数称为setter，使用set命令；取值函数称为getter，使用get命令。
+
+{% highlight javascript %}
+
+var o = {
+	get p() {
+		return "getter";
+  },
+  set p(value) {
+    console.log("setter: "+value);
+  }
+}
+
+{% endhighlight %}
+
+上面代码中，o对象内部的get和set命令，分别定义了p属性的取值函数和存值函数。定义了这两个函数之后，对p属性取值时，取值函数会自动调用；对p属性赋值时，存值函数会自动调用。
+
+{% highlight javascript %}
+
+o.p // getter
+o.p = 123 // setter: 123
+
+{% endhighlight %}
+
+存取函数往往用于，某个属性的值需要依赖对象内部数据的场合。
+
+{% highlight javascript %}
+
+var o ={
+	$n:5,
+	get next(){return this.$n++ },
+	set next(n) {
+		if (n >= this.$n) this.$n = n;
+		else throw "新的值必须大于当前值";
+	}
+};
+
+o.next // 5
+
+o.next = 10;
+o.next //10
+
+{% endhighlight %}
+
+上面代码中，next属性的存值函数和取值函数，都依赖于对内部属性$n的操作。
+
+下面是另一个存取函数的例子。
+
+```javascript
+
+var user = {}
+var nameValue = 'Joe';
+
+Object.defineProperty(user, 'name', {
+  get: function() { return nameValue }, 
+  set: function(newValue) { nameValue = newValue; },
+  configurable: true
+});
+
+user.name //Joe 
+user.name = 'Bob';
+user.name //Bob
+nameValue //Bob
+
+```
+
+上面代码使用存取函数，将user对象name绑定在nameValue属性上了。user = {}
+nameValue = 'Joe';
+Object.defineProperty(user, 'name', {
+  get: function() { return nameValue }, 
+  set: function(newValue) { nameValue = newValue; },
+  configurable: true //to enable redefining the property later
+});
+
+user.name //Joe 
+user.name = 'Bob'
+user.name //Bob
+nameValue //Bob
+
+存取函数也可以使用Object.create方法定义。
+
+{% highlight javascript %}
+
+var o = Object.create(Object.prototype, {
+        foo: { 
+          get: function () {
+            return 'getter';
+          },
+          set: function (value) {
+            console.log('setter: '+value);
+          }
+        }
+});
+
+{% endhighlight %}
+
+如果使用上面这种写法，属性foo必须定义一个属性描述对象。该对象的get和set属性，分别是foo的取值函数和存值函数。
+
+利用存取函数，可以实现数据对象与DOM对象的双向绑定。
+
+```javascript
+
+Object.defineProperty(user, 'name', {
+  get: function() { 
+    return document.getElementById("foo").value 
+  }, 
+  set: function(newValue) {
+    document.getElementById("foo").value = newValue;
+  },
+  configurable: true
+});
+
+```
+
+上面代码使用存取函数，将DOM对象foo与数据对象user的name属性，实现了绑定。两者之中只要有一个对象发生变化，就能在另一个对象上实时反映出来。
 
 ## 控制对象状态
 
@@ -976,22 +1087,20 @@ Object.defineProperty(o, 'p', { enumerable: false })
 
 从上面代码可以看到，使用seal方法之后，attributes对象的configurable就变成了false，然后如果想改变enumerable就会报错。
 
-但是，出于历史原因，这时依然可以将writable从true变成false，即seal方法对writable属性无效。
+可写性（writable）有点特别。如果writable为false，使用Object.seal方法以后，将无法将其变成true；但是，如果writable为true，依然可以将其变成false。
 
 {% highlight javascript %}
 
-var o = {p : ""};
-Object.seal(o);
+var o1 = Object.defineProperty({}, 'p', {writable: false});
+Object.seal(o1);
+Object.defineProperty(o1,'p',{writable:true}) 
+// Uncaught TypeError: Cannot redefine property: p 
 
-Object.getOwnPropertyDescriptor(o, 'p')
-/* { value: '',
-  writable: true,
-  enumerable: true,
-  configurable: false } */
+var o2 = Object.defineProperty({}, 'p', {writable: true});
+Object.seal(o2);
+Object.defineProperty(o2,'p',{writable:false}) 
 
-Object.defineProperty(o, 'p', {writable: false});
-
-Object.getOwnPropertyDescriptor(o, 'p')
+Object.getOwnPropertyDescriptor(o2, 'p')
 /* { value: '',
   writable: false,
   enumerable: true,
@@ -999,9 +1108,9 @@ Object.getOwnPropertyDescriptor(o, 'p')
 
 {% endhighlight %}
 
-上面代码中，对象o被seal以后，依然可以将p属性的writable从true改为false。
+上面代码中，同样是使用了Object.seal方法，如果writable原为false，改变这个设置将报错；如果原为true，则不会有问题。
 
-此外，此时p属性的value也是可以重新赋值的。
+至于属性对象的value是否可改变，是由writable决定的。
 
 ```javascript
 
@@ -1012,7 +1121,7 @@ o.p // 'b'
 
 ```
 
-因此，seal方法只对attributes对象的enumberable和configurable有效。
+上面代码中，Object.seal方法对p属性的value无效，是因为此时p属性的writable为true。
 
 ### Object.isSealed方法
 
@@ -1127,3 +1236,5 @@ o.hello // undefined
 - Jon Bretman, [Type Checking in JavaScript](http://techblog.badoo.com/blog/2013/11/01/type-checking-in-javascript/)
 - Cody Lindley, [Thinking About ECMAScript 5 Parts](http://tech.pro/tutorial/1671/thinking-about-ecmascript-5-parts)
 - Bjorn Tipling, [Advanced objects in JavaScript](http://bjorn.tipling.com/advanced-objects-in-javascript)
+- Javier Márquez, [Javascript properties are enumerable, writable and configurable](http://arqex.com/967/javascript-properties-enumerable-writable-configurable)
+- Sella Rafaeli, [Native JavaScript Data-Binding](http://www.sellarafaeli.com/blog/native_javascript_data_binding): 使用存取函数实现model与view的双向绑定
