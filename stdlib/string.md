@@ -39,9 +39,9 @@ String(5) // "5"
 
 上面代码将布尔值ture和数值5，分别转换为字符串。
 
-## String对象的方法
+## String.fromCharCode()
 
-String对象直接提供的方法，主要是fromCharCode。该方法根据Unicode编码，生成一个字符串。
+String对象直接提供的方法，主要是fromCharCode()。该方法根据Unicode编码，生成一个字符串。
 
 {% highlight javascript %}
 
@@ -49,6 +49,24 @@ String.fromCharCode(104, 101, 108, 108, 111)
 // "hello"
 
 {% endhighlight %}
+
+注意，该方法不支持编号大于0xFFFF的字符。
+
+```javascript
+
+String.fromCharCode(0x20BB7)
+// "ஷ"
+
+```
+
+上面代码返回字符的编号是0x0BB7，而不是0x20BB7。这种情况下，只能使用四字节的UTF-16编号，得到正确结果。
+
+```javascript
+
+String.fromCharCode(0xD842, 0xDFB7)
+// "𠮷"
+    
+```
 
 ## 实例对象的属性和方法
 
