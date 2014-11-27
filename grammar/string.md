@@ -246,6 +246,40 @@ C = (H - 0xD800) * 0x400 + L - 0xDC00 + 0x10000
 
 {% endhighlight %}
 
+由于JavaScript引擎（严格说是ES5规格）不能自动识别辅助平面（编号大于0xFFFF）的Unicode字符，导致所有字符串处理函数遇到这类字符，都会产生错误的结果（详见《标准库》一章的String对象章节）。如果要完成字符串相关操作，就必须判断字符是否落在0xD800到0xDFFF这个区间。
+
+下面是能够正确处理字符串遍历的函数。
+
+```javascript
+
+function getSymbols(string) {
+  var length = string.length;
+  var index = -1;
+  var output = [];
+  var character;
+  var charCode;
+  while (++index < length) {
+    character = string.charAt(index);
+    charCode = character.charCodeAt(0);
+    if (charCode >= 0xD800 && charCode <= 0xDBFF) {
+      output.push(character + string.charAt(++index));
+    } else {
+      output.push(character);
+    }
+  }
+  return output;
+}
+
+var symbols = getSymbols('𝌆');
+
+symbols.forEach(function(symbol) {
+  // ...
+});
+
+```
+
+替换（String.prototype.replace）、截取子字符串（String.prototype.substring, String.prototype.slice）等其他字符串操作，都必须做类似的处理。
+
 ## Base64转码
 
 Base64是一种将二进制数据转为可打印字符的编码方法。在浏览器环境中，JavaScript原生提供两个方法，用来处理Base64转码：btoa方法将字符串或二进制值转化为Base64编码，atob方法将Base64编码转化为原来的编码。
