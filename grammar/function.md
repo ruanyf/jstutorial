@@ -203,17 +203,19 @@ f()
 
 ### 不能在条件语句中声明函数
 
-根据ECMAScript的规范，不得在代码块中声明函数。最常见的情况就是if和try语句。
+根据ECMAScript的规范，不得在非函数的代码块中声明函数，最常见的情况就是if和try语句。
 
 ```javascript
 
 if (foo) {
-    function x() { return; }
+  function x() { return; }
 }
 
 try {
   function x() {return; }
-} catch(e) { console.log(e) }
+} catch(e) { 
+  console.log(e) 
+}
 
 ```
 

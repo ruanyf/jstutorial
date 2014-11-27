@@ -416,7 +416,7 @@ Object.defineProperty方法允许通过定义attributes对象，来定义或修�
 ```javascript
 
 Object.defineProperty(object, propertyName, attributesObject)
-股当
+
 ```
 
 Object.defineProperty方法接受三个参数，第一个是属性所在的对象，第二个是属性名（它应该是一个字符串），第三个是属性的描述对象。比如，新建一个o对象，并定义它的p属性，可以这样写：
@@ -684,18 +684,7 @@ Object.defineProperty(o,'p', {enumerable: true})
 Object.defineProperties(o,'p',{configurable: true})
 // TypeError: Cannot redefine property: p
 
-```user = {}
-nameValue = 'Joe';
-Object.defineProperty(user, 'name', {
-  get: function() { return nameValue }, 
-  set: function(newValue) { nameValue = newValue; },
-  configurable: true //to enable redefining the property later
-});
-
-user.name //Joe 
-user.name = 'Bob'
-user.name //Bob
-nameValue //Bob
+```
 
 上面代码首先生成对象o，并且定义属性p的configurable为false。然后，逐一改动value、writable、enumerable、configurable，结果都报错。
 
