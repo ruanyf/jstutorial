@@ -921,18 +921,7 @@ nameValue //Bob
 
 ```
 
-上面代码使用存取函数，将user对象name绑定在nameValue属性上了。user = {}
-nameValue = 'Joe';
-Object.defineProperty(user, 'name', {
-  get: function() { return nameValue }, 
-  set: function(newValue) { nameValue = newValue; },
-  configurable: true //to enable redefining the property later
-});
-
-user.name //Joe 
-user.name = 'Bob'
-user.name //Bob
-nameValue //Bob
+上面代码使用存取函数，将user对象name绑定在nameValue属性上了。
 
 存取函数也可以使用Object.create方法定义。
 
@@ -997,7 +986,10 @@ o.p // undefined
 
 {% highlight javascript %}
 
-(function () { 'use strict'; o.p = '1' }());
+(function () { 
+  'use strict'; 
+  o.p = '1'
+}());
 // TypeError: Can't add property bar, object is not extensible
 
 {% endhighlight %}
