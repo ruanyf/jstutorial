@@ -303,7 +303,7 @@ require方法的参数是模块文件的名字。它分成两种情况，第一�
 {% highlight javascript %}
 
 var bar = require('bar');
-
+很低
 {% endhighlight %}
 
 如果require方法的参数不带有路径，则node.js依次按照以下顺序，去寻找模块文件。
@@ -936,6 +936,86 @@ if (cluster.isMaster){
 
 上面代码先判断当前进程是否为主进程（cluster.isMaster），如果是的，就按照CPU的核数，新建若干个worker进程；如果不是，说明当前进程是worker进程，则在该进程启动一个服务器程序。
 
+## 异常处理
+
+Node是单线程运行环境，一旦抛出的异常没有被捕获，就会引起整个进程的崩溃。所以，Node的异常处理对于保证系统的稳定运行非常重要。
+
+### try...catch结构
+
+最常用的捕获异常的方式，就是使用try...catch结构。但是，这个结构无法捕获异步运行的代码抛出的异常。
+
+```javascript
+
+try {
+    process.nextTick(function () {
+        throw new Error("error");
+    });
+} catch (err) {
+    //can not catch it
+    console.log(err);
+}
+
+try {
+    setTimeout(function(){
+        throw new Error("error");
+    },1)
+} catch (err) {
+    //can not catch it
+    console.log(err);
+}
+
+
+```
+
+上面代码抛出的两个异常，都无法被catch代码块捕获。
+
+### uncaughtException事件
+
+当一个异常未被捕获，就会触发uncaughtException事件，可以对这个事件注册回调函数，从而捕获异常。
+
+```javascript
+
+process.on('uncaughtException', function(err) {
+    console.error('Error caught in uncaughtException event:', err);
+});
+
+
+try {
+    setTimeout(function(){
+        throw new Error("error");
+    },1)
+} catch (err) {
+    //can not catch it
+    console.log(err);
+}
+
+
+```
+
+只要给uncaughtException配置了回调，Node进程不会异常退出，但异常发生的上下文已经丢失，无法给出异常发生的详细信息。而且，异常可能导致Node不能正常进行内存回收，出现内存泄露。所以，当uncaughtException触发后，最好记录错误日志，然后结束Node进程。
+
+```javascript
+
+process.on('uncaughtException', function(err) {
+  logger(err);
+  process.exit(1);
+});
+
+```
+
+### 正确的编码习惯
+
+由于异步中的异常无法被外部捕获，所以异常应该作为第一个参数传递给回调函数，Node的编码规则就是这么规定的。
+
+```javascript
+
+fs.readFile('/t.txt', function (err, data) {
+  if (err) throw err;
+  console.log(data);
+});
+
+```
+
 ## 参考链接
 
 - Cody Lindley, [Package Managers: An Introductory Guide For The Uninitiated Front-End Developer](http://tech.pro/tutorial/1190/package-managers-an-introductory-guide-for-the-uninitiated-front-end-developer)
@@ -946,3 +1026,4 @@ if (cluster.isMaster){
 - Node.js Manual & Documentation, [Modules](http://nodejs.org/api/modules.html)
 - Brent Ertz, [Creating and publishing a node.js module](http://quickleft.com/blog/creating-and-publishing-a-node-js-module)
 - Fred K Schott, ["npm install --save" No Longer Using Tildes](http://fredkschott.com/post/2014/02/npm-no-longer-defaults-to-tildes/)
+- Satans17, [Node稳定性的研究心得](http://satans17.github.io/2014/05/04/node%E7%A8%B3%E5%AE%9A%E6%80%A7%E7%9A%84%E7%A0%94%E7%A9%B6%E5%BF%83%E5%BE%97/)
