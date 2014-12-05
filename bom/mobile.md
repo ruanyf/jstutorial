@@ -8,6 +8,42 @@ modifiedOn: 2013-12-20
 
 为了更好地为移动设备服务，HTML 5推出了一系列针对移动设备的API。
 
+## Viewport
+
+Viewport指的是网页的显示区域，也就是不借助滚动条的情况下，用户可以看到的部分网页大小，中文译为“视口”。正常情况下，viewport和浏览器的显示窗口是一样大小的。但是，在移动设备上，两者可能不是一样大小。
+
+比如，手机浏览器的窗口宽度可能是640像素，这时viewport宽度就是640像素，但是网页宽度有950像素，正常情况下，浏览器会提供横向滚动条，让用户查看窗口容纳不下的310个像素。另一种方法则是，将viewport设成950像素，也就是说，浏览器的显示宽度还是640像素，但是网页的显示区域达到950像素，整个网页缩小了，在浏览器中可以看清楚全貌。这样一来，手机浏览器就可以看到网页在桌面浏览器上的显示效果。
+
+viewport缩放规则，需要在HTML网页的head部分指定。
+
+```html
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+</head>
+
+```
+
+上面代码指定，viewport的缩放规则是，缩放到当前设备的屏幕宽度（device-width），初始缩放比例（initial-scale）为1倍，禁止用户缩放（user-scalable）。
+
+viewport 全部属性如下。
+
+- width: viewport宽度
+- height: viewport高度
+- initial-scale: 初始缩放比例
+- maximum-scale: 最大缩放比例
+- minimum-scale: 最小缩放比例
+- user-scalable: 是否允许用户缩放
+
+其他的例子如下。
+
+```html
+
+<meta name = "viewport" content = "width = 320,
+       initial-scale = 2.3, user-scalable = no">
+
+```
+
 ## Geolocation API
 
 Geolocation接口用于获取用户的地理位置。它使用的方法基于GPS或者其他机制（比如IP地址、Wifi热点、手机基站等）。
