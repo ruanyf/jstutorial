@@ -234,7 +234,7 @@ function startPeristentVibrate(duration, interval) {
 
 ## Luminosity API
 
-该API用于屏幕亮度调节，当移动设备的亮度传感器感知外部亮度发生显著变化时，会触发devicelight事件。目前，只有Firefox部署了这个API。
+Luminosity API用于屏幕亮度调节，当移动设备的亮度传感器感知外部亮度发生显著变化时，会触发devicelight事件。目前，只有Firefox部署了这个API。
 
 {% highlight javascript %}
 
@@ -265,6 +265,24 @@ window.addEventListener('devicelight', function(e) {
 });
 
 {% endhighlight %}
+
+CSS下一个版本的Media Query可以单独设置亮度，一旦浏览器支持，就可以用来取代Luminosity API。
+
+```css
+
+@media (light-level: dim) {
+  /* 暗光环境 */
+}
+
+@media (light-level: normal) {
+  /* 正常光环境 */
+}
+
+@media (light-level: washed) {
+  /* 明亮环境 */
+}
+
+```
 
 ## Orientation API
 

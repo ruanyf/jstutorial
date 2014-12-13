@@ -229,10 +229,10 @@ var x;
 delete x; // 语法错误
 
 var o = Object.create(null, {
-	        x: {
-		        value: 1,
-			    configurable: true
-	        }
+  x: {
+    value: 1,
+    configurable: true
+  }
 });
 
 delete o.x; // 删除成功

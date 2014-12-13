@@ -106,7 +106,7 @@ var pageLoadTime = t.loadEventEnd - t.navigationStart;
 
 ```
 
-## performance.now方法
+## performance.now()
 
 performance.now方法返回当前网页自从performance.timing.navigationStart到当前时间之间的微秒数（毫秒的千分之一）。也就是说，它的精度可以达到100万分之一秒。
 
@@ -153,6 +153,27 @@ window.peformance.clearMarks('mark_fully_loaded');
 window.performance.clearMarks();
 
 {% endhighlight %}
+
+## performance.getEntries()
+
+浏览器获取网页时，会对网页中每一个对象（脚本文件、样式表、图片文件等等）发出一个HTTP请求。performance.getEntries方法以数组形式，返回这些请求的时间统计信息，有多少个请求，返回数组就会有多少个成员。
+
+由于该方法与浏览器处理网页的过程相关，所以只能在浏览器中使用。
+
+```javascript
+
+window.performance.getEntries()[0]
+
+// PerformanceResourceTiming { 
+//   responseEnd: 4121.6200000017125, 
+//   responseStart: 4120.0690000005125, 
+//   requestStart: 3315.355000002455, 
+//   ...
+// }
+
+```
+
+上面代码返回第一个HTTP请求（即网页的HTML源码）的时间统计信息。该信息以一个高精度时间戳的对象形式返回，每个属性的单位是微秒（microsecond），即百万分之一秒。
 
 ## performance.navigation对象
 
