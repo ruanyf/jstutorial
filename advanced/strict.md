@@ -131,7 +131,7 @@ Javascript语言的一个特点，就是允许“动态绑定”，即某些属�
 
 （1）禁止使用with语句
 
-因为with语句无法在编译时就确定，属性到底归属哪个对象。
+因为with语句无法在编译时就确定，某个属性到底归属哪个对象，从而影响了编译效果。
 
 {% highlight javascript %}
 
@@ -178,7 +178,7 @@ function f(){
 // 返回false，因为“this”指向全局对象，“!this”就是false
 
 // 严格模式
-function f(){   
+function f(){ 
     "use strict";
     return !this;
 } 
@@ -190,7 +190,7 @@ function f(){
 
 {% highlight javascript %}
 
-function f(){   
+function f(){ 
     "use strict";
     this.a = 1;
 };
@@ -331,10 +331,8 @@ var o = {
 
 "use strict";
 
-function f(a, a, b) { // 语法错误  
-
+function f(a, a, b) { // 语法错误
 	return ; 
-
 }
 
 {% endhighlight %}
