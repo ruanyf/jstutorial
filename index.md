@@ -64,7 +64,7 @@ modifiedOn: 2014-05-18
 - [Web Storage：浏览器端数据储存机制](bom/webstorage.html)
 - [IndexedDB：浏览器端数据库](bom/indexeddb.html)
 - [Web Notification API](bom/notification.html)
-- [performance对象：高精度时间戳](bom/performance.html)
+- [Performance API](bom/performance.html)
 - [移动设备API](bom/mobile.html)
 		
 <h2 id="htmlapi">HTML网页的API</h2>

@@ -1,12 +1,14 @@
 ---
-title: performance对象：高精度时间戳
+title: Performance API
 category: bom
 layout: page
 date: 2013-09-26
 modifiedOn: 2013-09-27
 ---
 
-为了得到程序运行的准确信息，开发者需要一个高精度时间戳。传统的做法是使用Date对象的getTime方法。
+Performance API用于精确度量、控制、增强浏览器的性能表现。这个API为测量网站性能，提供以前没有办法做到的精度。
+
+比如，为了得到脚本运行的准确耗时，需要一个高精度时间戳。传统的做法是使用Date对象的getTime方法。
 
 ```javascript
 
@@ -39,7 +41,7 @@ Date.now() - performance.timing.navigationStart
 
 上面代码表示距离浏览器开始处理当前网页，已经过了13260687毫秒。
 
-再比如，
+下面是另一个例子。
 
 ```javascript
 
@@ -134,7 +136,7 @@ console.log('耗时：' + (end - start) + '微秒。');
 
 {% endhighlight %}
 
-## performance.mark方法
+## performance.mark()
 
 mark方法用于为相应的视点做标记。
 
