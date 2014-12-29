@@ -195,7 +195,7 @@ window.performance.getEntries()[0]
 
 - **255**：任何其他来源的加载，相当于常数performance.navigation.TYPE_UNDEFINED。
 
-**（2）performance.navigation.redirectCount **
+**（2）performance.navigation.redirectCount**
 
 该属性表示当前网页经过了多少次重定向跳转。
 
