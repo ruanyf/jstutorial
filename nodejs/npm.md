@@ -15,10 +15,10 @@ npm不需要单独安装。在安装node的时候，会连带一起安装npm。n
 {% highlight bash %}
 
 # npm命令列表
-npm help
+$ npm help
 
 # 各个命令的简单用法
-npm -l
+$ npm -l
 
 {% endhighlight %}
 
@@ -26,9 +26,9 @@ npm -l
 
 {% highlight bash %}
 
-npm -version
+$ npm -version
 
-npm config list -l
+$ npm config list -l
 
 {% endhighlight %}
 
@@ -117,19 +117,13 @@ npm install git://github.com/package/path.git#0.1.0
 
 使用安装命令以后，模块文件将下载到当前目录的 node_modules 子目录。
 
-使用global参数，可以“全局安装”某个模块。
+使用global参数，可以“全局安装”某个模块。global参数可以被简化成g参数。
 
 {% highlight bash %}
 
-sudo npm install -global [package name]
+$ sudo npm install -global [package name]
 
-{% endhighlight %}
-
-global参数可以被简化成g参数。
-
-{% highlight bash %}
-
-sudo npm install -g [package name]
+$ sudo npm install -g [package name]
 
 {% endhighlight %}
 
@@ -137,9 +131,33 @@ install命令总是安装模块的最新版本，如果要安装模块的特定�
 
 {% highlight bash %}
 
-npm install package_name@version
+$ npm install sax@latest
+$ npm install sax@0.1.1
+$ npm install sax@">=0.1.0 <0.2.0"
 
 {% endhighlight %}
+
+install命令可以使用不同参数，指定所安装的模块属于哪一种性质的依赖关系，即出现在packages.json文件的哪一项中。
+
+- --save：模块名将被添加到dependencies
+- --save-dev: 模块名将被添加到devDependencies
+- --save-optional：模块名将被添加到optionalDependencies
+
+```bash
+
+$ npm install sax --save
+$ npm install node-tap --save-dev
+$ npm install dtrace-provider --save-optional
+
+```
+
+`--save-dev`有一个简写形式-D。
+
+```bash
+
+$ npm i -D gulp
+
+```
 
 一旦安装了某个模块，就可以在代码中用require命令调用这个模块。
 

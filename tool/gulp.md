@@ -22,7 +22,18 @@ npm install --save-dev gulp
 
 ## gulpfile.js
 
-项目根目录中的gulpfile.js，是Gulp的配置文件。下面就是一个典型的gulpfile.js文件。
+项目根目录中的gulpfile.js，是Gulp的配置文件。它大概是下面的样子。
+
+```javascript
+
+var gulp = require('gulp');
+
+gulp.task('default', function () {
+});
+
+```
+
+下面就是一个典型的gulpfile.js文件。
 
 ```javascript
 

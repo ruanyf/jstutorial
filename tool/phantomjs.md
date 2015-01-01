@@ -8,7 +8,7 @@ modifiedOn: 2013-08-07
 
 ## 概述
 
-有时，我们需要浏览器处理网页，但并不需要浏览，比如生成网页的截图、抓取网页数据等等。[PhantomJS](http://phantomjs.org/)的功能，就是提供一个浏览器环境的命令行接口，你可以把它看作一个“虚拟浏览器”，除了不能浏览，其他与正常浏览器一样。它的内核是V8引擎，不提供图形界面，只能在命令行下使用，我们可以用它完成一些特殊的用途。
+有时，我们需要浏览器处理网页，但并不需要浏览，比如生成网页的截图、抓取网页数据等操作。[PhantomJS](http://phantomjs.org/)的功能，就是提供一个浏览器环境的命令行接口，你可以把它看作一个“虚拟浏览器”，除了不能浏览，其他与正常浏览器一样。它的内核是WebKit引擎，不提供图形界面，只能在命令行下使用，我们可以用它完成一些特殊的用途。
 
 PhantomJS是二进制程序，需要[安装](http://phantomjs.org/download.html)后使用。使用下面的命令，查看是否安装成功。
 
@@ -18,9 +18,9 @@ phantomjs --version
 
 {% endhighlight %}
 
-## Javascript运行环境
+## REPL环境
 
-phantomjs提供了一个完整的Javascript运行环境。键入phantomjs，就进入了该环境。
+phantomjs提供了一个完整的REPL环境。键入phantomjs，就进入了该环境。
 
 {% highlight bash %}
 
@@ -40,8 +40,6 @@ undefined
 
 phantomjs> add(1,2)
 3
-
-phantomjs> 
 
 {% endhighlight %}
 
@@ -73,13 +71,36 @@ $ phantomjs add.js
 
 终端窗口就会显示结果为3。
 
-## 网页的加载与截图
+下面是更多的例子。
 
-### 加载
+```javascript
 
-下面，我们用PhantomJS加载网页。
+phantomjs> phantom.version
+{
+  "major": 1,
+  "minor": 5,
+  "patch": 0
+}
 
-新建一个文本文件page.js，写入下面的代码：
+phantomjs> console.log("phantom is awesome")
+phantom is awesome
+
+phantomjs> window.navigator
+{
+  "cookieEnabled": true,
+  "language": "en-GB",
+  "productSub": "20030107",
+  "product": "Gecko",
+  // ...
+}
+
+```
+
+## 基本用法
+
+### 加载网页
+
+下面，我们用PhantomJS加载网页。新建一个文本文件page.js，写入下面的代码：
 
 {% highlight javascript %}
 
@@ -138,9 +159,30 @@ phantomjs page.js http://www.google.com
 
 {% endhighlight %}
 
+## 应用
+
+Phantomjs可以实现多种应用。
+
+### 过滤资源
+
+处理页面的时候，有时不希望加载某些特定资源。这时，可以对URL进行匹配，一旦符合规则，就中断对资源的连接。
+
+```javascript
+
+page.onResourceRequested = function(requestData, request) {
+  if ((/http:\/\/.+?\.css$/gi).test(requestData['url'])) {
+    console.log('Skipping', requestData['url']);
+    request.abort();
+  }   
+};
+
+```
+
+上面代码一旦发现加载的资源是CSS文件，就会使用`request.abort`方法中断连接。
+
 ### 截图
 
-最简单的生成网页截图的方法如下：
+最简单的生成网页截图的方法如下。
 
 {% highlight javascript %}
 
@@ -178,30 +220,27 @@ zoomFactor表示将截图缩小至原图的25%大小；renderBase64方法则是�
 var page = require('webpage').create();
 
 page.settings.userAgent = 'WebKit/534.46 Mobile/9A405 Safari/7534.48.3';
-
 page.settings.viewportSize = { width: 400, height: 600 };
 
 page.open('http://slashdot.org', function (status) {
-
 	if (status !== 'success') {
-        console.log('Unable to load!');
-        phantom.exit();
-    } else {
-
+    console.log('Unable to load!');
+    phantom.exit();
+  } else {
 		var title = page.evaluate(function () {
-			var posts = document.getElementsByClassName("article");
-			posts[0].style.backgroundColor = "#FFF";
-			return document.title;
-		});
+  	  var posts = document.getElementsByClassName("article");
+		  posts[0].style.backgroundColor = "#FFF";
+		  return document.title;
+	  });
 
-		page.clipRect = { top: 0, left: 0, width: 600, height: 700 };
-		page.render(title + "1.png");
-		page.clipRect = { left: 0, top: 600, width: 400, height: 600 };
-        page.render(title + '2.png');
-		phantom.exit();
-
-	}
-
+    window.setTimeout(function () {
+      page.clipRect = { top: 0, left: 0, width: 600, height: 700 };
+	    page.render(title + "1.png");
+	    page.clipRect = { left: 0, top: 600, width: 400, height: 600 };
+      page.render(title + '2.png');
+	    phantom.exit();
+    }, 1000);	  
+  }
 });
 
 {% endhighlight %}
@@ -232,7 +271,7 @@ phantomjs rasterize.js 'http://en.wikipedia.org/w/index.php?title=Jakarta&printa
 
 {% endhighlight %}
 
-## 生成网页
+### 生成网页
 
 phantomjs可以生成网页，使用content方法指定网页的HTML代码。
 
@@ -255,3 +294,4 @@ phantom.exit();
 - [Phantom Quick Start](https://github.com/ariya/phantomjs/wiki/Quick-Start)
 - Ariya Hidayat, [Web Page Clipping with PhantomJS](http://ariya.ofilabs.com/2013/04/web-page-clipping-with-phantomjs.html)
 - BenjaminBenBen, [Using PhantomJS WebServer](http://benjaminbenben.com/2013/07/28/phantomjs-webserver/)
+- Ariya Hidayat, [Capturing Web Page Without Stylesheets](http://ariya.ofilabs.com/2013/06/capturing-web-page-without-stylesheets.html): 过滤CSS文件
