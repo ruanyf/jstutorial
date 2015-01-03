@@ -14,11 +14,11 @@ CommonJS是服务器端模块的规范，Node.js采用了这个规范。
 
 ```javascript
 
-global.warming = true;
+global.warning = true;
 
 ```
 
-上面代码的waiming变量，可以被所有模块读取。当然，这样做是不推荐，输出模块变量的最好方法是使用module.exports对象。
+上面代码的waining变量，可以被所有模块读取。当然，这样做是不推荐，输出模块变量的最好方法是使用module.exports对象。
 
 ```javascript
 

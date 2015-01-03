@@ -119,6 +119,85 @@ page.open('http://slashdot.org', function (s) {
 
 第二行open()方法，接受两个参数。第一个参数是网页的网址，这里我们打开的是著名新闻网站[Slashdot](http://slashdot.org)，第二个参数是回调函数，当网页打开后，该函数将会运行，它的参数是状态提示（status），如果打开成功，该参数的值就是success。运行page.js，屏幕将会显示success。
 
+### 执行代码
+
+打开网页以后，可以使用page实例的evaluate方法，在页面中执行代码。
+
+```javascript
+
+var page = require('webpage').create();
+
+page.open(url, function(status) {
+  var title = page.evaluate(function() {
+    return document.title;
+  });
+  console.log('Page title is ' + title);
+  phantom.exit();
+});
+
+```
+
+网页内部的console语句，以及evaluate方法内部的console语句，默认不会显示在命令行。这时可以采用onConsoleMessage回调函数，上面的例子可以改写如下。
+
+```javascript
+
+var page = require('webpage').create();
+
+page.onConsoleMessage = function(msg) {
+  console.log('Page title is ' + msg);
+};
+
+page.open(url, function(status) {
+  page.evaluate(function() {
+    console.log(document.title);
+  });
+  phantom.exit();
+});
+
+```
+
+上面代码中，evaluate方法内部有console语句，默认不会输出在命令行。这时，可以用onConsoleMessage方法监听这个事件，进行处理。
+
+### 加载资源
+
+如果网页实例向远程服务器请求资源，这时HTTP请求（request）和HTTP回应可以用onResourceRequested和onResourceReceived追踪。
+
+```javascript
+
+var page = require('webpage').create();
+
+page.onResourceRequested = function(request) {
+  console.log('Request ' + JSON.stringify(request, undefined, 4));
+};
+
+page.onResourceReceived = function(response) {
+  console.log('Receive ' + JSON.stringify(response, undefined, 4));
+};
+
+page.open(url);
+
+```
+
+上面代码会以JSON格式，输出所有HTTP请求和HTTP回应的头信息。
+
+page实例的includeJs方法，用于页面加载外部脚本。
+
+```javascript
+
+var page = require('webpage').create();
+page.open('http://www.sample.com', function() {
+  page.includeJs("http://path/to/jquery.min.js", function() {
+    page.evaluate(function() {
+      $("button").click();
+    });
+    phantom.exit()
+  });
+});
+
+```
+
+上面的例子在页面中注入jQuery脚本，然后点击所有的按钮。需要注意的是，由于是异步加载，所以`phantom.exit()`语句要放在`page.evaluate()`方法的回调函数之中，否则页面会过早退出。
+
 ### 接受参数
 
 修改page.js，使得它可以从命令行接受参数。

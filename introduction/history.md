@@ -169,6 +169,8 @@ JavaScript 1.1版对应ECMAScript 1.0，但是直到JavaScript 1.4版才完全�
 
 2014年，微软推出JavaScript的Windows库WinJS，标志微软公司全面支持JavaScript与Windows操作系统的融合。
 
+2014年，一部分核心开发者离开了Node.js，创造了io.js项目，这是一个更开放、更新更频繁的Node.js版本。
+
 ## 参考链接
 
 - Axel Rauschmayer, [The Past, Present, and Future of JavaScript](http://oreilly.com/javascript/radarreports/past-present-future-javascript.csp)
