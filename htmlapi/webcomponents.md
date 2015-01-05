@@ -6,9 +6,33 @@ date: 2014-07-09
 modifiedOn: 2014-07-09
 ---
 
-不同的网站往往需要一些相同的模块，比如日历、调色板等等，这种模块就被称为“组件”（component）。未来的网站开发，可以像搭积木一样，把组件合在一起，就组成了一个网站。很显然，组件非常有利于代码的重复利用。
+## 概述
 
-Web Components就是网页组件的规范。它不是单一的规范，而是一系列的技术组成，包括Template、Custom Element、Shadow DOM、HTML Import等。
+各种网站往往需要一些相同的模块，比如日历、调色板等等，这种模块就被称为“组件”（component）。Web Component就是网页组件式开发的技术规范。
+
+采用组件进行网站开发，有很多优点。
+
+（1）管理和使用非常容易。加载或卸载组件，只要添加或删除一行代码就可以了。
+
+```html
+
+<link rel="import" href="my-dialog.htm">
+
+<my-dialog heading="A Dialog">Lorem ipsum</my-dialog>
+
+```
+
+上面代码加载了一个对话框组件。
+
+（2）定制非常容易。组件往往留出接口，供使用者设置常见属性，比如上面代码的heading属性，就是用来设置对话框的标题。
+
+（3）组件是模块化编程思想的体现，非常有利于代码的重用。标准格式的模块，可以跨平台、跨框架使用，构建、部署和与其他UI元素互动都有统一做法。
+
+（4）组件提供了HTML、CSS、JavaScript封装的方法，实现了与同一页面上其他代码的隔离。
+
+未来的网站开发，可以像搭积木一样，把组件合在一起，就组成了一个网站。这是非常诱人的。
+
+Web Components不是单一的规范，而是一系列的技术组成，包括Template、Custom Element、Shadow DOM、HTML Import四种技术规范。使用时，并不一定这四者都要用到。其中，Custom Element和Shadow DOM最重要，Template和HTML Import只起到辅助作用。
 
 ## template标签
 
@@ -56,7 +80,7 @@ document.body.appendChild(template.content);
 
 ```
 
-上面的代码是将模板直接插入DOM，更好的做法是克隆template节点，然后将克隆的节点插入DOM。
+上面的代码是将模板直接插入DOM，更好的做法是克隆template节点，然后将克隆的节点插入DOM。这样做可以多次使用模板。
 
 ```javascript
 
@@ -82,9 +106,9 @@ document.body.appendChild(clone);
 
 ```
 
-## custom element
+## Custom Element
 
-HTML预定义的网页元素，有时并不符合我们的需要，这时可以自定义网页元素。这就叫做custom element。
+HTML预定义的网页元素，有时并不符合我们的需要，这时可以自定义网页元素，这就叫做Custom Element。它是Web component技术的核心。
 
 下面的代码用于测试浏览器是否支持自定义元素。
 
@@ -102,7 +126,7 @@ if (supportsCustomElements()) {
 
 ```
 
-### document.registerElement方法
+### document.registerElement()
 
 document.registerElement方法用来注册新的网页元素，它返回一个构造函数。
 
@@ -219,11 +243,13 @@ var XFoo = document.registerElement('x-foo', {
 
 ```
 
-原型上有一些属性，可以指定回调函数，在特定事件发生时触发。
+### 回调函数
+
+自定义元素的原型有一些属性，用来指定回调函数，在特定事件发生时触发。
 
 - **createdCallback**：实例生成时
-- **attachedCallback**：实例插入文档时
-- **detachedCallback**：实例从文档移除时
+- **attachedCallback**：实例插入HTML文档时
+- **detachedCallback**：实例从HTML文档移除时
 - **attributeChangedCallback(attrName, oldVal, newVal)**：添加、移除、更新属性时
 
 下面是一个例子。
@@ -232,8 +258,14 @@ var XFoo = document.registerElement('x-foo', {
 
 var proto = Object.create(HTMLElement.prototype);
 
-proto.createdCallback = function() {...};
-proto.attachedCallback = function() {...};
+proto.createdCallback = function() {
+  console.log('created');
+  this.innerHTML = 'This is a my-demo element!';
+};
+
+proto.attachedCallback = function() {
+  console.log('attached');
+};
 
 var XFoo = document.registerElement('x-foo', {prototype: proto});
 
@@ -266,11 +298,20 @@ var XFoo = document.registerElement('x-foo-with-markup',
 
 ## Shadow DOM
 
-所谓Shadow DOM指的是，浏览器将模板、样式表、属性、JavaScript代码等，封装成一个独立的DOM元素。外部的设置无法影响到其内部，而内部的设置也不会影响到外部。Chrome 35+支持Shadow DOM。
+所谓Shadow DOM指的是，浏览器将模板、样式表、属性、JavaScript代码等，封装成一个独立的DOM元素。外部的设置无法影响到其内部，而内部的设置也不会影响到外部，与浏览器处理原生网页元素（比如&lt;video&gt;元素）的方式很像。Shadow DOM最大的好处有两个，一是可以向用户隐藏细节，直接提供组件，二是可以封装内部样式表，不会影响到外部。Chrome 35+支持Shadow DOM。
 
-Shadow DOM最大的好处有两个，一是可以向用户隐藏细节，直接提供组件，二是可以封装内部样式表，不会影响到外部。
+Shadow DOM元素需要通过createShadowRoot方法创造，然后将其插入HTML文档。
 
-Shadow DOM需要通过createShadowRoot方法，造一个单独的root元素。
+```javascript
+
+var shadowRoot = element.createShadowRoot();
+shadowRoot.appendChild(body);
+
+```
+
+上面代码创造了一个shadowRoot元素，然后将其插入HTML文档。
+
+我们也可以指定，网页中某个现存的元素为Shadom DOM的根元素。
 
 ```html
 
@@ -284,9 +325,9 @@ Shadow DOM需要通过createShadowRoot方法，造一个单独的root元素。
 
 ```
 
-上面代码指定button的文字为“你好，世界！”。
+上面代码指定现存的button元素，为Shadow DOM的根元素，并将button的文字从英文改为中文。
 
-Shadow DOM更强大的作用是，可以为DOM元素指定模板和样式表。
+Shadow DOM更强大的作用是，可以为DOM元素指定独立的模板和样式表。
 
 ```html
 
@@ -322,6 +363,44 @@ shadow.appendChild(template.content.cloneNode());
 ```
 
 上面代码先用createShadowRoot方法，对div创造一个根元素，用来指定Shadow DOM，然后把模板元素添加为Shadow的子元素。
+
+另一种对Shadow DOM添加内容的方法，是直接对其指定innerHTML属性。
+
+```javascript
+
+var el = document.getElementById('demo1');
+        
+var shadow = el.createShadowRoot();
+        
+var shadowHTML = '<style>p {text-decoration: underline;}</style>';
+shadowHTML += '<p>These paragraphs are in a shadow root.</p>';
+shadow.innerHTML = shadowHTML;
+
+```
+
+上面代码在Shadow DOM之中，插入了样式和一个p元素。
+
+## HTML Import
+
+HTML Import允许将组件的HTML、CSS、JavaScript封装在一个文件里，然后使用下面的代码插入需要使用该组件的网页。
+
+```html
+
+<link rel="import" href="dialog.html">
+
+```
+
+上面代码在网页中插入一个对话框组件，该组建封装在`dialog.html`文件。注意，dialog.html文件中的样式和JavaScript脚本，都对所插入的整个网页有效。
+
+组件中的DOM元素，无法直接选取，必须使用下面的格式选中。
+
+```javascript
+
+linkElement.import.querySelector('#template');
+
+```
+
+注意，组件文件是同步加载的，与CSS文件、脚本文件的加载方式相似，会阻塞网页的渲染，除非为link元素加上async属性。
 
 ## Polymer.js
 
@@ -481,3 +560,4 @@ template标签定义了网页元素的模板。
 - Cédric Trévisan, Building an Accessible Disclosure Button – using Web Components](http://blog.paciellogroup.com/2014/06/accessible-disclosure-button-using-web-components/)
 - Eric Bidelman, [Custom Elements: defining new elements in HTML](http://www.html5rocks.com/en/tutorials/webcomponents/customelements/)
 - TJ VanToll, [Why Web Components Are Ready For Production](http://developer.telerik.com/featured/web-components-ready-production/)
+- Chris Bateman, [A No-Nonsense Guide to Web Components, Part 1: The Specs](http://cbateman.com/blog/a-no-nonsense-guide-to-web-components-part-1-the-specs/)
