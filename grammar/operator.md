@@ -437,24 +437,23 @@ null == undefined   // true
 
 ### 取反运算符（!）
 
-取反运算符用于将一个布尔值变为相反值。
+取反运算符形式上是一个感叹号，用于将布尔值变为相反值，即true变成false，false变成true。
 
 {% highlight javascript %}
 
 !true // false
-
 !false // true
 
 {% endhighlight %}
 
-对于非布尔值的数据，布尔运算会自动将其转为布尔值。以下六个值取反后为true，其他取反后都为false。
+对于非布尔值的数据，取反运算符会自动将其转为布尔值。规则是，以下六个值取反后为true，其他值取反后都为false。
 
 - undefined
 - null
 - false
 - 0（包括+0和-0）
 - NaN
-- ""
+- 空字符串（""）
 
 这意味着，取反运算符有转换数据类型的作用。
 
@@ -465,6 +464,7 @@ null == undefined   // true
 !0 // true
 !NaN // true
 !"" // true
+
 !54 // false
 !'hello' // false
 ![] // false
@@ -472,15 +472,23 @@ null == undefined   // true
 
 {% endhighlight %}
 
+上面代码中，不管什么类型的值，经过取反运算后，都变成了布尔值。
+
 如果对一个值连续做两次取反运算，等于将其转为对应的布尔值，与Boolean函数的作用相同。这是一种常用的类型转换的写法。
 
 {% highlight javascript %}
 
 !!x
 
+// 等同于
+
+Boolean(x)
+
 {% endhighlight %}
 
-取反运算符的这种将任意数据自动转为布尔值的功能，对下面三种布尔运算符都成立。
+上面代码中，不管x是什么类型的值，经过两次取反运算后，变成了与Boolean函数结果相同的布尔值。所以，两次取反就是将一个值转为布尔值的简便写法。
+
+取反运算符的这种将任意数据自动转为布尔值的功能，对下面三种布尔运算符（且运算符、或运算符、三元条件运算符）都成立。
 
 ### 且运算符（&&）
 
