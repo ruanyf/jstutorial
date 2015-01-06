@@ -382,7 +382,27 @@ shadow.innerHTML = shadowHTML;
 
 ## HTML Import
 
-HTML Import允许将组件的HTML、CSS、JavaScript封装在一个文件里，然后使用下面的代码插入需要使用该组件的网页。
+### 基本操作
+
+长久以来，网页可以加载外部的样式表、脚本、图片、多媒体，却无法方便地加载其他网页，iframe和ajax都只能提供部分的解决方案，且有自己很大的局限。HTML Import就是为了解决这个问题，而提出来的。
+
+下面代码用于测试当前浏览器是否支持HTML Import。
+
+```javascript
+
+function supportsImports() {
+  return 'import' in document.createElement('link');
+}
+
+if (supportsImports()) {
+  // 支持
+} else {
+  // 不支持
+}
+
+```
+
+HTML Import用于将外部的HTML文档加载进当前文档。我们可以将组件的HTML、CSS、JavaScript封装在一个文件里，然后使用下面的代码插入需要使用该组件的网页。
 
 ```html
 
@@ -392,15 +412,177 @@ HTML Import允许将组件的HTML、CSS、JavaScript封装在一个文件里，�
 
 上面代码在网页中插入一个对话框组件，该组建封装在`dialog.html`文件。注意，dialog.html文件中的样式和JavaScript脚本，都对所插入的整个网页有效。
 
-组件中的DOM元素，无法直接选取，必须使用下面的格式选中。
+由于加载的网页的样式表和脚本，对当前网页也有效（准确得说，只有style标签中的样式对当前网页有效，link标签加载的样式表对当前网页无效）。所以可以把多个样式表和脚本，都放在所要加载的网页中，都从那里加载。这对大型的框架，是很方便的加载方法。
 
-```javascript
+如果所要加载的网页，与当前网页不在同一个域时，对方的域名必须打开CORS。
 
-linkElement.import.querySelector('#template');
+```html
+
+<!-- example.com必须打开CORS -->
+<link rel="import" href="http://example.com/elements.html">
 
 ```
 
-注意，组件文件是同步加载的，与CSS文件、脚本文件的加载方式相似，会阻塞网页的渲染，除非为link元素加上async属性。
+除了用link标签，也可以用JavaScript调用link元素。
+
+```javascript
+
+var link = document.createElement('link');
+link.rel = 'import';
+link.href = 'file.html'
+link.onload = function(e) {...};
+link.onerror = function(e) {...};
+document.head.appendChild(link);
+
+```
+
+HTML Import加载成功时，会在link元素上触发load事件，加载失败时（比如404错误）会触发error，可以对这两个事件指定回调函数。
+
+```html
+
+<script async>
+  function handleLoad(e) {
+    console.log('Loaded import: ' + e.target.href);
+  }
+  function handleError(e) {
+    console.log('Error loading import: ' + e.target.href);
+  }
+</script>
+
+<link rel="import" href="file.html"
+      onload="handleLoad(event)" onerror="handleError(event)">
+
+```
+
+上面代码中，handleLoad和handleError函数的定义，必须在link元素的前面。因为浏览器元素遇到link元素时，立刻解析并加载外部网页（同步操作），如果这时没有对这两个函数定义，就会报错。
+
+HTML Import是同步加载，会阻塞当前网页的渲染，这主要是为了样式表的考虑。如果想避免这一点，可以为link元素加上async属性。当然，这也意味着，如果被加载的网页定义了Custome Element，就不能立即使用了，必须等HTML Import完成，才能使用。
+
+```html
+
+<link rel="import" href="/path/to/import_that_takes_5secs.html" async>
+
+```
+
+但是，HTML Import不会阻塞当前网页的解析和脚本执行。这意味着在加载的同时，主页面的脚本会继续执行。
+
+HTML Import支持多重加载，即被加载的网页同时又加载其他网页。如果这些网页都重复加载同一个外部脚本，浏览器只会抓取并执行一次该脚本。比如，A网页加载了B网页，它们各自都需要加载jQuery，浏览器只会加载一次jQuery。
+
+### 脚本的执行
+
+被加载的网页中的内容，并不会显示在当前网页中，它只是用来供选用的，必须用DOM操作来获取加载的内容。具体来说，就是使用link元素的import属性，来获取加载的内容。这一点与iframe完全不同。
+
+```javascript
+
+var content = document.querySelector('link[rel="import"]').import;
+
+```
+
+发生以下情况时，link.import属性为null。
+
+- 浏览器不支持HTML Import
+- link元素没有声明`rel="import"`
+- link元素没有被加入DOM
+- link元素已经从DOM中移除
+- 对方域名没有打开CORS
+
+下面代码用于从加载的网页中，选取id为template的元素。
+
+```javascript
+
+var el = linkElement.import.querySelector('#template');
+
+document.body.appendChild(el.cloneNode(true));
+
+```
+
+反过来也一样，被加载的网页中的脚本，不仅可以获取本身的DOM，还可以获取link元素所在的网页的DOM。
+
+```javascript
+
+// 以下代码位于被加载（import）的网页
+
+// importDoc指向被加载的DOM
+var importDoc = document.currentScript.ownerDocument;
+
+// mainDoc指向主文档的DOM
+var mainDoc = document;
+
+// 将子页面的样式表添加主文档
+var styles = importDoc.querySelector('link[rel="stylesheet"]');
+mainDoc.head.appendChild(styles.cloneNode(true));
+
+```
+
+上面代码将所加载的网页的样式表，添加进主文档。
+
+被加载的网页的脚本是直接在主网页的上下文执行，因为它的`window.document`指的是主网页的document，而且它定义的函数可以被主网页的脚本直接引用。
+
+### Web Component的封装
+
+对于Web Component来说，HTML Import的一个重要应用是在所加载的网页中，自动登记Custom Element。
+
+```html
+
+<script>
+  // 定义并登记<say-hi>
+  var proto = Object.create(HTMLElement.prototype);
+
+  proto.createdCallback = function() {
+    this.innerHTML = 'Hello, <b>' +
+                     (this.getAttribute('name') || '?') + '</b>';
+  };
+
+  document.registerElement('say-hi', {prototype: proto});
+</script>
+
+<template id="t">
+  <style>
+    ::content > * {
+      color: red;
+    }
+  </style>
+  <span>I'm a shadow-element using Shadow DOM!</span>
+  <content></content>
+</template>
+
+<script>
+  (function() {
+    var importDoc = document.currentScript.ownerDocument; //指向被加载的网页
+
+    // 定义并登记<shadow-element>
+    var proto2 = Object.create(HTMLElement.prototype);
+
+    proto2.createdCallback = function() {
+      var template = importDoc.querySelector('#t');
+      var clone = document.importNode(template.content, true);
+      var root = this.createShadowRoot();
+      root.appendChild(clone);
+    };
+
+    document.registerElement('shadow-element', {prototype: proto2});
+  })();
+</script>
+
+```
+
+上面代码定义并登记了两个元素：\<say-hi\>和\<shadow-element\>。在主页面使用这两个元素，非常简单。
+
+```html
+
+<head>
+  <link rel="import" href="elements.html">
+</head>
+<body>
+  <say-hi name="Eric"></say-hi>
+  <shadow-element>
+    <div>( I'm in the light dom )</div>
+  </shadow-element>
+</body>
+
+```
+
+不难想到，这意味着HTML Import使得Web Component变得可分享了，其他人只要拷贝`elements.html`，就可以在自己的页面中使用了。
 
 ## Polymer.js
 
@@ -559,5 +741,6 @@ template标签定义了网页元素的模板。
 - Rey Bango, [Using Polymer to Create Web Components](http://code.tutsplus.com/tutorials/using-polymer-to-create-web-components--cms-20475)
 - Cédric Trévisan, Building an Accessible Disclosure Button – using Web Components](http://blog.paciellogroup.com/2014/06/accessible-disclosure-button-using-web-components/)
 - Eric Bidelman, [Custom Elements: defining new elements in HTML](http://www.html5rocks.com/en/tutorials/webcomponents/customelements/)
+- Eric Bidelman, [HTML Imports](http://www.html5rocks.com/en/tutorials/webcomponents/imports/)
 - TJ VanToll, [Why Web Components Are Ready For Production](http://developer.telerik.com/featured/web-components-ready-production/)
 - Chris Bateman, [A No-Nonsense Guide to Web Components, Part 1: The Specs](http://cbateman.com/blog/a-no-nonsense-guide-to-web-components-part-1-the-specs/)
