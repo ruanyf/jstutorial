@@ -547,6 +547,18 @@ func.call(thisValue, arg1, arg2, ...)
 
 它的第一个参数就是this所要指向的那个对象，后面的参数则是函数调用时所需的参数。
 
+```javascript
+
+function add(a,b) {
+  return a+b;
+}
+
+add.call(this,1,2) // 3
+
+```
+
+上面代码中，call方法指定函数add在当前环境（对象）中运行，并且参数为1和2，因此函数add运行后得到3。
+
 ### apply方法
 
 apply方法的作用与call方法类似，也是改变this指向，然后再调用该函数。它的使用格式如下。
