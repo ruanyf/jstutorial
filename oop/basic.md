@@ -495,30 +495,36 @@ $("#button").on("click", o.f);
 
 ## 固定this的方法
 
-this的动态切换，固然为JavaScript创造了巨大的灵活性，但也使得编程变得困难和模糊。有时，需要把this固定下来，反正出现意想不到的情况。
-
-JavaScript提供了call、apply、bind这三个方法，来固定this的指向。
+this的动态切换，固然为JavaScript创造了巨大的灵活性，但也使得编程变得困难和模糊。有时，需要把this固定下来，避免出现意想不到的情况。JavaScript提供了call、apply、bind这三个方法，来切换/固定this的指向。
 
 ### call方法
 
-函数的call方法，可以改变指定该函数内部this的指向，然后再调用该函数。它的使用格式如下。
+函数的call方法，可以改变指定该函数内部this的指向，然后再调用该函数。
 
-{% highlight javascript %}
+```javascript
 
-func.call(thisValue, arg1, arg2, ...)
+var o = {};
 
-{% endhighlight %}
+var f = function (){
+  return this;
+};
 
-call方法的第一个参数就是this所要指向的那个对象，后面的参数则是函数调用时所需的参数。如果this所要指向的那个对象，设定为null或undefined，则等同于指定全局对象。
+f() === this // true
+f.call(o) === o // true
+
+```
+
+上面代码中，在全局环境运行函数f时，this指向全局环境；call方法指定，在对象o的环境中运行函数f，则this指向对象o。
+
+再看一个例子。
 
 {% highlight javascript %}
 
 var n = 123;
-
 var o = { n : 456 };
 
 function a() {
-    console.log(this.n);
+  console.log(this.n);
 }
 
 a.call() // 123
@@ -529,7 +535,17 @@ a.call(o) // 456
 
 {% endhighlight %}
 
-上面代码中，a函数中的this关键字，如果指向全局对象，返回结果为123。如果使用call方法，将this关键字指向o对象，返回结果为456。
+上面代码中，a函数中的this关键字，如果指向全局对象，返回结果为123。如果使用call方法，将this关键字指向o对象，返回结果为456。如果this所要指向的那个对象，设定为null或undefined，则等同于指向全局对象。
+
+call方法的完整使用格式如下。
+
+```javascript
+
+func.call(thisValue, arg1, arg2, ...)
+
+```
+
+它的第一个参数就是this所要指向的那个对象，后面的参数则是函数调用时所需的参数。
 
 ### apply方法
 
