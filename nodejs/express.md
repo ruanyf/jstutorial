@@ -48,6 +48,21 @@ $ npm install
 
 ```javascript
 
+var express = require('express');
+var app = express();
+ 
+app.use(express.static(__dirname + '/public'));
+ 
+app.listen(8080);
+
+```
+
+上面代码运行之后，访问`http://localhost:8080`，就会在浏览器中打开当前目录的public子目录。如果public目录之中有一个图片文件my_image.png，那么可以用`http://localhost:8080/my_image.png`访问该文件。
+
+你也可以在index.js之中，生成动态网页。
+
+```javascript
+
 // index.js
 
 var express = require('express');

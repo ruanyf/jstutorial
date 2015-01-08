@@ -342,7 +342,7 @@ var bar = require('bar/lib/bar.js')
 
 ### 核心模块
 
-Node.js自带一系列的核心模块，下面就是其中的一部分：
+如果只是在服务器运行JavaScript代码，用处并不大，因为服务器脚本语言已经有很多种了。Node.js的用处在于，它本身还提供了一系列功能模块，与操作系统互动。这些核心的功能模块，不用安装就可以使用，下面是它们的清单。
 
 - **http**：提供HTTP服务器功能。
 - **url**：解析URL。
@@ -353,13 +353,11 @@ Node.js自带一系列的核心模块，下面就是其中的一部分：
 - **path**：处理文件路径。
 - **crypto**：提供加密和解密功能，基本上是对OpenSSL的包装。
 
-这些模块可以不用安装就使用。
-
 除了使用核心模块，还可以使用第三方模块，以及自定义模块。
 
 ### 自定义模块
 
-Node.js模块采用CommonJS规范。只要符合这个规范，就可以自定义模块。
+Node模块采用CommonJS规范。只要符合这个规范，就可以自定义模块。
 
 下面是一个最简单的模块，假定新建一个foo.js文件，写入以下内容。
 
@@ -474,7 +472,17 @@ fs.readFile('./helloDir/message.txt','UTF-8' ,function (err, data) {
 
 {% endhighlight %}
 
-上面代码使用readFile方法读取文件。readFile方法的第一个参数是文件名，第二个参数是文件编码，第三个参数是回调函数。可用的文件编码包括“ascii”、“utf8”和“base64”，如果这个参数没有提供，默认是utf8。
+上面代码使用readFile方法读取文件。readFile方法的第一个参数是文件名，第二个参数是文件编码，第三个参数是回调函数。可用的文件编码包括“ascii”、“utf8”和“base64”。如果没有指定文件编码，返回的是原始的缓存二进制数据，这时需要调用buffer对象的toString方法，将其转为字符串。
+
+```javascript
+
+var fs = require('fs');
+fs.readFile('example_log.txt', function (err, logData) {
+  if (err) throw err;
+  var text = logData.toString();
+});
+
+```
 
 ### mkdirSync()，writeFileSync()，readFileSync()
 
@@ -598,9 +606,9 @@ unwatchfile方法用于解除对文件的监听。
 
 ## http模块
 
-### 实例：搭建一个HTTP服务器
+### 基本用法
 
-使用Node.js搭建HTTP服务器非常简单。
+http模块主要用于搭建HTTP服务。使用Node.js搭建HTTP服务器非常简单。
 
 {% highlight javascript %}
 
