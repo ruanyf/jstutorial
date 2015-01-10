@@ -126,20 +126,39 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 ### querySelector()，getElementById()
 
-这两个方法用于获取一个网页的元素节点。它们的不同之处是，querySelector方法的参数使用CSS选择器语法，getElementById方法的参数是HTML标签元素的id属性。
+这两个方法用于获取元素节点。它们的不同之处是，querySelector方法的参数使用CSS选择器语法，getElementById方法的参数是HTML标签元素的id属性。
 
 {% highlight javascript %}
 
-document.querySelector('li')
-document.getElementById('last')
+document.getElementById('myElement')
+
+document.querySelector('#myElement')
 
 {% endhighlight %}
 
-如果有多个节点满足querySelector方法的条件，则返回第一个匹配的节点。
+上面代码中，两个方法都能选中id为myElement的元素，但是getElementById()比querySelector()效率高得多。
+
+getElementById方法和querySelector方法的返回值，要么是null（未选中时），要么是选中的那个元素节点。如果有多个节点满足querySelector方法的条件，则返回第一个匹配的节点。
+
+querySelector方法可以接受各种复杂的CSS选择器。
+
+```javascript
+
+document.querySelector('#myParent > [ng-click]');
+
+```
 
 ### querySelectorAll()，getElementsByTagName()，getElementsByClassName()
 
-这三个方法都返回一组符合条件的网页元素节点（即NodeList对象）。它们的不同之处在于参数，querySelectorAll方法的参数是CSS选择器，getElementsByTagName方法的参数是HTML元素名，getElementsByClassName方法的参数是HTML元素的class属性。
+这三个方法都返回一组符合条件的网页元素节点。
+
+它们的不同之处如下。
+
+（1）参数，querySelectorAll方法的参数是CSS选择器，getElementsByTagName方法的参数是HTML元素名，getElementsByClassName方法的参数是HTML元素的class属性。
+
+（2）返回值的类型。getElementsByTagName方法和getElementsByClassName方法，返回的是HTMLCollection类型的对象，querySelectorAll方法返回的是NodeList类型的对象。这两类对象都是类似数组的对象，但是HTMLCollection只能包括HTML元素节点，NodeList可以包括各种节点。getElementsByTagName方法和getElementsByClassName方法返回的是对象的指针，当对象发生变化时，返回的结果集会跟着变化，querySelectorAll方法返回的结果集没有这种特性。
+
+（3）效率。getElementsByTagName方法和getElementsByClassName方法的效率，高于querySelectorAll方法。
 
 {% highlight javascript %}
 
@@ -149,9 +168,25 @@ document.getElementsByClassName('liClass')
 
 {% endhighlight %}
 
-getElementsByTagName方法和getElementsByClassName方法返回的是对象的指针，当对象发生变化时，返回的结果集会跟着变化，querySelectorAll方法返回的结果集没有这种特性。
-
 如果querySelectorAll方法和getElementsByTagName方法的参数是字符串“*”，则会返回文档中的所有HTML元素节点。
+
+querySelectorAll方法支持复杂的CSS选择器。
+
+```javascript
+
+// 选中data-foo-bar属性等于someval的元素
+document.querySelectorAll('[data-foo-bar="someval"]');
+
+// 选中myForm表单中所有不通过验证的元素
+document.querySelectorAll('#myForm :invalid');
+
+// 选中div元素，那些class含ignore的除外
+document.querySelectorAll('DIV:not(.ignore)');
+
+// 同时选中div，a，script三类元素
+document.querySelectorAll('DIV, A, SCRIPT');
+
+```
 
 ### getElementsByName()
 
