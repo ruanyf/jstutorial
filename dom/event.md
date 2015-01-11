@@ -386,9 +386,25 @@ window.addEventListener("resize", resizeMethod, true);
 
 鼠标移出某个HTML元素时触发。它与mouseleave事件类似，区别在于mouseout事件会冒泡，而且它会在从该元素移入某个子元素时触发。
 
+```javascript
+
+someEl.addEventListener('mouseout', function() {
+    // mouse was hovering over this element, but no longer is
+});
+
+```
+
 （9）mouseover事件
 
-鼠标在某个元素上方时触发。
+鼠标在某个元素上方时触发，即悬停时触发。
+
+```javascript
+
+someEl.addEventListener('mouseover', function() {
+    // mouse is hovering over this element
+});
+
+```
 
 （10）wheel事件
 
@@ -398,15 +414,43 @@ window.addEventListener("resize", resizeMethod, true);
 
 （1）keydown事件
 
-用户按下某个键时触发。它的触发时间早于系统输入法接收到用户的动作。键盘上的任何键都可以触发该事件。
+用户按下某个键时触发，此时用户还没放开这个键。它的触发时间早于系统输入法接收到用户的动作。键盘上的任何键都可以触发该事件。
 
 （2）keypress事件
 
-用户按下能够输入字符的键时触发。
+用户按下能够字符键时触发。如果用户一直按着，这个事件就持续触发。
+
+```javascript
+
+someElement.addEventListener('keypress', function(event) {
+    // ...
+});
+
+```
 
 （3）keyup事件
 
 用户松开某个键时触发。它总是发生在相应的keydown和keypress事件之后。
+
+```javascript
+
+someElement.addEventListener('keyup', function(event) {
+    // ...
+});
+
+```
+
+下面是捕捉用户按下Ctrl+H键的代码。
+
+```javascript
+
+document.addEventListener('keydown', function(event) {
+  if (event.ctrlKey && event.which === 72) {
+    // open help widget
+  }
+});
+
+```
 
 ### 触摸事件
 
@@ -480,7 +524,9 @@ readystatechange事件在readyState属性发生变化时触发。它的发生对
 
 （2）DOMContentLoaded
 
-DOMContentLoaded事件在网页解析完成时触发，此时各种外部资源（resource）还没有被完全下载。
+DOMContentLoaded事件在网页解析完成时触发，此时各种外部资源（resource）还没有被完全下载。也就是说，这个事件比load事件，发生时间早得多。
+
+注意，DOMContentLoaded事件的回调函数，应该部署在所有连接外部样式表的link元素前面。因为，抓取外部样式表的时候，页面是阻塞的，所有脚本都不会执行。如果DOMContentLoaded事件的回调函数，放在外部样式表的后面定义，就会造成所有外部样式表加载完毕之后，回调函数才执行。
 
 ### 拖拉事件
 
@@ -580,7 +626,32 @@ PrefixedEvent(anim, "AnimationEnd", AnimationListener);
 
 ## event对象
 
-当事件发生以后，会生成一个事件对象event，在DOM中传递，也被作为参数传给回调函数。
+当事件发生以后，会生成一个事件对象event，在DOM中传递，也被作为参数传给回调函数。但是，IE8及以下版本，这个事件对应是不作为参数传递的，而是通过window对象的event属性读取，所以要获取这个对象，往往写成下面这样。
+
+```javascript
+
+function myEventHandler(event) {
+    var actualEvent = event || window.event;
+
+    // handle actualEvent
+}
+
+```
+
+除外，IE8及以下版本，事件对象的target属性叫做srcElement属性。
+
+```javascript
+
+function myEventHandler(event) {
+  var actualEvent = event || window.event;
+  var actualTarget = actualEvent.target || actualEvent.srcElement;
+
+  // handle actualEvent & actualTarget
+}
+
+```
+
+老式的IE浏览器还有其他一些不兼容之处。如果不需要支持IE8，代码可以简单很多。
 
 ### event对象的属性
 
@@ -630,51 +701,47 @@ anchor.addEventListener('click', function(event) {
 
 该方法阻止事件在DOM中继续传播，防止再触发定义在别的节点上的回调函数，但是不包括在当前节点上新定义的事件回调函数。
 
+```javascript
+
+someEl.addEventListener('some-event', function(event) {
+    event.stopPropagation();
+});
+
+```
+
 **（3）stopImmediatePropagation方法**
 
 该方法的作用与stopPropagation方法相同，唯一的区别是还阻止当前节点上后继定义的事件回调函数。
 
+```javascript
+
+someEl.addEventListener('some-event', function(event) {
+    event.stopImmediatePropagation();
+});
+
+```
+
 ## 自定义事件
 
-浏览器允许用户通过CustomEvent构造函数，定义自己的事件对象。
+除了浏览器预定义的那些事件，用户还可以自定义事件，然后手动触发。下面是jQuery触发自定义事件的写法，相当简单。
 
-{% highlight javascript %}
+```javascript
 
-var myEvent = new CustomEvent("myevent", {
-  detail: {
-    name: "张三"
-  },
-  bubbles: true,
-  cancelable: false
-});
+$('some-element').trigger('my-custom-event');
 
-{% endhighlight %}
+```
 
-构造函数CustomEvent接受两个参数，第一个是事件名称，第二个是事件的属性对象。
+上面代码触发了自定义事件，该事件会层层向上冒泡。在冒泡过程中，如果有一个元素定义了该事件的回调函数，该回调函数就会触发。
 
-还可以使用document.createEvent方法来生成事件对象。
+使用浏览器原生方法创造自定义事件，也很简单。
 
-{% highlight javascript %}
+```javascript
 
-var myEvent = document.createEvent('CustomEvent');
+var event = document.createEvent('Event');
+event.initEvent('my-custom-event', true, true, {foo:'bar'});
+someElement.dispatchEvent(event);
 
-myEvent.initCustomEvent('myevent',true,false,{name:'张三'});
-
-{% endhighlight %}
-
-上面两种自定义事件的写法是等价的。但是，IE 9只支持第二种写法，不支持第一种写法。
-
-定义事件对象以后，就可以用addEventListener方法为该事件指定回调函数，用dispatchEvent方法触发该事件。
-
-{% highlight javascript %}
-
-element.addEventListener('myevent', function(event) {
-  console.log('Hello ' + event.detail.name);
-});
-
-element.dispatchEvent(myEvent);
-
-{% endhighlight %}
+```
 
 document.createEvent方法除了自定义事件以外，还能触发浏览器的默认事件。比如，模仿并触发click事件的写法如下。
 
@@ -689,8 +756,37 @@ divElement.dispatchEvent(simulateDivClick);
 
 {% endhighlight %}
 
+但是，document.createEvent方法不是标准，只是浏览器还继续支持。目前的标准方法，是使用CustomEvent构造函数，自定义事件对象。除了IE以外的其他浏览器，都支持这种方法。
+
+{% highlight javascript %}
+
+var myEvent = new CustomEvent("myevent", {
+  detail: {
+    foo: "bar"
+  },
+  bubbles: true,
+  cancelable: false
+});
+
+{% endhighlight %}
+
+构造函数CustomEvent接受两个参数，第一个是事件名称，第二个是事件的属性对象。上面的写法与第一种写法是等价的。
+
+定义事件对象以后，就可以用addEventListener方法为该事件指定回调函数，用dispatchEvent方法触发该事件。
+
+{% highlight javascript %}
+
+element.addEventListener('myevent', function(event) {
+  console.log('Hello ' + event.detail.name);
+});
+
+element.dispatchEvent(myEvent);
+
+{% endhighlight %}
+
 ## 参考链接
 
 - Wilson Page, [An Introduction To DOM Events](http://coding.smashingmagazine.com/2013/11/12/an-introduction-to-dom-events/)
 - Mozilla Developer Network, [Using Firefox 1.5 caching](https://developer.mozilla.org/en-US/docs/Using_Firefox_1.5_caching)
 - Craig Buckler, [How to Capture CSS3 Animation Events in JavaScript](http://www.sitepoint.com/css3-animation-javascript-event-handlers/)
+- Ray Nicholus, [You Don't Need jQuery!: Events](http://blog.garstasio.com/you-dont-need-jquery/events/)

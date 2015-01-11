@@ -39,20 +39,32 @@ xhr.send(null);
 
 {% endhighlight %}
 
-### Open方法
+### Open()
 
 open方法用于指定发送HTTP请求的参数，它有三个参数如下：
+
 - 发送方法，一般来说为“GET”、“POST”、“PUT”和“DELETE”中的一个值。
 - 网址。
 - 是否异步，true表示异步，false表示同步。
 
-### readyState属性和readyStateChange事件
+下面发送POST请求的例子。
 
-在通信过程中，每当发生状态变化的时候，readyState属性的值就会发生改变。
+```javascript
 
-这个值每一次变化，都会触发readyStateChange事件。我们可以指定这个事件的回调函数，对不同状态进行不同处理。尤其是当状态变为4的时候，表示通信成功，这时回调函数就可以处理服务器传送回来的数据。
+xhr.open('POST', encodeURI('someURL'));
+xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+xhr.onload = function() {};
+xhr.send(encodeURI('dataString'));
 
-### send方法
+```
+
+上面方法中，open方法向指定URL发出POST请求，send方法送出实际的数据。
+
+### setRequestHeader()
+
+setRequestHeader方法用于设置HTTP请求的头信息。
+
+### send()
 
 send方法用于实际发出HTTP请求。如果不带参数，就表示HTTP请求只包含头信息，也就是只有一个URL，典型例子就是GET请求；如果带有参数，就表示除了头信息，还带有包含具体数据的信息体，典型例子就是POST请求。
 
@@ -144,6 +156,12 @@ document.querySelector('input[type="file"]').addEventListener('change', function
 }, false);
 
 {% endhighlight %}
+
+### readyState属性和readyStateChange事件
+
+在通信过程中，每当发生状态变化的时候，readyState属性的值就会发生改变。
+
+这个值每一次变化，都会触发readyStateChange事件。我们可以指定这个事件的回调函数，对不同状态进行不同处理。尤其是当状态变为4的时候，表示通信成功，这时回调函数就可以处理服务器传送回来的数据。
 
 ### progress事件
 
@@ -389,6 +407,21 @@ xhr.send(formData);
 
 目前，各大浏览器（包括IE 10）都支持Ajax上传文件。
 
+除了使用FormData接口上传，也可以直接使用File API上传。
+
+```javascript
+
+var file = document.getElementById('test-input').files[0];
+var xhr = new XMLHttpRequest();
+
+xhr.open('POST', 'myserver/uploads');
+xhr.setRequestHeader('Content-Type', file.type);
+xhr.send(file);
+
+```
+
+可以看到，上面这种写法比FormData的写法，要简单很多。
+
 ## JSONP
 
 JSONP是一种常见做法，用于服务器与客户端之间的数据传输，主要为了规避浏览器的同域限制。因为Ajax只能向当前网页所在的域名发出HTTP请求（除非使用下文要提到的CORS，但并不是所有服务器都支持CORS），所以JSONP就采用在网页中动态插入script元素的做法，向服务器请求脚本文件。
@@ -564,7 +597,7 @@ CORS机制默认不发送cookie和HTTP认证信息，除非在Ajax请求中打�
 {% highlight javascript %}
 
 var request = new XMLHttpRequest();
-request.withCredentials = "true";
+request.withCredentials = true;
 
 {% endhighlight %}
 

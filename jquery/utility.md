@@ -344,7 +344,7 @@ $.ajax([options])
 
 上面代码中的url，指的是服务器网址，options则是一个对象参数，设置Ajax请求的具体参数。
 
-{% highlight javascript %}
+```javascript
 
 $.ajax({
   async: true,
@@ -374,7 +374,7 @@ function completeCallback(xhr, status){
 	console.log('Ajax请求已结束。');
 }
 
-{% endhighlight %}
+```
 
 上面代码的对象参数有多个属性，含义如下：
 
@@ -420,12 +420,13 @@ $.ajax('/url/to/json',{
 
 ```javascript
 
-    url: '/remote/url',
-    data: {
-        param1: 'value1',
-        param2: 'value2'
-        ...
-    }
+$.ajax({
+  url: '/remote/url',
+  data: {
+    param1: 'value1',
+    param2: 'value2',
+    ...
+  }
 });
 
 // 相当于
@@ -679,6 +680,49 @@ $.getJSON('/data/search.jsonp?q=a&callback=?',
 );
 
 {% endhighlight %}
+
+### 文件上传
+
+假定网页有一个文件控件。
+
+```html
+
+<input type="file" id="test-input">
+
+```
+
+下面就是如何使用Ajax上传文件。
+
+```javascript
+
+var file = $('#test-input')[0].files[0];
+var formData = new FormData();
+
+formData.append('file', file);
+
+$.ajax('myserver/uploads', {
+  method: 'POST',
+  contentType: false,
+  processData: false,
+  data: formData
+});
+
+```
+
+上面代码是将文件作为表单数据发送。除此之外，也可以直接发送文件。
+
+```javascript
+
+var file = $('#test-input')[0].files[0];
+
+$.ajax('myserver/uploads', {
+  method: 'POST',
+  contentType: file.type,
+  processData: false,
+  data: file
+});
+
+```
 
 ## 参考链接
 
