@@ -107,7 +107,9 @@ Node对象有以下方法：
 - removeChild()
 - replaceChild()
 
-appendChild()方法用于在父节点的最后一个子节点后，再插入一个子节点。
+（1）appendChild()
+
+appendChild()方法用于在父节点的最后一个子节点后，再插入一个子节点。它在父节点上调用，子节点作为方法的参数。
 
 {% highlight javascript %}
 
@@ -119,7 +121,9 @@ document.querySelector('strong').appendChild(textNode);
 
 {% endhighlight %}
 
-insertBefore()用于将子节点插入父节点的指定位置。它接受两个参数，第一个参数是所要插入的子节点，第二个参数是父节点下方的另一个子节点，新插入的子节点将插在这个节点的前面。
+（2）insertBefore()
+
+insertBefore()用于将子节点插入父节点的指定位置。它在父节点上调用，接受两个参数，第一个参数是所要插入的子节点，第二个参数是父节点下方的另一个子节点，新插入的子节点将插在这个节点的前面。
 
 {% highlight javascript %}
 
@@ -132,7 +136,9 @@ ul.insertBefore(li,ul.firstChild);
 
 {% endhighlight %}
 
-removeChild() 方法用于从父节点移除一个子节点。
+（3）removeChild() 
+
+removeChild() 方法用于从父节点移除一个子节点。它在父节点上调用，被移除的子节点作为参数。
 
 {% highlight javascript %}
 
@@ -140,6 +146,8 @@ var divA = document.getElementById('A');
 divA.parentNode.removeChild(divA);
 
 {% endhighlight %}
+
+（4）replaceChild()
 
 replaceChild()方法用于将一个新的节点，替换父节点的某一个子节点。它接受两个参数，第一个参数是用来替换的新节点，第二个参数将要被替换走的子节点。
 
@@ -152,6 +160,8 @@ divA.parentNode.replaceChild(newSpan,divA);
 
 {% endhighlight %}
 
+（5）cloneNode()
+
 cloneNode()方法用于克隆一个节点。它接受一个布尔值作为参数，表示是否同时克隆子节点，默认是false，即不克隆子节点。
 
 {% highlight javascript %}
@@ -162,6 +172,8 @@ var cloneUL = document.querySelector('ul').cloneNode(true);
 
 需要注意的是，克隆一个节点，会丧失定义在这个节点上的事件回调函数，但是会拷贝该节点的所有属性。因此，有可能克隆一个节点之后，DOM中出现两个有相同ID属性的HTML元素。
 
+（6）contains方法
+
 contains方法检查一个节点是否为另一个节点的子节点。
 
 {% highlight javascript %}
@@ -170,6 +182,8 @@ document.querySelector('html').contains(document.querySelector('body'))
 // true
 
 {% endhighlight %}
+
+（7）isEqualNode()
 
 isEqualNode()方法用来检查两个节点是否相等。所谓相等的节点，指的是两个节点的类型相同、属性相同、子节点相同。
 
@@ -214,7 +228,25 @@ outerHTML属性用来读取或设置HTML代码时，会把节点本身包括在�
 
 textContent属性用来读取或设置节点包含的文本内容。
 
-innerText属性和outerText属性在读取元素节点的文本内容时，得到的值是不一样的。它们的不同之处在于设置一个节点的文本属性时，outerText属性会使得原来的元素节点被文本节点替换掉。
+innerText属性和outerText属性在读取元素节点的文本内容时，得到的值是不一样的。它们的不同之处在于设置一个节点的文本属性时，outerText属性会使得原来的元素节点被文本节点替换掉。注意，innerText是非标准属性，Firefox不支持。
+
+```javascript
+
+document.getElementById('foo').innerHTML = 'Goodbye!';
+document.getElementById('foo').innerText = 'GoodBye!';
+document.getElementById('foo').textContent = 'Goodbye!';
+
+```
+
+使用textContent和innerText属性，为一个HTML元素设置内容，有一个好处，就是自动对HTML标签转义。这很适合用于用户提供的内容。
+
+```javascript
+
+document.getElementById('foo').innerText = '<p>GoodBye!</p>';
+
+```
+
+上面代码在插入文本时，会将p标签解释为文本，而不会当作标签处理。
 
 **（2）tagName属性**
 
@@ -276,7 +308,7 @@ className属性和classList属性都返回HTML元素的class属性。不同之�
 
 {% endhighlight %}
 
-上面这个div节点对象的className属性和classList属性，分别如下：
+上面这个div节点对象的className属性和classList属性，分别如下。
 
 {% highlight javascript %}
 
@@ -323,6 +355,21 @@ myDiv.classList.toString();
 {% endhighlight %}
 
 各大浏览器（包括IE 10）都支持classList属性。
+
+下面比较一下，className和classList在添加和删除某个类时的写法。
+
+```javascript
+
+// 添加class
+document.getElementById('foo').className += 'bold';
+document.getElementById('foo').classList.add('bold');
+
+// 删除class
+document.getElementById('foo').classList.remove('bold');
+document.getElementById('foo').className = 
+  document.getElementById('foo').className.replace(/^bold$/, '');
+
+```
 
 ### html元素
 
@@ -505,9 +552,29 @@ document.querySelector('content').children[4].scrollIntoView();
 
 scrollIntoView方法接受一个布尔值作为参数，默认值为true，表示滚动到HTML元素的上方边缘，如果该值为false，表示滚动到下方边缘。
 
-### insertAdjacentHTML方法
+### setAttribute()，removeAttribute()
 
-insertAdjacentHTML方法可以将一段字符串，作为HTML或XML对象，插入DOM。
+setAttribute方法用于设置HTML元素的属性。
+
+```javascript
+
+// 使得<div id="foo"></div>
+// 变为<div id="foo" role="button"></div>
+document.getElementById('foo').setAttribute('role', 'button');
+
+```
+
+removeAttribute方法用于移除HTML元素的属性。
+
+```javascript
+
+document.getElementById('foo').removeAttribute('role');
+
+```
+
+### insertAdjacentHTML()
+
+insertAdjacentHTML方法可以将一段字符串，作为HTML或XML对象，插入DOM。通常使用这个方法，在当前节点的前面或后面，添加新的同级节点或子节点。
 
 比如，原来的DOM结构如下：
 

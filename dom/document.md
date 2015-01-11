@@ -205,7 +205,9 @@ forms[0].tagName // "FORM"
 
 ### createElement()，createTextNode()
 
-这两个方法分别用来生成元素节点和文本节点。createElement方法接受一个字符串参数，表示要创造哪一种HTML元素。传入的字符串应该等同于元素节点的tagName属性。createTextNode方法的参数，就是所要生成的文本节点的内容。
+createElement方法用来生成元素节点，createTextNode方法用来生成文本节点。
+
+createElement方法接受一个字符串参数，表示要创造哪一种HTML元素，传入的字符串应该等同于元素节点的tagName属性。createTextNode方法的参数，就是所要生成的文本节点的内容。
 
 ```javascript
 
