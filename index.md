@@ -133,7 +133,7 @@ modifiedOn: 2014-05-18
 - [package.json文件](nodejs/packagejson.html)
 - [npm模块管理器](nodejs/npm.html)
 - [process对象](nodejs/process.html)
-- [events模块](nodejs/events.html)
+- [Events模块](nodejs/events.html)
 - [Stream接口](nodejs/stream.html)
 - [Child Process模块](nodejs/child-process.html)
 - [Express框架](nodejs/express.html)
