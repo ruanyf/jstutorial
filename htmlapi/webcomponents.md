@@ -36,6 +36,8 @@ Web Components不是单一的规范，而是一系列的技术组成，包括Tem
 
 ## template标签
 
+### 基本用法
+
 template标签表示网页中某些重复出现的部分的代码模板。它存在于DOM之中，但是在页面中不可见。
 
 下面的代码用来检查，浏览器是否支持template标签。
@@ -105,6 +107,25 @@ document.body.appendChild(clone);
 </template>
 
 ```
+
+### document.importNode()
+
+document.importNode方法用于克隆外部文档的DOM节点。
+
+```javascript
+
+var iframe = document.getElementsByTagName("iframe")[0];
+var oldNode = iframe.contentWindow.document.getElementById("myNode");
+var newNode = document.importNode(oldNode, true);
+document.getElementById("container").appendChild(newNode);
+
+```
+
+上面例子是将iframe窗口之中的节点oldNode，克隆进入当前文档。
+
+注意，克隆节点之后，还必须用appendChild方法将其加入当前文档，否则不会显示。换个角度说，这意味着插入外部文档节点之前，必须用document.importNode方法先将这个节点准备好。
+
+document.importNode方法接受两个参数，第一个参数是外部文档的DOM节点，第二个参数是一个布尔值，表示是否连同子节点一起克隆，默认为false。大多数情况下，必须显式地将第二个参数设为true。
 
 ## Custom Element
 
@@ -384,7 +405,7 @@ shadow.innerHTML = shadowHTML;
 
 ### 基本操作
 
-长久以来，网页可以加载外部的样式表、脚本、图片、多媒体，却无法方便地加载其他网页，iframe和ajax都只能提供部分的解决方案，且有自己很大的局限。HTML Import就是为了解决这个问题，而提出来的。
+长久以来，网页可以加载外部的样式表、脚本、图片、多媒体，却无法方便地加载其他网页，iframe和ajax都只能提供部分的解决方案，且有很大的局限。HTML Import就是为了解决加载外部网页这个问题，而提出来的。
 
 下面代码用于测试当前浏览器是否支持HTML Import。
 
@@ -412,9 +433,9 @@ HTML Import用于将外部的HTML文档加载进当前文档。我们可以将�
 
 上面代码在网页中插入一个对话框组件，该组建封装在`dialog.html`文件。注意，dialog.html文件中的样式和JavaScript脚本，都对所插入的整个网页有效。
 
-由于加载的网页的样式表和脚本，对当前网页也有效（准确得说，只有style标签中的样式对当前网页有效，link标签加载的样式表对当前网页无效）。所以可以把多个样式表和脚本，都放在所要加载的网页中，都从那里加载。这对大型的框架，是很方便的加载方法。
+假定A网页通过HTML Import加载了B网页，即B是一个组件，那么B网页的样式表和脚本，对A网页也有效（准确得说，只有style标签中的样式对A网页有效，link标签加载的样式表对A网页无效）。所以可以把多个样式表和脚本，都放在B网页中，都从那里加载。这对大型的框架，是很方便的加载方法。
 
-如果所要加载的网页，与当前网页不在同一个域时，对方的域名必须打开CORS。
+如果B与A不在同一个域，那么A所在的域必须打开CORS。
 
 ```html
 
@@ -423,7 +444,7 @@ HTML Import用于将外部的HTML文档加载进当前文档。我们可以将�
 
 ```
 
-除了用link标签，也可以用JavaScript调用link元素。
+除了用link标签，也可以用JavaScript调用link元素，完成HTML Import。
 
 ```javascript
 
@@ -436,7 +457,7 @@ document.head.appendChild(link);
 
 ```
 
-HTML Import加载成功时，会在link元素上触发load事件，加载失败时（比如404错误）会触发error，可以对这两个事件指定回调函数。
+HTML Import加载成功时，会在link元素上触发load事件，加载失败时（比如404错误）会触发error事件，可以对这两个事件指定回调函数。
 
 ```html
 
@@ -456,7 +477,7 @@ HTML Import加载成功时，会在link元素上触发load事件，加载失败�
 
 上面代码中，handleLoad和handleError函数的定义，必须在link元素的前面。因为浏览器元素遇到link元素时，立刻解析并加载外部网页（同步操作），如果这时没有对这两个函数定义，就会报错。
 
-HTML Import是同步加载，会阻塞当前网页的渲染，这主要是为了样式表的考虑。如果想避免这一点，可以为link元素加上async属性。当然，这也意味着，如果被加载的网页定义了Custome Element，就不能立即使用了，必须等HTML Import完成，才能使用。
+HTML Import是同步加载，会阻塞当前网页的渲染，这主要是为了样式表的考虑，因为外部网页的样式表对当前网页也有效。如果想避免这一点，可以为link元素加上async属性。当然，这也意味着，如果外部网页定义了组件，就不能立即使用了，必须等HTML Import完成，才能使用。
 
 ```html
 
@@ -464,13 +485,13 @@ HTML Import是同步加载，会阻塞当前网页的渲染，这主要是为了
 
 ```
 
-但是，HTML Import不会阻塞当前网页的解析和脚本执行。这意味着在加载的同时，主页面的脚本会继续执行。
+但是，HTML Import不会阻塞当前网页的解析和脚本执行（即阻塞渲染）。这意味着在加载的同时，主页面的脚本会继续执行。
 
-HTML Import支持多重加载，即被加载的网页同时又加载其他网页。如果这些网页都重复加载同一个外部脚本，浏览器只会抓取并执行一次该脚本。比如，A网页加载了B网页，它们各自都需要加载jQuery，浏览器只会加载一次jQuery。
+最后，HTML Import支持多重加载，即被加载的网页同时又加载其他网页。如果这些网页都重复加载同一个外部脚本，浏览器只会抓取并执行一次该脚本。比如，A网页加载了B网页，它们各自都需要加载jQuery，浏览器只会加载一次jQuery。
 
 ### 脚本的执行
 
-被加载的网页中的内容，并不会显示在当前网页中，它只是用来供选用的，必须用DOM操作来获取加载的内容。具体来说，就是使用link元素的import属性，来获取加载的内容。这一点与iframe完全不同。
+外部网页的内容，并不会自动显示在当前网页中，它只是储存在浏览器中，等到被调用的时候才加载进入当前网页。为了加载网页网页，必须用DOM操作获取加载的内容。具体来说，就是使用link元素的import属性，来获取加载的内容。这一点与iframe完全不同。
 
 ```javascript
 
@@ -486,7 +507,7 @@ var content = document.querySelector('link[rel="import"]').import;
 - link元素已经从DOM中移除
 - 对方域名没有打开CORS
 
-下面代码用于从加载的网页中，选取id为template的元素。
+下面代码用于从加载的外部网页选取id为template的元素，然后将其克隆后加入当前网页的DOM。
 
 ```javascript
 
@@ -496,11 +517,11 @@ document.body.appendChild(el.cloneNode(true));
 
 ```
 
-反过来也一样，被加载的网页中的脚本，不仅可以获取本身的DOM，还可以获取link元素所在的网页的DOM。
+当前网页可以获取外部网页，反过来也一样，外部网页中的脚本，不仅可以获取本身的DOM，还可以获取link元素所在的当前网页的DOM。
 
 ```javascript
 
-// 以下代码位于被加载（import）的网页
+// 以下代码位于被加载（import）的外部网页
 
 // importDoc指向被加载的DOM
 var importDoc = document.currentScript.ownerDocument;
@@ -514,9 +535,9 @@ mainDoc.head.appendChild(styles.cloneNode(true));
 
 ```
 
-上面代码将所加载的网页的样式表，添加进主文档。
+上面代码将所加载的外部网页的样式表，添加进当前网页。
 
-被加载的网页的脚本是直接在主网页的上下文执行，因为它的`window.document`指的是主网页的document，而且它定义的函数可以被主网页的脚本直接引用。
+被加载的外部网页的脚本是直接在当前网页的上下文执行，因为它的`window.document`指的是当前网页的document，而且它定义的函数可以被当前网页的脚本直接引用。
 
 ### Web Component的封装
 

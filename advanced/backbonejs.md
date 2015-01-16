@@ -28,6 +28,69 @@ Controller表示控制层，用来对原始数据（Model）进行加工，传�
 
 框架的优点在于合理组织代码、便于团队合作和未来的维护，缺点在于有一定的学习成本，且限制你只能采取它的写法。
 
+## 模块化解决方案
+
+多用途的大型框架有一个致命的缺点，就是会让用户重度依赖它。一旦框架本身出现问题或者停止更新，用户的处境就会很困难，维护和更新成本极高。
+
+ES6的到来，使得模块化解决方案日益显示出它的优点。开发者有了另一种选择，就是不使用大型框架，只使用各种单一用途的模块库，组合完成一个项目。下面是可供选择的各种用途的模块列表。
+
+Helper Libraries
+
+- [moment.js](http://momentjs.com/): an invaluable tool for date and time cross-browser standardisation.
+- [underscore.js](http://underscorejs.org/) / [Lo-Dash](https://lodash.com/): widely used for years, these libraries are considered essential for functional programming in JavaScript. Do we really need a full library anymore? Perhaps it’s better to pick the function polyfills required from the Mozilla Development Network.
+
+Routing
+
+- [router.js](https://github.com/tildeio/router.js/): router.js is the micro-library used in Ember.js.
+- [route-recognizer](https://github.com/tildeio/route-recognizer): recommended as a “recognizer for a more comprehensive router system (such as router.js)”.
+- [page.js](https://github.com/visionmedia/page.js): directly inspired by Node’s well-used Express library.
+- [director](https://github.com/flatiron/director): a comprehensive, isomorphic routing solution. Read through the thorough documentation and code examples.
+
+Promises
+
+- [RSVP.js](https://github.com/tildeio/rsvp.js): an ES6-compliant library with “some extra toys”.
+- [ES6-Promise](https://github.com/jakearchibald/es6-promise): a subset of RSVP.js, but fully compliant with the ES6 spec.
+- [q](https://github.com/kriskowal/q): one of the most popular promises libraries, a stripped-down version of q is used in AngularJS.
+- [native-promise-only](https://github.com/getify/native-promise-only): like ES6-Promise the intention of this project is to be “a polyfill for native ES6 Promises as close as possible (no extensions) to the strict spec definitions”.
+
+Client–Server Communication
+
+- [fetch](https://github.com/github/fetch): a polyfill for window.fetch.
+- [qwest](https://github.com/pyrsmk/qwest): an “Ajax library with XHR2, promises and request limitation”.
+- [jQuery](https://github.com/jquery/jquery): from version 2.0 onwards, it is now possible to build your own jQuery component-based library; this leaves open the possibility of creating a slimmed-down AJAX-centred version.
+
+Animation
+
+- [cssanimevent](https://github.com/magnetikonline/cssanimevent): a “Cross browser compatible library to handle CSS3 animation and transition DOM events with a fallback pattern for unsupported browsers”.
+- [Velocity.js](http://julian.com/research/velocity/): this JS animation library, created by Julian Shapiro, received a lot of attention last year and now has a loyal user-base.
+
+Development Assistance
+
+- [LogJS](https://github.com/bfattori/LogJS): a lightweight JavaScript logging platform.
+- [UserTiming.js](https://github.com/nicjansma/usertiming.js): UserTiming is a polyfill that extends support to all common browsers.
+
+Flow Control/Architecture
+
+- [ondomready](https://github.com/tubalmartin/ondomready): “An AMD compatible module to detect when the DOM is ready”. Based on jQuery’s ready() method.
+- [script.js](https://github.com/ded/script.js]): “Asyncronous JavaScript loader and dependency manager”.
+- [async](https://github.com/caolan/async): a comprehensive set of asynchronous utilities for both the browser and node.js.
+- [Virtual DOM](https://github.com/Matt-Esch/virtual-dom): a viable alternative to react.js. For a full explanation, read the article [Virtual DOM and diffing algorithm](https://gist.github.com/Raynos/8414846).
+
+Data-binding/Object.observe(): there was much more enthusiasm for two-way data-binding a year ago, but some criticisms have now surfaced. Object.observe is now supported in Chrome but not, currently, in any other browser.
+
+Templating
+
+- [Mustache](http://mustache.github.io/): quite possibly the most popular “logic-less” templating system in current use.
+
+Micro-Frameworks
+
+It may be worth considering using a micro-framework as a starting point:
+
+- [bottlejs](https://github.com/young-steveo/bottlejs): “BottleJS is a tiny yet powerful dependency injection container. It features lazy loading, middleware hooks, decorators and a clean api inspired by the AngularJS Module API and the simple PHP library Pimple”.
+- [Stapes.js](http://hay.github.io/stapes/#top): a tiny MVC framework. From looking at GitHub submits, it hasn’t received much attention over the past year.
+- [soma.js](http://somajs.github.io/somajs/site/): “soma.js is a set of tools and design patterns to build a long term architecture that are decoupled and easily testable. The tools provided by the framework are dependency injection, observer pattern, mediator pattern, facade pattern, command pattern, OOP utilities and a DOM manipulation template engine as an optional plugin”.
+- [knockout](http://knockoutjs.com/): the most popular, well-maintained of all those in this list, but one that is focused on the UI interface, using the Model View ViewModel architectural pattern.
+
 ## Backbone的加载
 
 {% highlight html %}
@@ -639,4 +702,5 @@ obj.trigger("show-message", "Hello World");
 
 ## 参考链接
 
-* Biswadeep Ghosh, [Introduction to Backbone.js](http://www.phloxblog.in/introduction-backbone-js/) 
+- Andy Walpole, [2015: The End of the Monolithic JavaScript Framework](https://andywalpole.me/#!/blog/142134/2015-the-end-the-monolithic-javascript-framework)
+- Biswadeep Ghosh, [Introduction to Backbone.js](http://www.phloxblog.in/introduction-backbone-js/) 
