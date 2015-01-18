@@ -104,6 +104,10 @@ if (/mobi/i.test(ua)) {
 
 {% endhighlight %}
 
+**（2）navigator.plugins属性**
+
+navigator.plugins属性返回一个类似数组的对象，成员是浏览器安装的插件，比如Flash、ActiveX等。
+
 ### screen对象
 
 screen对象包含了显示设备的信息。

@@ -26,7 +26,9 @@ var ls = childProcess.exec('ls -l', function (error, stdout, stderr) {
 
 ```
 
-上面代码的exec方法用于新建一个子进程，然后缓存它的运行结果，运行结束后调用回调函数。exec方法的第一个参数是所要执行的shell命令，第二个参数是回调函数，该函数接受三个参数，分别是发生的错误、标准输出的显示结果、标准错误的显示结果。
+上面代码的exec方法用于新建一个子进程，然后缓存它的运行结果，运行结束后调用回调函数。
+
+exec方法的第一个参数是所要执行的shell命令，第二个参数是回调函数，该函数接受三个参数，分别是发生的错误、标准输出的显示结果、标准错误的显示结果。
 
 由于标准输出和标准错误都是流对象（stream），可以监听data事件，因此上面的代码也可以写成下面这样。
 
@@ -48,6 +50,37 @@ child.on('close', function(code) {
 ```
 
 上面的代码还表明，子进程本身有close事件，可以设置回调函数。
+
+上面的代码还有一个好处。监听data事件以后，可以实时输出结果，否则只有等到子进程结束，才会输出结果。所以，如果子进程运行时间较长，或者是持续运行，第二种写法更好。
+
+下面是另一个例子，假定有一个child.js文件。
+
+```javascript
+
+// child.js
+
+var exec = require('child_process').exec;
+exec('node -v', function(error, stdout, stderr) {
+    console.log('stdout: ' + stdout);
+    console.log('stderr: ' + stderr);
+    if (error !== null) {
+        console.log('exec error: ' + error);
+    }
+});
+
+```
+
+运行后，该文件的输出结果如下。
+
+```bash
+
+$ node child.js
+
+stdout: v0.11.14
+
+stderr:
+
+```
 
 exec方法会直接调用bash（`/bin/sh`程序）来解释命令，所以如果有用户输入的参数，exec方法是不安全的。
 
@@ -81,7 +114,7 @@ child_process.execFile('/bin/ls', ['-l', path], function (err, result) {
 
 ## spawn()
 
-spawn方法创建一个子进程来执行特定命令，用法与execFile方法类似，但是没有回调函数。
+spawn方法创建一个子进程来执行特定命令，用法与execFile方法类似，但是没有回调函数，只能通过监听事件，来获取运行结果。它适用于子进程长时间运行的情况。
 
 ```javascript
 
@@ -96,6 +129,15 @@ ls.stdout.on('data', function (data) {
 ```
 
 spawn对象返回一个对象，代表新进程，对该对象的标准输出监听data事件，可以得到输出结果。
+
+spawn方法与exec方法非常类似，只是使用格式略有区别。
+
+```javascript
+
+child_process.exec(command, [options], callback)
+child_process.spawn(command, [args], [options])
+
+```
 
 ## fork()
 
@@ -128,5 +170,6 @@ process.send({ foo: 'bar' });
 
 ## 参考链接
 
-- ^Lift Security Team, [Avoiding Command Injection in Node.js](https://blog.liftsecurity.io/2014/08/19/Avoid-Command-Injection-Node.js): 为什么execFile()的安全性高于exec()
+- Lift Security Team, [Avoiding Command Injection in Node.js](https://blog.liftsecurity.io/2014/08/19/Avoid-Command-Injection-Node.js): 为什么execFile()的安全性高于exec()
+- Krasimir Tsonev, [Node.js: managing child processes](http://tech.pro/tutorial/2074/nodejs-managing-child-processes) 
 - byvoid, [Node.js中的child_process及进程通信](https://www.byvoid.com/zhs/blog/node-child-process-ipc): exec()、execFile()、fork()、spawn()四种方法的简介
