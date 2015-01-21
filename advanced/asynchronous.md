@@ -1,12 +1,14 @@
 ---
-title: JavaScript异步编程的模式
+title: Promise对象
 layout: page
 category: advanced
 date: 2012-12-22
 modifiedOn: 2013-11-28
 ---
 
-## 概述
+## JavaScript的异步执行
+
+### 概述
 
 Javascript语言的执行环境是"单线程"（single thread）。所谓"单线程"，就是指一次只能完成一件任务。如果有多个任务，就必须排队，前面一个任务完成，再执行后面一个任务，以此类推。
 
@@ -20,7 +22,7 @@ Javascript语言的执行环境是"单线程"（single thread）。所谓"单线
 
 以下总结了"异步模式"编程的4种方法，理解它们可以让你写出结构更合理、性能更出色、维护更方便的JavaScript程序。
 
-## 回调函数
+### 回调函数
 
 回调函数是异步编程最基本的方法。
 
@@ -57,9 +59,9 @@ f1(f2);
 
 采用这种方式，我们把同步操作变成了异步操作，f1不会堵塞程序运行，相当于先执行程序的主要逻辑，将耗时的操作推迟执行。
 
-回调函数的优点是简单、容易理解和部署，缺点是不利于代码的阅读和维护，各个部分之间高度[耦合](http://en.wikipedia.org/wiki/Coupling_(computer_programming)（Coupling），使得程序结构混乱、流程难以追踪（尤其是回调函数嵌套的情况），而且每个任务只能指定一个回调函数。
+回调函数的优点是简单、容易理解和部署，缺点是不利于代码的阅读和维护，各个部分之间高度[耦合](http://en.wikipedia.org/wiki/Coupling_(computer_programming))（Coupling），使得程序结构混乱、流程难以追踪（尤其是回调函数嵌套的情况），而且每个任务只能指定一个回调函数。
 
-## 事件监听
+### 事件监听
 
 另一种思路是采用事件驱动模式。任务的执行不取决于代码的顺序，而取决于某个事件是否发生。
 
@@ -88,7 +90,7 @@ f1.trigger('done')表示，执行完成后，立即触发done事件，从而开�
 
 这种方法的优点是比较容易理解，可以绑定多个事件，每个事件可以指定多个回调函数，而且可以"[去耦合](http://en.wikipedia.org/wiki/Decoupling)"（Decoupling），有利于实现模块化。缺点是整个程序都要变成事件驱动型，运行流程会变得很不清晰。
 
-## 发布/订阅
+### 发布/订阅
 
 "事件"完全可以理解成"信号"，如果存在一个"信号中心"，某个任务执行完成，就向信号中心"发布"（publish）一个信号，其他任务可以向信号中心"订阅"（subscribe）这个信号，从而知道什么时候自己可以开始执行。这就叫做"[发布/订阅模式](http://en.wikipedia.org/wiki/Publish-subscribe_pattern)"（publish-subscribe pattern），又称"[观察者模式](http://en.wikipedia.org/wiki/Observer_pattern)"（observer pattern）。
 
@@ -127,7 +129,7 @@ jQuery.unsubscribe("done", f2);
 
 这种方法的性质与"事件监听"类似，但是明显优于后者。因为我们可以通过查看"消息中心"，了解存在多少信号、每个信号有多少订阅者，从而监控程序的运行。
 
-## Promises对象
+## Promise对象
 
 ### 简介
 
@@ -174,12 +176,16 @@ step1(function (value1) {
 
 Promises原本只是社区提出的一个构想，一些外部函数库率先实现了这个功能，目前ECMAScript 6正在考虑将其写入语言标准，Chrome和Firefox浏览器的最新版本都初步部署了这个功能。
 
-### Promises接口
+### Promise接口
 
 当异步任务返回一个promise对象（小写表示这是Promise的实例）时，该对象只有三种状态：未完成（pending）、已完成（fulfilled）、失败（rejected）。
 
 这三种的状态的变化途径只有两个，且只能发生一次：从“未完成”到“已完成”，或者从“未完成”到“失败”。一旦当前状态变为“已完成”或“失败”，就意味着不会再发生状态变化了。
 
+Promise对象的运行结果，最终只有两种。
+
+- 得到一个值，状态变为fulfilled
+- 抛出一个错误，状态变为rejected
 
 promise对象的then方法用来添加回调函数。它可以接受两个回调函数，第一个是操作成功（fulfilled）时的回调函数，第二个是操作失败（rejected）时的回调函数（可以不提供）。一旦状态改变，就调用相应的回调函数。
 
@@ -196,6 +202,24 @@ promise对象的then方法用来添加回调函数。它可以接受两个回调
 再来看上面的代码就很清楚，step1是一个耗时很长的异步任务，然后使用then方法，依次绑定了三个step1操作成功后的回调函数step2、step3、step4，最后再用then方法绑定两个回调函数：操作成功时的回调函数console.log，操作失败时的回调函数console.error。
 
 console.log和console.error这两个最后的回调函数，用法上有一点重要的区别。console.log只显示回调函数step4的返回值，而console.error可以显示step2、step3、step4之中任何一个发生的错误。也就是说，假定step2操作失败，抛出一个错误，这时step3和step4都不会再运行了，promises对象开始寻找接下来的第一个错误回调函数，在上面代码中是console.error。所以，结论就是Promises对象的错误有传递性。
+
+换言之，上面的代码等同于下面的形式。
+
+```javascript
+
+try {
+  var v1 = step1();
+  var v2 = step2(v1);
+  var v3 = step3(v2);
+  var v4 = step4(v3);
+  console.log(v4);
+} catch (error) {
+  console.error(error);
+}
+
+```
+
+上面代码表示，try部分任何一步的错误，都会被catch部分捕获，并导致整个Promise操作的停止。
 
 ### Promises对象的实现
 

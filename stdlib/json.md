@@ -87,7 +87,7 @@ JSON.stringify({ name: "张三" })
 
 上面代码将各种类型的值，转成JSON字符串。需要注意的是，对于原始类型的字符串，转换结果会带双引号，即字符串`abc`会被转成`"abc"`，这是因为将来还原的时候，双引号可以让JavaScript引擎知道，abc是一个字符串，而不是一个变量名。
 
-如果原始对象中，有一个成员的值是undefined、函数或XML对象，这个成员会被省略。如果该值是数组的成员，则返回null。
+如果原始对象中，有一个成员的值是undefined、函数或XML对象，这个成员会被省略。如果数组的成员是undefined、函数或XML对象，则这些值被转成null。
 
 {% highlight javascript %}
 
@@ -100,6 +100,14 @@ JSON.stringify({
 {% endhighlight %}
 
 上面代码中，原始对象的f属性是一个函数，JSON.stringify方法返回的字符串会将这个属性省略。而a属性是一个数组，成员分别为函数和undefined，它们都被转成了null。
+
+正则对象会被转成空对象。
+
+```javascript
+
+JSON.stringify(/foo/) // "{}"
+
+```
 
 JSON.stringify方法还可以接受一个数组参数，指定需要转成字符串的属性。
 
@@ -225,7 +233,7 @@ var o = {
   }
 };
 var json = JSON.stringify({x: o}); 
-// '{"x":"bar"}'.
+// '{"x":"bar"}'
 
 {% endhighlight %}
 
@@ -237,6 +245,19 @@ JSON.stringify(new Date("2011-07-29"))
 // "2011-07-29T00:00:00.000Z"
 
 {% endhighlight %}
+
+toJSON方法的一个应用是，可以将正则对象自动转为字符串。
+
+```javascript
+
+RegExp.prototype.toJSON = RegExp.prototype.toString;
+
+JSON.stringify(/foo/)
+// "/foo/"
+
+```
+
+上面代码，在正则对象的原型上面部署了toJSON方法，将其指向toString方法，因此遇到转换成JSON时，就正则对象就先调用toJSON方法转为字符串，然后再被JSON.stingify方法处理。
 
 ### JSON.parse()
 
