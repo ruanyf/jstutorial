@@ -229,9 +229,42 @@ npm search [搜索词]
 
 ## npm run
 
-package.json文件有一项scripts，用于指定脚本命令，供npm直接调用。scripts.test指定的内容，会被`npm test`命令执行；scripts.start指定的内容，会被`npm start`调用。
+package.json文件有一项scripts，用于指定脚本命令，供npm直接调用。
 
-`npm test`和`npm start`，其实只是`npm run test`和`npm run start`命令的简写。你可以用`npm run`命令，执行scripts属性的任何栏位。
+```javascript
+
+{
+  "name": "myproject",
+  "devDependencies": {
+    "jshint": "latest",
+    "browserify": "latest",
+    "mocha": "latest"
+  },
+  "scripts": {
+    "lint": "jshint **.js",
+    "test": "mocha test/"
+  }
+}
+
+```
+
+上面代码中，scripts指定了两项命令lint和test。命令行输入`npm run lint`，就会执行`jshint **.js`，输入`npm run test`，就会执行`mocha test/`。npm内置了两个命令简写，`npm test`等同于执行`npm run lint`，`npm start`等同于执行`npm run start`。
+
+`npm run`会创建一个shell，执行指定的命令，并将`node_modules/.bin`加入PATH变量，这意味着本地模块可以直接运行。也就是说，`npm run lint`直接运行`jshint **.js`即可，而不用`./node_modules/.bin/jshint **.js`。
+
+如果直接运行`npm run`不给出任何参数，就会列出scripts属性下所有命令。
+
+```bash
+
+Available scripts in the user-service package:  
+  lint
+     jshint **.js
+  test
+    mocha test/
+
+```
+
+下面是另一个package.json文件的例子。
 
 {% highlight javascript %}
 
@@ -239,12 +272,12 @@ package.json文件有一项scripts，用于指定脚本命令，供npm直接调�
   "watch": "watchify client/main.js -o public/app.js -v",
   "build": "browserify client/main.js -o public/app.js",
   "start": "npm run watch & nodemon server.js",
-	"test": "node test/all.js"
+  "test": "node test/all.js"
 },
 
 {% endhighlight %}
 
-上面代码在scripts项，定义了三个脚本命令，并且每个命令有一个别名。使用的时候，在命令行键入npm run后面加上别名，就能调用相应的脚本命令。
+上面代码在scripts项，定义了四个别名，每个别名都有对应的脚本命令。
 
 {% highlight bash %}
 
@@ -282,6 +315,21 @@ npm test
 
 上面的写法是先运行`npm run build-js`，然后再运行`npm run build-css`，两个命令中间用`&&`连接。如果希望两个命令同时平行执行，它们中间可以用`&`连接。
 
+下面是一个流操作的例子。
+
+```javascript
+
+"devDependencies": {
+  "autoprefixer": "latest",
+  "cssmin": "latest"
+},
+
+"scripts": {
+  "build:css": "autoprefixer -b 'last 2 versions' < assets/styles/main.css | cssmin > dist/main.css"
+}
+
+```
+
 写在scripts属性中的命令，也可以在`node_modules/.bin`目录中直接写成bash脚本。
 
 ```javascript
@@ -300,6 +348,34 @@ browserify browser/main.js | uglifyjs -mc > static/bundle.js
 "build-js": "bin/build.sh"
 
 ```
+
+`npm run`为每条命令提供了pre和post两个钩子（hook）。以`npm run lint`为例，执行这条命令之前，npm会先查看有没有定义prelint和postlint两个钩子，如果有的话，就会先执行`npm run prelint`，然后执行`npm run lint`，最后执行`npm run postlint`。所有命令都是这样，包括`npm test`（即实际存在`npm run pretest`、`npm run test`、`npm run posttest`三条命令）。如果执行过程出错，就不会执行排在后面的命令，即如果pretest命令执行出错，就不会接着执行 test和posttest命令。不能在pre命令之前再加pre，即prepretest命令不起作用。另外，还可以为一些内部命令指定pre和post的钩子：install、uninstall、publish、update。
+
+```javascript
+
+"scripts": {
+  "lint": "jshint **.js",
+  "build": "browserify index.js > myproject.min.js",
+  "test": "mocha test/",
+
+  "prepublish": "npm run build # also runs npm run prebuild",    
+  "prebuild": "npm run test # also runs npm run pretest",
+  "pretest": "npm run lint"
+}
+
+```
+
+`npm run`命令还可以添加参数。
+
+```javascript
+
+"scripts": {
+  "test": "mocha test/"
+}
+
+```
+
+上面代码指定`npm test`，实际运行`mocha test/`。可以在`npm test`命令后面加上参数，比如`npm run test -- anothertest.js`，实际运行的是`mocha test/ anothertest.js`。
 
 ## npm link
 
@@ -437,6 +513,13 @@ npm publish
 
 {% endhighlight %}
 
+## npm version
+
+`npm version`命令用来修改项目的版本号。
+
+`npm version patch`增加一位补丁号（比如 1.1.1 -> 1.1.2），`npm version minor`增加一位小版本号（比如 1.1.1 -> 1.2.0），`npm version major`增加一位大版本号（比如 1.1.1 -> 2.0.0）。如果在git代码仓库运行`npm version`命令，会同时进行版本commit和tag操作。
+
 ## 参考链接
 
 - James Halliday, [task automation with npm run](http://substack.net/task_automation_with_npm_run): npm run命令（package.json文件的script属性）的用法
+- Keith Cirkel, [How to Use npm as a Build Tool](http://blog.keithcirkel.co.uk/how-to-use-npm-as-a-build-tool/)

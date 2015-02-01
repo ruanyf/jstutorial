@@ -33,15 +33,15 @@ stack属性用来查看错误发生时的堆栈。
 {% highlight javascript %}
 
 function throwit() {
-    throw new Error('');
+  throw new Error('');
 }
 
 function catchit() {
-    try {
-        throwit();
-    } catch(e) {
-        console.log(e.stack); // print stack trace
-    }
+  try {
+    throwit();
+  } catch(e) {
+    console.log(e.stack); // print stack trace
+  }
 }
 
 catchit()
@@ -83,9 +83,24 @@ unknownVariable
 
 {% endhighlight %}
 
+
+另一种触发场景是，将一个值分配给无法分配的对象，比如对函数的运行结果或者this赋值。
+
+```javascript
+
+console.log() = 1
+// ReferenceError: Invalid left-hand side in assignment
+
+this = 1
+// ReferenceError: Invalid left-hand side in assignment
+
+```
+
+上面代码对函数console.log的运行结果和this赋值，结果都引发了ReferenceError错误。
+
 **（3）RangeError**
 
-RangeError是当一个值超出有效范围时发生的错误。主要有两种情况，一是数组长度为负数，二是Number对象的方法参数超出范围。
+RangeError是当一个值超出有效范围时发生的错误。主要有几种情况，一是数组长度为负数，二是Number对象的方法参数超出范围，以及函数堆栈超过最大值。
 
 {% highlight javascript %}
 
@@ -405,3 +420,7 @@ try {
 }
 
 {% endhighlight %}
+
+## 参考连接
+
+- Jani Hartikainen, [JavaScript Errors and How to Fix Them](http://davidwalsh.name/fix-javascript-errors)

@@ -92,6 +92,19 @@ history.go(2);  // url显示为http://example.com/example.html?page=3
 
 {% endhighlight %}
 
+## history.state属性
+
+history.state属性保存当前页面的state对象。
+
+```javascript
+
+history.pushState({page: 1}, "title 1", "?page=1");
+
+history.state
+// { page: 1 }
+
+```
+
 ## popstate事件
 
 每当同一个文档的浏览历史（即history对象）出现变化时，就会触发popstate事件。需要注意的是，仅仅调用pushState方法或replaceState方法 ，并不会触发该事件，只有用户点击浏览器倒退按钮和前进按钮，或者使用JavaScript调用back、forward、go方法时才会触发。另外，该事件只针对同一个文档，如果浏览历史的切换，导致加载不同的文档，该事件也不会触发。
