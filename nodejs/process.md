@@ -57,12 +57,12 @@ console.log("argc: ",process.argc);
 
 {% highlight javascript %}
 
-node argv.js a b c
-# [ 'node', '/path/to/argv.js', 'a', 'b', 'c' ]
+$ node argv.js a b c
+[ 'node', '/path/to/argv.js', 'a', 'b', 'c' ]
 
 {% endhighlight %}
 
-上面代码表示，argv返回数组的成员依次是命令行的各个部分。要得到真正的参数部分，可以把argv.js改写成下面这样。
+上面代码表示，argv返回数组的成员依次是命令行的各个部分，真正的参数实际上是从`process.argv[2]`开始。要得到真正的参数部分，可以把argv.js改写成下面这样。
 
 {% highlight javascript %}
 

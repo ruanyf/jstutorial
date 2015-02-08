@@ -389,8 +389,8 @@ m("这是自定义模块");
 
 {% highlight bash %}
 
-node index
-# 这是自定义模块
+$ node index
+这是自定义模块
 
 {% endhighlight %}
 
@@ -425,184 +425,6 @@ m.print("这是自定义模块");
 {% endhighlight %}
 
 上面代码表示，由于具体的方法定义在模块的print属性上，所以必须显式调用print属性。
-
-## fs模块
-
-fs是filesystem的缩写，该模块提供本地文件的读写能力，基本上是POSIX文件操作命令的简单包装。但是，这个模块几乎对所有操作提供异步和同步两种操作方式，供开发者选择。
-
-### mkdir()，writeFile()，readfile()
-
-mkdir方法用于新建目录。
-
-```javascript
-
-var fs = require('fs');
-
-fs.mkdir('./helloDir',0777, function (err) {
-  if (err) throw err;
-});
-
-```
-
-mkdir接受三个参数，第一个是目录名，第二个是权限值，第三个是回调函数。
-
-writeFile方法用于写入文件。
-
-```javascript
-
-var fs = require('fs');
-
-fs.writeFile('./helloDir/message.txt', 'Hello Node', function (err) {
-  if (err) throw err;
-  console.log('文件写入成功');
-});
-
-```
-
-readfile方法用于读取文件内容。
-
-{% highlight javascript %}
-
-var fs = require('fs');
-
-fs.readFile('./helloDir/message.txt','UTF-8' ,function (err, data) {
-  if (err) throw err;
-  console.log(data);
-});
-
-{% endhighlight %}
-
-上面代码使用readFile方法读取文件。readFile方法的第一个参数是文件名，第二个参数是文件编码，第三个参数是回调函数。可用的文件编码包括“ascii”、“utf8”和“base64”。如果没有指定文件编码，返回的是原始的缓存二进制数据，这时需要调用buffer对象的toString方法，将其转为字符串。
-
-```javascript
-
-var fs = require('fs');
-fs.readFile('example_log.txt', function (err, logData) {
-  if (err) throw err;
-  var text = logData.toString();
-});
-
-```
-
-### mkdirSync()，writeFileSync()，readFileSync()
-
-这三个方法是建立目录、写入文件、读取文件的同步版本。
-
-{% highlight javascript %}
-
-fs.mkdirSync('./helloDirSync',0777);
-fs.writeFileSync('./helloDirSync/message.txt', 'Hello Node');
-var data = fs.readFileSync('./helloDirSync/message.txt','UTF-8');
-console.log('file created with contents:');
-console.log(data);
-
-{% endhighlight %}
-
-对于流量较大的服务器，最好还是采用异步操作，因为同步操作时，只有前一个操作结束，才会开始后一个操作，如果某个操作特别耗时（常常发生在读写数据时），会导致整个程序停顿。
-
-### readdir()
-
-readdir方法用于读取目录，返回一个所包含的文件和子目录的数组。
-
-{% highlight javascript %}
-
-fs.readdir(process.cwd(), function (err, files) {
-  if (err) {
-    console.log(err);
-    return;
-  }
-
-  var count = files.length;
-  var results = {};
-  files.forEach(function (filename) {
-    fs.readFile(filename, function (data) {
-      results[filename] = data;
-      count--;
-      if (count <= 0) {
-        // 对所有文件进行处理
-      }
-    });
-  });
-});
-
-{% endhighlight %}
-
-### exists(path, callback)
-
-exists方法用来判断给定路径是否存在，然后不管结果如何，都会调用回调函数。
-
-{% highlight javascript %}
-
-fs.exists('/path/to/file', function (exists) {
-  util.debug(exists ? "it's there" : "no file!");
-});
-
-{% endhighlight %}
-
-上面代码表明，回调函数的参数是一个表示文件是否存在的布尔值。
-
-需要注意的是，不要在open方法之前调用exists方法，open方法本身就能检查文件是否存在。
-
-下面的例子是如果给定目录存在，就删除它。
-
-{% highlight javascript %}
-
-if(fs.exists(outputFolder)) {
-  console.log("Removing "+outputFolder);
-  fs.rmdir(outputFolder);
-}
-
-{% endhighlight %}
-
-### stat()
-
-stat方法的参数是一个文件或目录，它产生一个对象，该对象包含了该文件或目录的具体信息。我们往往通过该方法，判断正在处理的到底是一个文件，还是一个目录。
-
-```javascript
-
-var fs = require('fs');
-
-fs.readdir('/etc/', function (err, files) {
-  if (err) throw err;
-
-  files.forEach( function (file) {
-    fs.stat('/etc/' + file, function (err, stats) {
-      if (err) throw err;
-
-      if (stats.isFile()) {
-        console.log("%s is file", file);
-      }
-      else if (stats.isDirectory ()) {
-      console.log("%s is a directory", file);
-      }    
-    console.log('stats:  %s',JSON.stringify(stats));
-    });
-  });
-});
-
-```
-
-### watchfile()，unwatchfile()
-
-watchfile方法监听一个文件，如果该文件发生变化，就会自动触发回调函数。
-
-```javascript
-
-var fs = require('fs');
-
-fs.watchFile('./testFile.txt', function (curr, prev) {
-  console.log('the current mtime is: ' + curr.mtime);
-  console.log('the previous mtime was: ' + prev.mtime);
-});
-
-fs.writeFile('./testFile.txt', "changed", function (err) {
-  if (err) throw err;
-
-  console.log("file write complete");   
-});
-
-```
-unwatchfile方法用于解除对文件的监听。
 
 ## http模块
 
@@ -1024,6 +846,31 @@ fs.readFile('/t.txt', function (err, data) {
 
 ```
 
+## 命令行脚本
+
+node脚本可以作为命令行脚本使用。
+
+```bash
+$ node foo.js
+```
+
+上面代码执行了foo.js脚本文件。
+
+foo.js文件的第一行，如果加入了解释器的位置，就可以将其作为命令行工具直接调用。
+
+```bash
+#!/usr/bin/env node
+```
+
+调用前，需更改文件的执行权限。
+
+```bash
+$ chmod u+x myscript.js
+$ ./foo.js arg1 arg2 ...
+```
+
+作为命令行脚本时，`console.log`用于输出内容到标准输出，`process.stdin`用于读取标准输入，`child_process.exec()`用于执行一个shell命令。 
+
 ## 参考链接
 
 - Cody Lindley, [Package Managers: An Introductory Guide For The Uninitiated Front-End Developer](http://tech.pro/tutorial/1190/package-managers-an-introductory-guide-for-the-uninitiated-front-end-developer)
@@ -1035,3 +882,4 @@ fs.readFile('/t.txt', function (err, data) {
 - Brent Ertz, [Creating and publishing a node.js module](http://quickleft.com/blog/creating-and-publishing-a-node-js-module)
 - Fred K Schott, ["npm install --save" No Longer Using Tildes](http://fredkschott.com/post/2014/02/npm-no-longer-defaults-to-tildes/)
 - Satans17, [Node稳定性的研究心得](http://satans17.github.io/2014/05/04/node%E7%A8%B3%E5%AE%9A%E6%80%A7%E7%9A%84%E7%A0%94%E7%A9%B6%E5%BF%83%E5%BE%97/)
+- Axel Rauschmayer, [Write your shell scripts in JavaScript, via Node.js](http://www.2ality.com/2011/12/nodejs-shell-scripting.html)

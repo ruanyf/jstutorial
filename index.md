@@ -132,6 +132,8 @@ modifiedOn: 2014-05-18
 - [CommonJS规范](nodejs/commonjs.html)
 - [package.json文件](nodejs/packagejson.html)
 - [npm模块管理器](nodejs/npm.html)
+- [fs模块](nodejs/fs.html)
+- [path模块](nodejs/path.html)
 - [process对象](nodejs/process.html)
 - [Events模块](nodejs/events.html)
 - [Stream接口](nodejs/stream.html)
