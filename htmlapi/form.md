@@ -45,7 +45,7 @@ form.field.willValidate = false;
 
 麻烦的地方在于，即使willValidate属性为true，也不足以表示浏览器支持所有种类的表单验证。比如，Firefox 29不支持date类型的输入框，会自动将其改为text类型，而此时它的willValidate属性为true。为了解决这个问题，必须确认input输入框的类型（type）未被浏览器改变。
 
-'''javascript
+```javascript
 
 if (field.nodeName === "INPUT" && field.type !== field.getAttribute("type")) {
     // 浏览器不支持该种表单验证，需自行部署JavaScript验证
@@ -59,23 +59,23 @@ checkValidity方法表示执行原生的表单验证，如果验证通过返回t
 
 每一个表单元素都有一个validity对象，它有以下属性。
 
-* valid：如果该元素通过验证，则返回true。
-* valueMissing：如果用户没填必填项，则返回true。
-* typeMismatch：如果填入的格式不正确（比如Email地址），则返回true。
-* patternMismatch：如果不匹配指定的正则表达式，则返回true。
-* tooLong：如果超过最大长度，则返回true。
-* tooShort：如果小于最短长度，则返回true。
-* rangeUnderFlow：如果小于最小值，则返回true。
-* rangeOverflow：如果大于最大值，则返回true。
-* stepMismatch：如果不匹配步长（step），则返回true。
-* badInput：如果不能转为值，则返回true。
-* customError：如果该栏有自定义错误，则返回true。
+- valid：如果该元素通过验证，则返回true。
+- valueMissing：如果用户没填必填项，则返回true。
+- typeMismatch：如果填入的格式不正确（比如Email地址），则返回true。
+- patternMismatch：如果不匹配指定的正则表达式，则返回true。
+- tooLong：如果超过最大长度，则返回true。
+- tooShort：如果小于最短长度，则返回true。
+- rangeUnderFlow：如果小于最小值，则返回true。
+- rangeOverflow：如果大于最大值，则返回true。
+- stepMismatch：如果不匹配步长（step），则返回true。
+- badInput：如果不能转为值，则返回true。
+- customError：如果该栏有自定义错误，则返回true。
 
 setCustomValidity方法用于自定义错误信息，该提示信息也反映在该输入框的validationMessage属性中。如果将setCustomValidity设为空字符串，则意味该项目验证通过。
 
 ## 参考链接
 
-* Craig Buckler, [HTML5 Forms: JavaScript and the Constraint Validation API](http://www.sitepoint.com/html5-forms-javascript-constraint-validation-api/)
+- Craig Buckler, [HTML5 Forms: JavaScript and the Constraint Validation API](http://www.sitepoint.com/html5-forms-javascript-constraint-validation-api/)
 
 
 

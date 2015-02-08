@@ -154,7 +154,7 @@ var fileType = selected_file.type;
 
 ## FileReader对象
 
-FileReader对象用于读取文件，即把文件内容读入内存。它接收File对象或Blob对象，作为参数。
+FileReader对象用于读取文件，即把文件内容读入内存。它的参数是File对象或Blob对象。
 
 对于不同类型的文件，FileReader使用不同的方法读取。
 
@@ -165,6 +165,62 @@ FileReader对象用于读取文件，即把文件内容读入内存。它接收F
 - **readAsDataURL(Blob|File)**：返回一个基于Base64编码的data-uri对象。
 
 - **readAsArrayBuffer(Blob|File)** ：返回一个ArrayBuffer对象。
+
+readAsText方法用于读取文本文件，它的第一个参数是File或Blob对象，第二个参数是前一个参数的编码方法，如果省略就默认为UTF-8编码。该方法是异步方法，一般监听onload事件，用来确定文件是否加载结束，方法是判断FileReader实例的result属性是否有值。其他三种读取方法，用法与readAsText方法类似。
+
+```javascript
+
+var reader = new FileReader();
+
+reader.onload = function(e) {
+  var text = reader.result;
+}
+
+reader.readAsText(file, encoding);
+
+```
+
+readAsDataURL方法返回一个data URL，它的作用基本上是将文件数据进行Base64编码。你可以将返回值设为图像的src属性。
+
+```javascript
+
+var reader = new FileReader();
+
+reader.onload = function(e) {
+  var dataURL = reader.result;
+}
+
+reader.readAsDataURL(file);
+
+```
+
+readAsBinaryString方法可以读取任意类型的文件，而不仅仅是文本文件，返回文件的原始的二进制内容。这个方法与XMLHttpRequest.sendAsBinary方法结合使用，就可以使用JavaScript上传任意文件到服务器。
+
+```javascript
+
+var reader = new FileReader();
+
+reader.onload = function(e) {
+  var rawData = reader.result;
+}
+
+reader.readAsBinaryString(file);
+
+```
+
+readAsArrayBuffer方法读取文件，返回一个类型化数组（ArrayBuffer），即固定长度的二进制缓存数据。在文件操作时（比如将JPEG图像转为PNG图像），这个方法非常方便。
+
+```javascript
+
+var reader = new FileReader();
+
+reader.onload = function(e) {
+  var arrayBuffer = reader.result;
+}
+
+reader.readAsArrayBuffer(file);
+
+```
 
 除了以上四种不同的读取文件方法，FileReader对象还有一个abort方法，用于中止文件上传。
 
@@ -192,7 +248,7 @@ FileReader对象采用异步方式读取文件，可以为一系列事件指定�
 var reader = new FileReader();
 
 reader.onload = function(e){
-       console.log(e.target.result);
+  console.log(e.target.result);
 }
 
 reader.readAsText(blob);
@@ -224,18 +280,18 @@ var reader = new FileReader();
 reader.onerror = errorHandler;
 
 function errorHandler(evt) {
-    switch(evt.target.error.code) {
-      case evt.target.error.NOT_FOUND_ERR:
-        alert('File Not Found!');
-        break;
-      case evt.target.error.NOT_READABLE_ERR:
-        alert('File is not readable');
-        break;
-      case evt.target.error.ABORT_ERR:
-        break;
-      default:
-        alert('An error occurred reading this file.');
-    };
+  switch(evt.target.error.code) {
+    case evt.target.error.NOT_FOUND_ERR:
+      alert('File Not Found!');
+      break;
+    case evt.target.error.NOT_READABLE_ERR:
+      alert('File is not readable');
+      break;
+    case evt.target.error.ABORT_ERR:
+      break;
+    default:
+      alert('An error occurred reading this file.');
+  };
 }
 
 {% endhighlight %}
@@ -248,15 +304,15 @@ var reader = new FileReader();
 reader.onprogress = updateProgress;
 
 function updateProgress(evt) {
-    if (evt.lengthComputable) {
-      var percentLoaded = Math.round((evt.loaded / evt.totalEric Bidelman) * 100);
+  if (evt.lengthComputable) {
+    var percentLoaded = Math.round((evt.loaded / evt.totalEric Bidelman) * 100);
 	  
-      var progress = document.querySelector('.percent');
-      if (percentLoaded < 100) {
-        progress.style.width = percentLoaded + '%';
-        progress.textContent = percentLoaded + '%';
-      }
+    var progress = document.querySelector('.percent');
+    if (percentLoaded < 100) {
+      progress.style.width = percentLoaded + '%';
+      progress.textContent = percentLoaded + '%';
     }
+  }
 }
 
 {% endhighlight %}
@@ -399,3 +455,4 @@ window.URL.revokeObjectURL(obj_url);
 - Mozilla Developer Network，[Using files from web applications](https://developer.mozilla.org/en-US/docs/Using_files_from_web_applications)
 - [HTML5 download attribute](http://javascript-reverse.tumblr.com/post/37056936789/html5-download-attribute)
 - Eric Bidelman, [Reading files in JavaScript using the File APIs](http://www.html5rocks.com/en/tutorials/file/dndfiles/)
+- Matt West, [Reading Files Using The HTML5 FileReader API](http://blog.teamtreehouse.com/reading-files-using-the-html5-filereader-api)
