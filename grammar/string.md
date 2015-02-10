@@ -79,6 +79,21 @@ var longString = "Long " +
 
 {% endhighlight %}
 
+另外，有一种利用多行注释，生成多行字符串的变通方法。
+
+```javascript
+
+(function () { /*
+line 1
+line 2
+line 3
+*/}).toString().split('\n').slice(1,-1).join('\n')
+// "line 1
+// line 2
+// line 3"
+
+```
+
 ### 转义
 
 反斜杠在字符串内有特殊含义，用来表示一些特殊字符，所以又称为转义符。

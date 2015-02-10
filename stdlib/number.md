@@ -167,3 +167,69 @@ toPrecision方法用于四舍五入时不太可靠，可能跟浮点数不是精
 // "12.4"
 
 {% endhighlight %}
+
+## 自定义方法
+
+与其他对象一样，Number.prototype对象上面可以自定义方法，被Number的实例继承。
+
+```javascript
+
+Number.prototype.add = function (x) {
+  return this + x;
+};
+
+```
+
+上面代码为Number对象实例定义了一个add方法。
+
+由于Number对象的实例就是数值，在数值上调用某个方法，数值会自动转为对象，所以就得到了下面的结果。
+
+```javascript
+
+8['add'](2)
+// 10
+
+```
+
+上面代码中，调用方法之所以写成`8['add']`，而不是`8.add`，是因为数值后面的点，会被解释为小数点，而不是点运算符。将数值放在圆括号中，就可以使用点运算符调用方法了。
+
+```javascript
+
+(8).add(2)
+// 10
+
+```
+
+由于add方法返回的还是数值，所以可以链式运算。
+
+```javascript
+
+Number.prototype.subtract = function (x) {
+  return this - x;
+};
+
+(8).add(2).subtract(4)
+// 6
+
+```
+
+上面代码在Number对象的实例上部署了subtract方法，它可以与add方法链式调用。
+
+我们还可以部署更复杂的方法。
+
+```javascript
+
+Number.prototype.iterate = function () {
+  var result = [];
+  for (var i = 0; i <= this; i++) {
+    result.push(i);
+  }
+  return result;
+};
+
+(8).iterate()
+// [0, 1, 2, 3, 4, 5, 6, 7, 8]
+
+```
+
+上面代码在Number对象的原型上部署了iterate方法，可以将一个数值自动扩展为一个数组。
