@@ -207,6 +207,20 @@ s.length // 5
 
 上面代码表示字符串的length属性无法改变，但是不会报错。
 
+字符串也无法添加新属性。
+
+```javascript
+
+var s = "Hello World";
+s.x = 123;
+s.x // undefined
+
+```
+
+上面代码为字符串s添加了一个x属性，结果无效，总是返回undefined。
+
+上面这些行为的原因是，在JavaScript内部，变量s其实指向字符串“Hello World”的地址，而“Hello World”本身是一个常量，所以无法改变它，既不能新增，也不能删除。另一方面，当一个字符串被调用属性时，它会自动转为String对象的实例（参见《标准库》一章），调用结束后，该对象自动销毁。这意味着，下一次调用字符串的属性时，实际是调用一个临时生成的新对象，而不是上一次调用时生成的那个对象，所以取不到赋值在上一个对象的属性。如果想要为字符串添加属性，只有在它的原型对象String.prototype上定义（参见《面向对象编程》一章）。
+
 ## 字符集
 
 JavaScript使用Unicode字符集，也就是说在JavaScript内部，所有字符都用Unicode表示。ECMAScript 3要求使用Unicode 2.1或以上版本，ECMAScript 5则要求使用Unicode 3及以上版本。

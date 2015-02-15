@@ -251,6 +251,23 @@ connection.on('close', function(reasonCode, description) {
 
 {% endhighlight %}
 
+使用[ws](https://github.com/einaros/ws)模块，部署一个简单的WebSocket服务器非常容易。
+
+```javascript
+
+var WebSocketServer = require('ws').Server;
+var wss = new WebSocketServer({ port: 8080 });
+ 
+wss.on('connection', function connection(ws) {
+  ws.on('message', function incoming(message) {
+    console.log('received: %s', message);
+  });
+ 
+  ws.send('something');
+});
+
+```
+
 ## Socket.io简介
 
 [Socket.io](http://socket.io/)是目前最流行的WebSocket实现，包括服务器和客户端两个部分。它不仅简化了接口，使得操作更容易，而且对于那些不支持WebSocket的浏览器，会自动降为Ajax连接，最大限度地保证了兼容性。

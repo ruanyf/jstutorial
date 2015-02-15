@@ -8,7 +8,20 @@ modifiedOn: 2014-01-01
 
 ## 概述
 
-Number对象是数值对应的包装对象。作为构造函数时，用于生成值为数值的对象；作为工具函数时，可以将任何类型的值转为数值。
+Number对象是数值对应的包装对象，可以作为构造函数使用，也可以作为工具函数使用。
+
+作为构造函数时，它用于生成值为数值的对象。
+
+```javascript
+
+var n = new Number(1);
+typeof n // "object"
+
+```
+
+上面代码中，Number对象作为构造函数使用，返回一个值为1的对象。
+
+作为工具函数时，它可以将任何类型的值转为数值。
 
 {% highlight javascript %}
 
@@ -22,11 +35,25 @@ Number(true) // 1
 
 Number对象拥有一些特别的属性。
 
-- Number.POSITIVE_INFINITY 表示正的无限，指向关键字Infinity。
-- Number.NEGATIVE_INFINITY 表示负的无限，指向-Infinity。
-- Number.NaN 表示非数值，指向NaN。
-- Number.MAX_VALUE 表示最大的正数，相应的，最小的负数为-Number.MAX_VALUE。
-- Number.MIN_VALUE 表示最小的正数（即最接近0的正数，在64位浮点数体系中为5e-324），相应的，最接近0的负数为-Number.MIN_VALUE。
+（1）Number.POSITIVE_INFINITY 
+
+表示正的无限，指向关键字Infinity。
+
+（2）Number.NEGATIVE_INFINITY 
+
+表示负的无限，指向-Infinity。
+
+（3）Number.NaN 
+
+表示非数值，指向NaN。
+
+（4）Number.MAX_VALUE 
+
+表示最大的正数，相应的，最小的负数为-Number.MAX_VALUE。
+
+（5）Number.MIN_VALUE 
+
+表示最小的正数（即最接近0的正数，在64位浮点数体系中为5e-324），相应的，最接近0的负数为-Number.MIN_VALUE。
 
 {% highlight javascript %}
 
@@ -232,4 +259,16 @@ Number.prototype.iterate = function () {
 
 ```
 
-上面代码在Number对象的原型上部署了iterate方法，可以将一个数值自动扩展为一个数组。
+上面代码在Number对象的原型上部署了iterate方法，可以将一个数值自动遍历为一个数组。
+
+需要注意的是，数值的自定义方法，只能定义在它的原型对象Number.prototype上面，数值本身是无法自定义属性的。
+
+```javascript
+
+var n = 1;
+n.x = 1;
+n.x // undefined
+
+```
+
+上面代码中，n是一个原始类型的数值。直接在它上面新增一个属性x，不会报错，但毫无作用，总是返回undefined。这是因为一旦被调用属性，n就自动转为Number的实例对象，调用结束后，该对象自动销毁。所以，下一次调用n的属性时，实际取到的是另一个对象，属性x当然就读不出来。

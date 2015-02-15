@@ -8,7 +8,7 @@ category: oop
 
 ## \__proto__属性
 
-除了IE浏览器，其他浏览器都在Object对象的实例上，部署了一个非标准的\__proto__属性（前后各两个下划线），指向该对象的原型对象prototype。
+除了IE浏览器，其他浏览器都在Object对象的实例上，部署了一个非标准的\__proto__属性（前后各两个下划线），指向该对象的原型对象，即构造函数的prototype属性。
 
 {% highlight javascript %}
 
@@ -19,15 +19,37 @@ o.__proto__ === o.constructor.prototype
 
 {% endhighlight %}
 
-上面代码说明，对象o的\__proto__属性，直接指向它的原型对象constructor.prototype（这是间接获取原型对象的方法）。
+上面代码首先新建了一个对象o，它的\__proto__属性，指向构造函数（o.constructor）的prototype属性。所以，两者比较以后，返回true。因此，获取一个实例对象的原型，直接的方法是`o.__proto__`，间接的方法是`o.constructor.prototype`。
 
-可以用下面的代码，检查浏览器是否支持该属性。
+获取对象原型还有第三种方法，就是使用Object.getPrototypeOf方法。该方法的参数是实例对象，返回值是实例对象的原型对象。因此，上面代码改写如下。
+
+```javascript
+
+var o = new Object();
+
+o.__proto__ === Object.getPrototypeOf(o)
+// true
+
+```
+
+可以使用Object.getPrototypeOf方法，检查浏览器是否支持\__proto__属性，毕竟这个属性不是标准属性。
 
 {% highlight javascript %}
 
 Object.getPrototypeOf({ __proto__: null }) === null
 
 {% endhighlight %}
+
+上面代码将一个对象的\__proto__属性设为null，然后使用Object.getPrototypeOf方法获取这个对象的原型，判断是否等于null。如果当前环境支持\__proto__属性，两者的比较结果应该是true。
+
+有了\__proto__属性，就可以很方便得设置实例对象的原型了。假定有三个对象machine、vehicle和car，其中machine是vehicle的原型，vehicle又是car的原型，只要两行代码就可以设置。
+
+```javascript
+
+vehicle.__proto__ = machine;
+car.__proto__ = vehicle;
+
+```
 
 下面是一个实例，通过\__proto__属性与constructor.prototype两种方法，分别读取定义在原型对象上的属性。
 
