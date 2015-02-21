@@ -6,21 +6,19 @@ date: 2013-03-10
 modifiedOn: 2013-12-03
 ---
 
-console对象是JavaScript的原生对象，它的作用有点像Unix系统的标准输出stdout和标准错误stderr，在浏览器中，代表了JavaScript控制台。它的作用主要有两个。
+console对象是JavaScript的原生对象，它有点像Unix系统的标准输出stdout和标准错误stderr，可以输出各种信息用来调试程序，而且还提供了很多额外的方法，供开发者调用。它的常见用途有两个。
 
 - 显示网页代码运行时的错误信息。
 
 - 提供了一个命令行接口，用来与网页代码互动。
 
-console对象提供了很多方法，可供开发者调用。
+## 浏览器实现
 
-## 开发者工具
+console对象的浏览器实现，包含在浏览器自带的开发工具之中。以Chrome浏览器的“开发者工具”（Developer Tools）为例，首先使用下面三种方法的一种打开它。
 
-与console对象互动，需要通过浏览器自带的开发工具，以Chrome浏览器的“开发者工具”（Developer Tools）为例，打开它的方法有三种。
+1. 按F12或者Control+Shift+i（PC平台）/ Alt+Command+i（Mac平台）。
 
-1. 按F12或者Control+Shift+i。
-
-2. 在菜单中选择“工具”/“开发者工具”。
+2. 在菜单中选择“工具/开发者工具”。
 
 3. 在一个页面元素上，打开右键菜单，选择其中的“Inspect Element”。
 
@@ -44,15 +42,15 @@ console对象提供了很多方法，可供开发者调用。
 
 - **Console**：用来运行JavaScript命令。
 
-这八个面板都有各自的用途，以下都针对Console面板，也就是控制台。这个面板基本上就是一个命令行窗口，你可以在提示符下，键入各种命令。
+这八个面板都有各自的用途，以下内容针对Console面板，又称为控制台。Console面板基本上就是一个命令行窗口，你可以在提示符下，键入各种命令。
 
 下面介绍console对象提供的各种方法。
 
-## console.log()，console.info()，console.debug()
+## console对象
 
-log方法用于在console窗口显示信息。
+### console.log()，console.info()，console.debug()
 
-如果参数是普通字符串，log方法将字符串内容显示在console窗口。
+console.log方法用于在console窗口显示信息。如果参数是普通字符串，就直接将字符串内容显示在console窗口。
 
 {% highlight javascript %}
 
@@ -64,7 +62,9 @@ console.log("a","b","c")
 
 {% endhighlight %}
 
-如果参数是格式字符串（使用了格式占位符），log方法将占位符替换以后的内容，显示在console窗口。
+console.log方法会自动在每行的结尾，添加换行符。
+
+如果第一个参数是格式字符串（使用了格式占位符），console.log方法将依次用后面的参数替换占位符，然后再进行输出。
 
 {% highlight javascript %}
 
@@ -73,12 +73,38 @@ console.log(" %s + %s = %s", 1, 1, 2)
 
 {% endhighlight %}
 
-上面代码的%s表示字符串的占位符，其他占位符还有
+上面代码中，console.log方法的第一个参数有三个占位符（%s），第二、三、四个参数会在显示时，依次替换掉这个三个占位符。console.log方法支持的占位符有以下几个，不同格式的数据必须使用对应格式的占位符。
 
-- %d, %i 整数
+- %s 字符串
+- %d 整数
+- %i 整数
 - %f 浮点数
 - %o 对象的链接
 - %c CSS格式字符串
+
+```javascript
+
+var number = 11 * 9;
+var color = 'red';
+
+console.log('%d %s balloons', number, color);
+// 99 red balloons
+
+```
+
+上面代码中，第二个参数是数值，对应的占位符是%d，第三个参数是字符串，对应的占位符是%s。
+
+使用%c占位符时，对应的参数必须是CSS语句，用来对输出内容进行CSS渲染。
+
+```javascript
+
+console.log('%cThis text is styled!', 
+  'color: #86CC00; background-color: blue; font-size: 20px; padding: 3px;'
+)
+
+```
+
+上面代码运行后，输出的内容将显示为蓝底绿字。
 
 log方法的两种参数格式，可以结合在一起使用。
 
@@ -103,7 +129,7 @@ console.log(Date)
 
 上面代码输出Date对象的值，结果为一个构造函数。
 
-console.info()和console.debug()都是console.log方法的别名，它们完全一样。
+console.info()和console.debug()都是console.log方法的别名，用法完全一样。console.info方法会在输出信息的前面，加上一个蓝色图标。
 
 console对象的所有方法，都可以被覆盖。因此，可以按照自己的需要，定义console.log方法。
 
@@ -123,9 +149,9 @@ console.log("出错了！");
 
 上面代码表示，使用自定义的console.log方法，可以在显示结果添加当前时间。
 
-## console.warn()，console.error()
+### console.warn()，console.error()
 
-warn方法和error方法也是输出信息，它们与log方法的不同之处在于，warn方法输出信息时，在最前面加一个黄色三角，表示警告；error方法输出信息时，在最前面加一个红色的叉，表示出错。其他用法都一样。
+warn方法和error方法也是输出信息，它们与log方法的不同之处在于，warn方法输出信息时，在最前面加一个黄色三角，表示警告；error方法输出信息时，在最前面加一个红色的叉，表示出错，同时会显示错误发生的堆栈。其他用法都一样。
 
 {% highlight javascript %}
 
@@ -139,16 +165,16 @@ console.warn('Warning! Too few nodes (%d)', document.childNodes.length)
 
 本质上，log方法是写入标准输出（stdout），warn方法和error方法是写入标准错误（stderr）。
 
-## console.table()
+### console.table()
 
 对于某些复合类型的数据，console.table方法可以将其转为表格显示。
 
 {% highlight javascript %}
 
 var languages = [
-    { name: "JavaScript", fileExtension: ".js" },
-    { name: "TypeScript", fileExtension: ".ts" },
-    { name: "CoffeeScript", fileExtension: ".coffee" }
+  { name: "JavaScript", fileExtension: ".js" },
+  { name: "TypeScript", fileExtension: ".ts" },
+  { name: "CoffeeScript", fileExtension: ".coffee" }
 ];
 
 console.table(languages);
@@ -183,7 +209,53 @@ console.table(languages);
 csharp|"C#"|"object-oriented"
 fsharp|"F#"|"functional"
 
-## console.dir()
+### console.count()
+
+console.count方法用于计数，输出某个函数执行了多少次。
+
+```javascript
+
+function greet(user) {
+  console.count();
+  return "hi " + user;
+}
+
+greet('bob')
+//  : 1
+// "hi bob"
+
+greet('bob')
+//  : 2
+// "hi bob"
+
+```
+
+该方法可以接受一个参数，输出该参数执行了多少次。
+
+```javascript
+
+function greet(user) {
+  console.count(user);
+  return "hi " + user;
+}
+
+greet('bob')
+// bob: 1
+// "hi bob"
+
+greet('alice')
+// alice: 1
+// "hi alice"
+
+greet('bob')
+// bob: 2
+// "hi bob"
+
+```
+
+上面代码根据参数的不同，显示bob执行了两次，alice执行了一次。
+
+### console.dir()，console.dirxml()
 
 dir方法用来对一个对象进行检查（inspect），并以易于阅读和打印的格式显示。
 
@@ -198,7 +270,17 @@ console.dir({foo: 'bar'})
 
 上面代码显示dir方法的参数属于Object，该对像有一个属性foo，以及一个指向原型对象的\__proto\__的属性。
 
-## console.assert()
+该方法对于输出DOM对象非常有用，因为会显示DOM对象的所有属性。
+
+```javascript
+
+console.dir(document.body)
+
+```
+
+console.dirxml方法将一个对象以XML格式输出。
+
+### console.assert()
 
 console.assert方法用来验证某个条件是否为真。如果为假，则显示一条事先指定的错误信息。它的格式如下。
 
@@ -208,7 +290,7 @@ console.assert方法用来验证某个条件是否为真。如果为假，则显
 console.assert(条件判断，输出信息)
 
 // 实例
-console.assert(true === false,"判断条件不成立")
+console.assert(true === false, "判断条件不成立")
 // Assertion failed: 判断条件不成立
 
 {% endhighlight %}
@@ -223,7 +305,7 @@ console.assert(list.childNodes.length < 500, "节点个数大于等于500")
 
 {% endhighlight %}
 
-## console.time()，console.timeEnd()
+### console.time()，console.timeEnd()
 
 这两个方法用于计时，可以算出一个操作所花费的准确时间。
 
@@ -244,7 +326,25 @@ console.timeEnd("Array initialize");
 
 time方法表示计时开始，timeEnd方法表示计时结束。它们的参数是计时器的名称。调用timeEnd方法之后，console窗口会显示“计时器名称: 所耗费的时间”。
 
-## console.profile()，console.profileEnd()
+### console.timeline()，console.timelineEnd()，console.timeStamp()
+
+console.timeline和console.timelineEnd这两个方法用于定义一个新的时间线，可以在Timeline面板查看。这两个方法只有Chrome开发者工具支持。
+
+```javascript
+
+console.timeline('Google Search');
+
+// Do some work
+
+console.timelineEnd('Google Search');
+
+```
+
+上面代码定义了一个名称叫做“Google Search”的时间线，在这个时间线里的所有事件的耗时，可以在Timeline面板中查看。
+
+console.timeStamp方法用在上面两个方法的中间，用于为时间线添加一个时间戳。时间戳的名字就是timeStamp方法的参数。
+
+### console.profile()，console.profileEnd()
 
 console.profile方法用来新建一个性能测试器（profile），它的参数是性能测试器的名字。
 
@@ -266,17 +366,48 @@ console.profileEnd()
 
 打开浏览器的开发者工具，在profile面板中，可以看到这个性能调试器的运行结果。
 
-## console.group()，console.groupend()
+### console.group()，console.groupend()，console.groupCollapsed()
 
-这两个方法用于将显示的信息分组。它只在输出大量信息时有用，分在一组的信息，可以用鼠标折叠/展开。
+console.group和console.groupend这两个方法用于将显示的信息分组。它只在输出大量信息时有用，分在一组的信息，可以用鼠标折叠/展开。
 
-## 其他方法
+```javascript
 
-- **console.dir()**：输出对象的信息，用于显示一个对象的所有属性。
+console.group('Group One');
+console.group('Group Two');
 
-- **console.clear()**：对console窗口进行清屏，光标回到第一行。
+// some code
 
-- **console.trace()**：当前执行的代码在堆栈中的调用路径。
+console.groupEnd(); // Group Two 结束
+console.groupEnd(); // Group One 结束
+
+```
+
+console.groupCollapsed方法与console.group方法很类似，唯一的区别是该组的内容，在第一次显示时是收起的（collapsed），而不是展开的。
+
+```javascript
+
+console.groupCollapsed('Fetching Data');
+
+console.log('Request Sent');
+console.error('Error: Server not responding (500)');
+
+console.groupEnd();
+
+```
+
+### console.clear()
+
+console.clear方法用于清除当前控制台的所有输出，将光标回置到第一行。
+
+### console.trace()
+
+console.trace方法显示当前执行的代码在堆栈中的调用路径。
+
+```javascript
+
+console.trace()
+
+```
 
 ## 命令行API
 
@@ -583,6 +714,7 @@ hz = 1 / period;
 ## 参考链接
 
 - Chrome Developer Tools, [Using the Console](https://developers.google.com/chrome-developer-tools/docs/console)
+- Matt West, [Mastering The Developer Tools Console](http://blog.teamtreehouse.com/mastering-developer-tools-console)
 - Firebug Wiki, [Console API](https://getfirebug.com/wiki/index.php/Console_API)
 - Axel Rauschmayer, [The JavaScript console API](http://www.2ality.com/2013/10/console-api.html)
 - Marius Schulz, [Advanced JavaScript Debugging with console.table()](http://blog.mariusschulz.com/2013/11/13/advanced-javascript-debugging-with-consoletable)

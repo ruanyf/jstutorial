@@ -139,9 +139,9 @@ element.style.webkitAnimationPlayState = "running";
 
 {% endhighlight %}
 
-### CSS生成内容
+### CSS伪元素
 
-“CSS生成内容”指的是通过CSS，向DOM添加的元素。主要的方法是通过“:before”和“:after”生成伪元素，然后用content属性指定伪元素的内容。
+CSS伪元素是通过CSS向DOM添加的元素，主要方法是通过“:before”和“:after”生成伪元素，然后用content属性指定伪元素的内容。
 
 假定HTML代码如下：
 
@@ -162,24 +162,31 @@ element.style.webkitAnimationPlayState = "running";
 
 {% endhighlight %}
 
-DOM元素的style对象无法读写伪元素的样式，这时就要用到window对象的getComputedStyle方法。JavaScript获取获取伪元素的content属性和color属性，可以使用下面的方法。
+DOM元素的style对象无法读写伪元素的样式，这时就要用到window对象的getComputedStyle方法（详见下面介绍）。JavaScript获取获取伪元素的content属性和color属性，可以使用下面的方法。
 
 {% highlight javascript %}
 
 var test = document.querySelector('#test');
+
 var result = window.getComputedStyle(test, ':before').content;
 var color = window.getComputedStyle(test, ':before').color;
 
+// 或者
+
+var result = window.getComputedStyle(test, ':before')
+                   .getPropertyValue('content');
+var color = window.getComputedStyle(test, ':before')
+                  .getPropertyValue('color');
+
 {% endhighlight %}
 
-上面代码也可以使用window.getComputedStyle对象（详见下面介绍）的getPropertyValue方法获取。
+上面代码也可以使用window.getComputedStyle对象的getPropertyValue方法获取。
 
 {% highlight javascript %}
 
 var test = document.querySelector('#test');
 
-var result = window.getComputedStyle(test, ':before').getPropertyValue('content');
-var color = window.getComputedStyle(test, ':before').getPropertyValue('color');
+
 
 {% endhighlight %}
 
