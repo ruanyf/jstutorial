@@ -474,6 +474,16 @@ forEach方法对所有元素依次执行一个函数，它与map的区别在于�
 
 这两个方法都可以接受第二个参数，用来绑定函数中的this关键字。
 
+```javascript
+
+["foo", "bar"].forEach(func.bind(this));
+
+["foo", "bar"].forEach(func, this);
+
+```
+
+上面的两行代码是等价的。下面是一个实例。
+
 {% highlight javascript %}
 
 var out = [];
@@ -550,11 +560,11 @@ every方法对所有元素调用一个测试函数，只有所有元素通过该
 
 ### reduce方法，reduceRight方法
 
-reduce和reduceRight方法的作用，是依次处理数组的每个元素，最终累计为一个值。这两个方法的差别在于，reduce对数组元素的处理顺序是从左到右，reduceRight则是从右到左，其他地方完全一样。
+reduce方法和reduceRight方法的作用，是依次处理数组的每个元素，最终累计为一个值。这两个方法的差别在于，reduce对数组元素的处理顺序是从左到右（从第一个成员到最后一个成员），reduceRight则是从右到左（从最后一个成员到第一个成员），其他地方完全一样。
 
 reduce方法的第一个参数是一个处理函数。该函数接受四个参数，分别是：
 
-1. 用来累计的变量（即当前状态）
+1. 用来累计的变量（即当前状态），默认值为0
 2. 数组的当前元素
 3. 当前元素在数组中的序号（从0开始）
 4. 原数组
@@ -592,7 +602,7 @@ Array.prototype.sum = function (){
 {% highlight javascript %}
 
 [1, 2, 3, 4, 5].reduce(function(x, y){
-    return x+y;
+  return x+y;
 }, 10);
 // 25
 

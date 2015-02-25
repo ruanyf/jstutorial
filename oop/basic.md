@@ -680,7 +680,7 @@ $("#button").on("click", f);
 
 ### bind方法
 
-bind方法就是单纯地将函数体内的this绑定到某个对象，然后返回一个新函数。它的使用格式如下。
+bind方法用于将函数体内的this绑定到某个对象，然后返回一个新函数。它的使用格式如下。
 
 {% highlight javascript %}
 
@@ -688,9 +688,7 @@ func.bind(thisValue, arg1, arg2,...)
 
 {% endhighlight %}
 
-它比call方法和apply方法更进一步的是，除了绑定this以外，还可以绑定原函数的参数。
-
-请看下面的例子。
+下面是一个例子。
 
 {% highlight javascript %}
 
@@ -714,6 +712,28 @@ o2.m() // 123
 {% endhighlight %}
 
 上面代码使用bind方法将o1.m方法绑定到o1以后，在o2对象上调用o1.m的时候，o1.m函数体内部的this.p就不再到o2对象去寻找p属性的值了。
+
+bind比call方法和apply方法更进一步的是，除了绑定this以外，还可以绑定原函数的参数。
+
+```javascript
+
+var add = function (x,y) {
+  return x*this.m + y*this.n;
+}
+
+var obj = {
+  m: 2,
+  n: 2
+};
+
+var newAdd = add.bind(obj, 5);
+
+newAdd(5)
+// 20
+
+```
+
+上面代码中，bind方法除了绑定this对象，还绑定了add函数的第一个参数，结果newAdd函数只要一个参数就能运行了。
 
 如果bind方法的第一个参数是null或undefined，等于将this绑定到全局对象，函数运行时this指向全局对象（在浏览器中为window）。
 
