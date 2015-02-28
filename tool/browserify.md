@@ -12,11 +12,11 @@ Browserify是一个node.js模块，主要用于改写现有的CommonJS模块，�
 
 {% highlight bash %}
 
-npm install -g browserify
+$ npm install -g browserify
 
 {% endhighlight %}
 
-## 实例：简单应用
+## 基本用法
 
 先看一个例子。假定有一个很简单的CommonJS模块文件foo.js。
 
@@ -25,7 +25,7 @@ npm install -g browserify
 // foo.js
 
 module.exports = function(x) {
-    console.log(x);
+  console.log(x);
 };
 
 {% endhighlight %}
@@ -67,11 +67,7 @@ browserify main.js -o compiled.js
 
 使用上面的命令，在浏览器中运行compiled.js，控制台会显示Hi。
 
-## 实例：backbone的应用
-
-我们再看一个在服务器端的backbone模块转为客户端backbone模块的例子。
-
-先安装backbone和它所依赖的jQuery模块。
+我们再看一个在服务器端的backbone模块转为客户端backbone模块的例子。先安装backbone和它所依赖的jQuery模块。
 
 {% highlight bash %}
 
@@ -117,7 +113,96 @@ app.js就可以直接插入HTML网页了。
 
 注意，只要插入app.js一个文件就可以了，完全不需要再加载backbone.js和jQuery了。
 
-## 生成模块
+## 管理前端模块 
+
+Browserify的主要作用是将CommonJS模块转为浏览器可以调用的格式，但是纯粹的前端模块，也可以用它打包。
+
+首先，新建一个项目目录，添加package.json文件。
+
+```javascript
+{
+  "name": "demo",
+  "version": "1.0.0"
+}
+```
+
+接着，新建index.html。
+
+```html
+
+<!doctype html>
+<html>
+<head>
+  <title>npm and jQuery demo</title>
+</head>
+<body>
+  <span class="title-tipso tipso_style" title="This is a loaded TIPSO!">
+    Roll over to see the tip
+  </span>
+  <script src="./bundle.js">
+</body>
+</html>
+
+```
+
+上面代码中的bundle.js，就是Browserify打包后将生成的文件。
+
+然后，安装jquery和它的插件。
+
+```javascript
+$ npm install --save jquery tipso
+```
+
+接着，新建一个文件entry.js。
+
+```javascript
+global.jQuery = require('jquery');
+require('tipso');
+
+jQuery(function(){
+  jQuery('.title-tipso').tipso();
+});
+```
+
+上面的文件中，第一行之所以要把jQuery写成global的属性，是为了转码之后，它可以变成一个全局变量。
+
+最后，Browserify打包。
+
+```bash
+$ browserify entry.js --debug > bundle.jsOA
+```
+
+上面代码中，--debug参数表示在打包后的文件中加入source map以便除错。
+
+这时，浏览器打开index.html，脚本已经可以运行。如果不希望将jQuery一起打包，而是通过CDN加载，可以使用browserify-shim模块。
+
+另外一个问题是，某些jQuery插件还有自带的CSS文件，这时可以安装parcelify模块。
+
+```bash
+$ npm install -g parcelify
+```
+
+然后，在package.json中写入规则，声明CSS文件的位置。
+
+```javascript
+"style": [
+  "./node_modules/tipso/src/tipso.css"
+]
+```
+
+接着，运行parcelify进行CSS打包。
+
+```bash
+$ parcelify entry.js -c bundle.css
+```
+
+最后，将打包后的CSS文件插入index.html。
+
+```html
+<link rel="stylesheet" href="bundle.css" />
+```
+
+## 生成前端模块
 
 有时，我们只是希望将node.js的模块，移植到浏览器，使得浏览器端可以调用。这时，可以采用browserify的-r参数（--require的简写）。
 
@@ -146,19 +231,21 @@ browserify -r through -r ./my-file.js:my-module > bundle.js
 
 Browserify还可以实时生成脚本文件。
 
+下面是一个服务器端脚本，启动Web服务器之后，外部用户每次访问这个脚本，它的内容是实时生成的。
+
 ```javascript
 
 var browserify = require('browserify');
 var http = require('http');
 
 http.createServer(function (req, res) {
-    if (req.url === '/bundle.js') {
-        res.setHeader('content-type', 'application/javascript');
-        var b = browserify(__dirname + '/main.js').bundle();
-        b.on('error', console.error);
-        b.pipe(res);
-    }
-    else res.writeHead(404, 'not found')
+  if (req.url === '/bundle.js') {
+    res.setHeader('content-type', 'application/javascript');
+    var b = browserify(__dirname + '/main.js').bundle();
+    b.on('error', console.error);
+    b.pipe(res);
+  }
+  else res.writeHead(404, 'not found')
 });
 
 ```
@@ -199,3 +286,4 @@ app.get('/', function(req, res){
 - Seth Vincent, [Using Browserify with Express](http://learnjs.io/blog/2013/12/22/express-and-browserify/)
 - Patrick Mulder, [Browserify - Unix in the browser](http://thinkingonthinking.com/unix-in-the-browser/)
 - Patrick Catanzariti, [Getting Started with Browserify](http://www.sitepoint.com/getting-started-browserify/)
+- Lin Clark, [Using jQuery plugins with npm](http://blog.npmjs.org/post/112064849860/using-jquery-plugins-with-npm)
