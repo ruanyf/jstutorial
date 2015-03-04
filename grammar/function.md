@@ -266,6 +266,27 @@ f3.name // 'myName'
 
 上面代码中，函数的name属性总是返回紧跟在function关键字之后的那个函数名。对于f2来说，返回空字符串，对于f3来说，返回函数表达式的名字（真正的函数名还是f3，myName这个名字只在函数体内部可用）。 
 
+## toString方法
+
+函数的toString方法返回函数的源码。
+
+```javascript
+
+function f() { 
+  a(); 
+  b(); 
+  c(); 
+}
+
+f.toString()
+// function f() { 
+//  a(); 
+//  b(); 
+//  c(); 
+// }
+
+```
+
 ## 函数作用域
 
 ### 定义

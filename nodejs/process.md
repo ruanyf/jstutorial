@@ -26,7 +26,7 @@ process对象提供一系列属性，用于返回系统信息。
 
 下面是主要属性的介绍。
 
-**（1）process.stdout**
+**（1）process.stdout，process.stdin**
 
 process.stdout用来控制标准输出，也就是在命令行窗口向用户显示内容。它的write方法等同于console.log。
 
@@ -37,6 +37,39 @@ exports.log = function() {
 };
 
 {% endhighlight %}
+
+
+下面代码表示将一个文件导向标准输出。
+
+```javascript
+var fs = require('fs');
+
+fs.createReadStream('wow.txt')
+    .pipe(process.stdout)
+    ;
+```
+
+由于process.stdout和process.stdin与其他进程的通信，都是流（stream）形式，所以必须通过pipe管道命令中介。
+
+```javascript
+var fs = require('fs');
+var zlib = require('zlib');
+
+fs.createReadStream('wow.txt')
+    .pipe(zlib.createGzip())
+    .pipe(process.stdout)
+;
+```
+
+上面代码通过pipe方法，先将文件数据压缩，然后再导向标准输出。
+
+process.stdin代表标准输入。
+
+```javascript
+process.stdin.pipe(process.stdout)
+```
+
+上面代码表示将标准输入导向标准输出。
 
 **（2）process.argv**
 

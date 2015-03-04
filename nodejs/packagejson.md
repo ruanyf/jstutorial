@@ -161,3 +161,7 @@ scripts: {
 ### engines
 
 engines指明了该项目所需要的node.js版本。
+
+### preferGlobal
+
+preferGlobal的值是布尔值，表示当用户不将该模块安装为全局模块时（即不用--global参数），要不要显示警告，表示该模块的本意就是安装为全局模块。

@@ -16,6 +16,29 @@ Stream方法在Node中被定义成了一个抽象接口，具有readable、writa
 
 Node内部的很多IO处理都部署了Stream接口，比如HTTP连接、文件读写、标准输入输出等。
 
+数据流通过pipe方法，可以方便地导向其他具有Stream接口的对象。
+
+```javascript
+var fs = require('fs');
+var zlib = require('zlib');
+
+fs.createReadStream('wow.txt')
+    .pipe(zlib.createGzip())
+    .pipe(process.stdout)
+;
+```
+
+上面代码先打开文本文件wow.txt，然后压缩，再导向标准输出。
+
+```javascript
+fs.createReadStream('wow.txt')
+    .pipe(zlib.createGzip())
+    .pipe(fs.createWriteStream('wow.gz'))
+;
+```
+
+上面代码压缩文件wow.txt以后，又将其写回压缩文件。
+
 ## HTTP请求
 
 data事件表示读取或写入了一块数据。
@@ -133,3 +156,6 @@ readStream.on('end', function () {
 
 {% endhighlight %}
 
+## 参考链接
+
+- James Halliday, [cs294-101-streams-lecture](https://github.com/substack/cs294-101-streams-lecture)

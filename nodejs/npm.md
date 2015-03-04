@@ -381,27 +381,29 @@ browserify browser/main.js | uglifyjs -mc > static/bundle.js
 
 一般来说，每个项目都会在项目目录内，安装所需的模块文件。也就是说，各个模块是局部安装。但是有时候，我们希望模块是一个符号链接，连到外部文件，这时候就需要用到npm link命令。
 
-现在模块A（moduleA）的安装目录下运行npm link命令。
+为了理解npm link，请设想这样一个场景。你开发了一个模块myModule，目录为src/myModule，你自己的项目myProject要用到这个模块，项目目录为src/myProject。每一次，你更新myModule，就要用`npm publish`命令发布，然后切换到项目目录，使用`npm update`更新模块。这样显然很不方便，如果我们可以从项目目录建立一个符号链接，直接连到模块目录，就省去了中间步骤，项目可以直接使用最新版的模块。
+
+先在模块目录（src/myModule）下运行npm link命令。
 
 {% highlight bash %}
 
-/path/to/moduleA $ npm link
+src/myModule$ npm link
 
 {% endhighlight %}
 
-上面的命令会在npm的安装目录内，生成一个符号链接文件。
+上面的命令会在npm的全局模块目录内（比如/usr/local/lib/node_modules/），生成一个符号链接文件，该文件的名字就是package.json文件中指定的文件名。
 
 {% highlight bash %}
 
-/usr/local/share/npm/lib/node_modules/moduleA -> /path/to/moduleA
+/usr/local/lib/node_modules/myModule -> src/myModule
 
 {% endhighlight %}
 
-然后，转到你需要放置该模块的项目目录，再次运行npm link命令，并指定模块名。
+然后，切换到你需要放置该模块的项目目录，再次运行npm link命令，并指定模块名。
 
 {% highlight bash %}
 
-/path/to/my-project  $ npm link moduleA
+src/myProject$ npm link myModule
 
 {% endhighlight %}
 
@@ -409,7 +411,7 @@ browserify browser/main.js | uglifyjs -mc > static/bundle.js
 
 {% highlight bash %}
 
-/path/to/my-project/node_modules/moduleA -> /usr/local/share/npm/lib/node_modules/moduleA
+src/myProject/node_modules/myModule -> /usr/local/lib/node_modules/myModule
 
 {% endhighlight %}
 
@@ -417,17 +419,61 @@ browserify browser/main.js | uglifyjs -mc > static/bundle.js
 
 {% highlight javascript %}
 
-require('moduleA')
+var myModule = require('myModule');
 
 {% endhighlight %}
+
+这样一来，myModule的任何变化，都可以直接在myProject中调用。但是，同时也出现了风险，任何在myProject目录中对myModule，都会反映到模块的源码中。
+
+npm link命令有一个简写形式，显示连接模块的本地目录。
+
+```javascript
+
+src/myProject$ npm link ../myModule
+
+```
+
+上面的命令等同于下面几条命令。
+
+```javascript
+
+src/myProject$ cd ../myModule
+src/myModule$ npm link
+src/myModule$ cd ../myProject
+src/myProject$ npm link myModule
+
+```
 
 如果你的项目不再需要该模块，可以在项目目录内使用npm unlink命令，删除符号链接。
 
 {% highlight bash %}
 
-/path/to/my-project  $ npm unlink moduleA
+src/myProject$ npm unlink myModule
 
 {% endhighlight %}
+
+一般来说，npm公共模块都安装在系统目录（比如/usr/local/lib/），普通用户没有写入权限，需要用到sudo命令。这不是很方便，我们可以在没有root的情况下，用好npm。
+
+首先在主目录下新建配置文件.npmrc，然后在该文件中将prefix变量定义到主目录下面。
+
+```bash
+prefix = /home/yourUsername/npm
+```
+
+然后在主目录下新建npm子目录。
+
+```bash
+$ mkdir ~/npm
+```
+
+此后，全局安装的模块都会安装在这个子目录中，npm也会到`~/npm/bin`目录去寻找命令。因此，`npm link`就不再需要
+root权限了。
+
+最后，将这个路径在.bash_profile文件（或.bashrc文件）中加入PATH变量。
+
+```bash
+export PATH=~/npm/bin:$PATH
+```
 
 ## npm publish
 
@@ -523,3 +569,4 @@ npm publish
 
 - James Halliday, [task automation with npm run](http://substack.net/task_automation_with_npm_run): npm run命令（package.json文件的script属性）的用法
 - Keith Cirkel, [How to Use npm as a Build Tool](http://blog.keithcirkel.co.uk/how-to-use-npm-as-a-build-tool/)
+- justjs, [npm link: developing your own npm modules without tears](http://justjs.com/posts/npm-link-developing-your-own-npm-modules-without-tears)
