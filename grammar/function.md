@@ -71,10 +71,28 @@ var f = function f(){};
 {% highlight javascript %}
 
 var add = new Function("x","y","return (x+y)");
+// 相当于定义了如下函数
+// function add(x, y) {
+//   return (x+y);  
+// }
 
 {% endhighlight %}
 
-在上面代码中，Function对象接受若干个参数，除了最后一个参数是add函数的“函数体”，其他参数都是add函数的参数。这种声明函数的方式非常不直观，几乎无人使用。
+在上面代码中，Function对象接受若干个参数，除了最后一个参数是add函数的“函数体”，其他参数都是add函数的参数。如果只有一个参数，该参数就是函数体。
+
+```javascript
+
+var foo = new Function('return "hello world"');
+// 相当于定义了如下函数
+// function foo() {
+//   return "hello world";
+// }
+
+```
+
+Function构造函数可以不使用new命令，返回结果完全一样。
+
+总的来说，这种声明函数的方式非常不直观，几乎无人使用。
 
 **（4）函数的重复声明**
 
@@ -862,7 +880,7 @@ a // 2
 
 {% endhighlight %}
 
-上面代码中，eval命令修改了外部变量a的值。由于这个原因，所以eval有安全风险，无法做到作用域隔离，最好不要使用。此外，eval的命令字符串不会得到JavaScript引擎的优化，运行速度较慢，也是另一个不应该使用它的理由。通常情况下，eval最常见的场合是解析JSON数据字符串，这时应该使用浏览器提供的JSON.parse方法。
+上面代码中，eval命令修改了外部变量a的值。由于这个原因，所以eval有安全风险，无法做到作用域隔离，最好不要使用。此外，eval的命令字符串不会得到JavaScript引擎的优化，运行速度较慢，也是另一个不应该使用它的理由。通常情况下，eval最常见的场合是解析JSON数据字符串，正确的做法是这时应该使用浏览器提供的JSON.parse方法。
 
 ECMAScript 5将eval的使用分成两种情况，像上面这样的调用，就叫做“直接使用”，这种情况下eval的作用域就是当前作用域（即全局作用域或函数作用域）。另一种情况是，eval不是直接调用，而是“间接调用”，此时eval的作用域总是全局作用域。
 
@@ -906,17 +924,25 @@ eval('eval')('...')
 
 上面这些形式都是eval的间接调用，因此它们的作用域都是全局作用域。
 
-与eval作用类似的还有Function构造函数。利用它生成一个匿名函数，然后立即调用该函数，也能将字符串当作命令执行。
+与eval作用类似的还有Function构造函数。利用它生成一个函数，然后调用该函数，也能将字符串当作命令执行。
 
 {% highlight javascript %}
 
-var a = 1;
+var jsonp = 'foo({"id":42})';
 
-Function("a=2")() 
+var f = new Function( "foo", jsonp );
+// 相当于定义了如下函数
+// function f(foo) {
+//   foo({"id":42});
+// }
 
-a // 2
+f(function(json){
+  console.log( json.id ); // 42
+})
 
 {% endhighlight %}
+
+上面代码中，jsonp是一个字符串，Function构造函数将这个字符串，变成了函数体。调用该函数的时候，jsonp就会执行。这种写法的实质是将代码放到函数作用域执行，避免对全局作用域造成影响。
 
 ## 参考链接
 

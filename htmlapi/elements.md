@@ -6,6 +6,52 @@ date: 2014-07-08
 modifiedOn: 2014-07-08
 ---
 
+## image元素
+
+### alt属性，src属性
+
+alt属性返回image元素的HTML标签的alt属性值，src属性返回image元素的HTML标签的src属性值。
+
+```javascript
+
+// 方法一：HTML5构造函数Image
+var img1 = new Image(); 
+img1.src = 'image1.png';
+img1.alt = 'alt';
+document.body.appendChild(img1);
+
+// 方法二：DOM HTMLImageElement
+var img2 = document.createElement('img'); 
+img2.src = 'image2.jpg';
+img2.alt = 'alt text';
+document.body.appendChild(img2);
+
+document.images[0].src
+// image1.png
+
+```
+
+### complete属性
+
+complete属性返回一个布尔值，true表示当前图像属于浏览器支持的图形类型，并且加载完成，解码过程没有出错，否则就返回false。
+
+### height属性，width属性
+
+这两个属性返回image元素被浏览器渲染后的高度和宽度。
+
+### naturalWidth属性，naturalHeight属性
+
+这两个属性只读，表示image对象真实的宽度和高度。
+
+```javascript
+
+myImage.addEventListener('onload', function() {
+	console.log('My width is: ', this.naturalWidth);
+	console.log('My height is: ', this.naturalHeight);
+});
+
+```
+
 ## audio元素，video元素
 
 audio元素和video元素加载音频和视频时，以下事件按次序发生。

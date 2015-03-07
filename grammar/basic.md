@@ -974,14 +974,12 @@ var f = function f() {};
 
 ### 分号的自动添加
 
-除了本来就不写分号的情况，JavaScript引擎还有一个特点，就是在应该写分号却没写的情况下，它会自动添加。
+除了本来就不写分号的情况，JavaScript引擎还有一个特点，就是在应该写分号却没写的情况下，它会自动添加（Automatic Semicolon Insertion，简称ASI）。
 
 {% highlight javascript %}
 
 var a = b + c
-
 // 等同于
-
 var a = b + c;
 
 {% endhighlight %}
@@ -1046,8 +1044,8 @@ var a = "b"
 var a = 0;
 var f = function(x) { return x }
 (a++)
-/* f等于0，
-   因为(a++)被视为匿名函数的调用 */
+/* f等于0，因为(a++)被
+ * 视为匿名函数的调用 */
 
 return a +
 b;
@@ -1108,7 +1106,7 @@ a;
 
 return
 { first: "Jane" };
-    
+
 // 解释成
 return;
 { first: "Jane" };
@@ -1116,6 +1114,8 @@ return;
 {% endhighlight %}
 
 由于解释引擎自动添加分号的行为难以预测，因此编写代码的时候不应该省略行尾的分号。
+
+省略结尾的分号，还有一个问题。有些JavaScript代码压缩器不会自动添加分号，因此遇到没有分号的结尾，就会让代码保持原状，而不是压缩成一行。
 
 ## 参考链接
 
