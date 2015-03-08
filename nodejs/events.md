@@ -180,11 +180,13 @@ ee.removeListener("save-user", foo);
 
 {% highlight javascript %}
 
-ee.once("firstConnection", function (){
-		console.log("本提示只出现一次"); 
+server.once('connection', function (stream) {
+  console.log('Ah, we have our first user!');
 });
 
 {% endhighlight %}
+
+该方法返回一个EventEmitter对象，所以可以链式加载监听函数。
 
 **（2）removeListener方法**
 

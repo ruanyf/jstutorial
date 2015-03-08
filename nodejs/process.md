@@ -219,6 +219,25 @@ process.on('SIGINT', function () {
 $ kill -s SIGINT [process_id]
 ```
 
+SIGTERM信号表示内核要求当前进程停止，进程可以自行停止，也可以忽略这个信号。
+
+```javascript
+
+var http = require('http');
+
+var server = http.createServer(function (req, res) {
+});
+
+process.on('SIGTERM', function () {
+  server.close(function () {
+    process.exit(0);
+  });
+});
+
+```
+
+上面代码表示，进程接到SIGTERM信号之后，关闭服务器，然后退出进程。需要注意的是，这时进程不会马上退出，而是要回应完最后一个请求，处理完所有回调函数，然后再退出。
+
 ### process.kill()
 
 process.kill方法用来对指定ID的线程发送信号，默认为SIGINT信号。
@@ -269,3 +288,7 @@ process.on('exit', function () {
  });
 
 {% endhighlight %}
+
+## 参考链接
+
+- José F. Romaniello, [Graceful shutdown in node.js](http://joseoncode.com/2014/07/21/graceful-shutdown-in-node-dot-js/)

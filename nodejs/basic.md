@@ -572,6 +572,36 @@ http.createServer(function (request, response) {
 
 ```
 
+### 发出请求：get方法
+
+get方法用于发出get请求。
+
+```javascript
+
+function getTestPersonaLoginCredentials(callback) {
+  return http.get({
+    host: 'personatestuser.org',
+    path: '/email'
+  }, function(response) {
+    
+    var body = '';
+
+    response.on('data', function(d) {
+      body += d;
+    });
+
+    response.on('end', function() {
+      var parsed = JSON.parse(body);
+      callback({
+        email: parsed.email,
+        password: parsed.pass
+      });
+    });
+  });
+},
+
+```
+
 ### 发出请求：request方法
 
 request方法用于发出HTTP请求。
@@ -739,32 +769,6 @@ console.log(chunk.toString());
 // "some"
 
 ```
-
-## cluster模块
-
-Node.js默认单进程运行，对于多核CPU的计算机来说，这样做效率很低，因为只有一个核在运行，其他核都在闲置。cluster模块就是为了解决这个问题而提出的。
-
-cluster模块允许设立一个主进程和若干个worker进程，由主进程监控和协调worker进程的运行。
-
-{% highlight javascript %}
-
-var cluster = require('cluster');
-var os = require('os');
-
-if (cluster.isMaster){
-      for (var i = 0, n = os.cpus().length; i < n; i += 1){
-        cluster.fork();
-	  }
-}else{
-	  http.createServer(function(req, res) {
-	    res.writeHead(200);
-	    res.end("hello world\n");
-	  }).listen(8000);
-}
-
-{% endhighlight %}
-
-上面代码先判断当前进程是否为主进程（cluster.isMaster），如果是的，就按照CPU的核数，新建若干个worker进程；如果不是，说明当前进程是worker进程，则在该进程启动一个服务器程序。
 
 ## 异常处理
 

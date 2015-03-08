@@ -168,6 +168,34 @@ process.send({ foo: 'bar' });
 
 上面代码中，子进程监听message事件，并向父进程发送信息。
 
+## send()
+
+使用 child_process.fork() 生成新进程之后，就可以用 child.send(message, [sendHandle]) 向新进程发送消息。新进程中通过监听message事件，来获取消息。
+
+下面的例子是主进程的代码。
+
+```javascript
+var cp = require('child_process');
+
+var n = cp.fork(__dirname + '/sub.js');
+
+n.on('message', function(m) {
+  console.log('PARENT got message:', m);
+});
+
+n.send({ hello: 'world' });
+```
+
+下面是子进程sub.js代码。
+
+```javascript
+process.on('message', function(m) {
+  console.log('CHILD got message:', m);
+});
+
+process.send({ foo: 'bar' });
+```
+
 ## 参考链接
 
 - Lift Security Team, [Avoiding Command Injection in Node.js](https://blog.liftsecurity.io/2014/08/19/Avoid-Command-Injection-Node.js): 为什么execFile()的安全性高于exec()

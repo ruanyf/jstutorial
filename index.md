@@ -138,6 +138,7 @@ modifiedOn: 2014-05-18
 - [Events模块](nodejs/events.html)
 - [Stream接口](nodejs/stream.html)
 - [Child Process模块](nodejs/child-process.html)
+- [Cluster模块](nodejs/cluster.html)
 - [Express框架](nodejs/express.html)
 
 {% comment %}
