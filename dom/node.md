@@ -298,6 +298,22 @@ textcontent属性的作用与innerText属性很相近，但是有以下几点区
 
 另外，该属性是可写的，可以用它设置Element节点的文本内容。但是这样一来，原有的子节点会被全部删除。
 
+**（5）tabindex属性**
+
+tabindex属性用来指定，当前HTML元素节点是否被tab键遍历，以及遍历的优先级。
+
+```javascript
+var b1 = document.getElementById("button1");
+ 
+b1.tabIndex = 1;
+```
+
+如果 tabindex = -1 ，tab键跳过当前元素。
+
+如果 tabindex = 0 ，表示tab键将遍历当前元素。如果一个元素没有设置tabindex，默认值就是0。
+
+如果 tabindex 大于0，表示tab键优先遍历。值越大，就表示优先级越大。
+
 ### className属性和classList属性
 
 className属性和classList属性都返回HTML元素的class属性。不同之处是，className属性返回一个字符串，每个class之间用空格分割，classList属性则返回一个类似数组的对象，每个class就是这个对象的一个成员。
@@ -551,6 +567,16 @@ document.querySelector('content').children[4].scrollIntoView();
 {% endhighlight %}
 
 scrollIntoView方法接受一个布尔值作为参数，默认值为true，表示滚动到HTML元素的上方边缘，如果该值为false，表示滚动到下方边缘。
+
+**（6）focus方法**
+
+focus方法用于将当前页面的焦点，转移到指定元素上。
+
+```javascript
+
+document.getElementById('my-span').focus();
+
+```
 
 ### setAttribute()，removeAttribute()
 

@@ -10,6 +10,8 @@ modifiedOn: 2013-12-12
 
 ## 插件的编写
 
+### 原理
+
 本质上，jQuery插件是定义在jQuery构造函数的prototype对象上面的一个方法，这样做就能使得所有jQuery对象的实例都能共享这个方法。因为jQuery构造函数的prototype对象被简写成jQuery.fn对象，所以插件采用下面的方法定义。
 
 {% highlight javascript %}
@@ -114,6 +116,18 @@ $.fn.myNewPlugin = function() {
 {% endhighlight %}
 
 上面代码使用extend方法，为参数对象设置属性的默认值。
+
+### 侦测环境
+
+jQuery逐渐从浏览器环境，变为也可以用于服务器环境。所以，定义插件的时候，最好首先侦测一下运行环境。
+
+```javascript
+if (typeof module === "object" && typeof module.exports === "object") {
+  // CommonJS版本
+} else {
+  // 浏览器版本
+}
+```
 
 ## 实例
 

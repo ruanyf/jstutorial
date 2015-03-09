@@ -158,13 +158,19 @@ scripts: {
 
 ## 其他
 
+### browser
+
+browser指定该模板供浏览器使用的版本。Browserify这样的浏览器打包工具，通过它就知道该打包那个文件。
+
+```javascript
+"browser": {
+  "tipso": "./node_modules/tipso/src/tipso.js"
+},
+```
+
 ### engines
 
 engines指明了该项目所需要的node.js版本。
-
-### preferGlobal
-
-preferGlobal的值是布尔值，表示当用户不将该模块安装为全局模块时（即不用--global参数），要不要显示警告，表示该模块的本意就是安装为全局模块。
 
 ### man 
 
@@ -172,4 +178,18 @@ man用来指定当前模块的man文档的位置。
 
 ```javascript
 "man" :[ "./doc/calc.1" ]
+```
+
+### preferGlobal
+
+preferGlobal的值是布尔值，表示当用户不将该模块安装为全局模块时（即不用--global参数），要不要显示警告，表示该模块的本意就是安装为全局模块。
+
+### style
+
+style指定供浏览器使用时，样式文件所在的位置。样式文件打包工具parcelify，通过它知道样式文件的打包位置。
+
+```javascript
+"style": [
+  "./node_modules/tipso/src/tipso.css"
+]
 ```
