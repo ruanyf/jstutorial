@@ -8,9 +8,11 @@ modifiedOn: 2014-05-18
 
 ## DOM的含义
 
-DOM是文档对象模型（Document Object Model）的简称，它的基本思想是把结构化文档（比如HTML和XML）解析成一系列的节点，再由这些节点组成一个树状结构（DOM Tree）。所有的节点和最终的树状结构，都有规范的对外接口，以达到使用编程语言操作文档的目的（比如增删内容）。所以，DOM可以理解成文档的编程接口。
+DOM是文档对象模型（Document Object Model）的简称，它的基本思想是把结构化文档（比如HTML和XML）解析成一系列的节点，再由这些节点组成一个树状结构（DOM Tree）。所有的节点和最终的树状结构，都有规范的对外接口，以达到使用编程语言操作文档的目的（比如增删内容）。所以，DOM可以理解成文档（HTML文档、XML文档和SVG文档）的编程接口。
 
 DOM有自己的国际标准，目前的通用版本是[DOM 3](http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/core.html)，下一代版本[DOM 4](http://www.w3.org/TR/dom/)正在拟定中。本章介绍的就是JavaScript对DOM标准的实现和用法。
+
+严格地说，DOM不属于JavaScript，但是操作DOM是JavaScript最常见的任务，而JavaScript也是最常用于DOM操作的语言。所以，DOM往往放在JavaScript里面介绍。
 
 ## document对象概述
 
@@ -29,7 +31,7 @@ document对象有不同的办法可以获取。
 
 document对象有很多属性，用得比较多的是下面这些。
 
-### doctype，documentElement
+### doctype，documentElement，defaultView，designMode
 
 对于HTML文档来说，document对象一般有两个子节点。第一个子节点是document.doctype，它是一个对象，包含了当前文档类型（Document Type Declaration，简写DTD）信息。对于HTML5文档，该节点就代表&lt;!DOCTYPE html&gt;。如果网页没有声明DTD，该属性返回null。另外，document.firstChild通常就返回这个节点。
 
@@ -43,11 +45,42 @@ doctype.name // "html"
 ```
 第二个子节点是document.documentElement，表示当前文档的根节点（root）。对于HTML网页，该属性返回html节点，代表&lt;html lang="en"&gt;。
 
-### documentURI，URL
+defaultView属性，在浏览器中返回document对象所在的window对象，否则返回null。
+
+```javascript
+
+var win = document.defaultView;
+
+```
+
+designMode属性控制当前document是否可编辑。通常会打开iframe的designMode属性，将其变为一个所见即所得的编辑器。
+
+```javascript
+
+iframe_node.contentDocument.designMode = "on";
+
+```
+
+### documentURI，URL，domain
 
 documentURI属性和URL属性都返回当前文档的网址。不同之处是documentURI属性是所有文档都具备的，URL属性则是HTML文档独有的。
 
-### implementation
+domain属性返回当前文档的域名。比如，某张网页的网址是 http://www.example.com/hello.html ，domain属性就等于 www.example.com 。如果无法获取域名，该属性返回null。
+
+```javascript
+
+var badDomain = "www.example.xxx";
+
+if (document.domain === badDomain)
+  window.close(); 
+
+```   
+
+上面代码判断，如果当前域名等于指定域名，则关闭窗口。
+
+二级域名的情况下，domain属性可以设置为对应的一级域名。比如，当前域名是sub.example.com，则domain属性可以设置为example.com。除此之外的写入，都是不可以的。
+
+### implementation，styleSheets
 
 implementation属性返回一个对象，用来甄别当前环境部署了哪些DOM相关接口。implementation属性的hasFeature方法，可以判断当前环境是否部署了特定版本的特定接口。
 
@@ -59,8 +92,6 @@ document.implementation.hasFeature( 'HTML, 2.0 )
 ```
 
 上面代码表示，当前环境部署了DOM HTML 2.0版。
-
-### styleSheets
 
 styleSheets属性返回一个类似数组的对象，包含了当前网页的所有样式表。该属性提供了样式表操作的接口。然后，每张样式表对象的cssRules属性，返回该样式表的所有CSS规则。这又方便了操作具体的CSS规则。
 
@@ -76,9 +107,24 @@ var allSheets = [].slice.call(document.styleSheets);
 
 activeElement属性返回当前文档中获得焦点的那个元素。用户通常可以使用tab键移动焦点，使用空格键激活焦点，比如如果焦点在一个链接上，此时按一下空格键，就会跳转到该链接。
 
-### anchors，cookie
+### anchors，embeds，forms
 
 anchors属性返回网页中所有的a节点元素。注意，只有指定了name属性的a元素，才会包含在anchors属性之中。
+
+embeds属性返回网页中所有嵌入对象，即embed标签，返回的格式为类似数组的对象（nodeList）。
+
+forms属性返回页面中所有表单。
+
+```javascript
+
+var selectForm = document.forms[index];
+var selectFormElement = document.forms[index].elements[index];
+
+```
+
+上面代码获取指定表单的指定元素。
+
+### cookie
 
 cookie属性返回当前网页的cookie。该属性是可写的，但是一次只能写入一个cookie，也就是说写入并不是单纯的覆盖，JavaScript内部会对其进行处理。
 
@@ -102,9 +148,17 @@ cookie的值可以用encodeURIComponent方法进行处理，对逗号、分号�
 - ;expires=date-in-GMTString-format，指定cookie过期时间，日期格式等同于Date.toUTCString()的格式。
 - ;secure，指定cookie只能在加密协议https下发送。
 
-### body
+### body，head
 
 body属性返回当前文档的body或frameset节点，如果不存在这样的节点，就返回null。这个属性是可写的，如果对其写入一个新的节点，会导致原有的所有子节点被移除。
+
+head属性返回当前文档的head节点。如果当前文档有多个head，则返回第一个。
+
+```javascript
+
+document.head === document.querySelector("head") 
+
+```
 
 ### 文档信息属性
 
