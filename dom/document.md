@@ -31,7 +31,7 @@ document对象有不同的办法可以获取。
 
 document对象有很多属性，用得比较多的是下面这些。
 
-### doctype，documentElement，defaultView，designMode
+### doctype，documentElement，defaultView，body，head，activeElement
 
 对于HTML文档来说，document对象一般有两个子节点。第一个子节点是document.doctype，它是一个对象，包含了当前文档类型（Document Type Declaration，简写DTD）信息。对于HTML5文档，该节点就代表&lt;!DOCTYPE html&gt;。如果网页没有声明DTD，该属性返回null。另外，document.firstChild通常就返回这个节点。
 
@@ -53,15 +53,19 @@ var win = document.defaultView;
 
 ```
 
-designMode属性控制当前document是否可编辑。通常会打开iframe的designMode属性，将其变为一个所见即所得的编辑器。
+body属性返回当前文档的body或frameset节点，如果不存在这样的节点，就返回null。这个属性是可写的，如果对其写入一个新的节点，会导致原有的所有子节点被移除。
+
+head属性返回当前文档的head节点。如果当前文档有多个head，则返回第一个。
 
 ```javascript
 
-iframe_node.contentDocument.designMode = "on";
+document.head === document.querySelector("head") 
 
 ```
 
-### documentURI，URL，domain
+activeElement属性返回当前文档中获得焦点的那个元素。用户通常可以使用tab键移动焦点，使用空格键激活焦点，比如如果焦点在一个链接上，此时按一下空格键，就会跳转到该链接。
+
+### documentURI，URL，domain，lastModified，location，readyState，referrer，title
 
 documentURI属性和URL属性都返回当前文档的网址。不同之处是documentURI属性是所有文档都具备的，URL属性则是HTML文档独有的。
 
@@ -80,7 +84,81 @@ if (document.domain === badDomain)
 
 二级域名的情况下，domain属性可以设置为对应的一级域名。比如，当前域名是sub.example.com，则domain属性可以设置为example.com。除此之外的写入，都是不可以的。
 
-### implementation，styleSheets
+lastModified属性返回当前文档最后修改的时间戳，格式为字符串。
+
+```javascript
+
+document.lastModified 
+// Tuesday, July 10, 2001 10:19:42
+
+```
+
+注意，lastModified属性的值是字符串，所以不能用来直接比较，两个文档谁的日期更新，需要用Date.parse方法转成时间戳格式，才能进行比较。
+
+```javascript
+
+if (Date.parse(doc1.lastModified) > Date.parse(doc2.lastModified)) {
+  // ...
+}
+
+```
+
+location属性返回一个只读对象，提供了当前文档的URL信息。
+
+```javascript
+
+// 假定当前网址为http://user:passwd@www.example.com:4097/path/a.html?x=111#part1
+
+document.location.href // "http://user:passwd@www.example.com:4097/path/a.html?x=111#part1"
+document.location.protocol // "http:"
+document.location.host // "www.example.com:4097"
+document.location.hostname // "www.example.com"
+document.location.port // "4097"
+document.location.pathname // "/path/a.html"
+document.location.search // "?x=111"
+document.location.hash // "#part1"
+document.location.user // "user"
+document.location.password // "passed" 
+
+// 跳转到另一个网址
+document.location.assign('http://www.google.com')
+// 优先从服务器重新加载
+document.location.reload(true)
+// 优先从本地缓存重新加载（默认值）
+document.location.reload(false)
+// 跳转到另一个网址，但当前文档不保留在history对象中，
+// 即无法用后退按钮，回到当前文档
+document.location.assign('http://www.google.com')
+// 将location对象转为字符串，等价于document.location.href
+document.location.toString()
+
+```
+
+虽然location属性返回的对象是只读的，但是可以将URL赋值给这个属性，网页就会自动跳转到指定网址。
+
+```javascript
+
+document.location = 'http://www.example.com';
+// 等价于
+document.location.href = 'http://www.example.com';
+
+```
+
+document.location属性与window.location属性等价，历史上，IE曾经不允许对document.location赋值，为了保险起见，建议优先使用window.location。如果只是单纯地获取当前网址，建议使用document.URL。
+
+readyState属性返回当前文档的状态，共有三种可能的值，加载HTML代码阶段（尚未完成解析）是“loading”，加载外部资源阶段是“interactive”，全部加载完成是“complete”。
+
+referrer属性返回一个字符串，表示前文档的访问来源，如果是无法获取来源或是用户直接键入网址，而不是从其他网页点击，则返回一个空字符串。
+
+title属性返回当前文档的标题，该属性是可写的。
+
+```javascript
+
+document.title = '新标题';
+
+```
+
+### implementation，compatMode，designMode
 
 implementation属性返回一个对象，用来甄别当前环境部署了哪些DOM相关接口。implementation属性的hasFeature方法，可以判断当前环境是否部署了特定版本的特定接口。
 
@@ -89,25 +167,26 @@ implementation属性返回一个对象，用来甄别当前环境部署了哪些
 document.implementation.hasFeature( 'HTML, 2.0 )
 // true
 
+document.implementation.hasFeature('MutationEvents','2.0')
+// true
+
 ```
 
-上面代码表示，当前环境部署了DOM HTML 2.0版。
+上面代码表示，当前环境部署了DOM HTML 2.0版和MutationEvents的2.0版。
 
-styleSheets属性返回一个类似数组的对象，包含了当前网页的所有样式表。该属性提供了样式表操作的接口。然后，每张样式表对象的cssRules属性，返回该样式表的所有CSS规则。这又方便了操作具体的CSS规则。
+compatMode属性返回浏览器处理文档的模式，可能的值为BackCompat（向后兼容模式）和 CSS1Compat（严格模式）。
+
+designMode属性控制当前document是否可编辑。通常会打开iframe的designMode属性，将其变为一个所见即所得的编辑器。
 
 ```javascript
 
-var allSheets = [].slice.call(document.styleSheets);
+iframe_node.contentDocument.designMode = "on";
 
 ```
 
-上面代码中，使用slice方法将document.styleSheets转为数组，以便于进一步处理。
+### anchors，embeds，forms，images，links，scripts，styleSheets
 
-### activeElement
-
-activeElement属性返回当前文档中获得焦点的那个元素。用户通常可以使用tab键移动焦点，使用空格键激活焦点，比如如果焦点在一个链接上，此时按一下空格键，就会跳转到该链接。
-
-### anchors，embeds，forms
+document对象有一些属性，指向特定元素的集合。这些集合都是动态的，原节点有任何变化，立刻会反映在集合中。
 
 anchors属性返回网页中所有的a节点元素。注意，只有指定了name属性的a元素，才会包含在anchors属性之中。
 
@@ -123,6 +202,36 @@ var selectFormElement = document.forms[index].elements[index];
 ```
 
 上面代码获取指定表单的指定元素。
+
+images属性返回页面所有图片元素（即img标签）。
+
+```javascript
+
+var ilist = document.images;
+
+for(var i = 0; i < ilist.length; i++) {
+  if(ilist[i].src == "banner.gif") {
+    // ...
+  }
+}
+
+```
+
+上面代码在所有img标签中，寻找特定图片。
+
+links属性返回当前文档所有的链接元素（即a标签，或者说具有href属性的元素）。
+
+scripts属性返回当前文档的所有脚本（即script标签）。
+
+styleSheets属性返回一个类似数组的对象，包含了当前网页的所有样式表。该属性提供了样式表操作的接口。然后，每张样式表对象的cssRules属性，返回该样式表的所有CSS规则。这又方便了操作具体的CSS规则。
+
+```javascript
+
+var allSheets = [].slice.call(document.styleSheets);
+
+```
+
+上面代码中，使用slice方法将document.styleSheets转为数组，以便于进一步处理。
 
 ### cookie
 
@@ -147,74 +256,6 @@ cookie的值可以用encodeURIComponent方法进行处理，对逗号、分号�
 - ;max-age=max-age-in-seconds，指定cookie有效期，比如60*60*24*365（即一年31536e3秒）。
 - ;expires=date-in-GMTString-format，指定cookie过期时间，日期格式等同于Date.toUTCString()的格式。
 - ;secure，指定cookie只能在加密协议https下发送。
-
-### body，head
-
-body属性返回当前文档的body或frameset节点，如果不存在这样的节点，就返回null。这个属性是可写的，如果对其写入一个新的节点，会导致原有的所有子节点被移除。
-
-head属性返回当前文档的head节点。如果当前文档有多个head，则返回第一个。
-
-```javascript
-
-document.head === document.querySelector("head") 
-
-```
-
-### 文档信息属性
-
-- title：文档的标题。
-- lastModified：文档文件的上一次修改时间。
-- referrer：文档的访问来源。
-- URL：文档的URL。
-- compatMode：浏览器处理文档的模式，可能的值为BackCompat（向后兼容模式）和 CSS1Compat（严格模式）。
-
-### 指向其他节点或对象的属性
-
-- doctype：文档类型节点。
-- documentElement：html元素节点。
-- head：head元素节点。
-- body：body元素节点。
-- activeElement：文档中被激活（focused/active）的元素。
-- defaultView：当前文档的JavaScript顶层对象，即window对象。
-
-```javascript
-
-document.doctype // <!DOCTYPE html>
-document.documentElement // <html>...</html>
-document.head // <head>...</head>
-document.body // <body>...</body>
-document.defaultView // window
-
-document.querySelector('textarea').focus();
-document.activeElement // <textarea>
-
-```
-
-### 指向特定元素集合的属性
-
-document对象有一些属性，指向特定元素的集合。
-
-- document.all ：文档中所有的元素，Firefox不支持该属性。
-- document.forms ：所有的form元素。
-- document.images：所有的img元素。
-- document.links：所有的a元素。
-- document.scripts：所有的script元素。
-- document.styleSheets：所有的link或者style元素。
-
-上面所有的元素集合都是动态的，原节点有任何变化，立刻会反映在这些集合中。
-
-### implementation属性
-
-该属性指向一个对象，提供浏览器支持的模块信息，它的hasFeature方法返回一个布尔值，表示是否支持某个模块。
-
-```javascript
-
-document.implementation.hasFeature('MutationEvents','2.0')
-// true
-
-```
-
-上面代码表示，当前浏览器支持MutationEvents模块的2.0版本。
 
 ## document对象的方法
 
