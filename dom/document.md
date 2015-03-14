@@ -33,6 +33,10 @@ document对象有很多属性，用得比较多的是下面这些。
 
 ### doctype，documentElement，defaultView，body，head，activeElement
 
+以下属性指向文档内部的某个节点。
+
+**（1）doctype**
+
 对于HTML文档来说，document对象一般有两个子节点。第一个子节点是document.doctype，它是一个对象，包含了当前文档类型（Document Type Declaration，简写DTD）信息。对于HTML5文档，该节点就代表&lt;!DOCTYPE html&gt;。如果网页没有声明DTD，该属性返回null。另外，document.firstChild通常就返回这个节点。
 
 ```javascript
@@ -43,7 +47,12 @@ doctype // "<!DOCTYPE html>"
 doctype.name // "html"
 
 ```
+
+**（2）documentElement**
+
 第二个子节点是document.documentElement，表示当前文档的根节点（root）。对于HTML网页，该属性返回html节点，代表&lt;html lang="en"&gt;。
+
+**（3）defaultView**
 
 defaultView属性，在浏览器中返回document对象所在的window对象，否则返回null。
 
@@ -53,7 +62,11 @@ var win = document.defaultView;
 
 ```
 
+**（4）body**
+
 body属性返回当前文档的body或frameset节点，如果不存在这样的节点，就返回null。这个属性是可写的，如果对其写入一个新的节点，会导致原有的所有子节点被移除。
+
+**（4）head**
 
 head属性返回当前文档的head节点。如果当前文档有多个head，则返回第一个。
 
@@ -63,11 +76,19 @@ document.head === document.querySelector("head")
 
 ```
 
+**（5）activeElement**
+
 activeElement属性返回当前文档中获得焦点的那个元素。用户通常可以使用tab键移动焦点，使用空格键激活焦点，比如如果焦点在一个链接上，此时按一下空格键，就会跳转到该链接。
 
-### documentURI，URL，domain，lastModified，location，readyState，referrer，title
+### documentURI，URL，domain，lastModified，location，referrer，title，characterSet
+
+以下属性返回文档信息。
+
+**（1）documentURI，URL**
 
 documentURI属性和URL属性都返回当前文档的网址。不同之处是documentURI属性是所有文档都具备的，URL属性则是HTML文档独有的。
+
+**（2）domain**
 
 domain属性返回当前文档的域名。比如，某张网页的网址是 http://www.example.com/hello.html ，domain属性就等于 www.example.com 。如果无法获取域名，该属性返回null。
 
@@ -83,6 +104,8 @@ if (document.domain === badDomain)
 上面代码判断，如果当前域名等于指定域名，则关闭窗口。
 
 二级域名的情况下，domain属性可以设置为对应的一级域名。比如，当前域名是sub.example.com，则domain属性可以设置为example.com。除此之外的写入，都是不可以的。
+
+**（3）lastModified**
 
 lastModified属性返回当前文档最后修改的时间戳，格式为字符串。
 
@@ -102,6 +125,8 @@ if (Date.parse(doc1.lastModified) > Date.parse(doc2.lastModified)) {
 }
 
 ```
+
+**（4）location**
 
 location属性返回一个只读对象，提供了当前文档的URL信息。
 
@@ -146,9 +171,11 @@ document.location.href = 'http://www.example.com';
 
 document.location属性与window.location属性等价，历史上，IE曾经不允许对document.location赋值，为了保险起见，建议优先使用window.location。如果只是单纯地获取当前网址，建议使用document.URL。
 
-readyState属性返回当前文档的状态，共有三种可能的值，加载HTML代码阶段（尚未完成解析）是“loading”，加载外部资源阶段是“interactive”，全部加载完成是“complete”。
+**（5）referrer**
 
 referrer属性返回一个字符串，表示前文档的访问来源，如果是无法获取来源或是用户直接键入网址，而不是从其他网页点击，则返回一个空字符串。
+
+**（6）title**
 
 title属性返回当前文档的标题，该属性是可写的。
 
@@ -158,7 +185,33 @@ document.title = '新标题';
 
 ```
 
+**（7）characterSet**
+
+characterSet属性返回渲染当前文档的字符集，比如UTF-8、ISO-8859-1。
+
+### readyState，designModed
+
+以下属性与文档行为有关。
+
+**（1）readyState**
+
+readyState属性返回当前文档的状态，共有三种可能的值，加载HTML代码阶段（尚未完成解析）是“loading”，加载外部资源阶段是“interactive”，全部加载完成是“complete”。
+
+**（2）designModed**
+
+designMode属性控制当前document是否可编辑。通常会打开iframe的designMode属性，将其变为一个所见即所得的编辑器。
+
+```javascript
+
+iframe_node.contentDocument.designMode = "on";
+
+```
+
 ### implementation，compatMode，designMode
+
+以下属性返回文档的环境信息。
+
+**（1）implementation**
 
 implementation属性返回一个对象，用来甄别当前环境部署了哪些DOM相关接口。implementation属性的hasFeature方法，可以判断当前环境是否部署了特定版本的特定接口。
 
@@ -174,23 +227,23 @@ document.implementation.hasFeature('MutationEvents','2.0')
 
 上面代码表示，当前环境部署了DOM HTML 2.0版和MutationEvents的2.0版。
 
+**（2）compatMode**
+
 compatMode属性返回浏览器处理文档的模式，可能的值为BackCompat（向后兼容模式）和 CSS1Compat（严格模式）。
-
-designMode属性控制当前document是否可编辑。通常会打开iframe的designMode属性，将其变为一个所见即所得的编辑器。
-
-```javascript
-
-iframe_node.contentDocument.designMode = "on";
-
-```
 
 ### anchors，embeds，forms，images，links，scripts，styleSheets
 
-document对象有一些属性，指向特定元素的集合。这些集合都是动态的，原节点有任何变化，立刻会反映在集合中。
+以下属性返回文档内部特定元素的集合（即HTMLCollection对象，详见下文）。这些集合都是动态的，原节点有任何变化，立刻会反映在集合中。
+
+**（1）anchors**
 
 anchors属性返回网页中所有的a节点元素。注意，只有指定了name属性的a元素，才会包含在anchors属性之中。
 
+**（2）embeds**
+
 embeds属性返回网页中所有嵌入对象，即embed标签，返回的格式为类似数组的对象（nodeList）。
+
+**（3）forms**
 
 forms属性返回页面中所有表单。
 
@@ -202,6 +255,8 @@ var selectFormElement = document.forms[index].elements[index];
 ```
 
 上面代码获取指定表单的指定元素。
+
+**（4）images**
 
 images属性返回页面所有图片元素（即img标签）。
 
@@ -219,9 +274,15 @@ for(var i = 0; i < ilist.length; i++) {
 
 上面代码在所有img标签中，寻找特定图片。
 
+**（4）links**
+
 links属性返回当前文档所有的链接元素（即a标签，或者说具有href属性的元素）。
 
+**（5）links**
+
 scripts属性返回当前文档的所有脚本（即script标签）。
+
+**（6）styleSheets**
 
 styleSheets属性返回一个类似数组的对象，包含了当前网页的所有样式表。该属性提供了样式表操作的接口。然后，每张样式表对象的cssRules属性，返回该样式表的所有CSS规则。这又方便了操作具体的CSS规则。
 
@@ -256,6 +317,35 @@ cookie的值可以用encodeURIComponent方法进行处理，对逗号、分号�
 - ;max-age=max-age-in-seconds，指定cookie有效期，比如60*60*24*365（即一年31536e3秒）。
 - ;expires=date-in-GMTString-format，指定cookie过期时间，日期格式等同于Date.toUTCString()的格式。
 - ;secure，指定cookie只能在加密协议https下发送。
+
+## HTMLCollection接口
+
+HTMLCollection是一种接口规格，代表HTML元素的集合，属于类似数组的对象。该集合的网页元素都是动态的，元素的变化都会动态反映在集合中。document.links、docuement.forms、document.images等属性，返回的都是这个接口的对象。
+
+部署了HTMLCollection接口的对象，具有length属性，表示集合成员的总数。另外有两个方法，item()和namedItem()。
+
+item方法根据成员的位置参数（从0开始），返回该成员。
+
+```javascript
+
+var c = document.images; 
+var img1 = c.item(10);  
+// 等价于下面的写法
+var img1 = c[1];  
+
+```
+
+namedItem方法根据成员的ID属性或name属性，返回该成员。如果没有对应的成员，则返回null。
+
+```javascript
+
+var elem = document.forms.namedItem("myForm");
+// 等价于下面的写法
+var elem = document.forms["myForm"];
+
+```
+
+由于item方法和namedItem方法，都可以用方括号运算符代替，所以建议一律使用方括号运算符。
 
 ## document对象的方法
 
