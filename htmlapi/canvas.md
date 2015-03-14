@@ -190,12 +190,12 @@ canvas允许将图像文件插入画布，做法是读取图片后，使用drawI
 {% highlight javascript %}
 
 var img = new Image();
-
 img.src = "image.png";
-
 ctx.drawImage(img, 0, 0); // 设置对应的图像对象，以及它在画布上的位置
 
 {% endhighlight %}
+
+上面代码将一个PNG图像载入canvas。
 
 由于图像的载入需要时间，drawImage方法只能在图像完全载入后才能调用，因此上面的代码需要改写。
 
@@ -204,15 +204,12 @@ ctx.drawImage(img, 0, 0); // 设置对应的图像对象，以及它在画布上
 var image = new Image(); 
 
 image.onload = function() { 
+  var canvas = document.createElement("canvas");
+	canvas.width = image.width;
+	canvas.height = image.height;
+	canvas.getContext("2d").drawImage(image, 0, 0);
 
-	if (image.width != canvas.width)
-        canvas.width = image.width;
-    if (image.height != canvas.height)
-        canvas.height = image.height;
-
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(image, 0, 0);
-
+	return canvas;
 } 
 
 image.src = "image.png";

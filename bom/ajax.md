@@ -613,6 +613,122 @@ Access-Control-Allow-Credentials: true
 
 CORS机制与JSONP模式的使用目的相同，而且更强大。JSONP只支持GET请求，CORS可以支持所有类型的HTTP请求。在发生错误的情况下，CORS可以得到更详细的错误信息，部署更有针对性的错误处理代码。JSONP的优势在于可以用于老式浏览器，以及可以向不支持CORS的网站请求数据。
 
+## Fetch API
+
+Fetch API是一种新兴的规范，用来操作浏览器发出的网络请求，目的是在将来取代XMLHttpRequest。它的作用与XMLHttpRequest类似，但是返回的是Promise对象，因此API大大简化，并且避免了嵌套的回调函数。
+
+下面是一个XMLHttpRequest对象发出Ajax请求的常规例子。
+
+```javascript
+
+function reqListener() {  
+  var data = JSON.parse(this.responseText);  
+  console.log(data);  
+}
+
+function reqError(err) {  
+  console.log('Fetch Error :-S', err);  
+}
+
+var oReq = new XMLHttpRequest();  
+oReq.onload = reqListener;  
+oReq.onerror = reqError;  
+oReq.open('get', './api/some.json', true);  
+oReq.send();
+
+```
+
+上面的例子用Fetch实现如下。
+
+```javascript
+
+fetch('./api/some.json')  
+  .then(function(response) {  
+      if (response.status !== 200) {  
+        console.log('请求失败，状态码：' + response.status);  
+        return;  
+      }      
+      response.json().then(function(data) {  
+        console.log(data);  
+      });  
+  }).catch(function(err) {  
+    console.log('出错：', err);  
+  });
+
+```  
+
+上面代码中，因为HTTP请求返回的response对象是一个Stream对象，使用json方法转为JSON格式，但是json方法返回的是一个Promise对象。
+
+response对象除了json方法，还包含了HTTP回应的元数据。
+
+```javascript
+
+fetch('users.json').then(function(response) {  
+  console.log(response.headers.get('Content-Type'));  
+  console.log(response.headers.get('Date'));
+
+  console.log(response.status);  
+  console.log(response.statusText);  
+  console.log(response.type);  
+  console.log(response.url);  
+});
+
+```
+
+上面代码中，response.type表示HTTP回应的类型，它有以下三个值。
+
+- basic：正常的同域请求
+- cors：CORS机制下的跨域请求
+- opaque：非CORS机制下的跨域请求，这时无法读取返回的数据，也无法判断是否请求成功
+
+如果需要在CORS机制下发出跨域请求，需要指明状态。
+
+```javascript
+
+fetch('http://some-site.com/cors-enabled/some.json', {mode: 'cors'})  
+  .then(function(response) {  
+    return response.text();  
+  })  
+  .then(function(text) {  
+    console.log('Request successful', text);  
+  })  
+  .catch(function(error) {  
+    log('Request failed', error)  
+  });
+
+```
+
+除了指定模式，fetch方法的第二个参数还可以用来配置其他值，比如指定cookie连同HTTP请求一起发出。
+
+```javascript
+
+fetch(url, {  
+  credentials: 'include'  
+})
+
+```
+
+发出POST请求的写法如下。
+
+```javascript
+
+fetch(url, {  
+    method: 'post',  
+    headers: {  
+      "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"  
+    },  
+    body: 'foo=bar&lorem=ipsum'  
+  })
+  .then(json)  
+  .then(function (data) {  
+    console.log('Request succeeded with JSON response', data);  
+  })  
+  .catch(function (error) {  
+    console.log('Request failed', error);  
+  });
+
+```
+
 ## 参考链接
 
 - MDN, [Using XMLHttpRequest](https://developer.mozilla.org/en-US/docs/DOM/XMLHttpRequest/Using_XMLHttpRequest)
@@ -621,3 +737,4 @@ CORS机制与JSONP模式的使用目的相同，而且更强大。JSONP只支持
 - Matt West, [Uploading Files with AJAX](http://blog.teamtreehouse.com/uploading-files-ajax)
 - Monsur Hossain, [Using CORS](http://www.html5rocks.com/en/tutorials/cors/)
 - MDN, [HTTP access control (CORS)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS)
+- Matt Gaunt, [Introduction to fetch()](http://updates.html5rocks.com/2015/03/introduction-to-fetch)
