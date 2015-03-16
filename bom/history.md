@@ -77,7 +77,16 @@ history.pushState(stateObj, "page 2", "2.html");
 
 > 注意，pushState方法不会触发页面刷新。
 
-如果 pushState 的url参数，设置了一个当前网页的#号值（即hash），并不会触发hashchange事件。
+如果 pushState 的url参数，设置了一个当前网页的#号值（即hash），并不会触发hashchange事件。如果设置了一个非同域的网址，则会报错。
+
+```javascript
+
+// 报错
+history.pushState(null, null, 'https://twitter.com/hello');
+
+```
+
+上面代码中，pushState想要插入一个非同域的网址，导致报错。这样设计的目的是，防止恶意代码让用户以为他们是在另一个网站上。
 
 history.replaceState方法的参数与pushState方法一模一样，区别是它修改浏览历史中当前页面的值。假定当前网页是example.com/example.html。
 

@@ -4,7 +4,7 @@ title: JavaScript 标准参考教程（alpha）
 date: 2012-11-18
 modifiedOn: 2014-05-18
 ---
-	
+
 <h2 id="introduction">导论</h2>
 
 - [前言](introduction/preface.html)
@@ -19,7 +19,7 @@ modifiedOn: 2014-05-18
 - [对象](grammar/object.html)
 - [数组](grammar/array.html)
 - [函数](grammar/function.html)
-- [运算符](grammar/operator.html)		
+- [运算符](grammar/operator.html)
 - [数据类型转换](grammar/conversion.html)（基本完成）
 - [错误处理机制](grammar/error.html)（基本完成）
 - [编程风格](grammar/style.html)（基本完成）
@@ -66,7 +66,7 @@ modifiedOn: 2014-05-18
 - [Web Notification API](bom/notification.html)
 - [Performance API](bom/performance.html)
 - [移动设备API](bom/mobile.html)
-		
+
 <h2 id="htmlapi">HTML网页的API</h2>
 
 - [HTML网页元素](htmlapi/elements.html)
@@ -110,7 +110,7 @@ modifiedOn: 2014-05-18
 - [MVC模式和Backbone.js](advanced/backbonejs.html)
 - [严格模式](advanced/strict.html)（基本完成）
 - [ECMAScript 6 介绍](advanced/ecmascript6.html)
-		
+
 <hr></hr>
 
 <h2 id="appendix">附录</h2>
@@ -138,6 +138,7 @@ modifiedOn: 2014-05-18
 - [Events模块](nodejs/events.html)
 - [Stream接口](nodejs/stream.html)
 - [Child Process模块](nodejs/child-process.html)
+- [OS模块](nodejs/os.html)
 - [Cluster模块](nodejs/cluster.html)
 - [Express框架](nodejs/express.html)
 

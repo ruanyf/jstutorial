@@ -207,7 +207,7 @@ var isTrue = function(value, callback) {
 
 var callback = function (error, value) {
   if (error) {
-    return console.log(error); 
+    return console.log(error);
   }
   console.log(value);
 }
@@ -562,7 +562,7 @@ http.createServer(function (request, response) {
     var p = (uploadedBytes / fileSize) * 100; 
     response.write("Uploading " + parseInt(p, 0) + " %\n"); 
   }); 
-  
+
   request.on('end', function () { 
     response.end("File Upload Complete"); 
   });
@@ -583,7 +583,6 @@ function getTestPersonaLoginCredentials(callback) {
     host: 'personatestuser.org',
     path: '/email'
   }, function(response) {
-    
     var body = '';
 
     response.on('data', function(d) {
@@ -679,6 +678,8 @@ rm csr.pem
 
 上面的命令生成两个文件：ert.pem（证书文件）和 key.pem（私钥文件）。有了这两个文件，就可以运行HTTPs服务器了。
 
+Node.js提供一个https模块，专门用于处理加密访问。
+
 {% highlight javascript %}
 
 var https = require('https');
@@ -703,6 +704,29 @@ var a = https.createServer(options, function (req, res) {
 curl -k https://localhost:8000
 
 {% endhighlight %}
+
+### 模块属性
+
+（1）HTTP请求的属性
+
+- headers：HTTP请求的头信息。
+- url：请求的路径。
+
+### 模块方法
+
+（1）http模块的方法
+
+- createServer(callback)：创造服务器实例。
+
+（2）服务器实例的方法
+
+- listen(port)：启动服务器监听指定端口。
+
+（3）HTTP回应的方法
+
+- setHeader(key, value)：指定HTTP头信息。
+- write(str)：指定HTTP回应的内容。
+- end()：发送HTTP回应。
 
 ## Buffer对象
 

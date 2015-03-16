@@ -50,9 +50,9 @@ $ npm install
 
 var express = require('express');
 var app = express();
- 
+
 app.use(express.static(__dirname + '/public'));
- 
+
 app.listen(8080);
 
 ```
@@ -64,13 +64,12 @@ app.listen(8080);
 ```javascript
 
 // index.js
-
 var express = require('express');
 var app = express();
-app.get('/', function (req, res) {  
-    res.send('Hello world!');
+app.get('/', function (req, res) {
+  res.send('Hello world!');
 });
-app.listen(3000);  
+app.listen(3000);
 
 ```
 
@@ -78,22 +77,51 @@ app.listen(3000);
 
 {% highlight bash %}
 
-node index
+$ node index
 
 {% endhighlight %}
 
 默认情况下，网站运行在本机的3000端口，网页显示Hello World。
 
-index.js中的`app.get`用于指定不同的访问路径所对应的回调函数，这叫做“路由”（routing）。上面代码只指定了根目录的回调函数，因此只有一个路由记录，实际应用中，可能有多个路由记录。这时，最好就把路由放到一个单独的文件中，比如新建一个routes子目录。
+index.js中的`app.get`用于指定不同的访问路径所对应的回调函数，这叫做“路由”（routing）。上面代码只指定了根目录的回调函数，因此只有一个路由记录。实际应用中，可能有多个路由记录。
+
+
+```javascript
+
+// index.js
+var express = require('express');
+var app = express();
+
+app.get('/', function (req, res) {
+  res.send('Hello world!');
+});
+app.get('/customer', function(req, res){
+  res.send('customer page');
+});
+app.get('/admin', function(req, res){
+  res.send('admin page');
+});
+
+app.listen(3000);
+
+```
+
+这时，最好就把路由放到一个单独的文件中，比如新建一个routes子目录。
 
 ```javascript
 
 // routes/index.js
 
-module.exports = function (app) {  
-    app.get('/', function (req, res) {  
-	    res.send('Hello world');
-	});
+module.exports = function (app) {
+  app.get('/', function (req, res) {
+    res.send('Hello world');
+  });
+  app.get('/customer', function(req, res){
+    res.send('customer page');
+  });
+  app.get('/admin', function(req, res){
+    res.send('admin page');
+  });
 };
 
 ```
@@ -103,11 +131,37 @@ module.exports = function (app) {
 ```javascript
 
 // index.js
+var express = require('express');
+var app = express();
+var routes = require('./routes')(app);
+app.listen(3000);
 
-var express = require('express');  
-var app = express();  
-var routes = require('./routes')(app);  
-app.listen(3000);  
+```
+
+### 搭建HTTPs服务器
+
+使用Express搭建HTTPs加密服务器，也很简单。
+
+```javascript
+
+var fs = require('fs');
+var options = {
+  key: fs.readFileSync('E:/ssl/myserver.key'),
+  cert: fs.readFileSync('E:/ssl/myserver.crt'),
+  passphrase: '1234'
+};
+
+var https = require('https');
+var express = require('express');
+var app = express();
+
+app.get('/', function(req, res){
+  res.send('Hello World Expressjs');
+});
+
+var server = https.createServer(options, app);
+server.listen(8084);
+console.log('Server is running on port 8084');
 
 ```
 

@@ -6,40 +6,30 @@ date: 2014-10-20
 modifiedOn: 2014-10-20
 ---
 
-## 基本用法
+## 概述
 
-Events模块是node.js对“发布/订阅”模式（publish/subscribe）的部署。该模块通过EventEmitter属性，提供了一个构造函数。该构造函数的实例具有on方法，可以用来监听指定事件，并触发回调函数。任意对象都可以发布指定事件，被EventEmitter实例的on方法监听到。
+### 基本用法
+
+Events模块是node.js对“发布/订阅”模式（publish/subscribe）的部署。一个对象通过这个模块，向另一个对象传递消息。该模块通过EventEmitter属性，提供了一个构造函数。该构造函数的实例具有on方法，可以用来监听指定事件，并触发回调函数。任意对象都可以发布指定事件，被EventEmitter实例的on方法监听到。
 
 下面是一个实例，先建立一个消息中心，然后通过on方法，为各种事件指定回调函数，从而将程序转为事件驱动型，各个模块之间通过事件联系。
 
 {% highlight javascript %}
 
 var EventEmitter = require("events").EventEmitter;
- 
+
 var ee = new EventEmitter();
 ee.on("someEvent", function () {
   console.log("event has occured");
 });
- 
+
 ee.emit("someEvent");
 
 {% endhighlight %}
 
 上面代码在加载events模块后，通过EventEmitter属性建立了一个EventEmitter对象实例，这个实例就是消息中心。然后，通过on方法为someEvent事件指定回调函数。最后，通过emit方法触发someEvent事件。
 
-emit方法还接受第二个参数，用于向回调函数提供参数。
-
-{% highlight javascript %}
-
-ee.on("someEvent", function (data){
-        console.log(data);
-});
- 
-ee.emit("someEvent", data);
-
-{% endhighlight %}
-
-EventEmitter实例的emit方法，用来触发事件。它的第一个参数是事件名称，其余参数都会依次传入回调函数。
+### on方法
 
 默认情况下，Node.js允许同一个事件最多可以指定10个回调函数。
 
@@ -51,7 +41,7 @@ ee.on("someEvent", function () { console.log("event 3"); });
 
 {% endhighlight %}
 
-超过10个回调函数，会发出一个警告。这个门槛值可以通过setMaxListeners方法改变。 
+超过10个回调函数，会发出一个警告。这个门槛值可以通过setMaxListeners方法改变。
 
 {% highlight javascript %}
 
@@ -59,7 +49,27 @@ ee.setMaxListeners(20);
 
 {% endhighlight %}
 
-events模块的作用，还在于其他模块可以继承这个模块，因此也就拥有了EventEmitter接口。
+### emit方法
+
+EventEmitter实例的emit方法，用来触发事件。它的第一个参数是事件名称，其余参数都会依次传入回调函数。
+
+{% highlight javascript %}
+
+var EventEmitter = require('events').EventEmitter;
+var myEmitter = new EventEmitter;
+
+var connection = function(id){
+  console.log('client id: ' + id);
+};
+
+myEmitter.on('connection', connection);
+myEmitter.emit('connection', 6);
+
+{% endhighlight %}
+
+## EventEmitter接口的部署
+
+Events模块的作用，还在于其他模块可以部署EventEmitter接口，从而也能够订阅和发布消息。
 
 {% highlight javascript %}
 
@@ -109,7 +119,7 @@ var Radio = function(station) {
     this.on('newListener', function(listener) {
         console.log('Event Listener: ' + listener);
     });
-    
+
 };
 
 util.inherits(Radio, EventEmitter);
@@ -125,19 +135,19 @@ module.exports = Radio;
 var Radio = require('./radio.js');
 
 var station = {
-    freq: '80.16',
-    name: 'Rock N Roll Radio',
+  freq: '80.16',
+  name: 'Rock N Roll Radio',
 };
 
 var radio = new Radio(station);
 
 radio.on('open', function(station) {
-    console.log('"%s" FM %s 打开', station.name, station.freq);
-    console.log('♬ ♫♬');
+  console.log('"%s" FM %s 打开', station.name, station.freq);
+  console.log('♬ ♫♬');
 });
 
 radio.on('close', function(station) {
-    console.log('"%s" FM %s 关闭', station.name, station.freq);
+  console.log('"%s" FM %s 关闭', station.name, station.freq);
 });
 
 ```
@@ -152,11 +162,11 @@ Events模块默认支持两个事件。
 {% highlight javascript %}
 
 ee.on("newListener", function (evtName){
-	console.log("New Listener: " + evtName);
+  console.log("New Listener: " + evtName);
 });
 
 ee.on("removeListener", function (evtName){
-	console.log("Removed Listener: " + evtName);
+  console.log("Removed Listener: " + evtName);
 });
 
 function foo (){}
@@ -174,9 +184,28 @@ ee.removeListener("save-user", foo);
 
 ## EventEmitter实例的方法
 
-**（1）once方法**
+### once方法
 
 该方法类似于on方法，但是回调函数只触发一次。
+
+```javascript
+
+var EventEmitter = require('events').EventEmitter;
+var myEmitter = new EventEmitter;
+
+myEmitter.once('message', function(msg){
+  console.log('message: ' + msg);
+});
+
+myEmitter.emit('message', 'this is the first message');
+myEmitter.emit('message', 'this is the second message');
+myEmitter.emit('message', 'welcome to nodejs');
+
+```
+
+上面代码触发了三次message事件，但是回调函数只会在第一次调用时运行。
+
+下面代码指定，一旦服务器连通，只调用一次的回调函数。
 
 {% highlight javascript %}
 
@@ -186,9 +215,9 @@ server.once('connection', function (stream) {
 
 {% endhighlight %}
 
-该方法返回一个EventEmitter对象，所以可以链式加载监听函数。
+该方法返回一个EventEmitter对象，因此可以链式加载监听函数。
 
-**（2）removeListener方法**
+### removeListener方法
 
 该方法用于移除回调函数。它接受两个参数，第一个是事件名称，第二个是回调函数名称。这就是说，不能用于移除匿名函数。
 
