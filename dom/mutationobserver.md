@@ -26,9 +26,9 @@ Mutation Observer有以下特点：
 
 {% highlight javascript %}
 
-var MutationObserver = window.MutationObserver ||
-        window.WebKitMutationObserver || 
-        window.MozMutationObserver;
+var MutationObserver = window.MutationObserver
+  || window.WebKitMutationObserver
+  || window.MozMutationObserver;
 
 var observeMutationSupport = !!MutationObserver;
 
@@ -40,7 +40,7 @@ var observeMutationSupport = !!MutationObserver;
 
 {% highlight javascript %}
 
-var observer = new MutationObserver( callback );
+var observer = new MutationObserver(callback);
 
 {% endhighlight %}
 
@@ -50,20 +50,20 @@ observe方法指定所要观察的DOM元素，以及所要观察的特定变动�
 
 {% highlight javascript %}
 
-var article = document.querySelector( 'article' );
+var article = document.querySelector('article');
 
 var  options = {
-    'childList': true,
-    'attributes':true
+  'childList': true,
+  'attributes':true
 } ;
 
-observer.observe( article, options );
+observer.observe(article, options);
 
 {% endhighlight %}
 
 上面代码首先指定，所要观察的DOM元素是article，然后，指定所要观察的变动是子元素变动和属性变动。最后，将这两个限定条件作为参数，传入observer对象的observe方法。
 
-Mutation Observer所观察的DOM变动（即上面代码的option对象），包含以下类型：
+Mutation Observer所观察的DOM变动（即上面代码的options对象），包含以下类型：
 
 - **childList**：子元素的变动。
 - **attributes**：属性的变动。
@@ -120,17 +120,17 @@ MutationRecord对象包含了DOM的相关信息，有如下属性：
 {% highlight javascript %}
 
 var callback = function(records){
-    records.map(function(record){
-    	console.log('Mutation type: ' + record.type); 
-    	console.log('Mutation target: ' + record.target);
-    });
+  records.map(function(record){
+    console.log('Mutation type: ' + record.type);
+    console.log('Mutation target: ' + record.target);
+  });
 };
 
 var mo = new MutationObserver(callback);
 
 var option = {
-    'childList': true, 
-    'subtree': true
+  'childList': true,
+  'subtree': true
 };
 
 mo.observe(document.body, option);
@@ -146,9 +146,9 @@ mo.observe(document.body, option);
 {% highlight javascript %}
 
 var callback = function(records){
-    records.map(function(record){
-    	console.log('Previous attribute value: ' + record.oldValue);  
-    });
+  records.map(function(record){
+    console.log('Previous attribute value: ' + record.oldValue);
+  });
 };
 
 var mo = new MutationObserver(callback);
@@ -156,8 +156,8 @@ var mo = new MutationObserver(callback);
 var element = document.getElementById('#my_element');
 
 var options = {
-    'attributes': true,
-    'attributeOldValue': true 
+  'attributes': true,
+  'attributeOldValue': true
 }
 
 mo.observe(element, options);
@@ -166,9 +166,83 @@ mo.observe(element, options);
 
 上面代码先设定追踪属性变动（'attributes': true），然后设定记录变动前的值。实际发生变动时，会将变动前的值显示在控制台。
 
+### 取代DOM的ready方法
+
+网页加载的时候，DOM元素是一个接一个生成的，因此只要跟踪DOM的变动，就能在第一时间触发相关事件，因此也就没有必要使用DOM的ready方法。
+
+```javascript
+var observer = new MutationObserver(callback);
+observer.observe(document.documentElement, {
+  childList: true,
+  subtree: true
+});
+```
+
+上面代码中，监听document.documentElement（即HTML元素）的子元素的变动，subtree属性指定监听还包括子元素的下级元素。因此，任意一个网页元素一旦生成，就能立刻被监听到。
+
+下面的代码，使用MutationObserver对象封装一个监听DOM生成的函数。
+
+```javascript
+
+(function(win){
+  'use strict';
+
+  var listeners = [];
+  var doc = win.document;
+  var MutationObserver = win.MutationObserver || win.WebKitMutationObserver;
+  var observer;
+
+  function ready(selector, fn){
+    // 储存选择器和回调函数
+    listeners.push({
+      selector: selector,
+      fn: fn
+    });
+    if(!observer){
+      // 监听document变化
+      observer = new MutationObserver(check);
+      observer.observe(doc.documentElement, {
+        childList: true,
+        subtree: true
+      });
+    }
+    // 检查该元素是否已经在DOM中
+    check();
+  }
+
+  function check(){
+  // 检查DOM元素是否匹配已储存的元素
+    for(var i = 0; i < listeners.length; i++){
+      var listener = listeners[i];
+      // 检查指定元素是否有匹配
+      var elements = doc.querySelectorAll(listener.selector);
+      for(var j = 0; j < elements.length; j++){
+        var element = elements[j];
+        // 确保回调函数只会对该元素调用一次
+        if(!element.ready){
+          element.ready = true;
+          // 对该元素调用回调函数
+          listener.fn.call(element, element);
+        }
+      }
+    }
+  }
+
+  // 对外暴露ready
+  win.ready = ready;
+
+})(this);
+
+ready('.foo', function(element){
+  // ...
+});
+
+```
+
 ## 参考链接
 
 - Tiffany Brown, [Getting to know mutation observers](http://dev.opera.com/articles/view/mutation-observers-tutorial/)
 - Michal Budzynski, [JavaScript: The less known parts. DOM Mutations](http://michalbe.blogspot.com/2013/04/javascript-less-known-parts-dom.html)
 - Jeff Griffiths, [DOM MutationObserver – reacting to DOM changes without killing browser performance](https://hacks.mozilla.org/2012/05/dom-mutationobserver-reacting-to-dom-changes-without-killing-browser-performance/)
 - Addy Osmani, [Detect, Undo And Redo DOM Changes With Mutation Observers](http://addyosmani.com/blog/mutation-observers/)
+- Ryan Morr, [Using Mutation Observers to Watch for Element Availability](http://ryanmorr.com/using-mutation-observers-to-watch-for-element-availability/)

@@ -12,12 +12,12 @@ modifiedOn: 2014-01-17
 
 对象（object）是JavaScript的核心概念，也是最重要的数据类型。JavaScript的所有数据都可以被视为对象。
 
-简单说，所谓对象，就是一种无序的数据集合，由若干个“键值对”（key-value）构成。 
+简单说，所谓对象，就是一种无序的数据集合，由若干个“键值对”（key-value）构成。
 
 {% highlight javascript %}
 
 var o = {
-	p: "Hello World"
+  p: "Hello World"
 };
 
 {% endhighlight %}
@@ -31,7 +31,7 @@ var o = {
 {% highlight javascript %}
 
 var o = {
-	"p": "Hello World"
+  "p": "Hello World"
 };
 
 {% endhighlight %}
@@ -41,9 +41,9 @@ var o = {
 {% highlight javascript %}
 
 var o = {
-	"1p": "Hello World",
-	"h w": "Hello World",
-	"p+q": "Hello World"
+  "1p": "Hello World",
+  "h w": "Hello World",
+  "p+q": "Hello World"
 };
 
 {% endhighlight %}
@@ -57,7 +57,7 @@ var o = {
 {% highlight javascript %}
 
 var o = {
-	p: function(x) {return 2*x;}
+  p: function(x) {return 2*x;}
 };
 
 o.p(1)
@@ -103,7 +103,7 @@ var o3 = Object.create(null);
 {% highlight javascript %}
 
 var o = {
-	p: "Hello World"
+  p: "Hello World"
 };
 
 o.p // "Hello World"
@@ -118,7 +118,7 @@ o["p"] // "Hello World"
 {% highlight javascript %}
 
 var o = {
-	0.7: "Hello World"
+  0.7: "Hello World"
 };
 
 o.["0.7"] // "Hello World"
@@ -157,7 +157,7 @@ if(window['a']) {...} // 不报错
 {% highlight javascript %}
 
 if('a' in window) {
-	...
+  ...
 }
 
 {% endhighlight %}
@@ -195,8 +195,8 @@ o.p = 1;
 {% highlight javascript %}
 
 var o = {
-	key1: 1,
-	key2: 2
+  key1: 1,
+  key2: 2
 };
 
 Object.keys(o);
@@ -341,10 +341,10 @@ in运算符对继承的属性也有效。
 
 var o = new Object();
 
-o.hasOwnProperty('toString') 
+o.hasOwnProperty('toString')
 // false
 
-'toString' in o 
+'toString' in o
 // true
 
 {% endhighlight %}
@@ -362,7 +362,7 @@ for...in循环用来遍历一个对象的全部属性。
 var o = {a:1, b:2, c:3};
 
 for (i in o){
-	console.log(o[i]);
+  console.log(o[i]);
 }
 // 1
 // 2
@@ -374,16 +374,22 @@ for (i in o){
 
 {% highlight javascript %}
 
+// name是Person本身的属性
 function Person(name) {
-    this.name = name;
+  this.name = name;
 }
+
+// describe是Person.prototype的属性
 Person.prototype.describe = function () {
-    return 'Name: '+this.name;
+  return 'Name: '+this.name;
 };
 
 var person = new Person('Jane');
+
+// for...in循环会遍历实例自身的属性（name），
+// 以及继承的属性（describe）
 for (var key in person) {
-    console.log(key);
+  console.log(key);
 }
 // name
 // describe
@@ -404,6 +410,8 @@ for (var key in person) {
 // name
 
 {% endhighlight %}
+
+为了避免这一点，可以新建一个继承null的对象。由于null没有任何属性，所以新对象也就不会有继承的属性了。
 
 ## 类似数组的对象
 

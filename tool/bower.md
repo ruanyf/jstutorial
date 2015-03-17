@@ -14,7 +14,7 @@ Bower基于node.js，所以安装之前，必须先确保已安装node.js。
 
 {% highlight bash %}
 
-sudo npm install bower -global
+$ sudo npm install bower --global
 
 {% endhighlight %}
 
@@ -22,7 +22,7 @@ sudo npm install bower -global
 
 {% highlight bash %}
 
-bower help
+$ bower help
 
 {% endhighlight %}
 
@@ -30,13 +30,59 @@ bower help
 
 {% highlight bash %}
 
-sudo npm update -g bower
+# 更新
+$ sudo npm update -g bower
 
-sudo npm uninstall -global bower
+# 卸载
+$ sudo npm uninstall --global bower
 
 {% endhighlight %}
 
 ## 常用操作
+
+### 项目初始化
+
+在项目根目录下，运行下面的命令，进行初始化。
+
+```bash
+$ bower init
+```
+
+通过回答几个问题，就会自动生成bower.json文件。这是项目的配置文件，下面是一个例子。
+
+```javascript
+{
+  "name": "app-name",
+  "version": "0.1.0",
+  "main": ["path/to/app.html", "path/to/app.css", "path/to/app.js"],
+  "ignore": [".jshintrc","**/*.txt"],
+  "dependencies": {
+    "sass-bootstrap": "~3.0.0",
+    "modernizr": "~2.6.2",
+    "jquery": "latests"
+  },
+  "devDependencies": {"qunit": ">1.11.0"}
+}
+```
+
+有了bower.json文件以后，就可以用bower install命令，一下子安装所有库。
+
+{% highlight bash %}
+
+$ bower install
+
+{% endhighlight %}
+
+bower.json文件存放在库的根目录下，它的作用是（1）保存项目的库信息，供项目安装时使用，（2）向Bower.com提交你的库，该网站会读取bower.json，列入在线索引。
+
+```bash
+$ bower register <my-package-name> <git-endpoint>
+
+# 实例：在 bower.com 登记jquery
+$ bower register jquery git://github.com/jquery/jquery
+```
+
+注意，如果你的库与现有的库重名，就会提交失败。
 
 ### 库的安装
 
@@ -44,7 +90,7 @@ bower install命令用于安装某个库，需要指明库的名字。
 
 {% highlight bash %}
 
-bower install backbone
+$ bower install backbone
 
 {% endhighlight %}
 
@@ -52,11 +98,9 @@ Bower会使用库的名字，去在线索引中搜索该库的网址。某些情
 
 {% highlight bash %}
 
-bower install git://github.com/documentcloud/backbone.git
-
-bower install http://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js
-
-bower install ./some/path/relative/to/this/directory/backbone.js
+$ bower install git://github.com/documentcloud/backbone.git
+$ bower install http://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js
+$ bower install ./some/path/relative/to/this/directory/backbone.js
 
 {% endhighlight %}
 
@@ -66,7 +110,7 @@ bower install ./some/path/relative/to/this/directory/backbone.js
 
 {% highlight bash %}
 
-bower install jquery-ui#1.10.1
+$ bower install jquery-ui#1.10.1
 
 {% endhighlight %}
 
@@ -119,7 +163,7 @@ bower update用于更新一个库，将其更新为最新版本。
 
 {% highlight bash %}
 
-bower update jquery-ui
+$ bower update jquery-ui
 
 {% endhighlight %}
 
@@ -129,7 +173,7 @@ bower uninstall命令用于卸载指定的库。
 
 {% highlight bash %}
 
-bower uninstall jquery-ui
+$ bower uninstall jquery-ui
 
 {% endhighlight %}
 
@@ -169,59 +213,6 @@ Bower ls
 - endpoint：在线索引的网址，用来搜索各种库。
 - searchpath：一个数组，储存备选的在线索引网址。如果某个库在endpoint中找不到，则继续搜索该属性指定的网址，通常用于放置某些不公开的库。
 - shorthand_resolver：定义各个库名称简写形式。
-
-## 库信息文件bower.json
-
-bower.json文件存放在库的根目录下，用于保存项目的库信息，供项目安装时使用，以及Bower的在线索引读取。
-
-下面是一个典型的bower.json文件。
-
-{% highlight javascript %}
-
-{
-  "name": "app-name",
-  "version": "0.1.0", 
-  "main": ["path/to/app.html", "path/to/app.css", "path/to/app.js"],
-  "ignore": [".jshintrc","**/*.txt"],
-  "dependencies": {
-    "sass-bootstrap": "~3.0.0",
-    "modernizr": "~2.6.2",
-    "jquery": "latests"
-  },
-  "devDependencies": {"qunit": ">1.11.0"}
-}
-
-{% endhighlight %}
-
-在项目的根目录下，运行bower init命令，通过回答几个问题，就会自动生成bower.json文件。
-
-{% highlight bash %}
-
-bower init
-
-{% endhighlight %}
-
-有了bower.json文件以后，就可以用bower install命令，一下子安装所有库。
-
-{% highlight bash %}
-
-bower install
-
-{% endhighlight %}
-
-根据bower.json文件，还可以向Bower的在线索引提交你的库。
-
-{% highlight bash %}
-
-bower register <my-package-name> <git-endpoint>
-
-// 比如
-
-bower register jquery git://github.com/jquery/jquery
-
-{% endhighlight %}
-
-注意，如果你的库与现有的库重名，就会提交失败。
 
 ## 相关链接
 
