@@ -196,7 +196,7 @@ page.open('http://www.sample.com', function() {
 
 ```
 
-上面的例子在页面中注入jQuery脚本，然后点击所有的按钮。需要注意的是，由于是异步加载，所以`phantom.exit()`语句要放在`page.evaluate()`方法的回调函数之中，否则页面会过早退出。
+上面的例子在页面中注入jQuery脚本，然后点击所有的按钮。需要注意的是，由于是异步加载，所以`phantom.exit()`语句要放在`page.includeJs()`方法的回调函数之中，否则页面会过早退出。
 
 ### 接受参数
 

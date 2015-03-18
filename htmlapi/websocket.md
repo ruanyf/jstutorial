@@ -144,7 +144,7 @@ connection.send(file);
 
 客户端收到服务器发送的数据，会触发message事件。可以通过定义message事件的回调函数，来处理服务端返回的数据。
 
-{% highlight javascript	%}
+{% highlight javascript %}
 
 connection.onmessage = wsMessage;
 
@@ -172,7 +172,7 @@ connection.onmessage = function(e) {
 
 如果出现错误，浏览器会触发WebSocket实例对象的error事件。
 
-{% highlight javascript	%}
+{% highlight javascript %}
 
 connection.onerror = wsError;
 
@@ -257,12 +257,12 @@ connection.on('close', function(reasonCode, description) {
 
 var WebSocketServer = require('ws').Server;
 var wss = new WebSocketServer({ port: 8080 });
- 
+
 wss.on('connection', function connection(ws) {
   ws.on('message', function incoming(message) {
     console.log('received: %s', message);
   });
- 
+
   ws.send('something');
 });
 
@@ -270,7 +270,7 @@ wss.on('connection', function connection(ws) {
 
 ## Socket.io简介
 
-[Socket.io](http://socket.io/)是目前最流行的WebSocket实现，包括服务器和客户端两个部分。它不仅简化了接口，使得操作更容易，而且对于那些不支持WebSocket的浏览器，会自动降为Ajax连接，最大限度地保证了兼容性。
+[Socket.io](http://socket.io/)是目前最流行的WebSocket实现，包括服务器和客户端两个部分。它不仅简化了接口，使得操作更容易，而且对于那些不支持WebSocket的浏览器，会自动降为Ajax连接，最大限度地保证了兼容性。它的目标是统一通信机制，使得所有浏览器和移动设备都可以进行实时通信。
 
 第一步，在服务器端的项目根目录下，安装socket.io模块。
 
@@ -282,7 +282,7 @@ npm install socket.io
 
 第二步，在根目录下建立app.js，并写入以下代码（假定使用了Express框架）。
 
-{% highlight javascript	%}
+{% highlight javascript %}
 
 var app = require('express')();
 var server = require('http').createServer(app);
@@ -348,6 +348,8 @@ io.sockets.on('connection', function (socket) {
 {% endhighlight %}
 
 上面代码的io.sockets.on方法指定connection事件（WebSocket连接建立）的回调函数。在回调函数中，用emit方法向客户端发送数据，触发客户端的news事件。然后，再用on方法指定服务器端anotherNews事件的回调函数。
+
+不管是服务器还是客户端，socket.io提供两个核心方法：emit方法用于发送消息，on方法用于监听对方发送的消息。
 
 ## 参考链接
 

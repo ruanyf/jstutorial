@@ -97,9 +97,9 @@ domain属性返回当前文档的域名。比如，某张网页的网址是 http
 var badDomain = "www.example.xxx";
 
 if (document.domain === badDomain)
-  window.close(); 
+  window.close();
 
-```   
+```
 
 上面代码判断，如果当前域名等于指定域名，则关闭窗口。
 
@@ -111,7 +111,7 @@ lastModified属性返回当前文档最后修改的时间戳，格式为字符�
 
 ```javascript
 
-document.lastModified 
+document.lastModified
 // Tuesday, July 10, 2001 10:19:42
 
 ```
@@ -143,7 +143,7 @@ document.location.pathname // "/path/a.html"
 document.location.search // "?x=111"
 document.location.hash // "#part1"
 document.location.user // "user"
-document.location.password // "passed" 
+document.location.password // "passed"
 
 // 跳转到另一个网址
 document.location.assign('http://www.google.com')
@@ -328,10 +328,10 @@ item方法根据成员的位置参数（从0开始），返回该成员。
 
 ```javascript
 
-var c = document.images; 
-var img1 = c.item(10);  
+var c = document.images;
+var img1 = c.item(10);
 // 等价于下面的写法
-var img1 = c[1];  
+var img1 = c[1];
 
 ```
 
@@ -492,3 +492,37 @@ focused = document.hasFocus();
 ```
 
 如果用户点击按钮，从当前窗口跳出一个新窗口。在用户使用鼠标点击该窗口之前，该新窗口就不拥有焦点。
+
+### adoptNode()，createAttribute()
+
+adoptNode方法将某个节点，从其原来所在的文档移除，插入当前文档，并返回插入后的新节点。
+
+```javascript
+
+node = document.adoptNode(externalNode);
+
+```
+
+createAttribute方法生成一个新的属性对象节点，并返回它。
+
+```javascript
+
+attribute = document.createAttribute(name);
+
+```
+
+createAttribute方法的参数name，是属性的名称。
+
+```javascript
+
+var node = document.getElementById("div1");
+var a = document.createAttribute("my_attrib");
+a.value = "newVal";
+node.setAttributeNode(a);
+
+// 等同于
+
+var node = document.getElementById("div1");
+node.setAttribute("my_attrib", "newVal");
+
+```
