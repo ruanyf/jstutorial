@@ -181,6 +181,20 @@ p.addEventListener('click', function(event) {
 
 DOM支持多种事件。
 
+- UIEvent/UIEvents
+- MouseEvent/MouseEvents
+- MutationEvent/MutationEvents
+- HTMLEvents
+- TextEvent
+- KeyboardEvent
+- CustomEvent
+- Event
+- ProgressEvent
+- AnimationEvent（webkit浏览器为WebKitAnimationEvent）
+- TransitionEvent（webkit浏览器为WebKitTransitionEvent）
+
+有些事件类型的名称，同时存在单数形式和复数形式。这是因为DOM 2.0版采用复数形式，DOM 3.0版统一改为单数形式，浏览器为了保持兼容，就两种形式都支持。
+
 ### 用户界面事件
 
 **（1）load事件，error事件**
@@ -734,6 +748,48 @@ $('some-element').trigger('my-custom-event');
 上面代码触发了自定义事件，该事件会层层向上冒泡。在冒泡过程中，如果有一个元素定义了该事件的回调函数，该回调函数就会触发。
 
 使用浏览器原生方法创造自定义事件，也很简单。
+
+```javascript
+var event = new Event('build');
+elem.addEventListener('build', function (e) {
+  // ...
+}, false);
+elem.dispatchEvent(event);
+```
+
+上面代码先生成一个build事件，然后在元素上面绑定该事件的回调函数，最后触发该事件。
+
+Event构造函数只能指定事件名，不能在事件上绑定数据。如果需要在触发事件的同时，传入指定的数据，需要使用CustomEvent构造函数生成事件对象。
+
+```javascript
+var event = new CustomEvent('build', { 'detail': 'hello' });
+function eventHandler(e) {
+  console.log(e.detail);
+}
+```
+
+上面代码中，CustomEvent构造函数的第一个参数是事件名称，第二个参数是一个对象，该对象的detail属性会绑定在事件对象之上。
+
+```javascript
+function simulateClick() {
+  var event = new MouseEvent('click', {
+    'view': window,
+    'bubbles': true,
+    'cancelable': true
+  });
+  var cb = document.getElementById('checkbox');
+  var canceled = !cb.dispatchEvent(event);
+  if (canceled) {
+    // A handler called preventDefault.
+    alert("canceled");
+  } else {
+    // None of the handlers called preventDefault.
+    alert("not canceled");
+  }
+}
+```
+
+上面代码生成一个鼠标点击事件，并触发该事件。
 
 ```javascript
 

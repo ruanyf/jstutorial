@@ -207,7 +207,7 @@ iframe_node.contentDocument.designMode = "on";
 
 ```
 
-### implementation，compatMode，designMode
+### implementation，compatMode
 
 以下属性返回文档的环境信息。
 
@@ -377,10 +377,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 ```javascript
 
-<div> 
-  <script type="text/javascript"> 
-    document.write("<h1>Main title</h1>") 
-  </script> 
+<div>
+  <script type="text/javascript">
+    document.write("<h1>Main title</h1>")
+  </script>
 </div>
 
 ```
@@ -468,19 +468,6 @@ forms[0].tagName // "FORM"
 
 上面代码表明getElementsByName方法的返回值是一组对象，必须用方括号运算符取出单个对象。
 
-### createElement()，createTextNode()
-
-createElement方法用来生成元素节点，createTextNode方法用来生成文本节点。
-
-createElement方法接受一个字符串参数，表示要创造哪一种HTML元素，传入的字符串应该等同于元素节点的tagName属性。createTextNode方法的参数，就是所要生成的文本节点的内容。
-
-```javascript
-
-var elementNode = document.createElement('div');
-var textNode = document.createTextNode('Hi');
-
-```
-
 ### hasFocus()
 
 hasFocus()方法返回一个布尔值，表示当前文档之中是否有元素被激活或获得焦点。
@@ -493,22 +480,32 @@ focused = document.hasFocus();
 
 如果用户点击按钮，从当前窗口跳出一个新窗口。在用户使用鼠标点击该窗口之前，该新窗口就不拥有焦点。
 
-### adoptNode()，createAttribute()
+### createElement()，createTextNode()，createAttribute()，createDocumentFragment()，adoptNode()
 
-adoptNode方法将某个节点，从其原来所在的文档移除，插入当前文档，并返回插入后的新节点。
+createElement方法用来生成HTML元素节点。
 
 ```javascript
-
-node = document.adoptNode(externalNode);
-
+var element = document.createElement(tagName);
+// 实例
+var newDiv = document.createElement("div");
 ```
+
+createElement方法的参数为元素的标签名，即元素节点的tagName属性。如果传入大写的标签名，会被转为小写。如果参数带有尖括号（即&lt;和&gt;）或者是null，会报错。
+
+createTextNode方法用来生成文本节点，参数为所要生成的文本节点的内容。
+
+```javascript
+var newDiv = document.createElement("div");
+var newContent = document.createTextNode("Hello");
+newDiv.appendChild(newContent);
+```
+
+上面代码新建一个div节点和一个文本节点，然后将文本节点插入div节点。
 
 createAttribute方法生成一个新的属性对象节点，并返回它。
 
 ```javascript
-
 attribute = document.createAttribute(name);
-
 ```
 
 createAttribute方法的参数name，是属性的名称。
@@ -526,3 +523,97 @@ var node = document.getElementById("div1");
 node.setAttribute("my_attrib", "newVal");
 
 ```
+
+createDocumentFragment方法生成一个DocumentFragment对象。
+
+```javascript
+
+var docFragment = document.createDocumentFragment();
+
+```
+
+DocumentFragment对象是一个存在于内存的DOM片段，但是不属于当前文档，常常用来生成较复杂的DOM结构，然后插入当前文档。这样做的好处在于，因为DocumentFragment不属于当前文档，对它的任何改动，都不会引发网页的重新渲染，比直接修改当前文档的DOM有更好的性能表现。
+
+```javascript
+
+var docfrag = document.createDocumentFragment();
+
+[1, 2, 3, 4].forEach(function(e) {
+  var li = document.createElement("li");
+  li.textContent = e;
+  docfrag.appendChild(li);
+});
+
+document.body.appendChild(docfrag);
+
+```
+
+adoptNode方法将某个节点，从其原来所在的文档移除，插入当前文档，并返回插入后的新节点。
+
+```javascript
+
+node = document.adoptNode(externalNode);
+
+```
+
+### createEvent()
+
+createEvent方法生成一个事件对象，该对象可以被element.dispatchEvent方法使用，触发指定事件。
+
+```javascript
+var event = document.createEvent(type);
+```
+
+createEvent方法的参数是事件类型，比如UIEvents、MouseEvents、MutationEvents、HTMLEvents。
+
+```javascript
+var event = document.createEvent('Event');
+event.initEvent('build', true, true);
+document.addEventListener('build', function (e) {
+  // ...
+}, false);
+document.dispatchEvent(event);
+```
+
+### createNodeIterator()
+
+createNodeIterator方法返回一个DOM遍历器。
+
+```javascript
+var nodeIterator = document.createNodeIterator(
+  document.body,
+  NodeFilter.SHOW_ELEMENT
+);
+```
+
+上面代码返回body元素的遍历器。createNodeIterator方法的第一个参数为遍历器的根节点，第二个参数为所要遍历的节点类型，这里指定为元素节点。其他类型还有所有节点（NodeFilter.SHOW_ALL）、文本节点（NodeFilter.SHOW_TEXT）、评论节点（NodeFilter.SHOW_COMMENT）等。
+
+所谓“遍历器”，在这里指可以用nextNode方法和previousNode方法依次遍历根节点的所有子节点。
+
+```javascript
+var nodeIterator = document.createNodeIterator(document.body);
+var pars = [];
+var currentNode;
+
+while (currentNode = nodeIterator.nextNode()) {
+  pars.push(currentNode);
+}
+```
+
+上面代码使用遍历器的nextNode方法，将根节点的所有子节点，按照从头部到尾部的顺序，读入一个数组。nextNode方法先返回遍历器的内部指针所在的节点，然后会将指针移向下一个节点。所有成员遍历完成后，返回null。previousNode方法则是先将指针移向上一个节点，然后返回该节点。
+
+```javascript
+var nodeIterator = document.createNodeIterator(
+  document.body,
+  NodeFilter.SHOW_ELEMENT
+);
+
+var currentNode = nodeIterator.nextNode();
+var previousNode = nodeIterator.previousNode();
+
+currentNode === previousNode // true
+```
+
+上面代码中，currentNode和previousNode都指向同一个的节点。
+
+有一个需要注意的地方，遍历器返回的第一个节点，总是根节点。
