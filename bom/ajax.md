@@ -615,67 +615,99 @@ CORS机制与JSONP模式的使用目的相同，而且更强大。JSONP只支持
 
 ## Fetch API
 
-Fetch API是一种新兴的规范，用来操作浏览器发出的网络请求，目的是在将来取代XMLHttpRequest。它的作用与XMLHttpRequest类似，但是返回的是Promise对象，因此API大大简化，并且避免了嵌套的回调函数。
+### 基本用法
+
+Ajax操作所用的XMLHttpRequest对象，已经有十多年的历史，它的API设计并不是很好，输入、输出、状态都在同一个接口管理，容易写出非常混乱的代码。Fetch API是一种新规范，用来取代XMLHttpRequest对象。它主要有两个特点，一是简化接口，将API分散在几个不同的对象上，二是返回Promise对象，避免了嵌套的回调函数。
+
+检查浏览器是否部署了这个API的代码如下。
+
+```javascript
+
+if (fetch in window){
+  // 支持
+} else {
+  // 不支持
+}
+
+```
 
 下面是一个XMLHttpRequest对象发出Ajax请求的常规例子。
 
 ```javascript
 
-function reqListener() {  
-  var data = JSON.parse(this.responseText);  
-  console.log(data);  
+function reqListener() {
+  var data = JSON.parse(this.responseText);
+  console.log(data);
 }
 
-function reqError(err) {  
-  console.log('Fetch Error :-S', err);  
+function reqError(err) {
+  console.log('Fetch Error :-S', err);
 }
 
-var oReq = new XMLHttpRequest();  
-oReq.onload = reqListener;  
-oReq.onerror = reqError;  
-oReq.open('get', './api/some.json', true);  
+var oReq = new XMLHttpRequest();
+oReq.onload = reqListener;
+oReq.onerror = reqError;
+oReq.open('get', './api/some.json', true);
 oReq.send();
 
 ```
 
-上面的例子用Fetch实现如下。
+同样的操作用Fetch实现如下。
 
 ```javascript
 
-fetch('./api/some.json')  
-  .then(function(response) {  
-      if (response.status !== 200) {  
-        console.log('请求失败，状态码：' + response.status);  
-        return;  
-      }      
-      response.json().then(function(data) {  
-        console.log(data);  
-      });  
-  }).catch(function(err) {  
-    console.log('出错：', err);  
+fetch('./api/some.json')
+  .then(function(response) {
+      if (response.status !== 200) {
+        console.log('请求失败，状态码：' + response.status);
+        return;
+      }
+      response.json().then(function(data) {
+        console.log(data);
+      });
+  }).catch(function(err) {
+    console.log('出错：', err);
   });
 
-```  
+```
 
 上面代码中，因为HTTP请求返回的response对象是一个Stream对象，使用json方法转为JSON格式，但是json方法返回的是一个Promise对象。
+
+fetch函数的第一个参数可以是URL字符串，也可以是后文要讲到的Request对象实例。
+
+response对象还有一个ok属性，如果返回的状态码在200到299之间（即请求成功），这个属性为true，否则为false。因此，上面的代码可以写成下面这样。
+
+```javascript
+fetch("./api/some.json").then(function(response) {
+  if (response.ok) {
+    response.json().then(function(data) {
+      console.log(data);
+    });
+  } else {
+    console.log("请求失败，状态码为", response.status);
+  }
+}, function(err) {
+  console.log("出错：", err);
+});
+```
 
 response对象除了json方法，还包含了HTTP回应的元数据。
 
 ```javascript
 
-fetch('users.json').then(function(response) {  
-  console.log(response.headers.get('Content-Type'));  
+fetch('users.json').then(function(response) {
+  console.log(response.headers.get('Content-Type'));
   console.log(response.headers.get('Date'));
 
-  console.log(response.status);  
-  console.log(response.statusText);  
-  console.log(response.type);  
-  console.log(response.url);  
+  console.log(response.status);
+  console.log(response.statusText);
+  console.log(response.type);
+  console.log(response.url);
 });
 
 ```
 
-上面代码中，response.type表示HTTP回应的类型，它有以下三个值。
+上面代码中，response对象有很多属性，其中的type属性比较特别，表示HTTP回应的类型，它有以下三个值。
 
 - basic：正常的同域请求
 - cors：CORS机制下的跨域请求
@@ -702,8 +734,8 @@ fetch('http://some-site.com/cors-enabled/some.json', {mode: 'cors'})
 
 ```javascript
 
-fetch(url, {  
-  credentials: 'include'  
+fetch(url, {
+  credentials: 'include'
 })
 
 ```
@@ -712,21 +744,206 @@ fetch(url, {
 
 ```javascript
 
-fetch(url, {  
-    method: 'post',  
-    headers: {  
-      "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"  
-    },  
-    body: 'foo=bar&lorem=ipsum'  
-  })
-  .then(json)  
-  .then(function (data) {  
-    console.log('Request succeeded with JSON response', data);  
-  })  
-  .catch(function (error) {  
-    console.log('Request failed', error);  
-  });
+fetch("http://www.example.org/submit.php", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded"
+  },
+  body: "firstName=Nikhil&favColor=blue&password=easytoguess"
+}).then(function(res) {
+  if (res.ok) {
+    console.log("Perfect! Your settings are saved.");
+  } else if (res.status == 401) {
+    console.log("Oops! You are not authorized.");
+  }
+}, function(e) {
+  console.log("Error submitting form!");
+});
 
+```
+
+目前，还有一些XMLHttpRequest对象可以做到，但是Fetch API还没做到的地方，比如中途中断HTTP请求，以及获取HTTP请求的进度。这些不足与Fetch返回的是Promise对象有关。
+
+### Headers
+
+Fetch API引入三个新的对象（也是构造函数）：Headers, Request 和 Response。其中，Headers对象用来构造/读取HTTP数据包的头信息。
+
+```javascript
+var content = "Hello World";
+var reqHeaders = new Headers();
+reqHeaders.append("Content-Type", "text/plain");
+reqHeaders.append("Content-Length", content.length.toString());
+reqHeaders.append("X-Custom-Header", "ProcessThisImmediately");
+```
+
+Headers对象的实例，除了使用append方法添加属性，也可以直接通过构造函数一次性生成。
+
+```javascript
+reqHeaders = new Headers({
+  "Content-Type": "text/plain",
+  "Content-Length": content.length.toString(),
+  "X-Custom-Header": "ProcessThisImmediately",
+});
+```
+
+Headers对象实例还提供了一些工具方法。
+
+```javascript
+reqHeaders.has("Content-Type") // true
+reqHeaders.has("Set-Cookie") // false
+reqHeaders.set("Content-Type", "text/html")
+reqHeaders.append("X-Custom-Header", "AnotherValue")
+
+reqHeaders.get("Content-Length") // 11
+reqHeaders.getAll("X-Custom-Header") // ["ProcessThisImmediately", "AnotherValue"]
+
+reqHeaders.delete("X-Custom-Header")
+reqHeaders.getAll("X-Custom-Header") // []
+```
+
+### Request
+
+Request对象用来构造HTTP请求。
+
+```javascript
+var req = new Request("/index.html");
+req.method // "GET"
+req.url // "http://example.com/index.html"
+```
+
+Request对象实例的非url属性，只能通过Request构造函数的第二个参数进行设置。
+
+```javascript
+var uploadReq = new Request("/uploadImage", {
+  method: "POST",
+  headers: {
+    "Content-Type": "image/png",
+  },
+  body: "image data"
+});
+```
+
+Request对象实例有两个属性是只读的，不能手动设置。一个是referrer属性，表示请求的来源，由浏览器设置，有可能是空字符串。另一个是context属性，表示请求发出的上下文，如果是image，表示是从img标签发出，如果是worker，表示是从worker脚本发出，如果是fetch，表示是从fetch函数发出的。
+
+Request对象实例的mode属性，用来设置是否跨域，合法的值有以下三种：same-origin、no-cors（默认值）、cors。当设置为same-origin时，只能向同域的URL发出请求，否则会报错。
+
+```javascript
+var arbitraryUrl = document.getElementById("url-input").value;
+fetch(arbitraryUrl, { mode: "same-origin" }).then(function(res) {
+  console.log("Response succeeded?", res.ok);
+}, function(e) {
+  console.log("Please enter a same-origin URL!");
+});
+```
+
+上面代码中，如果用户输入的URL不是同域的，将会报错，否则就会发出请求。
+
+如果mode属性为no-cors，就与默认的浏览器行为没有不同，类似script标签加载外部脚本文件、img标签加载外部图片。如果mode属性为cors，就可以向部署了CORS机制的服务器，发出跨域请求。
+
+```javascript
+var u = new URLSearchParams();
+u.append('method', 'flickr.interestingness.getList');
+u.append('api_key', '<insert api key here>');
+u.append('format', 'json');
+u.append('nojsoncallback', '1');
+
+var apiCall = fetch('https://api.flickr.com/services/rest?' + u);
+
+apiCall.then(function(response) {
+  return response.json().then(function(json) {
+    // photo is a list of photos.
+    return json.photos.photo;
+  });
+}).then(function(photos) {
+  photos.forEach(function(photo) {
+    console.log(photo.title);
+  });
+});
+```
+
+上面代码是向Flickr API发出图片请求的例子。
+
+### Response
+
+fetch方法返回Response对象实例，它有以下属性。
+
+- status：整数值，表示状态码（比如200）
+- statusText：字符串，表示状态信息，默认是“OK”
+- ok：布尔值，表示状态码是否在200-299的范围内
+- headers：Headers对象，表示HTTP回应的头信息
+- url：字符串，表示HTTP请求的网址
+- type：字符串，合法的值有五个basic、cors、default、error、opaque。basic表示正常的同域请求；cors表示CORS机制的跨域请求；error表示网络出错，无法取得信息，status属性为0，headers属性为空，并且导致fetch函数返回Promise对象被拒绝；opaque表示非CORS机制的跨域请求，受到严格限制。
+
+Response对象还有两个静态方法。
+
+- Response.error() 返回一个type属性为error的Response对象实例
+- Response.redirect(url, status) 返回的Response对象实例会重定向到另一个URL
+
+### body属性
+
+Request对象和Response对象都有body属性，表示请求的内容。body属性可能是以下的数据类型。
+
+- ArrayBuffer
+- ArrayBufferView (Uint8Array等)
+- Blob/File
+- string
+- URLSearchParams
+- FormData
+
+```javascript
+var form = new FormData(document.getElementById('login-form'));
+fetch("/login", {
+  method: "POST",
+  body: form
+})
+```
+
+上面代码中，Request对象的body属性为表单数据。
+
+Request对象和Response对象都提供以下方法，用来读取body。
+
+- arrayBuffer()
+- blob()
+- json()
+- text()
+- formData()
+
+注意，上面这些方法都只能使用一次，第二次使用就会报错，也就是说，body属性只能读取一次。Request对象和Response对象都有bodyUsed属性，返回一个布尔值，表示body是否被读取过。
+
+```javascript
+var res = new Response("one time use");
+console.log(res.bodyUsed); // false
+res.text().then(function(v) {
+  console.log(res.bodyUsed); // true
+});
+console.log(res.bodyUsed); // true
+
+res.text().catch(function(e) {
+  console.log("Tried to read already consumed Response");
+});
+```
+
+上面代码中，第二次通过text方法读取Response对象实例的body时，就会报错。
+
+这是因为body属性是一个stream对象，数据只能单向传送一次。这样的设计是为了允许JavaScript处理视频、音频这样的大型文件。
+
+如果希望多次使用body属性，可以使用Response对象和Request对象的clone方法。它必须在body还没有读取前调用，返回一个前的body，也就是说，需要使用几次body，就要调用几次clone方法。
+
+```javascript
+addEventListener('fetch', function(evt) {
+  var sheep = new Response("Dolly");
+  console.log(sheep.bodyUsed); // false
+  var clone = sheep.clone();
+  console.log(clone.bodyUsed); // false
+
+  clone.text();
+  console.log(sheep.bodyUsed); // false
+  console.log(clone.bodyUsed); // true
+
+  evt.respondWith(cache.add(sheep.clone()).then(function(e) {
+    return sheep;
+  });
+});
 ```
 
 ## 参考链接
@@ -738,3 +955,4 @@ fetch(url, {
 - Monsur Hossain, [Using CORS](http://www.html5rocks.com/en/tutorials/cors/)
 - MDN, [HTTP access control (CORS)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS)
 - Matt Gaunt, [Introduction to fetch()](http://updates.html5rocks.com/2015/03/introduction-to-fetch)
+- Nikhil Marathe, [This API is so Fetching!](https://hacks.mozilla.org/2015/03/this-api-is-so-fetching/)

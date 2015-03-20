@@ -23,21 +23,58 @@ var fs = require('fs');
 var zlib = require('zlib');
 
 fs.createReadStream('wow.txt')
-    .pipe(zlib.createGzip())
-    .pipe(process.stdout)
-;
+  .pipe(zlib.createGzip())
+  .pipe(process.stdout);
 ```
 
 上面代码先打开文本文件wow.txt，然后压缩，再导向标准输出。
 
 ```javascript
 fs.createReadStream('wow.txt')
-    .pipe(zlib.createGzip())
-    .pipe(fs.createWriteStream('wow.gz'))
-;
+  .pipe(zlib.createGzip())
+  .pipe(fs.createWriteStream('wow.gz'));
 ```
 
 上面代码压缩文件wow.txt以后，又将其写回压缩文件。
+
+下面代码新建一个Stream实例，然后指定写入事件和终止事件的回调函数，再将其接到标准输入之上。
+
+```javascript
+var stream = require('stream');
+var Stream = stream.Stream;
+
+var ws = new Stream;
+ws.writable = true;
+
+ws.write = function(data) {
+  console.log("input=" + data);
+}
+
+ws.end = function(data) {
+  console.log("bye");
+}
+
+process.stdin.pipe(ws);
+```
+
+调用上面的脚本，会产生以下结果。
+
+```bash
+$ node pipe_out.js
+hello
+input=hello
+^d
+bye
+```
+
+上面代码调用脚本下，键入hello，会输出`input=hello`。然后按下ctrl-d，会输出bye。使用管道命令，可以看得更清楚。
+
+```bash
+$ echo hello | node pipe_out.js
+input=hello
+
+bye
+```
 
 ## HTTP请求
 
