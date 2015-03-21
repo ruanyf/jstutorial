@@ -575,9 +575,9 @@ document.addEventListener('build', function (e) {
 document.dispatchEvent(event);
 ```
 
-### createNodeIterator()
+### createNodeIterator()，createTreeWalker()
 
-createNodeIterator方法返回一个DOM遍历器。
+createNodeIterator方法返回一个DOM的子节点遍历器。
 
 ```javascript
 var nodeIterator = document.createNodeIterator(
@@ -617,3 +617,30 @@ currentNode === previousNode // true
 上面代码中，currentNode和previousNode都指向同一个的节点。
 
 有一个需要注意的地方，遍历器返回的第一个节点，总是根节点。
+
+createTreeWalker方法返回一个DOM的子树遍历器。它与createNodeIterator方法的区别在于，后者只遍历子节点，而它遍历整个子树。
+
+createTreeWalker方法的第一个参数，是所要遍历的根节点，第二个参数指定所要遍历的节点类型。
+
+```javascript
+var treeWalker = document.createTreeWalker(
+  document.body,
+  NodeFilter.SHOW_ELEMENT
+);
+
+var nodeList = [];
+
+while(treeWalker.nextNode()) nodeList.push(treeWalker.currentNode);
+```
+
+上面代码遍历body节点下属的所有元素节点，将它们插入nodeList数组。
+
+### elementFromPoint()
+
+elementFromPoint方法返回位于页面指定位置的元素。
+
+```javascript
+var element = document.elementFromPoint(x, y);
+```
+
+上面代码中，elementFromPoint方法的参数x和y，分别是相对于当前窗口左上角的横坐标和纵坐标，单位是CSS像素。elementFromPoint方法返回位于这个位置的DOM元素，如果该元素不可返回（比如文本框的滚动条），则返回它的父元素（比如文本框）。如果坐标值无意义（比如负值），则返回null。
