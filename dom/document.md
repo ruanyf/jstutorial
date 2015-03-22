@@ -389,51 +389,47 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 除了某些特殊情况，应该尽量避免使用这个方法。
 
-### querySelector()，getElementById()
+### querySelector()，getElementById()，querySelectorAll()，getElementsByTagName()，getElementsByClassName()
 
-这两个方法用于获取元素节点。它们的不同之处是，querySelector方法的参数使用CSS选择器语法，getElementById方法的参数是HTML标签元素的id属性。
+querySelector方法返回匹配指定的CSS选择器的元素节点。如果有多个节点满足匹配条件，则返回第一个匹配的节点。如果没有发现匹配的节点，则返回null。
 
-{% highlight javascript %}
+```javascript
+var el1 = document.querySelector(".myclass");
+var el2 = document.querySelector('#myParent > [ng-click]');
+```
 
+querySelector方法无法选中CSS伪元素。
+
+getElementById方法返回匹配指定ID属性的元素节点。如果没有发现匹配的节点，则返回null。
+
+```javascript
+var elem = document.getElementById("para1");
+```
+
+注意，在搜索匹配节点时，ID属性是大小写敏感的。比如，如果某个节点的ID属性是main，那么`document.getElementById("Main")`将返回null，而不是指定节点。
+
+getElementById方法与querySelector方法都能获取元素节点，不同之处是querySelector方法的参数使用CSS选择器语法，getElementById方法的参数是HTML标签元素的id属性。
+
+```javascript
 document.getElementById('myElement')
-
 document.querySelector('#myElement')
-
-{% endhighlight %}
+```
 
 上面代码中，两个方法都能选中id为myElement的元素，但是getElementById()比querySelector()效率高得多。
 
-getElementById方法和querySelector方法的返回值，要么是null（未选中时），要么是选中的那个元素节点。如果有多个节点满足querySelector方法的条件，则返回第一个匹配的节点。
-
-querySelector方法可以接受各种复杂的CSS选择器。
+querySelectorAll方法返回匹配指定的CSS选择器的所有节点，返回的是NodeList类型的对象。NodeList对象不是动态集合，所以元素节点的变化无法实时反映在返回结果中。
 
 ```javascript
-
-document.querySelector('#myParent > [ng-click]');
-
+elementList = document.querySelectorAll(selectors);
 ```
 
-### querySelectorAll()，getElementsByTagName()，getElementsByClassName()
+querySelectorAll方法的参数，可以是逗号分隔的多个CSS选择器，返回所有匹配其中一个选择器的元素。
 
-这三个方法都返回一组符合条件的网页元素节点。
+```
+var matches = document.querySelectorAll("div.note, div.alert");
+```
 
-它们的不同之处如下。
-
-（1）参数，querySelectorAll方法的参数是CSS选择器，getElementsByTagName方法的参数是HTML元素名，getElementsByClassName方法的参数是HTML元素的class属性。
-
-（2）返回值的类型。getElementsByTagName方法和getElementsByClassName方法，返回的是HTMLCollection类型的对象，querySelectorAll方法返回的是NodeList类型的对象。这两类对象都是类似数组的对象，但是HTMLCollection只能包括HTML元素节点，NodeList可以包括各种节点。getElementsByTagName方法和getElementsByClassName方法返回的是对象的指针，当对象发生变化时，返回的结果集会跟着变化，querySelectorAll方法返回的结果集没有这种特性。
-
-（3）效率。getElementsByTagName方法和getElementsByClassName方法的效率，高于querySelectorAll方法。
-
-{% highlight javascript %}
-
-document.querySelectorAll('li')
-document.getElementsByTagName('li')
-document.getElementsByClassName('liClass')
-
-{% endhighlight %}
-
-如果querySelectorAll方法和getElementsByTagName方法的参数是字符串“*”，则会返回文档中的所有HTML元素节点。
+上面代码返回class属性是note或alert的div元素。
 
 querySelectorAll方法支持复杂的CSS选择器。
 
@@ -452,6 +448,37 @@ document.querySelectorAll('DIV:not(.ignore)');
 document.querySelectorAll('DIV, A, SCRIPT');
 
 ```
+
+如果querySelectorAll方法和getElementsByTagName方法的参数是字符串“*”，则会返回文档中的所有HTML元素节点。
+
+与querySelector方法一样，querySelectorAll方法无法选中CSS伪元素。
+
+getElementsByClassName方法返回一个类似数组的对象（HTMLCollection类型的对象），包括了所有class名字符合指定条件的元素（搜索范围包括本身），元素的变化实时反映在返回结果中。这个方法不仅可以在document对象上调用，也可以在任何元素节点上调用。
+
+```javascript
+// document对象上调用
+var elements = document.getElementsByClassName(names);
+// 非document对象上调用
+var elements = rootElement.getElementsByClassName(names);
+```
+
+getElementsByClassName方法的参数，可以是多个空格分隔的class名字，返回同时具有这些节点的元素。
+
+```javascript
+document.getElementsByClassName('red test');
+```
+
+上面代码返回class同时具有red和test的元素。
+
+getElementsByTagName方法返回所有指定标签的元素（搜索范围包括本身）。返回值是一个HTMLCollection对象，也就是说，搜索结果是一个动态集合，任何元素的变化都会实时反映在返回的集合中。这个方法不仅可以在document对象上调用，也可以在任何元素节点上调用。
+
+```javascript
+var paras = document.getElementsByTagName("p");
+```
+
+上面代码返回当前文档的所有p元素节点。
+
+注意，getElementsByTagName方法会将参数转为小写后，再进行搜索。
 
 ### getElementsByName()
 
@@ -480,7 +507,7 @@ focused = document.hasFocus();
 
 如果用户点击按钮，从当前窗口跳出一个新窗口。在用户使用鼠标点击该窗口之前，该新窗口就不拥有焦点。
 
-### createElement()，createTextNode()，createAttribute()，createDocumentFragment()，adoptNode()
+### createElement()，createTextNode()，createAttribute()，createDocumentFragment()
 
 createElement方法用来生成HTML元素节点。
 
@@ -545,14 +572,6 @@ var docfrag = document.createDocumentFragment();
 });
 
 document.body.appendChild(docfrag);
-
-```
-
-adoptNode方法将某个节点，从其原来所在的文档移除，插入当前文档，并返回插入后的新节点。
-
-```javascript
-
-node = document.adoptNode(externalNode);
 
 ```
 
@@ -634,6 +653,33 @@ while(treeWalker.nextNode()) nodeList.push(treeWalker.currentNode);
 ```
 
 上面代码遍历body节点下属的所有元素节点，将它们插入nodeList数组。
+
+### adoptNode()，importNode()
+
+adoptNode方法将某个节点，从其原来所在的文档移除，插入当前文档，并返回插入后的新节点。
+
+```javascript
+node = document.adoptNode(externalNode);
+```
+
+importNode方法从外部文档拷贝指定节点，插入当前文档。
+
+```javascript
+var node = document.importNode(externalNode, deep);
+```
+
+importNode方法的第一个参数是外部节点，第二个参数是一个布尔值，表示对外部节点是深拷贝还是浅拷贝，默认是浅拷贝（false）。虽然第二个参数是可选的，但是建议总是保留这个参数，并设为true。
+
+另外一个需要注意的是地方是，上面代码只是将外部节点插入当前文档，这时该节点的父节点是null。下一步还必须将这个节点插入当前文档的DOM树。
+
+```javascript
+var iframe = document.getElementsByTagName("iframe")[0];
+var oldNode = iframe.contentWindow.document.getElementById("myNode");
+var newNode = document.importNode(oldNode, true);
+document.getElementById("container").appendChild(newNode);
+```
+
+上面代码从iframe窗口，拷贝一个指定节点myNode，插入当前文档。
 
 ### elementFromPoint()
 
