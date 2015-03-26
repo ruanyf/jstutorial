@@ -20,7 +20,7 @@ Javascript语言的执行环境是"单线程"（single thread）。所谓"单线
 
 "异步模式"非常重要。在浏览器端，耗时很长的操作都应该异步执行，避免浏览器失去响应，最好的例子就是Ajax操作。在服务器端，"异步模式"甚至是唯一的模式，因为执行环境是单线程的，如果允许同步执行所有http请求，服务器性能会急剧下降，很快就会失去响应。
 
-以下总结了"异步模式"编程的4种方法，理解它们可以让你写出结构更合理、性能更出色、维护更方便的JavaScript程序。
+以下总结了"异步模式"编程的几种方法，理解它们可以让你写出结构更合理、性能更出色、维护更方便的JavaScript程序。
 
 ### 回调函数
 
@@ -41,10 +41,10 @@ f2();
 {% highlight javascript %}
 
 function f1(callback){
-	setTimeout(function () {
-		// f1的任务代码
-		callback();
-	}, 1000);
+  setTimeout(function () {
+    // f1的任务代码
+    callback();
+  }, 1000);
 }
 
 {% endhighlight %}
@@ -128,6 +128,120 @@ jQuery.unsubscribe("done", f2);
 {% endhighlight %}
 
 这种方法的性质与"事件监听"类似，但是明显优于后者。因为我们可以通过查看"消息中心"，了解存在多少信号、每个信号有多少订阅者，从而监控程序的运行。
+
+## 异步操作的流程控制
+
+如果有多个异步操作，就存在一个流程控制的问题：确定操作执行的顺序，以后如何保证遵守这种顺序。
+
+```js
+function async(arg, callback) {
+  console.log('参数为 ' + arg +' , 1秒后返回结果');
+  setTimeout(function() { callback(arg * 2); }, 1000);
+}
+```
+
+上面代码的async函数是一个异步任务，非常耗时，每次执行需要1秒才能完成，然后再调用回调函数。
+
+如果有6个这样的异步任务，需要全部完成后，才能执行下一步的final函数。
+
+```js
+function final(value) {
+  console.log('完成: ', value);
+}
+```
+
+请问应该如何安排操作流程？
+
+```js
+async(1, function(value){
+  async(value, function(value){
+    async(value, function(value){
+      async(value, function(value){
+        async(value, function(value){
+          async(value, final);
+        });
+      });
+    });
+  });
+});
+```
+
+上面代码采用6个回调函数的嵌套，不仅写起来麻烦，容易出错，而且难以维护。
+
+### 串行执行
+
+我们可以编写一个流程控制函数，让它来控制异步任务，一个任务完成以后，再执行另一个。这就叫串行执行。
+
+```js
+var items = [ 1, 2, 3, 4, 5, 6 ];
+var results = [];
+function series(item) {
+  if(item) {
+    async( item, function(result) {
+      results.push(result);
+      return series(items.shift());
+    });
+  } else {
+    return final(results);
+  }
+}
+series(items.shift());
+```
+
+上面代码中，函数series就是串行函数，它会依次执行异步任务，所有任务都完成后，才会执行final函数。items数组保存每一个异步任务的参数，results数组保存每一个异步任务的运行结果。
+
+### 并行执行
+
+流程控制函数也可以是并行执行，即所有异步任务同时执行，等到全部完成以后，才执行final函数。
+
+```js
+var items = [ 1, 2, 3, 4, 5, 6 ];
+var results = [];
+
+items.forEach(function(item) {
+  async(item, function(result){
+    results.push(result);
+    if(results.length == items.length) {
+      final(results);
+    }
+  })
+});
+```
+
+上面代码中，forEach方法会同时发起6个异步任务，等到它们全部完成以后，才会执行final函数。
+
+并行执行的好处是效率较高，比起串行执行一次只能执行一个任务，较为节约时间。但是问题在于如果并行的任务较多，很容易耗尽系统资源，拖慢运行速度。因此有了第三种流程控制方式。
+
+### 并行与串行的结合
+
+所谓并行与串行的结合，就是设置一个门槛，每次最多只能并行执行n个异步任务。这样就避免了过分占用系统资源。
+
+```js
+var items = [ 1, 2, 3, 4, 5, 6 ];
+var results = [];
+var running = 0;
+var limit = 2;
+
+function launcher() {
+  while(running < limit && items.length > 0) {
+    var item = items.shift();
+    async(item, function(result) {
+      results.push(result);
+      running--;
+      if(items.length > 0) {
+        launcher();
+      } else if(running == 0) {
+        final();
+      }
+    });
+    running++;
+  }
+}
+
+launcher();
+```
+
+上面代码中，最多只能同时运行两个异步任务。变量running记录当前正在运行的任务数，只要低于门槛值，就再启动一个新的任务，如果等于0，就表示所有任务都执行完了，这时就执行final函数。
 
 ## Promise对象
 
@@ -454,3 +568,4 @@ Promises的优点在于，让回调函数变成了规范的链式写法，程序
 - Marc Harter, [Promise A+ Implementation](https://gist.github.com//wavded/5692344)
 - Bryan Klimt, [What’s so great about JavaScript Promises?](http://blog.parse.com/2013/01/29/whats-so-great-about-javascript-promises/)
 - Jake Archibald, [JavaScript Promises There and back again](http://www.html5rocks.com/en/tutorials/es6/promises/)
+- Mikito Takada, [7. Control flow, Mixu's Node book](http://book.mixu.net/node/ch7.html)
