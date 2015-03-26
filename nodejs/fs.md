@@ -130,6 +130,18 @@ fs.readFile('example_log.txt', function (err, logData) {
 
 ```
 
+readFile方法是异步操作，所以必须小心，不要同时发起多个readFile请求。
+
+```js
+for(var i = 1; i <= 1000; i++) {
+  fs.readFile('./'+i+'.txt', function() {
+     // do something with the file
+  });
+}
+```
+
+上面代码会同时发起1000个readFile异步请求，很快就会耗尽系统资源。
+
 ## mkdirSync()，writeFileSync()，readFileSync()
 
 这三个方法是建立目录、写入文件、读取文件的同步版本。
