@@ -17,7 +17,7 @@ modifiedOn: 2013-12-19
 {% highlight javascript %}
 
 function print(){
-	// ...
+  // ...
 }
 
 {% endhighlight %}
@@ -73,7 +73,7 @@ var f = function f(){};
 var add = new Function("x","y","return (x+y)");
 // 相当于定义了如下函数
 // function add(x, y) {
-//   return (x+y);  
+//   return (x+y);
 // }
 
 {% endhighlight %}
@@ -330,7 +330,7 @@ f()
 
 在函数内部定义的变量，外部无法读取，称为“局部变量”（local variable）。
 
-{% highlight javascript %}
+{%highlight javascript %}
 
 function f(){
    var v = 1;
@@ -345,7 +345,7 @@ v
 
 {% highlight javascript %}
 
-var v = 1; 
+var v = 1;
 
 function f(){
    var v = 2;
@@ -386,6 +386,44 @@ function foo(x) {
 }
 
 {% endhighlight %}
+
+### 函数本身的作用域
+
+函数本身也是一个值，也有自己的作用域。它的作用域绑定其声明时所在的作用域。
+
+```javascript
+var a = 1;
+var x = function (){
+  console.log(a);
+};
+
+function f(){
+  var a = 2;
+  x();
+}
+
+f() // 1
+```
+
+上面代码中，函数x是在函数f的外部声明的，所以它的作用域绑定外层，内部变量a不会到函数f体内取值，所以输出1，而不是2。
+
+很容易犯错的一点是，如果函数A调用函数B，却没考虑到函数B不会引用函数A的内部变量。
+
+```javascript
+var x = function (){
+  console.log(a);
+};
+
+function y(f){
+  var a = 2;
+  f();
+}
+
+y(x)
+// ReferenceError: a is not defined
+```
+
+上面代码将函数x作为参数，传入函数y。但是，函数x是在函数y体外声明的，作用域绑定外层，因此找不到函数y的内部变量a，导致报错。
 
 ## 参数
 
