@@ -366,9 +366,9 @@ node.js依次到下面的目录，去寻找bar模块。
 
 {% highlight javascript %}
 
-{ 
-	"name" : "bar",
-	"main" : "./lib/bar.js" 
+{
+  "name" : "bar",
+  "main" : "./lib/bar.js"
 }
 
 {% endhighlight %}
@@ -575,7 +575,7 @@ http.createServer(function (req, res) {
 
   req.on('end', function () {
     res.writeHead(200, {"Content-Type": "text/plain"});
-	res.write("You've sent: " + content);
+    res.write("You've sent: " + content);
     res.end();
   });
 
@@ -589,30 +589,30 @@ data事件会在数据接收过程中，每收到一段数据就触发一次，�
 
 ```javascript
 
-"use strict"; 
+"use strict";
 
-var http = require('http'); 
-var fs = require('fs'); 
-var destinationFile, fileSize, uploadedBytes; 
+var http = require('http');
+var fs = require('fs');
+var destinationFile, fileSize, uploadedBytes;
 
-http.createServer(function (request, response) { 
-  response.writeHead(200); 
-  destinationFile = fs.createWriteStream("destination.md"); 
-  request.pipe(destinationFile); 
-  fileSize = request.headers['content-length']; 
-  uploadedBytes = 0; 
-  
-  request.on('data', function (d) { 
-    uploadedBytes += d.length; 
-    var p = (uploadedBytes / fileSize) * 100; 
-    response.write("Uploading " + parseInt(p, 0) + " %\n"); 
-  }); 
+http.createServer(function (request, response) {
+  response.writeHead(200);
+  destinationFile = fs.createWriteStream("destination.md");
+  request.pipe(destinationFile);
+  fileSize = request.headers['content-length'];
+  uploadedBytes = 0;
 
-  request.on('end', function () { 
-    response.end("File Upload Complete"); 
+  request.on('data', function (d) {
+    uploadedBytes += d.length;
+    var p = (uploadedBytes / fileSize) * 100;
+    response.write("Uploading " + parseInt(p, 0) + " %\n");
   });
-}).listen(3030, function () { 
-  console.log("server started"); 
+
+  request.on('end', function () {
+    response.end("File Upload Complete");
+  });
+}).listen(3030, function () {
+  console.log("server started");
 });
 
 ```
