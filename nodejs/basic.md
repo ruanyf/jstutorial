@@ -216,6 +216,23 @@ var callback = function (error, value) {
 
 callback的第一个参数是一个Error对象，第二个参数才是真正的数据。如果没有发生错误，第一个参数就传入null。这种写法有一个很大的好处，就是说只要判断回调函数的第一个参数，就知道有没有出错，如果不是null，就肯定出错了。
 
+Node.js之所以把error放在回调函数的第一个参数，是因为服务器端JavaScript有大量的异步操作，传统的错误捕捉机制try...catch对于异步操作行不通。
+
+```javascript
+try {
+  db.User.get(userId, function(err, user) {
+    if(err) {
+      throw err
+    }
+    // ...
+  })
+} catch(e) {
+  console.log(‘Oh no!’);
+}
+```
+
+上面代码中，db.User.get方法是一个异步操作，等到抛出错误时，可能它所在的try...catch代码块早就运行结束了，这会导致错误无法被捕捉。所以，Node统一规定，一旦异步操作发生错误，就把错误对象传递到回调函数。
+
 ### 全局对象和全局变量
 
 Node提供以下几个全局对象，它们是所有模块都可以调用的。
@@ -259,7 +276,7 @@ var exports = module.exports;
 
 {% endhighlight %}
 
-这造成的结果是，在对外输出模块接口时，可以向exports对象添加方法，但是不能直接将exports变量指向一个函数。 
+这造成的结果是，在对外输出模块接口时，可以向exports对象添加方法，但是不能直接将exports变量指向一个函数。
 
 {% highlight javascript %}
 
@@ -280,6 +297,27 @@ exports.circumference = function (r) {
 };
 
 {% endhighlight %}
+
+所以，如果一个模块的对外接口，就是一个函数或对象时，不能使用exports输出，只能使用module.exports输出。假如a.js文件有一个函数verifyPassword，是整个模块的对外接口。
+
+```javascript
+// a.js
+var verifyPassword = function(user, password, done) { ... };
+
+// b.js
+require(‘a.js’)
+// function(user, password, done) { ... }
+```
+
+该函数只能用module.exports输出。
+
+```javascript
+// 错误的写法
+exports = verifyPassword;
+
+// 正确的写法
+module.exports = verifyPassword;
+```
 
 如果你觉得，exports与module.exports之间的区别很难分清，一个简单的处理方法，就是放弃使用exports，只使用module.exports。
 

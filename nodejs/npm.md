@@ -336,7 +336,7 @@ npm test
 
 #!/bin/bash
 
-cd site/main; 
+cd site/main;
 browserify browser/main.js | uglifyjs -mc > static/bundle.js
 
 ```
@@ -487,7 +487,7 @@ npm set init.author.url "http://xxx.com"
 
 {% endhighlight %}
 
-然后，请npm系统申请用户名。
+然后，向npm系统申请用户名。
 
 {% highlight bash %}
 
