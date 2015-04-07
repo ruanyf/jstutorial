@@ -12,7 +12,7 @@ modifiedOn: 2015-03-08
 
 Node.js默认单进程运行，对于多核CPU的计算机来说，这样做效率很低，因为只有一个核在运行，其他核都在闲置。cluster模块就是为了解决这个问题而提出的。
 
-cluster模块允许设立一个主进程和若干个worker进程，由主进程监控和协调worker进程的运行。
+cluster模块允许设立一个主进程和若干个worker进程，由主进程监控和协调worker进程的运行。worker之间采用进程建通信交换消息，cluster模块内置一个负载均衡器，采用Round-robin算法协调各个worker进程之间的负载。运行时，所有新建立的链接都由主进程完成，然后主进程再把TCP连接分配给指定的worker进程。
 
 {% highlight javascript %}
 
@@ -22,12 +22,12 @@ var os = require('os');
 if (cluster.isMaster){
   for (var i = 0, n = os.cpus().length; i < n; i += 1){
     cluster.fork();
-	}
+  }
 } else {
-	http.createServer(function(req, res) {
-	  res.writeHead(200);
-	  res.end("hello world\n");
-	}).listen(8000);
+  http.createServer(function(req, res) {
+    res.writeHead(200);
+    res.end("hello world\n");
+  }).listen(8000);
 }
 
 {% endhighlight %}
@@ -209,6 +209,61 @@ http://localhost:8080
 $ kill 10538
 ```
 
+## PM2模块
+
+PM2模块是cluster模块的一个包装层。它的作用是尽量将cluster模块抽象掉，让用户像使用单进程一样，部署多进程Node应用。
+
+```javascript
+// app.js
+var http = require('http');
+
+http.createServer(function(req, res) {
+  res.writeHead(200);
+  res.end("hello world");
+}).listen(8080);
+```
+
+上面代码是标准的Node架设Web服务器的方式，然后用PM2从命令行启动这段代码。
+
+```javascript
+$ pm2 start app.js -i 4
+```
+
+上面代码的i参数告诉PM2，这段代码应该在cluster_mode启动，且新建worker进程的数量是4个。如果i参数的值是0，那么当前机器有几个CPU内核，PM2就会启动几个worker进程。
+
+如果一个worker进程由于某种原因挂掉了，会立刻重启该worker进程。
+
+```bash
+# 重启所有worker进程
+$ pm2 reload all
+```
+
+每个worker进程都有一个id，可以用下面的命令查看单个worker进程的详情。
+
+```bash
+$ pm2 show <worker id>
+```
+
+正确情况下，PM2采用fork模式新建worker进程，即主进程fork自身，产生一个worker进程。`pm2 reload`命令则会用spawn方式启动，即一个接一个启动worker进程，一个新的worker启动成功，再杀死一个旧的worker进程。采用这种方式，重新部署新版本时，服务器就不会中断服务。
+
+```bash
+$ pm2 reload <脚本文件名>
+```
+
+关闭worker进程的时候，可以部署下面的代码，让worker进程监听shutdown消息。一旦收到这个消息，进行完毕收尾清理工作再关闭。
+
+```javascript
+process.on('message', function(msg) {
+  if (msg === 'shutdown') {
+    close_all_connections();
+    delete_logs();
+    server.close();
+    process.exit(0);
+  }
+});
+```
+
 ## 参考链接
 
 - José F. Romaniello, [Reloading node with no downtime](http://joseoncode.com/2015/01/18/reloading-node-with-no-downtime/)
+- Joni Shkurti, [Node.js clustering made easy with PM2](https://keymetrics.io/2015/03/26/pm2-clustering-made-easy/)

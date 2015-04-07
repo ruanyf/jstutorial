@@ -62,8 +62,8 @@ IE 9.0及以下版本，只允许setTimeout有两个参数，不支持更多的�
 
 ```javascript
 
-setTimeout(function() { 
-  myFunc("one", "two", "three"); 
+setTimeout(function() {
+  myFunc("one", "two", "three");
 }, 1000);
 
 ```
@@ -102,8 +102,8 @@ var a=[].slice.call(arguments,2);return f(function(){c.apply(this,a)},t)}
 var x = 1;
 
 var o = {
-	x: 2,
-	y: function(){
+  x: 2,
+  y: function(){
     console.log(this.x);
   }
 };
@@ -125,9 +125,9 @@ function User(login) {
     console.log(this.login);
   }
 }
- 
+
 var user = new User('John');
- 
+
 setTimeout(user.sayHi, 1000);
 
 ```
@@ -164,7 +164,7 @@ setInterval函数的用法与setTimeout完全一致，区别仅仅在于setInter
 
 <script>
   var i = 1
-  var timer = setInterval(function() { 
+  var timer = setInterval(function() {
     console.log(2);
   }, 1000);
 </script>
@@ -178,9 +178,9 @@ setInterval函数的用法与setTimeout完全一致，区别仅仅在于setInter
 {% highlight javascript %}
 
 function f(){
-	for (var i=0;i<arguments.length;i++){
-		console.log(arguments[i]);
-	}
+  for (var i=0;i<arguments.length;i++){
+    console.log(arguments[i]);
+  }
 }
 
 setInterval(f, 1000, "Hello World");
@@ -193,12 +193,12 @@ setInterval(f, 1000, "Hello World");
 
 如果网页不在浏览器的当前窗口（或tab），许多浏览器限制setInteral指定的反复运行的任务最多每秒执行一次。
 
-setInterval指定的是，“开始执行”之间的间隔，因此实际上，两次执行之间的间隔会小于setInterval指定的时间。假定setInterval指定，每100毫秒执行一次，每次执行需要5毫秒，那么第一次执行结束后95毫秒，第二次执行就会开始。如果某次执行耗时特别长，比如需要105毫秒，那么它结束后，下一次执行就会立即开始。
+setInterval指定的是“开始执行”之间的间隔，并不考虑每次任务执行本身所消耗的事件。因此实际上，两次执行之间的间隔会小于指定的时间。比如，setInterval指定每100ms执行一次，每次执行需要5ms，那么第一次执行结束后95毫秒，第二次执行就会开始。如果某次执行耗时特别长，比如需要105毫秒，那么它结束后，下一次执行就会立即开始。
 
 ```javascript
 
 var i = 1;
-var timer = setInterval(function() { 
+var timer = setInterval(function() {
   alert(i++);
 }, 2000);
 
@@ -225,12 +225,10 @@ var timer = setTimeout(function() {
 {% highlight javascript %}
 
 function interval(func, wait){
-  var interv = function(w){
-    return function(){
-      setTimeout(interv, w);
-      func.call(null);
-    }
-  }(wait);
+  var interv = function(){
+    func.call(null);
+    setTimeout(interv, wait);
+  };
 
   setTimeout(interv, wait);
 }

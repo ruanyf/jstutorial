@@ -228,14 +228,18 @@ outerHTML属性用来读取或设置HTML代码时，会把节点本身包括在�
 
 textContent属性用来读取或设置节点包含的文本内容。
 
-innerText属性和outerText属性在读取元素节点的文本内容时，得到的值是不一样的。它们的不同之处在于设置一个节点的文本属性时，outerText属性会使得原来的元素节点被文本节点替换掉。注意，innerText是非标准属性，Firefox不支持。
+innerText属性和outerText属性在读取元素节点的文本内容时，得到的值是不一样的。它们的不同之处在于设置一个节点的文本属性时，outerText属性会使得原来的元素节点被文本节点替换掉。
 
 ```javascript
-
 document.getElementById('foo').innerHTML = 'Goodbye!';
 document.getElementById('foo').innerText = 'GoodBye!';
 document.getElementById('foo').textContent = 'Goodbye!';
+```
 
+注意，innerText是非标准属性，Firefox不支持。考虑兼容老式浏览器，可以使用下面的写法，获取节点的文本内容。
+
+```javascript
+var text = element.textContent || element.innerText;
 ```
 
 使用textContent和innerText属性，为一个HTML元素设置内容，有一个好处，就是自动对HTML标签转义。这很适合用于用户提供的内容。

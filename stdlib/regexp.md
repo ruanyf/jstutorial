@@ -565,6 +565,14 @@ s.match(/yes[^]*day/) // [ 'yes\nmake my day']
 
 > 注意，字符类的连字符必须在头尾两个字符中间，才有特殊含义，否则就是字面含义。
 
+另外，不要过分使用连字符，设定一个很大的范围，结果选中意料之外的字符。最典型的例子就是[A-z]，表面上它是选中从大写的A到小写的z之间52个字母，但是由于在ASCII编码之中，大写字母与小写字母之间还有其他字符，结果就会出现意料之外的结果。
+
+```javascript
+/[A-z]/.test('\\') // true
+```
+
+上面代码中，由于反斜杠（\）的ASCII码在大写字母与小写字母之间，结果会被选中。
+
 ### 重复类
 
 {} 表示模式的重复次数。{n}表示重复n次，{n,}表示至少重复n次，{n,m}表示重复不少于n次，不多于m次。
@@ -749,7 +757,7 @@ var regex = /test/ig;
 {% highlight javascript %}
 
 var m = "abcabc".match(/(.)b(.)/);
-m 
+m
 // ["abc", "a", "c"]
 
 {% endhighlight %}
@@ -829,7 +837,7 @@ x(?=y)称为先行断言（Positive look-ahead），x只有在y前面才匹配�
 {% highlight javascript %}
 
 var m = "abc".match(/b(?=c)/);
-m 
+m
 // "b"
 
 {% endhighlight %}
