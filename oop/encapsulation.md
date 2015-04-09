@@ -233,12 +233,12 @@ Object.create方法基本等同于下面的代码，如果老式浏览器不支�
 
 {% highlight javascript %}
 
-if(typeof Object.create !== "function") {
-    Object.create = function (o) {
-        function F() {}
-        F.prototype = o;
-        return new F();
-    };
+if (typeof Object.create !== "function") {
+  Object.create = function (o) {
+    function F() {}
+    F.prototype = o;
+    return new F();
+  };
 }
 
 {% endhighlight %}
@@ -277,16 +277,16 @@ Object.create()
 
 {% endhighlight %}
 
-Object.create方法生成的新对象，动态继承了原型。在原型上添加任何方法，会立刻反映在新对象之上。
+Object.create方法生成的新对象，动态继承了原型。在原型上添加或修改任何方法，会立刻反映在新对象之上。
 
 {% highlight javascript %}
 
 var o1 = { p: 1 };
 var o2 = Object.create(o1);
 
-o1.p = 2; 
-o2.p 
-// 2 
+o1.p = 2;
+o2.p
+// 2
 
 {% endhighlight %}
 
@@ -297,8 +297,8 @@ o2.p
 {% highlight javascript %}
 
 var o = Object.create(Object.prototype, {
-        p1: { value: 123, enumerable: true },
-        p2: { value: "abc", enumerable: true }
+  p1: { value: 123, enumerable: true },
+  p2: { value: "abc", enumerable: true }
 });
 
 o.p1 // 123

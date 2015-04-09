@@ -318,36 +318,52 @@ str.replace(search, replacement)
 
 {% endhighlight %}
 
+上面代码中，最后一个正则表达式使用了g修饰符，导致所有的b都被替换掉了。
+
+replace方法的一个应用，就是消除字符串首尾两端的空格，下面给出两种写法。
+
+```javascript
+
+var str = '  #id div.class  ';
+
+str.replace(/^\s+|\s+$/g, '')
+// "#id div.class"
+
+str.replace(/^\s\s*/,'').replace(/\s\s*$/,'')
+// "#id div.class"
+
+```
+
 replace方法的第二个参数可以使用美元符号$，用来指代所替换的内容。
 
 - $& 指代匹配的子字符串。
 - $` 指代匹配结果前面的文本。
 - $' 指代匹配结果后面的文本。
-- $n 指代匹配成功的第n组内容，n从1开始计数。
+- $n 指代匹配成功的第n组内容，n是从1的自然数。
 - $$ 指代美元符号$。
 
 {% highlight javascript %}
 
-"abc".replace("b", "[$`-$&-$']")
-// "a[a-b-c]c"
-
 "hello world".replace(/(\w+)\s(\w+)/,"$2 $1")
 // "world hello"
 
+"abc".replace("b", "[$`-$&-$']")
+// "a[a-b-c]c"
+
 {% endhighlight %}
 
-第二个参数还可以是一个函数，将匹配内容替换为函数返回值。
+replace方法的第二个参数还可以是一个函数，将匹配内容替换为函数返回值。
 
 {% highlight javascript %}
 
 "3 and 5".replace(/[0-9]+/g, function(match){
-			return 2 * match; })
+  return 2 * match; })
 // "6 and 10"
 
 var a = "The quick brown fox jumped over the lazy dog.";
 var pattern = /quick|brown|lazy/ig;
 a.replace( pattern, function replacer(match){
-    return match.toUpperCase();
+  return match.toUpperCase();
 } );
 // The QUICK BROWN fox jumped over the LAZY dog.
 
@@ -358,9 +374,9 @@ a.replace( pattern, function replacer(match){
 ```javascript
 
 var prices = {
-    "pr_1": "$1.99",
-    "pr_2": "$9.99",
-    "pr_3": "$5.00"
+  "pr_1": "$1.99",
+  "pr_2": "$9.99",
+  "pr_3": "$5.00"
 };
 
 var template = ".."; // some ecommerce page template
@@ -390,7 +406,7 @@ str.split(separator, [limit])
 
 {% highlight javascript %}
 
-'a,  b,c, d'.split(',') 
+'a,  b,c, d'.split(',')
 // [ 'a', '  b', 'c', ' d' ]
 
 'a,  b,c, d'.split(/, */)
@@ -563,7 +579,17 @@ s.match(/yes[^]*day/) // [ 'yes\nmake my day']
 
 上面代码中最后一个字符类[1-31]，不代表1到31，只代表1到3。
 
-> 注意，字符类的连字符必须在头尾两个字符中间，才有特殊含义，否则就是字面含义。
+> 注意，字符类的连字符必须在头尾两个字符中间，才有特殊含义，否则就是字面含义。比如，`[-9]`就表示匹配连字符和9，而不是匹配0到9。
+
+连字符还可以用来指定Unicode字符的范围。
+
+```javascript
+
+var str = "\u0130\u0131\u0132";
+/[\u0128-\uFFFF]/.test(str)
+// true
+
+```
 
 另外，不要过分使用连字符，设定一个很大的范围，结果选中意料之外的字符。最典型的例子就是[A-z]，表面上它是选中从大写的A到小写的z之间52个字母，但是由于在ASCII编码之中，大写字母与小写字母之间还有其他字符，结果就会出现意料之外的结果。
 
@@ -720,18 +746,49 @@ var regex = /test/ig;
 - \b 匹配词的边界。
 - \B 匹配非词边界，即在词的内部。
 
+下面是一些例子。
+
 {% highlight javascript %}
 
+// \s的例子
 /\s\w*/.exec("hello world") // [" world"]
 
+// \b的例子
 /\bworld/.test("hello world") // true
 /\bworld/.test("hello-world") // true
 /\bworld/.test("helloworld") // false
 
+// \B的例子
 /\Bworld/.test("hello-world") // false
 /\Bworld/.test("helloworld") // true
 
 {% endhighlight %}
+
+通常，正则表达式遇到换行符（\n）就会停止匹配。
+
+```javascript
+
+var html = "<b>Hello</b>\n<i>world!</i>";
+/.*/.exec(html)[0]
+// "<b>Hello</b>"
+
+```
+
+上面代码中，字符串html包含一个换行符，结果点字符（.）不匹配换行符，导致匹配结果可能不符合原意。这时使用\s字符类，就能包括换行符。
+
+```javascript
+
+var html = "<b>Hello</b>\n<i>world!</i>";
+/[\S\s]*/.exec(html)[0]
+// "<b>Hello</b>\n<i>world!</i>"
+
+// 另一种写法（用到了非捕获组）
+/(?:.|\s)*/.exec(html)[0]
+// "<b>Hello</b>\n<i>world!</i>"
+
+```
+
+上面代码中，`[\S\s]`指代一切字符。
 
 ### 特殊字符
 
@@ -796,6 +853,26 @@ tagName.exec("<b>bold</b>")[1]
 // 'b'
 
 {% endhighlight %}
+
+上面代码略加修改，就能捕获带有属性的标签。
+
+```javascript
+
+var html = '<b class="hello">Hello</b><i>world</i>';
+var tag = /<(\w+)([^>]*)>(.*?)<\/\1>/g;
+var match = tag.exec(html);
+
+match[1] // "b"
+match[2] // "class="hello""
+match[3] // "Hello"
+
+match = tag.exec(html);
+
+match[1] // "i"
+match[2] // ""
+match[3] // "world"
+
+```
 
 **（2）非捕获组**
 

@@ -31,7 +31,7 @@ function print(){
 {% highlight javascript %}
 
 var print = function (){
-	// ...
+  // ...
 };
 
 {% endhighlight %}
@@ -43,7 +43,7 @@ var print = function (){
 {% highlight javascript %}
 
 var print = function x(){
-	console.log(typeof x);
+  console.log(typeof x);
 };
 
 x
@@ -100,14 +100,14 @@ Function构造函数可以不使用new命令，返回结果完全一样。
 
 {% highlight javascript %}
 
-function f(){ 
-	console.log(1);
+function f(){
+  console.log(1);
 }
 
 f() // 2
 
 function f(){
-	console.log(2);
+  console.log(2);
 }
 
 f() // 2
@@ -123,7 +123,7 @@ f() // 2
 {% highlight javascript %}
 
 function add(x,y) {
-	return x+y;
+  return x+y;
 }
 
 add(1,1) // 2
@@ -156,7 +156,7 @@ JavaScript的函数与其他数据类型处于同等地位，可以使用其他�
 {% highlight javascript %}
 
 function add(x,y){
-	return x+y;
+  return x+y;
 }
 
 // 将函数赋值给一个变量
@@ -164,7 +164,7 @@ var operator = add;
 
 // 将函数作为参数和返回值
 function a(op){
-	return op;
+  return op;
 }
 a(add)(1,1)
 // 2
@@ -209,11 +209,11 @@ f = function (){};
 var f = function() {
   console.log ('1');
 }
- 
+
 function f() {
   console.log('2');
 }
- 
+
 f()
 // 1
 
@@ -231,8 +231,8 @@ if (foo) {
 
 try {
   function x() {return; }
-} catch(e) { 
-  console.log(e) 
+} catch(e) {
+  console.log(e);
 }
 
 ```
@@ -244,7 +244,7 @@ try {
 {% highlight javascript %}
 
 if (false){
-	function f(){}
+  function f(){}
 }
 
 f()
@@ -257,7 +257,7 @@ f()
 {% highlight javascript %}
 
 if (false){
-	var f = function (){};
+  var f = function (){};
 }
 
 f()
@@ -282,7 +282,7 @@ f3.name // 'myName'
 
 {% endhighlight %}
 
-上面代码中，函数的name属性总是返回紧跟在function关键字之后的那个函数名。对于f2来说，返回空字符串，对于f3来说，返回函数表达式的名字（真正的函数名还是f3，myName这个名字只在函数体内部可用）。 
+上面代码中，函数的name属性总是返回紧跟在function关键字之后的那个函数名。对于f2来说，返回空字符串，对于f3来说，返回函数表达式的名字（真正的函数名还是f3，myName这个名字只在函数体内部可用）。
 
 ## toString方法
 
@@ -290,17 +290,17 @@ f3.name // 'myName'
 
 ```javascript
 
-function f() { 
-  a(); 
-  b(); 
-  c(); 
+function f() {
+  a();
+  b();
+  c();
 }
 
 f.toString()
-// function f() { 
-//  a(); 
-//  b(); 
-//  c(); 
+// function f() {
+//  a();
+//  b();
+//  c();
 // }
 
 ```
@@ -379,10 +379,10 @@ function foo(x) {
 {% highlight javascript %}
 
 function foo(x) {
-	var tmp;
-    if (x > 100) {
-        tmp = x - 100;
-    }
+  var tmp;
+  if (x > 100) {
+    tmp = x - 100;
+  };
 }
 
 {% endhighlight %}
