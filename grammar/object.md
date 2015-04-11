@@ -505,7 +505,7 @@ with语句的格式如下：
 {% highlight javascript %}
 
 with (object)
-	statement
+  statement
 
 {% endhighlight %}
 
@@ -513,26 +513,40 @@ with (object)
 
 {% highlight javascript %}
 
-o.p1 = 1;
-o.p2 = 2;
+// 例一
+with (o) {
+  p1 = 1;
+  p2 = 2;
+}
 
 // 等同于
 
-with (o){
-	p1 = 1;
-	p2 = 2;
+o.p1 = 1;
+o.p2 = 2;
+
+// 例二
+with (document.links[0]){
+  console.log(href);
+  console.log(title);
+  console.log(style);
 }
-	
+
+// 等同于
+
+console.log(document.links[0].href);
+console.log(document.links[0].title);
+console.log(document.links[0].style);
+
 {% endhighlight %}
 
-这里需要注意的是，在with区块内部依然是全局作用域。
+注意，with区块内部的变量，必须是当前对象已经存在的属性，否则会创造一个当前作用域的全局变量。这是因为with区块没有改变作用域，它的内部依然是当前作用域。
 
 {% highlight javascript %}
 
 var o = {};
 
 with (o){
-	x = "abc";
+  x = "abc";
 }
 
 o.x
@@ -540,10 +554,10 @@ o.x
 
 x
 // "abc"
-	
+
 {% endhighlight %}
 
-这意味着，如果你要在with语句内部，赋值对象某个属性，这个属性必须已经存在，否则你就是声明了一个全局变量。
+上面代码中，对象o没有属性x，所以with区块内部对x的操作，等于创造了一个全局变量x。正确的写法应该是，先定义对象o的属性x，然后在with区块内操作它。
 
 {% highlight javascript %}
 
@@ -552,31 +566,31 @@ var o = {};
 o.x = 1;
 
 with (o){
-	x = 2;
+  x = 2;
 }
 
 o.x
 // 2
-	
+
 {% endhighlight %}
 
-with语句有很大的弊病，主要问题是绑定对象不明确。
+这是with语句的一个很大的弊病，就是绑定对象不明确。
 
 {% highlight javascript %}
 
 with (o) {
-	console.log(x);
+  console.log(x);
 }
 
 {% endhighlight %}
 
-单纯从上面的代码块，根本无法判断x到底是全局变量，还是o对象的一个属性。这非常不利于代码的除错和模块化。因此，建议不要使用with语句，可以考虑用一个临时变量代替with。
+单纯从上面的代码块，根本无法判断x到底是全局变量，还是o对象的一个属性。这非常不利于代码的除错和模块化，编译器也无法对这段代码进行优化，只能留到运行时判断，这就拖慢了运行速度。因此，建议不要使用with语句，可以考虑用一个临时变量代替with。
 
 {% highlight javascript %}
 
 with(o1.o2.o3) {
-        console.log(p1 + p2);
-    }
+  console.log(p1 + p2);
+}
 
 // 可以写成
 
@@ -584,6 +598,32 @@ var temp = o1.o2.o3;
 console.log(temp.p1 + temp.p2);
 
 {% endhighlight %}
+
+with语句少数有用场合之一，就是替换模板变量。
+
+```javascript
+var str = 'Hello <%= name %>!';
+```
+
+上面代码是一个模板字符串，为了替换其中的变量name，可以先将其分解成三部分`'Hello ', name, '!'`，然后进行模板变量替换。
+
+```javascript
+
+var o = {
+  name: 'Alice'
+};
+
+var p = [];
+var tmpl = '';
+
+with(o){
+  p.push('Hello ', name, '!');
+};
+
+p.join('') // "Hello Alice!"
+```
+
+上面代码中，with区块内部，模板变量name可以被对象o的属性替换，而p依然是全局变量。事实上，这就是很多模板引擎的实现原理。
 
 ## 参考链接
 
