@@ -48,6 +48,7 @@ modifiedOn: 2014-05-18
 
 - [document对象](dom/document.html)
 - [Node对象](dom/node.html)
+- [Element对象](dom/element.html)
 - [DOM 事件](dom/event.html)
 - [CSS操作](dom/css.html)
 - [拖放操作](dom/dragndrop.html)

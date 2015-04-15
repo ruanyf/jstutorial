@@ -216,6 +216,17 @@ var callback = function (error, value) {
 
 callback的第一个参数是一个Error对象，第二个参数才是真正的数据。如果没有发生错误，第一个参数就传入null。这种写法有一个很大的好处，就是说只要判断回调函数的第一个参数，就知道有没有出错，如果不是null，就肯定出错了。
 
+回调函数的第一个参数是Error对象，还有一个好处，就是可以层层传递错误。
+
+```javascript
+if(err) {
+  // 除了放过No Permission错误意外，其他错误传给下一个回调函数
+  if(!err.noPermission) {
+    return next(err);
+  }
+}
+```
+
 Node.js之所以把error放在回调函数的第一个参数，是因为服务器端JavaScript有大量的异步操作，传统的错误捕捉机制try...catch对于异步操作行不通。
 
 ```javascript
