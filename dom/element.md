@@ -8,6 +8,29 @@ modifiedOn: 2015-04-15
 
 Element对象就是网页中HTML标签元素的节点。
 
+## 属性
+
+### attributes
+
+attributes属性返回指定元素节点的所有属性节点，返回的是一个NamedNodeMap对象，它是类似数组的对象，所有成员都是动态的，即属性的变化会实时反映在结果集。
+
+下面代码是遍历一个元素节点的所有属性。
+
+```javascript
+var para = document.getElementsByTagName("p")[0];
+
+if (para.hasAttributes()) {
+  var attrs = para.attributes;
+  var output = "";
+  for(var i = attrs.length - 1; i >= 0; i--) {
+    output += attrs[i].name + "->" + attrs[i].value;
+  }
+  result.value = output;
+} else {
+  result.value = "No attributes to show";
+}
+```
+
 ## 方法
 
 ### querySelector()，querySelectorAll()

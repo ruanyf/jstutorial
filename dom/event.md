@@ -8,9 +8,7 @@ modifiedOn: 2013-12-19
 
 ## 概述
 
-DOM定义了一些事件，允许开发者指定它们的回调函数。
-
-指定回调事件的方法有三种。
+DOM定义了一些事件，允许开发者指定它们的回调函数。指定事件的回调事件有三种方法。
 
 **（1）HTML属性定义**
 
@@ -18,18 +16,22 @@ HTML语言允许在元素的属性中，直接定义某些事件的回调代码�
 
 {% highlight html %}
 
-<body onclick="console.log('触发事件')">
+<body onload="doSomething()">
+
+<div onclick="console.log('触发事件')">
 
 {% endhighlight %}
 
-**（2）Element对象的事件属性**
+**（2）节点对象的事件属性**
 
-Element对象有事件属性，可以定义回调函数。
+节点对象有事件属性，可以定义回调函数。
 
 {% highlight javascript %}
 
+window.onload = doSomething;
+
 div.onclick = function(event){
-	console.log('触发事件');
+  console.log('触发事件');
 };
 
 {% endhighlight %}
@@ -40,9 +42,10 @@ div.onclick = function(event){
 
 {% highlight javascript %}
 
-button.addEventListener('click', 
-		function(){console.log('Hello world');}, 
-		false);
+button.addEventListener('click',
+  function(){console.log('Hello world');},
+  false
+);
 
 {% endhighlight %}
 
@@ -85,8 +88,8 @@ element.removeEventListener(event, callback, use-capture);
 {% highlight html %}
 
 <div>
-    <p>Click Me</p>
-</div> 
+  <p>Click Me</p>
+</div>
 
 {% endhighlight %}
 
@@ -118,7 +121,7 @@ function callback(event) {
 // Tag: 'DIV'. EventPhase: 'capture'
 // Tag: 'P'. EventPhase: 'target'
 // Tag: 'P'. EventPhase: 'target'
-// Tag: 'DIV'. EventPhase: 'bubble' 
+// Tag: 'DIV'. EventPhase: 'bubble'
 
 {% endhighlight %}
 
