@@ -79,8 +79,7 @@ classList属性则返回一个类似数组的对象，当前元素的每个class
 
 上面这个div元素的节点对象的className属性和classList属性，分别如下。
 
-{% highlight javascript %}
-
+```javascript
 document.getElementById('myDiv').className
 // "one two three"
 
@@ -91,8 +90,7 @@ document.getElementById('myDiv').classList
 //   2: "three"
 //   length: 3
 // }
-
-{% endhighlight %}
+```
 
 从上面代码可以看出，className属性返回一个空格分隔的字符串，而classList属性指向一个类似数组的对象，该对象的length属性（只读）返回当前元素的class数量。
 
