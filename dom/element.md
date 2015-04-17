@@ -10,7 +10,7 @@ Element对象就是网页中HTML标签元素的节点。
 
 ## 属性
 
-### attributes
+### attributes，id
 
 attributes属性返回指定元素节点的所有属性节点，返回的是一个类似数组的对象，每个数字索引对应一个属性节点（Attribute）对象。返回值中，所有成员都是动态的，即属性的变化会实时反映在结果集。
 
@@ -49,7 +49,45 @@ if (para.hasAttributes()) {
 }
 ```
 
-### children，childElementCount
+id属性返回指定元素的id标识。该属性可读写。
+
+### innerHTML
+
+innerHTML属性返回该元素包含的HTML代码。该属性可读写，常用来设置某个节点的内容。
+
+如果将该属性设为空，等于删除所有它包含的所有节点。
+
+```javascript
+el.innerHTML = '';
+```
+
+上面代码等于将el节点变成了一个空节点，el原来包含的节点被全部删除。
+
+注意，如果文本节点中包含&amp;、小于号（&lt;）和大于号（%gt;），innerHTML属性会将它们转为实体形式&amp、&lt、&gt。
+
+```javascript
+// HTML代码如下 <p id="para"> 5 > 3 </p>
+document.getElementById('para').innerHTML
+// 5 &gt; 3
+```
+
+由于上面这个原因，导致在innerHTML插入&lt;script&gt;标签，不会被执行。
+
+```javascript
+var name = "<script>alert('haha')</script>";
+el.innerHTML = name;
+```
+
+上面代码将脚本插入内容，脚本并不会执行。但是，innerHTML还是有安全风险的。
+
+```javascript
+var name = "<img src=x onerror=alert(1)>";
+el.innerHTML = name;
+```
+
+上面代码中，alert方法是会执行的。因此为了安全考虑，如果插入的是文本，最好用textContent属性代替innerHTML。
+
+### children，childElementCount，firstElementChild，lastElementChild
 
 children属性返回一个类似数组的动态对象（实时反映变化），包括当前元素节点的所有子元素。如果当前元素没有子元素，则返回的对象包含零个成员。
 
@@ -64,6 +102,10 @@ if (para.children.length) {
 ```
 
 childElementCount属性返回当前元素节点包含的子元素节点的个数。
+
+firstElementChild属性返回第一个子元素，如果没有，则返回null。
+
+lastElementChild属性返回最后一个子元素，如果没有，则返回null。
 
 ### className，classList
 
@@ -142,6 +184,16 @@ if (someBool){
 }
 
 ```
+
+### clientHeight，clientLeft，clientTop，clientWidth
+
+clientHeight属性返回网页元素的内侧高度，即包括padding、但不包括水平滚动条、边框和margin的高度，单位为像素。该属性可以计算得到，等于元素的CSS高度，加上CSS的padding高度，减去水平滚动条的高度（如果存在水平滚动条）。
+
+clientLeft属性等于网页元素左边框的宽度，单位为像素，包括垂直滚动条的宽度，不包括左侧的margin和padding。但是，除非排版方向是从右到左，且发生元素宽度溢出，否则是不可能存在左侧滚动条。如果该元素的显示设为`display: inline`，clientLeft一律为0，不管是否存在左边框。
+
+clientTop属性等于网页元素顶部边框的宽度，不包括顶部的margin和padding。
+
+clientWidth属性等于网页元素的内侧宽度，即包括padding、但不包括垂直滚动条（如果有的话）、边框和margin的宽度，单位为像素。
 
 ## 方法
 
