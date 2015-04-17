@@ -103,8 +103,7 @@ classList对象有下列方法。
 - item()：返回指定索引位置的class。
 - toString()：将class的列表转为字符串。
 
-{% highlight javascript %}
-
+```javascript
 myDiv.classList.add('myCssClass');
 myDiv.classList.add('foo', 'bar');
 myDiv.classList.remove('myCssClass');
@@ -112,8 +111,7 @@ myDiv.classList.toggle('myCssClass'); // 如果myCssClass不存在就加入，�
 myDiv.classList.contains('myCssClass'); // 返回 true 或者 false
 myDiv.classList.item(0); // 返回第一个Class
 myDiv.classList.toString();
-
-{% endhighlight %}
+```
 
 下面比较一下，className和classList在添加和删除某个类时的写法。
 
