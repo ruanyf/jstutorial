@@ -51,7 +51,7 @@ if (para.hasAttributes()) {
 
 id属性返回指定元素的id标识。该属性可读写。
 
-### innerHTML
+### innerHTML，outerHTML
 
 innerHTML属性返回该元素包含的HTML代码。该属性可读写，常用来设置某个节点的内容。
 
@@ -87,7 +87,43 @@ el.innerHTML = name;
 
 上面代码中，alert方法是会执行的。因此为了安全考虑，如果插入的是文本，最好用textContent属性代替innerHTML。
 
-### children，childElementCount，firstElementChild，lastElementChild
+outerHTML属性返回一个字符串，内容为指定元素的所有HTML代码，包括它自身和包含的所有子元素。
+
+```javascript
+// 假定HTML代码如下
+// <div id="d"><p>Hello</p></div>
+
+d = document.getElementById("d");
+dump(d.outerHTML);
+
+// '<div id="d"><p>Hello</p></div>'
+```
+
+outerHTML属性是可读写的，对它进行赋值，等于替换掉当前元素。
+
+```javascript
+// 假定HTML代码如下
+// <div id="container"><div id="d">Hello</div></div>
+
+container = document.getElementById("container");
+d = document.getElementById("d");
+container.firstChild.nodeName // "DIV"
+d.nodeName // "DIV"
+
+d.outerHTML = "<p>Hello</p>";
+container.firstChild.nodeName // "P"
+d.nodeName // "DIV"
+```
+
+上面代码中，outerHTML属性重新赋值以后，内层的div元素就不存在了，被p元素替换了。但是，变量d依然指向原来的div元素，这表示被替换的DIV元素还存在于内存中。
+
+如果指定元素没有父节点，对它的outerTHML属性重新赋值，会抛出一个错误。
+
+```javascript
+document.documentElement.outerHTML = "test";  // DOMException
+```
+
+### children，childElementCount，firstElementChild，lastElementChild，nextElementSibling，previousElementSibling
 
 children属性返回一个类似数组的动态对象（实时反映变化），包括当前元素节点的所有子元素。如果当前元素没有子元素，则返回的对象包含零个成员。
 
@@ -106,6 +142,20 @@ childElementCount属性返回当前元素节点包含的子元素节点的个数
 firstElementChild属性返回第一个子元素，如果没有，则返回null。
 
 lastElementChild属性返回最后一个子元素，如果没有，则返回null。
+
+nextElementSibling属性返回指定元素的后一个同级元素，如果没有则返回null。
+
+```javascript
+// 假定HTML代码如下
+// <div id="div-01">Here is div-01</div>
+// <div id="div-02">Here is div-02</div>
+var el = document.getElementById('div-01');
+el.nextElementSibling
+// <div id="div-02">Here is div-02</div>
+
+```
+
+previousElementSibling属性返回指定元素的前一个同级元素，如果没有则返回null。
 
 ### className，classList
 
