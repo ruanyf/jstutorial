@@ -29,7 +29,7 @@ DOCUMENT_TYPE_NODE | 文档类型节点 | 文档的类型（比如&lt;!DOCTYPE h
 
 nodeName属性返回节点的名称，nodeType属性返回节点的常数值。具体的返回值，可查阅下方的表格。
 
-类型 | nodeName | nodeType 
+类型 | nodeName | nodeType
 -----|----------|---------
 DOCUMENT_NODE | #document | 9
 ELEMENT_NODE | 大写的HTML元素名 | 1

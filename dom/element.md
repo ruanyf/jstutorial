@@ -280,11 +280,9 @@ scrollLeft属性设置或返回水平滚动条向右侧滚动的像素数量。�
 
 scrollTop属性设置或返回垂直滚动条向下滚动的像素数量。它的值等于元素的顶部与其可见的最高位置之间的距离。对于那些没有滚动条或不需要滚动的元素，该属性等于0。该属性是可读写属性，设置该属性的值，会导致浏览器将指定元素自动滚动到相应位置。
 
-% highlight javascript %}
-
+```javascript
 document.querySelector('div').scrollTop = 150;
-
-{% endhighlight %}
+```
 
 上面代码将div元素向下滚动150像素。
 
