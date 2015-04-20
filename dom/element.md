@@ -237,13 +237,56 @@ if (someBool){
 
 ### clientHeight，clientLeft，clientTop，clientWidth
 
-clientHeight属性返回网页元素的内侧高度，即包括padding、但不包括水平滚动条、边框和margin的高度，单位为像素。该属性可以计算得到，等于元素的CSS高度，加上CSS的padding高度，减去水平滚动条的高度（如果存在水平滚动条）。
+clientHeight属性返回网页元素的可见高度，包括padding、但不包括水平滚动条、边框和margin的高度，单位为像素。该属性可以计算得到，等于元素的CSS高度，加上CSS的padding高度，减去水平滚动条的高度（如果存在水平滚动条）。
+
+如果一个元素是可以滚动的，则clientHeight只计算它的可见部分的高度。
 
 clientLeft属性等于网页元素左边框的宽度，单位为像素，包括垂直滚动条的宽度，不包括左侧的margin和padding。但是，除非排版方向是从右到左，且发生元素宽度溢出，否则是不可能存在左侧滚动条。如果该元素的显示设为`display: inline`，clientLeft一律为0，不管是否存在左边框。
 
 clientTop属性等于网页元素顶部边框的宽度，不包括顶部的margin和padding。
 
-clientWidth属性等于网页元素的内侧宽度，即包括padding、但不包括垂直滚动条（如果有的话）、边框和margin的宽度，单位为像素。
+clientWidth属性等于网页元素的可见宽度，即包括padding、但不包括垂直滚动条（如果有的话）、边框和margin的宽度，单位为像素。
+
+如果一个元素是可以滚动的，则clientWidth只计算它的可见部分的宽度。
+
+### scrollHeight，scrollWidth，scrollLeft，scrollTop
+
+scrollHeight属性返回指定元素的总高度，包括由于溢出而无法展示在网页的不可见部分。如果一个元素是可以滚动的，则scrollHeight包括整个元素的高度，不管是否存在垂直滚动条。scrollHeight属性包括padding，但不包括border和margin。该属性为只读属性。
+
+如果不存在垂直滚动条，scrollHeight属性与clientHeight属性是相等的。如果存在滚动条，scrollHeight属性总是大于clientHeight属性。当滚动条滚动到内容底部时，下面的表达式为true。
+
+```javascript
+element.scrollHeight - element.scrollTop === element.clientHeight
+```
+
+如果滚动条没有滚动到内容底部，上面的表达式为false。这个特性结合`onscroll`事件，可以判断用户是否滚动到了指定元素的底部，比如是否滚动到了《使用须知》区块的底部。
+
+```javascript
+var rules = document.getElementById("rules");
+rules.onscroll = checking;
+
+function checking(){
+  if (this.scrollHeight - this.scrollTop === this.clientHeight) {
+    console.log('谢谢阅读');
+  } else {
+    console.log('您还未读完');
+  }
+}
+```
+
+scrollWidth属性返回元素的总宽度，包括由于溢出容器而无法显示在网页上的那部分宽度，不管是否存在水平滚动条。该属性是只读属性。
+
+scrollLeft属性设置或返回水平滚动条向右侧滚动的像素数量。它的值等于元素的最左边与其可见的最左侧之间的距离。对于那些没有滚动条或不需要滚动的元素，该属性等于0。该属性是可读写属性，设置该属性的值，会导致浏览器将指定元素自动滚动到相应的位置。
+
+scrollTop属性设置或返回垂直滚动条向下滚动的像素数量。它的值等于元素的顶部与其可见的最高位置之间的距离。对于那些没有滚动条或不需要滚动的元素，该属性等于0。该属性是可读写属性，设置该属性的值，会导致浏览器将指定元素自动滚动到相应位置。
+
+% highlight javascript %}
+
+document.querySelector('div').scrollTop = 150;
+
+{% endhighlight %}
+
+上面代码将div元素向下滚动150像素。
 
 ## 方法
 

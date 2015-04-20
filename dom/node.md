@@ -136,7 +136,7 @@ ul.insertBefore(li,ul.firstChild);
 
 {% endhighlight %}
 
-（3）removeChild() 
+（3）removeChild()
 
 removeChild() 方法用于从父节点移除一个子节点。它在父节点上调用，被移除的子节点作为参数。
 
@@ -308,7 +308,7 @@ tabindex属性用来指定，当前HTML元素节点是否被tab键遍历，以�
 
 ```javascript
 var b1 = document.getElementById("button1");
- 
+
 b1.tabIndex = 1;
 ```
 
@@ -383,53 +383,6 @@ IE 9不支持dataset属性，可以用 getAttribute('data-foo')、removeAttribut
 - offsetLeft：当前HTML元素左上角相对于offsetParent的水平位移。
 
 如果Element对象的父对象都没有将position属性设置为非static的值（比如absolute或relative），则offsetParent属性指向body元素。另外，计算offsetTop和offsetLeft的时候，是从边框的左上角开始计算，即Element对象的border宽度不计入offsetTop和offsetLeft。
-
-**（2） clientWidth属性和clientHeight属性**
-
-这两个属性返回HTML元素的宽度和高度，在数值上等于内容本身+padding，不包括边框（border）。
-
-{% highlight javascript %}
-
-document.querySelector('div').clientWidth
-document.querySelector('div').clientHeight
-
-{% endhighlight %}
-
-如果一个元素是可以滚动的，则clientWidth和clientHeight只计算它的可见部分的宽度和高度。
-
-**（3）scrollHeight属性和scrollWidth属性**
-
-这两个只读属性提供可滚动的HTML元素的总高度和总宽度。
-
-{% highlight javascript %}
-
-// <html>元素的总高度
-document.documentElement.scrollHeight
-
-// <body>元素的总高度
-document.body.scrollHeight
-
-{% endhighlight %}
-
-**（4）scrollTop属性和scrollLeft属性**
-
-这两个属性提供可滚动元素的可以滚动的高度和宽度。这两个属性是读写的。
-
-{% highlight javascript %}
-
-document.querySelector('div').scrollTop = 750;
-
-{% endhighlight %}
-
-上面代码将div元素的向下滚动750像素。
-
-可滚动对象的高度和宽度，满足下面的公式。
-
-{% highlight javascript %}
-
-element.scrollHeight - element.scrollTop === element.clientHeight
-
-{% endhighlight %}
 
 ### style属性
 
