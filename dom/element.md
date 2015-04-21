@@ -10,7 +10,11 @@ Element对象就是网页中HTML标签元素的节点。
 
 ## 属性
 
-### attributes，id
+### attributes，id，tagName
+
+以下属性返回元素节点的性质。
+
+**（1）attributes**
 
 attributes属性返回指定元素节点的所有属性节点，返回的是一个类似数组的对象，每个数字索引对应一个属性节点（Attribute）对象。返回值中，所有成员都是动态的，即属性的变化会实时反映在结果集。
 
@@ -49,9 +53,26 @@ if (para.hasAttributes()) {
 }
 ```
 
+**（2）id属性**
+
 id属性返回指定元素的id标识。该属性可读写。
 
+**（3）tagName属性**
+
+tagName属性返回指定元素的大写的标签名，与nodeName属性的值相等。
+
+```javascript
+// 假定HTML代码如下
+// <span id="span">Hello</span>
+var span = document.getElementById("span");
+span.tagName // "SPAN"
+```
+
 ### innerHTML，outerHTML
+
+以下属性返回元素节点的HTML内容。
+
+**（1）innerHTML**
 
 innerHTML属性返回该元素包含的HTML代码。该属性可读写，常用来设置某个节点的内容。
 
@@ -86,6 +107,8 @@ el.innerHTML = name;
 ```
 
 上面代码中，alert方法是会执行的。因此为了安全考虑，如果插入的是文本，最好用textContent属性代替innerHTML。
+
+**（2）outerHTML**
 
 outerHTML属性返回一个字符串，内容为指定元素的所有HTML代码，包括它自身和包含的所有子元素。
 
@@ -123,7 +146,11 @@ d.nodeName // "DIV"
 document.documentElement.outerHTML = "test";  // DOMException
 ```
 
-### children，childElementCount，firstElementChild，lastElementChild，nextElementSibling，previousElementSibling
+### children，childElementCount，firstElementChild，lastElementChild
+
+以下属性与元素节点的子元素相关。
+
+**（1）children**
 
 children属性返回一个类似数组的动态对象（实时反映变化），包括当前元素节点的所有子元素。如果当前元素没有子元素，则返回的对象包含零个成员。
 
@@ -137,11 +164,23 @@ if (para.children.length) {
 }
 ```
 
+**（2）childElementCount**
+
 childElementCount属性返回当前元素节点包含的子元素节点的个数。
+
+**（3）firstElementChild**
 
 firstElementChild属性返回第一个子元素，如果没有，则返回null。
 
+**（4）lastElementChild**
+
 lastElementChild属性返回最后一个子元素，如果没有，则返回null。
+
+### nextElementSibling，previousElementSibling
+
+以下属性与元素节点的同级元素相关。
+
+**（1）nextElementSibling**
 
 nextElementSibling属性返回指定元素的后一个同级元素，如果没有则返回null。
 
@@ -155,13 +194,15 @@ el.nextElementSibling
 
 ```
 
+**（2）previousElementSibling**
+
 previousElementSibling属性返回指定元素的前一个同级元素，如果没有则返回null。
 
 ### className，classList
 
 className属性用来读取和设置当前元素的class属性。它的值是一个字符串，每个class之间用空格分割。
 
-classList属性则返回一个类似数组的对象，当前元素的每个class就是这个对象的一个成员。
+classList属性则返回一个类似数组的对象，当前元素节点的每个class就是这个对象的一个成员。
 
 {% highlight html %}
 
@@ -237,19 +278,33 @@ if (someBool){
 
 ### clientHeight，clientLeft，clientTop，clientWidth
 
-clientHeight属性返回网页元素的可见高度，包括padding、但不包括水平滚动条、边框和margin的高度，单位为像素。该属性可以计算得到，等于元素的CSS高度，加上CSS的padding高度，减去水平滚动条的高度（如果存在水平滚动条）。
+以下属性与元素节点的可见区域的坐标相关。
+
+**（1）clientHeight**
+
+clientHeight属性返回元素节点的可见高度，包括padding、但不包括水平滚动条、边框和margin的高度，单位为像素。该属性可以计算得到，等于元素的CSS高度，加上CSS的padding高度，减去水平滚动条的高度（如果存在水平滚动条）。
 
 如果一个元素是可以滚动的，则clientHeight只计算它的可见部分的高度。
 
-clientLeft属性等于网页元素左边框的宽度，单位为像素，包括垂直滚动条的宽度，不包括左侧的margin和padding。但是，除非排版方向是从右到左，且发生元素宽度溢出，否则是不可能存在左侧滚动条。如果该元素的显示设为`display: inline`，clientLeft一律为0，不管是否存在左边框。
+**（2）clientLeft**
+
+clientLeft属性等于元素节点左边框（border）的宽度，单位为像素，包括垂直滚动条的宽度，不包括左侧的margin和padding。但是，除非排版方向是从右到左，且发生元素宽度溢出，否则是不可能存在左侧滚动条。如果该元素的显示设为`display: inline`，clientLeft一律为0，不管是否存在左边框。
+
+**（3）clientTop**
 
 clientTop属性等于网页元素顶部边框的宽度，不包括顶部的margin和padding。
+
+**（4）clientWidth**
 
 clientWidth属性等于网页元素的可见宽度，即包括padding、但不包括垂直滚动条（如果有的话）、边框和margin的宽度，单位为像素。
 
 如果一个元素是可以滚动的，则clientWidth只计算它的可见部分的宽度。
 
 ### scrollHeight，scrollWidth，scrollLeft，scrollTop
+
+以下属性与元素节点占据的总区域的坐标相关。
+
+**（1）scrollHeight**
 
 scrollHeight属性返回指定元素的总高度，包括由于溢出而无法展示在网页的不可见部分。如果一个元素是可以滚动的，则scrollHeight包括整个元素的高度，不管是否存在垂直滚动条。scrollHeight属性包括padding，但不包括border和margin。该属性为只读属性。
 
@@ -274,9 +329,15 @@ function checking(){
 }
 ```
 
+**（2）scrollWidth**
+
 scrollWidth属性返回元素的总宽度，包括由于溢出容器而无法显示在网页上的那部分宽度，不管是否存在水平滚动条。该属性是只读属性。
 
+**（3）scrollLeft**
+
 scrollLeft属性设置或返回水平滚动条向右侧滚动的像素数量。它的值等于元素的最左边与其可见的最左侧之间的距离。对于那些没有滚动条或不需要滚动的元素，该属性等于0。该属性是可读写属性，设置该属性的值，会导致浏览器将指定元素自动滚动到相应的位置。
+
+**（4）scrollTop**
 
 scrollTop属性设置或返回垂直滚动条向下滚动的像素数量。它的值等于元素的顶部与其可见的最高位置之间的距离。对于那些没有滚动条或不需要滚动的元素，该属性等于0。该属性是可读写属性，设置该属性的值，会导致浏览器将指定元素自动滚动到相应位置。
 
