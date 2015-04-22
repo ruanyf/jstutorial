@@ -407,3 +407,143 @@ var matches = el.querySelectorAll('div.highlighted > p');
 var outer = document.getElementById('outer');
 var el = outer.querySelectorAll('div p');
 ```
+
+### addEventListener()，removeEventListener()，dispatchEvent()
+
+addEventListener方法为元素节点添加事件监听函数。
+
+```javascript
+function print() {
+  console.log('已经点击');
+}
+
+var el = document.getElementById("div1");
+el.addEventListener("click", print, false);
+```
+
+上面代码为div元素节点，添加了click事件的监听函数print，即一旦发生click事件，就会调用print函数。
+
+addEventListener方法第三个参数是一个布尔值，如果为true，表示在“捕获阶段”触发监听函数，如果为false，表示在“冒泡阶段”触发监听函数。该参数默认为false。
+
+如果向同一个元素节点的同一个事件，添加两个或多个相同的监听函数，那么重复的监听函数都会被自动删除。
+
+```javascript
+el.addEventListener("click", print, false);
+el.addEventListener("click", print, false);
+```
+
+上面代码向元素节点的click事件，添加了两次监听函数print，第二个print函数会被自动删除。也就是说，发生click事件时，print函数只会被调用一次。
+
+监听函数内部的this，指向触发事件的元素节点。
+
+```javascript
+function print() {
+  console.log(this.id); // 输出div1
+}
+
+var el = document.getElementById("div1");
+el.addEventListener("click", print, false);
+```
+
+上面代码中，监听函数print内部的this变量，指向触发事件的元素节点。这是因为监听函数被“拷贝”成了元素节点的一个属性，使用下面的写法，会看得更清楚。
+
+```javascript
+el.onclick = print;
+```
+
+如果事件监听函数写在元素的HTML属性里，事件触发时，this变量指向全局对象。
+
+```html
+<div id="div1" onclick="print()">
+```
+
+上面代码中，print函数内部的this变量，事件触发时指向全局变量。这是因为这种写法没有“拷贝”监听函数，而是事件触发时，找到print函数，然后执行，类似于下面的代码。
+
+```javascript
+function onclick()
+{
+  print();
+}
+```
+
+上面代码中，print函数内部的this变量指向全局对象。
+
+解决方法就是把this写进HTML属性。
+
+```javascript
+<div id="div1" onclick="console.log(this.id)">
+```
+
+上面代码中，this指向元素节点。
+
+总结一下，以下写法的this对象都指向元素节点。
+
+```javascript
+element.onclick = print
+element.addEventListener('click',print,false)
+element.onclick = function () {console.log(this.id);}
+<element onclick="console.log(this.id)">
+```
+
+以下写法的this对象都指向全局对象。
+
+```javascript
+element.onclick = function () {print()}
+<element onclick="print()">
+```
+
+如果希望向监听函数传递参数，可以用匿名函数包装一下监听函数。
+
+```javascript
+function print(x) {
+  console.log(x);
+}
+
+var el = document.getElementById("div1");
+el.addEventListener("click", function(){print('Hello')}, false);
+```
+
+上面代码通过匿名函数，向监听函数print传递了一个参数。
+
+removeEventListener方法用来移除addEventListener方法添加的事件监听函数。
+
+```javascript
+div.addEventListener('click', listener, false);
+div.removeEventListener('click', listener, false);
+```
+
+注意，removeEventListener方法移除的监听函数，必须与对应的addEventListener方法的参数完全一致，而且在同一个元素节点，否则无效。
+
+dispatchEvent方法触发元素节点的指定事件，从而调用事件监听函数。如果事件监听函数调用了`Event.preventDefault()`，则返回false，否则为true。
+
+```javascript
+cancelled = !target.dispatchEvent(event)
+```
+
+### closest()
+
+closest方法返回当前元素节点的最接近的父元素（或者当前节点本身），条件是必须匹配给定的CSS选择器。如果不满足匹配，则返回null。
+
+假定HTML代码如下。
+
+```html
+<article>
+  <div id="div-01">Here is div-01
+    <div id="div-02">Here is div-02
+      <div id="div-03">Here is div-03</div>
+    </div>
+  </div>
+</article>
+```
+
+div-03节点的closet方法的例子如下。
+
+```javascript
+var el = document.getElementById('div-03');
+el.closest("#div-02") // div-02
+el.closest("div div") // div-03
+el.closest("article > div") //div-01
+el.closest(":not(div)") // article
+```
+
+上面代码中，由于closet方法将当前元素节点也考虑在内，所以第二个closet方法返回div-03。

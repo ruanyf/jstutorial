@@ -321,34 +321,42 @@ var XFoo = document.registerElement('x-foo-with-markup',
 
 所谓Shadow DOM指的是，浏览器将模板、样式表、属性、JavaScript代码等，封装成一个独立的DOM元素。外部的设置无法影响到其内部，而内部的设置也不会影响到外部，与浏览器处理原生网页元素（比如&lt;video&gt;元素）的方式很像。Shadow DOM最大的好处有两个，一是可以向用户隐藏细节，直接提供组件，二是可以封装内部样式表，不会影响到外部。Chrome 35+支持Shadow DOM。
 
-Shadow DOM元素需要通过createShadowRoot方法创造，然后将其插入HTML文档。
+Shadow DOM元素必须依存在一个现有的DOM元素之下，通过createShadowRoot方法创造，然后将其插入该元素。
 
 ```javascript
 
 var shadowRoot = element.createShadowRoot();
-shadowRoot.appendChild(body);
+shadowRoot.appendChild(document.body);
 
 ```
 
 上面代码创造了一个shadowRoot元素，然后将其插入HTML文档。
 
-我们也可以指定，网页中某个现存的元素为Shadom DOM的根元素。
+下面的例子是指定网页中某个现存的元素，作为Shadom DOM的根元素。
 
 ```html
 
 <button>Hello, world!</button>
 
 <script>
-	var host = document.querySelector('button');
-	var root = host.createShadowRoot();
-	root.textContent = '你好，世界！';
+  var host = document.querySelector('button');
+  var root = host.createShadowRoot();
+  root.textContent = '你好';
 </script>
 
 ```
 
 上面代码指定现存的button元素，为Shadow DOM的根元素，并将button的文字从英文改为中文。
 
-Shadow DOM更强大的作用是，可以为DOM元素指定独立的模板和样式表。
+通过innerHTML属性，可以为Shadow DOM指定内容。
+
+```javascript
+var shadow = document.querySelector('#hostElement').createShadowRoot();
+shadow.innerHTML = '<p>Here is some new text</p>';
+shadow.innerHTML += '<style>p { color: red };</style>';
+```
+
+下面的例子是为Shadow DOM加上独立的模板。
 
 ```html
 
@@ -384,22 +392,6 @@ shadow.appendChild(template.content.cloneNode());
 ```
 
 上面代码先用createShadowRoot方法，对div创造一个根元素，用来指定Shadow DOM，然后把模板元素添加为Shadow的子元素。
-
-另一种对Shadow DOM添加内容的方法，是直接对其指定innerHTML属性。
-
-```javascript
-
-var el = document.getElementById('demo1');
-        
-var shadow = el.createShadowRoot();
-        
-var shadowHTML = '<style>p {text-decoration: underline;}</style>';
-shadowHTML += '<p>These paragraphs are in a shadow root.</p>';
-shadow.innerHTML = shadowHTML;
-
-```
-
-上面代码在Shadow DOM之中，插入了样式和一个p元素。
 
 ## HTML Import
 

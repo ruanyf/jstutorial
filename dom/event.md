@@ -740,17 +740,21 @@ someEl.addEventListener('some-event', function(event) {
 
 ## 自定义事件
 
-除了浏览器预定义的那些事件，用户还可以自定义事件，然后手动触发。下面是jQuery触发自定义事件的写法，相当简单。
+### 标准写法
+
+除了浏览器预定义的那些事件，用户还可以自定义事件，然后手动触发。比如，下面是jQuery触发自定义事件的写法。
 
 ```javascript
-
 $('some-element').trigger('my-custom-event');
-
 ```
 
 上面代码触发了自定义事件，该事件会层层向上冒泡。在冒泡过程中，如果有一个元素定义了该事件的回调函数，该回调函数就会触发。
 
-使用浏览器原生方法创造自定义事件，也很简单。
+下面介绍浏览器原生的生成新事件的API。
+
+#### Event()
+
+使用Event构造函数，生成一个新的事件对象。
 
 ```javascript
 var event = new Event('build');
@@ -760,9 +764,21 @@ elem.addEventListener('build', function (e) {
 elem.dispatchEvent(event);
 ```
 
-上面代码先生成一个build事件，然后在元素上面绑定该事件的回调函数，最后触发该事件。
+上面代码先生成一个build事件，然后在元素上面绑定该事件的回调函数，最后触发该事件。除了IE，其他浏览器都支持这种写法。
 
-Event构造函数只能指定事件名，不能在事件上绑定数据。如果需要在触发事件的同时，传入指定的数据，需要使用CustomEvent构造函数生成事件对象。
+Event构造函数可以接受两个参数。第一个参数是事件名称，第二个参数是一个对象，表示事件对象的配置。该参数可以有以下两个属性。
+
+- bubbles：布尔值，可选，默认为false，表示事件对象是否冒泡。
+- cancelable：布尔值，可选，默认为false，表示事件是否可以被取消。
+
+```javascript
+var ev = new Event("look", {"bubbles":true, "cancelable":false});
+document.dispatchEvent(ev);
+```
+
+#### CustomEvent()
+
+Event构造函数只能指定事件名，不能在事件上绑定数据。如果需要在触发事件的同时，传入指定的数据，需要使用CustomEvent构造函数生成自定义的事件对象。
 
 ```javascript
 var event = new CustomEvent('build', { 'detail': 'hello' });
@@ -773,49 +789,135 @@ function eventHandler(e) {
 
 上面代码中，CustomEvent构造函数的第一个参数是事件名称，第二个参数是一个对象，该对象的detail属性会绑定在事件对象之上。
 
+IE不支持这个方法，可以用下面的垫片函数模拟。
+
+```javascript
+(function () {
+  function CustomEvent ( event, params ) {
+    params = params || { bubbles: false, cancelable: false, detail: undefined };
+    var evt = document.createEvent( 'CustomEvent' );
+    evt.initCustomEvent( event, params.bubbles, params.cancelable, params.detail );
+    return evt;
+   }
+
+  CustomEvent.prototype = window.Event.prototype;
+
+  window.CustomEvent = CustomEvent;
+})();
+```
+
+#### MouseEvent()
+
+MouseEvent方法是一个构造函数，用来新建鼠标事件。
+
+```javascript
+event = new MouseEvent(typeArg, mouseEventInit);
+```
+
+MouseEvent方法的第一个参数是事件名称（比如click），第二个参数是一个事件初始化对象。该对象可以配置以下属性。
+
+- screenX，鼠标相对于屏幕的水平坐标，默认为0。
+- screenY，鼠标相对于屏幕的垂直坐标，默认为0。
+- clientX，鼠标相对于窗口的水平坐标，默认为0。
+- clientY，鼠标相对于窗口的垂直坐标，默认为0。
+- ctrlKey，是否按下ctrl键，默认为false。
+- shiftKey，是否按下shift键，默认为false。
+- altKey，是否按下alt键，默认为false。
+- metaKey，是否按下meta键，默认为false。
+- button，按下了哪一个鼠标按键，默认为0。-1表示没有按键，0表示按下主键（通常是左键），1表示按下辅助键（通常是中间的键），2表示按下次要键（通常是右键）。
+
+下面是一个例子。
+
 ```javascript
 function simulateClick() {
   var event = new MouseEvent('click', {
-    'view': window,
     'bubbles': true,
     'cancelable': true
   });
   var cb = document.getElementById('checkbox');
-  var canceled = !cb.dispatchEvent(event);
-  if (canceled) {
-    // A handler called preventDefault.
-    alert("canceled");
-  } else {
-    // None of the handlers called preventDefault.
-    alert("not canceled");
-  }
+  cb.dispatchEvent(event);
 }
 ```
 
 上面代码生成一个鼠标点击事件，并触发该事件。
 
-```javascript
+### 老式写法
 
+以下的方法都不是标准，未来会被逐步淘汰，但是目前浏览器还广泛支持。
+
+#### document.createEvent()
+
+document.createEvent方法用来新建指定类型的事件 。
+
+```javascript
+var event = document.createEvent('Event');
+
+// 指定事件名为build
+event.initEvent('build', true, true);
+
+document.addEventListener('build', function (e) {
+  // ...
+}, false);
+
+// 触发事件
+document.dispatchEvent(event);
+```
+
+createEvent方法接受一个字符串作为参数，可能的值参见下表“数据类型”一栏。使用了某一种“数据类型”，就必须使用对应的事件初始化方法。
+
+|事件类型|事件初始化方法|
+|--------|--------------|
+|UIEvents|event.initUIEvent|
+|MouseEvents|event.initMouseEvent|
+|MutationEvents|event.initMutationEvent|
+|HTMLEvents|event.initEvent|
+|Event|event.initEvent|
+|CustomEvent|event.initCustomEvent|
+|KeyboardEvent|event.initKeyEvent|
+
+#### event.initEvent()
+
+事件对象的initEvent方法，用来初始化事件对象，还能向事件对象添加属性。
+
+```javascript
 var event = document.createEvent('Event');
 event.initEvent('my-custom-event', true, true, {foo:'bar'});
 someElement.dispatchEvent(event);
-
 ```
 
-document.createEvent方法除了自定义事件以外，还能触发浏览器的默认事件。比如，模仿并触发click事件的写法如下。
+initEvent方法可以接受四个参数。
+
+- type：事件名称，格式为字符串。
+- bubbles：事件是否应该冒泡，格式为布尔值。可以使用event.bubbles属性读取它的值。
+- cancelable：事件是否能被取消，格式为布尔值。可以使用event.cancelable属性读取它的值。
+- option：为事件对象指定额外的属性。
+
+### event.initMouseEvent()
+
+initMouseEvent方法用来初始化Document.createEvent方法新建的鼠标事件。该方法必须在事件新建之后、触发（dispatchEvent方法）之前调用。
+
+initMouseEvent方法有很长的参数。
+
+```javascript
+event.initMouseEvent(type, canBubble, cancelable, view,
+                     detail, screenX, screenY, clientX, clientY,
+                     ctrlKey, altKey, shiftKey, metaKey,
+                     button, relatedTarget);
+```
+
+模仿并触发click事件的写法如下。
 
 {% highlight javascript %}
 
 var simulateDivClick = document.createEvent('MouseEvents');
 
-// initMouseEvent(type,bubbles,cancelable,view,detail,screenx,screeny,clientx,clienty,ctrlKey,altKey,shiftKey,metaKey,button,relatedTarget)
 simulateDivClick.initMouseEvent('click',true,true,document.defaultView,0,0,0,0,0,false,false,false,0,null,null);
 
 divElement.dispatchEvent(simulateDivClick);
 
 {% endhighlight %}
 
-但是，document.createEvent方法不是标准，只是浏览器还继续支持。目前的标准方法，是使用CustomEvent构造函数，自定义事件对象。除了IE以外的其他浏览器，都支持这种方法。
+document.createEvent方法不是标准，只是浏览器还继续支持。目前的标准方法，是使用CustomEvent构造函数自定义事件对象。除了IE以外的其他浏览器，都支持这种方法。
 
 {% highlight javascript %}
 
