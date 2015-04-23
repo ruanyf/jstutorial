@@ -349,7 +349,7 @@ document.querySelector('div').scrollTop = 150;
 
 ## 方法
 
-### hasAttribute()
+### hasAttribute()，getAttribute()
 
 hasAttribute方法返回一个布尔值，表示当前元素节点是否包含指定的HTML属性。
 
@@ -362,6 +362,13 @@ if (d.hasAttribute("align")) {
 ```
 
 上面代码检查div节点是否含有align属性。如果有，则设置为“居中对齐”。
+
+getAttribute方法返回当前元素节点的指定属性。如果指定属性不存在，则返回null。
+
+```javascript
+var div = document.getElementById("div1");
+div.getAttribute("align") // "left"
+```
 
 ### querySelector()，querySelectorAll()
 
@@ -547,3 +554,48 @@ el.closest(":not(div)") // article
 ```
 
 上面代码中，由于closet方法将当前元素节点也考虑在内，所以第二个closet方法返回div-03。
+
+### getBoundingClientRect()，getClientRects()
+
+getBoundingClientRect方法返回一个对象，该对象提供当前元素节点的大小、它相对于视口（viewport）的位置等信息，基本上就是CSS盒状模型的内容。
+
+```javascript
+var rect = obj.getBoundingClientRect();
+```
+
+上面代码中，getBoundingClientRect方法返回的对象，具有以下属性（全部为只读）。
+
+- bottom：元素底部相对于视口的纵坐标。
+- height：元素高度（等于bottom减去top）。
+- left：元素左上角相对于视口的坐标。
+- right：元素右边界相对于视口的横坐标。
+- top：元素顶部相对于视口的纵坐标。
+- width：元素宽度（等于right减去left）。
+
+由于元素相对于视口（viewport）的位置，会随着页面滚动变化，因此表示位置的四个属性值，都不是固定不变的。
+
+getClientRects方法返回一个类似数组的对象，里面是当前元素在页面上形成的所有矩形。每个矩形都有botto、height、left、right、top和width六个属性，表示它们相对于视口的四个坐标，以及本身的高度和宽度。
+
+对于盒状元素（比如div和p），该方法返回的对象中只有该元素一个成员。对于行内元素（比如span、a、em），该方法返回的对象有多少个成员，取决于该元素在页面上占据多少行。
+
+```html
+<span id="inline">
+Hello World
+Hello World
+Hello World
+</span>
+```
+
+上面代码是一个行内元素span，如果它在页面上占据三行，getClientRects方法返回的对象就有三个成员，如果它在页面上占据一行，getClientRects方法返回的对象就只有一个成员。
+
+```javascript
+var el = document.getElementById('inline');
+el.getClientRects().length // 3
+el.getClientRects()[0].left // 8
+el.getClientRects()[0].right // 113.908203125
+el.getClientRects()[0].bottom // 31.200000762939453
+el.getClientRects()[0].height // 23.200000762939453
+el.getClientRects()[0].width // 105.908203125
+```
+
+这个方法主要用于判断行内元素是否换行，以及行内元素的每一行的位置偏移。
