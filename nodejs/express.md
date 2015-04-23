@@ -321,7 +321,7 @@ var http = require("http");
 
 var app = express();
 
-app.use("/", function(request, response, next) {
+app.use("/$", function(request, response, next) {
     response.writeHead(200, { "Content-Type": "text/plain" });
     response.end("Welcome to the homepage!\n");
 });
