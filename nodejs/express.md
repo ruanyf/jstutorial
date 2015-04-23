@@ -192,13 +192,6 @@ Express框架的核心是对http模块的再包装。上面的代码用Express�
 
 {% highlight javascript %}
 
-var express = require('express');
-var app = express();
-app.get('/', function (req, res) {  
-    res.send('Hello world!');
-});
-app.listen(3000);  
-
 var express = require("express");
 var http = require("http");
 
