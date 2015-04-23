@@ -394,11 +394,11 @@ app.get("/hello/:who", function(req, res) {
 {% highlight javascript %}
 
 app.get('/hello/:who?',function(req,res) {
-	if(req.params.id) {
+	if(req.params.who) {
     	res.end("Hello, " + req.params.who + ".");
 	}
     else {
-    	res.send("Hello, Guest.");
+    	res.end("Hello, Guest.");
 	}
 });
 
