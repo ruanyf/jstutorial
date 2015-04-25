@@ -202,29 +202,7 @@ input[0].isEqualNode(input[1])
 
 ### 属性
 
-每一个HTML标签元素，都会转化成一个Element对象节点。所有的Element节点的nodeType属性都是1，但是不同标签生成的节点是不一样的。JavaScript内部使用不同的构造函数，生成不同的Element节点，比如a标签的节点由HTMLAnchorElement()构造函数生成，button标签的节点由HTMLButtonElement()构造函数生成。因此，Element对象不是一种对象，而是一组对象。
-
-Element对象特有的属性：
-
-- innerHTML
-- outerHTML
-- textContent
-- innerText
-- outerText
-- firstElementChild
-- lastElementChild
-- nextElementChild
-- previousElementChild
-- children
-- tagName
-- dataset
-- attributes
-
 **（1）innerHTML属性，outerHTML属性，textContent属性，innerText属性，outerText属性**
-
-innerHTML属性用来读取或设置某个节点内的HTML代码。
-
-outerHTML属性用来读取或设置HTML代码时，会把节点本身包括在内。
 
 textContent属性用来读取或设置节点包含的文本内容。
 
@@ -251,20 +229,6 @@ document.getElementById('foo').innerText = '<p>GoodBye!</p>';
 ```
 
 上面代码在插入文本时，会将p标签解释为文本，而不会当作标签处理。
-
-**（2）tagName属性**
-
-tagName属性返回该节点的HTML标签名，与nodeName属性相同。
-
-{% highlight javascript %}
-
-document.querySelector('a').tagName // A
-
-document.querySelector('a').nodeName // A
-
-{% endhighlight %}
-
-从上面代码可以看出，这两个属性返回的都是标签名的大写形式。
 
 **（3）attributes属性**
 
@@ -440,19 +404,7 @@ document.querySelector('li').matchesSelector('li:first-child')
 
 这个方法需要加上浏览器前缀，需要写成mozMatchesSelector()、webkitMatchesSelector()、oMatchesSelector()、msMatchesSelector()。
 
-**（5）scrollIntoView方法**
-
-该方法用于将一个可滚动元素滚动到可见区域。
-
-{% highlight javascript %}
-
-document.querySelector('content').children[4].scrollIntoView();
-
-{% endhighlight %}
-
-scrollIntoView方法接受一个布尔值作为参数，默认值为true，表示滚动到HTML元素的上方边缘，如果该值为false，表示滚动到下方边缘。
-
-**（6）focus方法**
+**（5）focus方法**
 
 focus方法用于将当前页面的焦点，转移到指定元素上。
 
@@ -461,101 +413,6 @@ focus方法用于将当前页面的焦点，转移到指定元素上。
 document.getElementById('my-span').focus();
 
 ```
-
-### setAttribute()，removeAttribute()
-
-setAttribute方法用于设置HTML元素的属性。
-
-```javascript
-
-// 使得<div id="foo"></div>
-// 变为<div id="foo" role="button"></div>
-document.getElementById('foo').setAttribute('role', 'button');
-
-```
-
-removeAttribute方法用于移除HTML元素的属性。
-
-```javascript
-
-document.getElementById('foo').removeAttribute('role');
-
-```
-
-### insertAdjacentHTML()
-
-insertAdjacentHTML方法可以将一段字符串，作为HTML或XML对象，插入DOM。通常使用这个方法，在当前节点的前面或后面，添加新的同级节点或子节点。
-
-比如，原来的DOM结构如下：
-
-{% highlight html %}
-
-<div id="box1">
-    <p>Some example text</p>
-</div>
-<div id="box2">
-    <p>Some example text</p>
-</div>
-
-{% endhighlight %}
-
-insertAdjacentHTML方法可以轻而易举地在上面两个div节点之间，再插入一个div节点。
-
-{% highlight javascript %}
-
-var box2 = document.getElementById("box2");
-
-box2.insertAdjacentHTML('beforebegin', '<div><p>This gets inserted.</p></div>');
-
-{% endhighlight %}
-
-插入以后的DOM结构变成下面这样：
-
-{% highlight html %}
-
-<div id="box1">
-    <p>Some example text</p>
-</div>
-<div><p>This gets inserted.</p></div>
-<div id="box2">
-    <p>Some example text</p>
-</div>
-
-{% endhighlight %}
-
-insertAdjacentHTML方法接受两个参数，第一个是插入的位置，第二个是插入的节点字符串。关于插入的位置，可以取下面四个值。
-
-- **beforebegin**：在指定元素之前插入，变成它的同级元素。
-- **afterbegin**：在指定元素的开始标签之后插入，变成它的第一个子元素。
-- **beforeend**：在指定元素的结束标签之前插入，变成它的最后一个子元素。
-- **afterend**：在指定元素之后插入，变成它的同级元素。
-
-需要注意的是，上面四个值都是字符串，而不是关键字，所以必须放在引号里面。
-
-insertAdjacentHTML方法比innerHTML方法效率高，因为它不是彻底置换现有的DOM结构。所有浏览器都支持这个方法，包括IE 6。
-
-### getBoundingClientRect方法
-
-getBoundingClientRect方法返回一个记录了位置信息的对象，用于获取HTML元素相对于视口（viewport）左上角的位置以及本身的长度和宽度。
-
-{% highlight javascript %}
-
-var box = document.getElementById('box');
-
-var x1 = box.getBoundingClientRect().left;
-var y1 = box.getBoundingClientRect().top;
-var x2 = box.getBoundingClientRect().right;
-var y2 = box.getBoundingClientRect().bottom;
-var w = box.getBoundingClientRect().width;
-var h = box.getBoundingClientRect().height;
-
-{% endhighlight %}
-
-上面代码获取DOM元素之后，使用getBoundingClientRect方法的相应属性，先后得到左上角和右下角的四个坐标（相对于视口），以及元素的宽和高。所有这些值都是只读的。
-
-注意，getBoundingClientRect方法的所有属性，都把边框（border属性）算作元素的一部分。也就是说，都是从边框外缘的各个点来计算。因此，width和height包括了元素本身+padding+border。
-
-所有浏览器都支持这个方法，但是IE 6到8对这个对象的支持不完整。 
 
 ### table元素
 
@@ -609,7 +466,7 @@ table元素有以下属性：
 
 ## Text节点
 
-文档中的文本对应Text节点，通常使用Element对象的firstChild、nextSibling等属性获取文本节点，或者使用document对象的createTextNode方法创造一个文本节点。
+Text节点代表元素节点和属性节点的文本内容。如果一个元素没有子元素，那么它就只有一个文本子节点，代表该元素的文本内容。通常使用元素节点的firstChild、nextSibling等属性获取文本节点，或者使用document对象的createTextNode方法创造一个文本节点。
 
 {% highlight javascript %}
 
@@ -626,7 +483,7 @@ document.querySelector('div').appendChild(textNode);
 
 ### 文本节点的属性
 
-除了继承的属性，文本节点自身主要的属性是data，它等同于nodeValue属性，用来返回文本节点的内容。
+除了继承的属性，文本节点自身主要的属性是data，它等同于nodeValue属性，用来设置或读取文本节点的内容。
 
 {% highlight javascript %}
 
@@ -635,6 +492,30 @@ document.querySelector('p').firstChild.data
 document.querySelector('p').firstChild.nodeValue
 
 {% endhighlight %}
+
+wholeText属性将当前文本节点与毗邻的文本节点，作为一个整体返回。大多数情况下，wholeText属性的返回值，与data属性和textContent属性相同。但是，某些特殊情况会有差异。
+
+举例来说，HTML代码如下。
+
+```html
+<p id="para">A <em>B</em> C</p>
+```
+
+这时，文本节点的wholeText属性和data属性，返回值相同。
+
+```javascript
+var el = document.getElementById("para");
+el.firstChild.wholeText // "A "
+el.firstChild.data // "A "
+```
+
+但是，一旦移除em节点，wholeText属性与data属性就会有差异。
+
+```javascript
+el.removeChild(para.childNodes[1]);
+el.firstChild.wholeText // "A C"
+el.firstChild.data // "A "
+```
 
 ### 文本节点的方法
 
@@ -658,36 +539,61 @@ pElementText.substringData(7,10));
 
 {% endhighlight %}
 
-（2）文本的分割与合并
+（2）splitText()，normalize()
 
-- splitText()：将文本节点一分为二。
-- normalize()：将毗邻的两个文本节点合并。
+splitText方法将文本节点一分为二，变成两个毗邻的文本节点。它的参数就是分割位置（从零开始），分割到该位置的字符前结束。如果分割位置不存在，将报错。
+
+分割后，该方法返回分割位置后方的字符串，而原文本节点变成只包含分割位置前方的字符串。
 
 {% highlight javascript %}
 
-// 将文本节点从第4个位置开始一分为二
-document.querySelector('p').firstChild.splitText(4)
+// html代码为 <p id="p">foobar</p>
+var p = document.getElementById('p');
+var textnode = p.firstChild;
 
-document.querySelector('p').firstChild.textContent
-// 2
-
-// 将毗邻的两个文本节点合并
-document.querySelector('div').normalize()
-
-document.querySelector('p').childNodes.length
-// 1
+var newText = textnode.splitText(3);
+newText // "bar"
+textnode // "foo"
 
 {% endhighlight %}
 
+normalize方法可以将毗邻的两个文本节点合并。
+
+接上面的例子，splitText方法将一个文本节点分割成两个，normalize方法可以实现逆操作，将它们合并。
+
+```javascript
+p.childNodes.length // 2
+
+// 将毗邻的两个文本节点合并
+p.normalize();
+p.childNodes.length // 1
+```
+
+（3）Text构造函数
+
+Text构造函数可以返回一个文本节点。它的参数就是文本节点的内容。
+
+```javascript
+var text1 = new Text();
+var text2 = new Text("This is a text node");
+```
+
 ## DocumentFragment节点
 
-DocumentFragment节点代表一个完整的DOM树形结构，但是不属于当前文档，只存在于内存之中。操作DocumentFragment节点，要比直接操作文档快得多。它就像一个文档的片段，一般用于构建一个子结构，然后插入当前文档。
+DocumentFragment是一个没有父节点的document对象，代表一个完整的DOM树形结构，但是不属于当前文档，只存在于内存之中。操作DocumentFragment节点，要比直接操作文档快得多。它就像一个文档的片段，一般用于构建一个子结构，然后插入当前文档。
 
-document对象的createDocumentFragment方法可以创建DocumentFragment节点，然后再可以使用其他DOM方法，添加子节点。
+Node对象的所有方法，都接受DocumentFragment节点作为参数（比如Node.appendChild、Node.insertBefore），这时DocumentFragment的子节点（而不是DocumentFragment节点本身）将新增或插入当前节点。
+
+DocumentFragment节点对Web component也很有用，template元素的content属性包含的就是一个DocumentFragment对象。
+
+document对象的createDocumentFragment方法，以及DocumentFragment构造函数，可以创建一个空的DocumentFragment节点，然后再可以使用其他DOM方法，向其添加子节点。
 
 {% highlight javascript %}
 
 var docFrag = document.createDocumentFragment();
+// or
+var docFrag = new DocumentFragment();
+
 var li = document.createElement("li");
 li.textContent = "Hello World";
 docFrag.appendChild(li);
@@ -705,6 +611,13 @@ document.queryselector('ul').appendChild(docFrag);
 document.queryselector('ul').(docFrag.cloneNode(true));
 
 {% endhighlight %}
+
+DocumentFragment对象的属性和方法，都继承自Node对象。以下四个属性是Node对象没有提供的属性。
+
+- children：返回一个动态的HTMLCollection集合对象，包括当前DocumentFragment对象的所有子元素节点。
+- firstElementChild：返回当前DocumentFragment对象的第一个子元素节点，如果没有则返回null。
+- lastElementChild：返回当前DocumentFragment对象的最后一个子元素节点，如果没有则返回null。
+- childElementCount：返回当前DocumentFragment对象的所有子元素数量。
 
 ## 参考链接
 

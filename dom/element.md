@@ -6,7 +6,7 @@ date: 2015-04-15
 modifiedOn: 2015-04-15
 ---
 
-Element对象就是网页中HTML标签元素的节点。
+Element对象对应网页的HTML标签元素。每一个HTML标签元素，在DOM树上都会转化成一个Element节点对象（以下简称元素节点）。元素节点的nodeType属性都是1，但是不同HTML标签生成的元素节点是不一样的。JavaScript内部使用不同的构造函数，生成不同的Element节点，比如a标签的节点对象由HTMLAnchorElement()构造函数生成，button标签的节点对象由HTMLButtonElement()构造函数生成。因此，元素节点不是一种对象，而是一组对象。
 
 ## 属性
 
@@ -649,6 +649,8 @@ var rect = obj.getBoundingClientRect();
 
 由于元素相对于视口（viewport）的位置，会随着页面滚动变化，因此表示位置的四个属性值，都不是固定不变的。
 
+注意，getBoundingClientRect方法的所有属性，都把边框（border属性）算作元素的一部分。也就是说，都是从边框外缘的各个点来计算。因此，width和height包括了元素本身 + padding + border。
+
 **（1）getClientRects()**
 
 getClientRects方法返回一个类似数组的对象，里面是当前元素在页面上形成的所有矩形。每个矩形都有botto、height、left、right、top和width六个属性，表示它们相对于视口的四个坐标，以及本身的高度和宽度。
@@ -706,7 +708,7 @@ d1.insertAdjacentHTML('afterend', '<div id="two">two</div>');
 // <div id="one">one</div><div id="two">two</div>
 ```
 
-该方法不解析它所在的当前元素，这使得它的执行速度比进行innerHTML操作快得多。
+该方法不是彻底置换现有的DOM结构，这使得它的执行速度比innerHTML操作快得多。所有浏览器都支持这个方法，包括IE 6。
 
 **（2）remove()**
 
