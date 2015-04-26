@@ -6,26 +6,34 @@ date: 2013-10-07
 modifiedOn: 2014-05-18
 ---
 
-## Node节点对象
+## DOM的含义
 
-DOM的最小单位是节点（node），一个文档的树形结构就是由各种不同的节点组成。
+DOM是文档对象模型（Document Object Model）的简称，它的基本思想是把结构化文档（比如HTML和XML）解析成一系列的节点，再由这些节点组成一个树状结构（DOM Tree）。所有的节点和最终的树状结构，都有规范的对外接口，以达到使用编程语言操作文档的目的（比如增删内容）。所以，DOM可以理解成文档（HTML文档、XML文档和SVG文档）的编程接口。
 
-对于HTML文档，节点有以下类型：
+DOM有自己的国际标准，目前的通用版本是[DOM 3](http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/core.html)，下一代版本[DOM 4](http://www.w3.org/TR/dom/)正在拟定中。本章介绍的就是JavaScript对DOM标准的实现和用法。
+
+严格地说，DOM不属于JavaScript，但是操作DOM是JavaScript最常见的任务，而JavaScript也是最常用于DOM操作的语言。所以，DOM往往放在JavaScript里面介绍。
+
+## Node节点的概念
+
+DOM的最小组成单位叫做节点（node），一个文档的树形结构（DOM树），就是由各种不同类型的节点组成。
+
+对于HTML文档，节点有以下类型。
 
 节点|名称|含义
 ----|----|----
 DOCUMENT_NODE | 文档节点 | 整个文档（window.document）
+DOCUMENT_TYPE_NODE | 文档类型节点 | 文档的类型（比如&lt;!DOCTYPE html&gt;）
 ELEMENT_NODE | 元素节点 | HTML元素（比如&lt;body&gt;、&lt;a&gt;等）
 ATTRIBUTE_NODE | 属性节点| HTML元素的属性（比如class="right"）
 TEXT_NODE | 文本节点 | HTML文档中出现的文本
 DOCUMENT_FRAGMENT_NODE | 文档碎片节点 | 文档的片段
-DOCUMENT_TYPE_NODE | 文档类型节点 | 文档的类型（比如&lt;!DOCTYPE html&gt;）
 
-浏览器原生提供一个Node对象，上面所有类型的节点都是Node对象派生出来的，也就是说它们都继承了Node的属性和方法。
+浏览器原生提供一个Node对象，上表所有类型的节点都是Node对象派生出来的。也就是说，它们都继承了Node的属性和方法。
 
-### Node对象的属性
+## Node对象的属性
 
-**（1）nodeName属性和nodeType属性**
+### nodeName属性和nodeType属性
 
 nodeName属性返回节点的名称，nodeType属性返回节点的常数值。具体的返回值，可查阅下方的表格。
 
@@ -93,7 +101,11 @@ childNodes属性和children属性返回的节点都是动态的。一旦原节�
 - nextElementSibling：下一个类型为HTML元素的同级节点。
 - previousElementSibling：上一个类型为HTML元素的同级节点。
 
-### Node对象的方法
+### baseURI
+
+baseURI属性返回一个字符串，由当前网页的协议、域名和所在的目录组成。
+
+## Node对象的方法
 
 Node对象有以下方法：
 

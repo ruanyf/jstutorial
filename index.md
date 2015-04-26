@@ -46,8 +46,8 @@ modifiedOn: 2014-05-18
 
 <h2 id="dom">DOM</h2>
 
-- [document对象](dom/document.html)
 - [Node对象](dom/node.html)
+- [Document对象](dom/document.html)
 - [Element对象](dom/element.html)
 - [DOM 事件](dom/event.html)
 - [CSS操作](dom/css.html)
