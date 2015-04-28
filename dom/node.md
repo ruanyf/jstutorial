@@ -103,7 +103,20 @@ childNodes属性和children属性返回的节点都是动态的。一旦原节�
 
 ### baseURI
 
-baseURI属性返回一个字符串，由当前网页的协议、域名和所在的目录组成。
+baseURI属性返回一个字符串，由当前网页的协议、域名和所在的目录组成，表示当前网页的绝对路径。如果无法取到这个值，则返回null。浏览器根据这个属性，计算网页上的相对路径的URL。该属性为只读。
+
+通常情况下，该属性由当前网址的URL（即window.location属性）决定，但是可以使用HTML的&lt;base&gt;标签，改变该属性的值。
+
+```html
+<base href="http://www.example.com/page.html">
+<base target="_blank" href="http://www.example.com/page.html">
+```
+
+该属性不仅document对象有（`document.baseURI`），元素节点也有（`element.baseURI`）。通常情况下，它们的值是相同的。
+
+### childNodes
+
+childNodes属性返回一个NodeList动态集合，成员包括指定节点的所有子节点。注意，除了HTML元素子节点，该属性还包括文本节点和评论节点。
 
 ## Node对象的方法
 
