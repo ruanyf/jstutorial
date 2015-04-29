@@ -192,13 +192,6 @@ Express框架的核心是对http模块的再包装。上面的代码用Express�
 
 {% highlight javascript %}
 
-var express = require('express');
-var app = express();
-app.get('/', function (req, res) {  
-    res.send('Hello world!');
-});
-app.listen(3000);  
-
 var express = require("express");
 var http = require("http");
 
@@ -328,7 +321,7 @@ var http = require("http");
 
 var app = express();
 
-app.use("/", function(request, response, next) {
+app.use("/$", function(request, response, next) {
     response.writeHead(200, { "Content-Type": "text/plain" });
     response.end("Welcome to the homepage!\n");
 });
@@ -401,11 +394,11 @@ app.get("/hello/:who", function(req, res) {
 {% highlight javascript %}
 
 app.get('/hello/:who?',function(req,res) {
-	if(req.params.id) {
+	if(req.params.who) {
     	res.end("Hello, " + req.params.who + ".");
 	}
     else {
-    	res.send("Hello, Guest.");
+    	res.end("Hello, Guest.");
 	}
 });
 
