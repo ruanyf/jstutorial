@@ -33,7 +33,7 @@ DOCUMENT_FRAGMENT_NODE | 文档碎片节点 | 文档的片段
 
 ## Node对象的属性
 
-### nodeName，nodeType，nodeValue
+### nodeName，nodeType
 
 nodeName属性返回节点的名称，nodeType属性返回节点的常数值。具体的返回值，可查阅下方的表格。
 
@@ -69,13 +69,58 @@ document.querySelector('a').nodeType === Node.ELEMENT_NODE
 
 上面两种写法是等价的。
 
-nodeValue属性返回或设置当前节点的值。除了Text节点和Comment节点的nodeValue属性返回文本内容，其他类型节点的nodeValue都是null。因此，该属性的作用主要是提取和设置Text节点的内容，对于那些原来值为null的节点，设置nodeValue属性是无效的。
+### ownerDocument，nextSibling，previousSibling，parentNode，parentElement
 
-### ownerDocument
+以下属性返回当前节点的相关节点。
+
+**（1）ownerDocument**
 
 ownerDocument属性返回当前节点所在的顶层文档对象，即document对象。document对象本身的ownerDocument属性，返回null。
 
-### textContent
+**（2）nextSibling**
+
+nextsibling属性返回紧跟在当前节点后面的第一个同级节点。如果当前节点后面没有同级节点，则返回null。注意，该属性还包括文本节点和评论节点。因此如果当前节点后面有空格，该属性会返回一个文本节点，内容为空格。
+
+```javascript
+var el = document.getelementbyid('div-01').firstchild;
+var i = 1;
+
+while (el) {
+  console.log(i + '. ' + el.nodename);
+  el = el.nextsibling;
+  i++;
+}
+```
+
+上面代码遍历div-01节点的所有子节点。
+
+**（3）previousSibling**
+
+previoussibling属性返回当前节点前面的、距离最近的一个同级节点。如果当前节点前面没有同级节点，则返回null。
+
+```javascript
+// html代码如下
+// <a><b1 id="b1"/><b2 id="b2"/></a>
+
+document.getelementbyid("b1").previoussibling // null
+document.getelementbyid("b2").previoussibling.id // "b1"
+```
+
+对于当前节点前面有空格，则previoussibling属性会返回一个内容为空格的文本节点。
+
+**（4）parentnode**
+
+parentnode属性返回当前节点的父节点。对于一个节点来说，它的父节点只可能是三种类型：element节点、document节点和documentfragment节点。对于document节点和documentfragment节点，它们的父节点都是null。另外，对于那些生成后还没插入dom树的节点，父节点也是null。
+
+**（5）parentelement**
+
+parentelement属性返回当前节点的父元素节点。如果当前节点没有父节点，或者父节点类型不是元素节点，则返回null。在ie浏览器中，只有element节点才有该属性，其他浏览器则是所有类型的节点都有该属性。
+
+### textContent，nodeValue
+
+以下属性返回当前节点的内容。
+
+**（1）textContent**
 
 textContent属性返回当前节点和它的所有后代节点的文本内容。该属性是可读写的，设置该属性的值，会用一个新的文本节点，替换所有它原来的子节点。
 
@@ -87,13 +132,21 @@ document.getElementById("divA").textContent
 // This is some text
 ```
 
-对于Text节点和Comment节点，该属性的值与nodeValue属性相同。对于其他类型的节点，该属性会将每个子节点的内容连接在一起返回，但是不包括Comment节点。如果一个节点没有子节点，则返回空字符串。document节点的textContent属性为null。如果要读取整个文档的内容，可以使用document.documentElement.textContent。
+对于Text节点和Comment节点，该属性的值与nodeValue属性相同。对于其他类型的节点，该属性会将每个子节点的内容连接在一起返回，但是不包括Comment节点。如果一个节点没有子节点，则返回空字符串。document节点的textContent属性为null。如果要读取整个文档的内容，可以使用`document.documentElement.textContent`。
 
 IE浏览器对于所有Element节点，都有一个innerText属性。它与textContent属性基本相同，但是有两点区别。一是innerText不返回隐藏元素的值（即与CSS样式相关），而textContent会返回（即与CSS样式不相关）；二是innerText不返回&lt;script&gt;和&lt;style&gt;的文本内容，而textContent返回。
 
-### childNodes属性和children属性
+**（2）nodeValue**
 
-childNodes属性返回一个NodeList对象，该对象的成员是父节点的所有子节点，注意返回的不仅包括元素节点，还包括文本节点以及其他各种类型的子节点。如果父对象不包括任何子对象，则返回一个空对象。
+nodeValue属性返回或设置当前节点的值。除了Text节点和Comment节点的nodeValue属性返回文本内容，其他类型节点的nodeValue都是null。因此，该属性的作用主要是提取和设置Text节点的内容，对于那些原来值为null的节点，设置nodeValue属性是无效的。
+
+### childNodes，firstNode，lastChild
+
+以下属性返回当前节点的子节点。
+
+**（1）childNodes**
+
+childNodes属性返回一个NodeList集合，成员包括当前节点的所有子节点。注意，除了HTML元素节点，该属性返回的还包括Text节点和Comment节点。如果当前节点不包括任何子节点，则返回一个空的NodeList集合。由于NodeList对象是一个动态集合，一旦子节点发生变化，立刻会反映在返回结果之中。
 
 {% highlight javascript %}
 
@@ -101,23 +154,13 @@ var ulElementChildNodes = document.querySelector('ul').childNodes;
 
 {% endhighlight %}
 
-children属性返回一个类似数组的对象，该对象的成员为HTML元素类型的子节点。如果没有HTML元素类型的子节点，则返回一个空数组。
+**（2）firstNode**
 
-childNodes属性和children属性返回的节点都是动态的。一旦原节点发生变化，立刻会反映在返回结果之中。
+firstNode属性返回当前节点的第一个子节点，如果当前节点没有子节点，则返回null。注意，除了HTML元素子节点，该属性还包括文本节点和评论节点。
 
-**（4）指向其他节点的属性**
+**（3）lastChild**
 
-以下属性指向其他的相关节点，用于遍历文档节点时非常方便。
-
-- firstChild：第一个子节点。
-- lastChild：最后一个子节点。
-- parentNode：父节点。
-- nextSibling：下一个同级节点。
-- previousSibling：上一个同级节点。
-- firstElementChild：第一个类型为HTML元素的子节点。
-- lastElementChild：最后一个类型为HTML元素的子节点。
-- nextElementSibling：下一个类型为HTML元素的同级节点。
-- previousElementSibling：上一个类型为HTML元素的同级节点。
+lastChild属性返回当前节点的最后一个子节点，如果当前节点没有子节点，则返回null。
 
 ### baseURI
 
@@ -131,47 +174,6 @@ baseURI属性返回一个字符串，由当前网页的协议、域名和所在�
 ```
 
 该属性不仅document对象有（`document.baseURI`），元素节点也有（`element.baseURI`）。通常情况下，它们的值是相同的。
-
-### childNodes，firstNode，lastChild
-
-childNodes属性返回一个NodeList动态集合，成员包括指定节点的所有子节点。注意，除了HTML元素子节点，该属性还包括文本节点和评论节点。
-
-firstNode属性返回当前节点的第一个子节点，如果当前节点没有子节点，则返回null。注意，除了HTML元素子节点，该属性还包括文本节点和评论节点。
-
-lastChild属性返回当前节点的最后一个子节点，如果当前节点没有子节点，则返回null。
-
-### nextSibling，previousSibling，parentNode，parentElement
-
-nextSibling属性返回紧跟在当前节点后面的第一个同级节点。如果当前节点后面没有同级节点，则返回null。注意，该属性还包括文本节点和评论节点。因此如果当前节点后面有空格，该属性会返回一个文本节点，内容为空格。
-
-```javascript
-var el = document.getElementById('div-01').firstChild;
-var i = 1;
-
-while (el) {
-  console.log(i + '. ' + el.nodeName);
-  el = el.nextSibling;
-  i++;
-}
-```
-
-上面代码遍历div-01节点的所有子节点。
-
-previousSibling属性返回当前节点前面的、距离最近的一个同级节点。如果当前节点前面没有同级节点，则返回null。
-
-```javascript
-// HTML代码如下
-// <a><b1 id="b1"/><b2 id="b2"/></a>
-
-document.getElementById("b1").previousSibling // null
-document.getElementById("b2").previousSibling.id // "b1"
-```
-
-对于当前节点前面有空格，则previousSibling属性会返回一个内容为空格的文本节点。
-
-parentNode属性返回当前节点的父节点。对于一个节点来说，它的父节点只可能是三种类型：Element节点、Document节点和DocumentFragment节点。对于Document节点和DocumentFragment节点，它们的父节点都是null。另外，对于那些生成后还没插入DOM树的节点，父节点也是null。
-
-parentElement属性返回当前节点的父元素节点。如果当前节点没有父节点，或者父节点类型不是元素节点，则返回null。在IE浏览器中，只有Element节点才有该属性，其他浏览器则是所有类型的节点都有该属性。
 
 ## Node对象的方法
 
