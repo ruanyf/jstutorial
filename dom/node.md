@@ -14,7 +14,7 @@ DOM有自己的国际标准，目前的通用版本是[DOM 3](http://www.w3.org/
 
 严格地说，DOM不属于JavaScript，但是操作DOM是JavaScript最常见的任务，而JavaScript也是最常用于DOM操作的语言。所以，DOM往往放在JavaScript里面介绍。
 
-## Node节点的概念
+## 节点的概念
 
 DOM的最小组成单位叫做节点（node），一个文档的树形结构（DOM树），就是由各种不同类型的节点组成。
 
@@ -31,7 +31,7 @@ DOCUMENT_FRAGMENT_NODE | 文档碎片节点 | 文档的片段
 
 浏览器原生提供一个Node对象，上表所有类型的节点都是Node对象派生出来的。也就是说，它们都继承了Node的属性和方法。
 
-## Node对象的属性
+## Node节点的属性
 
 ### nodeName，nodeType
 
@@ -122,7 +122,7 @@ parentelement属性返回当前节点的父元素节点。如果当前节点没�
 
 **（1）textContent**
 
-textContent属性返回当前节点和它的所有后代节点的文本内容。该属性是可读写的，设置该属性的值，会用一个新的文本节点，替换所有它原来的子节点。
+textContent属性返回当前节点和它的所有后代节点的文本内容。
 
 ```javascript
 // HTML代码为
@@ -132,9 +132,27 @@ document.getElementById("divA").textContent
 // This is some text
 ```
 
-对于Text节点和Comment节点，该属性的值与nodeValue属性相同。对于其他类型的节点，该属性会将每个子节点的内容连接在一起返回，但是不包括Comment节点。如果一个节点没有子节点，则返回空字符串。document节点的textContent属性为null。如果要读取整个文档的内容，可以使用`document.documentElement.textContent`。
+上面代码的textContent属性，自动忽略当前节点内部的HTML标签，返回所有文本内容。
 
-IE浏览器对于所有Element节点，都有一个innerText属性。它与textContent属性基本相同，但是有两点区别。一是innerText不返回隐藏元素的值（即与CSS样式相关），而textContent会返回（即与CSS样式不相关）；二是innerText不返回&lt;script&gt;和&lt;style&gt;的文本内容，而textContent返回。
+该属性是可读写的，设置该属性的值，会用一个新的文本节点，替换所有它原来的子节点。它还有一个好处，就是自动对HTML标签转义。这很适合用于用户提供的内容。
+
+```javascript
+document.getElementById('foo').textContent = '<p>GoodBye!</p>';
+```
+
+上面代码在插入文本时，会将p标签解释为文本，即&amp;lt;p&amp;gt;，而不会当作标签处理。
+
+对于Text节点和Comment节点，该属性的值与nodeValue属性相同。对于其他类型的节点，该属性会将每个子节点的内容连接在一起返回，但是不包括Comment节点。如果一个节点没有子节点，则返回空字符串。
+
+document节点和doctype节点的textContent属性为null。如果要读取整个文档的内容，可以使用`document.documentElement.textContent`。
+
+在IE浏览器，所有Element节点都有一个innerText属性。它与textContent属性基本相同，但是有几点区别。
+
+- innerText受CSS影响，textcontent不受。比如，如果CSS规则隐藏（hidden）了某段文本，innerText就不会返回这段文本，textcontent则照样返回。
+
+- innerText返回的文本，会过滤掉空格、换行和回车键，textcontent则不会。
+
+- innerText属性不是DOM标准的一部分，Firefox浏览器甚至没有部署这个属性，而textcontent是DOM标准的一部分。
 
 **（2）nodeValue**
 
@@ -175,7 +193,7 @@ baseURI属性返回一个字符串，由当前网页的协议、域名和所在�
 
 该属性不仅document对象有（`document.baseURI`），元素节点也有（`element.baseURI`）。通常情况下，它们的值是相同的。
 
-## Node对象的方法
+## Node节点的方法
 
 Node对象有以下方法：
 
@@ -276,95 +294,11 @@ input[0].isEqualNode(input[1])
 
 {% endhighlight %}
 
-### NodeList对象
+## NodeList对象
 
 当使用querySelectorAll()方法选择一组对象时，会返回一个NodeList对象（比如document.querySelectorAll('*')的返回结果）或者HTMLCollection对象（比如document.scripts）。它们是类似数组的对象，即可以使用length属性，但是不能使用pop或push之类数组特有的方法。
 
-## Element对象
-
-### 属性
-
-**（1）innerHTML属性，outerHTML属性，textContent属性，innerText属性，outerText属性**
-
-textContent属性用来读取或设置节点包含的文本内容。
-
-innerText属性和outerText属性在读取元素节点的文本内容时，得到的值是不一样的。它们的不同之处在于设置一个节点的文本属性时，outerText属性会使得原来的元素节点被文本节点替换掉。
-
-```javascript
-document.getElementById('foo').innerHTML = 'Goodbye!';
-document.getElementById('foo').innerText = 'GoodBye!';
-document.getElementById('foo').textContent = 'Goodbye!';
-```
-
-注意，innerText是非标准属性，Firefox不支持。考虑兼容老式浏览器，可以使用下面的写法，获取节点的文本内容。
-
-```javascript
-var text = element.textContent || element.innerText;
-```
-
-使用textContent和innerText属性，为一个HTML元素设置内容，有一个好处，就是自动对HTML标签转义。这很适合用于用户提供的内容。
-
-```javascript
-
-document.getElementById('foo').innerText = '<p>GoodBye!</p>';
-
-```
-
-上面代码在插入文本时，会将p标签解释为文本，而不会当作标签处理。
-
-**（3）attributes属性**
-
-该属性返回一个数组，数组成员就是Element元素包含的每一个属性节点对象。
-
-{% highlight javascript %}
-
-var atts = document.querySelector('a').attributes;
-
-for(var i=0; i< atts.length; i++){
-	console.log(atts[i].nodeName +'='+ atts[i].nodeValue);
-}
-
-{% endhighlight %}
-
-**（4）textcontent属性**
-
-该属性返回Element节点包含的所有文本内容。它通常用于剥离HTML标签，还用于返回&lt;script&gt;and&lt;style&gt;标签所包含的代码。
-
-{% highlight javascript %}
-
-document.body.textContent
-
-{% endhighlight %}
-
-如果对document或者doctype节点使用该属性，会返回null。
-
-textcontent属性的作用与innerText属性很相近，但是有以下几点区别：
-
-- innerText受CSS影响，textcontent没有这个问题。比如，如果CSS规则隐藏了某段文本，innerText就不会返回这段文本，textcontent则照样返回。
-
-- innerText返回的文本，会过滤掉空格、换行和回车键，textcontent则不会。
-
-- innerText属性不是DOM标准的一部分，Firefox浏览器甚至没有部署这个属性，而textcontent是DOM标准的一部分。
-
-另外，该属性是可写的，可以用它设置Element节点的文本内容。但是这样一来，原有的子节点会被全部删除。
-
-**（5）tabindex属性**
-
-tabindex属性用来指定，当前HTML元素节点是否被tab键遍历，以及遍历的优先级。
-
-```javascript
-var b1 = document.getElementById("button1");
-
-b1.tabIndex = 1;
-```
-
-如果 tabindex = -1 ，tab键跳过当前元素。
-
-如果 tabindex = 0 ，表示tab键将遍历当前元素。如果一个元素没有设置tabindex，默认值就是0。
-
-如果 tabindex 大于0，表示tab键优先遍历。值越大，就表示优先级越大。
-
-### html元素
+## html元素
 
 html元素是网页的根元素，document.documentElement就指向这个元素。
 
@@ -417,6 +351,22 @@ delete document.getElementById("myDiv").dataset.id
 IE 9不支持dataset属性，可以用 getAttribute('data-foo')、removeAttribute('data-foo')、setAttribute('data-foo')、hasAttribute('data-foo') 代替。
 
 需要注意的是，dataset属性使用骆驼拼写法表示属性名，这意味着data-hello-world会用dataset.helloWorld表示。而如果此时存在一个data-helloWorld属性，该属性将无法读取，也就是说，data属性本身只能使用连词号，不能使用骆驼拼写法。
+
+### tabindex属性
+
+tabindex属性用来指定，当前HTML元素节点是否被tab键遍历，以及遍历的优先级。
+
+```javascript
+var b1 = document.getElementById("button1");
+
+b1.tabIndex = 1;
+```
+
+如果 tabindex = -1 ，tab键跳过当前元素。
+
+如果 tabindex = 0 ，表示tab键将遍历当前元素。如果一个元素没有设置tabindex，默认值就是0。
+
+如果 tabindex 大于0，表示tab键优先遍历。值越大，就表示优先级越大。
 
 ### 页面位置相关属性
 

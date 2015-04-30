@@ -16,9 +16,9 @@ Element对象对应网页的HTML标签元素。每一个HTML标签元素，在DO
 
 **（1）attributes**
 
-attributes属性返回指定元素节点的所有属性节点，返回的是一个类似数组的对象，每个数字索引对应一个属性节点（Attribute）对象。返回值中，所有成员都是动态的，即属性的变化会实时反映在结果集。
+attributes属性返回一个类似数组的对象，成员是当前元素节点的所有属性节点，每个数字索引对应一个属性节点（Attribute）对象。返回值中，所有成员都是动态的，即属性的变化会实时反映在结果集。
 
-假定下面是一个p元素代码。
+下面是一个HTML代码。
 
 ```html
 <p id="para">Hello World</p>
@@ -35,6 +35,8 @@ attr.value // para
 ```
 
 上面代码说明，通过attributes属性获取属性节点对象（attr）以后，可以通过name属性获取属性名（id），通过value属性获取属性值（para）。
+
+注意，属性节点的name属性和value属性，等同于nodeName属性和nodeValue属性。
 
 下面代码是遍历一个元素节点的所有属性。
 
