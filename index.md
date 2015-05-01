@@ -47,8 +47,9 @@ modifiedOn: 2014-05-18
 <h2 id="dom">DOM</h2>
 
 - [Node对象](dom/node.html)
-- [Document对象](dom/document.html)
-- [Element对象](dom/element.html)
+- [Document节点](dom/document.html)
+- [Element节点](dom/element.html)
+- [Text节点和DocumentFragment节点](dom/text.html)
 - [DOM 事件](dom/event.html)
 - [CSS操作](dom/css.html)
 - [拖放操作](dom/dragndrop.html)
