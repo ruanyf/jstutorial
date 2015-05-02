@@ -31,7 +31,7 @@ DOCUMENT_FRAGMENT_NODE | 文档碎片节点 | 文档的片段
 
 浏览器原生提供一个Node对象，上表所有类型的节点都是Node对象派生出来的。也就是说，它们都继承了Node的属性和方法。
 
-## Node节点的属性
+## Node对象的属性
 
 ### nodeName，nodeType
 
@@ -193,33 +193,20 @@ baseURI属性返回一个字符串，由当前网页的协议、域名和所在�
 
 该属性不仅document对象有（`document.baseURI`），元素节点也有（`element.baseURI`）。通常情况下，它们的值是相同的。
 
-## Node节点的方法
+## Node对象的方法
 
-Node对象有以下方法：
+### appendChild()
 
-- appendChild()
-- cloneNode()
-- compareDocumentPosition()
-- contains()
-- hasChildNodes()
-- insertBefore()
-- isEqualNode()
-- removeChild()
-- replaceChild()
-
-（1）appendChild()
-
-appendChild()方法用于在父节点的最后一个子节点后，再插入一个子节点。它在父节点上调用，子节点作为方法的参数。
+appendChild方法接受一个节点对象作为参数，将其作为最后一个子节点，插入当前节点。
 
 {% highlight javascript %}
 
-var elementNode = document.createElement('strong');
-var textNode = document.createTextNode(' Dude');
-
-document.querySelector('p').appendChild(elementNode);
-document.querySelector('strong').appendChild(textNode);
+var p = document.createElement("p");
+document.body.appendChild(p);
 
 {% endhighlight %}
+
+如果参数节点是文档中现有的其他节点，appendChild方法会将其从原来的位置，移动到新位置。
 
 （2）insertBefore()
 
@@ -260,7 +247,7 @@ divA.parentNode.replaceChild(newSpan,divA);
 
 {% endhighlight %}
 
-（5）cloneNode()
+### cloneNode()
 
 cloneNode()方法用于克隆一个节点。它接受一个布尔值作为参数，表示是否同时克隆子节点，默认是false，即不克隆子节点。
 
@@ -270,20 +257,84 @@ var cloneUL = document.querySelector('ul').cloneNode(true);
 
 {% endhighlight %}
 
-需要注意的是，克隆一个节点，会丧失定义在这个节点上的事件回调函数，但是会拷贝该节点的所有属性。因此，有可能克隆一个节点之后，DOM中出现两个有相同ID属性的HTML元素。
+需要注意的是，克隆一个节点，会拷贝该节点的所有属性，但是会丧失addEventListener方法和on-属性（即`node.onclick = fn`），添加在这个节点上的事件回调函数。
 
-（6）contains方法
+克隆一个节点之后，DOM树有可能出现两个有相同ID属性（即`id="xxx"`）的HTML元素，这时应该修改其中一个HTML元素的ID属性。
 
-contains方法检查一个节点是否为另一个节点的子节点。
+### contains()，compareDocumentPosition()
+
+contains方法接受一个节点作为参数，返回一个布尔值，表示参数节点是否为当前节点的后代节点。
 
 {% highlight javascript %}
 
-document.querySelector('html').contains(document.querySelector('body'))
-// true
+document.body.contains(node)
 
 {% endhighlight %}
 
-（7）isEqualNode()
+上面代码检查某个节点，是否包含在当前文档之中。
+
+注意，如果将当前节点传入contains方法，会返回true。虽然从意义上说，一个节点不应该包含自身。
+
+```javascript
+nodeA.contains(nodeA) // true
+```
+
+compareDocumentPosition方法的用法，与contains方法完全一致，返回一个7个比特位的二进制值，表示参数节点与当前节点的关系。
+
+二进制值 | 数值 | 含义
+---------|------|-----
+000000 | 0 | 两个节点相同
+000001 | 1 | 两个节点不在同一个文档（即有一个节点不在当前文档）
+000010 | 2 | 参数节点在当前节点的前面
+000100 | 4 | 参数节点在当前节点的后面
+001000 | 8 | 参数节点包含当前节点
+010000 | 16 | 当前节点包含参数节点
+100000 | 32 | 浏览器的私有用途
+
+```javascript
+// HTML代码为
+// <div id="writeroot">
+//   <form>
+//     <input id="test" />
+//   </form>
+// </div>
+
+var x = document.getElementById('writeroot');
+var y = document.getElementById('test');
+
+x.compareDocumentPosition(y) // 20
+y.compareDocumentPosition(x) // 10
+```
+
+上面代码中，节点x包含节点y，而且节点y在节点x的后面，所以第一个compareDocumentPosition方法返回20（010100），第二个compareDocumentPosition方法返回10（0010010）。
+
+由于compareDocumentPosition返回值的含义，定义在每一个比特位上，所以如果要检查某一种特定的含义，就需要使用比特位运算符。
+
+```javascript
+var head = document.head;
+var body = document.body;
+if (head.compareDocumentPosition(body) & 4) {
+  console.log("文档结构正确");
+} else {
+  console.log("<head> 不能在 <body> 前面");
+}
+```
+
+上面代码中，compareDocumentPosition的返回值与4（又称掩码）进行与运算（&），得到一个布尔值，表示head是否在body前面。
+
+在这个方法的基础上，可以部署一些特定的函数，检查节点的位置。
+
+```javascript
+Node.prototype.before = function (arg) {
+  return !!(this.compareDocumentPosition(arg) & 2)
+}
+
+nodeA.before(nodeB)
+```
+
+上面代码在Node对象上部署了一个before方法，返回一个布尔值，表示参数节点是否在当前节点的前面。
+
+### isEqualNode()
 
 isEqualNode()方法用来检查两个节点是否相等。所谓相等的节点，指的是两个节点的类型相同、属性相同、子节点相同。
 

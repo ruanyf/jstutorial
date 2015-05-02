@@ -88,13 +88,20 @@ subStringData方法用于获取子字符串，第一个参数为子字符串在�
 
 {% highlight javascript %}
 
+// HTML代码为
+// <p>Hello World</p>
 var pElementText = document.querySelector('p').firstChild;
 
 pElementText.appendData('!');
+// 页面显示 Hello World!
 pElementText.deleteData(7,5);
+// 页面显示 Hello W
 pElementText.insertData(7,'Hello ');
+// 页面显示 Hello WHello
 pElementText.replaceData(7,5,'World');
-pElementText.substringData(7,10));
+// 页面显示 Hello WWorld
+pElementText.substringData(7,10);
+// 页面显示不变，返回"World "
 
 {% endhighlight %}
 

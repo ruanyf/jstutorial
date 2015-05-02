@@ -752,9 +752,9 @@ var node = document.importNode(externalNode, deep);
 
 **（2）importNode()**
 
-importNode方法的第一个参数是外部节点，第二个参数是一个布尔值，表示对外部节点是深拷贝还是浅拷贝，默认是浅拷贝（false）。虽然第二个参数是可选的，但是建议总是保留这个参数，并设为true。
+importNode方法用于创造一个外部节点的拷贝，然后插入当前文档。它的第一个参数是外部节点，第二个参数是一个布尔值，表示对外部节点是深拷贝还是浅拷贝，默认是浅拷贝（false）。虽然第二个参数是可选的，但是建议总是保留这个参数，并设为true。
 
-另外一个需要注意的是地方是，上面代码只是将外部节点插入当前文档，这时该节点的父节点是null。下一步还必须将这个节点插入当前文档的DOM树。
+另外一个需要注意的地方是，importNode方法只是拷贝外部节点，这时该节点的父节点是null。下一步还必须将这个节点插入当前文档的DOM树。
 
 ```javascript
 var iframe = document.getElementsByTagName("iframe")[0];
