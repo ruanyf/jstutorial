@@ -291,6 +291,8 @@ process.on('exit', function () {
 
 {% endhighlight %}
 
+部署uncaughtException事件的监听函数，是免于node进程终止的最后措施，否则node就要执行`process.exit`。出于除错的目的，并不建议发生错误，还保持进程运行。
+
 ## 参考链接
 
 - José F. Romaniello, [Graceful shutdown in node.js](http://joseoncode.com/2014/07/21/graceful-shutdown-in-node-dot-js/)

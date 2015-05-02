@@ -108,13 +108,33 @@ document.getelementbyid("b2").previoussibling.id // "b1"
 
 对于当前节点前面有空格，则previoussibling属性会返回一个内容为空格的文本节点。
 
-**（4）parentnode**
+**（4）parentNode**
 
-parentnode属性返回当前节点的父节点。对于一个节点来说，它的父节点只可能是三种类型：element节点、document节点和documentfragment节点。对于document节点和documentfragment节点，它们的父节点都是null。另外，对于那些生成后还没插入dom树的节点，父节点也是null。
+parentNode属性返回当前节点的父节点。对于一个节点来说，它的父节点只可能是三种类型：element节点、document节点和documentfragment节点。
 
-**（5）parentelement**
+下面代码是如何从父节点移除指定节点。
 
-parentelement属性返回当前节点的父元素节点。如果当前节点没有父节点，或者父节点类型不是元素节点，则返回null。在ie浏览器中，只有element节点才有该属性，其他浏览器则是所有类型的节点都有该属性。
+```javascript
+if (node.parentNode) {
+  node.parentNode.removeChild(node);
+}
+```
+
+对于document节点和documentfragment节点，它们的父节点都是null。另外，对于那些生成后还没插入DOM树的节点，父节点也是null。
+
+**（5）parentElement**
+
+parentElement属性返回当前节点的父Element节点。如果当前节点没有父节点，或者父节点类型不是Element节点，则返回null。
+
+```javascript
+if (node.parentElement) {
+  node.parentElement.style.color = "red";
+}
+```
+
+上面代码设置指定节点的父Element节点的CSS属性。
+
+在IE浏览器中，只有Element节点才有该属性，其他浏览器则是所有类型的节点都有该属性。
 
 ### textContent，nodeValue
 
@@ -195,7 +215,7 @@ baseURI属性返回一个字符串，由当前网页的协议、域名和所在�
 
 ## Node对象的方法
 
-### appendChild()
+### appendChild()，hasChildNodes()，removeChild()，replaceChild()
 
 appendChild方法接受一个节点对象作为参数，将其作为最后一个子节点，插入当前节点。
 
@@ -208,24 +228,44 @@ document.body.appendChild(p);
 
 如果参数节点是文档中现有的其他节点，appendChild方法会将其从原来的位置，移动到新位置。
 
-（2）insertBefore()
+hasChildNodes方法返回一个布尔值，表示当前节点是否有子节点。
 
-insertBefore()用于将子节点插入父节点的指定位置。它在父节点上调用，接受两个参数，第一个参数是所要插入的子节点，第二个参数是父节点下方的另一个子节点，新插入的子节点将插在这个节点的前面。
+```javascript
+var foo = document.getElementById("foo");
 
-{% highlight javascript %}
+if ( foo.hasChildNodes() ) {
+  foo.removeChild( foo.childNodes[0] );
+}
+```
 
-var text1 = document.createTextNode('1');
-var li = document.createElement('li');
-li.appendChild(text1);
+上面代码表示，如果foo节点有子节点，就移除第一个子节点。
 
-var ul = document.querySelector('ul');
-ul.insertBefore(li,ul.firstChild);
+hasChildNodes方法结合firstChild属性和nextSibling属性，可以遍历当前节点的所有后代节点。
 
-{% endhighlight %}
+```javascript
+function DOMComb (oParent, oCallback) {
+  if (oParent.hasChildNodes()) {
+    for (var oNode = oParent.firstChild; oNode; oNode = oNode.nextSibling) {
+      DOMComb(oNode, oCallback);
+    }
+  }
+  oCallback.call(oParent);
+}
+```
 
-（3）removeChild()
+上面代码的DOMComb函数的第一个参数是某个指定的节点，第二个参数是回调函数。这个回调函数会依次作用于指定节点，以及指定节点的所有后代节点。
 
-removeChild() 方法用于从父节点移除一个子节点。它在父节点上调用，被移除的子节点作为参数。
+```javascript
+function printContent () {
+  if (this.nodeValue) {
+    console.log(this.nodeValue);
+  }
+}
+
+DOMComb(document.body, printContent);
+```
+
+removeChild方法接受一个子节点作为参数，用于从当前节点移除该节点。它返回被移除的节点。
 
 {% highlight javascript %}
 
@@ -234,9 +274,26 @@ divA.parentNode.removeChild(divA);
 
 {% endhighlight %}
 
-（4）replaceChild()
+上面代码是如何移除一个指定节点。
 
-replaceChild()方法用于将一个新的节点，替换父节点的某一个子节点。它接受两个参数，第一个参数是用来替换的新节点，第二个参数将要被替换走的子节点。
+下面是如何移除当前节点的所有子节点。
+
+```javascript
+var element = document.getElementById("top");
+while (element.firstChild) {
+  element.removeChild(element.firstChild);
+}
+```
+
+被移除的节点依然存在于内存之中，但是不再是DOM的一部分。所以，一个节点移除以后，依然可以使用它，比如插入到另一个节点。
+
+replaceChild方法用于将一个新的节点，替换当前节点的某一个子节点。它接受两个参数，第一个参数是用来替换的新节点，第二个参数将要被替换走的子节点。它返回被替换走的那个节点。
+
+```javascript
+replacedNode = parentNode.replaceChild(newChild, oldChild);
+```
+
+下面是一个例子。
 
 {% highlight javascript %}
 
@@ -247,7 +304,9 @@ divA.parentNode.replaceChild(newSpan,divA);
 
 {% endhighlight %}
 
-### cloneNode()
+上面代码是如何替换指定节点。
+
+### cloneNode()，insertBefore()
 
 cloneNode()方法用于克隆一个节点。它接受一个布尔值作为参数，表示是否同时克隆子节点，默认是false，即不克隆子节点。
 
@@ -261,7 +320,40 @@ var cloneUL = document.querySelector('ul').cloneNode(true);
 
 克隆一个节点之后，DOM树有可能出现两个有相同ID属性（即`id="xxx"`）的HTML元素，这时应该修改其中一个HTML元素的ID属性。
 
-### contains()，compareDocumentPosition()
+insertBefore方法用于将某个节点插入当前节点的指定位置。它接受两个参数，第一个参数是所要插入的节点，第二个参数是当前节点的一个子节点，新的节点将插在这个节点的前面。该方法返回被插入的新节点。
+
+{% highlight javascript %}
+
+var text1 = document.createTextNode('1');
+var li = document.createElement('li');
+li.appendChild(text1);
+
+var ul = document.querySelector('ul');
+ul.insertBefore(li,ul.firstChild);
+
+{% endhighlight %}
+
+上面代码在ul节点的最前面，插入一个新建的li节点。
+
+如果insertBefore方法的第二个参数为null，则新节点将插在当前节点的最后位置，即变成最后一个子节点。
+
+将新节点插在当前节点的最前面（即变成第一个子节点），可以使用当前节点的firstChild属性。
+
+```javascript
+parentElement.insertBefore(newElement, parentElement.firstChild);
+```
+
+上面代码中，如果当前节点没有任何子节点，`parentElement.firstChild`会返回null，则新节点会插在当前节点的最后，等于是第一个子节点。
+
+由于不存在insertAfter方法，如果要插在当前节点的某个子节点后面，可以用insertBefore方法结合nextSibling属性模拟。
+
+```javascript
+parentDiv.insertBefore(s1, s2.nextSibling);
+```
+
+上面代码可以将s1节点，插在s2节点的后面。如果s2是当前节点的最后一个子节点，则`s2.nextSibling`返回null，这时s1节点会插在当前节点的最后，变成当前节点的最后一个子节点，等于紧跟在s2的后面。
+
+### contains()，compareDocumentPosition()，isEqualNode()
 
 contains方法接受一个节点作为参数，返回一个布尔值，表示参数节点是否为当前节点的后代节点。
 
@@ -334,16 +426,37 @@ nodeA.before(nodeB)
 
 上面代码在Node对象上部署了一个before方法，返回一个布尔值，表示参数节点是否在当前节点的前面。
 
-### isEqualNode()
-
-isEqualNode()方法用来检查两个节点是否相等。所谓相等的节点，指的是两个节点的类型相同、属性相同、子节点相同。
+isEqualNode方法返回一个布尔值，用于检查两个节点是否相等。所谓相等的节点，指的是两个节点的类型相同、属性相同、子节点相同。
 
 {% highlight javascript %}
 
-var input = document.querySelectorAll('input');
-input[0].isEqualNode(input[1])
+var targetEl = document.getElementById("targetEl");
+var firstDiv = document.getElementsByTagName("div")[0];
+
+targetEl.isEqualNode(firstDiv)
 
 {% endhighlight %}
+
+### normalize()
+
+normailize方法用于清理当前节点内部的所有Text节点。它会去除空的文本节点，并且将毗邻的文本节点合并成一个。
+
+```javascript
+var wrapper = document.createElement("div");
+
+wrapper.appendChild(document.createTextNode("Part 1 "));
+wrapper.appendChild(document.createTextNode("Part 2 "));
+
+wrapper.childNodes.length // 2
+
+wrapper.normalize();
+
+wrapper.childNodes.length // 1
+```
+
+上面代码使用normalize方法之前，wrapper节点有两个Text子节点。使用normalize方法之后，两个Text子节点被合并成一个。
+
+该方法是`Text.splitText`的逆方法，可以查看《Text节点》章节，了解更多内容。
 
 ## NodeList对象
 
