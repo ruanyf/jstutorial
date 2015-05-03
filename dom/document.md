@@ -1,27 +1,27 @@
 ---
-title: document对象
+title: document节点
 layout: page
 category: dom
 date: 2014-05-18
 modifiedOn: 2014-05-18
 ---
 
-## document对象概述
+## document节点概述
 
-document对象是文档的根节点，每张网页都有自己的document对象。window.document属性就指向这个对象。也就是说，只要浏览器开始载入HTML文档，这个对象就开始存在了，可以直接调用。
+document节点是文档的根节点，每张网页都有自己的document节点。window.document属性就指向这个节点。也就是说，只要浏览器开始载入HTML文档，这个节点对象就开始存在了，可以直接调用。
 
-document对象有不同的办法可以获取。
+document节点有不同的办法可以获取。
 
 - 对于正常的网页，直接使用document或window.document。
 - 对于iframe载入的网页，使用iframe节点的contentDocument属性。
 - 对Ajax操作返回的文档，使用XMLHttpRequest对象的responseXML属性。
 - 对于某个节点包含的文档，使用该节点的ownerDocument属性。
 
-上面这四种document对象，都部署了[Document接口](http://dom.spec.whatwg.org/#interface-document)，因此有共同的属性和方法。当然，各自也有一些自己独特的属性和方法，比如HTML和XML文档的document对象就不一样。
+上面这四种document节点，都部署了[Document接口](http://dom.spec.whatwg.org/#interface-document)，因此有共同的属性和方法。当然，各自也有一些自己独特的属性和方法，比如HTML和XML文档的document节点就不一样。
 
-## document对象的属性
+## document节点的属性
 
-document对象有很多属性，用得比较多的是下面这些。
+document节点有很多属性，用得比较多的是下面这些。
 
 ### doctype，documentElement，defaultView，body，head，activeElement
 
@@ -29,7 +29,7 @@ document对象有很多属性，用得比较多的是下面这些。
 
 **（1）doctype**
 
-对于HTML文档来说，document对象一般有两个子节点。第一个子节点是document.doctype，它是一个对象，包含了当前文档类型（Document Type Declaration，简写DTD）信息。对于HTML5文档，该节点就代表&lt;!DOCTYPE html&gt;。如果网页没有声明DTD，该属性返回null。另外，document.firstChild通常就返回这个节点。
+对于HTML文档来说，document对象一般有两个子节点。第一个子节点是document.doctype，它是一个对象，包含了当前文档类型（Document Type Declaration，简写DTD）信息。对于HTML5文档，该节点就代表&lt;!DOCTYPE html&gt;。如果网页没有声明DTD，该属性返回null。
 
 ```javascript
 
@@ -40,9 +40,13 @@ doctype.name // "html"
 
 ```
 
+document.firstChild通常就返回这个节点。
+
 **（2）documentElement**
 
-第二个子节点是document.documentElement，表示当前文档的根节点（root）。对于HTML网页，该属性返回html节点，代表&lt;html lang="en"&gt;。
+document.documentElement属性，表示当前文档的根节点（root）。它通常是document节点的第二个子节点，紧跟在`document.doctype`节点后面。
+
+对于HTML网页，该属性返回HTML节点，代表&lt;html lang="en"&gt;。
 
 **（3）defaultView**
 

@@ -1,5 +1,5 @@
 ---
-title: Node对象
+title: Node节点
 layout: page
 category: dom
 date: 2013-10-07
@@ -31,7 +31,7 @@ DOCUMENT_FRAGMENT_NODE | 文档碎片节点 | 文档的片段
 
 浏览器原生提供一个Node对象，上表所有类型的节点都是Node对象派生出来的。也就是说，它们都继承了Node的属性和方法。
 
-## Node对象的属性
+## Node节点的属性
 
 ### nodeName，nodeType
 
@@ -75,7 +75,14 @@ document.querySelector('a').nodeType === Node.ELEMENT_NODE
 
 **（1）ownerDocument**
 
-ownerDocument属性返回当前节点所在的顶层文档对象，即document对象。document对象本身的ownerDocument属性，返回null。
+ownerDocument属性返回当前节点所在的顶层文档对象，即document对象。
+
+```javascript
+var d = p.ownerDocument;
+d === document // true
+```
+
+document对象本身的ownerDocument属性，返回null。
 
 **（2）nextSibling**
 
@@ -213,7 +220,7 @@ baseURI属性返回一个字符串，由当前网页的协议、域名和所在�
 
 该属性不仅document对象有（`document.baseURI`），元素节点也有（`element.baseURI`）。通常情况下，它们的值是相同的。
 
-## Node对象的方法
+## Node节点的方法
 
 ### appendChild()，hasChildNodes()，removeChild()，replaceChild()
 

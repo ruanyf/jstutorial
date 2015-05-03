@@ -46,7 +46,7 @@ modifiedOn: 2014-05-18
 
 <h2 id="dom">DOM</h2>
 
-- [Node对象](dom/node.html)
+- [Node节点](dom/node.html)
 - [Document节点](dom/document.html)
 - [Element节点](dom/element.html)
 - [Text节点和DocumentFragment节点](dom/text.html)
