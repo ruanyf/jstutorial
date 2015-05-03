@@ -176,9 +176,7 @@ referrer属性返回一个字符串，表示前文档的访问来源，如果是
 title属性返回当前文档的标题，该属性是可写的。
 
 ```javascript
-
 document.title = '新标题';
-
 ```
 
 **（7）characterSet**
@@ -274,9 +272,16 @@ for(var i = 0; i < ilist.length; i++) {
 
 links属性返回当前文档所有的链接元素（即a标签，或者说具有href属性的元素）。
 
-**（5）links**
+**（5）scripts**
 
 scripts属性返回当前文档的所有脚本（即script标签）。
+
+```javascript
+var scripts = document.scripts;
+if (scripts.length !== 0 ) {
+  console.log("当前网页有脚本");
+}
+```
 
 **（6）styleSheets**
 
@@ -292,11 +297,21 @@ var allSheets = [].slice.call(document.styleSheets);
 
 ### cookie
 
-cookie属性返回当前网页的cookie。该属性是可写的，但是一次只能写入一个cookie，也就是说写入并不是单纯的覆盖，JavaScript内部会对其进行处理。
+**（1）概述**
+
+cookie属性返回当前网页的cookie。
 
 ```javascript
+// 读取当前网页的所有cookie
+allCookies = document.cookie;
+```
 
+该属性是可写的，但是一次只能写入一个cookie，也就是说写入并不是覆盖，而是添加。另外，cookie的值必须对分号、逗号和空格进行转义。
+
+```javascript
+// 写入一个新cookie
 document.cookie = "test1=hello";
+// 再写入一个cookie
 document.cookie = "test2=world";
 
 document.cookie
@@ -304,15 +319,109 @@ document.cookie
 
 ```
 
+cookie属性的读写操作含义不同，跟服务器与浏览器的通信格式有关。浏览器向服务器发送cookie，是一次性所有cookie全部发送。
+
+```http
+GET /sample_page.html HTTP/1.1
+Host: www.example.org
+Cookie: cookie_name1=cookie_value1; cookie_name2=cookie_value2
+Accept: */*
+```
+
+服务器告诉浏览器需要储存cookie，则是分行指定。
+
+```http
+HTTP/1.0 200 OK
+Content-type: text/html
+Set-Cookie: cookie_name1=cookie_value1
+Set-Cookie: cookie_name2=cookie_value2; expires=Sun, 16 Jul 3567 06:23:41 GMT
+```
+
 cookie的值可以用encodeURIComponent方法进行处理，对逗号、分号、空格进行转义（这些符号都不允许作为cookie的值）。
+
+**（2）cookie的属性**
 
 除了cookie本身的内容，还有一些可选的属性也是可以写入的，它们都必须以分号开头。
 
-- ;path=path，指定路径，必须是绝对路径（比如'/'，'/mydir'），如果未指定，默认为当前路径。
-- ;domain=domain，指定域名，比如'example.com'，'.example.com'（这种写法将对所有子域名生效）、'subdomain.example.com'。如果未指定，默认为当前域名。
-- ;max-age=max-age-in-seconds，指定cookie有效期，比如60*60*24*365（即一年31536e3秒）。
-- ;expires=date-in-GMTString-format，指定cookie过期时间，日期格式等同于Date.toUTCString()的格式。
-- ;secure，指定cookie只能在加密协议https下发送。
+```http
+Set-Cookie: value[; expires=date][; domain=domain][; path=path][; secure]
+```
+
+- ; path=path，指定路径，必须是绝对路径（比如'/'，'/mydir'），如果未指定，默认为设定该cookie的路径。只有path属性匹配向服务器发送的路径，cookie才会发送。这里的匹配不是绝对匹配，而是从根路径开始，只要path属性匹配发送路径的一部分，就可以发送。比如，path属性等于`/blog`，则发送路径是`/blog`或者`/blogroll`，cookie都会发送。path属性生效的前提是domain属性匹配。
+
+- ; domain=domain，指定cookie所在的域名，比如'example.com'，'.example.com'（这种写法将对所有子域名生效）、'subdomain.example.com'。如果未指定，默认为设定该cookie的域名。所指定的域名必须是当前发送cookie的域名的一部分，比如当前访问的域名是example.com，就不能将其设为google.com。只有访问的域名匹配domain属性，cookie才会发送到服务器。
+
+- ; max-age=max-age-in-seconds，指定cookie有效期，比如60*60*24*365（即一年31536e3秒）。
+
+- ; expires=date-in-GMTString-format，指定cookie过期时间，日期格式等同于Date.toUTCString()的格式。如果不设置该属性，则cookie只在当前会话（session）有效，浏览器窗口一旦关闭，当前session结束，该cookie就会被删除。浏览器根据本地时间，决定cookie是否过期，由于本地时间是不精确的，所以没有办法保证cookie一定会在服务器指定的时间过期。
+
+- ; secure，指定cookie只能在加密协议HTTPS下发送到服务器。该属性只是一个开关，不需要设定值。在HTTPS协议下设定的cookie，该开关自动打开。
+
+以上属性可以同时设置一个或多个，也没有次序的要求。如果服务器想改变一个早先设置的cookie，必须同时满足四个条件：cookie的名字、domain、path和secure。也就是说，如果原始的cookie是用如下的Set-Cookie头命令设置的。
+
+```http
+Set-Cookie: key1=value1; domain=example.com; path=/blog
+```
+
+改变上面这个cookie的值，就必须使用同样的Set-Cookie命令。
+
+```http
+Set-Cookie: key1=value2; domain=example.com; path=/blog
+```
+
+只要有一个属性不同，就会生成一个全新的cookie，而不是替换掉原来那个cookie。
+
+```http
+Set-Cookie: key1=value2; domain=example.com; path=/
+```
+
+上面的命令设置了一个全新的同名cookie。下一次访问`example.com/blog`的时候，浏览器将向服务器发送两个同名的cookie。
+
+```http
+Cookie: key1=value1; key1=value2
+```
+
+上面代码的两个cookie是同名的，匹配越精确的cookie排在越前面。
+
+```javascript
+var str = 'someCookieName=true';
+str += '; expires=Fri, 31 Dec 9999 23:59:59 GMT';
+str += '; path=/';
+
+document.cookie = str;
+```
+
+另外，上面这些cookie属性只能用来设置cookie。一旦设置完成，就没有办法从某个cookie读取这些属性的值。
+
+删除一个cookie的简便方法，就是设置expires属性等于0。
+
+**（3）cookie的限制**
+
+浏览器对cookie的数量和长度有限制，但是每个浏览器的规定是不一样的。
+
+- IE6：每个域名20个cookie。
+- IE7，IE8，Firefox：每个域名50个cookie
+- Safari，Chrome：没有域名数量的限制。
+
+所有cookie的累加长度限制为4KB。超过这个长度的cookie，将被忽略，不会被设置。
+
+由于cookie存在数量限制，有时为了规避限制，可以将cookie设置成下面的形式。
+
+```http
+name=a=b&c=d&e=f&g=h
+```
+
+上面代码实际上是设置了一个cookie，但是这个cookie内部使用&符号，设置了多部分的内容。因此，可以在一个cookie里面，通过自行解析，可以得到多个键值对。这样就规避了cookie的数量限制。
+
+**（4）HTTP-Only cookie**
+
+设置cookie的时候，如果服务器加上了HTTPOnly属性，则这个cookie无法被JavaScript读取（即`document.cookie`不会返回这个cookie的值），只用于向服务器发送。
+
+```http
+Set-Cookie: key=value; HttpOnly
+```
+
+上面的这个cookie将无法用JavaScript获取。进行AJAX操作时，getAllResponseHeaders方法或getResponseHeader方法也不会显示这个头命令。
 
 ## HTMLCollection接口
 
