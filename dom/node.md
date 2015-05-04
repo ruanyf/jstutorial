@@ -6,7 +6,7 @@ date: 2013-10-07
 modifiedOn: 2014-05-18
 ---
 
-## DOM的含义
+## DOM的概念
 
 DOM是文档对象模型（Document Object Model）的简称，它的基本思想是把结构化文档（比如HTML和XML）解析成一系列的节点，再由这些节点组成一个树状结构（DOM Tree）。所有的节点和最终的树状结构，都有规范的对外接口，以达到使用编程语言操作文档的目的（比如增删内容）。所以，DOM可以理解成文档（HTML文档、XML文档和SVG文档）的编程接口。
 
@@ -18,16 +18,16 @@ DOM有自己的国际标准，目前的通用版本是[DOM 3](http://www.w3.org/
 
 DOM的最小组成单位叫做节点（node），一个文档的树形结构（DOM树），就是由各种不同类型的节点组成。
 
-对于HTML文档，节点有以下类型。
+对于HTML文档，节点主要有以下六种类型：Document节点、DocumentType节点、Element节点、Attribute节点、Text节点和DocumentFragment节点。
 
 节点|名称|含义
 ----|----|----
-DOCUMENT_NODE | 文档节点 | 整个文档（window.document）
-DOCUMENT_TYPE_NODE | 文档类型节点 | 文档的类型（比如&lt;!DOCTYPE html&gt;）
-ELEMENT_NODE | 元素节点 | HTML元素（比如&lt;body&gt;、&lt;a&gt;等）
-ATTRIBUTE_NODE | 属性节点| HTML元素的属性（比如class="right"）
-TEXT_NODE | 文本节点 | HTML文档中出现的文本
-DOCUMENT_FRAGMENT_NODE | 文档碎片节点 | 文档的片段
+Document | 文档节点 | 整个文档（window.document）
+DocumentType | 文档类型节点 | 文档的类型（比如&lt;!DOCTYPE html&gt;）
+Element | 元素节点 | HTML元素（比如&lt;body&gt;、&lt;a&gt;等）
+Attribute | 属性节点| HTML元素的属性（比如class="right"）
+Text | 文本节点 | HTML文档中出现的文本
+DocumentFragment | 文档碎片节点 | 文档的片段
 
 浏览器原生提供一个Node对象，上表所有类型的节点都是Node对象派生出来的。也就是说，它们都继承了Node的属性和方法。
 
@@ -658,7 +658,7 @@ childElementCount属性返回当前节点的所有Element子节点的数目。
 
 ### ChildNode接口
 
-ChildNode接口用于处理子节点（包含但不限于Element子节点）。Element节点、DocumentType节点和CharacterData节点，部署了这个接口。凡是这三类节点，都可以使用下面四个方法，但是除了第一个remove方法，目前没有浏览器支持后面三个方法。
+ChildNode接口用于处理子节点（包含但不限于Element子节点）。Element节点、DocumentType节点和CharacterData接口，部署了ChildNode接口。凡是这三类节点（接口），都可以使用下面四个方法。但是现实的情况是，除了第一个remove方法，目前没有浏览器支持后面三个方法。
 
 **（1）remove()**
 
