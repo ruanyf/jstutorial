@@ -622,7 +622,7 @@ children属性返回一个动态的HTMLCollection集合，由当前节点的所�
 
 下面代码遍历指定节点的所有Element子节点。
 
-```javascritp
+```javascript
 if (el.children.length) {
   for (var i = 0; i < el.children.length; i++) {
     // ...
