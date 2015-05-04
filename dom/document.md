@@ -423,35 +423,6 @@ Set-Cookie: key=value; HttpOnly
 
 上面的这个cookie将无法用JavaScript获取。进行AJAX操作时，getAllResponseHeaders方法或getResponseHeader方法也不会显示这个头命令。
 
-## HTMLCollection接口
-
-HTMLCollection是一种接口规格，代表HTML元素的集合，属于类似数组的对象。该集合的网页元素都是动态的，元素的变化都会动态反映在集合中。document.links、docuement.forms、document.images等属性，返回的都是这个接口的对象。
-
-部署了HTMLCollection接口的对象，具有length属性，表示集合成员的总数。另外有两个方法，item()和namedItem()。
-
-item方法根据成员的位置参数（从0开始），返回该成员。
-
-```javascript
-
-var c = document.images;
-var img1 = c.item(10);
-// 等价于下面的写法
-var img1 = c[1];
-
-```
-
-namedItem方法根据成员的ID属性或name属性，返回该成员。如果没有对应的成员，则返回null。
-
-```javascript
-
-var elem = document.forms.namedItem("myForm");
-// 等价于下面的写法
-var elem = document.forms["myForm"];
-
-```
-
-由于item方法和namedItem方法，都可以用方括号运算符代替，所以建议一律使用方括号运算符。
-
 ## document对象的方法
 
 document对象主要有以下一些方法。
