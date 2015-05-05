@@ -848,3 +848,20 @@ document.getElementById("container").appendChild(newNode);
 ```
 
 上面代码从iframe窗口，拷贝一个指定节点myNode，插入当前文档。
+
+### addEventListener()，removeEventListener()，dispatchEvent()
+
+以下三个方法与Document节点的事件相关。这些方法都继承自EventTarget接口，详细介绍参见《Event对象》章节的《EventTarget》部分。
+
+```javascript
+// 添加事件监听函数
+document.addEventListener('click', listener, false);
+
+// 移除事件监听函数
+document.removeEventListener('click', listener, false);
+
+// 触发事件
+document.dispatchEvent('click');
+```
+
+
