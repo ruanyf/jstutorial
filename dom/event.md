@@ -291,7 +291,7 @@ cancelable属性返回一个布尔值，表示事件是否可以取消。除非�
 
 如果要取消某个事件，需要在这个事件上面调用preventDefault方法，这会阻止浏览器对某种事件部署的默认行为。
 
-## currentTarget，target
+### currentTarget，target
 
 currentTarget属性返回事件当前所在的节点，即正在执行的监听函数所绑定的那个节点。作为比较，target属性返回事件发生的节点。如果监听函数在捕获阶段和冒泡阶段触发，那么这两个属性返回的值是不一样的。
 
@@ -1169,7 +1169,7 @@ initEvent方法可以接受四个参数。
 - cancelable：事件是否能被取消，格式为布尔值。可以使用event.cancelable属性读取它的值。
 - option：为事件对象指定额外的属性。
 
-## event.initMouseEvent()
+### event.initMouseEvent()
 
 initMouseEvent方法用来初始化Document.createEvent方法新建的鼠标事件。该方法必须在事件新建（document.createEvent方法）之后、触发（dispatchEvent方法）之前调用。
 
