@@ -183,7 +183,9 @@ document节点和doctype节点的textContent属性为null。如果要读取整�
 
 **（2）nodeValue**
 
-nodeValue属性返回或设置当前节点的值。除了Text节点和Comment节点的nodeValue属性返回文本内容，其他类型节点的nodeValue都是null。因此，该属性的作用主要是提取和设置Text节点的内容，对于那些原来值为null的节点，设置nodeValue属性是无效的。
+nodeValue属性返回或设置当前节点的值，格式为字符串。但是，该属性只对Text节点、Comment节点、XML文档的CDATA节点有效，其他类型的节点一律返回null。
+
+因此，nodeValue属性一般只用于Text节点。对于那些返回null的节点，设置nodeValue属性是无效的。
 
 ### childNodes，firstNode，lastChild
 

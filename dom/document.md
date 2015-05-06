@@ -861,7 +861,8 @@ document.addEventListener('click', listener, false);
 document.removeEventListener('click', listener, false);
 
 // 触发事件
-document.dispatchEvent('click');
+var event = new Event('click');
+document.dispatchEvent(event);
 ```
 
 

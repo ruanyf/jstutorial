@@ -520,7 +520,8 @@ el.addEventListener('click', listener, false);
 el.removeEventListener('click', listener, false);
 
 // 触发事件
-el.dispatchEvent('click');
+var event = new Event('click');
+el.dispatchEvent(event);
 ```
 
 ### getBoundingClientRect()，getClientRects()
