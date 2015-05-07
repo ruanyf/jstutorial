@@ -128,6 +128,8 @@ HTML语言允许在元素标签的属性中，直接定义某些事件的监听�
 
 上面代码为body节点的load事件、div节点的click事件，指定了回调函数。
 
+使用这个方法指定的监听函数，只会在冒泡阶段触发。
+
 注意，使用这种方法时，on-属性的值是“监听代码”，而不是“监听函数”。也就是说，一旦指定事件发生，这些代码是原样传入JavaScript引擎执行。因此如果要执行函数，必须在函数名后面加上一对圆括号。
 
 另外，Element节点的setAttribue方法，其实设置的也是这种效果。
@@ -149,6 +151,8 @@ div.onclick = function(event){
 };
 
 {% endhighlight %}
+
+使用这个方法指定的监听函数，只会在冒泡阶段触发。
 
 ### addEventListener方法
 
@@ -277,7 +281,7 @@ document.dispatchEvent(ev);
 
 **（1）bubbles**
 
-bubbles属性返回一个布尔值，表示当前事件是否会冒泡。除非显式声明，Event构造函数生成的事件，默认是不冒泡的。
+bubbles属性返回一个布尔值，表示当前事件是否会冒泡。该属性为只读属性，只能在新建事件时改变。除非显式声明，Event构造函数生成的事件，默认是不冒泡的。
 
 ```javascript
 function goInput(e) {
@@ -310,7 +314,7 @@ var phase = event.eventPhase;
 
 **（1）cancelable**
 
-cancelable属性返回一个布尔值，表示事件是否可以取消。除非显式声明，Event构造函数生成的事件，默认是不可以取消的。
+cancelable属性返回一个布尔值，表示事件是否可以取消。该属性为只读属性，只能在新建事件时改变。除非显式声明，Event构造函数生成的事件，默认是不可以取消的。
 
 ```javascript
 var bool = event.cancelable;
@@ -414,6 +418,76 @@ var bool = event.isTrusted;
 ```
 
 Firefox浏览器中，用户触发的事件会返回true，脚本触发的事件返回false；IE浏览器中，除了使用createEvent方法生成的事件，所有其他事件都返回true；Chrome浏览器不支持该属性。
+
+## Event接口的事件
+
+### preventDefault()
+
+preventDefault方法取消浏览器对当前事件的默认行为。该方法生效的前提是，事件的cancelable属性为true，如果为false，则调用该方法没有任何效果。
+
+该方法不会阻止事件的进一步传播（stopPropagation方法可用于这个目的）。只要在事件的传播过程中（捕获阶段、目标阶段、冒泡阶段皆可），使用了preventDefault方法，该事件的默认方法就不会执行。
+
+```javascript
+// HTML代码为
+// <input type="checkbox" id="my-checkbox" />
+
+var cb = document.getElementById('my-checkbox');
+
+cb.addEventListener(
+  'click',
+  function (e){ e.preventDefault(); },
+  false
+);
+```
+
+上面代码为点击单选框的事件，设置回调函数，取消默认行为。由于浏览器的默认行为是选中单选框，所以这段代码会导致无法选中单选框。
+
+利用这个方法，可以为文本输入框设置校验条件。如果用户的输入不符合条件，就无法将字符输入文本框。
+
+```javascript
+function checkName(e) {
+  if (e.charCode < 97 || e.charCode > 122) {
+    e.preventDefault();
+  }
+}
+```
+
+上面函数设为文本框的keypress监听函数后，将只能输入小写字母，否则输入事件的默认事件（写入文本框）将被取消。
+
+### stopPropagation()
+
+stopPropagation方法阻止当前事件的进一步传播。
+
+```javascript
+function stopEvent(e) {
+  e.stopPropagation();
+}
+
+el.addEventListener('click', stopEvent, false);
+```
+
+将上面函数指定为监听函数，会阻止事件进一步冒泡到el节点的父节点。
+
+### stopImmediatePropagation()
+
+stopImmediatePropagation方法阻止同一个事件的其他监听函数被调用。
+
+如果同一个节点对于同一个事件指定了多个监听函数，这些函数会根据添加的顺序依次调用。只要其中有一个监听函数调用了stopImmediatePropagation方法，其他的监听函数就不会再执行了。
+
+```javascript
+function l1(e){
+  e.stopImmediatePropagation();
+}
+
+function l2(e){
+  console.log('hello world');
+}
+
+el.addEventListener('click', l1, false);
+el.addEventListener('click', l2, false);
+```
+
+上面代码在el节点上，为click事件添加了两个监听函数l1和l2。由于l1调用了stopImmediatePropagation方法，所以l2不会被调用。
 
 ## 事件的传播
 

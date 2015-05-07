@@ -8,7 +8,9 @@ modifiedOn: 2013-12-04
 
 ## 简介
 
-Node.js是JavaScript在服务器端的一个运行环境，也是一个工具库，用来与服务器端其他软件互动。它的JavaScript解释器，采用了Google公司的V8引擎。
+Node是JavaScript语言的服务器运行环境。所谓“运行环境”有两层意思：首先，JavaScript语言通过Node在服务器运行，在这个意义上，Node有点像JavaScript虚拟机；其次，Node提供大量工具库，使得JavaScript语言与操作系统互动（比如读写文件、新建子进程），在这个意义上，Node又是JavaScript的工具库。
+
+Node内部采用Google公司的V8引擎，作为JavaScript语言解释器；通过自行开发的libuv库，调用操作系统资源。
 
 ### 安装与更新
 
@@ -18,9 +20,9 @@ Node.js是JavaScript在服务器端的一个运行环境，也是一个工具库
 
 {% highlight bash %}
 
-node --version
-// 或者
-node -v
+$ node --version
+# 或者
+$ node -v
 
 {% endhighlight %}
 
@@ -28,66 +30,57 @@ node -v
 
 {% highlight bash %}
 
-sudo npm install n -g
-sudo n stable
+$ sudo npm install n -g
+$ sudo n stable
 
 {% endhighlight %}
 
 上面代码通过n模块，将node.js更新为最新发布的稳定版。
 
-n模块也可以指定安装的版本。
+n模块也可以指定安装特定版本的node。
 
 {% highlight bash %}
 
-sudo n 0.8.21
+$ sudo n 0.10.21
 
 {% endhighlight %}
 
 ### 版本管理工具nvm
 
-如果想在同一台机器，同时运行多个版本的node.js，就需要用到版本管理工具nvm。
-
-首先，需要安装nvm。
+如果想在同一台机器，同时安装多个版本的node.js，就需要用到版本管理工具nvm。
 
 {% highlight bash %}
 
-git clone https://github.com/creationix/nvm.git ~/.nvm
+$ git clone https://github.com/creationix/nvm.git ~/.nvm
+$ source ~/.nvm/nvm.sh
 
 {% endhighlight %}
 
-然后使用下面的命令，激活nvm。
-
-{% highlight bash %}
-
-source ~/.nvm/nvm.sh
-
-{% endhighlight %}
-
-上面这条命令，每次使用nvm前都要输入，建议将其加入~/.bashrc文件（假定你所使用的shell是bash）。
+nvm的执行脚本，每次使用前都要输入，建议将其加入~/.bashrc文件（假定使用Bash）。
 
 激活nvm之后，就可以安装指定版本的node.js。
 
 {% highlight bash %}
 
-nvm install 0.10
+# 安装最新版本
+$ nvm install node
+
+# 安装指定版本
+$ nvm install 0.12.1
+
+# 使用已安装的最新版本
+$ nvm use node
+
+# 使用指定版本的node
+$ nvm use 0.12
 
 {% endhighlight %}
 
-上面这条命令，安装最新的v0.10.x版本的node.js。
-
-安装后，就可以指定使用该版本。
+或者，直接进入指定版本的REPL环境。
 
 {% highlight bash %}
 
-nvm use 0.10
-
-{% endhighlight %}
-
-或者，直接进入该版本的REPL环境。
-
-{% highlight bash %}
-
-nvm run 0.10
+$ nvm run 0.10
 
 {% endhighlight %}
 
@@ -95,31 +88,22 @@ nvm run 0.10
 
 {% highlight bash %}
 
-nvm use
+$ nvm use
 
 {% endhighlight %}
 
-ls命令用于查看本地所安装的版本。
+还有一些其他经常用到的命令。
 
 {% highlight bash %}
 
-nvm ls
+# 查看本地安装的所有版本
+$ nvm ls
 
-{% endhighlight %}
+# 查看服务器上所有可供安装的版本。
+$ nvm ls-remote
 
-ls-remote命令用于查看服务器上所有可供安装的版本。
-
-{% highlight bash %}
-
-nvm ls-remote
-
-{% endhighlight %}
-
-如果要退出已经激活的nvm，使用deactivate命令。
-
-{% highlight bash %}
-
-nvm deactivate
+# 退出已经激活的nvm，使用deactivate命令。
+$ nvm deactivate
 
 {% endhighlight %}
 
@@ -145,9 +129,10 @@ node demo.js
 
 {% highlight bash %}
 
-node
+$ node
 > 1+1
 2
+>
 
 {% endhighlight %}
 
@@ -155,11 +140,13 @@ node
 
 {% highlight bash %}
 
-node --use_strict
+$ node --use_strict
 
 {% endhighlight %}
 
-这个REPL是Node.js与用户互动的shell，各种基本的shell功能都可以在里面使用，比如使用上下方向键遍历曾经使用过的命令。特殊变量下划线（_）表示上一个命令的返回结果。
+REPL是Node.js与用户互动的shell，各种基本的shell功能都可以在里面使用，比如使用上下方向键遍历曾经使用过的命令。
+
+特殊变量下划线（_）表示上一个命令的返回结果。
 
 {% highlight bash %}
 
@@ -170,7 +157,7 @@ node --use_strict
 
 {% endhighlight %}
 
-在REPL中，如果运行一个表达式，会直接在命令行返回结果，如果运行一条语句则不会，因为它没有返回值。
+在REPL中，如果运行一个表达式，会直接在命令行返回结果。如果运行一条语句，就不会有任何输出，因为语句没有返回值。
 
 {% highlight bash %}
 
@@ -201,7 +188,9 @@ var isTrue = function(value, callback) {
 
 {% endhighlight %}
 
-上面代码就把进一步的处理，交给回调函数callback。约定俗成，callback的位置总是最后一个参数。值得注意的是，callback的格式也有约定。
+上面代码就把进一步的处理，交给回调函数callback。
+
+Node约定，如果某个函数需要回调函数作为参数，则回调函数是最后一个参数。另外，回调函数本身的第一个参数，约定为上一步传入的错误对象。
 
 {% highlight javascript %}
 
@@ -214,20 +203,7 @@ var callback = function (error, value) {
 
 {% endhighlight %}
 
-callback的第一个参数是一个Error对象，第二个参数才是真正的数据。如果没有发生错误，第一个参数就传入null。这种写法有一个很大的好处，就是说只要判断回调函数的第一个参数，就知道有没有出错，如果不是null，就肯定出错了。
-
-回调函数的第一个参数是Error对象，还有一个好处，就是可以层层传递错误。
-
-```javascript
-if(err) {
-  // 除了放过No Permission错误意外，其他错误传给下一个回调函数
-  if(!err.noPermission) {
-    return next(err);
-  }
-}
-```
-
-Node.js之所以把error放在回调函数的第一个参数，是因为服务器端JavaScript有大量的异步操作，传统的错误捕捉机制try...catch对于异步操作行不通。
+上面代码中，callback的第一个参数是Error对象，第二个参数才是真正的数据参数。这是因为回调函数主要用于异步操作，当回调函数运行时，前期的操作早结束了，错误的执行栈早就不存在了，传统的错误捕捉机制try...catch对于异步操作行不通，所以只能把错误交给回调函数处理。
 
 ```javascript
 try {
@@ -244,6 +220,17 @@ try {
 
 上面代码中，db.User.get方法是一个异步操作，等到抛出错误时，可能它所在的try...catch代码块早就运行结束了，这会导致错误无法被捕捉。所以，Node统一规定，一旦异步操作发生错误，就把错误对象传递到回调函数。
 
+如果没有发生错误，回调函数的第一个参数就传入null。这种写法有一个很大的好处，就是说只要判断回调函数的第一个参数，就知道有没有出错，如果不是null，就肯定出错了。另外，这样还可以层层传递错误。
+
+```javascript
+if(err) {
+  // 除了放过No Permission错误意外，其他错误传给下一个回调函数
+  if(!err.noPermission) {
+    return next(err);
+  }
+}
+```
+
 ### 全局对象和全局变量
 
 Node提供以下几个全局对象，它们是所有模块都可以调用的。
@@ -251,9 +238,8 @@ Node提供以下几个全局对象，它们是所有模块都可以调用的。
 - **global**：表示Node所在的全局环境，类似于浏览器的window对象。需要注意的是，如果在浏览器中声明一个全局变量，实际上是声明了一个全局对象的属性，比如`var x = 1`等同于设置`window.x = 1`，但是Node不是这样，至少在模块中不是这样（REPL环境的行为与浏览器一致）。在模块文件中，声明`var x = 1`，该变量不是`global`对象的属性，`global.x`等于undefined。这是因为模块的全局变量都是该模块私有的，其他模块无法取到。
 
 - **process**：该对象表示Node所处的当前进程，允许开发者与该进程互动。
+
 - **console**：指向Node内置的console模块，提供命令行环境中的标准输入、标准输出功能。
-- **module**：该对象指向当前模块，`module.exports`属性是该模块对外的接口，被require方法调用。module实际上不是全局变量，而是每个模块私有的。
-- **exports**：该对象指向`module.exports`属性，是该属性的简写形式。exports也不是全局变量，而是每个模块私有的。
 
 Node还提供一些全局函数。
 
@@ -271,107 +257,29 @@ Node提供两个全局变量，都以两个下划线开头。
 
 除此之外，还有一些对象实际上是模块内部的局部变量，指向的对象根据模块不同而不同，但是所有模块都适用，可以看作是伪全局变量，主要为module, module.exports, exports等。
 
-module变量指代当前模块。module.exports变量表示当前模块对外输出的接口，其他文件加载该模块，实际上就是读取module.exports变量。
-
-- module.id 模块的识别符，通常是模块的文件名。
-- module.filename 模块的文件名。
-- module.loaded 返回一个布尔值，表示模块是否已经完成加载。
-- module.parent 返回使用该模块的模块。
-- module.children 返回一个数组，表示该模块要用到的其他模块。
-
-这里需要特别指出的是，exports变量实际上是一个指向module.exports对象的链接，等同在每个模块头部，有一行这样的命令。
-
-{% highlight javascript %}
-
-var exports = module.exports;
-
-{% endhighlight %}
-
-这造成的结果是，在对外输出模块接口时，可以向exports对象添加方法，但是不能直接将exports变量指向一个函数。
-
-{% highlight javascript %}
-
-exports = function (x){ console.log(x);};
-
-{% endhighlight %}
-
-上面这样的写法是无效的，因为它切断了exports与module.exports之间的链接。但是，下面这样写是可以的。
-
-{% highlight javascript %}
-
-exports.area = function (r) {
-  return Math.PI * r * r;
-};
-
-exports.circumference = function (r) {
-  return 2 * Math.PI * r;
-};
-
-{% endhighlight %}
-
-所以，如果一个模块的对外接口，就是一个函数或对象时，不能使用exports输出，只能使用module.exports输出。假如a.js文件有一个函数verifyPassword，是整个模块的对外接口。
-
-```javascript
-// a.js
-var verifyPassword = function(user, password, done) { ... };
-
-// b.js
-require(‘a.js’)
-// function(user, password, done) { ... }
-```
-
-该函数只能用module.exports输出。
-
-```javascript
-// 错误的写法
-exports = verifyPassword;
-
-// 正确的写法
-module.exports = verifyPassword;
-```
-
-如果你觉得，exports与module.exports之间的区别很难分清，一个简单的处理方法，就是放弃使用exports，只使用module.exports。
-
 ## 模块化结构
 
 ### 概述
 
 Node.js采用模块化结构，按照[CommonJS规范](http://wiki.commonjs.org/wiki/CommonJS)定义和使用模块。模块与文件是一一对应关系，即加载一个模块，实际上就是加载对应的一个模块文件。
 
-require方法用于指定加载模块。
+require命令用于指定加载模块，加载时可以省略脚本文件的后缀名。
 
 {% highlight javascript %}
 
 var circle = require('./circle.js');
-
-{% endhighlight %}
-
-上面代码表明，从当前目录下的circle.js文件，加载circle模块。因为require方法默认加载的就是js文件，因此可以把js后缀名省略。
-
-{% highlight javascript %}
-
+// 或者
 var circle = require('./circle');
 
 {% endhighlight %}
 
-require方法的参数是模块文件的名字。它分成两种情况，第一种情况是参数中含有文件路径（比如上例），这时路径是相对于当前脚本所在的目录，第二种情况是参数中不含有文件路径（比如下例）。
+require方法的参数是模块文件的名字。它分成两种情况，第一种情况是参数中含有文件路径（比如上例），这时路径是相对于当前脚本所在的目录，第二种情况是参数中不含有文件路径，这时Node到模块的安装目录，去寻找已安装的模块（比如下例）。
 
 {% highlight javascript %}
 
 var bar = require('bar');
 
 {% endhighlight %}
-
-如果require方法的参数不带有路径，则node.js依次按照以下顺序，去寻找模块文件。
-
-node.js依次到下面的目录，去寻找bar模块。
-
-- ./node_modules/bar
-- ../node_modules/bar
-- ../../node_modules/bar
-- /node_modules/bar
-
-可以看到，如果没有指明模块所在位置，Node会依次从当前目录向上，一级级在node_modules子目录下寻找模块。如果没有找到该模块，会抛出一个错误。这样做的好处是，不同的项目可以在自己的目录中，安装同一个模块的不同版本，而不会发生版本冲突。
 
 有时候，一个模块本身就是一个目录，目录中包含多个文件。这时候，Node在package.json文件中，寻找main属性所指明的模块入口文件。
 
@@ -384,7 +292,7 @@ node.js依次到下面的目录，去寻找bar模块。
 
 {% endhighlight %}
 
-上面代码中，模块的启动文件为lib子目录下的bar.js。当使用require('bar')命令加载该模块时，实际上加载的是`bar/lib/some-library.js`文件。下面写法会起到同样效果。
+上面代码中，模块的启动文件为lib子目录下的bar.js。当使用`require('bar')`命令加载该模块时，实际上加载的是`./node_modules/bar/lib/bar.js`文件。下面写法会起到同样效果。
 
 ```javascript
 
@@ -409,7 +317,9 @@ var bar = require('bar/lib/bar.js')
 - **path**：处理文件路径。
 - **crypto**：提供加密和解密功能，基本上是对OpenSSL的包装。
 
-除了使用核心模块，还可以使用第三方模块，以及自定义模块。
+上面这些核心模块，源码都在Node的lib子目录中。为了提高运行速度，它们安装时都会被编译成二进制文件。
+
+核心模块总是最优先加载的。如果你自己写了一个HTTP模块，`require('http')`加载的还是核心模块。
 
 ### 自定义模块
 
