@@ -8,6 +8,106 @@ modifiedOn: 2013-12-19
 
 事件是一种异步编程的实现方式，本质上是程序各个组成部分之间传递的特定消息。DOM支持大量的事件，本节介绍DOM的事件编程。
 
+## EventTarget接口
+
+DOM节点关于事件的方法（监听和触发），都定义在EventTarget接口。Element节点、document节点和window对象，都部署了这个接口。此外，XMLHttpRequest、AudioNode、AudioContext等浏览器内置对象，也部署了这个接口。
+
+### addEventListener()
+
+addEventListener方法用于在当前节点或对象上，定义一个特定事件的监听函数。
+
+```javascript
+target.addEventListener(type, listener[, useCapture]);
+```
+
+addEventListener方法接受三个参数。
+
+- type，事件名称，大小写不敏感。
+- listener，监听函数。指定事件发生时，会调用该监听函数。
+- useCapture，回调函数是否在捕获阶段（capture）触发。该参数是一个布尔值，默认为false（表示回调函数只在冒泡阶段被触发）。在较新版本的浏览器中，该参数是可选的，为了保持兼容，建议总是写上该参数。
+
+下面是一个例子。
+
+```javascript
+function hello(){
+  console.log('Hello world');
+}
+
+var button = document.getElementById("btn");
+button.addEventListener('click', hello, false);
+```
+
+可以使用addEventListener方法，为当前对象的同一个事件，添加多个监听函数。这些函数按照添加顺序触发，即先添加先触发。如果为同一个事件多次添加同一个监听函数，该函数只会执行一次，多余的添加将自动被去除（不必使用removeEventListener方法手动去除）。
+
+```javascript
+function hello(){
+  console.log('Hello world');
+}
+
+document.addEventListener('click', hello, false);
+document.addEventListener('click', hello, false);
+```
+
+执行上面代码，点击文档只会输出一行“Hello world”。
+
+如果希望向监听函数传递参数，可以用匿名函数包装一下监听函数。
+
+```javascript
+function print(x) {
+  console.log(x);
+}
+
+var el = document.getElementById("div1");
+el.addEventListener("click", function(){print('Hello')}, false);
+```
+
+上面代码通过匿名函数，向监听函数print传递了一个参数。
+
+### removeEventListener()
+
+removeEventListener方法用来移除addEventListener方法添加的事件监听函数。
+
+```javascript
+div.addEventListener('click', listener, false);
+div.removeEventListener('click', listener, false);
+```
+
+removeEventListener方法的参数，与addEventListener方法完全一致。它对第一个参数“事件类型”，也是大小写不敏感。
+
+注意，removeEventListener方法移除的监听函数，必须与对应的addEventListener方法的参数完全一致，而且在同一个元素节点，否则无效。
+
+### dispatchEvent()
+
+dispatchEvent方法在当前节点上触发指定事件，从而触发监听函数的执行。该方法返回一个布尔值，只要有一个监听函数调用了`Event.preventDefault()`，则返回值为false，否则为true。
+
+```javascript
+target.dispatchEvent(event)
+```
+
+dispatchEvent方法的参数是一个Event对象的实例。
+
+```javascript
+para.addEventListener('click', hello, false);
+var event = new Event('click');
+para.dispatchEvent(event);
+```
+
+上面代码在当前节点触发了click事件。
+
+如果dispatchEvent方法的参数为空，或者不是一个有效的事件对象，将报错。
+
+下面代码根据dispatchEvent方法的返回值，判断事件是否被取消了。
+
+```javascript
+var canceled = !cb.dispatchEvent(event);
+  if (canceled) {
+    console.log('事件取消');
+  } else {
+    console.log('事件未取消');
+  }
+}
+```
+
 ## 监听函数
 
 监听函数是事件发生时，程序所要执行的函数。它是事件驱动编程模式的主要编程方式。
@@ -147,106 +247,6 @@ element.setAttribute('onclick', 'doSomething()');
 <element onclick="doSomething()">
 ```
 
-## EventTarget接口
-
-DOM节点关于事件的方法（监听和触发），都定义在EventTarget接口。Element节点、document节点和window对象，都部署了这个接口。此外，XMLHttpRequest、AudioNode、AudioContext等浏览器内置对象，也部署了这个接口。
-
-### addEventListener()
-
-addEventListener方法用于在当前节点或对象上，定义一个特定事件的监听函数。
-
-```javascript
-target.addEventListener(type, listener[, useCapture]);
-```
-
-addEventListener方法接受三个参数。
-
-- type，事件名称。
-- listener，监听函数。指定事件发生时，会调用该监听函数。
-- useCapture，回调函数是否在捕获阶段（capture）触发。该参数是一个布尔值，默认为false（表示回调函数只在冒泡阶段被触发）。在较新版本的浏览器中，该参数是可选的，为了保持兼容，建议总是写上该参数。
-
-下面是一个例子。
-
-```javascript
-function hello(){
-  console.log('Hello world');
-}
-
-var button = document.getElementById("btn");
-button.addEventListener('click', hello, false);
-```
-
-可以使用addEventListener方法，为当前对象的同一个事件，添加多个监听函数。这些函数按照添加顺序触发，即先添加先触发。如果为同一个事件多次添加同一个监听函数，该函数只会执行一次，多余的添加将自动被去除（不必使用removeEventListener方法手动去除）。
-
-```javascript
-function hello(){
-  console.log('Hello world');
-}
-
-document.addEventListener('click', hello, false);
-document.addEventListener('click', hello, false);
-```
-
-执行上面代码，点击文档只会输出一行“Hello world”。
-
-如果希望向监听函数传递参数，可以用匿名函数包装一下监听函数。
-
-```javascript
-function print(x) {
-  console.log(x);
-}
-
-var el = document.getElementById("div1");
-el.addEventListener("click", function(){print('Hello')}, false);
-```
-
-上面代码通过匿名函数，向监听函数print传递了一个参数。
-
-### removeEventListener()
-
-removeEventListener方法用来移除addEventListener方法添加的事件监听函数。
-
-```javascript
-div.addEventListener('click', listener, false);
-div.removeEventListener('click', listener, false);
-```
-
-removeEventListener方法的参数，与addEventListener方法完全一致。
-
-注意，removeEventListener方法移除的监听函数，必须与对应的addEventListener方法的参数完全一致，而且在同一个元素节点，否则无效。
-
-### dispatchEvent()
-
-dispatchEvent方法在当前节点上触发指定事件，从而触发监听函数的执行。该方法返回一个布尔值，只要有一个监听函数调用了`Event.preventDefault()`，则返回值为false，否则为true。
-
-```javascript
-target.dispatchEvent(event)
-```
-
-dispatchEvent方法的参数是一个Event对象的实例。
-
-```javascript
-para.addEventListener('click', hello, false);
-var event = new Event('click');
-para.dispatchEvent(event);
-```
-
-上面代码在当前节点触发了click事件。
-
-如果dispatchEvent方法的参数为空，或者不是一个有效的事件对象，将报错。
-
-下面代码根据dispatchEvent方法的返回值，判断事件是否被取消了。
-
-```javascript
-var canceled = !cb.dispatchEvent(event);
-  if (canceled) {
-    console.log('事件取消');
-  } else {
-    console.log('事件未取消');
-  }
-}
-```
-
 ## Event接口
 
 所有的DOM事件，都部署了Event接口。它体现在浏览器原生提供一个Event构造函数，所有的事件都是这个构造函数的实例，或者说继承了`Event.prototype`对象。Event构造函数可以用来生成新的事件。
@@ -271,7 +271,11 @@ document.dispatchEvent(ev);
 
 ## Event接口的属性
 
-### bubbles，cancelable
+### bubbles，eventPhase
+
+以下属性与事件的阶段有关。
+
+**（1）bubbles**
 
 bubbles属性返回一个布尔值，表示当前事件是否会冒泡。除非显式声明，Event构造函数生成的事件，默认是不冒泡的。
 
@@ -287,11 +291,48 @@ function goInput(e) {
 
 上面代码根据事件是否冒泡，调用不同的函数。
 
+**（2）eventPhase**
+
+eventPhase属性返回一个整数值，表示事件目前所处的节点。
+
+```javascript
+var phase = event.eventPhase;
+```
+
+- 0，事件目前没有发生。
+- 1，事件目前处于捕获阶段，即处于从祖先节点向目标节点的传播过程中。该过程是从Window对象到Document节点，再到HTMLHtmlElement节点，直到目标节点的父节点为止。
+- 2，事件到达目标节点，即target属性指向的那个节点。
+- 3，事件处于冒泡阶段，即处于从目标节点向祖先节点的反向传播过程中。该过程是从父节点一直到Window对象。只有bubbles属性为true时，这个阶段才可能发生。
+
+### cancelable，defaultPrevented
+
+以下属性与事件的默认行为有关。
+
+**（1）cancelable**
+
 cancelable属性返回一个布尔值，表示事件是否可以取消。除非显式声明，Event构造函数生成的事件，默认是不可以取消的。
+
+```javascript
+var bool = event.cancelable;
+```
 
 如果要取消某个事件，需要在这个事件上面调用preventDefault方法，这会阻止浏览器对某种事件部署的默认行为。
 
+**（2）defaultPrevented**
+
+defaultPrevented属性返回一个布尔值，表示该事件是否调用过preventDefault方法。
+
+```javascript
+if (e.defaultPrevented) {
+  // ...
+}
+```
+
 ### currentTarget，target
+
+以下属性与事件的目标节点有关。
+
+**（1）currentTarget**
 
 currentTarget属性返回事件当前所在的节点，即正在执行的监听函数所绑定的那个节点。作为比较，target属性返回事件发生的节点。如果监听函数在捕获阶段和冒泡阶段触发，那么这两个属性返回的值是不一样的。
 
@@ -305,6 +346,8 @@ para.addEventListener('click', hide, false);
 ```
 
 上面代码中，点击para节点，该节点会不可见。另外，在回调函数中，currentTarget属性实际上等同于this对象。
+
+**（2）target**
 
 target属性返回触发事件的那个节点，即事件最初发生的节点。如果监听函数不在该节点触发，那么它与currentTarget属性返回的值是不一样的。
 
@@ -330,7 +373,19 @@ function hide(e) {
 }
 ```
 
-### detail
+### type，detail，timeStamp，isTrusted
+
+以下属性与事件对象的其他信息相关。
+
+**（1）type**
+
+type属性返回一个字符串，表示事件类型，具体的值同addEventListener方法和removeEventListener方法的第一个参数一致，大小写不敏感。
+
+```javascript
+var string = event.type;
+```
+
+**（2）detail**
 
 detail属性返回一个数值，表示事件的某种信息。具体含义与事件类型有关，对于鼠标事件，表示鼠标按键在某个位置按下的次数，比如对于dblclick事件，detail属性的值总是2。
 
@@ -341,6 +396,24 @@ function giveDetails(e) {
 
 el.onclick = giveDetails;
 ```
+
+**（3）timeStamp**
+
+timeStamp属性返回一个毫秒时间戳，表示事件发生的时间。
+
+```javascript
+var number = event.timeStamp;
+```
+
+**（4）isTrusted**
+
+isTrusted属性返回一个布尔值，表示该事件是否可以信任。
+
+```javascript
+var bool = event.isTrusted;
+```
+
+Firefox浏览器中，用户触发的事件会返回true，脚本触发的事件返回false；IE浏览器中，除了使用createEvent方法生成的事件，所有其他事件都返回true；Chrome浏览器不支持该属性。
 
 ## 事件的传播
 
