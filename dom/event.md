@@ -251,9 +251,118 @@ element.setAttribute('onclick', 'doSomething()');
 <element onclick="doSomething()">
 ```
 
-## Event接口
+## 事件的传播
 
-所有的DOM事件，都部署了Event接口。它体现在浏览器原生提供一个Event构造函数，所有的事件都是这个构造函数的实例，或者说继承了`Event.prototype`对象。Event构造函数可以用来生成新的事件。
+### 传播的三个阶段
+
+当一个事件发生以后，它会在不同的DOM对象之间传播（propagation）。这种传播分成三个阶段：
+
+- **第一阶段**：从文档的根元素（html元素）传导到目标元素，称为“捕获阶段”（capture phase）。
+
+- **第二阶段**：在目标元素上触发，称为“目标阶段”（target phase）。
+
+- **第三阶段**：从目标元素传导回文档的根元素（html元素），称为“冒泡阶段”（bubbling phase）。
+
+这种三阶段的传播模型，会使得一个事件在多个元素上触发。比如，假设div元素之中嵌套一个p元素。
+
+{% highlight html %}
+
+<div>
+  <p>Click Me</p>
+</div>
+
+{% endhighlight %}
+
+如果对这两个元素的click事件都设定回调函数，则click事件会被触发四次。
+
+{% highlight javascript %}
+
+var phases = {
+  1: 'capture',
+  2: 'target',
+  3: 'bubble'
+};
+
+var div = document.querySelector('div');
+var p = document.querySelector('p');
+
+div.addEventListener('click', callback, true);
+p.addEventListener('click', callback, true);
+div.addEventListener('click', callback, false);
+p.addEventListener('click', callback, false);
+
+function callback(event) {
+  var tag = event.currentTarget.tagName;
+  var phase = phases[event.eventPhase];
+  console.log("Tag: '" + tag + "'. EventPhase: '" + phase + "'");
+}
+
+// 点击以后的结果
+// Tag: 'DIV'. EventPhase: 'capture'
+// Tag: 'P'. EventPhase: 'target'
+// Tag: 'P'. EventPhase: 'target'
+// Tag: 'DIV'. EventPhase: 'bubble'
+
+{% endhighlight %}
+
+上面代码表示，click事件被触发了四次。
+
+1. 捕获阶段：事件从div向p传播时，触发div的click事件；
+2. 目标阶段：事件从div到达p时，触发p的click事件；
+3. 目标阶段：事件离开p时，触发p的click事件；
+4. 冒泡阶段：事件从p传回div时，再次触发div的click事件。
+
+注意，用户点击网页的时候，浏览器总是假定click事件的目标对象，就是嵌套最深的那个元素（嵌套在div元素中的p元素）。
+
+事件传播的最上层对象是window，接着依次是document，html（document.documentElement）和body（document.dody）。也就是说，如果body元素中有一个div元素，点击该元素。事件的传播顺序，在捕获阶段依次为window、document、html、body、div，在冒泡阶段依次为div、body、html、document、window。
+
+### 事件的代理
+
+由于事件会在冒泡阶段向上传播到父元素，因此可以把子元素的回调函数定义在父元素上，由父元素的回调函数统一处理多个子元素的事件。这种方法叫做事件的代理（delegation）。
+
+{% highlight javascript %}
+
+var ul = document.querySelector('ul');
+
+ul.addEventListener('click', function(event) {
+  if (event.target.tagName.toLowerCase() === 'li') {
+    // some code
+  }
+});
+
+{% endhighlight %}
+
+上面代码的click事件的回调函数是定义在ul元素上的，但是实际上，它处理的是子元素li的click事件。这样做的好处是，只要定义一个回调函数，就能处理多个子元素的事件，而且以后再添加子元素，回调函数依然有效。
+
+如果希望事件到某个节点为止，不再传播，可以使用事件对象的stopPropagation方法。
+
+{% highlight javascript %}
+
+p.addEventListener('click', function(event) {
+  event.stopPropagation();
+});
+
+{% endhighlight %}
+
+使用上面的代码以后，click事件在冒泡阶段到达p元素以后，就不再向上（父元素的方向）传播了。
+
+但是，stopPropagation方法不会阻止p元素上的其他click事件的回调函数。如果想要不再触发那些回调函数，可以使用stopImmediatePropagation方法。
+
+{% highlight javascript %}
+
+p.addEventListener('click', function(event) {
+ event.stopImmediatePropagation();
+});
+
+p.addEventListener('click', function(event) {
+ // 不会被触发
+});
+
+{% endhighlight %}
+
+## Event对象
+
+事件发生以后，会生成一个事件对象，在DOM中传递，作为参数传给回调函数。浏览器原生提供一个Event对象，所有的事件对象都是这个对象的实例，或者说继承了`Event.prototype`对象。Event本身就是一个构造函数，可以用来生成新的事件。
 
 ```javascript
 event = new Event(typeArg, eventInit);
@@ -273,7 +382,17 @@ document.dispatchEvent(ev);
 
 上面代码新建一个look事件，然后使用dispatchEvent方法触发该事件。
 
-## Event接口的属性
+IE8及以下版本，事件对象不作为参数传递，而是通过window对象的event属性读取，并且事件对象的target属性叫做srcElement属性。所以获取事件信息，往往写成下面这样。
+
+```javascript
+function myEventHandler(event) {
+  var actualEvent = event || window.event;
+  var actualTarget = actualEvent.target || actualEvent.srcElement;
+  // ...
+}
+```
+
+## Event实例的属性
 
 ### bubbles，eventPhase
 
@@ -419,11 +538,11 @@ var bool = event.isTrusted;
 
 Firefox浏览器中，用户触发的事件会返回true，脚本触发的事件返回false；IE浏览器中，除了使用createEvent方法生成的事件，所有其他事件都返回true；Chrome浏览器不支持该属性。
 
-## Event接口的事件
+## Event实例的事件
 
 ### preventDefault()
 
-preventDefault方法取消浏览器对当前事件的默认行为。该方法生效的前提是，事件的cancelable属性为true，如果为false，则调用该方法没有任何效果。
+preventDefault方法取消浏览器对当前事件的默认行为，比如点击链接后，浏览器跳转到指定页面，或者按一下空格键，页面向下滚动一段距离。该方法生效的前提是，事件的cancelable属性为true，如果为false，则调用该方法没有任何效果。
 
 该方法不会阻止事件的进一步传播（stopPropagation方法可用于这个目的）。只要在事件的传播过程中（捕获阶段、目标阶段、冒泡阶段皆可），使用了preventDefault方法，该事件的默认方法就不会执行。
 
@@ -454,9 +573,11 @@ function checkName(e) {
 
 上面函数设为文本框的keypress监听函数后，将只能输入小写字母，否则输入事件的默认事件（写入文本框）将被取消。
 
+如果监听函数最后返回布尔值false（即return false），浏览器也不会触发默认行为，与preventDefault方法有等同效果。
+
 ### stopPropagation()
 
-stopPropagation方法阻止当前事件的进一步传播。
+stopPropagation方法阻止事件在DOM中继续传播，防止再触发定义在别的节点上的监听函数，但是不包括在当前节点上新定义的事件回调函数。
 
 ```javascript
 function stopEvent(e) {
@@ -488,115 +609,6 @@ el.addEventListener('click', l2, false);
 ```
 
 上面代码在el节点上，为click事件添加了两个监听函数l1和l2。由于l1调用了stopImmediatePropagation方法，所以l2不会被调用。
-
-## 事件的传播
-
-### 传播的三个阶段
-
-当一个事件发生以后，它会在不同的DOM对象之间传播（propagation）。这种传播分成三个阶段：
-
-- **第一阶段**：从文档的根元素（html元素）传导到目标元素，称为“捕获阶段”（capture phase）。
-
-- **第二阶段**：在目标元素上触发，称为“目标阶段”（target phase）。
-
-- **第三阶段**：从目标元素传导回文档的根元素（html元素），称为“冒泡阶段”（bubbling phase）。
-
-这种三阶段的传播模型，会使得一个事件在多个元素上触发。比如，假设div元素之中嵌套一个p元素。
-
-{% highlight html %}
-
-<div>
-  <p>Click Me</p>
-</div>
-
-{% endhighlight %}
-
-如果对这两个元素的click事件都设定回调函数，则click事件会被触发四次。
-
-{% highlight javascript %}
-
-var phases = {
-  1: 'capture',
-  2: 'target',
-  3: 'bubble'
-};
-
-var div = document.querySelector('div');
-var p = document.querySelector('p');
-
-div.addEventListener('click', callback, true);
-p.addEventListener('click', callback, true);
-div.addEventListener('click', callback, false);
-p.addEventListener('click', callback, false);
-
-function callback(event) {
-  var tag = event.currentTarget.tagName;
-  var phase = phases[event.eventPhase];
-  console.log("Tag: '" + tag + "'. EventPhase: '" + phase + "'");
-}
-
-// 点击以后的结果
-// Tag: 'DIV'. EventPhase: 'capture'
-// Tag: 'P'. EventPhase: 'target'
-// Tag: 'P'. EventPhase: 'target'
-// Tag: 'DIV'. EventPhase: 'bubble'
-
-{% endhighlight %}
-
-上面代码表示，click事件被触发了四次。
-
-1. 捕获阶段：事件从div向p传播时，触发div的click事件；
-2. 目标阶段：事件从div到达p时，触发p的click事件；
-3. 目标阶段：事件离开p时，触发p的click事件；
-4. 冒泡阶段：事件从p传回div时，再次触发div的click事件。
-
-注意，用户点击网页的时候，浏览器总是假定click事件的目标对象，就是嵌套最深的那个元素（嵌套在div元素中的p元素）。
-
-事件传播的最上层对象是window，接着依次是document，html（document.documentElement）和body（document.dody）。也就是说，如果body元素中有一个div元素，点击该元素。事件的传播顺序，在捕获阶段依次为window、document、html、body、div，在冒泡阶段依次为div、body、html、document、window。
-
-### 事件的代理
-
-由于事件会在冒泡阶段向上传播到父元素，因此可以把子元素的回调函数定义在父元素上，由父元素的回调函数统一处理多个子元素的事件。这种方法叫做事件的代理（delegation）。
-
-{% highlight javascript %}
-
-var ul = document.querySelector('ul');
-
-ul.addEventListener('click', function(event) {
-  if (event.target.tagName.toLowerCase() === 'li') {
-    // some code
-  }
-});
-
-{% endhighlight %}
-
-上面代码的click事件的回调函数是定义在ul元素上的，但是实际上，它处理的是子元素li的click事件。这样做的好处是，只要定义一个回调函数，就能处理多个子元素的事件，而且以后再添加子元素，回调函数依然有效。
-
-如果希望事件到某个节点为止，不再传播，可以使用事件对象的stopPropagation方法。
-
-{% highlight javascript %}
-
-p.addEventListener('click', function(event) {
- event.stopPropagation();
-});
-
-{% endhighlight %}
-
-使用上面的代码以后，click事件在冒泡阶段到达p元素以后，就不再向上（父元素的方向）传播了。
-
-但是，stopPropagation方法不会阻止p元素上的其他click事件的回调函数。如果想要不再触发那些回调函数，可以使用stopImmediatePropagation方法。
-
-{% highlight javascript %}
-
-p.addEventListener('click', function(event) {
- event.stopImmediatePropagation();
-});
-
-p.addEventListener('click', function(event) {
- // 不会被触发
-});
-
-{% endhighlight %}
 
 ## 事件的类型
 
@@ -1058,103 +1070,6 @@ PrefixedEvent(anim, "AnimationEnd", AnimationListener);
 
 - animationName：动画的名称。
 - elapsedTime：从动画开始播放，到事件发生时所持续的秒数。
-
-## event对象
-
-当事件发生以后，会生成一个事件对象event，在DOM中传递，也被作为参数传给回调函数。但是，IE8及以下版本，这个事件对应是不作为参数传递的，而是通过window对象的event属性读取，所以要获取这个对象，往往写成下面这样。
-
-```javascript
-
-function myEventHandler(event) {
-    var actualEvent = event || window.event;
-
-    // handle actualEvent
-}
-
-```
-
-除外，IE8及以下版本，事件对象的target属性叫做srcElement属性。
-
-```javascript
-
-function myEventHandler(event) {
-  var actualEvent = event || window.event;
-  var actualTarget = actualEvent.target || actualEvent.srcElement;
-
-  // handle actualEvent & actualTarget
-}
-
-```
-
-老式的IE浏览器还有其他一些不兼容之处。如果不需要支持IE8，代码可以简单很多。
-
-### event对象的属性
-
-- type：返回一个字符串，表示事件的名称。
-- target：返回一个Element节点，表示事件起源的那个节点。
-- currentTarget：返回一个Element节点，表示触发回调函数的那个节点。通常，事件回调函数中的this关键字的指向，与currentTarget是一致的。
-- bubbles：返回一个布尔值，表示事件触发时，是否处在“冒泡”阶段。
-- cancelable：返回一个布尔值，表示该事件的默认行为是否可以被preventDefault方法阻止。
-- defaultPrevented：返回一个布尔值，表示是否已经调用过preventDefault方法。
-- isTrusted：返回一个布尔值，表示事件是否可信任，即事件是从设备上触发，还是JavaScript方法模拟的。
-- eventPhase：返回一个数字，表示事件目前所处的阶段，0为事件开始从DOM表层向目标元素传播，1为捕获阶段，2为事件到达目标元素，3为冒泡阶段。
-- timestamp：返回一个数字，
-- keyCode：返回按键对应的ASCII码。
-- ctrlKey：返回一个布尔值，表示是否按下ctrl键。
-- button：返回一个整数，表示用户按下了鼠标的哪个键。
-
-除了上面这些属性，特定事件还会有一些独特的属性。比如，click事件的event对象就有clientX和clientY属性，表示事件发生的位置相对于视口左上角的水平坐标和垂直坐标。
-
-### click事件
-
-当用户点击以后，event对象会包含以下属性。
-
-- pageX，pageY：点击位置相对于html元素的坐标，单位为CSS像素。
-- clientX，clientY：点击位置相对于视口（viewport）的坐标，单位为CSS像素。
-- screenX，screenY：点击位置相对于设备显示屏幕的坐标，单位为设备硬件的像素。
-
-一般来说，为了确定点击位置，大部分时候应该使用pageX/Y属性，只有小部分时候，才考虑使用clientX/Y属性，而screenX/Y属性很少使用。
-
-### event对象的方法
-
-**（1）preventDefault方法**
-
-该方法阻止事件所对应的浏览器默认行为。比如点击a元素后，浏览器跳转到指定页面，或者按一下空格键，页面向下滚动一段距离。
-
-{% highlight javascript %}
-
-anchor.addEventListener('click', function(event) {
-  event.preventDefault();
-  // some code
-});
-
-{% endhighlight %}
-
-如果事件回调函数最后返回布尔值false，即使用return false语言，则浏览器也不会触发默认行为，与preventDefault有等同效果。
-
-**（2）stopPropagation方法**
-
-该方法阻止事件在DOM中继续传播，防止再触发定义在别的节点上的回调函数，但是不包括在当前节点上新定义的事件回调函数。
-
-```javascript
-
-someEl.addEventListener('some-event', function(event) {
-    event.stopPropagation();
-});
-
-```
-
-**（3）stopImmediatePropagation方法**
-
-该方法的作用与stopPropagation方法相同，唯一的区别是还阻止当前节点上后继定义的事件回调函数。
-
-```javascript
-
-someEl.addEventListener('some-event', function(event) {
-    event.stopImmediatePropagation();
-});
-
-```
 
 ## 自定义事件（标准写法）
 

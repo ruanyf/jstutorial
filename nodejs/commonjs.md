@@ -51,11 +51,9 @@ console.log(example.x); // 5
 console.log(addX(1)); // 6
 {% endhighlight %}
 
-## module.exports变量 与 exports变量
+## module对象
 
-Node提供几个文件级别的全局变量，主要是module、module.exports和exports。这些变量每个模块都有，但是指向的对象根据模板不同而不同。
-
-module变量指代当前模块。
+每个模块都可以使用module变量，该变量指向当前模块。module不是全局变量，而是每个模块都有的本地变量。
 
 - module.id 模块的识别符，通常是模块的文件名。
 - module.filename 模块的文件名。
@@ -63,9 +61,31 @@ module变量指代当前模块。
 - module.parent 返回使用该模块的模块。
 - module.children 返回一个数组，表示该模块要用到的其他模块。
 
-module.exports变量表示当前模块对外输出的接口，其他文件加载该模块，实际上就是读取module.exports变量。
+### module.exports属性
 
-exports变量是一个指向module.exports对象的链接，等同在每个模块头部，有一行这样的命令。
+module.exports属性表示当前模块对外输出的接口，其他文件加载该模块，实际上就是读取module.exports变量。
+
+```javascript
+var EventEmitter = require('events').EventEmitter;
+module.exports = new EventEmitter();
+
+setTimeout(function() {
+  module.exports.emit('ready');
+}, 1000);
+```
+
+上面模块会在加载后1秒后，发出ready事件。其他文件监听该事件，可以写成下面这样。
+
+```javascript
+var a = require('./a');
+a.on('ready', function() {
+  console.log('module a is ready');
+});
+```
+
+### exports变量
+
+为了方便，Node为每个模块提供一个exports变量，指向module.exports。这等同在每个模块头部，有一行这样的命令。
 
 {% highlight javascript %}
 
@@ -73,7 +93,7 @@ var exports = module.exports;
 
 {% endhighlight %}
 
-这造成的结果是，在对外输出模块接口时，可以向exports对象添加方法。
+造成的结果是，在对外输出模块接口时，可以向exports对象添加方法。
 
 {% highlight javascript %}
 
@@ -87,7 +107,7 @@ exports.circumference = function (r) {
 
 {% endhighlight %}
 
-注意，不能直接将exports变量指向一个函数。
+注意，不能直接将exports变量指向一个函数。因为这样等于切断了exports与module.exports的联系。
 
 {% highlight javascript %}
 
@@ -215,11 +235,24 @@ require('./example.js').message
 
 ### 加载规则
 
-require命令接受模块文件的名字，作为参数。参数字符串可以省略脚本文件的“.js”后缀名，Node会自动添加。
+require命令接受模块名作为参数。
 
-它的加载规则是，如果参数字符串不以“./“或”/“开头，则表示加载的是一个默认提供的核心模块（位于Node的系统安装目录中），要么位于项目的node_modules目录。如果参数字符串以“./”开头，则表示加载的是一个位于相对路径（跟当前执行脚本的位置相比）的模块文件。如果参数字符串以“/”开头，则表示加载的是一个位于绝对路径的模块文件。
+（1）如果参数字符串以“/”开头，则表示加载的是一个位于绝对路径的模块文件。比如，`require('/home/marco/foo.js')`将加载/home/marco/foo.js。
 
-如果传入require方法的是一个目录，那么require会先查看该目录的package.json文件，然后加载main字段指定的脚本文件。否则取不到main字段，则会加载`index.js`文件。
+（2）如果参数字符串以“./”开头，则表示加载的是一个位于相对路径（跟当前执行脚本的位置相比）的模块文件。比如，`require('./circle')`将加载当前脚本同一目录的circle.js。
+
+（3）如果参数字符串不以“./“或”/“开头，则表示加载的是一个默认提供的核心模块（位于Node的系统安装目录中），或者一个位于各级node_modules目录的已安装模块（全局安装或局部安装）。
+
+举例来说，脚本`/home/ry/projects/foo.js`执行了`require('bar.js')`命令，Node会依次搜索以下文件。
+
+- /home/ry/projects/node_modules/bar.js
+- /home/ry/node_modules/bar.js
+- /home/node_modules/bar.js
+- /node_modules/bar.js
+
+这样设计的目的是，使得不同的模块可以将所依赖的模块本地化。
+
+（4）如果传入require方法的是一个目录，那么require会先查看该目录的package.json文件，然后加载main字段指定的脚本文件。否则取不到main字段，则会加载`index.js`文件或`index.node`文件。
 
 举例来说，下面是一行普通的require命令语句。
 
@@ -231,13 +264,79 @@ Node寻找utils脚本的顺序是，首先寻找核心模块，然后是全局�
 
 ```bash
 [
-'/usr/local/lib/node',
-'~/.node_modules',
-'./node_modules/utils.js',
-'./node_modules/utils/package.json',
-'./node_modules/utils/index.js'
+  '/usr/local/lib/node',
+  '~/.node_modules',
+  './node_modules/utils.js',
+  './node_modules/utils/package.json',
+  './node_modules/utils/index.js'
 ]
 ```
+
+（5）如果指定的模块文件没有发现，Node会尝试为文件名添加.js、.json、.node后，再去搜索。.js文件会以文本格式的JavaScript脚本文件解析，.json文件会以JSON格式的文本文件解析，.node文件会议编译后二进制文件解析。
+
+（6）如果没有发现指定模块，会报错。
+
+### 模块的缓存
+
+第一次加载某个模块时，Node会缓存该模块。以后再加载该模块，就直接从缓存取出该模块的exports属性。
+
+如果想要多次执行某个模块，可以输出一个函数，然后多次调用这个函数。
+
+缓存是根据绝对路径识别模块的，如果同样的模块名，但是保存在不同的路径，require命令还是会重新加载该模块。
+
+### 模块的循环加载
+
+如果发生模块的循环加载，即A加载B，B又加载A，则B将加载A的不完整版本。
+
+```javascript
+// a.js
+exports.x = 'a1';
+console.log('a.js ', require('./b.js').x);
+exports.x = 'a2';
+
+// b.js
+exports.x = 'b1';
+console.log('b.js ', require('./a.js').x);
+exports.x = 'b2';
+
+// main.js
+console.log('main.js ', require('./a.js').x);
+console.log('main.js ', require('./b.js').x);
+```
+
+上面代码是三个JavaScript文件。其中，a.js加载了b.js，而b.js又加载a.js。这时，Node返回a.js的不完整版本，所以执行结果如下。
+
+```bash
+$ node main.js
+b.js  a1
+a.js  b2
+main.js  a2
+main.js  b2
+```
+
+修改main.js，再次加载a.js和b.js。
+
+```javascript
+// main.js
+console.log('main.js ', require('./a.js').x);
+console.log('main.js ', require('./b.js').x);
+console.log('main.js ', require('./a.js').x);
+console.log('main.js ', require('./b.js').x);
+```
+
+执行上面代码，结果如下。
+
+```bash
+$ node main.js
+b.js  a1
+a.js  b2
+main.js  a2
+main.js  b2
+main.js  a2
+main.js  b2
+```
+
+上面代码中，第二次加载a.js和b.js时，会直接从缓存读取exports属性，所以a.js和b.js内部的console.log语句都不会执行了。
 
 ## 参考链接
 
