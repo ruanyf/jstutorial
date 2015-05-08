@@ -8,7 +8,7 @@ modifiedOn: 2013-08-13
 
 ## 概述
 
-CommonJS是服务器端模块的规范，Node.js采用了这个规范。
+CommonJS是服务器模块的规范，Node.js采用了这个规范。
 
 根据CommonJS规范，一个单独的文件就是一个模块。每一个模块都是一个单独的作用域，也就是说，在一个文件定义的变量（还包括函数和类），都是私有的，对其他文件是不可见的。
 
@@ -53,13 +53,46 @@ console.log(addX(1)); // 6
 
 ## module对象
 
-每个模块都可以使用module变量，该变量指向当前模块。module不是全局变量，而是每个模块都有的本地变量。
+每个模块都有一个module变量，该变量指向当前模块。module不是全局变量，而是每个模块都有的本地变量。
 
-- module.id 模块的识别符，通常是模块的文件名。
+- module.id 模块的识别符，通常是带有绝对路径的模块文件名。
 - module.filename 模块的文件名。
 - module.loaded 返回一个布尔值，表示模块是否已经完成加载。
-- module.parent 返回使用该模块的模块。
+- module.parent 返回一个对象，表示调用该模块的模块。
 - module.children 返回一个数组，表示该模块要用到的其他模块。
+
+下面是一个示例文件，最后一行输出module变量。
+
+```javascript
+// example.js
+var jquery = require('jquery');
+exports.$ = jquery;
+console.log(module);
+```
+
+执行这个文件，命令行会输出如下信息。
+
+```javascript
+{ id: '.',
+  exports: { '$': [Function] },
+  parent: null,
+  filename: '/path/to/example.js',
+  loaded: false,
+  children:
+   [ { id: '/path/to/node_modules/jquery/dist/jquery.js',
+       exports: [Function],
+       parent: [Circular],
+       filename: '/path/to/node_modules/jquery/dist/jquery.js',
+       loaded: true,
+       children: [],
+       paths: [Object] } ],
+  paths:
+   [ '/home/user/deleted/node_modules',
+     '/home/user/node_modules',
+     '/home/node_modules',
+     '/node_modules' ]
+}
+```
 
 ### module.exports属性
 
@@ -184,7 +217,7 @@ define(function (require, exports, module){
 
 Node.js使用CommonJS模块规范，内置的require命令用于加载模块文件。
 
-require命令的基本功能是，读入并执行一个JavaScript文件，然后返回该模块的exports对象。
+require命令的基本功能是，读入并执行一个JavaScript文件，然后返回该模块的exports对象。如果没有发现指定模块，会报错。
 
 ```javascript
 // example.js
@@ -222,17 +255,6 @@ require('./example2.js')()
 
 上面代码中，require命令调用自身，等于是执行`module.exports`，因此会输出 hello world。
 
-需要注意的是，require命令会形成缓存，如果执行同样的命令，不会重新加载模块文件，而是直接输出已经缓存的对象。
-
-```javascript
-require('./example.js');
-require('./example.js').message = "hello";
-require('./example.js').message
-// "hello"
-```
-
-上面代码中，连续三次使用require命令，加载同一个模块。第二次加载的时候，为输出的对象添加了一个message属性。但是第三次加载的时候，这个message属性依然存在，这就证明require命令并没有重新加载模块文件，而是输出了缓存。
-
 ### 加载规则
 
 require命令接受模块名作为参数。
@@ -243,10 +265,10 @@ require命令接受模块名作为参数。
 
 （3）如果参数字符串不以“./“或”/“开头，则表示加载的是一个默认提供的核心模块（位于Node的系统安装目录中），或者一个位于各级node_modules目录的已安装模块（全局安装或局部安装）。
 
-举例来说，脚本`/home/ry/projects/foo.js`执行了`require('bar.js')`命令，Node会依次搜索以下文件。
+举例来说，脚本`/home/user/projects/foo.js`执行了`require('bar.js')`命令，Node会依次搜索以下文件。
 
-- /home/ry/projects/node_modules/bar.js
-- /home/ry/node_modules/bar.js
+- /home/user/projects/node_modules/bar.js
+- /home/user/node_modules/bar.js
 - /home/node_modules/bar.js
 - /node_modules/bar.js
 
@@ -274,11 +296,20 @@ Node寻找utils脚本的顺序是，首先寻找核心模块，然后是全局�
 
 （5）如果指定的模块文件没有发现，Node会尝试为文件名添加.js、.json、.node后，再去搜索。.js文件会以文本格式的JavaScript脚本文件解析，.json文件会以JSON格式的文本文件解析，.node文件会议编译后二进制文件解析。
 
-（6）如果没有发现指定模块，会报错。
+（6）如果想得到require命令加载的确切文件名，使用require.resolve()方法。
 
 ### 模块的缓存
 
 第一次加载某个模块时，Node会缓存该模块。以后再加载该模块，就直接从缓存取出该模块的exports属性。
+
+```javascript
+require('./example.js');
+require('./example.js').message = "hello";
+require('./example.js').message
+// "hello"
+```
+
+上面代码中，连续三次使用require命令，加载同一个模块。第二次加载的时候，为输出的对象添加了一个message属性。但是第三次加载的时候，这个message属性依然存在，这就证明require命令并没有重新加载模块文件，而是输出了缓存。
 
 如果想要多次执行某个模块，可以输出一个函数，然后多次调用这个函数。
 
@@ -337,6 +368,19 @@ main.js  b2
 ```
 
 上面代码中，第二次加载a.js和b.js时，会直接从缓存读取exports属性，所以a.js和b.js内部的console.log语句都不会执行了。
+
+### require.main
+
+正常的脚本调用时，require.main属性指向模块本身。
+
+```javascript
+require.main === module
+// true
+```
+
+如果是在REPL环境使用require命令，则上面的表达式返回false。
+
+通过require.main属性，可以获取模块的信息。比如，module对象有一个filename属性（正常情况下等于 __filename），可以通过require.main.filename属性，得知当前模块的入口文件。
 
 ## 参考链接
 

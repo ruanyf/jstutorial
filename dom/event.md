@@ -1,5 +1,5 @@
 ---
-title: DOM 事件
+title: Event对象
 layout: page
 category: dom
 date: 2013-11-15

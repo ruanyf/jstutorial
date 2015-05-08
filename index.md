@@ -50,7 +50,7 @@ modifiedOn: 2014-05-18
 - [Document节点](dom/document.html)
 - [Element节点](dom/element.html)
 - [Text节点和DocumentFragment节点](dom/text.html)
-- [DOM 事件](dom/event.html)
+- [Event对象](dom/event.html)
 - [CSS操作](dom/css.html)
 - [拖放操作](dom/dragndrop.html)
 - [Mutation Observer](dom/mutationobserver.html)
