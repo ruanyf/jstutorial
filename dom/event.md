@@ -610,6 +610,125 @@ el.addEventListener('click', l2, false);
 
 上面代码在el节点上，为click事件添加了两个监听函数l1和l2。由于l1调用了stopImmediatePropagation方法，所以l2不会被调用。
 
+## UIEvent对象
+
+UIEvent对象代表用户界面的事件。它继承了Event对象，所有UIEvent实例同时也是Event实例。
+
+浏览器提供一个UIEvent构造函数，用于新建一个UIEvent实例。
+
+```javascript
+event = new UIEvent(typeArg, UIEventInit);
+```
+
+UIEvent构造函数接受两个参数，第一个是事件名称，第二个是事件的描述对象（有detail和view两个字段），该参数可省略。
+
+## MouseEvent对象
+
+MouseEvent对象代表与鼠标相关的事件，常见的有click、dblclick、mouseup、 mousedown。MouseEvent对象继承UIEvent对象。
+
+浏览器提供一个MouseEvent构造函数，用于新建一个MouseEvent实例。
+```javascript
+event = new MouseEvent(typeArg, mouseEventInit);
+```
+
+MouseEvent构造函数的第一个参数是事件名称（可能的值包括click、mousedown、mouseup、mouseover、mousemove、mouseout），第二个参数是一个事件初始化对象。该对象可以配置以下属性。
+
+- screenX，设置鼠标相对于屏幕的水平坐标（但不会移动鼠标），默认为0，等同于Event.screenX属性。
+- screenY，设置鼠标相对于屏幕的垂直坐标，默认为0，等同于Event.screenY属性。
+- clientX，设置鼠标相对于窗口的水平坐标，默认为0，等同于Event.clientX属性。
+- clientY，设置鼠标相对于窗口的垂直坐标，默认为0，等同于Event.clientY属性。
+- ctrlKey，设置是否按下ctrl键，默认为false，等同于Event.ctrlKey属性。
+- shiftKey，设置是否按下shift键，默认为false，等同于Event.shiftKey属性。
+- altKey，设置是否按下alt键，默认为false，等同于Event.altKey属性。
+- metaKey，设置是否按下meta键，默认为false，等同于Event.metaKey属性。
+- button，设置按下了哪一个鼠标按键，默认为0。-1表示没有按键，0表示按下主键（通常是左键），1表示按下辅助键（通常是中间的键），2表示按下次要键（通常是右键）。
+- buttons，设置按下了鼠标哪些键，是一个3个比特位的二进制值，默认为0。1表示按下主键（通常是左键），2表示按下次要键（通常是右键），4表示按下辅助键（通常是中间的键）。
+- relatedTarget，设置一个Element节点，在mouseenter和mouseover事件时，表示鼠标刚刚离开的那个Element节点，在mouseout和mouseleave事件时，表示鼠标正在进入的那个Element节点。默认为null，等同于event.relatedTarget属性。
+- region，设置鼠标点击区域Element节点的id属性，默认为null。
+
+以下属性也是可配置的，都继承自UIEvent构造函数。
+
+- bubbles，布尔值，设置事件是否冒泡，默认为false，等同于Event.bubbles属性。
+- cancelable，布尔值，设置事件是否可取消，默认为false，等同于Event.cancelable属性。
+- view，设置事件的视图，一般是window或document.defaultView，等同于Event.view属性。
+- detail，设置鼠标点击的次数，等同于Event.detail属性。
+
+下面是一个例子。
+
+```javascript
+function simulateClick() {
+  var event = new MouseEvent('click', {
+    'bubbles': true,
+    'cancelable': true
+  });
+  var cb = document.getElementById('checkbox');
+  cb.dispatchEvent(event);
+}
+```
+
+上面代码生成一个鼠标点击事件，并触发该事件。
+
+## MouseEvent实例的属性
+
+### altKey，ctrlKey，metaKey
+
+altKey属性返回一个布尔值，表示鼠标事件发生时，是否按下alt键。
+
+ctrlKey属性返回一个布尔值，表示鼠标事件发生时，是否按下key键。
+
+metaKey属性返回一个布尔值，表示鼠标事件发生时，是否按下Meta键（Mac键盘是一个四瓣的小花，Windows键盘是Windows键）。
+
+```javascript
+// HTML代码为
+// <body onclick="showkey(event);">
+
+function showKey(e){
+  console.log("ALT key pressed: " + e.altKey);
+  console.log("CTRL key pressed: " + e.ctrlKey);
+  console.log("META key pressed: " + e.metaKey);
+}
+```
+
+上面代码中，点击网页会输出是否同时按下Alt键。
+
+### button，buttons
+
+button属性返回一个数值，表示按下了鼠标哪个键。
+
+- -1：没有按下键。
+- 0：按下主键（通常是左键）。
+- 1：按下辅助键（通常是中键或者滚轮键）。
+- 2：按下次键（通常是右键）。
+
+```javascript
+// HTML代码为
+// <button onmouseup="whichButton(event);">点击</button>
+
+var whichButton = function (e) {
+  switch (e.button) {
+    case 0:
+      console.log('Left button clicked.');
+      break;
+    case 1:
+      console.log('Middle button clicked.');
+      break;
+    case 2:
+      console.log('Right button clicked.');
+      break;
+    default:
+      console.log('Unexpected code: ' + e.button);
+  }
+}
+```
+
+buttons属性返回一个3个比特位的值，表示同时按下了哪些键。它用来处理同时按下多个鼠标键的情况。
+
+- 1：二进制为001，表示按下左键。
+- 2：二进制为010，表示按下右键。
+- 4：二进制为100，表示按下中键或滚轮键。
+
+同时按下多个键的时候，每个按下的键对应的比特位都会有值。比如，同时按下左键和右键，会返回3（二进制为011）。
+
 ## 事件的类型
 
 DOM支持多种事件。
