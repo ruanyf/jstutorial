@@ -485,7 +485,7 @@ function hide(e){
 para.addEventListener('click', hide, false);
 ```
 
-上面代码中，如果在para节点的em子节点上面点击，则`e.target`指向em子节点，导致只有该子节点（即World部分）会不可见，且输出false。
+上面代码中，如果在para节点的em子节点上面点击，则`e.target`指向em子节点，导致em子节点（即World部分）会不可见，且输出false。
 
 在IE6—IE8之中，该属性的名字不是target，而是srcElement，因此经常可以看到下面这样的代码。
 
@@ -538,7 +538,7 @@ var bool = event.isTrusted;
 
 Firefox浏览器中，用户触发的事件会返回true，脚本触发的事件返回false；IE浏览器中，除了使用createEvent方法生成的事件，所有其他事件都返回true；Chrome浏览器不支持该属性。
 
-## Event实例的事件
+## Event实例的方法
 
 ### preventDefault()
 
@@ -644,7 +644,6 @@ MouseEvent构造函数的第一个参数是事件名称（可能的值包括clic
 - button，设置按下了哪一个鼠标按键，默认为0。-1表示没有按键，0表示按下主键（通常是左键），1表示按下辅助键（通常是中间的键），2表示按下次要键（通常是右键）。
 - buttons，设置按下了鼠标哪些键，是一个3个比特位的二进制值，默认为0。1表示按下主键（通常是左键），2表示按下次要键（通常是右键），4表示按下辅助键（通常是中间的键）。
 - relatedTarget，设置一个Element节点，在mouseenter和mouseover事件时，表示鼠标刚刚离开的那个Element节点，在mouseout和mouseleave事件时，表示鼠标正在进入的那个Element节点。默认为null，等同于event.relatedTarget属性。
-- region，设置鼠标点击区域Element节点的id属性，默认为null。
 
 以下属性也是可配置的，都继承自UIEvent构造函数。
 
@@ -670,13 +669,15 @@ function simulateClick() {
 
 ## MouseEvent实例的属性
 
-### altKey，ctrlKey，metaKey
+### altKey，ctrlKey，metaKey，shiftKey
 
 altKey属性返回一个布尔值，表示鼠标事件发生时，是否按下alt键。
 
 ctrlKey属性返回一个布尔值，表示鼠标事件发生时，是否按下key键。
 
 metaKey属性返回一个布尔值，表示鼠标事件发生时，是否按下Meta键（Mac键盘是一个四瓣的小花，Windows键盘是Windows键）。
+
+shiftKey属性返回一个布尔值，表示鼠标事件发生时，是否按下Shift键。
 
 ```javascript
 // HTML代码为
@@ -686,12 +687,17 @@ function showKey(e){
   console.log("ALT key pressed: " + e.altKey);
   console.log("CTRL key pressed: " + e.ctrlKey);
   console.log("META key pressed: " + e.metaKey);
+  console.log("META key pressed: " + e.shiftKey);
 }
 ```
 
 上面代码中，点击网页会输出是否同时按下Alt键。
 
 ### button，buttons
+
+以下属性返回事件的鼠标键信息。
+
+**（1）button**
 
 button属性返回一个数值，表示按下了鼠标哪个键。
 
@@ -721,6 +727,8 @@ var whichButton = function (e) {
 }
 ```
 
+**（2）buttons**
+
 buttons属性返回一个3个比特位的值，表示同时按下了哪些键。它用来处理同时按下多个鼠标键的情况。
 
 - 1：二进制为001，表示按下左键。
@@ -728,6 +736,101 @@ buttons属性返回一个3个比特位的值，表示同时按下了哪些键。
 - 4：二进制为100，表示按下中键或滚轮键。
 
 同时按下多个键的时候，每个按下的键对应的比特位都会有值。比如，同时按下左键和右键，会返回3（二进制为011）。
+
+## clientX，clientY，movementX，movementY，screenX
+
+以下属性与事件的位置相关。
+
+**（1）clientX，clientY**
+
+clientX属性返回鼠标位置相对于浏览器窗口左上角的水平坐标，单位为像素，与页面是否横向滚动无关。
+
+clientY属性返回鼠标位置相对于浏览器窗口左上角的垂直坐标，单位为像素，与页面是否纵向滚动无关。
+
+```javascript
+// HTML代码为
+// <body onmousedown="showCoords(event)">
+
+function showCoords(evt){
+  console.log(
+    "clientX value: " + evt.clientX + "\n" +
+    "clientY value: " + evt.clientY + "\n"
+  );
+}
+```
+
+**（2）movementX，movementY**
+
+movementX属性返回一个水平位移，单位为像素，表示当前位置与上一个mousemove事件之间的水平距离。在数值上，等于currentEvent.movementX = currentEvent.screenX - previousEvent.screenX。
+
+movementY属性返回一个垂直位移，单位为像素，表示当前位置与上一个mousemove事件之间的垂直距离。在数值上，等于currentEvent.movementY = currentEvent.screenY - previousEvent.screenY。
+
+**（3）screenX，screenY**
+
+screenX属性返回鼠标位置相对于屏幕左上角的水平坐标，单位为像素。
+
+screenY属性返回鼠标位置相对于屏幕左上角的垂直坐标，单位为像素。
+
+```javascript
+// HTML代码为
+// <body onmousedown="showCoords(event)">
+
+function showCoords(evt){
+  console.log(
+    "screenX value: " + evt.screenX + "\n"
+    + "screenY value: " + evt.screenY + "\n"
+  );
+}
+```
+
+### relatedTarget
+
+relatedTarget属性返回事件的次要相关节点。对于那些没有次要相关节点的事件，该属性返回null。
+
+下表列出不同事件的target属性和relatedTarget属性含义。
+
+|事件名称 |target属性 |relatedTarget属性 |
+|---------|-----------|------------------|
+|focusin |接受焦点的节点 |丧失焦点的节点 |
+|focusout |丧失焦点的节点 |接受焦点的节点 |
+|mouseenter |将要进入的节点 |将要离开的节点 |
+|mouseleave |将要离开的节点 |将要进入的节点 |
+|mouseout |将要离开的节点 |将要进入的节点 |
+|mouseover |将要进入的节点 |将要离开的节点 |
+|dragenter |将要进入的节点 |将要离开的节点 |
+|dragexit |将要离开的节点 |将要进入的节点 |
+
+下面是一个例子。
+
+```javascript
+// HTML代码为
+// <div id="outer" style="height:50px;width:50px;border-width:1px solid black;">
+//   <div id="inner" style="height:25px;width:25px;border:1px solid black;"></div>
+// </div>
+
+var inner = document.getElementById("inner");
+
+inner.addEventListener("mouseover", function (){
+  console.log('进入' + event.target.id + " 离开" + event.relatedTarget.id);
+});
+inner.addEventListener("mouseenter", function (){
+  console.log('进入' + event.target.id + " 离开" + event.relatedTarget.id);
+});
+inner.addEventListener("mouseout", function (){
+  console.log('离开' + event.target.id + " 进入" + event.relatedTarget.id);
+});
+inner.addEventListener("mouseleave", function (){
+  console.log('离开' + event.target.id + " 进入" + event.relatedTarget.id);
+});
+
+// 鼠标从outer进入inner，输出
+// 进入inner 离开outer
+// 进入inner 离开outer
+
+// 鼠标从inner进入outer，输出
+// 离开inner 进入outer
+// 离开inner 进入outer
+```
 
 ## 事件的类型
 
