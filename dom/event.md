@@ -737,7 +737,7 @@ buttons属性返回一个3个比特位的值，表示同时按下了哪些键。
 
 同时按下多个键的时候，每个按下的键对应的比特位都会有值。比如，同时按下左键和右键，会返回3（二进制为011）。
 
-## clientX，clientY，movementX，movementY，screenX
+### clientX，clientY，movementX，movementY，screenX
 
 以下属性与事件的位置相关。
 
@@ -831,6 +831,91 @@ inner.addEventListener("mouseleave", function (){
 // 离开inner 进入outer
 // 离开inner 进入outer
 ```
+
+## TouchEvent对象
+
+TouchEvent对象代表由触摸引发的事件，只有触摸屏才会引发这一类事件。触摸动作由Touch对象来描述，每一个触摸动作都包括位置、大小、形状、压力、目标元素等属性。触摸动作的集合由TouchList对象表示。
+
+很多发生触摸的时候，触摸事件和鼠标事件同时触发，即使这个时候并没有用到鼠标。这是为了让那些只定义鼠标事件、没有定义触摸事件的代码，在触摸屏的情况下仍然能用。如果想避免这种情况，可以用preventDefault方法阻止发出鼠标事件。
+
+### Touch对象
+
+Touch对象代表一个触摸点。
+
+Touch实例有以下属性。
+
+**（1）identifier**
+
+identifier属性表示Touch实例的独一无二的识别符。它在整个触摸过程中保持不变。
+
+```javascript
+var id = touchItem.identifier;
+```
+
+**（2）screenX，screenY，clientX，clientY，pageX，pageY**
+
+screenX属性和screenY属性，分别表示触摸点相对于屏幕左上角的横坐标和纵坐标，与页面是否滚动无关。
+
+clientX属性和clientY属性，分别表示触摸点相对于浏览器视口左上角的横坐标和纵坐标，与页面是否滚动无关。
+
+pageX属性和pageY属性，分别表示触摸点相对于当前页面左上角的横坐标和纵坐标，包含了页面滚动带来的位移。
+
+**（3）radiusX，radiusY，rotationAngle**
+
+radiusX属性和radiusY属性，分别返回触摸点周围受到影响的椭圆范围的X轴和Y轴，单位为像素。
+
+rotationAngle属性表示触摸区域的椭圆的旋转角度，单位为度数，在0到90度之间。
+
+上面这三个属性共同定义了用户与屏幕接触的区域，对于描述手指这一类非精确的触摸，很有帮助。指尖接触屏幕，触摸范围会形成一个椭圆，这三个属性就用来描述这个椭圆区域。
+
+**（4）force**
+
+force属性返回一个0到1之间的数值，表示触摸压力。0代表没有压力，1代表硬件所能识别的最大压力。
+
+**（5）target**
+
+target属性返回一个Element节点，代表触摸发生的那个节点。
+
+### TouchEvent实例的属性
+
+TouchEvent对象实例继承Event对象和UIEvent对象。除了被继承的属性以外，它还有一些自己的属性。
+
+**（1）键盘相关属性**
+
+以下属性都为只读属性，返回一个布尔值，表示触摸的同时，是否按下某个键。
+
+- altKey 是否按下alt键
+- ctrlKey 是否按下ctrl键
+- metaKey 是否按下meta键
+- shiftKey 是否按下shift键
+
+**（2）changedTouches**
+
+changedTouches属性返回一个TouchList对象，包含了由当前触摸事件引发的所有Touch对象，表示相关的触摸点。
+
+对于touchstart事件，它代表被激活的触摸点；对于touchmove事件，代表发生变化的触摸点；对于touchend事件，代表消失的触摸点（即不再被触碰的点）。
+
+```javascript
+var touches = touchEvent.changedTouches;
+```
+
+**（3）targetTouches**
+
+targetTouches属性返回一个TouchList对象，包含了触摸的目标Element节点内部，所有仍然处于活动状态的触摸点。
+
+```javascript
+var touches = touchEvent.targetTouches;
+```
+
+**（4）touches**
+
+touches属性返回一个TouchList对象，包含了所有仍然处于活动状态的触摸点。
+
+```javascript
+var touches = touchEvent.touches;
+```
+
+### 触摸事件的种类
 
 ## 事件的类型
 
