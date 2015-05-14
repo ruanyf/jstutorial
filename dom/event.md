@@ -610,7 +610,7 @@ el.addEventListener('click', l2, false);
 
 上面代码在el节点上，为click事件添加了两个监听函数l1和l2。由于l1调用了stopImmediatePropagation方法，所以l2不会被调用。
 
-## UIEvent对象
+## UI事件（UIEvent对象）
 
 UIEvent对象代表用户界面的事件。它继承了Event对象，所有UIEvent实例同时也是Event实例。
 
@@ -620,13 +620,78 @@ UIEvent对象代表用户界面的事件。它继承了Event对象，所有UIEve
 event = new UIEvent(typeArg, UIEventInit);
 ```
 
-UIEvent构造函数接受两个参数，第一个是事件名称，第二个是事件的描述对象（有detail和view两个字段），该参数可省略。
+UIEvent构造函数接受两个参数，第一个是事件名称，第二个是事件的描述对象（可以设置bubbles、cancelable、detail、view等字段），该参数可省略。
 
-## MouseEvent对象
+UI事件由以下八类事件组成。
 
-MouseEvent对象代表与鼠标相关的事件，常见的有click、dblclick、mouseup、 mousedown。MouseEvent对象继承UIEvent对象。
+- 鼠标事件（MouseEvent对象）
+- 滚轮事件（WheelEvent对象）
+- 拖拉事件（DragEvent对象）
+- 触摸事件（TouchEvent对象）
+- 焦点事件（FocusEvent对象）
+- 键盘事件（KeyboardEvent对象）
+- 输入事件（InputEvent对象）
+- 作文事件（CompositionEvent对象）
 
-浏览器提供一个MouseEvent构造函数，用于新建一个MouseEvent实例。
+以下逐一详细介绍。
+
+## 鼠标事件（MouseEvent对象）
+
+鼠标事件指与鼠标相关的事件，主要有以下一些。
+
+- click事件：在一个节点上，按下然后放开一个鼠标键时触发。
+- dblclick事件：在一个节点上，双击鼠标时触发。
+- mouseup事件：在一个节点上，释放按下的鼠标键时触发。
+- mousedown事件：在一个节点上，按下鼠标键时触发。
+- mousemove事件：鼠标在一个节点内部移动时触发。
+- mouseover事件：鼠标进入一个节点或其子element节点时触发。
+- mouseout事件：鼠标离开一个节点或其子element节点时触发。
+- mouseenter事件：鼠标进入一个节点时触发，该事件与mouseover的最大区别是，该事件不会冒泡，所以进入子节点时，不会触发父节点的监听函数。
+- mouseleave事件：鼠标离开一个节点时触发，该事件与mouseout事件的最大区别是，该事件不会冒泡，所以离开子节点时，不会触发父节点的监听函数。
+- contextmenu事件：在一个节点上点击鼠标右键触发（上下文菜单显示前），或者按下“上下文菜单”键时触发。
+
+下面是一个设置click事件监听函数的例子。
+
+```javascript
+div.addEventListener("click", function( event ) {
+  // 显示在该节点，鼠标连续点击的次数
+  event.target.innerHTML = "click count: " + event.detail;
+}, false);
+```
+
+下面的例子是mouseenter事件与mouseover事件的区别。
+
+```javascript
+// HTML代码为
+// <ul id="test">
+//   <li>item 1</li>
+//   <li>item 2</li>
+//   <li>item 3</li>
+// </ul>
+
+var test = document.getElementById("test");
+
+// 进入test节点以后，该事件只会触发一次
+test.addEventListener("mouseenter", function( event ) {
+  event.target.style.color = "purple";
+  setTimeout(function() {
+    event.target.style.color = "";
+  }, 500);
+}, false);
+
+// 接入test节点以后，只要在子Element节点上移动，该事件会触发多次
+test.addEventListener("mouseover", function( event ) {
+  event.target.style.color = "orange";
+  setTimeout(function() {
+    event.target.style.color = "";
+  }, 500);
+}, false);
+```
+
+上面代码中，由于mouseover事件会冒泡，所以子节点的mouseover事件会触发父节点的监听函数。
+
+鼠标事件使用MouseEvent对象表示，它继承UIEvent对象和Event对象。浏览器提供一个MouseEvent构造函数，用于新建一个MouseEvent实例。
+
 ```javascript
 event = new MouseEvent(typeArg, mouseEventInit);
 ```
@@ -645,7 +710,7 @@ MouseEvent构造函数的第一个参数是事件名称（可能的值包括clic
 - buttons，设置按下了鼠标哪些键，是一个3个比特位的二进制值，默认为0。1表示按下主键（通常是左键），2表示按下次要键（通常是右键），4表示按下辅助键（通常是中间的键）。
 - relatedTarget，设置一个Element节点，在mouseenter和mouseover事件时，表示鼠标刚刚离开的那个Element节点，在mouseout和mouseleave事件时，表示鼠标正在进入的那个Element节点。默认为null，等同于event.relatedTarget属性。
 
-以下属性也是可配置的，都继承自UIEvent构造函数。
+以下属性也是可配置的，都继承自UIEvent构造函数和Event构造函数。
 
 - bubbles，布尔值，设置事件是否冒泡，默认为false，等同于Event.bubbles属性。
 - cancelable，布尔值，设置事件是否可取消，默认为false，等同于Event.cancelable属性。
@@ -969,6 +1034,44 @@ function handleMove(evt) {
   }
 }
 ```
+
+## 焦点事件（FocusEvent）
+
+焦点事件与Element节点获得或失去焦点相关。它主要包括以下四个事件。
+
+- focus：Element节点获得焦点后触发，该事件不会冒泡。
+- blur：Element节点失去焦点后触发，该事件不会冒泡。
+- focusin：Element节点将要获得焦点时触发，该事件会冒泡，但Firefox不支持该事件。
+- focusout：Element节点将要失去焦点时触发，该事件会冒泡，但Firefox不支持该事件。
+
+以上四个事件都会生成一个FocusEvent事件对象。该对象有以下属性。
+
+- target：事件对象的目标节点。
+- type：事件的类型，格式为字符串。
+- bubbles：返回一个布尔值，表示该事件是否会冒泡。
+- cancelable：返回一个布尔值，表示是否可以取消该事件。
+- relatedTarget：返回一个Element节点。对于focusin事件，表示失去焦点的节点；对于focusout事件，表示将要接受焦点的节点；对于focus和blur事件，该属性返回null。
+
+由于focus和blur事件不会冒泡，只能在捕获阶段触发，所以addEventListener方法的第三个参数需要设为true。
+
+```javascript
+form.addEventListener("focus", function( event ) {
+  event.target.style.background = "pink";
+}, true);
+form.addEventListener("blur", function( event ) {
+  event.target.style.background = "";
+}, true);
+```
+
+上面代码设置表单的文本输入框，在接受焦点时设置背景色，在失去焦点时去除背景色。
+
+FocusEvent对象继承Event对象和UIEvent对象。浏览器提供一个FocusEvent构造函数，可以用它生成FocusEvent实例。
+
+```javascript
+var focusEvent = new FocusEvent(typeArg, focusEventInit);
+```
+
+上面代码中，FocusEvent构造函数的第一个参数为事件类型，第二个参数是可选的，它是一个对象，用来配置FocusEvent对象。UIEvent和Event构造函数的配置项，都可以在该对象设置，其中的relatedTarget字段，用来设置焦点从一个节点变化到另一个节点时的来源节点和目标节点。
 
 ## 事件的类型
 
