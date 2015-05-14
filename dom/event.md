@@ -671,13 +671,12 @@ function simulateClick() {
 
 ### altKey，ctrlKey，metaKey，shiftKey
 
-altKey属性返回一个布尔值，表示鼠标事件发生时，是否按下alt键。
+以下属性返回一个布尔值，表示鼠标事件发生时，是否按下某个键。
 
-ctrlKey属性返回一个布尔值，表示鼠标事件发生时，是否按下key键。
-
-metaKey属性返回一个布尔值，表示鼠标事件发生时，是否按下Meta键（Mac键盘是一个四瓣的小花，Windows键盘是Windows键）。
-
-shiftKey属性返回一个布尔值，表示鼠标事件发生时，是否按下Shift键。
+- altKey属性：alt键
+- ctrlKey属性：key键
+- metaKey属性：Meta键（Mac键盘是一个四瓣的小花，Windows键盘是Windows键）
+- shiftKey属性：Shift键
 
 ```javascript
 // HTML代码为
@@ -832,15 +831,21 @@ inner.addEventListener("mouseleave", function (){
 // 离开inner 进入outer
 ```
 
-## TouchEvent对象
+## 触摸事件（TouchEvent对象）
 
 TouchEvent对象代表由触摸引发的事件，只有触摸屏才会引发这一类事件。触摸动作由Touch对象来描述，每一个触摸动作都包括位置、大小、形状、压力、目标元素等属性。触摸动作的集合由TouchList对象表示。
 
 很多发生触摸的时候，触摸事件和鼠标事件同时触发，即使这个时候并没有用到鼠标。这是为了让那些只定义鼠标事件、没有定义触摸事件的代码，在触摸屏的情况下仍然能用。如果想避免这种情况，可以用preventDefault方法阻止发出鼠标事件。
 
+触摸API由三个对象组成。
+
+- Touch
+- TouchList
+- TouchEvent
+
 ### Touch对象
 
-Touch对象代表一个触摸点。
+Touch对象代表一个触摸点。触摸点可能是一根手指，也可能是一根触摸笔。
 
 Touch实例有以下属性。
 
@@ -851,6 +856,8 @@ identifier属性表示Touch实例的独一无二的识别符。它在整个触�
 ```javascript
 var id = touchItem.identifier;
 ```
+
+TouchList对象的identifiedTouch方法，可以根据这个属性，从一个集合里面取出对应的Touch对象。
 
 **（2）screenX，screenY，clientX，clientY，pageX，pageY**
 
@@ -876,6 +883,14 @@ force属性返回一个0到1之间的数值，表示触摸压力。0代表没有
 
 target属性返回一个Element节点，代表触摸发生的那个节点。
 
+### TouchList对象
+
+TouchList对象是一个类似数组的对象，成员是与某个触摸事件相关的所有触摸点。比如，用户用三根手指触摸，产生的TouchList对象就有三个成员，每根手指对应一个Touch对象。
+
+TouchList实例的length属性，返回TouchList对象的成员数量。
+
+TouchList实例的identifiedTouch方法和item方法，分别使用id属性和索引值（从0开始）作为参数，取出指定的Touch对象。
+
 ### TouchEvent实例的属性
 
 TouchEvent对象实例继承Event对象和UIEvent对象。除了被继承的属性以外，它还有一些自己的属性。
@@ -891,7 +906,7 @@ TouchEvent对象实例继承Event对象和UIEvent对象。除了被继承的属�
 
 **（2）changedTouches**
 
-changedTouches属性返回一个TouchList对象，包含了由当前触摸事件引发的所有Touch对象，表示相关的触摸点。
+changedTouches属性返回一个TouchList对象，包含了由当前触摸事件引发的所有Touch对象（即相关的触摸点）。
 
 对于touchstart事件，它代表被激活的触摸点；对于touchmove事件，代表发生变化的触摸点；对于touchend事件，代表消失的触摸点（即不再被触碰的点）。
 
@@ -916,6 +931,46 @@ var touches = touchEvent.touches;
 ```
 
 ### 触摸事件的种类
+
+触摸引发的事件，有以下几类。可以通过TouchEvent.type属性，查看到底发生的是哪一种事件。
+
+- touchstart：用户接触触摸屏时触发，它的target属性返回发生触摸的Element节点。
+
+- touchend：用户不再接触触摸屏时（或者移出屏幕边缘时）触发，它的target属性与touchstart事件的target属性是一致的，它的changedTouches属性返回一个TouchList对象，包含所有不再触摸的触摸点（Touch对象）。
+
+- touchmove：用户移动触摸点时触发，它的target属性与touchstart事件的target属性一致。如果触摸的半径、角度、力度发生变化，也会触发该事件。
+
+- touchcancel：触摸点取消时触发，比如在触摸区域跳出一个情态窗口（modal window）、触摸点离开了文档区域（进入浏览器菜单栏区域）、用户放置更多的触摸点（自动取消早先的触摸点）。
+
+下面是一个例子。
+
+```javascript
+var el = document.getElementsByTagName("canvas")[0];
+el.addEventListener("touchstart", handleStart, false);
+el.addEventListener("touchmove", handleMove, false);
+
+function handleStart(evt) {
+  // 阻止浏览器继续处理触摸事件，
+  // 也阻止发出鼠标事件
+  evt.preventDefault();
+  var touches = evt.changedTouches;
+
+  for (var i=0; i < touches.length; i++) {
+    console.log(touches[i].pageX, touches[i].pageY);
+  }
+}
+
+function handleMove(evt) {
+  evt.preventDefault();
+  var touches = evt.changedTouches;
+
+  for (var i=0; i < touches.length; i++) {
+    var id = touches[i].identifier;
+    var touch = touches.identifiedTouch(id);
+    console.log(touch.pageX, touch.pageY);
+  }
+}
+```
 
 ## 事件的类型
 
