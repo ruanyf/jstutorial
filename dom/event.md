@@ -612,17 +612,7 @@ el.addEventListener('click', l2, false);
 
 ## UI事件（UIEvent对象）
 
-UIEvent对象代表用户界面的事件。它继承了Event对象，所有UIEvent实例同时也是Event实例。
-
-浏览器提供一个UIEvent构造函数，用于新建一个UIEvent实例。
-
-```javascript
-event = new UIEvent(typeArg, UIEventInit);
-```
-
-UIEvent构造函数接受两个参数，第一个是事件名称，第二个是事件的描述对象（可以设置bubbles、cancelable、detail、view等字段），该参数可省略。
-
-UI事件由以下八类事件组成。
+UI事件表示用户界面的事件，它是一个大类，由以下八类事件组成。
 
 - 鼠标事件（MouseEvent对象）
 - 滚轮事件（WheelEvent对象）
@@ -633,7 +623,13 @@ UI事件由以下八类事件组成。
 - 输入事件（InputEvent对象）
 - 作文事件（CompositionEvent对象）
 
-以下逐一详细介绍。
+每一个UI事件都是一个UIEvent对象实例。UIEvent对象继承了Event对象，即所有UIEvent实例同时也是Event实例。浏览器提供一个UIEvent构造函数，用于新建一个UIEvent实例。
+
+```javascript
+event = new UIEvent(typeArg, UIEventInit);
+```
+
+UIEvent构造函数接受两个参数，第一个参数是事件名称，第二个参数是事件的描述对象（可以设置bubbles、cancelable、detail、view等字段），该参数可省略。
 
 ## 鼠标事件（MouseEvent对象）
 
@@ -1018,7 +1014,7 @@ function handleStart(evt) {
   evt.preventDefault();
   var touches = evt.changedTouches;
 
-  for (var i=0; i < touches.length; i++) {
+  for (var i = 0; i < touches.length; i++) {
     console.log(touches[i].pageX, touches[i].pageY);
   }
 }
@@ -1027,7 +1023,7 @@ function handleMove(evt) {
   evt.preventDefault();
   var touches = evt.changedTouches;
 
-  for (var i=0; i < touches.length; i++) {
+  for (var i = 0; i < touches.length; i++) {
     var id = touches[i].identifier;
     var touch = touches.identifiedTouch(id);
     console.log(touch.pageX, touch.pageY);
