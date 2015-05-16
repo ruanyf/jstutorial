@@ -892,7 +892,191 @@ inner.addEventListener("mouseleave", function (){
 // 离开inner 进入outer
 ```
 
-## 触摸事件
+## 滚轮事件（WheelEvent对象）
+
+滚轮事件是与鼠标滚轮相关的事件，目前只有一个wheel事件。用户滚动鼠标的滚轮，就触发这个事件。
+
+该事件除了继承了MouseEvent、UIEvent、Event的属性，还有几个自己的属性。
+
+- deltaX：返回一个数值，表示滚轮的水平滚动量。
+- deltaY：返回一个数值，表示滚轮的垂直滚动量。
+- deltaZ：返回一个数值，表示滚轮的Z轴滚动量。
+- deltaMode：返回一个数值，表示滚动的单位，适用于上面三个属性。0表示像素，1表示行，2表示页。
+
+滚轮事件使用一个WheelEvent对象表示，该对象继承MouseEvent对象，因此也就继承了UIEvent和Event对象。浏览器提供一个WheelEvent构造函数，可以用来生成滚轮事件的实例。
+
+```javascript
+var syntheticEvent = new WheelEvent("syntheticWheel", {"deltaX": 4, "deltaMode": 0});
+```
+
+上面代码表示，WheelEvent构造函数接受两个参数，第一个是事件名称，第二个是配置对象。
+
+## 拖拉事件（DragEvent对象）
+
+### 事件种类
+
+当Element节点或选中的文本被拖拉时，就会持续触发拖拉事件，包括以下一些事件。
+
+- drag事件：拖拉时持续触发。
+- dragstart事件：拖拉开始时触发，事件的target属性是被拖拉的节点。
+- dragend事件：拖拉结束时（释放鼠标键或按下escape键）触发，事件的target属性是被拖拉的节点。
+- dragover事件：拖拉到目标节点上方时持续触发，事件的target属性是目标节点。一旦发生该事件，默认会重置当前的拖拉事件的效果（DataTransfer属性）为none，即不允许放下被拖拉的节点，所以通常使用preventDefault方法，防止拖拉事件被重置。
+- dragenter事件：拖拉进入目标节点范围时触发，事件的target属性是目标节点。
+- dragleave事件：拖拉离开目标节点范围时触发，事件的target属性是目标节点。
+- drop事件：拖拉的Element节点或选中的文本，释放到目标节点时触发。
+
+拖拉事件用一个DragEvent对象表示，该对象继承MouseEvent对象，因此也就继承了UIEvent和Event对象。DragEvent对象只有一个独有的属性DataTransfer，其他都是继承的属性。
+
+- DataTransfer属性：返回一个对象，用来保存拖拉事件中传输的数据，详见下文《DataTransfer对象》的部分。
+
+下面是一个例子，显示如何实现，将一个节点从当面父节点，拖动到另一个父节点中。
+
+```javascript
+// HTML代码为
+// <div class="dropzone">
+//    <div id="draggable" draggable="true">
+//       该节点可拖拉
+//    </div>
+// </div>
+// <div class="dropzone"></div>
+// <div class="dropzone"></div>
+// <div class="dropzone"></div>
+
+// 被拖拉节点
+var dragged;
+
+document.addEventListener("dragstart", function( event ) {
+  // 保存被拖拉节点
+  dragged = event.target;
+  // 被拖拉节点的背景色变透明
+  event.target.style.opacity = .5;
+}, false);
+
+document.addEventListener("dragend", function( event ) {
+  // 被拖拉节点的背景色恢复正常
+  event.target.style.opacity = "";
+}, false);
+
+document.addEventListener("dragover", function( event ) {
+  // 防止拖拉效果被重置，允许被拖拉的节点放入目标节点
+  event.preventDefault();
+}, false);
+
+document.addEventListener("dragenter", function( event ) {
+  // 目标节点的背景色变紫色
+  // 由于该事件会冒泡，所以要过滤节点
+  if ( event.target.className == "dropzone" ) {
+    event.target.style.background = "purple";
+  }
+}, false);
+
+document.addEventListener("dragleave", function( event ) {
+  // 目标节点的背景色恢复原样
+  if ( event.target.className == "dropzone" ) {
+    event.target.style.background = "";
+  }
+}, false);
+
+document.addEventListener("drop", function( event ) {
+  // 防止事件默认行为（比如某些Elment节点上可以打开链接）
+  event.preventDefault();
+  if ( event.target.className == "dropzone" ) {
+    // 恢复目标节点背景色
+    event.target.style.background = "";
+    // 将被拖拉节点插入目标节点
+    dragged.parentNode.removeChild( dragged );
+    event.target.appendChild( dragged );
+  }
+}, false);
+```
+
+下面的例子展示，如何动态改变被拖动节点的背景色。
+
+```javascript
+div.addEventListener("dragstart", function(e) {
+  this.style.backgroundColor = "red";
+}, false);
+div.addEventListener("dragend", function(e) {
+  this.style.backgroundColor = "green";
+}, false);
+```
+
+上面代码中，div节点被拖动时，背景色会变为红色，拖动结束，又变回绿色。
+
+### DataTransfer对象
+
+DataTransfer对象用来保存拖拉事件传输的数据，它可以通过拖拉事件的DataTransfer属性读取或设置。
+
+DataTransfer对象有以下属性。
+
+- dropEffect：设置放下（drop）被拖拉节点时的效果，可能的值包括copy（复制被拖拉的节点）、move（移动被拖拉的节点）、link（创建指向被拖拉的节点的链接）、none（无法放下被拖拉的节点）。设置非以上四种值，都是无效的。对于dragstart、drag、dragleave这三个事件，该属性不起作用。
+
+- effectAllowed：本次拖拉中允许的效果，可能的值包括copy（复制被拖拉的节点）、move（移动被拖拉的节点）、link（创建指向被拖拉节点的链接）、copyLink（允许copy或link）、copyMove（允许copy或move）、linkMove（允许link或move）、all（允许所有效果）、none（无法放下被拖拉的节点）、uninitialized（默认值，等同于all）。可以在dragstart事件时，设置对被拖拉节点允许的效果，在dragenter和dragover事件时，设置对目标节点允许的效果。
+
+- files：该属性是一个FileList对象，包含一组本地文件，可以用来在拖拉操作中传送。如果本次拖拉不涉及文件，则属性为空的FileList对象。
+
+- types：该属性是一个数组，保存每一次拖拉的数据格式，比如拖拉文件，则格式信息就为File。
+
+下面就是一个接收拖拉文件的例子。
+
+```javascript
+// HTML代码为
+// <div id="output" style="min-height: 200px;border: 1px solid black;">
+//   文件拖拉到这里
+// </div>
+
+var div = document.getElementById('output');
+
+div.addEventListener("dragenter", function( event ) {
+  div.textContent = '';
+  event.stopPropagation();
+  event.preventDefault();
+}, false);
+
+div.addEventListener("dragover", function( event ) {
+  event.stopPropagation();
+  event.preventDefault();
+}, false);
+
+div.addEventListener("drop", function( event ) {
+  event.stopPropagation();
+  event.preventDefault();
+  var files = event.dataTransfer.files;
+  for (var i = 0; i < files.length; i++) {
+    div.textContent += files[i].name + ' ' + files[i].size + '字节\n';
+  }
+}, false);
+```
+
+DataTransfer对象有以下方法。
+
+- addElement()：接受一个Element节点作为参数，用来设置被拖拉的节点，即drag、dragend事件发生在哪个节点。
+
+- clearData()：接受一个字符串（表示数据类型）作为参数，删除事件所带的指定类型的数据。如果没有指定类型，则删除所有数据。如果指定类型不存在，则原数据不受影响。
+
+- getData()：接受一个字符串（表示数据类型）作为参数，返回事件所带的指定类型的数据。如果指定类型的数据不存在，则返回空字符串。通常只有drop事件触发后，才能取出数据。如果取出另一个域名存放的数据，将会报错。
+
+- setData()：用来设置事件所带有的指定类型的数据。它接受两个参数，第一个是数据类型，第二个是具体数据。如果指定的类型在现有数据中不存在，则该类型将写入types属性；如果已经存在，在该类型的现有数据将被替换。
+
+- setDragImage()：节点拖动过程中，会显示一张图片表示被拖动的节点。该方法用来设置这张图片。该方法接受三个参数，第一个是img图片元素或者canvas元素，如果省略或为null则使用被拖动的节点的外观，第二个和第三个参数为鼠标相对于该图片左上角的横坐标和右坐标。
+
+下面是setDragImage方法的一个例子，为被拖动的节点自定义拖动时的外观图片。
+
+```javascript
+// HTML代码为
+// <div id="drag-with-image" class="dragdemo" draggable="true">
+     drag me
+// </div>
+
+var div = document.getElementById("drag-with-image");
+div.addEventListener("dragstart", function(e) {
+  var img = document.createElement("img");
+  img.src = "http://path/to/img";
+  e.dataTransfer.setDragImage(img, 0, 0);
+}, false);
+```
+
+## 触摸事件（TouchEvent对象）
 
 触摸API由三个对象组成。
 
@@ -900,9 +1084,9 @@ inner.addEventListener("mouseleave", function (){
 - TouchList
 - TouchEvent
 
-TouchEvent对象代表由触摸引发的事件，只有触摸屏才会引发这一类事件。触摸动作由Touch对象来描述，每一个触摸动作都包括位置、大小、形状、压力、目标元素等属性。触摸动作的集合由TouchList对象表示。
+Touch对象表示触摸点（一根手指或者一根触摸笔），用来描述触摸动作，包括位置、大小、形状、压力、目标元素等属性。有时，触摸动作由多个触摸点（多根手指或者多根触摸笔）组成，多个触摸点的集合由TouchList对象表示。TouchEvent对象代表由触摸引发的事件，只有触摸屏才会引发这一类事件。
 
-很多发生触摸的时候，触摸事件和鼠标事件同时触发，即使这个时候并没有用到鼠标。这是为了让那些只定义鼠标事件、没有定义触摸事件的代码，在触摸屏的情况下仍然能用。如果想避免这种情况，可以用preventDefault方法阻止发出鼠标事件。
+很多时候，触摸事件和鼠标事件同时触发，即使这个时候并没有用到鼠标。这是为了让那些只定义鼠标事件、没有定义触摸事件的代码，在触摸屏的情况下仍然能用。如果想避免这种情况，可以用preventDefault方法阻止发出鼠标事件。
 
 ### Touch对象
 
