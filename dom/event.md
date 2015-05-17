@@ -140,15 +140,13 @@ el.setAttribute('onclick', 'doSomething()');
 
 Element节点有事件属性，可以定义回调函数。
 
-{% highlight javascript %}
-
+```javascript
 window.onload = doSomething;
 
 div.onclick = function(event){
   console.log('触发事件');
 };
-
-{% endhighlight %}
+```
 
 使用这个方法指定的监听函数，只会在冒泡阶段触发。
 
@@ -156,11 +154,9 @@ div.onclick = function(event){
 
 通过Element节点、document节点、window对象的addEventListener方法，也可以定义事件的回调函数。
 
-{% highlight javascript %}
-
+```javascript
 window.addEventListener('load', doSomething, false);
-
-{% endhighlight %}
+```
 
 addEventListener方法的详细介绍，参见本节EventTarget接口的部分。
 
@@ -263,18 +259,15 @@ element.setAttribute('onclick', 'doSomething()');
 
 这种三阶段的传播模型，会使得一个事件在多个元素上触发。比如，假设div元素之中嵌套一个p元素。
 
-{% highlight html %}
-
+```html
 <div>
   <p>Click Me</p>
 </div>
-
-{% endhighlight %}
+```
 
 如果对这两个元素的click事件都设定回调函数，则click事件会被触发四次。
 
-{% highlight javascript %}
-
+```javascript
 var phases = {
   1: 'capture',
   2: 'target',
@@ -300,8 +293,7 @@ function callback(event) {
 // Tag: 'P'. EventPhase: 'target'
 // Tag: 'P'. EventPhase: 'target'
 // Tag: 'DIV'. EventPhase: 'bubble'
-
-{% endhighlight %}
+```
 
 上面代码表示，click事件被触发了四次。
 
@@ -318,8 +310,7 @@ function callback(event) {
 
 由于事件会在冒泡阶段向上传播到父元素，因此可以把子元素的回调函数定义在父元素上，由父元素的回调函数统一处理多个子元素的事件。这种方法叫做事件的代理（delegation）。
 
-{% highlight javascript %}
-
+```javascript
 var ul = document.querySelector('ul');
 
 ul.addEventListener('click', function(event) {
@@ -327,8 +318,7 @@ ul.addEventListener('click', function(event) {
     // some code
   }
 });
-
-{% endhighlight %}
+```
 
 上面代码的click事件的回调函数是定义在ul元素上的，但是实际上，它处理的是子元素li的click事件。这样做的好处是，只要定义一个回调函数，就能处理多个子元素的事件，而且以后再添加子元素，回调函数依然有效。
 
@@ -346,8 +336,7 @@ p.addEventListener('click', function(event) {
 
 但是，stopPropagation方法不会阻止p元素上的其他click事件的回调函数。如果想要不再触发那些回调函数，可以使用stopImmediatePropagation方法。
 
-{% highlight javascript %}
-
+```javascript
 p.addEventListener('click', function(event) {
  event.stopImmediatePropagation();
 });
@@ -355,8 +344,7 @@ p.addEventListener('click', function(event) {
 p.addEventListener('click', function(event) {
  // 不会被触发
 });
-
-{% endhighlight %}
+```
 
 ## Event对象
 
