@@ -324,13 +324,11 @@ ul.addEventListener('click', function(event) {
 
 如果希望事件到某个节点为止，不再传播，可以使用事件对象的stopPropagation方法。
 
-{% highlight javascript %}
-
+```javascript
 p.addEventListener('click', function(event) {
   event.stopPropagation();
 });
-
-{% endhighlight %}
+```
 
 使用上面的代码以后，click事件在冒泡阶段到达p元素以后，就不再向上（父元素的方向）传播了。
 
