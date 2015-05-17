@@ -118,13 +118,11 @@ DOM允许指定各种事件的回调函数，使用的方法有三种。
 
 HTML语言允许在元素标签的属性中，直接定义某些事件的监听代码。
 
-{% highlight html %}
-
+```html
 <body onload="doSomething()">
 
 <div onclick="console.log('触发事件')">
-
-{% endhighlight %}
+```
 
 上面代码为body节点的load事件、div节点的click事件，指定了回调函数。
 
