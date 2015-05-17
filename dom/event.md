@@ -913,21 +913,56 @@ var syntheticEvent = new WheelEvent("syntheticWheel", {"deltaX": 4, "deltaMode":
 
 ## 拖拉事件（DragEvent对象）
 
+拖拉指的是，用户在某个对象上按下鼠标键不放，拖动它到另一个位置，然后释放鼠标键，将该对象放在那里。
+
+拖拉的对象有好几种，包括Element节点、选中的文字、图片、链接等等。在HTML网页中，除了选中的文字、链接、图片以外，其他Element节点默认都是不可以拖拉的。为了让它们可以拖拉，需要将Element节点的draggable属性设为true。
+
+```html
+<div draggable="true">
+  此区域可拖拉
+</div>
+```
+
+draggable属性可用于任何Element节点，但是图片和链接不加这个属性，就可以拖拉。对于它们，实际的用法往往是将draggable属性设为false，防止拖拉。
+
+注意，一旦某个Element节点的draggable属性设为true，就无法再用鼠标选中该节点内部的文字或子节点了。
+
+如果拖拉的是图像或链接，它的链接默认为拖拉事件中传送的数据。拖放时，浏览器会跟随鼠标的移动，实时显示一个被拖动对象的外观图像。
+
 ### 事件种类
 
 当Element节点或选中的文本被拖拉时，就会持续触发拖拉事件，包括以下一些事件。
 
-- drag事件：拖拉时持续触发。
-- dragstart事件：拖拉开始时触发，事件的target属性是被拖拉的节点。
-- dragend事件：拖拉结束时（释放鼠标键或按下escape键）触发，事件的target属性是被拖拉的节点。
-- dragover事件：拖拉到目标节点上方时持续触发，事件的target属性是目标节点。一旦发生该事件，默认会重置当前的拖拉事件的效果（DataTransfer属性）为none，即不允许放下被拖拉的节点，所以通常使用preventDefault方法，防止拖拉事件被重置。
-- dragenter事件：拖拉进入目标节点范围时触发，事件的target属性是目标节点。
-- dragleave事件：拖拉离开目标节点范围时触发，事件的target属性是目标节点。
-- drop事件：拖拉的Element节点或选中的文本，释放到目标节点时触发。
+- drag事件：拖拉过程中，在被拖拉的节点上持续触发。
 
-拖拉事件用一个DragEvent对象表示，该对象继承MouseEvent对象，因此也就继承了UIEvent和Event对象。DragEvent对象只有一个独有的属性DataTransfer，其他都是继承的属性。
+- dragstart事件：拖拉开始时在被拖拉的节点上触发，该事件的target属性是被拖拉的节点。通常应该在这个事件的监听函数中，指定拖拉的数据。
 
-- DataTransfer属性：返回一个对象，用来保存拖拉事件中传输的数据，详见下文《DataTransfer对象》的部分。
+- dragend事件：拖拉结束时（释放鼠标键或按下escape键）在被拖拉的节点上触发，该事件的target属性是被拖拉的节点。它与dragStart事件，在同一个节点上触发。不管拖拉是否跨窗口，或者中途被取消，dragend事件总是会触发的。
+
+- dragenter事件：拖拉进入当前节点时，在当前节点上触发，该事件的target属性是当前节点。通常应该在这个事件的监听函数中，指定是否允许在当前节点drop拖拉的数据。如果当前节点没有该事件的监听函数，或者监听函数不执行任何操作，就意味着不允许在当前节点drop数据。在视觉上显示拖拉进入当前节点，也是在这个事件的监听函数中设置。
+
+- dragover事件：拖拉到当前节点上方时，在当前节点上持续触发，该事件的target属性是当前节点。该事件与dragenter事件基本类似，默认会重置当前的拖拉事件的效果（DataTransfer对象的dropEffect属性）为none，即不允许放下被拖拉的节点，所以如果允许在当前节点drop数据，通常会使用preventDefault方法，取消重置拖拉效果为none。
+
+- dragleave事件：拖拉离开当前节点范围时，在当前节点上触发，该事件的target属性是当前节点。在视觉上显示拖拉离开当前节点，就在这个事件的监听函数中设置。
+
+- drop事件：被拖拉的节点或选中的文本，释放到目标节点时，在目标节点上触发。注意，如果当前节点不允许drop，即使在该节点上方松开鼠标键，也不会触发该事件。如果用户按下Escape键，取消这个操作，也不会触发该事件。该事件的监听函数负责取出拖拉数据，并进行相关处理。
+
+关于拖拉事件，有以下几点注意事项。
+
+- 拖拉过程只触发以上这些拖拉事件，尽管鼠标在移动，但是鼠标事件不会触发。
+
+- 将文件从操作系统拖拉进浏览器，不会触发dragStart和dragend事件。
+
+- dragenter和dragover事件的监听函数，用来指定可以放下（drop）拖拉的数据。由于网页的大部分区域不适合作为drop的目标节点，所以这两个事件的默认设置为当前节点不允许drop。如果想要在目标节点上drop拖拉的数据，首先必须阻止这两个事件的默认行为，或者取消这两个事件。
+
+```html
+<div ondragover="return false">
+<div ondragover="event.preventDefault()">
+```
+
+上面代码中，如果不取消拖拉事件或者阻止默认行为，就不可能在div节点上drop被拖拉的节点。
+
+拖拉事件用一个DragEvent对象表示，该对象继承MouseEvent对象，因此也就继承了UIEvent和Event对象。DragEvent对象只有一个独有的属性DataTransfer，其他都是继承的属性。DataTransfer属性用来读写拖拉事件中传输的数据，详见下文《DataTransfer对象》的部分。
 
 下面是一个例子，显示如何实现，将一个节点从当面父节点，拖动到另一个父节点中。
 
@@ -1003,19 +1038,46 @@ div.addEventListener("dragend", function(e) {
 
 上面代码中，div节点被拖动时，背景色会变为红色，拖动结束，又变回绿色。
 
-### DataTransfer对象
+### DataTransfer对象概述
 
-DataTransfer对象用来保存拖拉事件传输的数据，它可以通过拖拉事件的DataTransfer属性读取或设置。
+所有的拖拉事件都有一个dataTransfer属性，用来保存需要传递的数据。这个属性的值是一个DataTransfer对象。
+
+拖拉的数据保存两方面的数据：数据的种类（又称格式）和数据的值。数据的种类是一个MIME字符串，比如 text/plain或者image/jpeg，数据的值是一个字符串。一般来说，如果拖拉一段选中的文本，则拖拉事件的数据默认就是那段文本；如果拖拉一个链接，则拖拉事件的数据默认就是链接的URL。
+
+当拖拉事件开始的时候，可以提供数据类型和数据值；在拖拉过程中，通过dragenter和dragover事件的监听函数，检查数据类型，以确定是否允许放下（drop）被拖拉的对象。比如，在只允许放下链接的区域，检查拖拉的数据类型是否为text/uri-list。
+
+发生drop事件时，监听函数取出拖拉的数据，对其进行处理。
+
+### DataTransfer对象的属性
 
 DataTransfer对象有以下属性。
 
-- dropEffect：设置放下（drop）被拖拉节点时的效果，可能的值包括copy（复制被拖拉的节点）、move（移动被拖拉的节点）、link（创建指向被拖拉的节点的链接）、none（无法放下被拖拉的节点）。设置非以上四种值，都是无效的。对于dragstart、drag、dragleave这三个事件，该属性不起作用。
+- dropEffect：设置放下（drop）被拖拉节点时的效果，可能的值包括copy（复制被拖拉的节点）、move（移动被拖拉的节点）、link（创建指向被拖拉的节点的链接）、none（无法放下被拖拉的节点）。设置除此以外的值，都是无效的。
 
-- effectAllowed：本次拖拉中允许的效果，可能的值包括copy（复制被拖拉的节点）、move（移动被拖拉的节点）、link（创建指向被拖拉节点的链接）、copyLink（允许copy或link）、copyMove（允许copy或move）、linkMove（允许link或move）、all（允许所有效果）、none（无法放下被拖拉的节点）、uninitialized（默认值，等同于all）。可以在dragstart事件时，设置对被拖拉节点允许的效果，在dragenter和dragover事件时，设置对目标节点允许的效果。
+dropEffect属性一般在dragenter和dragove事件的监听函数中设置，对于dragstart、drag、dragleave这三个事件，该属性不起作用。进入目标节点后，拖拉行为会初始化成用户设定的效果，用户可以通过按下Shift键和Control键，改变初始设置，在copy、move、link三种效果中切换。
+
+鼠标箭头会根据dropEffect属性改变形状，提示目前正处于哪一种效果。这意味着，通过鼠标就能判断是否可以在当前节点drop被拖拉的节点。
+
+- effectAllowed：本次拖拉中允许的效果，可能的值包括copy（复制被拖拉的节点）、move（移动被拖拉的节点）、link（创建指向被拖拉节点的链接）、copyLink（允许copy或link）、copyMove（允许copy或move）、linkMove（允许link或move）、all（允许所有效果）、none（无法放下被拖拉的节点）、uninitialized（默认值，等同于all）。如果某种效果是不允许的，用户就无法在目标节点中达成这种效果。
+
+dragstart事件的监听函数，可以设置被拖拉节点允许的效果；dragenter和dragover事件的监听函数，可以设置目标节点允许的效果。
+
+```javascript
+event.dataTransfer.effectAllowed = "copy";
+```
+
+dropEffect属性和effectAllowed属性，往往配合使用。
+
+```javascript
+event.dataTransfer.effectAllowed = "copyMove";
+event.dataTransfer.dropEffect = "copy";
+```
+
+上面代码中，copy是指定的效果，但是可以通过Shift或Ctrl键（根据平台而定），将效果切换成move。
+
+只要dropEffect属性和effectAllowed属性之中，有一个为none，就无法在目标节点上完成drop操作。
 
 - files：该属性是一个FileList对象，包含一组本地文件，可以用来在拖拉操作中传送。如果本次拖拉不涉及文件，则属性为空的FileList对象。
-
-- types：该属性是一个数组，保存每一次拖拉的数据格式，比如拖拉文件，则格式信息就为File。
 
 下面就是一个接收拖拉文件的例子。
 
@@ -1048,19 +1110,139 @@ div.addEventListener("drop", function( event ) {
 }, false);
 ```
 
+- types：该属性是一个数组，保存每一次拖拉的数据格式，比如拖拉文件，则格式信息就为File。
+
+下面是一个例子，通过检查dataTransfer属性的类型，决定是否允许在当前节点执行drop操作。
+
+```javascript
+function contains(list, value){
+  for( var i = 0; i < list.length; ++i ){
+    if(list[i] === value) return true;
+  }
+  return false;
+}
+
+function doDragOver(event){
+  var isLink = contains( event.dataTransfer.types, "text/uri-list");
+  if (isLink) event.preventDefault();
+}
+```
+
+上面代码中，只有当被拖拉的节点是一个链接时，才允许在当前节点放下。
+
+### DataTransfer对象的方法
+
 DataTransfer对象有以下方法。
 
 - addElement()：接受一个Element节点作为参数，用来设置被拖拉的节点，即drag、dragend事件发生在哪个节点。
 
-- clearData()：接受一个字符串（表示数据类型）作为参数，删除事件所带的指定类型的数据。如果没有指定类型，则删除所有数据。如果指定类型不存在，则原数据不受影响。
-
-- getData()：接受一个字符串（表示数据类型）作为参数，返回事件所带的指定类型的数据。如果指定类型的数据不存在，则返回空字符串。通常只有drop事件触发后，才能取出数据。如果取出另一个域名存放的数据，将会报错。
-
 - setData()：用来设置事件所带有的指定类型的数据。它接受两个参数，第一个是数据类型，第二个是具体数据。如果指定的类型在现有数据中不存在，则该类型将写入types属性；如果已经存在，在该类型的现有数据将被替换。
 
-- setDragImage()：节点拖动过程中，会显示一张图片表示被拖动的节点。该方法用来设置这张图片。该方法接受三个参数，第一个是img图片元素或者canvas元素，如果省略或为null则使用被拖动的节点的外观，第二个和第三个参数为鼠标相对于该图片左上角的横坐标和右坐标。
+```javascript
+event.dataTransfer.setData("text/plain", "Text to drag");
+```
 
-下面是setDragImage方法的一个例子，为被拖动的节点自定义拖动时的外观图片。
+上面代码为事件加入纯文本格式的数据。
+
+如果拖拉文本框或者拖拉选中的文本，会默认将文本数据添加到dataTransfer属性，不用手动指定。
+
+```javascript
+<div draggable="true" ondragstart="
+  event.dataTransfer.setData('text/plain', 'bbb')">
+  aaa
+</div>
+```
+
+上面代码中，拖拉数据实际上是bbb，而不是aaa。
+
+下面是添加其他类型的数据。由于text/plain是最普遍支持的格式，为了保证兼容性，建议最后总是将数据保存一份纯文本的格式。
+
+```javascript
+var dt = event.dataTransfer;
+
+// 添加链接
+dt.setData("text/uri-list", "http://www.example.com");
+dt.setData("text/plain", "http://www.example.com");
+// 添加HTML代码
+dt.setData("text/html", "Hello there, <strong>stranger</strong>");
+dt.setData("text/plain", "Hello there, <strong>stranger</strong>");
+// 添加图像的URL
+dt.setData("text/uri-list", imageurl);
+dt.setData("text/plain", imageurl);
+```
+
+可以一次提供多种格式的数据。
+
+```javascript
+var dt = event.dataTransfer;
+dt.setData("application/x-bookmark", bookmarkString);
+dt.setData("text/uri-list", "http://www.example.com");
+dt.setData("text/plain", "http://www.example.com");
+```
+
+上面代码中，通过在同一个事件上面，存放三种类型的数据，使得拖拉事件可以在不同的对象上面，drop不同的值。注意，第一种格式是一个自定义格式，浏览器默认无法读取，这意味着，只有某个部署了特定代码的节点，才可能drop（读取到）这个数据。
+
+- getData()：接受一个字符串（表示数据类型）作为参数，返回事件所带的指定类型的数据（通常是用setData方法添加的数据）。如果指定类型的数据不存在，则返回空字符串。通常只有drop事件触发后，才能取出数据。如果取出另一个域名存放的数据，将会报错。
+
+下面是一个drop事件的监听函数，用来取出指定类型的数据。
+
+```javascript
+function onDrop(event){
+  var data = event.dataTransfer.getData("text/plain");
+  event.target.textContent = data;
+  event.preventDefault();
+}
+```
+
+上面代码取出拖拉事件的文本数据，将其替换成当前节点的文本内容。注意，这时还必须取消浏览器的默认行为，因为假如用户拖拉的是一个链接，浏览器默认会在当前窗口打开这个链接。
+
+getData方法返回的是一个字符串，如果其中包含多项数据，就必须手动解析。
+
+```javascript
+function doDrop(event){
+  var lines = event.dataTransfer.getData("text/uri-list").split("\n");
+  for (let line of lines) {
+    let link = document.createElement("a");
+    link.href = line;
+    link.textContent = line;
+    event.target.appendChild(link);
+  }
+  event.preventDefault();
+}
+```
+
+上面代码中，getData方法返回的是一组链接，就必须自行解析。
+
+类型值指定为URL，可以取出第一个有效链接。
+
+```javascript
+var link = event.dataTransfer.getData("URL");
+```
+
+下面是一次性取出多种类型的数据。
+
+```javascript
+function doDrop(event){
+  var types = event.dataTransfer.types;
+  var supportedTypes = ["text/uri-list", "text/plain"];
+  types = supportedTypes.filter(function (value) types.includes(value));
+  if (types.length)
+    var data = event.dataTransfer.getData(types[0]);
+  event.preventDefault();
+}
+```
+
+- clearData()：接受一个字符串（表示数据类型）作为参数，删除事件所带的指定类型的数据。如果没有指定类型，则删除所有数据。如果指定类型不存在，则原数据不受影响。
+
+```javascript
+event.dataTransfer.clearData("text/uri-list");
+```
+
+上面代码清除事件所带的URL数据。
+
+- setDragImage()：拖动过程中（dragstart事件触发后），浏览器会显示一张图片跟随鼠标一起移动，表示被拖动的节点。这张图片是自动创造的，通常显示为被拖动节点的外观，不需要自己动手设置。setDragImage方法可以用来自定义这张图片，它接受三个参数，第一个是img图片元素或者canvas元素，如果省略或为null则使用被拖动的节点的外观，第二个和第三个参数为鼠标相对于该图片左上角的横坐标和右坐标。
+
+下面是一个例子。
 
 ```javascript
 // HTML代码为

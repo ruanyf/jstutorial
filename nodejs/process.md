@@ -6,7 +6,21 @@ date: 2014-10-20
 modifiedOn: 2014-10-20
 ---
 
-process对象提供node进程本身的信息。它可以通过全局变量process访问，不必使用require命令加载。
+process对象是Node的一个全局对象，提供当前node进程的信息。它可以在脚本的任意位置使用，不必通过require命令加载。该对象部署了EventEmitter接口。
+
+## 进程信息
+
+通过process对象，可以获知当前进程的很多信息。
+
+### 退出码
+
+进程退出时，会返回一个整数值，表示退出时的状态。这个整数值就叫做退出码。下面是常见的Node进程退出码。
+
+- 0，正常退出
+- 1，发生未捕获错误
+- 5，V8执行错误
+- 8，不正确的参数
+- 128 + 信号值，如果Node接受到退出信号（比如SIGKILL或SIGHUP），它的退出码就是128加上信号值。由于128的二进制形式是10000000, 所以退出码的后七位就是信号值。
 
 ## 属性
 
@@ -273,10 +287,23 @@ setTimeout(function(){
 {% highlight javascript %}
 
 process.on('exit', function () {
-  fs.writeFileSync('/tmp/myfile', 'This MUST be saved on exit.');
- });
+  fs.writeFileSync('/tmp/myfile', '需要保存到硬盘的信息');
+});
 
 {% endhighlight %}
+
+注意，此时回调函数只能执行同步操作，不能包含异步操作，因为执行完回调函数，进程就会退出，无法监听到回调函数的操作结果。
+
+```javascript
+process.on('exit', function(code) {
+  // 不会执行
+  setTimeout(function() {
+    console.log('This will not run');
+  }, 0);
+});
+```
+
+上面代码在exit事件的回调函数里面，指定了一个下一轮事件循环，所要执行的操作。这是无效的，不会得到执行。
 
 ### uncaughtException事件
 
