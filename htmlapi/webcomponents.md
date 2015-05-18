@@ -15,11 +15,8 @@ modifiedOn: 2014-07-09
 （1）管理和使用非常容易。加载或卸载组件，只要添加或删除一行代码就可以了。
 
 ```html
-
 <link rel="import" href="my-dialog.htm">
-
 <my-dialog heading="A Dialog">Lorem ipsum</my-dialog>
-
 ```
 
 上面代码加载了一个对话框组件。
@@ -99,7 +96,7 @@ document.body.appendChild(clone);
 <style>
   :host {
     background: #f8f8f8;
-  } 
+  }
   :host(:hover) {
     background: #ccc;
   }
@@ -129,37 +126,36 @@ document.importNode方法接受两个参数，第一个参数是外部文档的D
 
 ## Custom Element
 
-HTML预定义的网页元素，有时并不符合我们的需要，这时可以自定义网页元素，这就叫做Custom Element。它是Web component技术的核心。
+HTML预定义的网页元素，有时并不符合我们的需要，这时可以自定义网页元素，这就叫做Custom Element。它是Web component技术的核心。举例来说，你可以自定义一个叫做super-button的网页元素。
+
+```html
+<super-button></super-button>
+```
+
+注意，自定义网页元素的标签名必须含有连字符（-），一个或多个都可。这是因为浏览器内置的的HTML元素标签名，都不含有连字符，这样可以做到有效区分。
 
 下面的代码用于测试浏览器是否支持自定义元素。
 
 ```javascript
-
-function supportsCustomElements() {
-  return 'registerElement' in document;
-}
-
-if (supportsCustomElements()) {
+if ('registerElement' in document) {
   // 支持
 } else {
   // 不支持
 }
-
 ```
 
 ### document.registerElement()
 
-document.registerElement方法用来注册新的网页元素，它返回一个构造函数。
+使用自定义元素前，必须用document对象的registerElement方法登记该元素。该方法返回一个自定义元素的构造函数。
 
 ```javascript
-
-var XFoo = document.registerElement('x-foo');
-
+var SuperButton = document.registerElement('super-button');
+document.body.appendChild(new SuperButton());
 ```
 
-上面代码注册了网页元素x-foo。可以看到，document.registerElement方法的第一个参数是一个字符串，表示自定义的网页元素的名称。需要注意的是，自定义元素的名称中，必须包含连字号（-），用来与预定义的网页元素相区分。连字号可以是一个也可以是多个。
+上面代码生成自定义网页元素的构造函数，然后通过构造函数生成一个实例，将其插入网页。
 
-document.registerElement方法还可以接受第二个参数，表示自定义网页元素的原型对象。
+可以看到，document.registerElement方法的第一个参数是一个字符串，表示自定义的网页元素标签名。该方法还可以接受第二个参数，表示自定义网页元素的原型对象。
 
 ```javascript
 
@@ -169,71 +165,74 @@ var MyElement = document.registerElement('user-profile', {
 
 ```
 
-上面代码注册了user-profile。document.registerElement方法的第二个参数，指定它的原型对象是HTMLElement.prototype（它是浏览器内部所有网页元素的原型）。如果想让自定义元素继承某种特定的网页元素，就要指定extends属性。比如，想让自定义元素继承h1元素，需要写成下面这样。
+上面代码注册了自定义元素user-profile。第二个参数指定该元素的原型为HTMLElement.prototype（浏览器内部所有Element节点的原型）。
+
+但是，如果写成上面这样，自定义网页元素就跟普通元素没有太大区别。自定义元素的真正优势在于，可以自定义它的API。
 
 ```javascript
+var buttonProto = Object.create(HTMLElement.prototype);
 
-var MyElement = document.registerElement('another-heading', {
-  prototype: Object.create(HTMLElement.prototype),
-  extends: 'h1' 
+buttonProto.print = function() {
+  console.log('Super Button!');
+}
+
+var SuperButton = document.registerElement('super-button', {
+  prototype: buttonProto
 });
 
+var supperButton = document.querySelector('super-button');
+
+supperButton.print();
+```
+
+上面代码在原型对象上定义了一个print方法，然后将其指定为super-button元素的原型。因此，所有supper-button实例都可以调用print这个方法。
+
+如果想让自定义元素继承某种特定的网页元素，就要指定extends属性。比如，想让自定义元素继承h1元素，需要写成下面这样。
+
+```javascript
+var MyElement = document.registerElement('another-heading', {
+  prototype: Object.create(HTMLElement.prototype),
+  extends: 'h1'
+});
 ```
 
 另一个是自定义按钮（button）元素的例子。
 
 ```javascript
-
-var MyButton = document.registerElement('my-button', {
+var MyButton = document.registerElement('super-button', {
   prototype: Object.create(HTMLButtonElement.prototype),
   extends: 'button'
 });
-
 ```
 
-如果要继承一个自定义元素，比如创造`x-foo-extended`继承`x-foo`，也是一样写法。
+如果要继承一个自定义元素（比如`x-foo-extended`继承`x-foo`），也是采用extends属性。
 
 ```javascript
-
 var XFooExtended = document.registerElement('x-foo-extended', {
   prototype: Object.create(HTMLElement.prototype),
   extends: 'x-foo'
 });
-
 ```
 
-总之，如果要自定义一个元素A继承元素B，那么元素A的原型必须是元素B的原型。使用的时候，需要把它写在所继承的网页元素的is属性之中，读起来就是B元素“is”A元素。
+定义了自定义元素以后，使用的时候，有两种方法。一种是直接使用，另一种是间接使用，指定为某个现有元素是自定义元素的实例。
 
 ```html
+<!-- 直接使用 -->
+<supper-button></supper-button>
 
-<h1 is="another-heading">
-  Page title
-</h1>
-
-<button is="my-button">
-
+<!-- 间接使用 -->
+<button is="supper-button"></button>
 ```
 
-自定义元素注册成功以后，document.registerElement方法返回一个构造函数。下一步就可以用这个构造函数，生成自定义元素的实例。
-
-```javascript
-
-document.body.appendChild(new XFoo());
-
-```
-
-上面代码中，XFoo是自定义元素的构造函数，appendChild将它的实例插入DOM。
+总之，如果A元素继承了B元素。那么，B元素的is属性，可以指定B元素是A元素的一个实例。
 
 ### 添加属性和方法
 
 自定义元素的强大之处，就是可以在它上面定义新的属性和方法。
 
 ```javascript
-
 var XFooProto = Object.create(HTMLElement.prototype);
-
 var XFoo = document.registerElement('x-foo', {prototype: XFooProto});
-
 ```
 
 上面代码注册了一个x-foo标签，并且指明原型继承HTMLElement.prototype。现在，我们就可以在原型上面，添加新的属性和方法。
@@ -268,15 +267,14 @@ var XFoo = document.registerElement('x-foo', {
 
 自定义元素的原型有一些属性，用来指定回调函数，在特定事件发生时触发。
 
-- **createdCallback**：实例生成时
-- **attachedCallback**：实例插入HTML文档时
-- **detachedCallback**：实例从HTML文档移除时
-- **attributeChangedCallback(attrName, oldVal, newVal)**：添加、移除、更新属性时
+- **createdCallback**：实例生成时触发
+- **attachedCallback**：实例插入HTML文档时触发
+- **detachedCallback**：实例从HTML文档移除时触发
+- **attributeChangedCallback(attrName, oldVal, newVal)**：实例的属性发生改变时（添加、移除、更新）触发
 
 下面是一个例子。
 
 ```javascript
-
 var proto = Object.create(HTMLElement.prototype);
 
 proto.createdCallback = function() {
@@ -289,7 +287,6 @@ proto.attachedCallback = function() {
 };
 
 var XFoo = document.registerElement('x-foo', {prototype: proto});
-
 ```
 
 利用回调函数，可以方便地在自定义元素中插入HTML语句。
@@ -302,8 +299,8 @@ XFooProto.createdCallback = function() {
   this.innerHTML = "<b>I'm an x-foo-with-markup!</b>";
 };
 
-var XFoo = document.registerElement('x-foo-with-markup', 
-			{prototype: XFooProto});
+var XFoo = document.registerElement('x-foo-with-markup',
+  {prototype: XFooProto});
 
 ```
 

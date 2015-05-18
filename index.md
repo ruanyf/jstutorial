@@ -52,7 +52,6 @@ modifiedOn: 2014-05-18
 - [Text节点和DocumentFragment节点](dom/text.html)
 - [Event对象](dom/event.html)
 - [CSS操作](dom/css.html)
-- [拖放操作](dom/dragndrop.html)
 - [Mutation Observer](dom/mutationobserver.html)
 
 <h2 id="bom">浏览器对象</h2>
