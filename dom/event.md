@@ -895,6 +895,52 @@ var syntheticEvent = new WheelEvent("syntheticWheel", {"deltaX": 4, "deltaMode":
 
 上面代码表示，WheelEvent构造函数接受两个参数，第一个是事件名称，第二个是配置对象。
 
+## 键盘事件（KeyboardEvent对象）
+
+键盘事件用来描述键盘行为。
+
+键盘事件使用KeyboardEvent对象表示，该对象继承了UIEvent和MouseEvent对象。浏览器提供KeyboardEvent构造函数，用来新建键盘事件的实例。
+
+```javascript
+event = new KeyboardEvent(typeArg, KeyboardEventInit);
+```
+
+KeyboardEvent构造函数的第一个参数是一个字符串，表示事件类型，第二个参数是一个事件配置对象，可配置以下字段。
+
+- key，对应KeyboardEvent.key属性，默认为空字符串。
+- ctrlKey，对应KeyboardEvent.ctrlKey属性，默认为false。
+- shiftKey，对应KeyboardEvent.shiftKey属性，默认为false。
+- altKey，对应KeyboardEvent.altKey属性，默认为false。
+- metaKey，对应KeyboardEvent.metaKey属性，默认为false。
+
+下面就是KeyboardEvent实例的属性介绍。
+
+### altKey，ctrlKey，metaKey，shiftKey
+
+以下属性返回一个布尔值，表示是否按下对应的键。
+
+- altKey：alt键
+- ctrlKey：ctrl键
+- metaKey：meta键（mac系统是一个四瓣的小花，windows系统是windows键）
+- shiftKey：shift键
+
+```javascript
+function showChar(e){
+  console.log("ALT: " + e.altKey);
+  console.log("CTRL: " + e.ctrlKey);
+  console.log("Meta: " + e.metaKey);
+  console.log("Meta: " + e.shiftKey);
+}
+```
+
+### key，charCode
+
+key属性返回一个字符串，表示按下的键名。如果同时按下一个控制键和一个符号键，则返回符号键的键名。比如，按下Ctrl+a，则返回a。如果无法识别键名，则返回字符串Unidentified。
+
+主要功能键的键名（不同的浏览器可能有差异）：Backspace，Tab，Enter，Shift，Control，Alt，CapsLock，CapsLock，Esc，Spacebar，PageUp，PageDown，End，Home，Left，Right，Up，Down，PrintScreen，Insert，Del，Win，F1～F12，NumLock，Scroll等。
+
+charCode属性返回一个数值，表示keypress事件按键的Unicode值，keydown和keyup事件不提供这个属性。注意，该属性已经从标准移除，虽然浏览器还支持，但应该尽量不使用。
+
 ## 拖拉事件（DragEvent对象）
 
 拖拉指的是，用户在某个对象上按下鼠标键不放，拖动它到另一个位置，然后释放鼠标键，将该对象放在那里。

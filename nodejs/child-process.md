@@ -14,9 +14,9 @@ exec方法用于执行bash命令。
 
 ```javascript
 
-var childProcess = require('child_process');
+var exec = require('child_process').exec;
 
-var ls = childProcess.exec('ls -l', function (error, stdout, stderr) {
+var ls = exec('ls -l', function (error, stdout, stderr) {
    if (error) {
      console.log(error.stack);
      console.log('Error code: '+error.code);
@@ -73,24 +73,20 @@ exec('node -v', function(error, stdout, stderr) {
 运行后，该文件的输出结果如下。
 
 ```bash
-
 $ node child.js
 
 stdout: v0.11.14
 
 stderr:
-
 ```
 
 exec方法会直接调用bash（`/bin/sh`程序）来解释命令，所以如果有用户输入的参数，exec方法是不安全的。
 
 ```javascript
-
 var path = ";user input";
 child_process.exec('ls -l ' + path, function (err, data) {
-    console.log(data);
+  console.log(data);
 });
-
 ```
 
 上面代码表示，在bash环境下，`ls -l; user input`会直接运行。如果用户输入恶意代码，将会带来安全风险。因此，在有用户输入的情况下，最好不使用exec方法，而是使用execFile方法。
@@ -114,29 +110,35 @@ child_process.execFile('/bin/ls', ['-l', path], function (err, result) {
 
 ## spawn()
 
-spawn方法创建一个子进程来执行特定命令，用法与execFile方法类似，但是没有回调函数，只能通过监听事件，来获取运行结果。它适用于子进程长时间运行的情况。
+spawn方法创建一个子进程来执行特定命令，用法与execFile方法类似，但是没有回调函数，只能通过监听事件，来获取运行结果。它属于异步执行，适用于子进程长时间运行的情况。
 
 ```javascript
-
 var child_process = require('child_process');
 
-var path = ".";
+var path = '.';
 var ls = child_process.spawn('/bin/ls', ['-l', path]);
 ls.stdout.on('data', function (data) {
-    console.log(data.toString());
+  console.log('stdout: ' + data);
 });
 
+ls.stderr.on('data', function (data) {
+  console.log('stderr: ' + data);
+});
+
+ls.on('close', function (code) {
+  console.log('child process exited with code ' + code);
+});
 ```
 
-spawn对象返回一个对象，代表新进程，对该对象的标准输出监听data事件，可以得到输出结果。
+spawn方法接受两个参数，第一个是可执行文件，第二个是参数数组。
+
+spawn对象返回一个对象，代表子进程。该对象部署了EventEmitter接口，它的data事件可以监听，从而得到子进程的输出结果。
 
 spawn方法与exec方法非常类似，只是使用格式略有区别。
 
 ```javascript
-
 child_process.exec(command, [options], callback)
 child_process.spawn(command, [args], [options])
-
 ```
 
 ## fork()

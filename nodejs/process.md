@@ -28,30 +28,27 @@ process对象提供一系列属性，用于返回系统信息。
 
 - **process.argv**：返回当前进程的命令行参数数组。
 - **process.env**：返回一个对象，成员为当前shell的环境变量，比如process.env.HOME。
-- **process.execPath**：node执行文件所在的目录，比如`/usr/lcoal/bin/node`。
 - **process.installPrefix**：node的安装路径的前缀，比如`/usr/local`，则node的执行文件目录为`/usr/local/bin/node`。
 - **process.pid**：当前进程的进程号。
 - **process.platform**：当前系统平台，比如Linux。
-- **process.stdout**：指向标准输出。
-- **process.stdin**：指向标准输入。
-- **process.stderr**：指向标准错误。
 - **process.title**：默认值为“node”，可以自定义该值。
 - **process.version**：Node的版本，比如v0.10.18。
 
 下面是主要属性的介绍。
 
-### process.stdout，process.stdin
+### stdout，stdin，stderr
 
-process.stdout用来控制标准输出，也就是在命令行窗口向用户显示内容。它的write方法等同于console.log。
+以下属性指向系统IO。
 
-{% highlight javascript %}
+**（1）stdout**
 
-exports.log = function() {
-    process.stdout.write(format.apply(this, arguments) + '\n');
+stdout属性指向标准输出（文件描述符1）。它的write方法等同于console.log，可用在标准输出向用户显示内容。
+
+```javascript
+console.log = function(d) {
+  process.stdout.write(d + '\n');
 };
-
-{% endhighlight %}
-
+```
 
 下面代码表示将一个文件导向标准输出。
 
@@ -59,25 +56,25 @@ exports.log = function() {
 var fs = require('fs');
 
 fs.createReadStream('wow.txt')
-    .pipe(process.stdout)
-    ;
+  .pipe(process.stdout);
 ```
 
-由于process.stdout和process.stdin与其他进程的通信，都是流（stream）形式，所以必须通过pipe管道命令中介。
+上面代码中，由于process.stdout和process.stdin与其他进程的通信，都是流（stream）形式，所以必须通过pipe管道命令中介。
 
 ```javascript
 var fs = require('fs');
 var zlib = require('zlib');
 
 fs.createReadStream('wow.txt')
-    .pipe(zlib.createGzip())
-    .pipe(process.stdout)
-;
+  .pipe(zlib.createGzip())
+  .pipe(process.stdout);
 ```
 
 上面代码通过pipe方法，先将文件数据压缩，然后再导向标准输出。
 
-process.stdin代表标准输入。
+**（2）stdin**
+
+stdin代表标准输入（文件描述符0）。
 
 ```javascript
 process.stdin.pipe(process.stdout)
@@ -88,46 +85,65 @@ process.stdin.pipe(process.stdout)
 由于stdin和stdout都部署了stream接口，所以可以使用stream接口的方法。
 
 ```javascript
-
-process.stdin.resume();
 process.stdin.setEncoding('utf8');
-process.stdin.on('data', function(data) {
-  process.stdout.write(data);
+
+process.stdin.on('readable', function() {
+  var chunk = process.stdin.read();
+  if (chunk !== null) {
+    process.stdout.write('data: ' + chunk);
+  }
 });
 
+process.stdin.on('end', function() {
+  process.stdout.write('end');
+});
 ```
 
-### process.argv
+**（3）stderr**
 
-process.argv返回命令行脚本的各个参数组成的数组。第一个成员总是node，第二个成员是脚本文件名，其余成员是脚本文件的参数。
+stderr属性指向标准错误（文件描述符2）。
+
+### argv，execPath，execArgv
+
+argv属性返回一个数组，由命令行执行脚本时的各个参数组成。它的第一个成员总是node，第二个成员是脚本文件名，其余成员是脚本文件的参数。
 
 请看下面的例子，新建一个脚本文件argv.js。
 
-{% highlight javascript %}
-
+```javascript
 // argv.js
 console.log("argv: ",process.argv);
-
-{% endhighlight %}
+```
 
 在命令行下调用这个脚本，会得到以下结果。
 
-{% highlight javascript %}
-
+```javascript
 $ node argv.js a b c
 [ 'node', '/path/to/argv.js', 'a', 'b', 'c' ]
-
-{% endhighlight %}
+```
 
 上面代码表示，argv返回数组的成员依次是命令行的各个部分，真正的参数实际上是从`process.argv[2]`开始。要得到真正的参数部分，可以把argv.js改写成下面这样。
 
-{% highlight javascript %}
-
+```javascript
 // argv.js
 var myArgs = process.argv.slice(2);
 console.log(myArgs);
+```
 
-{% endhighlight %}
+execPath属性返回执行当前脚本的Node二进制文件的绝对路径。
+
+```javascript
+> process.execPath
+'/usr/local/bin/node'
+>
+```
+
+execArgv属性返回一个数组，成员是命令行下执行脚本时，在Node可执行文件与脚本文件之间的命令行参数。
+
+```bash
+# script.js的代码为
+# console.log(process.execArgv);
+$ node --harmony script.js --version
+```
 
 ## 方法
 
@@ -305,20 +321,58 @@ process.on('exit', function(code) {
 
 上面代码在exit事件的回调函数里面，指定了一个下一轮事件循环，所要执行的操作。这是无效的，不会得到执行。
 
+### beforeExit事件
+
+beforeExit事件在Node清空了Event Loop以后，再没有任何待处理的任务时触发。正常情况下，如果没有任何待处理的任务，Node进程会自动退出，设置beforeExit事件的监听函数以后，就可以提供一个机会，再部署一些任务，使得Node进程不退出。
+
+beforeExit事件与exit事件的主要区别是，beforeExit的监听函数可以部署异步任务，而exit不行。
+
+此外，如果是显式终止程序（比如调用process.exit()），或者因为发生未捕获的错误，而导致进程退出，这些场合不会触发beforeExit事件。因此，不能使用该事件替代exit事件。
+
 ### uncaughtException事件
 
-当前进程抛出一个没有被捕捉的意外时，会触发uncaughtException事件。
+当前进程抛出一个没有被捕捉的错误时，会触发uncaughtException事件。
 
-{% highlight javascript %}
+```javascript
+process.on('uncaughtException', function (err) {
+  console.error('An uncaught error occurred!');
+  console.error(err.stack);
+});
+```
 
- process.on('uncaughtException', function (err) {
-   console.error('An uncaught error occurred!');
-   console.error(err.stack);
- });
+部署uncaughtException事件的监听函数，是免于node进程终止的最后措施，否则node就要执行`process.exit()`。出于除错的目的，并不建议发生错误，还保持进程运行。
 
-{% endhighlight %}
+抛出错误之前部署的异步操作，还是会继续执行。只有完成以后，Node进程才会退出。
 
-部署uncaughtException事件的监听函数，是免于node进程终止的最后措施，否则node就要执行`process.exit`。出于除错的目的，并不建议发生错误，还保持进程运行。
+```javascript
+process.on('uncaughtException', function(err) {
+  console.log('Caught exception: ' + err);
+});
+
+setTimeout(function() {
+  console.log('本行依然执行');
+}, 500);
+
+// 下面的表达式抛出错误
+nonexistentFunc();
+```
+
+上面代码中，抛出错误之后，此前setTimeout指定的回调函数亦然会执行。
+
+### 信号事件
+
+操作系统内核向Node进程发出信号，会触发信号事件。实际开发中，主要对SIGTERM和SIGINT信号部署监听函数，这两个信号在非Windows平台会导致进程退出，但是只要部署了监听函数，Node进程收到信号后就不会退出。
+
+```javascript
+// 读取标准输入，这主要是为了不让当前进程退出
+process.stdin.resume();
+
+process.on('SIGINT', function() {
+  console.log('SIGINT信号，按Control-D退出');
+});
+```
+
+上面代码部署了SIGINT信号的监听函数，当用户按下Ctrl-C后，会显示提示文字。
 
 ## 参考链接
 
