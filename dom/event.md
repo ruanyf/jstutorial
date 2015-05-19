@@ -376,7 +376,7 @@ function myEventHandler(event) {
 }
 ```
 
-## Event实例的属性
+以下介绍Event实例的属性和方法。
 
 ### bubbles，eventPhase
 
@@ -522,8 +522,6 @@ var bool = event.isTrusted;
 
 Firefox浏览器中，用户触发的事件会返回true，脚本触发的事件返回false；IE浏览器中，除了使用createEvent方法生成的事件，所有其他事件都返回true；Chrome浏览器不支持该属性。
 
-## Event实例的方法
-
 ### preventDefault()
 
 preventDefault方法取消浏览器对当前事件的默认行为，比如点击链接后，浏览器跳转到指定页面，或者按一下空格键，页面向下滚动一段距离。该方法生效的前提是，事件的cancelable属性为true，如果为false，则调用该方法没有任何效果。
@@ -617,6 +615,8 @@ UIEvent构造函数接受两个参数，第一个参数是事件名称，第二�
 
 ## 鼠标事件（MouseEvent对象）
 
+### 事件类型
+
 鼠标事件指与鼠标相关的事件，主要有以下一些。
 
 - click事件：在一个节点上，按下然后放开一个鼠标键时触发。
@@ -670,6 +670,8 @@ test.addEventListener("mouseover", function( event ) {
 
 上面代码中，由于mouseover事件会冒泡，所以子节点的mouseover事件会触发父节点的监听函数。
 
+### MouseEvent构造函数
+
 鼠标事件使用MouseEvent对象表示，它继承UIEvent对象和Event对象。浏览器提供一个MouseEvent构造函数，用于新建一个MouseEvent实例。
 
 ```javascript
@@ -712,7 +714,7 @@ function simulateClick() {
 
 上面代码生成一个鼠标点击事件，并触发该事件。
 
-## MouseEvent实例的属性
+以下介绍MouseEvent实例的属性。
 
 ### altKey，ctrlKey，metaKey，shiftKey
 
