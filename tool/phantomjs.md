@@ -10,28 +10,29 @@ modifiedOn: 2013-08-07
 
 有时，我们需要浏览器处理网页，但并不需要浏览，比如生成网页的截图、抓取网页数据等操作。[PhantomJS](http://phantomjs.org/)的功能，就是提供一个浏览器环境的命令行接口，你可以把它看作一个“虚拟浏览器”，除了不能浏览，其他与正常浏览器一样。它的内核是WebKit引擎，不提供图形界面，只能在命令行下使用，我们可以用它完成一些特殊的用途。
 
-PhantomJS是二进制程序，需要[安装](http://phantomjs.org/download.html)后使用。使用下面的命令，查看是否安装成功。
+PhantomJS是二进制程序，需要[安装](http://phantomjs.org/download.html)后使用。
 
-{% highlight javascript %}
+```bash
+$ npm install phantomjs -g
+```
 
-phantomjs --version
+使用下面的命令，查看是否安装成功。
 
-{% endhighlight %}
+```bash
+$ phantomjs --version
+```
 
 ## REPL环境
 
-phantomjs提供了一个完整的REPL环境。键入phantomjs，就进入了该环境。
+phantomjs提供了一个完整的REPL环境，允许用户通过命令行与PhantomJS互动。键入phantomjs，就进入了该环境。
 
-{% highlight bash %}
-
+```bash
 $ phantomjs
-
-{% endhighlight %}
+```
 
 这时会跳出一个phantom提示符，就可以输入Javascript命令了。
 
-{% highlight bash %}
-
+```bash
 phantomjs> 1+2
 3
 
@@ -40,15 +41,13 @@ undefined
 
 phantomjs> add(1,2)
 3
-
-{% endhighlight %}
+```
 
 按ctrl+c可以退出该环境。
 
 下面，我们把上面的add()函数写成一个文件add.js文件。
 
-{% highlight javascript %}
-
+```javascript
 // add.js
 
 function add(a,b){ return a+b; }
@@ -56,25 +55,21 @@ function add(a,b){ return a+b; }
 console.log(add(1,2));
 
 phantom.exit();
+```
 
-{% endhighlight %}
+上面的代码中，console.log()的作用是在终端窗口显示，phantom.exit()则表示退出phantomjs环境。一般来说，不管什么样的程序，exit这一行都不能少。
 
-上面的代码中，console.log()的作用是在终端窗口显示，phantom.exit()则表示退出phantomjs环境。一般来说，不管什么样的程序，这一行都不能少。
+现在，运行该程序。
 
-现在，运行该程序：
-
-{% highlight bash %}
-
+```bash
 $ phantomjs add.js
-
-{% endhighlight %}
+```
 
 终端窗口就会显示结果为3。
 
 下面是更多的例子。
 
 ```javascript
-
 phantomjs> phantom.version
 {
   "major": 1,
@@ -93,35 +88,79 @@ phantomjs> window.navigator
   "product": "Gecko",
   // ...
 }
-
 ```
 
-## 基本用法
+## webpage模块
 
-### 加载网页
+webpage模块是PhantomJS的核心模块，用于网页操作。
 
-下面，我们用PhantomJS加载网页。新建一个文本文件page.js，写入下面的代码：
+```javascript
+var webPage = require('webpage');
+var page = webPage.create();
+```
 
-{% highlight javascript %}
+上面代码表示加载PhantomJS的webpage模块，并创建一个实例。
 
-// page.js
+下面是webpage实例的属性和方法介绍。
 
+### open()
+
+open方法用于打开具体的网页。
+
+```javascript
 var page = require('webpage').create();
 
 page.open('http://slashdot.org', function (s) {
-    console.log(s);
-    phantom.exit();
+  console.log(s);
+  phantom.exit();
 });
+```
 
-{% endhighlight %}
+上面代码中，open()方法，用于打开具体的网页。它接受两个参数。第一个参数是网页的网址，这里打开的是著名新闻网站[Slashdot](http://slashdot.org)，第二个参数是回调函数，网页打开后该函数将会运行，它的参数是一个表示状态的字符串，如果打开成功就是success，否则就是fail。
 
-第一行require('webpage').create() 表示加载网页模块，并创建一个实例。
+注意，只要接收到服务器返回的结果，PhantomJS就会报告网页打开成功，而不管服务器是否返回404或500错误。
 
-第二行open()方法，接受两个参数。第一个参数是网页的网址，这里我们打开的是著名新闻网站[Slashdot](http://slashdot.org)，第二个参数是回调函数，当网页打开后，该函数将会运行，它的参数是状态提示（status），如果打开成功，该参数的值就是success。运行page.js，屏幕将会显示success。
+open方法默认使用GET方法，与服务器通信，但是也可以使用其他方法。
 
-### 执行代码
+```javascript
+var webPage = require('webpage');
+var page = webPage.create();
+var postBody = 'user=username&password=password';
 
-打开网页以后，可以使用page实例的evaluate方法，在页面中执行代码。
+page.open('http://www.google.com/', 'POST', postBody, function(status) {
+  console.log('Status: ' + status);
+  // Do other things here...
+});
+```
+
+上面代码中，使用POST方法向服务器发送数据。open方法的第二个参数用来指定HTTP方法，第三个参数用来指定该方法所要使用的数据。
+
+open方法还允许提供配置对象，对HTTP请求进行更详细的配置。
+
+```javascript
+var webPage = require('webpage');
+var page = webPage.create();
+var settings = {
+  operation: "POST",
+  encoding: "utf8",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  data: JSON.stringify({
+    some: "data",
+    another: ["custom", "data"]
+  })
+};
+
+page.open('http://your.custom.api', settings, function(status) {
+  console.log('Status: ' + status);
+  // Do other things here...
+});
+```
+
+### evaluate()
+
+evaluate方法用于打开网页以后，在页面中执行JavaScript代码。
 
 ```javascript
 
@@ -158,32 +197,11 @@ page.open(url, function(status) {
 
 上面代码中，evaluate方法内部有console语句，默认不会输出在命令行。这时，可以用onConsoleMessage方法监听这个事件，进行处理。
 
-### 加载资源
+### includeJs()
 
-如果网页实例向远程服务器请求资源，这时HTTP请求（request）和HTTP回应可以用onResourceRequested和onResourceReceived追踪。
-
-```javascript
-
-var page = require('webpage').create();
-
-page.onResourceRequested = function(request) {
-  console.log('Request ' + JSON.stringify(request, undefined, 4));
-};
-
-page.onResourceReceived = function(response) {
-  console.log('Receive ' + JSON.stringify(response, undefined, 4));
-};
-
-page.open(url);
-
-```
-
-上面代码会以JSON格式，输出所有HTTP请求和HTTP回应的头信息。
-
-page实例的includeJs方法，用于页面加载外部脚本。
+includeJs方法用于页面加载外部脚本，加载结束后就调用指定的回调函数。
 
 ```javascript
-
 var page = require('webpage').create();
 page.open('http://www.sample.com', function() {
   page.includeJs("http://path/to/jquery.min.js", function() {
@@ -193,14 +211,107 @@ page.open('http://www.sample.com', function() {
     phantom.exit()
   });
 });
-
 ```
 
 上面的例子在页面中注入jQuery脚本，然后点击所有的按钮。需要注意的是，由于是异步加载，所以`phantom.exit()`语句要放在`page.includeJs()`方法的回调函数之中，否则页面会过早退出。
 
-### 接受参数
+### render()
 
-修改page.js，使得它可以从命令行接受参数。
+render方法用于将网页保存成图片，参数就是指定的文件名。该方法根据后缀名，将网页保存成不同的格式，目前支持PNG、GIF、JPEG和PDF。
+
+```javascript
+var webPage = require('webpage');
+var page = webPage.create();
+
+page.viewportSize = { width: 1920, height: 1080 };
+page.open("http://www.google.com", function start(status) {
+  page.render('google_home.jpeg', {format: 'jpeg', quality: '100'});
+  phantom.exit();
+});
+```
+
+该方法还可以接受一个配置对象，format字段用于指定图片格式，quality字段用于指定图片质量，最小为0，最大为100。
+
+### viewportSize，zoomFactor
+
+viewportSize属性指定浏览器视口的大小，即网页加载的初始浏览器窗口大小。
+
+```javascript
+var webPage = require('webpage');
+var page = webPage.create();
+
+page.viewportSize = {
+  width: 480,
+  height: 800
+};
+```
+
+viewportSize的Height字段必须指定，不可省略。
+
+zoomFactor属性用来指定渲染时（render方法和renderBase64方法）页面的放大系数，默认是1（即100%）。
+
+```javascript
+var webPage = require('webpage');
+var page = webPage.create();
+
+page.zoomFactor = 0.25;
+page.render('capture.png');
+```
+
+### onResourceRequested
+
+onResourceRequested属性用来指定一个回调函数，当页面请求一个资源时，会触发这个回调函数。它的第一个参数是HTTP请求的元数据对象，第二个参数是发出的网络请求对象。
+
+HTTP请求包括以下字段。
+
+- id：所请求资源的编号
+- method：使用的HTTP方法
+- url：所请求的资源 URL
+- time：一个包含请求时间的Date对象
+- headers：HTTP头信息数组
+
+网络请求对象包含以下方法。
+
+- abort()：终止当前的网络请求，这会导致调用onResourceError回调函数。
+- changeUrl(newUrl)：改变当前网络请求的URL。
+- setHeader(key, value)：设置HTTP头信息。
+
+```javascript
+var webPage = require('webpage');
+var page = webPage.create();
+
+page.onResourceRequested = function(requestData, networkRequest) {
+  console.log('Request (#' + requestData.id + '): ' + JSON.stringify(requestData));
+};
+```
+
+### onResourceReceived
+
+onResourceReceived属性用于指定一个回调函数，当网页收到所请求的资源时，就会执行该回调函数。它的参数就是服务器发来的HTTP回应的元数据对象，包括以下字段。
+
+- id：所请求的资源编号
+- url：所请求的资源的URL
+r- time：包含HTTP回应时间的Date对象
+- headers：HTTP头信息数组
+- bodySize：解压缩后的收到的内容大小
+- contentType：接到的内容种类
+- redirectURL：重定向URL（如果有的话）
+- stage：对于多数据块的HTTP回应，头一个数据块为start，最后一个数据块为end。
+- status：HTTP状态码，成功时为200。
+- statusText：HTTP状态信息，比如OK。
+
+如果HTTP回应非常大，分成多个数据块发送，onResourceReceived会在收到每个数据块时触发回调函数。
+
+```javascript
+var webPage = require('webpage');
+var page = webPage.create();
+
+page.onResourceReceived = function(response) {
+  console.log('Response (#' + response.id + ', stage "' + response.stage + '"): ' + JSON.stringify(response));
+};
+```
+
+## system模块
 
 system模块可以加载操作系统变量，system.args就是参数数组。
 
@@ -232,11 +343,9 @@ page.open(address, function (status) {
 
 使用方法如下：
 
-{% highlight javascript %}
-
-phantomjs page.js http://www.google.com
-
-{% endhighlight %}
+```bash
+$ phantomjs page.js http://www.google.com
+```
 
 ## 应用
 

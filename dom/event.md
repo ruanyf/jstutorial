@@ -615,7 +615,7 @@ UIEvent构造函数接受两个参数，第一个参数是事件名称，第二�
 
 ## 鼠标事件（MouseEvent对象）
 
-### 事件类型
+### 事件种类
 
 鼠标事件指与鼠标相关的事件，主要有以下一些。
 
@@ -899,7 +899,36 @@ var syntheticEvent = new WheelEvent("syntheticWheel", {"deltaX": 4, "deltaMode":
 
 ## 键盘事件（KeyboardEvent对象）
 
-键盘事件用来描述键盘行为。
+键盘事件用来描述键盘行为，主要有keydown、keypress、keyup三个事件。
+
+- keydown：按下键盘时触发该事件。
+- keypress：只要按下的键并非Ctrl、Alt、Shift和Meta，就接着触发keypress事件。
+- keyup：松开键盘时触发该事件。
+
+下面是一个例子，对文本框设置keypress监听函数，只允许输入数字。
+
+```javascript
+// HTML代码为
+// <input type="text"
+//   name="myInput"
+//   onkeypress="return numbersOnly(this, event);"
+//   onpaste="return false;"
+// />
+
+function numbersOnly(oToCheckField, oKeyEvent) {
+  return oKeyEvent.charCode === 0
+    || /\d/.test(String.fromCharCode(oKeyEvent.charCode));
+}
+```
+
+如果用户一直按键不松开，就会连续触发键盘事件，触发的顺序如下。
+
+1. keydown
+1. keypress
+1. keydown
+1. keypress
+1. （重复以上过程）
+1. keyup
 
 键盘事件使用KeyboardEvent对象表示，该对象继承了UIEvent和MouseEvent对象。浏览器提供KeyboardEvent构造函数，用来新建键盘事件的实例。
 
@@ -1509,23 +1538,42 @@ var focusEvent = new FocusEvent(typeArg, focusEventInit);
 
 上面代码中，FocusEvent构造函数的第一个参数为事件类型，第二个参数是可选的，它是一个对象，用来配置FocusEvent对象。UIEvent和Event构造函数的配置项，都可以在该对象设置，其中的relatedTarget字段，用来设置焦点从一个节点变化到另一个节点时的来源节点和目标节点。
 
+## Input事件，Change事件
+
+### Input事件
+
+当input元素、textarea元素的值发生变化时，就会触发input事件。此外，打开contenteditable属性的元素，只要值发生变化，也会触发input事件。
+
+input事件的一个特点，就是会连续触发，比如用户每次按下一次按键，就会触发一次input事件。
+
+该事件继承Event对象，具有target、type、bubbles和cancelable四个属性。
+
+### Change事件
+
+当input元素、select元素、textarea元素的值发生变化时，会触发change事件。它与input事件的最大不同，就是不会连续触发，只有当全部修改完成时才会触发，而且input事件必然会引发change事件。具体来说，分成以下几种情况。
+
+- 激活单选框（radio）或复选框（checkbox）时触发。
+- 用户提交时触发。比如，从下列列表（select）完成选择，在日期或文件输入框完成选择。
+- 当文本框或textarea元素的值发生改变，并且丧失焦点时触发。
+
+该事件继承Event对象，具有target、type、bubbles和cancelable四个属性。
+
+下面是一个例子。
+
+```javascript
+// HTML代码为
+// <select size="1" onchange="changeEventHandler(event);">
+//   <option>chocolate</option>
+//   <option>strawberry</option>
+//   <option>vanilla</option>
+// </select>
+
+function changeEventHandler(event) {
+  console.log('You like ' + event.target.value + ' ice cream.');
+}
+```
+
 ## 事件的类型
-
-DOM支持多种事件。
-
-- UIEvent/UIEvents
-- MouseEvent/MouseEvents
-- MutationEvent/MutationEvents
-- HTMLEvents
-- TextEvent
-- KeyboardEvent
-- CustomEvent
-- Event
-- ProgressEvent
-- AnimationEvent（webkit浏览器为WebKitAnimationEvent）
-- TransitionEvent（webkit浏览器为WebKitTransitionEvent）
-
-有些事件类型的名称，同时存在单数形式和复数形式。这是因为DOM 2.0版采用复数形式，DOM 3.0版统一改为单数形式，浏览器为了保持兼容，就两种形式都支持。
 
 ### 用户界面事件
 
