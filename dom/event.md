@@ -1538,7 +1538,7 @@ var focusEvent = new FocusEvent(typeArg, focusEventInit);
 
 上面代码中，FocusEvent构造函数的第一个参数为事件类型，第二个参数是可选的，它是一个对象，用来配置FocusEvent对象。UIEvent和Event构造函数的配置项，都可以在该对象设置，其中的relatedTarget字段，用来设置焦点从一个节点变化到另一个节点时的来源节点和目标节点。
 
-## Input事件，Change事件
+## 表单事件
 
 ### Input事件
 
@@ -1572,6 +1572,101 @@ function changeEventHandler(event) {
   console.log('You like ' + event.target.value + ' ice cream.');
 }
 ```
+
+### cut事件，copy事件，paste事件
+
+cut事件在将选中的内容从文档中移除，加入剪贴板后触发。
+
+copy事件在选中的内容加入剪贴板后触发。
+
+paste事件在剪贴板内容被粘贴到文档后触发。
+
+这三个事件都有一个clipboardData只读属性。该属性存放剪贴的数据，是一个DataTransfer对象，具体的API接口和操作方法，请参见《触摸事件》的DataTransfer对象章节。
+
+## 文档事件
+
+### BeforeUnloadEvent事件
+
+当窗口将要关闭，或者document和网页资源将要卸载的时候，会触发BeforeUnloadEvent事件。
+
+该事件的默认动作就是关闭当前窗口或文档。如果调用了`event.preventDefault()`，或者对事件对象的returnValue属性赋予一个非空的值，就会跳出一个确认框，询问用户是否真的要离开当前页面。如果用户点击否，该事件将被取消，即窗口不会关闭。
+
+```javascript
+window.addEventListener("beforeunload", function( event ) {
+  event.returnValue = "是否要关闭该窗口？";
+});
+
+// 等同于
+window.addEventListener("beforeunload", function( event ) {
+  event.preventDefault();
+});
+```
+
+returnValue属性的值，将会出现在确认框上面。
+
+### DOMContentLoaded事件
+
+当HTML文档加载并解析完成以后，就会DOMContentLoaded事件。这时，仅仅完成了HTML文档的解析，所有外部资源（样式表、脚本、iframe等等）可能还没有下载结束。
+
+```javascript
+document.addEventListener("DOMContentLoaded", function(event) {
+  console.log("DOM完成生成");
+});
+```
+
+注意，网页的JavaScript脚本是同步执行的，所以一旦发生堵塞，将推迟触发DOMContentLoaded事件。
+
+### readystatechange事件
+
+readystatechange事件在Document对象的readyState属性发生变化时触发。
+
+```javascript
+document.onreadystatechange = function () {
+  if (document.readyState == "interactive") {
+    // ...
+  }
+}
+```
+
+IE8不支持DOMContentLoaded事件，但是支持这个事件。因此，可以使用readystatechange事件，在低版本的IE中代替DOMContentLoaded事件。
+
+### unload事件，load事件
+
+unload事件在窗口关闭或者document对象将要卸载时触发。它的触发顺序排在beforeunload、pagehide事件后面。unload事件只在页面没有被浏览器缓存时才会触发，换言之，如果通过按下“前进/后退”导致页面卸载，并不会触发unload事件。
+
+当unload事件发生时，document对象处于一个特殊状态。所有资源依然存在，但是对用户来说都不可见，UI互动（window.open、alert、confirm方法等）全部无效。这时即使抛出错误，也不能停止文档的卸载。
+
+```javascript
+window.addEventListener('unload', function(event) {
+  console.log('文档将要卸载');
+});
+```
+
+load事件在页面或者一个资源结束加载时触发。注意，页面从浏览器缓存加载，并不会触发这个事件。
+
+### pageshow事件，pagehide事件
+
+pageshow事件在页面加载时触发。它的触发顺序排在load事件后面，并且通过按下“前进/后退”按钮时，进行页面遍历时也会触发。所以，如果指定页面每次加载（不管是不是从浏览器缓存）时都要运行的代码，可以放在这个事件的监听函数。
+
+```javascript
+window.addEventListener('pageshow', function(event) {
+  console.log('pageshow: ', event);
+});
+```
+
+pageshow事件有一个persisted属性，返回一个布尔值。页面第一次加载时，这个属性是false；当页面从缓存加载时，这个属性是true。
+
+```javascript
+window.addEventListener('pageshow', function(event){
+  if (event.persisted) {
+    // ...
+  }
+});
+```
+
+pagehide事件在按下“前进/后退”按钮导致页面卸载时触发。该事件也有一个persisted属性，如果页面没有被浏览器缓存，返回false，否则返回true。如果这个属性为false，则pagehide事件后面立即触发unload事件。
+
+如果页面包含frame或iframe元素，则子页面的pageshow事件和pagehide事件，都会在主页面之前触发。
 
 ## 事件的类型
 
@@ -1800,83 +1895,7 @@ someEl.addEventListener('mouseover', function() {
 
 ```
 
-（10）wheel事件
-
-用户滚动鼠标的滚轮时触发。
-
-### 键盘事件
-
-（1）keydown事件
-
-用户按下某个键时触发，此时用户还没放开这个键。它的触发时间早于系统输入法接收到用户的动作。键盘上的任何键都可以触发该事件。
-
-（2）keypress事件
-
-用户按下能够字符键时触发。如果用户一直按着，这个事件就持续触发。
-
-```javascript
-
-someElement.addEventListener('keypress', function(event) {
-    // ...
-});
-
-```
-
-（3）keyup事件
-
-用户松开某个键时触发。它总是发生在相应的keydown和keypress事件之后。
-
-```javascript
-
-someElement.addEventListener('keyup', function(event) {
-    // ...
-});
-
-```
-
-下面是捕捉用户按下Ctrl+H键的代码。
-
-```javascript
-
-document.addEventListener('keydown', function(event) {
-  if (event.ctrlKey && event.which === 72) {
-    // open help widget
-  }
-});
-
-```
-
-### 触摸事件
-
-（1）touchstart事件
-
-用户开始触摸时触发。
-
-（2）touchend事件
-
-用户结束触摸时触发。
-
-（3）touchmove事件
-
-用户在触摸设备表面移动时触发。
-
-（4）touchenter事件
-
-触摸点进入设定在DOM上的互动区域时触发。
-
-（5）toucheleave事件
-
-触摸点离开设定在DOM上的互动区域时触发。
-
-（6）touchcancel事件
-
-触摸因为某些原因被中断时触发。
-
 ### window、body、frame对象的特有事件
-
-**（1）beforeprint，afterprint**
-
-beforeprint事件在文档打印或打印预览前触发，afterprint事件在之后触发。
 
 **（2）beforeunload**
 
@@ -1921,28 +1940,6 @@ readystatechange事件在readyState属性发生变化时触发。它的发生对
 DOMContentLoaded事件在网页解析完成时触发，此时各种外部资源（resource）还没有被完全下载。也就是说，这个事件比load事件，发生时间早得多。
 
 注意，DOMContentLoaded事件的回调函数，应该部署在所有连接外部样式表的link元素前面。因为，抓取外部样式表的时候，页面是阻塞的，所有脚本都不会执行。如果DOMContentLoaded事件的回调函数，放在外部样式表的后面定义，就会造成所有外部样式表加载完毕之后，回调函数才执行。
-
-### 拖拉事件
-
-（1）drag
-
-drag事件在源对象被拖拉过程中触发。
-
-（2）dragstart，dragend
-
-dragstart事件在用户开始用鼠标拖拉某个对象时触发，dragend事件在结束拖拉时触发。
-
-（3）dragenter，dragleave
-
-dragenter事件在源对象拖拉进目标对象后，在目标对象上触发。dragleave事件在源对象离开目标对象后，在目标对象上触发。
-
-（4）dragover事件
-
-dragover事件在源对象拖拉过另一个对象上方时，在后者上触发。
-
-（5）drop事件
-
-当源对象被拖拉到目标对象上方，用户松开鼠标时，在目标对象上触发drop事件。
 
 ### CSS事件
 
@@ -2018,7 +2015,7 @@ PrefixedEvent(anim, "AnimationEnd", AnimationListener);
 - animationName：动画的名称。
 - elapsedTime：从动画开始播放，到事件发生时所持续的秒数。
 
-## 自定义事件（标准写法）
+## 自定义事件和事件模拟
 
 除了浏览器预定义的那些事件，用户还可以自定义事件，然后手动触发。
 
@@ -2087,32 +2084,11 @@ IE不支持这个方法，可以用下面的垫片函数模拟。
 })();
 ```
 
-### MouseEvent()
+### 事件的模拟
 
-MouseEvent方法是一个构造函数，用来新建鼠标事件。
+有时，需要在脚本中模拟触发某种类型的事件，这时就必须使用这种事件的构造函数。
 
-```javascript
-event = new MouseEvent(typeArg, mouseEventInit);
-```
-
-MouseEvent构造函数的第一个参数是事件名称（可能的值包括click、mousedown、mouseup、mouseover、mousemove、mouseout），第二个参数是一个事件初始化对象。该对象可以配置以下属性。
-
-- detail，鼠标点击的次数，等同于Event.detail属性。
-- screenX，鼠标相对于屏幕的水平坐标，默认为0，等同于Event.screenX属性。
-- screenY，鼠标相对于屏幕的垂直坐标，默认为0，等同于Event.screenY属性。
-- clientX，鼠标相对于窗口的水平坐标，默认为0，等同于Event.clientX属性。
-- clientY，鼠标相对于窗口的垂直坐标，默认为0，等同于Event.clientY属性。
-- ctrlKey，是否按下ctrl键，默认为false，等同于Event.ctrlKey属性。
-- shiftKey，是否按下shift键，默认为false，等同于Event.shiftKey属性。
-- altKey，是否按下alt键，默认为false，等同于Event.altKey属性。
-- metaKey，是否按下meta键，默认为false，等同于Event.metaKey属性。
-- button，按下了哪一个鼠标按键，默认为0。-1表示没有按键，0表示按下主键（通常是左键），1表示按下辅助键（通常是中间的键），2表示按下次要键（通常是右键）。
-- relatedTarget，等同于event.relatedTarget属性，只有鼠标事件需要用到该属性，其他事件类型都传入null。
-- bubbles，布尔值，是否冒泡，默认为false，等同于Event.bubbles属性。
-- cancelable，布尔值，是否可取消，默认为false，等同于Event.cancelable属性。
-- view，事件的视图，一般是window或document.defaultView，等同于Event.view属性。
-
-下面是一个例子。
+下面是一个通过MouseEvent构造函数，模拟触发click鼠标事件的例子。
 
 ```javascript
 function simulateClick() {
@@ -2125,13 +2101,11 @@ function simulateClick() {
 }
 ```
 
-上面代码生成一个鼠标点击事件，并触发该事件。
+### 自定义事件的老式写法
 
-## 自定义事件（老式写法）
+老式浏览器不一定支持各种类型事件的构造函数。因此，有时为了兼容，会用到一些非标准的方法。这些方法未来会被逐步淘汰，但是目前浏览器还广泛支持。除非是为了兼容老式浏览器，尽量不要使用。
 
-以下的方法都不是标准，未来会被逐步淘汰，但是目前浏览器还广泛支持。除非是为了兼容老式浏览器，否则不要使用使用下面的这些方法。
-
-### document.createEvent()
+**（1）document.createEvent()**
 
 document.createEvent方法用来新建指定类型的事件。它所生成的Event实例，可以传入dispatchEvent方法。
 
@@ -2161,7 +2135,7 @@ createEvent方法接受一个字符串作为参数，可能的值参见下表“
 |CustomEvent|event.initCustomEvent|
 |KeyboardEvent|event.initKeyEvent|
 
-### event.initEvent()
+**（2）event.initEvent()**
 
 事件对象的initEvent方法，用来初始化事件对象，还能向事件对象添加属性。该方法的参数必须是一个使用`Document.createEvent()`生成的Event实例，而且必须在dispatchEvent方法之前调用。
 
@@ -2178,7 +2152,11 @@ initEvent方法可以接受四个参数。
 - cancelable：事件是否能被取消，格式为布尔值。可以使用event.cancelable属性读取它的值。
 - option：为事件对象指定额外的属性。
 
-### event.initMouseEvent()
+### 事件模拟的老式写法
+
+事件模拟的非标准做法是，对document.createEvent方法生成的事件对象，使用对应的事件初始化方法进行初始化。比如，click事件对象属于MouseEvent对象，也属于UIEvent对象，因此要用initMouseEvent方法或initUIEvent方法进行初始化。
+
+**（1）event.initMouseEvent()**
 
 initMouseEvent方法用来初始化Document.createEvent方法新建的鼠标事件。该方法必须在事件新建（document.createEvent方法）之后、触发（dispatchEvent方法）之前调用。
 
@@ -2209,7 +2187,7 @@ divElement.dispatchEvent(simulateDivClick);
 
 {% endhighlight %}
 
-### UIEvent.initUIEvent()
+**（2）UIEvent.initUIEvent()**
 
 `UIEvent.initUIEvent()`用来初始化一个UI事件。该方法必须在事件新建（document.createEvent方法）之后、触发（dispatchEvent方法）之前调用。
 
