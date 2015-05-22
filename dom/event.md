@@ -878,9 +878,9 @@ inner.addEventListener("mouseleave", function (){
 // 离开inner 进入outer
 ```
 
-## 滚轮事件（WheelEvent对象）
+### wheel事件
 
-滚轮事件是与鼠标滚轮相关的事件，目前只有一个wheel事件。用户滚动鼠标的滚轮，就触发这个事件。
+wheel事件是与鼠标滚轮相关的事件，目前只有一个wheel事件。用户滚动鼠标的滚轮，就触发这个事件。
 
 该事件除了继承了MouseEvent、UIEvent、Event的属性，还有几个自己的属性。
 
@@ -889,13 +889,11 @@ inner.addEventListener("mouseleave", function (){
 - deltaZ：返回一个数值，表示滚轮的Z轴滚动量。
 - deltaMode：返回一个数值，表示滚动的单位，适用于上面三个属性。0表示像素，1表示行，2表示页。
 
-滚轮事件使用一个WheelEvent对象表示，该对象继承MouseEvent对象，因此也就继承了UIEvent和Event对象。浏览器提供一个WheelEvent构造函数，可以用来生成滚轮事件的实例。
+浏览器提供一个WheelEvent构造函数，可以用来生成滚轮事件的实例。它接受两个参数，第一个是事件名称，第二个是配置对象。
 
 ```javascript
 var syntheticEvent = new WheelEvent("syntheticWheel", {"deltaX": 4, "deltaMode": 0});
 ```
-
-上面代码表示，WheelEvent构造函数接受两个参数，第一个是事件名称，第二个是配置对象。
 
 ## 键盘事件（KeyboardEvent对象）
 
@@ -971,6 +969,30 @@ key属性返回一个字符串，表示按下的键名。如果同时按下一�
 主要功能键的键名（不同的浏览器可能有差异）：Backspace，Tab，Enter，Shift，Control，Alt，CapsLock，CapsLock，Esc，Spacebar，PageUp，PageDown，End，Home，Left，Right，Up，Down，PrintScreen，Insert，Del，Win，F1～F12，NumLock，Scroll等。
 
 charCode属性返回一个数值，表示keypress事件按键的Unicode值，keydown和keyup事件不提供这个属性。注意，该属性已经从标准移除，虽然浏览器还支持，但应该尽量不使用。
+
+## 进度事件（ProgressEvent对象）
+
+进度事件用来描述一个事件进展的过程，比如XMLHttpRequest对象发出的HTTP请求的过程、&lt;img&gt;、&lt;audio&gt;、&lt;video&gt;、&lt;style&gt;、&lt;link&gt;加载外部资源的过程。
+
+进度事件使用ProgressEvent对象表示。ProgressEvent实例有以下属性。
+
+- lengthComputable：返回一个布尔值，表示当前进度是否具有可计算的长度。如果为false，就表示当前进度无法测量。
+
+- total：返回一个数值，表示当前进度的总长度。如果是通过HTTP下载某个资源，表示内容本身的长度，不含HTTP头部的长度。如果lengthComputable属性为false，则total属性就无法取得正确的值。
+
+- loaded：返回一个数值，表示当前进度已经完成的数量。该属性除以total属性，就可以得到目前进度的百分比。
+
+浏览器提供一个ProgressEvent构造函数，用来生成进度事件的实例。
+
+```javascript
+progressEvent = new ProgressEvent(type, {
+  lengthComputable: aBooleanValue,
+  loaded: aNumber,
+  total: aNumber
+});
+```
+
+上面代码中，ProgressEvent构造函数的第一个参数是事件类型（字符串），第二个参数是配置对象，用来指定lengthComputable属性（默认值为false）、loaded属性（默认值为0）、total属性（默认值为0）。
 
 ## 拖拉事件（DragEvent对象）
 
@@ -1602,23 +1624,23 @@ window.addEventListener("beforeunload", function( event ) {
 });
 ```
 
-returnValue属性的值，将会出现在确认框上面。
+returnValue属性的值，将会成为确认框的提示文字。
 
 ### DOMContentLoaded事件
 
-当HTML文档加载并解析完成以后，就会DOMContentLoaded事件。这时，仅仅完成了HTML文档的解析，所有外部资源（样式表、脚本、iframe等等）可能还没有下载结束。
+当HTML文档下载并解析完成以后，就会在document对象上触发DOMContentLoaded事件。这时，仅仅完成了HTML文档的解析（整张页面的DOM生成），所有外部资源（样式表、脚本、iframe等等）可能还没有下载结束。也就是说，这个事件比load事件，发生时间早得多。
 
 ```javascript
 document.addEventListener("DOMContentLoaded", function(event) {
-  console.log("DOM完成生成");
+  console.log("DOM生成");
 });
 ```
 
-注意，网页的JavaScript脚本是同步执行的，所以一旦发生堵塞，将推迟触发DOMContentLoaded事件。
+注意，网页的JavaScript脚本是同步执行的，所以定义DOMContentLoaded事件的回调函数，应该放在所有脚本的最前面。否则脚本一旦发生堵塞，将推迟触发DOMContentLoaded事件。
 
 ### readystatechange事件
 
-readystatechange事件在Document对象的readyState属性发生变化时触发。
+readystatechange事件发生在Document对象和XMLHttpRequest对象，当它们的readyState属性发生变化时触发。
 
 ```javascript
 document.onreadystatechange = function () {
@@ -1667,6 +1689,62 @@ window.addEventListener('pageshow', function(event){
 pagehide事件在按下“前进/后退”按钮导致页面卸载时触发。该事件也有一个persisted属性，如果页面没有被浏览器缓存，返回false，否则返回true。如果这个属性为false，则pagehide事件后面立即触发unload事件。
 
 如果页面包含frame或iframe元素，则子页面的pageshow事件和pagehide事件，都会在主页面之前触发。
+
+### hashchange事件
+
+hashchange事件在URL的hash部分（即#号后面的部分，包括#号）发生变化时触发。如果老式浏览器不支持该属性，可以通过定期检查location.hash属性，模拟该事件，下面就是代码。
+
+```javascript
+(function(window) {
+  if ( "onhashchange" in window.document.body ) { return; }
+
+  var location = window.location;
+  var oldURL = location.href;
+  var oldHash = location.hash;
+
+  // 每隔100毫秒检查一下URL的hash
+  setInterval(function() {
+    var newURL = location.href;
+    var newHash = location.hash;
+
+    if ( newHash != oldHash && typeof window.onhashchange === "function" ) {
+      window.onhashchange({
+        type: "hashchange",
+        oldURL: oldURL,
+        newURL: newURL
+      });
+
+      oldURL = newURL;
+      oldHash = newHash;
+    }
+  }, 100);
+
+})(window);
+```
+
+hashchange事件对象除了继承Event对象，还有oldURL属性和newURL属性，分别表示变化前后的URL。
+
+### popstate事件
+
+popstate事件在浏览器的history对象的当前记录发生显式切换时触发。注意，调用history.pushState()或history.replaceState()，并不会触发popstate事件。该事件只在用户在history记录之间显式切换时触发，比如鼠标点击“后退/前进”按钮，或者在脚本中调用history.back()、history.forward()、history.go()时触发。
+
+该事件对象有一个state属性，保存history.pushState方法和history.replaceState方法为当前记录添加的state对象。
+
+```javascript
+window.onpopstate = function(event) {
+  console.log("state: " + event.state);
+};
+history.pushState({page: 1}, "title 1", "?page=1");
+history.pushState({page: 2}, "title 2", "?page=2");
+history.replaceState({page: 3}, "title 3", "?page=3");
+history.back(); // state: {"page":1}
+history.back(); // state: null
+history.go(2);  // state: {"page":3}
+```
+
+上面代码中，pushState方法向history添加了两条记录，然后replaceState方法替换掉当前记录。因此，连续两次back方法，会让当前条目退回到原始网址，它没有附带state对象，所以事件的state属性为null，然后前进两条记录，又回到replaceState方法添加的记录。
+
+浏览器对于页面首次加载，是否触发popstate事件，处理不一样，Firefox不触发该事件。
 
 ## 事件的类型
 
@@ -1929,40 +2007,27 @@ offline事件在浏览器离线时触发，online事件在浏览器重新连线�
 
 pagehide事件与pageshow事件类似，当用户通过“前进/后退”按钮，离开当前页面时触发。它与unload事件的区别在于，使用unload事件之后，页面不会保存在缓存中，而使用pagehide事件，页面会保存在缓存中。pagehide事件的event对象有一个persisted属性，将这个属性设为true，就表示页面要保存在缓存中；设为false，表示网页不保存在缓存中，这时如果设置了unload事件的回调函数，该函数将在pagehide事件后立即运行。
 
-### document对象的特有事件
+## CSS事件
 
-（1）readystatechange
+### transitionEnd事件
 
-readystatechange事件在readyState属性发生变化时触发。它的发生对象是document和XMLHttpRequest对象。
+CSS的过渡效果（transition）结束后，触发该事件。
 
-（2）DOMContentLoaded
-
-DOMContentLoaded事件在网页解析完成时触发，此时各种外部资源（resource）还没有被完全下载。也就是说，这个事件比load事件，发生时间早得多。
-
-注意，DOMContentLoaded事件的回调函数，应该部署在所有连接外部样式表的link元素前面。因为，抓取外部样式表的时候，页面是阻塞的，所有脚本都不会执行。如果DOMContentLoaded事件的回调函数，放在外部样式表的后面定义，就会造成所有外部样式表加载完毕之后，回调函数才执行。
-
-### CSS事件
-
-（1）transitionEnd事件
-
-CSS变动的过渡（transition）结束后，触发该事件。
-
-{% highlight javascript %}
-
-div.addEventListener('webkitTransitionEnd', onTransitionEnd);
-div.addEventListener('mozTransitionEnd', onTransitionEnd);
-div.addEventListener('msTransitionEnd', onTransitionEnd);
-div.addEventListener('transitionEnd', onTransitionEnd);
+```javascript
+el.addEventListener("transitionend", onTransitionEnd, false);
 
 function onTransitionEnd() {
   console.log('Transition end');
 }
+```
 
-{% endhighlight %}
+transitionEnd的事件对象具有以下属性。
 
-目前，该事件需要添加浏览器前缀。另外，它与其他CSS事件一样，也存在向上传播的冒泡阶段。
+- propertyName：发生transition效果的CSS属性名。
+- elapsedTime：transition效果持续的秒数，不含transition-delay的时间。
+- pseudoElement：如果transition效果发生在伪元素，会返回该伪元素的名称，以“::”开头。如果不发生在伪元素上，则返回一个空字符串。
 
-**（2）animationstart事件，animationend事件，animationiteration事件**
+### animationstart事件，animationend事件，animationiteration事件
 
 animation动画开始时，触发animationstart事件；结束时，触发animationend事件。
 
