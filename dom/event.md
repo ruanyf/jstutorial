@@ -1531,13 +1531,7 @@ function handleMove(evt) {
 - focusin：Element节点将要获得焦点时触发，该事件会冒泡，但Firefox不支持该事件。
 - focusout：Element节点将要失去焦点时触发，该事件会冒泡，但Firefox不支持该事件。
 
-以上四个事件都会生成一个FocusEvent事件对象。该对象有以下属性。
-
-- target：事件对象的目标节点。
-- type：事件的类型，格式为字符串。
-- bubbles：返回一个布尔值，表示该事件是否会冒泡。
-- cancelable：返回一个布尔值，表示是否可以取消该事件。
-- relatedTarget：返回一个Element节点。对于focusin事件，表示失去焦点的节点；对于focusout事件，表示将要接受焦点的节点；对于focus和blur事件，该属性返回null。
+这四个事件的事件对象，带有target属性（返回事件的目标节点）和relatedTarget属性（返回一个Element节点）。对于focusin事件，relatedTarget属性表示失去焦点的节点；对于focusout事件，表示将要接受焦点的节点；对于focus和blur事件，该属性返回null。
 
 由于focus和blur事件不会冒泡，只能在捕获阶段触发，所以addEventListener方法的第三个参数需要设为true。
 
@@ -1552,13 +1546,13 @@ form.addEventListener("blur", function( event ) {
 
 上面代码设置表单的文本输入框，在接受焦点时设置背景色，在失去焦点时去除背景色。
 
-FocusEvent对象继承Event对象和UIEvent对象。浏览器提供一个FocusEvent构造函数，可以用它生成FocusEvent实例。
+浏览器提供一个FocusEvent构造函数，可以用它生成焦点事件的实例。
 
 ```javascript
 var focusEvent = new FocusEvent(typeArg, focusEventInit);
 ```
 
-上面代码中，FocusEvent构造函数的第一个参数为事件类型，第二个参数是可选的，它是一个对象，用来配置FocusEvent对象。UIEvent和Event构造函数的配置项，都可以在该对象设置，其中的relatedTarget字段，用来设置焦点从一个节点变化到另一个节点时的来源节点和目标节点。
+上面代码中，FocusEvent构造函数的第一个参数为事件类型，第二个参数是可选的配置对象，用来配置FocusEvent对象。
 
 ## 表单事件
 
@@ -2029,16 +2023,9 @@ transitionEnd的事件对象具有以下属性。
 
 ### animationstart事件，animationend事件，animationiteration事件
 
-animation动画开始时，触发animationstart事件；结束时，触发animationend事件。
+CSS动画开始时，会触发animationstart事件；结束时，会触发animationend事件。当CSS动画开始新一轮循环时，就会触发animationiteration事件。但是，animation-iteration-count属性等于1时，该事件不触发，即只播放一轮的CSS动画，不会触发animationiteration事件。
 
-{% highlight javascript %}
-
-var anim = document.getElementById("anim");
-anim.addEventListener("animationstart", AnimationListener, false);
-
-{% endhighlight %}
-
-当CSS动画开始新一轮循环时，就会触发animationiteration事件。也就是说，除了CSS动画的第一轮播放，其他每轮的开始时，都会触发该事件。
+这三个事件的事件对象，都有animationName属性（返回产生过渡效果的CSS属性名）和elapsedTime属性（动画已经运行的秒数）。对于animationstart事件，elapsedTime属性等于0，除非animation-delay属性等于负值。
 
 {% highlight javascript %}
 
@@ -2047,38 +2034,6 @@ div.addEventListener('animationiteration', function() {
 });
 
 {% endhighlight %}
-
-这三个事件，除了Firefox浏览器不需要前缀，Chrome、Opera和IE都需要浏览器前缀，且大小写不一致。
-
-- animationstart：写为animationstart、webkitAnimationStart、oanimationstart和MSAnimationStart。
-- animationiteration：写为animationiteration、webkitAnimationIteration、oanimationiteration和MSAnimationIteration。
-- animationend：写为animationend、webkitAnimationEnd、oanimationend和MSAnimationEnd。
-
-下面是一个解决浏览器前缀的函数。
-
-{% highlight javascript %}
-
-var pfx = ["webkit", "moz", "MS", "o", ""];
-
-function PrefixedEvent(element, type, callback) {
-	for (var p = 0; p < pfx.length; p++) {
-		if (!pfx[p]) type = type.toLowerCase();
-		element.addEventListener(pfx[p]+type, callback, false);
-	}
-}
-
-// 用法
-
-PrefixedEvent(anim, "AnimationStart", AnimationListener);
-PrefixedEvent(anim, "AnimationIteration", AnimationListener);
-PrefixedEvent(anim, "AnimationEnd", AnimationListener);
-
-{% endhighlight %}
-
-这三个事件的回调函数，接受一个事件对象作为参数。该事件对象除了标准属性以外，还有两个与动画相关的属性。
-
-- animationName：动画的名称。
-- elapsedTime：从动画开始播放，到事件发生时所持续的秒数。
 
 ## 自定义事件和事件模拟
 
