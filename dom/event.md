@@ -10,7 +10,9 @@ modifiedOn: 2013-12-19
 
 ## EventTarget接口
 
-DOM节点关于事件的方法（监听和触发），都定义在EventTarget接口。Element节点、document节点和window对象，都部署了这个接口。此外，XMLHttpRequest、AudioNode、AudioContext等浏览器内置对象，也部署了这个接口。
+DOM的事件操作（监听和触发），都定义在EventTarget接口。Element节点、document节点和window对象，都部署了这个接口。此外，XMLHttpRequest、AudioNode、AudioContext等浏览器内置对象，也部署了这个接口。
+
+该接口就是三个方法，addEventListener和removeEventListener用于绑定和移除监听函数，dispatchEvent用于触发事件。
 
 ### addEventListener()
 
@@ -20,11 +22,13 @@ addEventListener方法用于在当前节点或对象上，定义一个特定事�
 target.addEventListener(type, listener[, useCapture]);
 ```
 
-addEventListener方法接受三个参数。
+上面是使用格式，addEventListener方法接受三个参数。
 
 - type，事件名称，大小写不敏感。
+
 - listener，监听函数。指定事件发生时，会调用该监听函数。
-- useCapture，回调函数是否在捕获阶段（capture）触发。该参数是一个布尔值，默认为false（表示回调函数只在冒泡阶段被触发）。在较新版本的浏览器中，该参数是可选的，为了保持兼容，建议总是写上该参数。
+
+- useCapture，监听函数是否在捕获阶段（capture）触发（参见后文《事件的传播》部分）。该参数是一个布尔值，默认为false（表示监听函数只在冒泡阶段被触发）。老式浏览器规定该参数必写，较新版本的浏览器允许该参数可选。为了保持兼容，建议总是写上该参数。
 
 下面是一个例子。
 
@@ -36,6 +40,8 @@ function hello(){
 var button = document.getElementById("btn");
 button.addEventListener('click', hello, false);
 ```
+
+上面代码中，addEventListener方法为button节点，绑定click事件的监听函数hello，该函数只在冒泡阶段触发。
 
 可以使用addEventListener方法，为当前对象的同一个事件，添加多个监听函数。这些函数按照添加顺序触发，即先添加先触发。如果为同一个事件多次添加同一个监听函数，该函数只会执行一次，多余的添加将自动被去除（不必使用removeEventListener方法手动去除）。
 
@@ -110,9 +116,9 @@ var canceled = !cb.dispatchEvent(event);
 
 ## 监听函数
 
-监听函数是事件发生时，程序所要执行的函数。它是事件驱动编程模式的主要编程方式。
+监听函数（listener）是事件发生时，程序所要执行的函数。它是事件驱动编程模式的主要编程方式。
 
-DOM允许指定各种事件的回调函数，使用的方法有三种。
+DOM提供三种方法，可以用来为事件绑定监听函数。
 
 ### HTML标签的on-属性
 
@@ -124,7 +130,7 @@ HTML语言允许在元素标签的属性中，直接定义某些事件的监听�
 <div onclick="console.log('触发事件')">
 ```
 
-上面代码为body节点的load事件、div节点的click事件，指定了回调函数。
+上面代码为body节点的load事件、div节点的click事件，指定了监听函数。
 
 使用这个方法指定的监听函数，只会在冒泡阶段触发。
 
@@ -138,7 +144,7 @@ el.setAttribute('onclick', 'doSomething()');
 
 ### Element节点的事件属性
 
-Element节点有事件属性，可以定义回调函数。
+Element节点有事件属性，可以定义监听函数。
 
 ```javascript
 window.onload = doSomething;
@@ -152,7 +158,7 @@ div.onclick = function(event){
 
 ### addEventListener方法
 
-通过Element节点、document节点、window对象的addEventListener方法，也可以定义事件的回调函数。
+通过Element节点、document节点、window对象的addEventListener方法，也可以定义事件的监听函数。
 
 ```javascript
 window.addEventListener('load', doSomething, false);
@@ -160,7 +166,7 @@ window.addEventListener('load', doSomething, false);
 
 addEventListener方法的详细介绍，参见本节EventTarget接口的部分。
 
-在上面三种方法中，第一种“HTML标签的on-属性”，违反了HTML与JavaScript代码相分离的原则；第二种“Element节点的事件属性”的缺点是，同一个事件只能定义一个回调函数，也就是说，如果定义两次onclick属性，后一次定义会覆盖前一次。因此，这两种方法都不推荐使用，除非是为了程序的兼容问题，因为所有浏览器都支持这两种方法。
+在上面三种方法中，第一种“HTML标签的on-属性”，违反了HTML与JavaScript代码相分离的原则；第二种“Element节点的事件属性”的缺点是，同一个事件只能定义一个监听函数，也就是说，如果定义两次onclick属性，后一次定义会覆盖前一次。因此，这两种方法都不推荐使用，除非是为了程序的兼容问题，因为所有浏览器都支持这两种方法。
 
 addEventListener是推荐的指定监听函数的方法。它有如下优点：
 
@@ -249,15 +255,15 @@ element.setAttribute('onclick', 'doSomething()');
 
 ### 传播的三个阶段
 
-当一个事件发生以后，它会在不同的DOM对象之间传播（propagation）。这种传播分成三个阶段：
+当一个事件发生以后，它会在不同的DOM节点之间传播（propagation）。这种传播分成三个阶段：
 
-- **第一阶段**：从文档的根元素（html元素）传导到目标元素，称为“捕获阶段”（capture phase）。
+- **第一阶段**：从window对象传导到目标节点，称为“捕获阶段”（capture phase）。
 
-- **第二阶段**：在目标元素上触发，称为“目标阶段”（target phase）。
+- **第二阶段**：在目标节点上触发，称为“目标阶段”（target phase）。
 
-- **第三阶段**：从目标元素传导回文档的根元素（html元素），称为“冒泡阶段”（bubbling phase）。
+- **第三阶段**：从目标节点传导回window对象，称为“冒泡阶段”（bubbling phase）。
 
-这种三阶段的传播模型，会使得一个事件在多个元素上触发。比如，假设div元素之中嵌套一个p元素。
+这种三阶段的传播模型，会使得一个事件在多个节点上触发。比如，假设div节点之中嵌套一个p节点。
 
 ```html
 <div>
@@ -265,7 +271,7 @@ element.setAttribute('onclick', 'doSomething()');
 </div>
 ```
 
-如果对这两个元素的click事件都设定回调函数，则click事件会被触发四次。
+如果对这两个节点的click事件都设定监听函数，则click事件会被触发四次。
 
 ```javascript
 var phases = {
@@ -295,20 +301,20 @@ function callback(event) {
 // Tag: 'DIV'. EventPhase: 'bubble'
 ```
 
-上面代码表示，click事件被触发了四次。
+上面代码表示，click事件被触发了四次：p节点的捕获阶段和冒泡阶段各1次，div节点的捕获阶段和冒泡阶段各1次。
 
 1. 捕获阶段：事件从div向p传播时，触发div的click事件；
 2. 目标阶段：事件从div到达p时，触发p的click事件；
 3. 目标阶段：事件离开p时，触发p的click事件；
 4. 冒泡阶段：事件从p传回div时，再次触发div的click事件。
 
-注意，用户点击网页的时候，浏览器总是假定click事件的目标对象，就是嵌套最深的那个元素（嵌套在div元素中的p元素）。
+注意，用户点击网页的时候，浏览器总是假定click事件的目标节点，就是点击位置的嵌套最深的那个节点（嵌套在div节点的p节点）。
 
 事件传播的最上层对象是window，接着依次是document，html（document.documentElement）和body（document.dody）。也就是说，如果body元素中有一个div元素，点击该元素。事件的传播顺序，在捕获阶段依次为window、document、html、body、div，在冒泡阶段依次为div、body、html、document、window。
 
 ### 事件的代理
 
-由于事件会在冒泡阶段向上传播到父元素，因此可以把子元素的回调函数定义在父元素上，由父元素的回调函数统一处理多个子元素的事件。这种方法叫做事件的代理（delegation）。
+由于事件会在冒泡阶段向上传播到父节点，因此可以把子节点的监听函数定义在父节点上，由父节点的监听函数统一处理多个子元素的事件。这种方法叫做事件的代理（delegation）。
 
 ```javascript
 var ul = document.querySelector('ul');
@@ -320,7 +326,7 @@ ul.addEventListener('click', function(event) {
 });
 ```
 
-上面代码的click事件的回调函数是定义在ul元素上的，但是实际上，它处理的是子元素li的click事件。这样做的好处是，只要定义一个回调函数，就能处理多个子元素的事件，而且以后再添加子元素，回调函数依然有效。
+上面代码的click事件的监听函数定义在ul节点，但是实际上，它处理的是子节点li的click事件。这样做的好处是，只要定义一个监听函数，就能处理多个子节点的事件，而且以后再添加子节点，监听函数依然有效。
 
 如果希望事件到某个节点为止，不再传播，可以使用事件对象的stopPropagation方法。
 
@@ -330,9 +336,9 @@ p.addEventListener('click', function(event) {
 });
 ```
 
-使用上面的代码以后，click事件在冒泡阶段到达p元素以后，就不再向上（父元素的方向）传播了。
+使用上面的代码以后，click事件在冒泡阶段到达p节点以后，就不再向上（父节点的方向）传播了。
 
-但是，stopPropagation方法不会阻止p元素上的其他click事件的回调函数。如果想要不再触发那些回调函数，可以使用stopImmediatePropagation方法。
+但是，stopPropagation方法不会阻止p节点上的其他click事件的监听函数。如果想要不再触发那些监听函数，可以使用stopImmediatePropagation方法。
 
 ```javascript
 p.addEventListener('click', function(event) {
@@ -346,7 +352,7 @@ p.addEventListener('click', function(event) {
 
 ## Event对象
 
-事件发生以后，会生成一个事件对象，在DOM中传递，作为参数传给回调函数。浏览器原生提供一个Event对象，所有的事件对象都是这个对象的实例，或者说继承了`Event.prototype`对象。Event本身就是一个构造函数，可以用来生成新的事件。
+事件发生以后，会生成一个事件对象，在DOM中传递，作为参数传给监听函数。浏览器原生提供一个Event对象，所有的事件对象都是这个对象的实例，或者说继承了`Event.prototype`对象。Event本身就是一个构造函数，可以用来生成新的事件。
 
 ```javascript
 event = new Event(typeArg, eventInit);
@@ -452,7 +458,7 @@ function hide(e){
 para.addEventListener('click', hide, false);
 ```
 
-上面代码中，点击para节点，该节点会不可见。另外，在回调函数中，currentTarget属性实际上等同于this对象。
+上面代码中，点击para节点，该节点会不可见。另外，在监听函数中，currentTarget属性实际上等同于this对象。
 
 **（2）target**
 
@@ -541,7 +547,7 @@ cb.addEventListener(
 );
 ```
 
-上面代码为点击单选框的事件，设置回调函数，取消默认行为。由于浏览器的默认行为是选中单选框，所以这段代码会导致无法选中单选框。
+上面代码为点击单选框的事件，设置监听函数，取消默认行为。由于浏览器的默认行为是选中单选框，所以这段代码会导致无法选中单选框。
 
 利用这个方法，可以为文本输入框设置校验条件。如果用户的输入不符合条件，就无法将字符输入文本框。
 
@@ -559,7 +565,7 @@ function checkName(e) {
 
 ### stopPropagation()
 
-stopPropagation方法阻止事件在DOM中继续传播，防止再触发定义在别的节点上的监听函数，但是不包括在当前节点上新定义的事件回调函数。
+stopPropagation方法阻止事件在DOM中继续传播，防止再触发定义在别的节点上的监听函数，但是不包括在当前节点上新定义的事件监听函数。
 
 ```javascript
 function stopEvent(e) {
@@ -592,27 +598,6 @@ el.addEventListener('click', l2, false);
 
 上面代码在el节点上，为click事件添加了两个监听函数l1和l2。由于l1调用了stopImmediatePropagation方法，所以l2不会被调用。
 
-## UI事件（UIEvent对象）
-
-UI事件表示用户界面的事件，它是一个大类，由以下八类事件组成。
-
-- 鼠标事件（MouseEvent对象）
-- 滚轮事件（WheelEvent对象）
-- 拖拉事件（DragEvent对象）
-- 触摸事件（TouchEvent对象）
-- 焦点事件（FocusEvent对象）
-- 键盘事件（KeyboardEvent对象）
-- 输入事件（InputEvent对象）
-- 作文事件（CompositionEvent对象）
-
-每一个UI事件都是一个UIEvent对象实例。UIEvent对象继承了Event对象，即所有UIEvent实例同时也是Event实例。浏览器提供一个UIEvent构造函数，用于新建一个UIEvent实例。
-
-```javascript
-event = new UIEvent(typeArg, UIEventInit);
-```
-
-UIEvent构造函数接受两个参数，第一个参数是事件名称，第二个参数是事件的描述对象（可以设置bubbles、cancelable、detail、view等字段），该参数可省略。
-
 ## 鼠标事件（MouseEvent对象）
 
 ### 事件种类
@@ -620,14 +605,23 @@ UIEvent构造函数接受两个参数，第一个参数是事件名称，第二�
 鼠标事件指与鼠标相关的事件，主要有以下一些。
 
 - click事件：在一个节点上，按下然后放开一个鼠标键时触发。
+
 - dblclick事件：在一个节点上，双击鼠标时触发。
+
 - mouseup事件：在一个节点上，释放按下的鼠标键时触发。
+
 - mousedown事件：在一个节点上，按下鼠标键时触发。
+
 - mousemove事件：鼠标在一个节点内部移动时触发。
+
 - mouseover事件：鼠标进入一个节点或其子element节点时触发。
+
 - mouseout事件：鼠标离开一个节点或其子element节点时触发。
+
 - mouseenter事件：鼠标进入一个节点时触发，该事件与mouseover的最大区别是，该事件不会冒泡，所以进入子节点时，不会触发父节点的监听函数。
+
 - mouseleave事件：鼠标离开一个节点时触发，该事件与mouseout事件的最大区别是，该事件不会冒泡，所以离开子节点时，不会触发父节点的监听函数。
+
 - contextmenu事件：在一个节点上点击鼠标右键触发（上下文菜单显示前），或者按下“上下文菜单”键时触发。
 
 下面是一个设置click事件监听函数的例子。
@@ -972,7 +966,25 @@ charCode属性返回一个数值，表示keypress事件按键的Unicode值，key
 
 ## 进度事件（ProgressEvent对象）
 
-进度事件用来描述一个事件进展的过程，比如XMLHttpRequest对象发出的HTTP请求的过程、&lt;img&gt;、&lt;audio&gt;、&lt;video&gt;、&lt;style&gt;、&lt;link&gt;加载外部资源的过程。
+进度事件用来描述一个事件进展的过程，比如XMLHttpRequest对象发出的HTTP请求的过程、&lt;img&gt;、&lt;audio&gt;、&lt;video&gt;、&lt;style&gt;、&lt;link&gt;加载外部资源的过程。下载和上传都会发生进度事件。
+
+进度事件有以下几种。
+
+- abort事件：当进度事件被中止时触发。如果发生错误，导致进程中止，不会触发该事件。
+
+- error事件：由于错误导致资源无法加载时触发。
+
+- load事件：进度成功结束时触发。
+
+- loadstart事件：进度开始时触发。
+
+- loadend事件：进度停止时触发，发生顺序排在error事件\abort事件\load事件后面。
+
+- progress事件：当操作处于进度之中，由传输的数据块不断触发。
+
+- timeout事件：进度超过限时触发。
+
+下面是一个例子。
 
 进度事件使用ProgressEvent对象表示。ProgressEvent实例有以下属性。
 
@@ -981,6 +993,62 @@ charCode属性返回一个数值，表示keypress事件按键的Unicode值，key
 - total：返回一个数值，表示当前进度的总长度。如果是通过HTTP下载某个资源，表示内容本身的长度，不含HTTP头部的长度。如果lengthComputable属性为false，则total属性就无法取得正确的值。
 
 - loaded：返回一个数值，表示当前进度已经完成的数量。该属性除以total属性，就可以得到目前进度的百分比。
+
+```javascript
+var xhr = new XMLHttpRequest();
+
+xhr.addEventListener("progress", updateProgress, false);
+xhr.addEventListener("load", transferComplete, false);
+xhr.addEventListener("error", transferFailed, false);
+xhr.addEventListener("abort", transferCanceled, false);
+
+xhr.open();
+
+function updateProgress (e) {
+  if (e.lengthComputable) {
+    var percentComplete = e.loaded / e.total;
+  } else {
+    console.log('不能计算进度');
+  }
+}
+
+function transferComplete(e) {
+  console.log('传输结束');
+}
+
+function transferFailed(evt) {
+  console.log('传输过程中发生错误');
+}
+
+function transferCanceled(evt) {
+  console.log('用户取消了传输');
+}
+```
+
+loadend事件的监听函数，可以用来取代abort事件/load事件/error事件的监听函数。
+
+```javascript
+req.addEventListener("loadend", loadEnd, false);
+
+function loadEnd(e) {
+  console.log('传输结束，成功失败未知');
+}
+```
+
+loadend事件本身不提供关于进度结束的原因，但可以用它来做所有进度结束场景都需要做的一些操作。
+
+另外，上面是下载过程的进度事件，还存在上传过程的进度事件。这时所有监听函数都要放在XMLHttpRequest.upload对象上面。
+
+```javascript
+var xhr = new XMLHttpRequest();
+
+xhr.upload.addEventListener("progress", updateProgress, false);
+xhr.upload.addEventListener("load", transferComplete, false);
+xhr.upload.addEventListener("error", transferFailed, false);
+xhr.upload.addEventListener("abort", transferCanceled, false);
+
+xhr.open();
+```
 
 浏览器提供一个ProgressEvent构造函数，用来生成进度事件的实例。
 
@@ -1556,23 +1624,37 @@ var focusEvent = new FocusEvent(typeArg, focusEventInit);
 
 ## 表单事件
 
-### Input事件
+### Input事件，select事件，change事件
 
-当input元素、textarea元素的值发生变化时，就会触发input事件。此外，打开contenteditable属性的元素，只要值发生变化，也会触发input事件。
+以下事件与表单成员的值变化有关。
+
+**（1）input事件**
+
+input事件当&lt;input&gt;、&lt;textarea&gt;的值发生变化时触发。此外，打开contenteditable属性的元素，只要值发生变化，也会触发input事件。
 
 input事件的一个特点，就是会连续触发，比如用户每次按下一次按键，就会触发一次input事件。
 
-该事件继承Event对象，具有target、type、bubbles和cancelable四个属性。
+**（2）select事件**
 
-### Change事件
+select事件当在&lt;input&gt;、&lt;textarea&gt;中选中文本时触发。
 
-当input元素、select元素、textarea元素的值发生变化时，会触发change事件。它与input事件的最大不同，就是不会连续触发，只有当全部修改完成时才会触发，而且input事件必然会引发change事件。具体来说，分成以下几种情况。
+```javascript
+// HTML代码为
+// <input id="test" type="text" value="Select me!" />
+
+var elem = document.getElementById('test');
+elem.addEventListener('select', function() {
+  console.log('Selection changed!');
+}, false);
+```
+
+**（3）Change事件**
+
+Change事件当&lt;input&gt;、&lt;select&gt;、&lt;textarea&gt;的值发生变化时触发。它与input事件的最大不同，就是不会连续触发，只有当全部修改完成时才会触发，而且input事件必然会引发change事件。具体来说，分成以下几种情况。
 
 - 激活单选框（radio）或复选框（checkbox）时触发。
 - 用户提交时触发。比如，从下列列表（select）完成选择，在日期或文件输入框完成选择。
 - 当文本框或textarea元素的值发生改变，并且丧失焦点时触发。
-
-该事件继承Event对象，具有target、type、bubbles和cancelable四个属性。
 
 下面是一个例子。
 
@@ -1589,21 +1671,23 @@ function changeEventHandler(event) {
 }
 ```
 
-### cut事件，copy事件，paste事件
+### reset事件，submit事件
 
-cut事件在将选中的内容从文档中移除，加入剪贴板后触发。
+以下事件发生在表单对象上，而不是发生在表单的成员上。
 
-copy事件在选中的内容加入剪贴板后触发。
+**（1）reset事件**
 
-paste事件在剪贴板内容被粘贴到文档后触发。
+reset事件当表单重置（所有表单成员变回默认值）时触发。
 
-这三个事件都有一个clipboardData只读属性。该属性存放剪贴的数据，是一个DataTransfer对象，具体的API接口和操作方法，请参见《触摸事件》的DataTransfer对象章节。
+**（2）submit事件**
+
+submit事件当表单数据向服务器提交时触发。注意，submit事件的发生对象是form元素，而不是button元素（即使它的类型是submit），因为提交的是表单，而不是按钮。
 
 ## 文档事件
 
-### BeforeUnloadEvent事件
+### beforeunload事件
 
-当窗口将要关闭，或者document和网页资源将要卸载的时候，会触发BeforeUnloadEvent事件。
+当窗口将要关闭，或者document和网页资源将要卸载的时候，会触发beforeunload事件。
 
 该事件的默认动作就是关闭当前窗口或文档。如果调用了`event.preventDefault()`，或者对事件对象的returnValue属性赋予一个非空的值，就会跳出一个确认框，询问用户是否真的要离开当前页面。如果用户点击否，该事件将被取消，即窗口不会关闭。
 
@@ -1630,7 +1714,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 });
 ```
 
-注意，网页的JavaScript脚本是同步执行的，所以定义DOMContentLoaded事件的回调函数，应该放在所有脚本的最前面。否则脚本一旦发生堵塞，将推迟触发DOMContentLoaded事件。
+注意，网页的JavaScript脚本是同步执行的，所以定义DOMContentLoaded事件的监听函数，应该放在所有脚本的最前面。否则脚本一旦发生堵塞，将推迟触发DOMContentLoaded事件。
 
 ### readystatechange事件
 
@@ -1659,6 +1743,71 @@ window.addEventListener('unload', function(event) {
 ```
 
 load事件在页面或者一个资源结束加载时触发。注意，页面从浏览器缓存加载，并不会触发这个事件。
+
+### scroll事件，resize事件
+
+以下事件与窗口行为有关。
+
+**（1）scroll事件**
+
+scroll事件在文档或文档元素滚动时触发。
+
+由于该事件会连续地大量触发，所以它的监听函数之中不应该有非常耗费计算的操作。推荐的做法是使用requestAnimationFrame或setTimeout控制该事件的触发频率，然后可以结合customEvent抛出一个新事件。
+
+```javascript
+(function() {
+  var throttle = function(type, name, obj) {
+    var obj = obj || window;
+    var running = false;
+    var func = function() {
+      if (running) { return; }
+      running = true;
+      requestAnimationFrame(function() {
+        obj.dispatchEvent(new CustomEvent(name));
+        running = false;
+      });
+    };
+    obj.addEventListener(type, func);
+  };
+
+  // 将scroll事件重定义为optimizedScroll事件
+  throttle("scroll", "optimizedScroll");
+})();
+
+window.addEventListener("optimizedScroll", function() {
+  console.log("Resource conscious scroll callback!");
+});
+```
+
+上面代码中，throttle函数用于控制事件触发频率，requestAnimationFrame方法保证每次页面重绘（每秒60次），只会触发一次scroll事件的监听函数。改用setTimeout方法，可以放置更大的时间间隔。
+
+```javascript
+(function() {
+  window.addEventListener("scroll", scrollThrottler, false);
+
+  var scrollTimeout;
+  function scrollThrottler() {
+    if ( !scrollTimeout ) {
+      scrollTimeout = setTimeout(function() {
+        scrollTimeout = null;
+        actualScrollHandler();
+      }, 66);
+    }
+  }
+
+  function actualScrollHandler() {
+    // ...
+  }
+}());
+```
+
+上面代码中，setTimeout指定scroll事件的监听函数，每66毫秒触发一次（每秒15次）。
+
+**（2）resize事件**
+
+resize事件在文档视口改变大小时触发。
+
+该事件也会连续地大量触发，所以最好也像上面的scroll事件一样，通过throttle函数控制事件触发频率。
 
 ### pageshow事件，pagehide事件
 
@@ -1740,6 +1889,34 @@ history.go(2);  // state: {"page":3}
 
 浏览器对于页面首次加载，是否触发popstate事件，处理不一样，Firefox不触发该事件。
 
+### cut事件，copy事件，paste事件
+
+以下三个事件属于文本操作触发的事件。
+
+- cut事件：在将选中的内容从文档中移除，加入剪贴板后触发。
+
+- copy事件：在选中的内容加入剪贴板后触发。
+
+- paste事件：在剪贴板内容被粘贴到文档后触发。
+
+这三个事件都有一个clipboardData只读属性。该属性存放剪贴的数据，是一个DataTransfer对象，具体的API接口和操作方法，请参见《触摸事件》的DataTransfer对象章节。
+
+### 全屏事件
+
+以下事件与全屏操作有关。
+
+- fullscreenchange事件：浏览器进入或离开全屏时触发。
+
+- fullscreenerror事件：浏览器无法进入全屏时触发，可能是技术原因，也可能是用户拒绝。
+
+```javascript
+document.addEventListener("fullscreenchange", function( event ) {
+  if ( document.fullscreenEnabled ) {
+    document.fullscreenElement;
+  }
+});
+```
+
 ## 事件的类型
 
 ### 用户界面事件
@@ -1764,7 +1941,7 @@ image.addEventListener('error', function(event) {
 
 上面代码在图片元素加载完成后，为图片元素的class属性添加一个值“finished”。如果加载失败，就把图片元素的样式设置为不显示。
 
-有时候，图片加载会在脚本运行之前就完成，尤其是当脚本放置在网页底部的时候，因此有可能使得load和error事件的回调函数根本不会被执行。所以，比较可靠的方式，是用complete属性先判断一下是否加载完成。
+有时候，图片加载会在脚本运行之前就完成，尤其是当脚本放置在网页底部的时候，因此有可能使得load和error事件的监听函数根本不会被执行。所以，比较可靠的方式，是用complete属性先判断一下是否加载完成。
 
 {% highlight javascript %}
 
@@ -1780,7 +1957,7 @@ if (image.complete) {
 
 {% endhighlight %}
 
-由于DOM没有机制判断是否发生加载错误，所以上面的方法不适用error事件的回调函数，它最好放在img元素的HTML属性中。
+由于DOM没有机制判断是否发生加载错误，所以上面的方法不适用error事件的监听函数，它最好放在img元素的HTML属性中。
 
 {% highlight javascript %}
 
@@ -1788,7 +1965,7 @@ if (image.complete) {
 
 {% endhighlight %}
 
-error事件有一个特殊的性质，就是不会冒泡。这样的设计是正确的，防止引发父元素的error事件回调函数。
+error事件有一个特殊的性质，就是不会冒泡。这样的设计是正确的，防止引发父元素的error事件监听函数。
 
 **（2）unload事件**
 
@@ -1800,7 +1977,7 @@ error事件有一个特殊的性质，就是不会冒泡。这样的设计是正
 
 该事件在用户关闭网页时触发。它可以用来防止用户不当心关闭网页。
 
-该事件的特别之处在于，它会自动跳出一个确认对话框，让用户确认是否关闭网页。如果用户点击“取消”按钮，网页就不会关闭。beforeunload事件的回调函数所返回的字符串，会显示在确认对话框之中。
+该事件的特别之处在于，它会自动跳出一个确认对话框，让用户确认是否关闭网页。如果用户点击“取消”按钮，网页就不会关闭。beforeunload事件的监听函数所返回的字符串，会显示在确认对话框之中。
 
 {% highlight javascript %}
 
@@ -1814,7 +1991,7 @@ window.onbeforeunload = function() {
 
 上面代码表示，当用户关闭网页，会跳出一个确认对话框，上面显示“你确认要离开吗？”。
 
-如果定义了该事件的回调函数，网页不会被浏览器缓存。
+如果定义了该事件的监听函数，网页不会被浏览器缓存。
 
 **（4）resize事件**
 
@@ -1941,7 +2118,7 @@ window.addEventListener("resize", resizeMethod, true);
 
 （7）mousemove事件
 
-鼠标在某个元素上方移动时触发。当鼠标持续移动时，该事件会连续触发。为了避免性能问题，建议对该事件的回调函数做一些限定，比如限定一段时间内只能运行一次代码。
+鼠标在某个元素上方移动时触发。当鼠标持续移动时，该事件会连续触发。为了避免性能问题，建议对该事件的监听函数做一些限定，比如限定一段时间内只能运行一次代码。
 
 （8）mouseout事件
 
@@ -1987,7 +2164,7 @@ offline事件在浏览器离线时触发，online事件在浏览器重新连线�
 
 **（6）pageshow，pagehide**
 
-默认情况下，浏览器会在当前会话（session）缓存页面，当用户点击“前进/后退”按钮时，浏览器就会缓存中加载页面。pageshow事件在每次网页从缓存加载时触发，这种情况下load事件不会触发，因为网页在缓存中的样子通常是load事件的回调函数运行后的样子，所以不必重复执行。同理，如果是从缓存中加载页面，网页内初始化的JavaScript脚本也不会执行。
+默认情况下，浏览器会在当前会话（session）缓存页面，当用户点击“前进/后退”按钮时，浏览器就会缓存中加载页面。pageshow事件在每次网页从缓存加载时触发，这种情况下load事件不会触发，因为网页在缓存中的样子通常是load事件的监听函数运行后的样子，所以不必重复执行。同理，如果是从缓存中加载页面，网页内初始化的JavaScript脚本也不会执行。
 
 如果网页是第一次加载（即不在缓存中），那么首先会触发load事件，然后再触发pageshow事件。也就是说，pageshow事件是每次网页加载都会运行的。pageshow事件的event对象有一个persisted属性，返回一个布尔值。如果是第一次加载，这个值为false；如果是从缓存中加载，这个值为true。
 
@@ -1999,7 +2176,7 @@ offline事件在浏览器离线时触发，online事件在浏览器重新连线�
 
 上面代码表示，通过判断persisted属性，做到网页第一次加载时，不运行onPageShow函数，其后如果是从缓存中加载，就运行onPageShow函数。
 
-pagehide事件与pageshow事件类似，当用户通过“前进/后退”按钮，离开当前页面时触发。它与unload事件的区别在于，使用unload事件之后，页面不会保存在缓存中，而使用pagehide事件，页面会保存在缓存中。pagehide事件的event对象有一个persisted属性，将这个属性设为true，就表示页面要保存在缓存中；设为false，表示网页不保存在缓存中，这时如果设置了unload事件的回调函数，该函数将在pagehide事件后立即运行。
+pagehide事件与pageshow事件类似，当用户通过“前进/后退”按钮，离开当前页面时触发。它与unload事件的区别在于，使用unload事件之后，页面不会保存在缓存中，而使用pagehide事件，页面会保存在缓存中。pagehide事件的event对象有一个persisted属性，将这个属性设为true，就表示页面要保存在缓存中；设为false，表示网页不保存在缓存中，这时如果设置了unload事件的监听函数，该函数将在pagehide事件后立即运行。
 
 ## CSS事件
 
@@ -2050,7 +2227,7 @@ elem.addEventListener('build', function (e) { ... }, false);
 elem.dispatchEvent(event);
 ```
 
-上面代码触发了自定义事件，该事件会层层向上冒泡。在冒泡过程中，如果有一个元素定义了该事件的回调函数，该回调函数就会触发。
+上面代码触发了自定义事件，该事件会层层向上冒泡。在冒泡过程中，如果有一个元素定义了该事件的监听函数，该监听函数就会触发。
 
 由于IE不支持这个API，如果在IE中自定义事件，需要使用后文的“老式方法”。
 
