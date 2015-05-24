@@ -537,6 +537,40 @@ function mqCallback(mql) {
 
 上面代码中，回调函数的参数是MediaQueryList对象。回调函数的调用可能存在两种情况。一种是显示宽度从700像素以上变为以下，另一种是从700像素以下变为以上，所以在回调函数内部要判断一下当前的屏幕宽度。
 
+## CSS事件
+
+### transitionEnd事件
+
+CSS的过渡效果（transition）结束后，触发该事件。
+
+```javascript
+el.addEventListener("transitionend", onTransitionEnd, false);
+
+function onTransitionEnd() {
+  console.log('Transition end');
+}
+```
+
+transitionEnd的事件对象具有以下属性。
+
+- propertyName：发生transition效果的CSS属性名。
+- elapsedTime：transition效果持续的秒数，不含transition-delay的时间。
+- pseudoElement：如果transition效果发生在伪元素，会返回该伪元素的名称，以“::”开头。如果不发生在伪元素上，则返回一个空字符串。
+
+### animationstart事件，animationend事件，animationiteration事件
+
+CSS动画开始时，会触发animationstart事件；结束时，会触发animationend事件。当CSS动画开始新一轮循环时，就会触发animationiteration事件。但是，animation-iteration-count属性等于1时，该事件不触发，即只播放一轮的CSS动画，不会触发animationiteration事件。
+
+这三个事件的事件对象，都有animationName属性（返回产生过渡效果的CSS属性名）和elapsedTime属性（动画已经运行的秒数）。对于animationstart事件，elapsedTime属性等于0，除非animation-delay属性等于负值。
+
+{% highlight javascript %}
+
+div.addEventListener('animationiteration', function() {
+  console.log('完成一次动画');
+});
+
+{% endhighlight %}
+
 ## 参考链接
 
 - David Walsh, [Add Rules to Stylesheets with JavaScript](http://davidwalsh.name/add-rules-stylesheets)

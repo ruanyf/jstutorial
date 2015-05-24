@@ -352,7 +352,9 @@ p.addEventListener('click', function(event) {
 
 ## Event对象
 
-事件发生以后，会生成一个事件对象，在DOM中传递，作为参数传给监听函数。浏览器原生提供一个Event对象，所有的事件对象都是这个对象的实例，或者说继承了`Event.prototype`对象。Event本身就是一个构造函数，可以用来生成新的事件。
+事件发生以后，会生成一个事件对象，作为参数传给监听函数。浏览器原生提供一个Event对象，所有的事件都是这个对象的实例，或者说继承了`Event.prototype`对象。
+
+Event对象本身就是一个构造函数，可以用来生成新的实例。
 
 ```javascript
 event = new Event(typeArg, eventInit);
@@ -366,13 +368,12 @@ Event构造函数接受两个参数。第一个参数是字符串，表示事件
 
 ```javascript
 var ev = new Event("look", {"bubbles":true, "cancelable":false});
-
 document.dispatchEvent(ev);
 ```
 
-上面代码新建一个look事件，然后使用dispatchEvent方法触发该事件。
+上面代码新建一个look事件实例，然后使用dispatchEvent方法触发该事件。
 
-IE8及以下版本，事件对象不作为参数传递，而是通过window对象的event属性读取，并且事件对象的target属性叫做srcElement属性。所以获取事件信息，往往写成下面这样。
+IE8及以下版本，事件对象不作为参数传递，而是通过window对象的event属性读取，并且事件对象的target属性叫做srcElement属性。所以，以前获取事件信息，往往要写成下面这样。
 
 ```javascript
 function myEventHandler(event) {
@@ -381,6 +382,8 @@ function myEventHandler(event) {
   // ...
 }
 ```
+
+上面的代码只是为了说明以前的程序为什么这样写，在新代码中，这样的写法不应该再用了。
 
 以下介绍Event实例的属性和方法。
 
@@ -598,31 +601,15 @@ el.addEventListener('click', l2, false);
 
 上面代码在el节点上，为click事件添加了两个监听函数l1和l2。由于l1调用了stopImmediatePropagation方法，所以l2不会被调用。
 
-## 鼠标事件（MouseEvent对象）
+## 鼠标事件
 
 ### 事件种类
 
 鼠标事件指与鼠标相关的事件，主要有以下一些。
 
-- click事件：在一个节点上，按下然后放开一个鼠标键时触发。
+**（1）click事件**
 
-- dblclick事件：在一个节点上，双击鼠标时触发。
-
-- mouseup事件：在一个节点上，释放按下的鼠标键时触发。
-
-- mousedown事件：在一个节点上，按下鼠标键时触发。
-
-- mousemove事件：鼠标在一个节点内部移动时触发。
-
-- mouseover事件：鼠标进入一个节点或其子element节点时触发。
-
-- mouseout事件：鼠标离开一个节点或其子element节点时触发。
-
-- mouseenter事件：鼠标进入一个节点时触发，该事件与mouseover的最大区别是，该事件不会冒泡，所以进入子节点时，不会触发父节点的监听函数。
-
-- mouseleave事件：鼠标离开一个节点时触发，该事件与mouseout事件的最大区别是，该事件不会冒泡，所以离开子节点时，不会触发父节点的监听函数。
-
-- contextmenu事件：在一个节点上点击鼠标右键触发（上下文菜单显示前），或者按下“上下文菜单”键时触发。
+click事件当用户在Element节点、document节点、window对象上，单击鼠标（或者按下回车键）时触发。“鼠标单击”定义为，用户在同一个位置完成一次mousedown动作和mouseup动作。它们的触发顺序是：mousedown首先触发，mouseup接着触发，click最后触发。
 
 下面是一个设置click事件监听函数的例子。
 
@@ -632,6 +619,39 @@ div.addEventListener("click", function( event ) {
   event.target.innerHTML = "click count: " + event.detail;
 }, false);
 ```
+
+下面的代码是利用click事件进行CSRF攻击（Cross-site request forgery）的一个例子。
+
+```html
+<a href="http://www.harmless.com/" onclick="
+  var f = document.createElement('form');
+  f.style.display = 'none';
+  this.parentNode.appendChild(f);
+  f.method = 'POST';
+  f.action = 'http://www.example.com/account/destroy';
+  f.submit();
+  return false;">伪装的链接</a>
+```
+
+**（2）dblclick事件**
+
+dblclick事件当用户在element、document、window对象上，双击鼠标时触发。该事件会在mousedown、mouseup、click之后触发。
+
+**（3）mouseup事件，mousedown事件**
+
+mouseup事件在释放按下的鼠标键时触发。
+
+mousedown事件在按下鼠标键时触发。
+
+**（4）mousemove事件**
+
+mousemove事件当鼠标在一个节点内部移动时触发。当鼠标持续移动时，该事件会连续触发。为了避免性能问题，建议对该事件的监听函数做一些限定，比如限定一段时间内只能运行一次代码。
+
+**（5）mouseover事件，mouseenter事件**
+
+mouseover事件和mouseenter事件，都是鼠标进入一个节点时触发。
+
+两者的区别是，mouseover事件会冒泡，mouseenter事件不会。子节点的mouseover事件会冒泡到父节点，进而触发父节点的mouseover事件。mouseenter事件就没有这种效果，所以进入子节点时，不会触发父节点的监听函数。
 
 下面的例子是mouseenter事件与mouseover事件的区别。
 
@@ -664,7 +684,17 @@ test.addEventListener("mouseover", function( event ) {
 
 上面代码中，由于mouseover事件会冒泡，所以子节点的mouseover事件会触发父节点的监听函数。
 
-### MouseEvent构造函数
+**（6）mouseout事件，mouseleave事件**
+
+mouseout事件和mouseleave事件，都是鼠标离开一个节点时触发。
+
+两者的区别是，mouseout事件会冒泡，mouseleave事件不会。子节点的mouseout事件会冒泡到父节点，进而触发父节点的mouseout事件。mouseleave事件就没有这种效果，所以离开子节点时，不会触发父节点的监听函数。
+
+**（7）contextmenu**
+
+contextmenu事件在一个节点上点击鼠标右键时触发，或者按下“上下文菜单”键时触发。
+
+### MouseEvent对象
 
 鼠标事件使用MouseEvent对象表示，它继承UIEvent对象和Event对象。浏览器提供一个MouseEvent构造函数，用于新建一个MouseEvent实例。
 
@@ -674,17 +704,17 @@ event = new MouseEvent(typeArg, mouseEventInit);
 
 MouseEvent构造函数的第一个参数是事件名称（可能的值包括click、mousedown、mouseup、mouseover、mousemove、mouseout），第二个参数是一个事件初始化对象。该对象可以配置以下属性。
 
-- screenX，设置鼠标相对于屏幕的水平坐标（但不会移动鼠标），默认为0，等同于Event.screenX属性。
-- screenY，设置鼠标相对于屏幕的垂直坐标，默认为0，等同于Event.screenY属性。
-- clientX，设置鼠标相对于窗口的水平坐标，默认为0，等同于Event.clientX属性。
-- clientY，设置鼠标相对于窗口的垂直坐标，默认为0，等同于Event.clientY属性。
-- ctrlKey，设置是否按下ctrl键，默认为false，等同于Event.ctrlKey属性。
-- shiftKey，设置是否按下shift键，默认为false，等同于Event.shiftKey属性。
-- altKey，设置是否按下alt键，默认为false，等同于Event.altKey属性。
-- metaKey，设置是否按下meta键，默认为false，等同于Event.metaKey属性。
+- screenX，设置鼠标相对于屏幕的水平坐标（但不会移动鼠标），默认为0，等同于MouseEvent.screenX属性。
+- screenY，设置鼠标相对于屏幕的垂直坐标，默认为0，等同于MouseEvent.screenY属性。
+- clientX，设置鼠标相对于窗口的水平坐标，默认为0，等同于MouseEvent.clientX属性。
+- clientY，设置鼠标相对于窗口的垂直坐标，默认为0，等同于MouseEvent.clientY属性。
+- ctrlKey，设置是否按下ctrl键，默认为false，等同于MouseEvent.ctrlKey属性。
+- shiftKey，设置是否按下shift键，默认为false，等同于MouseEvent.shiftKey属性。
+- altKey，设置是否按下alt键，默认为false，等同于MouseEvent.altKey属性。
+- metaKey，设置是否按下meta键，默认为false，等同于MouseEvent.metaKey属性。
 - button，设置按下了哪一个鼠标按键，默认为0。-1表示没有按键，0表示按下主键（通常是左键），1表示按下辅助键（通常是中间的键），2表示按下次要键（通常是右键）。
 - buttons，设置按下了鼠标哪些键，是一个3个比特位的二进制值，默认为0。1表示按下主键（通常是左键），2表示按下次要键（通常是右键），4表示按下辅助键（通常是中间的键）。
-- relatedTarget，设置一个Element节点，在mouseenter和mouseover事件时，表示鼠标刚刚离开的那个Element节点，在mouseout和mouseleave事件时，表示鼠标正在进入的那个Element节点。默认为null，等同于event.relatedTarget属性。
+- relatedTarget，设置一个Element节点，在mouseenter和mouseover事件时，表示鼠标刚刚离开的那个Element节点，在mouseout和mouseleave事件时，表示鼠标正在进入的那个Element节点。默认为null，等同于MouseEvent.relatedTarget属性。
 
 以下属性也是可配置的，都继承自UIEvent构造函数和Event构造函数。
 
@@ -889,12 +919,14 @@ wheel事件是与鼠标滚轮相关的事件，目前只有一个wheel事件。�
 var syntheticEvent = new WheelEvent("syntheticWheel", {"deltaX": 4, "deltaMode": 0});
 ```
 
-## 键盘事件（KeyboardEvent对象）
+## 键盘事件
 
 键盘事件用来描述键盘行为，主要有keydown、keypress、keyup三个事件。
 
 - keydown：按下键盘时触发该事件。
+
 - keypress：只要按下的键并非Ctrl、Alt、Shift和Meta，就接着触发keypress事件。
+
 - keyup：松开键盘时触发该事件。
 
 下面是一个例子，对文本框设置keypress监听函数，只允许输入数字。
@@ -1062,7 +1094,7 @@ progressEvent = new ProgressEvent(type, {
 
 上面代码中，ProgressEvent构造函数的第一个参数是事件类型（字符串），第二个参数是配置对象，用来指定lengthComputable属性（默认值为false）、loaded属性（默认值为0）、total属性（默认值为0）。
 
-## 拖拉事件（DragEvent对象）
+## 拖拉事件
 
 拖拉指的是，用户在某个对象上按下鼠标键不放，拖动它到另一个位置，然后释放鼠标键，将该对象放在那里。
 
@@ -1451,7 +1483,7 @@ div.addEventListener("dragstart", function(e) {
 }, false);
 ```
 
-## 触摸事件（TouchEvent对象）
+## 触摸事件
 
 触摸API由三个对象组成。
 
@@ -1590,7 +1622,7 @@ function handleMove(evt) {
 }
 ```
 
-## 焦点事件（FocusEvent）
+## 焦点事件
 
 焦点事件与Element节点获得或失去焦点相关。它主要包括以下四个事件。
 
@@ -1811,7 +1843,11 @@ resize事件在文档视口改变大小时触发。
 
 ### pageshow事件，pagehide事件
 
-pageshow事件在页面加载时触发。它的触发顺序排在load事件后面，并且通过按下“前进/后退”按钮时，进行页面遍历时也会触发。所以，如果指定页面每次加载（不管是不是从浏览器缓存）时都要运行的代码，可以放在这个事件的监听函数。
+默认情况下，浏览器会在当前会话（session）缓存页面，当用户点击“前进/后退”按钮时，浏览器就会从缓存中加载页面。
+
+pageshow事件在页面加载时触发，包括第一次加载和从缓存加载两种情况。如果要指定页面每次加载（不管是不是从浏览器缓存）时都运行的代码，可以放在这个事件的监听函数。
+
+第一次加载时，它的触发顺序排在load事件后面。从缓存加载时，load事件不会触发，因为网页在缓存中的样子通常是load事件的监听函数运行后的样子，所以不必重复执行。同理，如果是从缓存中加载页面，网页内初始化的JavaScript脚本（比如DOMContentLoaded事件的监听函数）也不会执行。
 
 ```javascript
 window.addEventListener('pageshow', function(event) {
@@ -1829,9 +1865,11 @@ window.addEventListener('pageshow', function(event){
 });
 ```
 
-pagehide事件在按下“前进/后退”按钮导致页面卸载时触发。该事件也有一个persisted属性，如果页面没有被浏览器缓存，返回false，否则返回true。如果这个属性为false，则pagehide事件后面立即触发unload事件。
+pagehide事件与pageshow事件类似，当用户通过“前进/后退”按钮，离开当前页面时触发。它与unload事件的区别在于，如果在window对象上定义unload事件的监听函数之后，页面不会保存在缓存中，而使用pagehide事件，页面会保存在缓存中。
 
-如果页面包含frame或iframe元素，则子页面的pageshow事件和pagehide事件，都会在主页面之前触发。
+pagehide事件的event对象有一个persisted属性，将这个属性设为true，就表示页面要保存在缓存中；设为false，表示网页不保存在缓存中，这时如果设置了unload事件的监听函数，该函数将在pagehide事件后立即运行。
+
+如果页面包含frame或iframe元素，则frame页面的pageshow事件和pagehide事件，都会在主页面之前触发。
 
 ### hashchange事件
 
@@ -2009,18 +2047,6 @@ window.addEventListener("resize", resizeMethod, true);
 
 {% endhighlight %}
 
-**（5）abort事件**
-
-资源在加载成功前停止加载时触发该事件，主要发生在element、XMLHttpRequest、XMLHttpRequestUpload对象。
-
-**（6）scroll事件**
-
-用户滚动窗口或某个元素时触发该事件，主要发生在element、document、window对象。
-
-**（7）contextmenu事件**
-
-用户鼠标右击某个元素时触发，主要发生在element对象。
-
 ### 焦点事件
 
 <table class="responsive">
@@ -2054,163 +2080,6 @@ window.addEventListener("resize", resizeMethod, true);
 </tr>
 </tbody>
 </table>
-
-### 表单事件
-
-（1）change事件
-
-一些特定的表单元素（比如文本框和输入框）失去焦点、并且值发生变化时触发。
-
-（2）reset事件
-
-表单重置（reset）时触发。
-
-（3）submit事件
-
-表单提交（submit）时触发。
-
-（4）select事件
-
-用户在文本框或输入框中选中文本时触发。
-
-### 鼠标事件
-
-**（1）click事件**
-
-用户在网页元素（element、document、window对象）上，单击鼠标（或者按下回车键）时触发click事件。
-
-“鼠标单击”定义为在同一个位置完成一次mousedown动作和mouseup动作。它们的触发顺序是：mousedown首先触发，mouseup接着触发，click最后触发。
-
-下面的代码是利用click事件进行CSRF攻击（Cross-site request forgery）的一个例子。
-
-{% highlight html %}
-
-<a href="http://www.harmless.com/" onclick="
-  var f = document.createElement('form');
-  f.style.display = 'none';
-  this.parentNode.appendChild(f);
-  f.method = 'POST';
-  f.action = 'http://www.example.com/account/destroy';
-  f.submit();
-  return false;">伪装的链接</a>
-
-{% endhighlight %}
-
-**（2）dblclick事件**
-
-用户在element、document、window对象上用鼠标双击时触发。该事件会在mousedown、mouseup、click之后触发。
-
-（3）mousedown事件
-
-用户按下鼠标按钮时触发。
-
-（4）mouseup事件
-
-用户放开鼠标按钮时触发。
-
-（5）mouseenter事件
-
-鼠标进入某个HTML元素或它的子元素时触发。该事件与mouseover事件相似，区别在于mouseenter事件不会冒泡，而且当鼠标移出子元素的边界、当仍在父元素之中时，它不会在父元素上触发。
-
-（6）mouseleave事件
-
-鼠标移出某个HTML元素以及它的所有子元素时触发。该事件与mouseout事件类似，区别在于mouseleave事件不会冒泡，而且要等到鼠标离开该元素本身和它的所有子元素时才触发。
-
-（7）mousemove事件
-
-鼠标在某个元素上方移动时触发。当鼠标持续移动时，该事件会连续触发。为了避免性能问题，建议对该事件的监听函数做一些限定，比如限定一段时间内只能运行一次代码。
-
-（8）mouseout事件
-
-鼠标移出某个HTML元素时触发。它与mouseleave事件类似，区别在于mouseout事件会冒泡，而且它会在从该元素移入某个子元素时触发。
-
-```javascript
-
-someEl.addEventListener('mouseout', function() {
-    // mouse was hovering over this element, but no longer is
-});
-
-```
-
-（9）mouseover事件
-
-鼠标在某个元素上方时触发，即悬停时触发。
-
-```javascript
-
-someEl.addEventListener('mouseover', function() {
-    // mouse is hovering over this element
-});
-
-```
-
-### window、body、frame对象的特有事件
-
-**（2）beforeunload**
-
-文档关闭前触发。
-
-**（3）hashchange**
-
-URL的hash部分发生变化时触发。
-
-**（4）messsage**
-
-message事件在一个worker子线程通过postMessage方法发来消息时触发，详见《Web Worker》一节。
-
-**（5）offline，online**
-
-offline事件在浏览器离线时触发，online事件在浏览器重新连线时触发。
-
-**（6）pageshow，pagehide**
-
-默认情况下，浏览器会在当前会话（session）缓存页面，当用户点击“前进/后退”按钮时，浏览器就会缓存中加载页面。pageshow事件在每次网页从缓存加载时触发，这种情况下load事件不会触发，因为网页在缓存中的样子通常是load事件的监听函数运行后的样子，所以不必重复执行。同理，如果是从缓存中加载页面，网页内初始化的JavaScript脚本也不会执行。
-
-如果网页是第一次加载（即不在缓存中），那么首先会触发load事件，然后再触发pageshow事件。也就是说，pageshow事件是每次网页加载都会运行的。pageshow事件的event对象有一个persisted属性，返回一个布尔值。如果是第一次加载，这个值为false；如果是从缓存中加载，这个值为true。
-
-{% highlight html %}
-
-<body onload="onLoad();" onpageshow="if (event.persisted) onPageShow();"> 
-
-{% endhighlight %}
-
-上面代码表示，通过判断persisted属性，做到网页第一次加载时，不运行onPageShow函数，其后如果是从缓存中加载，就运行onPageShow函数。
-
-pagehide事件与pageshow事件类似，当用户通过“前进/后退”按钮，离开当前页面时触发。它与unload事件的区别在于，使用unload事件之后，页面不会保存在缓存中，而使用pagehide事件，页面会保存在缓存中。pagehide事件的event对象有一个persisted属性，将这个属性设为true，就表示页面要保存在缓存中；设为false，表示网页不保存在缓存中，这时如果设置了unload事件的监听函数，该函数将在pagehide事件后立即运行。
-
-## CSS事件
-
-### transitionEnd事件
-
-CSS的过渡效果（transition）结束后，触发该事件。
-
-```javascript
-el.addEventListener("transitionend", onTransitionEnd, false);
-
-function onTransitionEnd() {
-  console.log('Transition end');
-}
-```
-
-transitionEnd的事件对象具有以下属性。
-
-- propertyName：发生transition效果的CSS属性名。
-- elapsedTime：transition效果持续的秒数，不含transition-delay的时间。
-- pseudoElement：如果transition效果发生在伪元素，会返回该伪元素的名称，以“::”开头。如果不发生在伪元素上，则返回一个空字符串。
-
-### animationstart事件，animationend事件，animationiteration事件
-
-CSS动画开始时，会触发animationstart事件；结束时，会触发animationend事件。当CSS动画开始新一轮循环时，就会触发animationiteration事件。但是，animation-iteration-count属性等于1时，该事件不触发，即只播放一轮的CSS动画，不会触发animationiteration事件。
-
-这三个事件的事件对象，都有animationName属性（返回产生过渡效果的CSS属性名）和elapsedTime属性（动画已经运行的秒数）。对于animationstart事件，elapsedTime属性等于0，除非animation-delay属性等于负值。
-
-{% highlight javascript %}
-
-div.addEventListener('animationiteration', function() {
-  console.log('完成一次动画');
-});
-
-{% endhighlight %}
 
 ## 自定义事件和事件模拟
 
