@@ -2054,8 +2054,7 @@ function eventHandler(e) {
 
 下面是另一个例子。
 
-{% highlight javascript %}
-
+```javascript
 var myEvent = new CustomEvent("myevent", {
   detail: {
     foo: "bar"
@@ -2069,8 +2068,7 @@ el.addEventListener('myevent', function(event) {
 });
 
 el.dispatchEvent(myEvent);
-
-{% endhighlight %}
+```
 
 IE不支持这个方法，可以用下面的垫片函数模拟。
 
@@ -2179,8 +2177,7 @@ event.initMouseEvent(type, canBubble, cancelable, view,
 
 模仿并触发click事件的写法如下。
 
-{% highlight javascript %}
-
+```javascript
 var simulateDivClick = document.createEvent('MouseEvents');
 
 simulateDivClick.initMouseEvent('click',true,true,
@@ -2189,8 +2186,7 @@ simulateDivClick.initMouseEvent('click',true,true,
 );
 
 divElement.dispatchEvent(simulateDivClick);
-
-{% endhighlight %}
+```
 
 **（2）UIEvent.initUIEvent()**
 
