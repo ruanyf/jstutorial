@@ -206,8 +206,10 @@ para.onclick = hello;
 
 ```html
 <p id="para" onclick="hello()">Hello</p>
-// 或者使用JavaScript代码
-pElement.setAttribute('onclick', 'hello()');
+<!-- 或者使用JavaScript代码  -->
+<script>
+  pElement.setAttribute('onclick', 'hello()');
+</script>
 ```
 
 执行上面代码，点击p节点会输出doc。这是因为这里只是调用hello函数，而hello函数实际是在全局作用域执行，相当于下面的代码。
@@ -2017,22 +2019,6 @@ var focusEvent = new FocusEvent(typeArg, focusEventInit);
 ```
 
 上面代码中，FocusEvent构造函数的第一个参数为事件类型，第二个参数是可选的配置对象，用来配置FocusEvent对象。
-
-### 全屏事件
-
-以下事件与全屏操作有关。
-
-- fullscreenchange事件：浏览器进入或离开全屏时触发。
-
-- fullscreenerror事件：浏览器无法进入全屏时触发，可能是技术原因，也可能是用户拒绝。
-
-```javascript
-document.addEventListener("fullscreenchange", function( event ) {
-  if ( document.fullscreenEnabled ) {
-    document.fullscreenElement;
-  }
-});
-```
 
 ## 自定义事件和事件模拟
 

@@ -78,7 +78,7 @@ modifiedOn: 2014-05-18
 - [Web Worker](htmlapi/webworker.html)
 - [SSE：服务器发送事件](htmlapi/eventsource.html)（基本完成）
 - [Page Visiblity](htmlapi/pagevisibility.html)
-- [FullScreen](htmlapi/fullscreen.html)
+- [FullScreen API：全屏操作](htmlapi/fullscreen.html)
 - [Web Speech](htmlapi/webspeech.html)
 - [requestAnimationFrame](htmlapi/requestanimationframe.html)
 - [WebSocket](htmlapi/websocket.html)（基本完成）
