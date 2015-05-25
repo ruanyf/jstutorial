@@ -807,7 +807,7 @@ buttons属性返回一个3个比特位的值，表示同时按下了哪些键。
 
 同时按下多个键的时候，每个按下的键对应的比特位都会有值。比如，同时按下左键和右键，会返回3（二进制为011）。
 
-### clientX，clientY，movementX，movementY，screenX
+### clientX，clientY，movementX，movementY，screenX，screenY
 
 以下属性与事件的位置相关。
 
@@ -996,7 +996,7 @@ key属性返回一个字符串，表示按下的键名。如果同时按下一�
 
 charCode属性返回一个数值，表示keypress事件按键的Unicode值，keydown和keyup事件不提供这个属性。注意，该属性已经从标准移除，虽然浏览器还支持，但应该尽量不使用。
 
-## 进度事件（ProgressEvent对象）
+## 进度事件
 
 进度事件用来描述一个事件进展的过程，比如XMLHttpRequest对象发出的HTTP请求的过程、&lt;img&gt;、&lt;audio&gt;、&lt;video&gt;、&lt;style&gt;、&lt;link&gt;加载外部资源的过程。下载和上传都会发生进度事件。
 
@@ -1016,7 +1016,39 @@ charCode属性返回一个数值，表示keypress事件按键的Unicode值，key
 
 - timeout事件：进度超过限时触发。
 
-下面是一个例子。
+```javascript
+image.addEventListener('load', function(event) {
+  image.classList.add('finished');
+});
+
+image.addEventListener('error', function(event) {
+  image.style.display = 'none';
+});
+```
+
+上面代码在图片元素加载完成后，为图片元素的class属性添加一个值“finished”。如果加载失败，就把图片元素的样式设置为不显示。
+
+有时候，图片加载会在脚本运行之前就完成，尤其是当脚本放置在网页底部的时候，因此有可能使得load和error事件的监听函数根本不会被执行。所以，比较可靠的方式，是用complete属性先判断一下是否加载完成。
+
+```
+function loaded() {
+  // code after image loaded
+}
+
+if (image.complete) {
+  loaded();
+} else {
+  image.addEventListener('load', loaded);
+}
+```
+
+由于DOM没有提供像complete属性那样的，判断是否发生加载错误的属性，所以error事件的监听函数最好放在img元素的HTML属性中，这样才能保证发生加载错误时百分之百会执行。
+
+```html
+<img src="/wrong/url" onerror="this.style.display='none';" />
+```
+
+error事件有一个特殊的性质，就是不会冒泡。这样的设计是正确的，防止引发父元素的error事件监听函数。
 
 进度事件使用ProgressEvent对象表示。ProgressEvent实例有以下属性。
 
@@ -1025,6 +1057,8 @@ charCode属性返回一个数值，表示keypress事件按键的Unicode值，key
 - total：返回一个数值，表示当前进度的总长度。如果是通过HTTP下载某个资源，表示内容本身的长度，不含HTTP头部的长度。如果lengthComputable属性为false，则total属性就无法取得正确的值。
 
 - loaded：返回一个数值，表示当前进度已经完成的数量。该属性除以total属性，就可以得到目前进度的百分比。
+
+下面是一个例子。
 
 ```javascript
 var xhr = new XMLHttpRequest();
@@ -1622,38 +1656,6 @@ function handleMove(evt) {
 }
 ```
 
-## 焦点事件
-
-焦点事件与Element节点获得或失去焦点相关。它主要包括以下四个事件。
-
-- focus：Element节点获得焦点后触发，该事件不会冒泡。
-- blur：Element节点失去焦点后触发，该事件不会冒泡。
-- focusin：Element节点将要获得焦点时触发，该事件会冒泡，但Firefox不支持该事件。
-- focusout：Element节点将要失去焦点时触发，该事件会冒泡，但Firefox不支持该事件。
-
-这四个事件的事件对象，带有target属性（返回事件的目标节点）和relatedTarget属性（返回一个Element节点）。对于focusin事件，relatedTarget属性表示失去焦点的节点；对于focusout事件，表示将要接受焦点的节点；对于focus和blur事件，该属性返回null。
-
-由于focus和blur事件不会冒泡，只能在捕获阶段触发，所以addEventListener方法的第三个参数需要设为true。
-
-```javascript
-form.addEventListener("focus", function( event ) {
-  event.target.style.background = "pink";
-}, true);
-form.addEventListener("blur", function( event ) {
-  event.target.style.background = "";
-}, true);
-```
-
-上面代码设置表单的文本输入框，在接受焦点时设置背景色，在失去焦点时去除背景色。
-
-浏览器提供一个FocusEvent构造函数，可以用它生成焦点事件的实例。
-
-```javascript
-var focusEvent = new FocusEvent(typeArg, focusEventInit);
-```
-
-上面代码中，FocusEvent构造函数的第一个参数为事件类型，第二个参数是可选的配置对象，用来配置FocusEvent对象。
-
 ## 表单事件
 
 ### Input事件，select事件，change事件
@@ -1717,26 +1719,98 @@ submit事件当表单数据向服务器提交时触发。注意，submit事件�
 
 ## 文档事件
 
-### beforeunload事件
+### beforeunload事件，unload事件，load事件，error事件，pageshow事件，pagehide事件
 
-当窗口将要关闭，或者document和网页资源将要卸载的时候，会触发beforeunload事件。
+以下事件与网页的加载与卸载相关。
 
-该事件的默认动作就是关闭当前窗口或文档。如果调用了`event.preventDefault()`，或者对事件对象的returnValue属性赋予一个非空的值，就会跳出一个确认框，询问用户是否真的要离开当前页面。如果用户点击否，该事件将被取消，即窗口不会关闭。
+**（1）beforeunload事件**
+
+beforeunload事件当窗口将要关闭，或者document和网页资源将要卸载时触发。它可以用来防止用户不当心关闭网页。
+
+该事件的默认动作就是关闭当前窗口或文档。如果在监听函数中，调用了`event.preventDefault()`，或者对事件对象的returnValue属性赋予一个非空的值，就会自动跳出一个确认框，让用户确认是否关闭网页。如果用户点击“取消”按钮，网页就不会关闭。监听函数所返回的字符串，会显示在确认对话框之中。
 
 ```javascript
-window.addEventListener("beforeunload", function( event ) {
-  event.returnValue = "是否要关闭该窗口？";
+window.onbeforeunload = function() {
+  if (textarea.value != textarea.defaultValue) {
+    return '你确认要离开吗？';
+  }
+};
+```
+
+上面代码表示，当用户关闭网页，会跳出一个确认对话框，上面显示“你确认要离开吗？”。
+
+下面的两种写法，具有同样效果。
+
+```javascript
+window.addEventListener('beforeunload', function( event ) {
+  event.returnValue = '你确认要离开吗？';
 });
 
 // 等同于
-window.addEventListener("beforeunload", function( event ) {
+window.addEventListener('beforeunload', function( event ) {
   event.preventDefault();
 });
 ```
 
-returnValue属性的值，将会成为确认框的提示文字。
+上面代码中，事件对象的returnValue属性的值，将会成为确认框的提示文字。
 
-### DOMContentLoaded事件
+只要定义了beforeunload事件的监听函数，网页不会被浏览器缓存。
+
+**（2）unload事件**
+
+unload事件在窗口关闭或者document对象将要卸载时触发，发生在window、body、frameset等对象上面。它的触发顺序排在beforeunload、pagehide事件后面。unload事件只在页面没有被浏览器缓存时才会触发，换言之，如果通过按下“前进/后退”导致页面卸载，并不会触发unload事件。
+
+当unload事件发生时，document对象处于一个特殊状态。所有资源依然存在，但是对用户来说都不可见，UI互动（window.open、alert、confirm方法等）全部无效。这时即使抛出错误，也不能停止文档的卸载。
+
+```javascript
+window.addEventListener('unload', function(event) {
+  console.log('文档将要卸载');
+});
+```
+
+如果在window对象上定义了该事件，网页就不会被浏览器缓存。
+
+**（3）load事件，error事件**
+
+load事件在页面加载成功时触发，error事件在页面加载失败时触发。注意，页面从浏览器缓存加载，并不会触发load事件。
+
+这两个事件实际上属于进度事件，不仅发生在document对象，还发生在各种外部资源上面。浏览网页就是一个加载各种资源的过程，图像（image）、样式表（style sheet）、脚本（script）、视频（video）、音频（audio）、Ajax请求（XMLHttpRequest）等等。这些资源和document对象、window对象、XMLHttpRequestUpload对象，都会触发load事件和error事件。
+
+**（4）pageshow事件，pagehide事件**
+
+默认情况下，浏览器会在当前会话（session）缓存页面，当用户点击“前进/后退”按钮时，浏览器就会从缓存中加载页面。
+
+pageshow事件在页面加载时触发，包括第一次加载和从缓存加载两种情况。如果要指定页面每次加载（不管是不是从浏览器缓存）时都运行的代码，可以放在这个事件的监听函数。
+
+第一次加载时，它的触发顺序排在load事件后面。从缓存加载时，load事件不会触发，因为网页在缓存中的样子通常是load事件的监听函数运行后的样子，所以不必重复执行。同理，如果是从缓存中加载页面，网页内初始化的JavaScript脚本（比如DOMContentLoaded事件的监听函数）也不会执行。
+
+```javascript
+window.addEventListener('pageshow', function(event) {
+  console.log('pageshow: ', event);
+});
+```
+
+pageshow事件有一个persisted属性，返回一个布尔值。页面第一次加载时，这个属性是false；当页面从缓存加载时，这个属性是true。
+
+```javascript
+window.addEventListener('pageshow', function(event){
+  if (event.persisted) {
+    // ...
+  }
+});
+```
+
+pagehide事件与pageshow事件类似，当用户通过“前进/后退”按钮，离开当前页面时触发。它与unload事件的区别在于，如果在window对象上定义unload事件的监听函数之后，页面不会保存在缓存中，而使用pagehide事件，页面会保存在缓存中。
+
+pagehide事件的event对象有一个persisted属性，将这个属性设为true，就表示页面要保存在缓存中；设为false，表示网页不保存在缓存中，这时如果设置了unload事件的监听函数，该函数将在pagehide事件后立即运行。
+
+如果页面包含frame或iframe元素，则frame页面的pageshow事件和pagehide事件，都会在主页面之前触发。
+
+### DOMContentLoaded事件，readystatechange事件
+
+以下事件与文档状态相关。
+
+**（1）DOMContentLoaded事件**
 
 当HTML文档下载并解析完成以后，就会在document对象上触发DOMContentLoaded事件。这时，仅仅完成了HTML文档的解析（整张页面的DOM生成），所有外部资源（样式表、脚本、iframe等等）可能还没有下载结束。也就是说，这个事件比load事件，发生时间早得多。
 
@@ -1748,7 +1822,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 注意，网页的JavaScript脚本是同步执行的，所以定义DOMContentLoaded事件的监听函数，应该放在所有脚本的最前面。否则脚本一旦发生堵塞，将推迟触发DOMContentLoaded事件。
 
-### readystatechange事件
+**（2）readystatechange事件**
 
 readystatechange事件发生在Document对象和XMLHttpRequest对象，当它们的readyState属性发生变化时触发。
 
@@ -1761,20 +1835,6 @@ document.onreadystatechange = function () {
 ```
 
 IE8不支持DOMContentLoaded事件，但是支持这个事件。因此，可以使用readystatechange事件，在低版本的IE中代替DOMContentLoaded事件。
-
-### unload事件，load事件
-
-unload事件在窗口关闭或者document对象将要卸载时触发。它的触发顺序排在beforeunload、pagehide事件后面。unload事件只在页面没有被浏览器缓存时才会触发，换言之，如果通过按下“前进/后退”导致页面卸载，并不会触发unload事件。
-
-当unload事件发生时，document对象处于一个特殊状态。所有资源依然存在，但是对用户来说都不可见，UI互动（window.open、alert、confirm方法等）全部无效。这时即使抛出错误，也不能停止文档的卸载。
-
-```javascript
-window.addEventListener('unload', function(event) {
-  console.log('文档将要卸载');
-});
-```
-
-load事件在页面或者一个资源结束加载时触发。注意，页面从浏览器缓存加载，并不会触发这个事件。
 
 ### scroll事件，resize事件
 
@@ -1837,41 +1897,25 @@ window.addEventListener("optimizedScroll", function() {
 
 **（2）resize事件**
 
-resize事件在文档视口改变大小时触发。
-
-该事件也会连续地大量触发，所以最好也像上面的scroll事件一样，通过throttle函数控制事件触发频率。
-
-### pageshow事件，pagehide事件
-
-默认情况下，浏览器会在当前会话（session）缓存页面，当用户点击“前进/后退”按钮时，浏览器就会从缓存中加载页面。
-
-pageshow事件在页面加载时触发，包括第一次加载和从缓存加载两种情况。如果要指定页面每次加载（不管是不是从浏览器缓存）时都运行的代码，可以放在这个事件的监听函数。
-
-第一次加载时，它的触发顺序排在load事件后面。从缓存加载时，load事件不会触发，因为网页在缓存中的样子通常是load事件的监听函数运行后的样子，所以不必重复执行。同理，如果是从缓存中加载页面，网页内初始化的JavaScript脚本（比如DOMContentLoaded事件的监听函数）也不会执行。
+resize事件在改变浏览器窗口大小时触发，发生在window、body、frameset对象上面。
 
 ```javascript
-window.addEventListener('pageshow', function(event) {
-  console.log('pageshow: ', event);
-});
-```
-
-pageshow事件有一个persisted属性，返回一个布尔值。页面第一次加载时，这个属性是false；当页面从缓存加载时，这个属性是true。
-
-```javascript
-window.addEventListener('pageshow', function(event){
-  if (event.persisted) {
-    // ...
+var resizeMethod = function(){
+  if (document.body.clientWidth < 768) {
+    console.log('移动设备');
   }
-});
+};
+
+window.addEventListener("resize", resizeMethod, true);
 ```
 
-pagehide事件与pageshow事件类似，当用户通过“前进/后退”按钮，离开当前页面时触发。它与unload事件的区别在于，如果在window对象上定义unload事件的监听函数之后，页面不会保存在缓存中，而使用pagehide事件，页面会保存在缓存中。
+该事件也会连续地大量触发，所以最好像上面的scroll事件一样，通过throttle函数控制事件触发频率。
 
-pagehide事件的event对象有一个persisted属性，将这个属性设为true，就表示页面要保存在缓存中；设为false，表示网页不保存在缓存中，这时如果设置了unload事件的监听函数，该函数将在pagehide事件后立即运行。
+### hashchange事件，popstate事件
 
-如果页面包含frame或iframe元素，则frame页面的pageshow事件和pagehide事件，都会在主页面之前触发。
+以下事件与文档的URL变化相关。
 
-### hashchange事件
+**（1）hashchange事件**
 
 hashchange事件在URL的hash部分（即#号后面的部分，包括#号）发生变化时触发。如果老式浏览器不支持该属性，可以通过定期检查location.hash属性，模拟该事件，下面就是代码。
 
@@ -1905,7 +1949,7 @@ hashchange事件在URL的hash部分（即#号后面的部分，包括#号）发�
 
 hashchange事件对象除了继承Event对象，还有oldURL属性和newURL属性，分别表示变化前后的URL。
 
-### popstate事件
+**（2）popstate事件**
 
 popstate事件在浏览器的history对象的当前记录发生显式切换时触发。注意，调用history.pushState()或history.replaceState()，并不会触发popstate事件。该事件只在用户在history记录之间显式切换时触发，比如鼠标点击“后退/前进”按钮，或者在脚本中调用history.back()、history.forward()、history.go()时触发。
 
@@ -1939,6 +1983,41 @@ history.go(2);  // state: {"page":3}
 
 这三个事件都有一个clipboardData只读属性。该属性存放剪贴的数据，是一个DataTransfer对象，具体的API接口和操作方法，请参见《触摸事件》的DataTransfer对象章节。
 
+### 焦点事件
+
+焦点事件发生在Element节点和document对象上面，与获得或失去焦点相关。它主要包括以下四个事件。
+
+- focus事件：Element节点获得焦点后触发，该事件不会冒泡。
+
+- blur事件：Element节点失去焦点后触发，该事件不会冒泡。
+
+- focusin事件：Element节点将要获得焦点时触发，发生在focus事件之前。该事件会冒泡。Firefox不支持该事件。
+
+- focusout事件：Element节点将要失去焦点时触发，发生在blur事件之前。该事件会冒泡。Firefox不支持该事件。
+
+这四个事件的事件对象，带有target属性（返回事件的目标节点）和relatedTarget属性（返回一个Element节点）。对于focusin事件，relatedTarget属性表示失去焦点的节点；对于focusout事件，表示将要接受焦点的节点；对于focus和blur事件，该属性返回null。
+
+由于focus和blur事件不会冒泡，只能在捕获阶段触发，所以addEventListener方法的第三个参数需要设为true。
+
+```javascript
+form.addEventListener("focus", function( event ) {
+  event.target.style.background = "pink";
+}, true);
+form.addEventListener("blur", function( event ) {
+  event.target.style.background = "";
+}, true);
+```
+
+上面代码设置表单的文本输入框，在接受焦点时设置背景色，在失去焦点时去除背景色。
+
+浏览器提供一个FocusEvent构造函数，可以用它生成焦点事件的实例。
+
+```javascript
+var focusEvent = new FocusEvent(typeArg, focusEventInit);
+```
+
+上面代码中，FocusEvent构造函数的第一个参数为事件类型，第二个参数是可选的配置对象，用来配置FocusEvent对象。
+
 ### 全屏事件
 
 以下事件与全屏操作有关。
@@ -1954,132 +2033,6 @@ document.addEventListener("fullscreenchange", function( event ) {
   }
 });
 ```
-
-## 事件的类型
-
-### 用户界面事件
-
-**（1）load事件，error事件**
-
-浏览网页就是一个加载各种资源的过程，比如图像（image）、样式表（style sheet）、脚本（script）、视频（video）、音频（audio）、Ajax请求（XMLHttpRequest）等等。
-
-如果加载成功就触发load事件，如果加载失败就触发error事件。这两个事件发生的对象，除了上面列出的各种资源，还包括文档（document）、窗口（window）、Ajax文件上传（XMLHttpRequestUpload）。
-
-{% highlight javascript %}
-
-image.addEventListener('load', function(event) {
-  image.classList.add('finished');
-});
-
-image.addEventListener('error', function(event) {
-  image.style.display = 'none';
-});
-
-{% endhighlight %}
-
-上面代码在图片元素加载完成后，为图片元素的class属性添加一个值“finished”。如果加载失败，就把图片元素的样式设置为不显示。
-
-有时候，图片加载会在脚本运行之前就完成，尤其是当脚本放置在网页底部的时候，因此有可能使得load和error事件的监听函数根本不会被执行。所以，比较可靠的方式，是用complete属性先判断一下是否加载完成。
-
-{% highlight javascript %}
-
-function loaded() {
-  // code after image loaded
-}
-
-if (image.complete) {
-  loaded();
-} else {
-  image.addEventListener('load', loaded);
-}
-
-{% endhighlight %}
-
-由于DOM没有机制判断是否发生加载错误，所以上面的方法不适用error事件的监听函数，它最好放在img元素的HTML属性中。
-
-{% highlight javascript %}
-
-<img src="/wrong/url" onerror="this.style.display='none';" />
-
-{% endhighlight %}
-
-error事件有一个特殊的性质，就是不会冒泡。这样的设计是正确的，防止引发父元素的error事件监听函数。
-
-**（2）unload事件**
-
-该事件在卸载某个资源时触发。window、body、frameset等元素都可能触发该事件。
-
-如果在window对象上定义了该事件，网页就不会被浏览器缓存。
-
-**（3）beforeunload事件**
-
-该事件在用户关闭网页时触发。它可以用来防止用户不当心关闭网页。
-
-该事件的特别之处在于，它会自动跳出一个确认对话框，让用户确认是否关闭网页。如果用户点击“取消”按钮，网页就不会关闭。beforeunload事件的监听函数所返回的字符串，会显示在确认对话框之中。
-
-{% highlight javascript %}
-
-window.onbeforeunload = function() {
-  if (textarea.value != textarea.defaultValue) {
-    return '你确认要离开吗？';
-  }
-};
-
-{% endhighlight %}
-
-上面代码表示，当用户关闭网页，会跳出一个确认对话框，上面显示“你确认要离开吗？”。
-
-如果定义了该事件的监听函数，网页不会被浏览器缓存。
-
-**（4）resize事件**
-
-改变浏览器窗口大小时会触发resize事件。能够触发它的元素包括window、body、frameset。
-
-{% highlight javascript %}
-
-var resizeMethod = function(){
-    if (document.body.clientWidth < 768) {
-        console.log('移动设备');
-    }
-};
-
-window.addEventListener("resize", resizeMethod, true);
-
-{% endhighlight %}
-
-### 焦点事件
-
-<table class="responsive">
-<thead>
-<tr>
-	<th>事件名称</th>
-	<th>涵义</th>
-	<th>事件的目标</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-	<td>blur</td>
-	<td>元素丧失焦点</td>
-	<td>Element（除了body和frameset元素），Document</td>
-</tr>
-<tr>
-	<td>focus</td>
-	<td>元素获得焦点</td>
-	<td>Element（除了body和frameset元素），Document</td>
-</tr>
-<tr>
-	<td>focusin</td>
-	<td>元素即将获得焦点，在focus之前触发</td>
-	<td>Element</td>
-</tr>
-<tr>
-	<td>focusout</td>
-	<td>元素即将丧失焦点，在blur之前触发</td>
-	<td>Element</td>
-</tr>
-</tbody>
-</table>
 
 ## 自定义事件和事件模拟
 
