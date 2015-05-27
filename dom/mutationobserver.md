@@ -42,7 +42,7 @@ var observer = new MutationObserver(callback);
 
 观察器的回调函数会在每次DOM发生变动后调用。它接受两个参数，第一个是变动数组（详见后文），第二个是观察器实例。
 
-## 实例方法
+## Mutation Observer实例的方法
 
 ### observe()
 
@@ -123,7 +123,7 @@ MutationRecord对象包含了DOM的相关信息，有如下属性：
 - **attributeName**：发生变动的属性。如果设置了attributeFilter，则只返回预先指定的属性。
 - **oldValue**：变动前的值。这个属性只对attribute和characterData变动有效，如果发生childList变动，则返回null。
 
-## 实例
+## 应用示例
 
 ### 子元素的变动
 

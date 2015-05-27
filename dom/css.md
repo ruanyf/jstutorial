@@ -461,9 +461,6 @@ styleObj.getPropertyValue('color') // "red"
 item方法返回指定位置的属性名。
 
 ```javascript
-// CSS代码为
-// color:red;
-
 var styleObj = document.styleSheets[0].cssRules[1].style;
 styleObj.item(0) // "color"
 // 或者
@@ -487,11 +484,8 @@ styleObj.removeProperty('color') // "red"
 setProperty方法用于设置指定的CSS属性，没有返回值。
 
 ```javascript
-// CSS代码为
-// color:red;
-
 var styleObj = document.styleSheets[0].cssRules[1].style;
-styleObj.setProperty('color', 'green', 'important') // "red"
+styleObj.setProperty('color', 'green', 'important');
 ```
 
 下面是遍历一条CSS规则所有属性的例子。
