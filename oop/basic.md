@@ -501,10 +501,9 @@ this的动态切换，固然为JavaScript创造了巨大的灵活性，但也使
 
 ### call方法
 
-函数的call方法，可以改变指定该函数内部this的指向，然后再调用该函数。
+函数的call方法，可以指定该函数内部this的指向（即函数执行时所在的作用域），然后在所指定的作用域中，调用该函数。
 
 ```javascript
-
 var o = {};
 
 var f = function (){
@@ -513,15 +512,13 @@ var f = function (){
 
 f() === this // true
 f.call(o) === o // true
-
 ```
 
-上面代码中，在全局环境运行函数f时，this指向全局环境；call方法指定，在对象o的环境中运行函数f，则this指向对象o。
+上面代码中，在全局环境运行函数f时，this指向全局环境；call方法可以改变this的指向，指定this指向对象o，然后在对象o的作用域中运行函数f。
 
 再看一个例子。
 
-{% highlight javascript %}
-
+```javascript
 var n = 123;
 var o = { n : 456 };
 
@@ -534,55 +531,64 @@ a.call(null) // 123
 a.call(undefined) // 123
 a.call(window) // 123
 a.call(o) // 456
+```
 
-{% endhighlight %}
-
-上面代码中，a函数中的this关键字，如果指向全局对象，返回结果为123。如果使用call方法，将this关键字指向o对象，返回结果为456。如果this所要指向的那个对象，设定为null或undefined，则等同于指向全局对象。
+上面代码中，a函数中的this关键字，如果指向全局对象，返回结果为123。如果使用call方法将this关键字指向o对象，返回结果为456。可以看到，如果call方法没有参数，或者参数为null或undefined，则等同于指向全局对象。
 
 call方法的完整使用格式如下。
 
 ```javascript
-
 func.call(thisValue, arg1, arg2, ...)
-
 ```
 
 它的第一个参数就是this所要指向的那个对象，后面的参数则是函数调用时所需的参数。
 
 ```javascript
-
 function add(a,b) {
   return a+b;
 }
 
 add.call(this,1,2) // 3
-
 ```
 
 上面代码中，call方法指定函数add在当前环境（对象）中运行，并且参数为1和2，因此函数add运行后得到3。
 
+call方法的一个应用是调用对象的原生方法。
+
+```javascript
+var obj = {};
+obj.hasOwnProperty('toString') // false
+
+obj.hasOwnProperty = function (){
+  return true;
+};
+obj.hasOwnProperty('toString') // true
+
+Object.prototype.hasOwnProperty.call(obj, 'toString') // false
+```
+
+上面代码中，hasOwnProperty是obj对象继承的方法，如果这个方法一旦被覆盖，就不会得到正确结果。call方法可以解决这个方法，它将hasOwnProperty方法的原始定义放到obj对象上执行，这样无论obj上有没有同名方法，都不会影响结果。
+
 ### apply方法
 
-apply方法的作用与call方法类似，也是改变this指向，然后再调用该函数。它的使用格式如下。
+apply方法的作用与call方法类似，也是改变this指向，然后再调用该函数。唯一的区别就是，它接收一个数组作为函数执行时的参数，使用格式如下。
 
-{% highlight javascript %}
-
+```javascript
 func.apply(thisValue, [arg1, arg2, ...])
-
-{% endhighlight %}
+```
 
 apply方法的第一个参数也是this所要指向的那个对象，如果设为null或undefined，则等同于指定全局对象。第二个参数则是一个数组，该数组的所有成员依次作为参数，传入原函数。原函数的参数，在call方法中必须一个个添加，但是在apply方法中，必须以数组形式添加。
 
 请看下面的例子。
 
-{% highlight javascript %}
-
-function f(x,y){ console.log(x+y); }
+```javascript
+function f(x,y){
+  console.log(x+y);
+}
 
 f.call(null,1,1) // 2
 f.apply(null,[1,1]) // 2
-
-{% endhighlight %}
+```
 
 上面的f函数本来接受两个参数，使用apply方法以后，就变成可以接受一个数组作为参数。
 
@@ -619,7 +625,7 @@ Array.apply(null, ["a",,"b"])
 var a = ["a",,"b"];
 
 function print(i) {
-	console.log(i);
+  console.log(i);
 }
 
 a.forEach(print)
@@ -668,8 +674,8 @@ o.f = function (){
 }
 
 var f = function (){
-	o.f.apply(o);
-	// 或者 o.f.call(o);
+  o.f.apply(o);
+  // 或者 o.f.call(o);
 };
 
 $("#button").on("click", f);

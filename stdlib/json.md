@@ -77,10 +77,10 @@ JSON.stringify(false) // "false"
 JSON.stringify([]) // "[]"
 JSON.stringify({}) // "{}"
 
-JSON.stringify([1, "false", false]) 
+JSON.stringify([1, "false", false])
 // '[1,"false",false]'
 
-JSON.stringify({ name: "张三" }) 
+JSON.stringify({ name: "张三" })
 // '{"name":"张三"}'
 
 {% endhighlight %}
@@ -104,10 +104,28 @@ JSON.stringify({
 正则对象会被转成空对象。
 
 ```javascript
-
 JSON.stringify(/foo/) // "{}"
-
 ```
+
+JSON.stringify方法会忽略对象的不可遍历属性。
+
+```javascript
+var obj = {};
+Object.defineProperties(obj, {
+  'foo': {
+    value: 1,
+    enumerable: true
+  },
+  'bar': {
+    value: 2,
+    enumerable: false
+  }
+});
+
+JSON.stringify(obj); // {"foo":1}
+```
+
+上面代码中，bar是obj对象的不可遍历属性，JSON.stringify方法会忽略这个属性。
 
 JSON.stringify方法还可以接受一个数组参数，指定需要转成字符串的属性。
 
@@ -220,9 +238,9 @@ JSON.stringify({ p1:1, p2:2 }, null, "|-");
 {% highlight javascript %}
 
 JSON.stringify({
-  toJSON: function() { 
-    return "Cool" 
-  } 
+  toJSON: function() {
+    return "Cool"
+  }
 })
 // "Cool""
 

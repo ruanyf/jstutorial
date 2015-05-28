@@ -417,7 +417,7 @@ document.styleSheets[0].cssRules[0].style.cssText
 
 - window.getComputedStyle()的返回结果
 
-每一条CSS属性，都是CSSStyleDeclaration对象的属性。
+每一条CSS属性，都是CSSStyleDeclaration对象的属性。不过，连词号需要编程骆驼拼写法。
 
 ```javascript
 var styleObj = document.styleSheets[0].cssRules[1].style;
@@ -504,107 +504,102 @@ for (var i = styleObj.length - 1; i >= 0; i--) {
 styleObj.cssText = '';
 ```
 
-## window.getComputedStyle方法
+## window.getComputedStyle()
 
-getComputedStyle方法接受一个HTML元素作为参数，返回一个包含该HTML元素的最终样式信息的对象。所谓“最终样式信息”，指的是各种CSS规则叠加后的结果。
+getComputedStyle方法接受一个DOM节点对象作为参数，返回一个包含该节点最终样式信息的对象。所谓“最终样式信息”，指的是各种CSS规则叠加后的结果。
 
-{% highlight javascript %}
-
+```javascript
 var div = document.querySelector('div');
-
 window.getComputedStyle(div).backgroundColor
+```
 
-{% endhighlight %}
+getComputedStyle方法还可以接受第二个参数，表示指定节点的伪元素。
 
-getComputedStyle方法只能读取CSS属性，而不能设置。它使用骆驼拼写法表示CSS规则名，比如background-color要写成backgroundColor。
+```javascript
+var result = window.getComputedStyle(div, ':before');
+```
 
-getComputedStyle方法返回的颜色值一律都是rgb(#,#,#)格式。
+getComputedStyle方法返回的是一个CSSStyleDeclaration对象。但是此时，这个对象是只读的，也就是只能用来读取样式信息，不能用来设置。如果想设置样式，应该使用Element节点的style属性。
 
-## window.matchMedia方法
+```javascript
+var elem = document.getElementById("elem-container");
+var hValue = window.getComputedStyle(elem,null).getPropertyValue("height");
+```
+
+## window.matchMedia()
+
+### 基本用法
 
 window.matchMedia方法用来检查CSS的[mediaQuery](https://developer.mozilla.org/en-US/docs/DOM/Using_media_queries_from_code)语句。各种浏览器的最新版本（包括IE 10+）都支持该方法，对于不支持该方法的老式浏览器，可以使用第三方函数库[matchMedia.js](https://github.com/paulirish/matchMedia.js/)。
 
-### mediaQuery语句
+CSS的mediaQuery语句有点像if语句，只要显示媒介（包括浏览器和屏幕等）满足mediaQuery语句设定的条件，就会执行区块内部的语句。下面是mediaQuery语句的一个例子。
 
-mediaQuery有点像if语句，只要显示网页的媒介（包括浏览器和屏幕等）满足mediaQuery语句设定的条件，就会执行区块内部的语句。下面是mediaQuery语句的一个例子。
-
-{% highlight javascript %}
-
+```css
 @media all and (max-width: 700px) {
-    body {
-        background: #FF0;
-    }
+  body {
+    background: #FF0;
+  }
 }
+```
 
-{% endhighlight %}
-
-上面的CSS代码表示，该区块对所有媒介（media）有效，且视口必须满足最大宽度不超过700像素。如果条件满足，则body元素的背景设为#FF0。
+上面的CSS代码表示，该区块对所有媒介（media）有效，且视口的最大宽度不得超过700像素。如果条件满足，则body元素的背景设为#FF0。
 
 需要注意的是，mediaQuery接受两种宽度/高度的度量，一种是上例的“视口”的宽度/高度，还有一种是“设备”的宽度/高度，下面就是一个例子。
 
-{% highlight javascript %}
-
+```css
 @media all and (max-device-width: 700px) {
-
+  body {
+    background: #FF0;
+  }
 }
+```
 
-{% endhighlight %}
+视口的宽度/高度（width/height）使用documentElement.clientWidth/clientHeight来衡量，单位是CSS像素；设备的宽度/高度（device-width/device-height）使用screen.width/height来衡量，单位是设备硬件的像素。
 
-视口的宽度/高度（width/height）使用documentElement.clientWidth/Height来衡量，单位是CSS像素；设备的宽度/高度（device-width/device-height）使用screen.width/height来衡量，单位是设备硬件的像素。
+window.matchMedia方法接受一个mediaQuery语句的字符串作为参数，返回一个[MediaQueryList](https://developer.mozilla.org/en-US/docs/DOM/MediaQueryList)对象。该对象有以下两个属性。
 
-### 属性
+- media：返回所查询的mediaQuery语句字符串。
 
-window.matchMedia方法接受mediaQuery语句作为参数，返回一个[MediaQueryList](https://developer.mozilla.org/en-US/docs/DOM/MediaQueryList)对象。该对象有以下两个属性。
+- matches：返回一个布尔值，表示当前环境是否匹配查询语句。
 
-- media：查询语句的内容。
-- matches：如果查询结果为真，值为true，否则为false。
-
-{% highlight javascript %}
-
+```javascript
 var result = window.matchMedia("(min-width: 600px)");
-
 result.media // (min-width: 600px)
 result.matches // true
+```
 
-{% endhighlight %}
+下面是另外一个例子，根据mediaQuery是否匹配当前环境，执行不同的JavaScript代码。
 
-下面是另外一个例子，根据mediaQuery是否匹配，运行不同的JavaScript代码。
-
-{% highlight javascript %}
-
+```javascript
 var result = window.matchMedia('@media all and (max-width: 700px)');
 
-if(result.matches) {
-    console.log('the width is less then 700px');
+if (result.matches) {
+  console.log('页面宽度小于等于700px');
 } else {
-    console.log('the width is more then 700px');
+  console.log('页面宽度大于700px');
 }
+```
 
-{% endhighlight %}
+下面的例子根据mediaQuery是否匹配当前环境，加载相应的CSS样式表。
 
-还可以根据mediaQuery是否匹配，加载相应的CSS样式表。
-
-{% highlight javascript %}
-
+```javascript
 var result = window.matchMedia("(max-width: 700px)");
 
 if (result.matches){
-	var linkElm = document.createElement('link');
-	linkElm.setAttribute('rel', 'stylesheet');
-	linkElm.setAttribute('type', 'text/css');
-	linkElm.setAttribute('href', 'small.css');
+  var linkElm = document.createElement('link');
+  linkElm.setAttribute('rel', 'stylesheet');
+  linkElm.setAttribute('type', 'text/css');
+  linkElm.setAttribute('href', 'small.css');
 
-	document.head.appendChild(linkElm);
+  document.head.appendChild(linkElm);
 }
+```
 
-{% endhighlight %}
-
-### 方法
+### 监听事件
 
 window.matchMedia方法返回的MediaQueryList对象有两个方法，用来监听事件：addListener方法和removeListener方法。如果mediaQuery查询结果发生变化，就调用指定的回调函数。
 
-{% highlight javascript %}
-
+```javascript
 var mql = window.matchMedia("(max-width: 700px)");
 
 // 指定回调函数
@@ -620,8 +615,7 @@ function mqCallback(mql) {
     // 宽度大于700像素
   }
 }
-
-{% endhighlight %}
+```
 
 上面代码中，回调函数的参数是MediaQueryList对象。回调函数的调用可能存在两种情况。一种是显示宽度从700像素以上变为以下，另一种是从700像素以下变为以上，所以在回调函数内部要判断一下当前的屏幕宽度。
 

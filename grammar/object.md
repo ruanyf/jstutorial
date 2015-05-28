@@ -289,19 +289,16 @@ y // 1
 
 ### in运算符
 
-in运算符用于检查对象是否包含某个属性（注意，检查的是键名，不是键值），如果包含就返回true。
+in运算符用于检查对象是否包含某个属性（注意，检查的是键名，不是键值），如果包含就返回true，否则返回false。
 
-{% highlight javascript %}
-
+```javascript
 var o = { p: 1 };
 'p' in o // true
-
-{% endhighlight %}
+```
 
 该运算符对数组也适用。
 
-{% highlight javascript %}
-
+```javascript
 var a = ["hello", "world"];
 
 0 in a // true
@@ -311,47 +308,37 @@ var a = ["hello", "world"];
 '0' in a // true
 '1' in a // true
 '2' in a // false
+```
 
-{% endhighlight %}
+上面代码表示，数字键0和1都在数组之中。由于数组是一种特殊对象，而对象的键名都是字符串，所以字符串的”0“和”1“，也是数组的键名。
 
-上面代码表示，数字键0和1都在数组之中。由于对象的键名都是字符串，因此也可以用字符串1和2判断数组的成员。
+在JavaScript语言中，所有全局变量都是顶层对象（浏览器的顶层对象就是window对象）的属性，因此可以用in运算符判断，一个全局变量是否存在。
 
-在JavaScript语言中，所有全局变量都是顶层对象（浏览器环境的顶层对象为window）的属性，因此可以用in运算符判断一个全局变量是否存在。
-
-{% highlight javascript %}
-
+```javascript
 // 假设变量x未定义
 
-// 报错
+// 写法一：报错
 if (x){ return 1; }
 
-// 不正确的写法
+// 写法二：不正确
 if (window.x){ return 1; }
 
-// 正确的写法
+// 写法三：正确
 if ('x' in window) { return 1; }
+```
 
-{% endhighlight %}
+上面三种写法之中，如果x不存在，第一种写法会报错；如果x的值对应布尔值false（比如x等于空字符串），第二种写法无法得到正确结果；只有第三种写法，才能正确判断变量x是否存在。
 
-上面三种写法之中，如果x不存在，第一种写法会报错；如果x的值对应布尔值false（比如x等于空字符串），第二种写法无法得到正确结果；只有第三种写法，才是判断变量x是否存在的正确写法。
+in运算符的一个问题是，它不能识别对象继承的属性。
 
-in运算符对继承的属性也有效。
-
-{% highlight javascript %}
-
+```javascript
 var o = new Object();
+o.hasOwnProperty('toString') // false
 
-o.hasOwnProperty('toString')
-// false
+'toString' in o // true
+```
 
-'toString' in o
-// true
-
-{% endhighlight %}
-
-上面代码中，toString方法是对象o的继承属性，hasOwnProperty方法可以说明这一点，而in运算符对继承的属性也返回true。
-
-in运算符只能用来检验可枚举（enumerable）的属性。关于可枚举性，参见下一章的《Object对象》一节。
+上面代码中，toString方法不是对象o自身的属性，而是继承的属性，hasOwnProperty方法可以说明这一点。但是，in运算符不能识别，对继承的属性也返回true。
 
 ### for...in循环
 
