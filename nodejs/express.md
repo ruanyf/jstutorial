@@ -39,9 +39,7 @@ $ mkdir hello-world
 然后，就可以安装了。
 
 ```bash
-
 $ npm install
-
 ```
 
 安装了Express及其依赖的模块以后，在项目根目录下，新建一个启动文件，假定叫做index.js。
@@ -194,10 +192,10 @@ Express框架的核心是对http模块的再包装。上面的代码用Express�
 
 var express = require('express');
 var app = express();
-app.get('/', function (req, res) {  
+app.get('/', function (req, res) {
     res.send('Hello world!');
 });
-app.listen(3000);  
+app.listen(3000);
 
 var express = require("express");
 var http = require("http");
@@ -237,8 +235,8 @@ function uselessMiddleware(req, res, next) {
 
 {% highlight javascript %}
 
-function uselessMiddleware(req, res, next) { 
-	next('出错了！');
+function uselessMiddleware(req, res, next) {
+  next('出错了！');
 }
 
 {% endhighlight %}
@@ -1063,6 +1061,154 @@ app.route('/login')
 
 上面代码的这种写法，显然非常简洁清晰。
 
+## 上传文件
+
+首先，在网页插入上传文件的表单。
+
+```html
+<form action="/pictures/upload" method="POST" enctype="multipart/form-data">
+  Select an image to upload:
+  <input type="file" name="image">
+  <input type="submit" value="Upload Image">
+</form>
+```
+
+然后，服务器脚本建立指向`/upload`目录的路由。这时可以安装multer模块，它提供了上传文件的许多功能。
+
+```javascript
+var express = require('express');
+var router = express.Router();
+var multer = require('multer');
+
+var uploading = multer({
+  dest: __dirname + '../public/uploads/',
+  // 设定限制，每次最多上传1个文件，文件大小不超过1MB
+  limits: {fileSize: 1000000, files:1},
+})
+
+router.post('/upload', uploading, function(req, res) {
+
+})
+
+module.exports = router
+```
+
+上面代码是上传文件到本地目录。下面是上传到Amazon S3的例子。
+
+首先，在S3上面新增CORS配置文件。
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+  <CORSRule>
+    <AllowedOrigin>*</AllowedOrigin>
+    <AllowedMethod>GET</AllowedMethod>
+    <AllowedMethod>POST</AllowedMethod>
+    <AllowedMethod>PUT</AllowedMethod>
+    <AllowedHeader>*</AllowedHeader>
+  </CORSRule>
+</CORSConfiguration>
+```
+
+上面的配置允许任意电脑向你的bucket发送HTTP请求。
+
+然后，安装aws-sdk。
+
+```bash
+$ npm install aws-sdk --save
+```
+
+下面是服务器脚本。
+
+```javascript
+var express = require('express');
+var router = express.Router();
+var aws = require('aws-sdk');
+
+router.get('/', function(req, res) {
+  res.render('index')
+})
+
+var AWS_ACCESS_KEY = 'your_AWS_access_key'
+var AWS_SECRET_KEY = 'your_AWS_secret_key'
+var S3_BUCKET = 'images_upload'
+
+router.get('/sign', function(req, res) {
+  aws.config.update({accessKeyId: AWS_ACCESS_KEY, secretAccessKey: AWS_SECRET_KEY});
+
+  var s3 = new aws.S3()
+  var options = {
+    Bucket: S3_BUCKET,
+    Key: req.query.file_name,
+    Expires: 60,
+    ContentType: req.query.file_type,
+    ACL: 'public-read'
+  }
+
+  s3.getSignedUrl('putObject', options, function(err, data){
+    if(err) return res.send('Error with S3')
+
+    res.json({
+      signed_request: data,
+      url: 'https://s3.amazonaws.com/' + S3_BUCKET + '/' + req.query.file_name
+    })
+  })
+})
+
+module.exports = router
+```
+
+上面代码中，用户访问`/sign`路径，正确登录后，会收到一个JSON对象，里面是S3返回的数据和一个暂时用来接收上传文件的URL，有效期只有60秒。
+
+浏览器代码如下。
+
+```javascript
+// HTML代码为
+// <br>Please select an image
+// <input type="file" id="image">
+// <br>
+// <img id="preview">
+
+document.getElementById("image").onchange = function() {
+  var file = document.getElementById("image").files[0]
+  if (!file) return
+
+  sign_request(file, function(response) {
+    upload(file, response.signed_request, response.url, function() {
+      document.getElementById("preview").src = response.url
+    })
+  })
+}
+
+function sign_request(file, done) {
+  var xhr = new XMLHttpRequest()
+  xhr.open("GET", "/sign?file_name=" + file.name + "&file_type=" + file.type)
+
+  xhr.onreadystatechange = function() {
+    if(xhr.readyState === 4 && xhr.status === 200) {
+      var response = JSON.parse(xhr.responseText)
+      done(response)
+    }
+  }
+  xhr.send()
+}
+
+function upload(file, signed_request, url, done) {
+  var xhr = new XMLHttpRequest()
+  xhr.open("PUT", signed_request)
+  xhr.setRequestHeader('x-amz-acl', 'public-read')
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      done()
+    }
+  }
+
+  xhr.send(file)
+}
+```
+
+上面代码首先监听file控件的change事件，一旦有变化，就先向服务器要求一个临时的上传URL，然后向该URL上传文件。
+
 ## 参考链接
 
 - Raymond Camden, [Introduction to Express](http://net.tutsplus.com/tutorials/javascript-ajax/introduction-to-express/)
@@ -1070,3 +1216,4 @@ app.route('/login')
 - Stephen Sugden, [A short guide to Connect Middleware](http://stephensugden.com/middleware_guide/)
 - Evan Hahn, [Understanding Express.js](http://evanhahn.com/understanding-express/)
 - Chris Sevilleja, [Learn to Use the New Router in ExpressJS 4.0](http://scotch.io/tutorials/javascript/learn-to-use-the-new-router-in-expressjs-4)
+- Stefan Fidanov, [Limitless file uploading to Amazon S3 with Node & Express](http://www.terlici.com/2015/05/23/uploading-files-S3.html)
