@@ -6,7 +6,37 @@ date: 2015-04-17
 modifiedOn: 2015-04-17
 ---
 
-Koa是一个类似于Express的Web开发框架，开发人员也是同一组人，但是使用了Generator函数，进行了架构的重新设计。
+Koa是一个类似于Express的Web开发框架，开发人员也是同一组人，但是使用了Generator函数，进行了架构的重新设计。也就是说，Koa的原理和内部结构很像Express，但是语法和内部结构进行了升级。
+
+官方[faq](https://github.com/koajs/koa/blob/master/docs/faq.md#why-isnt-koa-just-express-40)有这样一个问题：”为什么koa不是Express 4.0？“，回答是这样的：”Koa与Express有很大差异，整个设计都是不同的，所以如果将Express 3.0按照这种写法升级到4.0，就意味着重写整个程序。所以，我们觉得创造一个新的库，是更合适的做法。“
+
+## Koa应用
+
+一个Koa应用就是一个对象，包含了一个middleware数组，这个数组由一组Generator函数组成。这些函数负责对HTTP请求进行各种加工，比如生成缓存、指定代理、请求重定向等等。
+
+```javascript
+var koa = require('koa');
+var app = koa();
+
+app.use(function *(){
+  this.body = 'Hello World';
+});
+
+app.listen(3000);
+```
+
+上面代码中，变量app就是一个Koa应用。它监听3000端口，返回一个内容为Hello World的网页。
+
+app.use方法用于向middleware数组添加Generator函数。
+
+listen方法指定监听端口，并启动当前应用。它实际上等同于下面的代码。
+
+```javascript
+var http = require('http');
+var koa = require('koa');
+var app = koa();
+http.createServer(app.callback()).listen(3000);
+```
 
 ## 中间件
 
@@ -49,6 +79,30 @@ Results Saved!
 footer
 ```
 
+只要有一个中间件缺少`yield next`语句，后面的中间件都不会执行，这一点要引起注意。
+
+```javascript
+app.use(function *(next){
+  console.log('>> one');
+  yield next;
+  console.log('<< one');
+});
+
+app.use(function *(next){
+  console.log('>> two');
+  this.body = 'two';
+  console.log('<< two');
+});
+
+app.use(function *(next){
+  console.log('>> three');
+  yield next;
+  console.log('<< three');
+});
+```
+
+上面代码中，因为第二个中间件少了`yield next`语句，第三个中间件并不会执行。
+
 由于Koa要求中间件唯一的参数就是next，导致如果要传入其他参数，必须另外写一个返回Generator函数的函数。
 
 ```javascript
@@ -68,6 +122,85 @@ app.use(logger(':method :url'));
 ```
 
 上面代码中，真正的中间件是logger函数的返回值，而logger函数是可以接受参数的。
+
+### 多个中间件的合并
+
+由于中间件的参数统一为next（意为下一个中间件），因此可以使用`.call(this, next)`，将多个中间件进行合并。
+
+```javascript
+function *random(next) {
+  if ('/random' == this.path) {
+    this.body = Math.floor(Math.random()*10);
+  } else {
+    yield next;
+  }
+};
+
+function *backwards(next) {
+  if ('/backwards' == this.path) {
+    this.body = 'sdrawkcab';
+  } else {
+    yield next;
+  }
+}
+
+function *pi(next) {
+  if ('/pi' == this.path) {
+    this.body = String(Math.PI);
+  } else {
+    yield next;
+  }
+}
+
+function *all(next) {
+  yield random.call(this, backwards.call(this, pi.call(this, next)));
+}
+
+app.use(all);
+```
+
+上面代码中，中间件all内部，就是依次调用random、backwards、pi，后一个中间件就是前一个中间件的参数。
+
+Koa内部使用koa-compose模块，进行同样的操作，下面是它的源码。
+
+```
+function compose(middleware){
+  return function *(next){
+    if (!next) next = noop();
+
+    var i = middleware.length;
+
+    while (i--) {
+      next = middleware[i].call(this, next);
+    }
+
+    yield *next;
+  }
+}
+
+function *noop(){}
+```
+
+上面代码中，middleware是中间件数组。前一个中间件的参数是后一个中间件，依次类推。如果最后一个中间件没有next参数，则传入一个空函数。
+
+## 路由
+
+路由需要安装koa-route插件。
+
+```javascript
+var app = require("koa")();
+var route = require("koa-route");
+
+app.use(route.get("/", function *() {
+  try {
+    this.body = 'Hello World';
+  }
+  catch (err) {
+    this.status = 500;
+    this.body = {success: false, err: err};
+  }
+}));
+```
 
 ## 错误处理机制
 
@@ -94,6 +227,158 @@ app.use(function *() {
 ```
 
 上面代码自行部署了try...catch代码块，一旦产生错误，就用`this.throw`方法抛出。该方法可以将指定的状态码和错误信息，返回给客户端。
+
+对于未捕获错误，可以设置error事件的监听函数。
+
+```javascript
+app.on('error', function(err){
+  log.error('server error', err);
+});
+```
+
+## context对象
+
+context对象代表一次HTTP请求和回应，可以将其理解为上下文对象，即一次访问的所有信息，都可以从上下文对象获得。
+
+context对象封装了request对象和response对象，即context对象的属性和方法，其实就是request对象和response对象的属性和方法。比如，ctx.type和ctx.length来自response对象，ctx.path和ctx.method来自request对象。
+
+context对象的全局属性。
+
+- request：指向Request对象
+- response：指向Response对象
+- app：指向App对象
+
+context对象的全局方法。
+
+- throw()：抛出错误，直接决定了HTTP回应的状态码。
+
+- assert()：如果一个表达式为false，则抛出一个错误。
+
+```javascript
+this.throw(403);
+this.throw('name required', 400);
+this.throw('something exploded');
+
+this.throw(400, 'name required');
+// 等同于
+var err = new Error('name required');
+err.status = 400;
+throw err;
+```
+
+assert方法的例子。
+
+```javascript
+// 格式
+ctx.assert(value, [msg], [status], [properties])
+
+// 例子
+this.assert(this.user, 401, 'User not found. Please login!');
+```
+
+以下属性为代理Request对象的属性。
+
+- ctx.header
+- ctx.headers
+- ctx.method
+- ctx.method=
+- ctx.url
+- ctx.url=
+- ctx.originalUrl
+- ctx.href
+- ctx.path
+- ctx.path=
+- ctx.query
+- ctx.query=
+- ctx.querystring
+- ctx.querystring=
+- ctx.host
+- ctx.hostname
+- ctx.fresh
+- ctx.stale
+- ctx.socket
+- ctx.protocol
+- ctx.secure
+- ctx.ip
+- ctx.ips
+- ctx.subdomains
+- ctx.is()
+- ctx.accepts()
+- ctx.acceptsEncodings()
+- ctx.acceptsCharsets()
+- ctx.acceptsLanguages()
+- ctx.get()
+
+以下属性为代理Response对象的属性。
+
+- ctx.body
+- ctx.body=
+- ctx.status
+- ctx.status=
+- ctx.message
+- ctx.message=
+- ctx.length=
+- ctx.length
+- ctx.type=
+- ctx.type
+- ctx.headerSent
+- ctx.redirect()
+- ctx.attachment()
+- ctx.set()
+- ctx.remove()
+- ctx.lastModified=
+- ctx.etag=
+
+设置cookie。
+
+```javascript
+this.cookies.set('name', 'tobi');
+this.cookies.get('name') // "tobi"
+```
+
+## Request对象
+
+Request对象表示HTTP请求。
+
+- request.type // "image/png"
+- request.charset // "utf-8"
+- request.query 返回解析后的字符串，比如”color=blue&size=small“，会被解析成下面的形式。
+
+```javascript
+{
+  color: 'blue',
+  size: 'small'
+}
+```
+
+## Response对象
+
+Response对象表示HTTP回应。
+
+- response.header
+- response.socket
+- response.status
+- response.status=
+- response.message
+- response.message=
+- response.length=
+- response.length
+- response.body
+- response.body=
+- response.get(field)
+- response.set(field, value)
+- response.set(fields)
+- response.remove(field)
+- response.type
+- response.type=
+- response.is(types...)
+- response.redirect(url, [alt])
+- response.attachment([filename])
+- response.headerSent
+- response.lastModified
+- response.lastModified=
+- response.etag=
+- response.vary(field)
 
 ## 源码解读
 
