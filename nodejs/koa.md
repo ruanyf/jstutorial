@@ -202,6 +202,45 @@ app.use(route.get("/", function *() {
 }));
 ```
 
+另一种路由方法是通过`this.path`属性判断。
+
+```javascript
+let koa = require('koa')
+ 
+let app = koa()
+ 
+// normal route
+app.use(function* (next) {
+  if (this.path !== '/') {
+    return yield next
+  }
+ 
+  this.body = 'hello world'
+});
+ 
+// /404 route
+app.use(function* (next) {
+  if (this.path !== '/404') {
+    return yield next;
+  }
+ 
+  this.body = 'page not found'
+});
+ 
+// /500 route
+app.use(function* (next) {
+  if (this.path !== '/500') {
+    return yield next;
+  }
+ 
+  this.body = 'internal server error'
+});
+ 
+app.listen(8080)
+```
+
+上面代码中，每一个中间件负责一个路径，如果路径不符合，就传递给下一个中间件。
+
 ## 错误处理机制
 
 Koa提供内置的错误处理机制，任何中间件抛出的错误都会被捕捉到，引发向客户端返回一个500错误，而不会导致进程停止，因此也就不需要forever这样的模块重启进程。
@@ -234,6 +273,24 @@ app.use(function *() {
 app.on('error', function(err){
   log.error('server error', err);
 });
+```
+
+由于中间件是层级式调用，所以可以把`try { yield next }`当成第一个中间件。
+
+```javascript
+app.use(function *(next) {
+  try {
+    yield next;
+  } catch (err) {
+    this.status = err.status || 500;
+    this.body = err.message;
+    this.app.emit('error', err, this);
+  }
+});
+
+app.use(function *(next) {
+  throw new Error('some error');
+})
 ```
 
 ## context对象
@@ -379,6 +436,18 @@ Response对象表示HTTP回应。
 - response.lastModified=
 - response.etag=
 - response.vary(field)
+
+## 数据压缩
+
+koa-compress模块可以实现数据压缩。
+
+```javascript
+app.use(require('koa-compress')())
+app.use(function* () {
+  this.type = 'text/plain'
+  this.body = fs.createReadStream('filename.txt')
+})
+```
 
 ## 源码解读
 

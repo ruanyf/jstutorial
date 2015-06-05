@@ -307,7 +307,7 @@ sheet.addRule('p','color:red',1);
 
 ### 添加样式表
 
-添加一张内置样式表，就是在文档中添加一个style节点。
+添加样式表有两种方式。一种是添加一张内置样式表，即在文档中添加一个&lt;style&gt;节点。
 
 ```javascript
 var style = document.createElement('style');
@@ -317,10 +317,13 @@ style.setAttribute('media', 'screen');
 style.setAttribute("media", "@media only screen and (max-width : 1024px)");
 
 style.innerHTML = 'body{color:red}';
+// 或者
+sheet.insertRule("header { float: left; opacity: 0.8; }", 1);
+
 document.head.appendChild(style);
 ```
 
-添加外部样式表，就是在文档中添加一个link节点。
+另一种是添加外部样式表，即在文档中添加一个link节点，然后将href属性指向外部样式表的URL。
 
 ```javascript
 var linkElm = document.createElement('link');

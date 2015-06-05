@@ -161,7 +161,7 @@ readStream.on('error', function (err) {
 
 writeStream.on('error', function (err) {
   console.log("ERROR", err);
-});
+});d all your errors, you wouldn't need to use domains.
 
 ```
 
@@ -192,6 +192,56 @@ readStream.on('end', function () {
 });
 
 {% endhighlight %}
+
+## 错误处理
+
+下面是压缩后发送文件的代码。
+
+```javascript
+http.createServer(function (req, res) {
+  // set the content headers
+  fs.createReadStream('filename.txt')
+  .pipe(zlib.createGzip())
+  .pipe(res)
+})
+```
+
+上面的代码没有部署错误处理机制，一旦发生错误，就无法处理。所以，需要加上error事件的监听函数。
+
+```javascript
+http.createServer(function (req, res) {
+  // set the content headers
+  fs.createReadStream('filename.txt')
+  .on('error', onerror)
+  .pipe(zlib.createGzip())
+  .on('error', onerror)
+  .pipe(res)
+
+  function onerror(err) {
+    console.error(err.stack)
+  }
+})
+```
+
+上面的代码还是存在问题，如果客户端中断下载，写入的数据流就会收不到close事件，一直处于等待状态，从而造成内存泄漏。因此，需要使用[on-finished模块](https://github.com/jshttp/on-finished)用来处理这种情况。
+
+```javascript
+http.createServer(function (req, res) {
+  var stream = fs.createReadStream('filename.txt')
+
+  // set the content headers
+  stream
+  .on('error', onerror)
+  .pipe(zlib.createGzip())
+  .on('error', onerror)
+  .pipe(res)
+
+  onFinished(res, function () {
+    // make sure the stream is always destroyed
+    stream.destroy()
+  })
+})
+```
 
 ## 参考链接
 

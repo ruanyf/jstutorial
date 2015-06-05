@@ -508,6 +508,28 @@ if (el.matches(".someClass")) {
 }
 ```
 
+该方法带有浏览器前缀，下面的函数可以兼容不同的浏览器，并且在浏览器不支持时，自行部署这个功能。
+
+```javascript
+function matchesSelector(el, selector) {
+  var p = Element.prototype;
+  var f = p.matches
+    || p.webkitMatchesSelector
+    || p.mozMatchesSelector
+    || p.msMatchesSelector
+    || function(s) {
+    return [].indexOf.call(document.querySelectorAll(s), this) !== -1;
+  };
+  return f.call(el, selector);
+}
+
+// 用法
+matchesSelector(
+  document.getElementById('myDiv'),
+  'div.someSelector[some-attribute=true]'
+)
+```
+
 ### addEventListener()，removeEventListener()，dispatchEvent()
 
 以下三个方法与Element节点的事件相关。这些方法都继承自EventTarget接口，详细介绍参见《Event对象》章节的《EventTarget》部分。
