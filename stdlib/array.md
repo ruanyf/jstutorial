@@ -527,34 +527,29 @@ out // [1, 4, 9]
 
 filter方法依次对所有数组成员调用一个测试函数，返回结果为true的成员组成一个新数组返回。
 
-{% highlight javascript %}
-
+```javascript
 [1, 2, 3, 4, 5].filter(function (elem){
   return (elem > 3);
 })
 // [4,5]
-
-{% endhighlight %}
+```
 
 上面代码将大于3的原数组成员，作为一个新数组返回。
 
 filter方法的测试函数可以接受三个参数，第一个参数是当前数组成员的值，这是必需的，后两个参数是可选的，分别是当前数组成员的位置和整个数组。
 
-{% highlight javascript %}
-
+```javascript
 [1, 2, 3, 4, 5].filter(function(elem, index, arr){
   return index % 2 === 0;
 });
 // [1, 3, 5]
-
-{% endhighlight %}
+```
 
 上面代码返回原数组偶数位置的成员组成的新数组。
 
 filter方法还可以接受第二个参数，指定测试函数所在的上下文对象（即this对象）。
 
 ```javascript
-
 var Obj = function () {
   this.MAX = 3;
 };
