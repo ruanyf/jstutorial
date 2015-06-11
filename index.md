@@ -103,6 +103,7 @@ modifiedOn: 2014-05-18
 - [Browserify：浏览器加载Node.js模块](tool/browserify.html)
 - [RequireJS和AMD规范](tool/requirejs.html)
 - [Source map](tool/sourcemap.html)
+- [JavaScript 测试](tool/testing.html)
 
 <h2 id="advanced">JavaScript高级语法</h2>
 
@@ -136,10 +137,12 @@ modifiedOn: 2014-05-18
 - [fs模块](nodejs/fs.html)
 - [path模块](nodejs/path.html)
 - [process对象](nodejs/process.html)
+- [Buffer对象](nodejs/buffer.html)
 - [Events模块](nodejs/events.html)
 - [Stream接口](nodejs/stream.html)
 - [Child Process模块](nodejs/child-process.html)
 - [Http模块](nodejs/http.html)
+- [assert模块](nodejs/assert.html)
 - [Cluster模块](nodejs/cluster.html)
 - [OS模块](nodejs/os.html)
 - [Net模块和DNS模块](nodejs/net.html)
