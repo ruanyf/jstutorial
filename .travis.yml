@@ -1,12 +1,6 @@
 language: ruby
 rvm:
-  - 2.1.0
-  - jruby-18mode
-  - jruby-19mode
-  - rbx-2
-  - ruby-head
-  - jruby-head
-  - ree
+  - 2.1.2
 script: "bundle exec jekyll build"
 branches:
   only:
