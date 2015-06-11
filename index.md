@@ -103,6 +103,7 @@ modifiedOn: 2014-05-18
 - [Browserify：浏览器加载Node.js模块](tool/browserify.html)
 - [RequireJS和AMD规范](tool/requirejs.html)
 - [Source map](tool/sourcemap.html)
+- [JavaScript 测试](tool/testing.html)
 
 <h2 id="advanced">JavaScript高级语法</h2>
 
