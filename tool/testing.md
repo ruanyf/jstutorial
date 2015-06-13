@@ -181,3 +181,432 @@ $ npm install -g chai
 ```
 
 Mocha默认执行test目录的脚本文件，所以我们将所有测试脚本放在test子目录。
+
+## WebDriver
+
+WebDriver是一个浏览器的自动化框架。它在各种浏览器的基础上，提供一个统一接口，将接收到的指令转为浏览器的原生指令，驱动浏览器。
+
+### 操作浏览器的方法
+
+WebDriver提供以下方法操作浏览器。
+
+close()：退出或关闭当前浏览器窗口。
+
+```javascript
+driver.close();
+```
+
+quit()：关闭所有浏览器窗口，中止当前浏览器driver和session。
+
+```javascript
+driver.quit();
+```
+
+getTitle()：返回当前网页的标题。
+
+```javascript
+driver.getTitle();
+```
+
+getCurrentUrl()：返回当前网页的网址。
+
+```javascript
+driver.getCurrentUrl();
+```
+
+getPageSource()：返回当前网页的源码。
+
+```javascript
+// 断言是否含有指定文本
+assert(driver.getPageSource().contains("Hello World"),
+  "预期含有文本Hello World");
+```
+
+click()：模拟鼠标点击。
+
+```javascript
+// 例一
+driver.findElement(By.locatorType("path"))
+  .click();
+
+// 例二
+driver.get("https://www.google.com");
+driver.findElement(By.name("q"))
+  .sendKeys("webDriver");
+driver.findElement(By.id("sblsbb"))
+  .click();
+```
+
+clear()：清空文本输入框。
+
+```javascript
+// 例一
+driver.findElement(By.locatorType("path")).clear();
+
+// 例二
+driver.get("https://www.google.com");
+driver.findElement(By.name("q"))
+  .sendKeys("webDriver");
+driver.findElement(By.name("q"))
+  .clear();
+driver.findElement(By.name("q"))
+  .sendKeys("testing");
+```
+
+sendKeys()：在文本输入框输入文本。
+
+```javascript
+driver.findElement(By.locatorType("path"))
+  .sendKeys("your text");
+```
+
+submit()：提交表单，或者用来模拟按下回车键。
+
+```javascript
+// 例一
+driver.findElement(By.locatorType("path"))
+  .submit();
+
+// 例二
+driver.get("https://www.google.com");
+driver.findElement(By.name("q"))
+  .sendKeys("webdriver");
+element.submit();
+```
+
+findElement()：返回选中的第一个元素。
+
+```javascript
+driver.get("https://www.google.com");
+driver.findElement(By.id("lst-ib"));
+```
+
+findElements()：返回选中的所有元素。
+
+```javascript
+// 例一
+driver.findElement(By.id("searchbox"))
+  .sendKeys("webdriver");
+driver.findElements(By.xpath("//div[3]/ul/li"))
+  .get(0)
+  .click();
+
+// 例二
+driver.findElements(By.tagName("select"))
+  .get(0)
+  .findElements(By.tagName("option"))
+  .get(3)
+  .click()
+  .get(4)
+  .click()
+  .get(5)
+  .click();
+
+// 例三：获取页面所有链接
+var links = driver
+  .get("https://www.google.com")
+  .findElements(By.tagName("a"));
+var linkSize = links.size();
+var linksSrc = [];
+
+console.log(linkSize);
+
+for(var i=0;i<linkSize;i++) {
+  linksSrc[i] = links.get(i).getAttribute("href");
+}
+
+for(int i=0;i<linkSize;i++){
+  driver.navigate().to(linksSrc[i]);
+  Thread.sleep(3000);
+}
+```
+
+### 网页元素的定位
+
+WebDriver提供一系列定位器，用于定位网页元素。
+
+- By.id
+- By.name
+- By.xpath
+- By.cssSelector
+- By.className
+- By.linkText
+- By.tagName
+- By.partialLinkText
+
+下面是一个使用id定位器，选中网页元素的例子。
+
+```javascript
+driver.findElement(By.id("sblsbb")).click();
+```
+
+### 网页元素的方法
+
+以下方法属于网页元素的方法，而不是webDriver实例的方法。
+
+getText()：返回网页元素的内部文本。
+
+```javascript
+driver.findElement(By.locatorType("path")).getText();
+```
+
+getAttribute()：返回网页元素指定属性的值。
+
+```javascript
+driver.get("https://www.google.com");
+driver.findElement(By.xpath("//div[@id='lst-ib']"))
+  .getAttribute("class");
+```
+
+getTagName()：返回指定元素的标签名。
+
+```javascript
+driver.get("https://www.google.com");
+driver.findElement(By.xpath("//div[@class='sbib_b']"))
+  .getTagName();
+```
+
+isDisplayed()：返回一个布尔值，表示元素是否可见。
+
+```javascript
+driver.get("https://www.google.com");
+assert(driver.findElement(By.name("q"))
+  .isDisplayed(),
+  '搜索框应该可选择');
+```
+
+isEnabled()：返回一个布尔值，表示文本框是否可编辑。
+
+```javascript
+driver.get("https://www.google.com");
+var Element = driver.findElement(By.name("q"));
+if (Element.isEnabled()) {
+  driver.findElement(By.name("q"))
+    .sendKeys("Selenium Essentials");
+} else {
+  throw new Error();
+}
+```
+
+isSelected()：返回一个布尔值，表示一个元素是否可选择。
+
+```javascript
+driver.findElement(By.xpath("//select[@name='jump']/option[1]"))
+  .isSelected()
+```
+
+getSize()：返回一个网页元素的宽度和高度。
+
+```javascript
+var dimensions=driver.findElement(By.locatorType("path"))
+  .getSize(); 
+dimensions.width;
+dimensions.height;
+```
+
+getLocation()：返回网页元素左上角的x坐标和y坐标。
+
+```javascript
+var point = driver.findElement(By.locatorType("path")).getLocation();
+point.x; // 等同于 point.getX();
+point.y; // 等同于 point.getY();
+```
+
+getCssValue()：返回网页元素指定的CSS属性的值。
+
+```javascript
+driver.get("https://www.google.com");
+var element = driver.findElement(By.xpath("//div[@id='hplogo']"));
+console.log(element.getCssValue("font-size"));
+console.log(element.getCssValue("font-weight"));
+console.log(element.getCssValue("color"));
+console.log(element.getCssValue("background-size"));
+```
+
+### 页面跳转的方法
+
+以下方法用来跳转到某一个页面。
+
+get()：要求浏览器跳到某个网址。
+
+```javascript
+driver.get("URL");
+```
+
+navigate().back()：浏览器回退。
+
+```javascript
+driver.navigate().back();
+```
+
+navigate().forward()：浏览器前进。
+
+```javascript
+driver.navigate().forward();
+```
+
+navigate().to()：跳转到浏览器历史中的某个页面。
+
+```javascript
+driver.navigate().to("URL");
+```
+
+navigate().refresh()：刷新当前页面。
+
+```javascript
+driver.navigate().refresh();
+// 等同于
+driver.navigate()
+  .to(driver.getCurrentUrl());
+// 等同于
+driver.findElement(By.locatorType("path"))
+  .sendKeys(Keys.F5);
+```
+
+### cookie的方法
+
+getCookies()：获取cookie
+
+```javascript
+driver.get("https://www.google.com");
+driver.manage().getCookies();
+```
+
+getCookieNamed() ：返回指定名称的cookie。
+
+```javascript
+driver.get("https://www.google.com");
+console.log(driver.manage().getCookieNamed("NID"));
+```
+
+addCookie()：将cookie加入当前页面。
+
+```javascript
+driver.get("https://www.google.com");
+driver.manage().addCookie(cookie0);
+```
+
+deleteCookie()：删除指定的cookie。
+
+```javascript
+driver.get("https://www.google.co.in");
+driver.manage().deleteCookieNamed("NID");
+```
+
+### 浏览器窗口的方法
+
+maximize()：最大化浏览器窗口。
+
+```javascript
+var driver = new FirefoxDriver();
+driver.manage().window().maximize();
+```
+
+getSize()：返回浏览器窗口、图像、网页元素的宽和高。
+
+```javascript
+driver.manage().window().getSize();
+```
+
+getPosition()：返回浏览器窗口左上角的x坐标和y坐标。
+
+```javascript
+console.log("Position X: " + driver.manage().window().getPosition().x);
+console.log("Position Y: " + driver.manage().window().getPosition().y);
+console.log("Position X: " + driver.manage().window().getPosition().getX());
+console.log("Position Y: " + driver.manage().window().getPosition().getY());
+```
+
+setSize()：定制浏览器窗口的大小。
+
+```javascript
+var d = new Dimension(320, 480);
+driver.manage().window().setSize(d);
+driver.manage().window().setSize(new Dimension(320, 480));
+```
+
+setPosition()：移动浏览器左上角到指定位置。
+
+```javascript
+var p = new Point(200, 200);
+driver.manage().window().setPosition(p);
+driver.manage().window().setPosition(new Point(300, 150));
+```
+
+getWindowHandle()：返回当前浏览器窗口。
+
+```javascript
+var parentwindow = driver.getWindowHandle();
+driver.switchTo().window(parentwindow);
+```
+
+getWindowHandles()：返回所有浏览器窗口。
+
+```javascript
+var childwindows =  driver.getWindowHandles();
+driver.switchTo().window(childwindow);
+```
+
+switchTo.window()：在浏览器窗口之间切换。
+
+```javascript
+driver.SwitchTo().Window(childwindow);
+driver.close();
+driver.SwitchTo().Window(parentWindow);
+```
+
+### 弹出窗口
+
+以下方法处理浏览器的弹出窗口。
+
+dismiss() ：关闭弹出窗口。
+
+```javascript
+var alert = driver.switchTo().alert();
+alert.dismiss();
+```
+
+accept()：接受弹出窗口，相当于按下接受OK按钮。
+
+```javascript
+var alert = driver.switchTo().alert();
+alert.accept();
+```
+
+getText()：返回弹出窗口的文本值。
+
+```javascript
+var alert = driver.switchTo().alert();
+alert.getText();
+```
+
+sendKeys()：向弹出窗口发送文本字符串。
+
+```javascript
+var alert = driver.switchTo().alert();
+alert.sendKeys("Text to be passed");
+```
+
+authenticateUsing()：处理HTTP认证。
+
+```javascript
+var user = new UserAndPassword("USERNAME", "PASSWORD");
+alert.authenticateUsing(user);
+```
+
+### 鼠标和键盘的方法
+
+以下方法模拟鼠标和键盘的动作。
+
+- click()：鼠标在当前位置点击。
+- clickAndHold()：按下鼠标不放
+- contextClick()：右击鼠标
+- doubleClick()：双击鼠标
+- dragAndDrop()：鼠标拖放到目标元素
+- dragAndDropBy()：鼠标拖放到目标坐标
+- keyDown()：按下某个键
+- keyUp()：从按下状态释放某个键
+- moveByOffset()：移动鼠标到另一个坐标位置
+- moveToElement()：移动鼠标到另一个网页元素
+- release()：释放拖拉的元素
+- sendKeys()：控制键盘输出
