@@ -62,11 +62,11 @@ Generator函数内部使用yield命令，将程序的执行权转交给下一个
 ```javascript
 app.use(function *() {
   this.body = "header\n";
-  yield saveResults();
+  yield saveResults.call(this);
   this.body += "footer\n";
 });
 
-function saveResults*() {
+function *saveResults() {
   this.body += "Results Saved!\n";
 }
 ```
