@@ -633,25 +633,6 @@ if (this.is('image/*')) {
 
 Response对象表示HTTP回应。以下属性有简写形式。
 
-- ctx.body
-- ctx.body=
-- ctx.status
-- ctx.status=
-- ctx.message
-- ctx.message=
-- ctx.length=
-- ctx.length
-- ctx.type=
-- ctx.type
-- ctx.headerSent
-- ctx.redirect()
-- ctx.attachment()
-- ctx.set()
-- ctx.remove()
-- ctx.lastModified=
-- ctx.etag=
-
-
 - response.header
 - response.socket
 - response.status
@@ -676,6 +657,46 @@ Response对象表示HTTP回应。以下属性有简写形式。
 - response.lastModified=
 - response.etag=
 - response.vary(field)
+
+## CSRF攻击
+
+CSRF攻击是指用户的session被劫持，用来冒充用户的攻击。
+
+koa-csrf插件用来防止CSRF攻击。原理是在session之中写入一个秘密的token，用户每次使用POST方法提交数据的时候，必须含有这个token，否则就会抛出错误。
+
+```javascript
+var koa = require('koa');
+var session = require('koa-session');
+var csrf = require('koa-csrf');
+var route = require('koa-route');
+
+var app = module.exports = koa();
+
+app.keys = ['session key', 'csrf example'];
+app.use(session(app));
+
+app.use(csrf());
+
+app.use(route.get('/token', token));
+app.use(route.post('/post', post));
+
+function* token () {
+  this.body = this.csrf;
+}
+
+function* post() {
+  this.body = {ok: true};
+}
+
+app.listen(3000);
+```
+
+POST请求含有token，可以是以下几种方式之一，koa-csrf插件就能获得token。
+
+- 表单的_csrf字段
+- 查询字符串的_csrf字段
+- HTTP请求头信息的x-csrf-token字段
+- HTTP请求头信息的x-xsrf-token字段
 
 ## 数据压缩
 
