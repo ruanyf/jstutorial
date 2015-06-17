@@ -43,7 +43,7 @@ modifiedOn: 2014-02-04
 ```javascript
 
 var Vehicle = function() {
-	this.price = 1000;
+  this.price = 1000;
 };
 
 ```
@@ -56,56 +56,58 @@ var Vehicle = function() {
 
 new命令的作用，就是执行构造函数，返回一个实例对象。
 
-{% highlight javascript %}
-
-var Vehicle = function() {
-	this.price = 1000;
+```javascript
+var Vehicle = function (){
+  this.price = 1000;
 };
 
 var v = new Vehicle();
 v.price // 1000
-
-{% endhighlight %}
+```
 
 上面代码通过new命令，让构造函数Vehicle生成一个实例对象，保存在变量v中。这个新生成的实例对象，从构造函数Vehicle继承了price属性。在new命令执行时，构造函数内部的this，就代表了新生成的实例对象，this.price表示实例对象有一个price属性，它的值是1000。
 
-new命令本身就可以执行构造函数，所以后面的构造函数可以带括号，也可以不带括号。下面两行代码是等价的。
+使用new命令时，根据需要，构造函数也可以接受参数。
 
-{% highlight javascript %}
-
-var v = new Vehicle();
-var v = new Vehicle;
-
-{% endhighlight %}
-
-我们修改构造函数，使其可以带一个参数。
-
-{% highlight javascript %}
-
-var Vehicle = function(p) {
-	this.price = p;
+```javascript
+var Vehicle = function (p){
+  this.price = p;
 };
 
-{% endhighlight %}
-
-这时使用new命令，就需要同时提供参数值。
-
-{% highlight javascript %}
-
 var v = new Vehicle(500);
+```
 
-{% endhighlight %}
+new命令本身就可以执行构造函数，所以后面的构造函数可以带括号，也可以不带括号。下面两行代码是等价的。
+
+```javascript
+var v = new Vehicle();
+var v = new Vehicle;
+```
 
 一个很自然的问题是，如果忘了使用new命令，直接调用构造函数会发生什么事？
 
-这种情况下，构造函数就变成了普通函数，并不会生成实例对象。而且由于下面会说到的原因，this这时代表全局对象，将造成一些意想不到的结果。因此，应该避免出现不使用new命令、直接调用构造函数的情况。
-
-为了保证构造函数必须与new命令一起使用，一个解决办法是，在构造函数内部使用严格模式，即第一行加上“use strict”。
+这种情况下，构造函数就变成了普通函数，并不会生成实例对象。而且由于下面会说到的原因，this这时代表全局对象，将造成一些意想不到的结果。
 
 ```javascript
+var Vehicle = function (){
+  this.price = 1000;
+};
 
-function Fubar (foo, bar) {
-  "use strict"
+var v = Vehicle();
+v.price
+// Uncaught TypeError: Cannot read property 'price' of undefined
+
+price
+// 1000
+```
+
+上面代码中，调用Vehicle构造函数时，忘了加上new命令。结果，price属性变成了全局变量，而变量v变成了undefined。
+
+因此，应该非常小心，避免出现不使用new命令、直接调用构造函数的情况。为了保证构造函数必须与new命令一起使用，一个解决办法是，在构造函数内部使用严格模式，即第一行加上`use strict`。
+
+```javascript
+function Fubar(foo, bar){
+  "use strict";
 
   this._foo = foo;
   this._bar = bar;
@@ -113,7 +115,6 @@ function Fubar (foo, bar) {
 
 Fubar()
 // TypeError: Cannot set property '_foo' of undefined
-
 ```
 
 上面代码的Fubar为构造函数，use strict命令保证了该函数在严格模式下运行。由于在严格模式中，函数内部的this不能指向全局对象，默认等于undefined，导致不加new调用会报错（JavaScript不允许对undefined添加属性）。
@@ -121,83 +122,118 @@ Fubar()
 另一个解决办法，是在构造函数内部判断是否使用new命令，如果发现没有使用，则直接返回一个实例对象。
 
 ```javascript
-
-function Fubar (foo, bar) {
+function Fubar(foo, bar){
   if (!(this instanceof Fubar)) {
     return new Fubar(foo, bar);
-  } 
+  }
 
   this._foo = foo;
   this._bar = bar;
 }
 
+Fubar(1, 2)._foo // 1
+(new Fubar(1, 2))._foo // 1
 ```
 
 上面代码中的构造函数，不管加不加new命令，都会得到同样的结果。
+
+### new命令的原理
+
+使用new命令时，它后面的函数调用就不是正常的调用，而是被new命令控制了。内部的流程是，先创造一个空对象，作为上下文对象，赋值给函数内部的this关键字。也就是说，this指的是一个新生成的空对象，所有针对this的操作，都会发生在这个空对象上。
+
+构造函数之所以叫“构造函数”，就是说这个函数的目的，就是操作上下文对象（即this对象），将其“构造”为需要的样子。如果构造函数的return语句返回的是对象，new命令会返回return语句指定的对象；否则，就会不管return语句，返回构造后的上下文对象。
+
+```javascript
+var Vehicle = function (){
+  this.price = 1000;
+  return 1000;
+};
+
+(new Vehicle()) === 1000
+// false
+```
+
+上面代码中，Vehicle是一个构造函数，它的return语句返回一个数值。这时，new命令就会忽略这个return语句，返回“构造”后的this对象。
+
+但是，如果return语句返回的是一个跟this无关的新对象，new命令会返回这个新对象，而不是this对象。这一点需要特别引起注意。
+
+```javascript
+var Vehicle = function (){
+  this.price = 1000;
+  return { price: 2000 };
+};
+
+(new Vehicle()).price
+// 2000
+```
+
+上面代码中，构造函数Vehicle的return语句，返回的是一个新对象。new命令会返回这个对象，而不是this对象。
+
+new命令简化的内部流程，可以用下面的代码表示。
+
+```javascript
+function _new(/* constructor, param, ... */) {
+  var args = [].slice.call(arguments);
+  var constructor = args.shift();
+  var context = Object.create(constructor.prototype);
+  var result = constructor.apply(context, args);
+  return (typeof result === 'object' && result != null) ? result : context;
+}
+
+var actor = _new(Person, "张三", 28);
+```
 
 ### instanceof运算符
 
 instanceof运算符用来确定一个对象是否为某个构造函数的实例。
 
-{% highlight javascript %}
-
+```javascript
 var v = new Vehicle();
 
 v instanceof Vehicle
 // true
-
-{% endhighlight %}
+```
 
 instanceof运算符的左边放置对象，右边放置构造函数。在JavaScript之中，只要是对象，就有对应的构造函数。因此，instanceof运算符可以用来判断值的类型。
 
-{% highlight javascript %}
-
+```javascript
 [1, 2, 3] instanceof Array // true
 
 ({}) instanceof Object // true
+```
 
-{% endhighlight %}
-
-上面代码表示数组和对象则分别是Array对象和Object对象的实例。最后那一行的空对象外面，之所以要加括号，是因为如果不加，JavaScript引擎会把一对大括号解释为一个代码块，而不是一个对象，从而导致这一行代码被解释为“{}; instanceof Object”，引擎就会报错。 
+上面代码表示数组和对象则分别是Array对象和Object对象的实例。最后那一行的空对象外面，之所以要加括号，是因为如果不加，JavaScript引擎会把一对大括号解释为一个代码块，而不是一个对象，从而导致这一行代码被解释为“{}; instanceof Object”，引擎就会报错。
 
 需要注意的是，由于原始类型的值不是对象，所以不能使用instanceof运算符判断类型。
 
-{% highlight javascript %}
-
+```javascript
 "" instanceof String // false
-
 1 instanceof Number // false
-
-{% endhighlight %}
+```
 
 上面代码中，字符串不是String对象的实例（因为字符串不是对象），数值1也不是Number对象的实例（因为数值1不是对象）。
 
 如果存在继承关系，也就是某个对象可能是多个构造函数的实例，那么instanceof运算符对这些构造函数都返回true。
 
-{% highlight javascript %}
-
+```javascript
 var a = [];
 
 a instanceof Array // true
 a instanceof Object // true
-
-{% endhighlight %}
+```
 
 上面代码表示，a是一个数组，所以它是Array的实例；同时，a也是一个对象，所以它也是Object的实例。
 
 利用instanceof运算符，还可以巧妙地解决，调用构造函数时，忘了加new命令的问题。
 
 ```javascript
-
 function Fubar (foo, bar) {
-
   if (this instanceof Fubar) {
     this._foo = foo;
     this._bar = bar;
   }
   else return new Fubar(foo, bar);
 }
-
 ```
 
 上面代码使用instanceof运算符，在函数体内部判断this关键字是否为构造函数Fubar的实例。如果不是，就表明忘了加new命令。
@@ -450,7 +486,7 @@ o.f()
 {% highlight javascript %}
 
 var o = {
-	v: 'hello',
+  v: 'hello',
     p: [ 'a1', 'a2' ],
     f: function f() {
         this.p.forEach(function (item) {

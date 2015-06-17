@@ -146,19 +146,16 @@ mine instanceof Array
 
 prototype对象有一个constructor属性，默认指向prototype对象所在的构造函数。
 
-{% highlight javascript %}
-
+```javascript
 function P() {}
 
 P.prototype.constructor === P
 // true
-
-{% endhighlight %}
+```
 
 由于constructor属性定义在prototype对象上面，意味着可以被所有实例对象继承。
 
-{% highlight javascript %}
-
+```javascript
 function P() {}
 
 var p = new P();
@@ -171,23 +168,20 @@ p.constructor === P.prototype.constructor
 
 p.hasOwnProperty('constructor')
 // false
+```
 
-{% endhighlight %}
-
-上面代码表示p是构造函数P的实例对象，但是p自身没有contructor属性，该属性其实是读取原型链上面的P.prototype.constructor属性。
+上面代码表示p是构造函数P的实例对象，但是p自身没有contructor属性，该属性其实是读取原型链上面的`P.prototype.constructor`属性。
 
 constructor属性的作用是分辨prototype对象到底定义在哪个构造函数上面。
 
-{% highlight javascript %}
-
+```javascript
 function F(){};
 
 var f = new F();
 
 f.constructor === F // true
 f.constructor === RegExp // false
-
-{% endhighlight %}
+```
 
 上面代码表示，使用constructor属性，确定变量f的构造函数是F，而不是RegExp。
 

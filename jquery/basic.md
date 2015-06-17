@@ -119,7 +119,7 @@ $([document.body, document.head])
 
 {% highlight javascript %}
 
-$('<li class="greet">test</lt>')
+$('<li class="greet">test</li>')
 
 {% endhighlight %}
 

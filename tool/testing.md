@@ -186,6 +186,8 @@ Mocha默认执行test目录的脚本文件，所以我们将所有测试脚本�
 
 WebDriver是一个浏览器的自动化框架。它在各种浏览器的基础上，提供一个统一接口，将接收到的指令转为浏览器的原生指令，驱动浏览器。
 
+WebDriver由Selenium项目演变而来。Selenium是一个测试自动化框架，它的1.0版叫做Selenium RC，通过一个代理服务器，将测试脚本转为JavaScript脚本，注入不同的浏览器，再由浏览器执行这些脚本后返回结果。WebDriver就是Selenium 2.0，它对每个浏览器提供一个驱动，测试脚本通过驱动转换为浏览器原生命令，在浏览器中执行。
+
 ### 操作浏览器的方法
 
 WebDriver提供以下方法操作浏览器。
@@ -281,7 +283,7 @@ driver.get("https://www.google.com");
 driver.findElement(By.id("lst-ib"));
 ```
 
-findElements()：返回选中的所有元素。
+findElements()：返回选中的所有元素（0个或多个）。
 
 ```javascript
 // 例一
@@ -321,18 +323,20 @@ for(int i=0;i<linkSize;i++){
 }
 ```
 
+可以使用`size()`，查看到底选中了多少个元素。
+
 ### 网页元素的定位
 
-WebDriver提供一系列定位器，用于定位网页元素。
+WebDriver提供8种定位器，用于定位网页元素。
 
-- By.id
-- By.name
-- By.xpath
-- By.cssSelector
-- By.className
-- By.linkText
-- By.tagName
-- By.partialLinkText
+- By.id：HTML元素的id属性
+- By.name：HTML元素的name属性
+- By.xpath：使用XPath语法选中HTML元素
+- By.cssSelector：使用CSS选择器语法
+- By.className：HTML元素的class属性
+- By.linkText：链接文本（只用于选中链接）
+- By.tagName：HTML元素的标签名
+- By.partialLinkText：部分链接文本（只用于选中链接）
 
 下面是一个使用id定位器，选中网页元素的例子。
 

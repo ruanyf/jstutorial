@@ -103,6 +103,14 @@ app.use(function *(next){
 
 上面代码中，因为第二个中间件少了`yield next`语句，第三个中间件并不会执行。
 
+如果想跳过一个中间件，可以直接在该中间件的第一行语句写上`return yield next`。
+
+```javascript
+app.use(function* (next) {
+  if (skip) return yield next;
+})
+```
+
 由于Koa要求中间件唯一的参数就是next，导致如果要传入其他参数，必须另外写一个返回Generator函数的函数。
 
 ```javascript
@@ -163,7 +171,7 @@ app.use(all);
 
 Koa内部使用koa-compose模块，进行同样的操作，下面是它的源码。
 
-```
+```javascript
 function compose(middleware){
   return function *(next){
     if (!next) next = noop();
@@ -185,7 +193,63 @@ function *noop(){}
 
 ## 路由
 
-路由需要安装koa-route插件。
+可以通过`this.path`属性，判断用户请求的路径，从而起到路由作用。
+
+```javascript
+app.use(function* (next) {
+  if (this.path === '/') {
+    this.body = 'we are at home!';
+  }
+})
+
+// 等同于
+
+app.use(function* (next) {
+  if (this.path !== '/') return yield next;
+  this.body = 'we are at home!';
+})
+```
+
+下面是多路径的例子。
+
+```javascript
+let koa = require('koa')
+
+let app = koa()
+
+// normal route
+app.use(function* (next) {
+  if (this.path !== '/') {
+    return yield next
+  }
+
+  this.body = 'hello world'
+});
+
+// /404 route
+app.use(function* (next) {
+  if (this.path !== '/404') {
+    return yield next;
+  }
+
+  this.body = 'page not found'
+});
+
+// /500 route
+app.use(function* (next) {
+  if (this.path !== '/500') {
+    return yield next;
+  }
+
+  this.body = 'internal server error'
+});
+
+app.listen(8080)
+```
+
+上面代码中，每一个中间件负责一个路径，如果路径不符合，就传递给下一个中间件。
+
+复杂的路由需要安装koa-route插件。
 
 ```javascript
 var app = require("koa")();
@@ -202,44 +266,90 @@ app.use(route.get("/", function *() {
 }));
 ```
 
-另一种路由方法是通过`this.path`属性判断。
+## context对象
+
+中间件当中的this表示上下文对象context，代表一次HTTP请求和回应，即一次访问/回应的所有信息，都可以从上下文对象获得。context对象封装了request和response对象，并且提供了一些辅助方法。每次HTTP请求，就会创建一个新的context对象。
 
 ```javascript
-let koa = require('koa')
- 
-let app = koa()
- 
-// normal route
-app.use(function* (next) {
-  if (this.path !== '/') {
-    return yield next
-  }
- 
-  this.body = 'hello world'
+app.use(function *(){
+  this; // is the Context
+  this.request; // is a koa Request
+  this.response; // is a koa Response
 });
- 
-// /404 route
-app.use(function* (next) {
-  if (this.path !== '/404') {
-    return yield next;
-  }
- 
-  this.body = 'page not found'
-});
- 
-// /500 route
-app.use(function* (next) {
-  if (this.path !== '/500') {
-    return yield next;
-  }
- 
-  this.body = 'internal server error'
-});
- 
-app.listen(8080)
 ```
 
-上面代码中，每一个中间件负责一个路径，如果路径不符合，就传递给下一个中间件。
+context对象的很多方法，其实是定义在ctx.request对象或ctx.response对象上面，比如，ctx.type和ctx.length对应于ctx.response.type和ctx.response.length，ctx.path和ctx.method对应于ctx.request.path和ctx.request.method。
+
+context对象的全局属性。
+
+- request：指向Request对象
+- response：指向Response对象
+- req：指向Node的request对象
+- req：指向Node的response对象
+- app：指向App对象
+- state：用于在中间件传递信息。
+
+```javascript
+this.state.user = yield User.find(id);
+```
+
+上面代码中，user属性存放在`this.state`对象上面，可以被另一个中间件读取。
+
+context对象的全局方法。
+
+- throw()：抛出错误，直接决定了HTTP回应的状态码。
+- assert()：如果一个表达式为false，则抛出一个错误。
+
+```javascript
+this.throw(403);
+this.throw('name required', 400);
+this.throw('something exploded');
+
+this.throw(400, 'name required');
+// 等同于
+var err = new Error('name required');
+err.status = 400;
+throw err;
+```
+
+assert方法的例子。
+
+```javascript
+// 格式
+ctx.assert(value, [msg], [status], [properties])
+
+// 例子
+this.assert(this.user, 401, 'User not found. Please login!');
+```
+
+用户的请求包含的信息。
+
+- this.path：请求的路径
+- this.method：请求的方法
+- this.query：查询字符串解析而得的对象，比如“color=blue&size=small”，就会得到`{color: 'blue', size: 'small'}`。
+- this.host：请求的主机名（hostname:port）
+- Content-Type：this.request.type
+- Content-Length：this.request.length
+- Content-Encoding
+
+服务器的请求包含的信息
+
+- this.response.type：Content-Type
+- this.response.length：Content-Length
+- this.response.status
+
+以下模块解析POST请求的数据。
+
+- co-body
+- https://github.com/koajs/body-parser
+- https://github.com/koajs/body-parsers
+
+```javascript
+var parse = require('co-body');
+
+// in Koa handler
+var body = yield parse(this);
+```
 
 ## 错误处理机制
 
@@ -275,6 +385,41 @@ app.on('error', function(err){
 });
 ```
 
+error事件的监听函数还可以接受上下文对象，作为第二个参数。
+
+```javascript
+app.on('error', function(err, ctx){
+  log.error('server error', err, ctx);
+});
+```
+
+如果一个错误没有被捕获，koa会向客户端返回一个500错误“Internal Server Error”。
+
+this.throw方法用于向客户端抛出一个错误。
+
+```javascript
+this.throw(403);
+this.throw('name required', 400);
+this.throw(400, 'name required');
+this.throw('something exploded');
+
+this.throw('name required', 400)
+// 等同于
+var err = new Error('name required');
+err.status = 400;
+throw err;
+```
+
+`this.throw`方法的两个参数，一个是错误码，另一个是报错信息。如果省略状态码，默认是500错误。
+
+`this.assert`方法用于在中间件之中断言，用法类似于Node的assert模块。
+
+```javascript
+this.assert(this.user, 401, 'User not found. Please login!');
+```
+
+上面代码中，如果this.user属性不存在，会抛出一个401错误。
+
 由于中间件是层级式调用，所以可以把`try { yield next }`当成第一个中间件。
 
 ```javascript
@@ -293,80 +438,200 @@ app.use(function *(next) {
 })
 ```
 
-## context对象
+## cookie
 
-context对象代表一次HTTP请求和回应，可以将其理解为上下文对象，即一次访问的所有信息，都可以从上下文对象获得。
-
-context对象封装了request对象和response对象，即context对象的属性和方法，其实就是request对象和response对象的属性和方法。比如，ctx.type和ctx.length来自response对象，ctx.path和ctx.method来自request对象。
-
-context对象的全局属性。
-
-- request：指向Request对象
-- response：指向Response对象
-- app：指向App对象
-
-context对象的全局方法。
-
-- throw()：抛出错误，直接决定了HTTP回应的状态码。
-
-- assert()：如果一个表达式为false，则抛出一个错误。
+cookie的读取和设置。
 
 ```javascript
-this.throw(403);
-this.throw('name required', 400);
-this.throw('something exploded');
-
-this.throw(400, 'name required');
-// 等同于
-var err = new Error('name required');
-err.status = 400;
-throw err;
+this.cookies.get('view');
+this.cookies.set('view', n);
 ```
 
-assert方法的例子。
+get和set方法都可以接受第三个参数，表示配置参数。其中的signed参数，用于指定cookie是否加密。如果指定加密的话，必须用`app.keys`指定加密短语。
 
 ```javascript
-// 格式
-ctx.assert(value, [msg], [status], [properties])
-
-// 例子
-this.assert(this.user, 401, 'User not found. Please login!');
+app.keys = ['secret1', 'secret2'];
+this.cookies.set('name', '张三', { signed: true });
 ```
 
-以下属性为代理Request对象的属性。
+this.cookie的配置对象的属性如下。
 
-- ctx.header
-- ctx.headers
-- ctx.method
-- ctx.method=
-- ctx.url
-- ctx.url=
-- ctx.originalUrl
-- ctx.href
-- ctx.path
-- ctx.path=
-- ctx.query
-- ctx.query=
-- ctx.querystring
-- ctx.querystring=
-- ctx.host
-- ctx.hostname
-- ctx.fresh
-- ctx.stale
-- ctx.socket
-- ctx.protocol
-- ctx.secure
-- ctx.ip
-- ctx.ips
-- ctx.subdomains
-- ctx.is()
-- ctx.accepts()
-- ctx.acceptsEncodings()
-- ctx.acceptsCharsets()
-- ctx.acceptsLanguages()
-- ctx.get()
+- signed：cookie是否加密。
+- expires：cookie何时过期
+- path：cookie的路径，默认是“/”。
+- domain：cookie的域名。
+- secure：cookie是否只有https请求下才发送。
+- httpOnly：是否只有服务器可以取到cookie，默认为true。
 
-以下属性为代理Response对象的属性。
+## session
+
+```
+var session = require('koa-session');
+var koa = require('koa');
+var app = koa();
+
+app.keys = ['some secret hurr'];
+app.use(session(app));
+
+app.use(function *(){
+  var n = this.session.views || 0;
+  this.session.views = ++n;
+  this.body = n + ' views';
+})
+
+app.listen(3000);
+console.log('listening on port 3000');
+```
+
+## Request对象
+
+Request对象表示HTTP请求。
+
+（1）this.request.header
+
+返回一个对象，包含所有HTTP请求的头信息。它也可以写成`this.request.headers`。
+
+（2）this.request.method
+
+返回HTTP请求的方法，该属性可读写。
+
+（3）this.request.length
+
+返回HTTP请求的Content-Length属性，取不到值，则返回undefined。
+
+（4）this.request.path
+
+返回HTTP请求的路径，该属性可读写。
+
+（5）this.request.href
+
+返回HTTP请求的完整路径，包括协议、端口和url。
+
+```javascript
+this.request.href
+// http://example.com/foo/bar?q=1
+```
+
+（6）this.request.querystring
+
+返回HTTP请求的查询字符串，不含问号。该属性可读写。
+
+（7）this.request.search
+
+返回HTTP请求的查询字符串，含问号。该属性可读写。
+
+（8）this.request.host
+
+返回HTTP请求的主机（含端口号）。
+
+（9）this.request.hostname
+
+返回HTTP的主机名（不含端口号）。
+
+（10）this.request.type
+
+返回HTTP请求的Content-Type属性。
+
+```javascript
+var ct = this.request.type;
+// "image/png"
+```
+
+（11）this.request.charset
+
+返回HTTP请求的字符集。
+
+```javascript
+this.request.charset
+// "utf-8"
+```
+
+（12）this.request.query
+
+返回一个对象，包含了HTTP请求的查询字符串。如果没有查询字符串，则返回一个空对象。该属性可读写。
+
+比如，查询字符串`color=blue&size=small`，会得到以下的对象。
+
+```javascript
+{
+  color: 'blue',
+  size: 'small'
+}
+```
+
+（13）this.request.fresh
+
+返回一个布尔值，表示缓存是否代表了最新内容。通常与If-None-Match、ETag、If-Modified-Since、Last-Modified等缓存头，配合使用。
+
+```javascript
+this.response.set('ETag', '123');
+
+// 检查客户端请求的内容是否有变化
+if (this.request.fresh) {
+  this.response.status = 304;
+  return;
+}
+
+// 否则就表示客户端的内容陈旧了，
+// 需要取出新内容
+this.response.body = yield db.find('something');
+```
+
+（14）this.request.stale
+
+返回`this.request.fresh`的相反值。
+
+（15）this.request.protocol
+
+返回HTTP请求的协议，https或者http。
+
+（16）this.request.secure
+
+返回一个布尔值，表示当前协议是否为https。
+
+（17）this.request.ip
+
+返回发出HTTP请求的IP地址。
+
+（18）this.request.subdomains
+
+返回一个数组，表示HTTP请求的子域名。该属性必须与app.subdomainOffset属性搭配使用。app.subdomainOffset属性默认为2，则域名“tobi.ferrets.example.com”返回["ferrets", "tobi"]，如果app.subdomainOffset设为3，则返回["tobi"]。
+
+（19）this.request.is(types...)
+
+返回指定的类型字符串，表示HTTP请求的Content-Type属性是否为指定类型。
+
+```javascript
+// Content-Type为 text/html; charset=utf-8
+this.request.is('html'); // 'html'
+this.request.is('text/html'); // 'text/html'
+this.request.is('text/*', 'text/html'); // 'text/html'
+
+// Content-Type为s application/json
+this.request.is('json', 'urlencoded'); // 'json'
+this.request.is('application/json'); // 'application/json'
+this.request.is('html', 'application/*'); // 'application/json'
+```
+
+如果不满足条件，返回false；如果HTTP请求不含数据，则返回undefined。
+
+```javascript
+this.is('html'); // false
+```
+
+它可以用于过滤HTTP请求，比如只允许请求下载图片。
+
+```javascript
+if (this.is('image/*')) {
+  // process
+} else {
+  this.throw(415, 'images only!');
+}
+```
+
+## Response对象
+
+Response对象表示HTTP回应。以下属性有简写形式。
 
 - ctx.body
 - ctx.body=
@@ -386,31 +651,6 @@ this.assert(this.user, 401, 'User not found. Please login!');
 - ctx.lastModified=
 - ctx.etag=
 
-设置cookie。
-
-```javascript
-this.cookies.set('name', 'tobi');
-this.cookies.get('name') // "tobi"
-```
-
-## Request对象
-
-Request对象表示HTTP请求。
-
-- request.type // "image/png"
-- request.charset // "utf-8"
-- request.query 返回解析后的字符串，比如”color=blue&size=small“，会被解析成下面的形式。
-
-```javascript
-{
-  color: 'blue',
-  size: 'small'
-}
-```
-
-## Response对象
-
-Response对象表示HTTP回应。
 
 - response.header
 - response.socket

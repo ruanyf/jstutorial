@@ -44,13 +44,11 @@ Date.now() - performance.timing.navigationStart
 下面是另一个例子。
 
 ```javascript
-
 var t = performance.timing;
-var pageloadtime = t.loadEventStart - t.navigationStart,
-var dns = t.domainLookupEnd - t.domainLookupStart,
-var tcp = t.connectEnd - t.connectStart,
+var pageloadtime = t.loadEventStart - t.navigationStart;
+var dns = t.domainLookupEnd - t.domainLookupStart;
+var tcp = t.connectEnd - t.connectStart;
 var ttfb = t.responseStart - t.navigationStart;
-
 ```
 
 上面代码依次得到页面加载的耗时、域名解析的耗时、TCP连接的耗时、读取页面第一个字节之前的耗时。

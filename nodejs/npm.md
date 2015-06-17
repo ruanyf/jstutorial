@@ -460,25 +460,21 @@ var myModule = require('myModule');
 
 {% endhighlight %}
 
-这样一来，myModule的任何变化，都可以直接在myProject中调用。但是，同时也出现了风险，任何在myProject目录中对myModule，都会反映到模块的源码中。
+这样一来，myModule的任何变化，都可以直接在myProject中调用。但是，同时也出现了风险，任何在myProject目录中对myModule的修改，都会反映到模块的源码中。
 
 npm link命令有一个简写形式，显示连接模块的本地目录。
 
 ```javascript
-
-src/myProject$ npm link ../myModule
-
+$ src/myProject$ npm link ../myModule
 ```
 
 上面的命令等同于下面几条命令。
 
 ```javascript
-
-src/myProject$ cd ../myModule
-src/myModule$ npm link
-src/myModule$ cd ../myProject
-src/myProject$ npm link myModule
-
+$ src/myProject$ cd ../myModule
+$ src/myModule$ npm link
+$ src/myModule$ cd ../myProject
+$ src/myProject$ npm link myModule
 ```
 
 如果你的项目不再需要该模块，可以在项目目录内使用npm unlink命令，删除符号链接。
