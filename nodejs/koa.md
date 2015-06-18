@@ -322,22 +322,6 @@ ctx.assert(value, [msg], [status], [properties])
 this.assert(this.user, 401, 'User not found. Please login!');
 ```
 
-用户的请求包含的信息。
-
-- this.path：请求的路径
-- this.method：请求的方法
-- this.query：查询字符串解析而得的对象，比如“color=blue&size=small”，就会得到`{color: 'blue', size: 'small'}`。
-- this.host：请求的主机名（hostname:port）
-- Content-Type：this.request.type
-- Content-Length：this.request.length
-- Content-Encoding
-
-服务器的请求包含的信息
-
-- this.response.type：Content-Type
-- this.response.length：Content-Length
-- this.response.status
-
 以下模块解析POST请求的数据。
 
 - co-body
@@ -629,34 +613,297 @@ if (this.is('image/*')) {
 }
 ```
 
+（20）this.request.accepts(types)
+
+检查HTTP请求的Accept属性是否可接受，如果可接受，则返回指定的媒体类型，否则返回false。
+
+```javascript
+// Accept: text/html
+this.request.accepts('html');
+// "html"
+
+// Accept: text/*, application/json
+this.request.accepts('html');
+// "html"
+this.request.accepts('text/html');
+// "text/html"
+this.request.accepts('json', 'text');
+// => "json"
+this.request.accepts('application/json');
+// => "application/json"
+
+// Accept: text/*, application/json
+this.request.accepts('image/png');
+this.request.accepts('png');
+// false
+
+// Accept: text/*;q=.5, application/json
+this.request.accepts(['html', 'json']);
+this.request.accepts('html', 'json');
+// "json"
+
+// No Accept header
+this.request.accepts('html', 'json');
+// "html"
+this.request.accepts('json', 'html');
+// => "json"
+```
+
+如果accepts方法没有参数，则返回所有支持的类型（text/html,application/xhtml+xml,image/webp,application/xml,*/*）。
+
+如果accepts方法的参数有多个参数，则返回最佳匹配。如果都不匹配则返回false，并向客户端抛出一个406”Not Acceptable“错误。
+
+如果HTTP请求没有Accept字段，那么accepts方法返回它的第一个参数。
+
+accepts方法可以根据不同Accept字段，向客户端返回不同的字段。
+
+```javascript
+switch (this.request.accepts('json', 'html', 'text')) {
+  case 'json': break;
+  case 'html': break;
+  case 'text': break;
+  default: this.throw(406, 'json, html, or text only');
+}
+```
+
+（21）this.request.acceptsEncodings(encodings)
+
+该方法根据HTTP请求的Accept-Encoding字段，返回最佳匹配，如果没有合适的匹配，则返回false。
+
+```javascript
+// Accept-Encoding: gzip
+this.request.acceptsEncodings('gzip', 'deflate', 'identity');
+// "gzip"
+this.request.acceptsEncodings(['gzip', 'deflate', 'identity']);
+// "gzip"
+```
+
+注意，acceptEncodings方法的参数必须包括identity（意为不编码）。
+
+如果HTTP请求没有Accept-Encoding字段，acceptEncodings方法返回所有可以提供的编码方法。
+
+```javascript
+// Accept-Encoding: gzip, deflate
+this.request.acceptsEncodings();
+// ["gzip", "deflate", "identity"]
+```
+
+如果都不匹配，acceptsEncodings方法返回false，并向客户端抛出一个406“Not Acceptable”错误。
+
+（22）this.request.acceptsCharsets(charsets)
+
+该方法根据HTTP请求的Accept-Charset字段，返回最佳匹配，如果没有合适的匹配，则返回false。
+
+```javascript
+// Accept-Charset: utf-8, iso-8859-1;q=0.2, utf-7;q=0.5
+this.request.acceptsCharsets('utf-8', 'utf-7');
+// => "utf-8"
+
+this.request.acceptsCharsets(['utf-7', 'utf-8']);
+// => "utf-8"
+```
+
+如果acceptsCharsets方法没有参数，则返回所有可接受的匹配。
+
+```javascript
+// Accept-Charset: utf-8, iso-8859-1;q=0.2, utf-7;q=0.5
+this.request.acceptsCharsets();
+// ["utf-8", "utf-7", "iso-8859-1"]
+```
+
+如果都不匹配，acceptsCharsets方法返回false，并向客户端抛出一个406“Not Acceptable”错误。
+
+（23）this.request.acceptsLanguages(langs)
+
+该方法根据HTTP请求的Accept-Language字段，返回最佳匹配，如果没有合适的匹配，则返回false。
+
+```javascript
+// Accept-Language: en;q=0.8, es, pt
+this.request.acceptsLanguages('es', 'en');
+// "es"
+this.request.acceptsLanguages(['en', 'es']);
+// "es"
+```
+
+如果acceptsCharsets方法没有参数，则返回所有可接受的匹配。
+
+```javascript
+// Accept-Language: en;q=0.8, es, pt
+this.request.acceptsLanguages();
+// ["es", "pt", "en"]
+```
+
+如果都不匹配，acceptsLanguages方法返回false，并向客户端抛出一个406“Not Acceptable”错误。
+
+（24）this.request.socket
+
+返回HTTP请求的socket。
+
+（25）this.request.get(field)
+
+返回HTTP请求指定的字段。
+
 ## Response对象
 
-Response对象表示HTTP回应。以下属性有简写形式。
+Response对象表示HTTP回应。
 
-- response.header
-- response.socket
-- response.status
-- response.status=
-- response.message
-- response.message=
-- response.length=
-- response.length
-- response.body
-- response.body=
-- response.get(field)
-- response.set(field, value)
-- response.set(fields)
-- response.remove(field)
-- response.type
-- response.type=
-- response.is(types...)
-- response.redirect(url, [alt])
-- response.attachment([filename])
-- response.headerSent
-- response.lastModified
-- response.lastModified=
-- response.etag=
-- response.vary(field)
+（1）this.response.header
+
+返回HTTP回应的头信息。
+
+（2）this.response.socket
+
+返回HTTP回应的socket。
+
+（3）this.response.status
+
+返回HTTP回应的状态码。默认情况下，该属性没有值。该属性可读写，设置时等于一个整数。
+
+（4）this.response.message
+
+返回HTTP回应的状态信息。该属性与`this.response.message`是配对的。该属性可读写。
+
+（5）this.response.length
+
+返回HTTP回应的Content-Length字段。该属性可读写，如果没有设置它的值，koa会自动从this.request.body推断。
+
+（6）this.response.body
+
+返回HTTP回应的信息体。该属性可读写，它的值可能有以下几种类型。
+
+- 字符串：Content-Type字段默认为text/html或text/plain，字符集默认为utf-8，Content-Length字段同时设定。
+- 二进制Buffer：Content-Type字段默认为application/octet-stream，Content-Length字段同时设定。
+- Stream：Content-Type字段默认为application/octet-stream。
+- JSON对象：Content-Type字段默认为application/json。
+- null（表示没有信息体）
+
+如果`this.response.status`没设置，Koa会自动将其设为200或204。
+
+（7）this.response.get(field)
+
+返回HTTP回应的指定字段。
+
+```javascript
+var etag = this.get('ETag');
+```
+
+注意，get方法的参数是区分大小写的。
+
+（8）this.response.set()
+
+设置HTTP回应的指定字段。
+
+```javascript
+this.set('Cache-Control', 'no-cache');
+```
+
+set方法也可以接受一个对象作为参数，同时为多个字段指定值。
+
+```javascript
+this.set({
+  'Etag': '1234',
+  'Last-Modified': date
+});
+```
+
+（9）this.response.remove(field)
+
+移除HTTP回应的指定字段。
+
+（10）this.response.type
+
+返回HTTP回应的Content-Type字段，不包括“charset”参数的部分。
+
+```javascript
+var ct = this.reponse.type;
+// "image/png"
+```
+
+该属性是可写的。
+
+```javascript
+this.reponse.type = 'text/plain; charset=utf-8';
+this.reponse.type = 'image/png';
+this.reponse.type = '.png';
+this.reponse.type = 'png';
+```
+
+设置type属性的时候，如果没有提供charset参数，Koa会判断是否自动设置。如果`this.response.type`设为html，charset默认设为utf-8；但如果`this.response.type`设为text/html，就不会提供charset的默认值。
+
+（10）this.response.is(types...)
+
+该方法类似于`this.request.is()`，用于检查HTTP回应的类型是否为支持的类型。
+
+它可以在中间件中起到处理不同格式内容的作用。
+
+```javascript
+var minify = require('html-minifier');
+
+app.use(function *minifyHTML(next){
+  yield next;
+
+  if (!this.response.is('html')) return;
+
+  var body = this.response.body;
+  if (!body || body.pipe) return;
+
+  if (Buffer.isBuffer(body)) body = body.toString();
+  this.response.body = minify(body);
+});
+```
+
+上面代码是一个中间件，如果输出的内容类型为HTML，就会进行最小化处理。
+
+（11）this.response.redirect(url, [alt])
+
+该方法执行302跳转到指定网址。
+
+```javascript
+this.redirect('back');
+this.redirect('back', '/index.html');
+this.redirect('/login');
+this.redirect('http://google.com');
+```
+
+如果redirect方法的第一个参数是back，将重定向到HTTP请求的Referrer字段指定的网址，如果没有该字段，则重定向到第二个参数或“/”网址。
+
+如果想修改302状态码，或者修改body文字，可以采用下面的写法。
+
+```javascript
+this.status = 301;
+this.redirect('/cart');
+this.body = 'Redirecting to shopping cart';
+```
+
+（12）this.response.attachment([filename])
+
+该方法将HTTP回应的Content-Disposition字段，设为“attachment”，提示浏览器下载指定文件。
+
+（13）this.response.headerSent
+
+该方法返回一个布尔值，检查是否HTTP回应已经发出。
+
+（14）this.response.lastModified
+
+该属性以Date对象的形式，返回HTTP回应的Last-Modified字段（如果该字段存在）。该属性可写。
+
+```javascript
+this.response.lastModified = new Date();
+```
+
+（15）this.response.etag
+
+该属性设置HTTP回应的ETag字段。
+
+```javascript
+this.response.etag = crypto.createHash('md5').update(this.body).digest('hex');
+```
+
+注意，不能用该属性读取ETag字段。
+
+（16）this.response.vary(field)
+
+该方法将参数添加到HTTP回应的Vary字段。
 
 ## CSRF攻击
 

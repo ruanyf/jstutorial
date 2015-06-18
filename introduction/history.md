@@ -6,7 +6,7 @@ date: 2013-01-10
 modifiedOn: 2013-12-05
 ---
 
-理解现在的最好方法之一，就是了解历史，本节将全面介绍JavaScript的历史。了解这些内容，还有助于把握JavaScript在整个计算机编程体系和计算机工业中所处的位置，以及涉及的全部范围。
+理解现在的最好方法之一，就是了解历史，本节将全面介绍JavaScript的历史。了解这些内容，还有助于把握JavaScript在整个计算机编程体系和计算机工业中所处的位置，以及这门语言涉及的全部内容。
 
 ## JavaScript的诞生
 
@@ -147,7 +147,7 @@ JavaScript 1.1版对应ECMAScript 1.0，但是直到JavaScript 1.4版才完全�
 
 2009年，Jeremy Ashkenas发布了CoffeeScript的最初版本。CoffeeScript可以被转化为JavaScript运行，但是语法要比JavaScript简洁。这开启了其他语言转为JavaScript的风潮。
 
-2009年，PhoneGap项目诞生，它将HTML5和JavaScript引入移动设备的应用程序开发，主要针对iOS和Android平台，使得JavaScript可以用于跨平台的应用程序开发。
+2009年，PhoneGap项目诞生，它将HTML5和JavaScript引入移动设是备的应用程序开发，主要针对iOS和Android平台，使得JavaScript可以用于跨平台的应用程序开发。
 
 2010年，三个重要的项目诞生，分别是NPM、BackboneJS和RequireJS，标志着JavaScript进入模块化开发的时代。
 
@@ -169,7 +169,20 @@ JavaScript 1.1版对应ECMAScript 1.0，但是直到JavaScript 1.4版才完全�
 
 2014年，微软推出JavaScript的Windows库WinJS，标志微软公司全面支持JavaScript与Windows操作系统的融合。
 
-2014年，一部分核心开发者离开了Node.js，创造了io.js项目，这是一个更开放、更新更频繁的Node.js版本。
+2014年11月，由于对Joyent公司垄断Node项目、以及该项目进展缓慢的不满，一部分核心开发者离开了Node.js，创造了io.js项目，这是一个更开放、更新更频繁的Node.js版本，很短时间内就发布到了2.0版。三个月后，Joyent公司宣布放弃对Node项目的控制，将其转交给新成立的开放性质的Node基金会。随后，io.js项目宣布回归Node，两个版本将合并。
+
+2015年3月，Facebook公司发布了React Native项目，将React框架移植到了手机端，可以用来开发手机App。它会将JavaScript代码转为iOS平台的Object-C代码，或者Android平台的Java代码，从而为JavaScript语言开发高性能的原生App打开了一条道路。
+
+2015年4月，Angular框架宣布，2.0版将基于微软公司的TypeScript语言开发，这等于为JavaScript语言引入了强类型。
+
+2015年5月，Node模块管理器npm超越CPAN，标志着JavaScript成为世界上软件模块最多的语言。
+
+2015年5月，Google公司的Polymer框架发布1.0版。该项目的目标是生产环境可以使用WebComponent组件，如果能够达到目标，Web开发将进入一个全新的以组件为开发基础的阶段。
+
+2015年6月，ECMA标准化组织正式批准了ECMAScript 6语言标准，JavaScript语言正式进入了下一个阶段，成为一种企业级的、开发大规模应用的语言。这个标准从提出到批准，历时10年，而JavaScript语言从诞生至今
+也已经20年了。
+
+2015年6月，Mozilla在asm.js的基础上发布WebAssembly项目。这是一种JavaScript语言编译后的二进制格式，类似于Java的字节码，有利于移动设备加载JavaScript脚本，解析速度提高了20+倍。这意味着将来的软件，会发布JavaScript二进制包。
 
 ## 参考链接
 
