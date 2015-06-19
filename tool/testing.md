@@ -188,6 +188,14 @@ WebDriver是一个浏览器的自动化框架。它在各种浏览器的基础�
 
 WebDriver由Selenium项目演变而来。Selenium是一个测试自动化框架，它的1.0版叫做Selenium RC，通过一个代理服务器，将测试脚本转为JavaScript脚本，注入不同的浏览器，再由浏览器执行这些脚本后返回结果。WebDriver就是Selenium 2.0，它对每个浏览器提供一个驱动，测试脚本通过驱动转换为浏览器原生命令，在浏览器中执行。
 
+### 定制测试环境
+
+DesiredCapabilities对象用于定制测试环境。
+
+- 定制DesiredCapabilities对象的各个属性
+- 创建DesiredCapabilities实例
+- 将DesiredCapabilities实例作为参数，新建一个WebDriver实例
+
 ### 操作浏览器的方法
 
 WebDriver提供以下方法操作浏览器。
@@ -346,13 +354,7 @@ driver.findElement(By.id("sblsbb")).click();
 
 ### 网页元素的方法
 
-以下方法属于网页元素的方法，而不是webDriver实例的方法。
-
-getText()：返回网页元素的内部文本。
-
-```javascript
-driver.findElement(By.locatorType("path")).getText();
-```
+以下方法属于网页元素的方法，而不是webDriver实例的方法。需要注意的是，有些方法是某些元素特有的，比如只有文本框才能输入文字。如果在网页元素上调用不支持的方法，WebDriver不会报错，也不会给出给出任何提示，只会静静地忽略。
 
 getAttribute()：返回网页元素指定属性的值。
 
@@ -360,6 +362,12 @@ getAttribute()：返回网页元素指定属性的值。
 driver.get("https://www.google.com");
 driver.findElement(By.xpath("//div[@id='lst-ib']"))
   .getAttribute("class");
+```
+
+getText()：返回网页元素的内部文本。
+
+```javascript
+driver.findElement(By.locatorType("path")).getText();
 ```
 
 getTagName()：返回指定元素的标签名。

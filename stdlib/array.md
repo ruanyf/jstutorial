@@ -432,7 +432,7 @@ ECMAScript 5新增了9个数组实例的方法，分别是map、forEach、filter
 
 ### map方法，forEach方法
 
-map方法对数组的所有成员依次调用一个函数，根据函数结果返回一个新数组，原数组不会发生变化。
+map方法对数组的所有成员依次调用一个函数，根据函数结果返回一个新数组。
 
 ```javascript
 var numbers = [1, 2, 3];
@@ -444,82 +444,94 @@ numbers
 // [1, 2, 3]
 ```
 
-上面代码中，原数组的成员都加上1，组成一个新数组返回。
+上面代码中，原数组的成员都加上1，组成一个新数组返回，原数组没有变化。
 
-{% highlight javascript %}
+只要数组的成员可以被索引到，map方法就不会跳过它。
 
+```javascript
+var f = function(n){ return n+1 };
+
+[1, undefined, 2].map(f) // [2, NaN, 3]
+[1, null, 2].map(f) // [2, 1, 3]
+[1, , 2].map(f) // [2, undefined, 3]
+```
+
+上面代码中，数组的成员分别是undefined、null和空位，map方法都不会跳过它们。
+
+map方法的回调函数依次接受三个参数，分别是当前的数组成员、当前成员的位置和数组本身。
+
+```javascript
 [1, 2, 3].map(function(elem, index, arr){
-    return elem * elem;
+  return elem * elem;
 });
 // [1, 4, 9]
+```
 
-{% endhighlight %}
+有时，我们需要对字符串的每个字符进行遍历。这时可以通过函数的call方法，将map方法用于字符串。
 
-通过函数的call方法，map方法可以用于字符串。
+```javascript
+var upper = function (x) { return x.toUpperCase() };
 
-{% highlight javascript %}
-
-[].map.call('abc', function (x) { return x.toUpperCase() })
+[].map.call('abc', upper)
 // [ 'A', 'B', 'C' ]
 
 // 或者
-
-'abc'.split('').map(function (x) { return x.toUpperCase() })
+'abc'.split('').map(upper)
 // [ 'A', 'B', 'C' ]
-
-{% endhighlight %}
-
-forEach方法与map方法很相似，也是遍历数组的所有成员，执行某种操作，但是forEach方法没有返回值。它与map方法的区别主要在于语义，如果只是数据处理，一般使用map方法，如果是执行有副作用的操作（即可能会改变原数组），则使用forEach方法。
-
-```javascript
-var numbers = [1,2,3];
-
-numbers.forEach(function(n, index) {
-  numbers[index] = n + 1;
-});
-
-numbers
-// [2,3,4]
 ```
 
-上面代码中，执行forEach方法之后，numbers数组就被改变了。
+其他类似数组的对象（比如querySelectorAll方法返回DOM节点集合），也可以用上面的方法遍历。
 
-{% highlight javascript %}
+map方法还可以接受第二个参数，表示回调函数执行时this所指向的对象。
 
-[1, 2, 3].forEach(function(elem, index, arr){
-    console.log("array[" + index + "] = " + elem);
-});
-// array[0] = 1
-// array[1] = 2
-// array[2] = 3
-
-{% endhighlight %}
-
-从上面代码可以看到，map和forEach的参数格式是一样的，都是一个函数。该函数接受三个参数，分别是当前元素、当前元素的位置（从0开始）、整个数组。
-
-这两个方法都可以接受第二个参数，用来绑定函数中的this关键字。
+数组实例的forEach方法与map方法很相似，也是遍历数组的所有成员，执行某种操作，但是forEach方法没有返回值。如果需要有返回值，一般使用map方法，如果只是单纯操作数据，一般使用forEach方法。
 
 ```javascript
+function log(element, index, array) {
+  console.log('[' + index + '] = ' + element);
+}
 
-["foo", "bar"].forEach(func.bind(this));
-
-["foo", "bar"].forEach(func, this);
-
+[2, 5, , 9].forEach(log);
+// [0] = 2
+// [1] = 5
+// [3] = 9
 ```
 
-上面的两行代码是等价的。下面是一个实例。
+从上面代码可以看到，forEach方法和map方法的参数格式是一样的，第一个参数都是一个函数。该函数接受三个参数，分别是当前元素、当前元素的位置（从0开始）、整个数组。
 
-{% highlight javascript %}
+forEach方法会跳过数组的空位。
 
+```javascript
+var log = function(n){ console.log(n + 1) };
+
+[1, undefined, 2].forEach(log)
+// 2
+// NaN
+// 3
+
+[1, null, 2].forEach(log)
+// 2
+// 1
+// 3
+
+[1, , 2].map(f)
+// 2
+// 3
+```
+
+上面代码中，forEach方法不会跳过undefined和null，但会跳过空位。
+
+forEach方法也可以接受第二个参数，用来绑定回调函数的this关键字。
+
+```javascript
 var out = [];
 
 [1, 2, 3].map(function(elem, index, arr){
-    this.push(elem * elem);
+  this.push(elem * elem);
 }, out);
 
 out // [1, 4, 9]
-
-{% endhighlight %}
+```
 
 上面代码表示，如果提供一个数组作为第二个参数，则函数内部的this关键字就指向这个数组。
 
