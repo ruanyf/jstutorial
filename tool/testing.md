@@ -182,6 +182,96 @@ $ npm install -g chai
 
 Mocha默认执行test目录的脚本文件，所以我们将所有测试脚本放在test子目录。
 
+Mocha允许指定测试脚本文件，可以使用通配符，同时指定多个文件。
+
+```bash
+$ mocha --reporter spec spec/{my,awesome}.js
+$ mocha --ui tdd test/unit/*.js etc
+```
+
+如果希望测试非存放于test子目录的测试用例，可以在test子目录中新建Mocha的配置文件mocha.opts。在该文件中写入以下内容。
+
+```bash
+server-tests
+```
+
+上面代码指定Mocha默认测试server-tests子目录的测试脚本。
+
+```bash
+server-tests
+--recursive
+```
+
+上面代码中，--recursive参数指定同时运行子目录中的测试用例脚本。
+
+report参数用于指定Mocha的报告格式。
+
+```bash
+$ mocha --reporter spec server-test/*.js
+```
+
+上面代码指定报告格式是spec。
+
+grep参数用于搜索测试用例的名称（即it方法的第一个参数），然后只执行匹配的测试用例。
+
+```bash
+$ mocha --reporter spec --grep "Fnord:" server-test/*.js
+```
+
+上面代码只测试名称中包含“Fnord：”的测试用例。
+
+invert参数表示只运行不符合条件的测试脚本。
+
+```bash
+$ mocha --grep auth --invert
+```
+
+测试脚本中，describe方法和it方法都允许调用only方法，表示只运行某个测试套件或测试用例。
+
+```javascript
+describe("using only", function() {
+  it.only("this is the only test to be run", function() {
+
+  });
+
+  it("this is not run", function() {
+
+  });
+});
+```
+
+上面代码中，只有第一个测试用例会运行。
+
+describe方法和it方法还可以调用skip方法，表示跳过指定的测试套件或测试用例。
+
+```javascript
+describe("using only", function() {
+  it.skip("this is the only test to be run", function() {
+
+  });
+
+  it("this is not run", function() {
+
+  });
+});
+```
+
+上面代码中，只有第二个测试用例会执行。
+
+如果测试用例包含异步操作，可以done方法显式指定测试用例的运行结束时间。
+
+```javascript
+it('logs a', function(done) {
+  var f = function(){
+    console.log('logs a');
+    done();
+  };
+  setTimeout(f, 500);
+});
+```
+
+上面代码中，正常情况下，函数f还没有执行，Mocha就已经结束运行了。为了保证Mocha等到测试用例跑完再结束运行，可以手动调用done方法
+
 ## WebDriver
 
 WebDriver是一个浏览器的自动化框架。它在各种浏览器的基础上，提供一个统一接口，将接收到的指令转为浏览器的原生指令，驱动浏览器。
