@@ -18,20 +18,17 @@ Error对象的实例有三个最基本的属性：
 
 利用name和message这两个属性，可以对发生什么错误有一个大概的了解。
 
-{% highlight javascript %}
-
+```javascript
 if (error.name){
-	console.log(error.name + ": " + error.message);
+  console.log(error.name + ": " + error.message);
 }
+```
 
-{% endhighlight %}
-
-上面代码表示，显示错误的名称以及出错提示信息。 
+上面代码表示，显示错误的名称以及出错提示信息。
 
 stack属性用来查看错误发生时的堆栈。
 
-{% highlight javascript %}
-
+```javascript
 function throwit() {
   throw new Error('');
 }
@@ -49,8 +46,7 @@ catchit()
 //    at throwit (~/examples/throwcatch.js:9:11)
 //    at catchit (~/examples/throwcatch.js:3:9)
 //    at repl:1:5
-
-{% endhighlight %}
+```
 
 上面代码显示，抛出错误首先是在throwit函数，然后是在catchit函数，最后是在函数的运行环境中。
 
@@ -186,7 +182,7 @@ throw语句的作用是中断程序执行，抛出一个意外或错误。它接
 
 {% highlight javascript %}
 
-throw "Error！"; 
+throw "Error！";
 throw 42;
 throw true;
 throw {toString: function() { return "Error!"; } };
@@ -226,27 +222,30 @@ throw new UserError("出错了！");
 
 为了对错误进行处理，需要使用try...catch结构。
 
-{% highlight javascript %}
-
+```javascript
 try {
-    throw new Error('出错了!');
+  throw new Error('出错了!');
 } catch (e) {
-    console.log(e.name + ": " + e.message);  // Error: 出错了！
-    console.log(e.stack);  // 不是标准属性，但是浏览器支持
+  console.log(e.name + ": " + e.message);  // Error: 出错了！
+  console.log(e.stack);  // 不是标准属性，但是浏览器支持
 }
+// Error: 出错了!
+// Error: 出错了!
+//   at <anonymous>:3:9
+//   at Object.InjectedScript._evaluateOn (<anonymous>:895:140)
+//   at Object.InjectedScript._evaluateAndWrap (<anonymous>:828:34)
+//   at Object.InjectedScript.evaluate (<anonymous>:694:21)
+```
 
-{% endhighlight %}
+上面代码中，try代码块抛出的错误（包括用throw语句抛出错误），可以被catch代码块捕获。catch接受一个参数，表示try代码块传入的错误对象。
 
-try代码块用来运行某段可能出错的代码，一旦出错（包括用throw语句抛出错误），就被catch代码块捕获。catch接受一个参数，表示try代码块传入的错误对象。
-
-{% highlight javascript %}
-
+```javascript
 function throwIt(exception) {
-    try {
-        throw exception;
-    } catch (e) {
-        console.log('Caught: '+e);
-    }
+  try {
+    throw exception;
+  } catch (e) {
+    console.log('Caught: '+e);
+  }
 }
 
 throwIt(3);
@@ -255,8 +254,22 @@ throwIt('hello');
 // Caught: hello
 throwIt(new Error('An error happened'));
 // Caught: Error: An error happened
+```
 
-{% endhighlight %}
+catch代码块捕获错误之后，程序不会中断，会按照正常流程继续执行下去。
+
+```javascript
+try {
+  throw "出错了";
+} catch (e) {
+  console.log(111);
+}
+console.log(222);
+// 111
+// 222
+```
+
+上面代码中，try代码块抛出的错误，被catch代码块捕获后，程序会继续向下执行。
 
 catch代码块之中，还可以再抛出错误，甚至使用嵌套的try...catch结构。
 

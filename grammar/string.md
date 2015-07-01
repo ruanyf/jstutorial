@@ -311,44 +311,40 @@ symbols.forEach(function(symbol) {
 
 ## Base64转码
 
-Base64是一种将二进制数据转为可打印字符的编码方法。在浏览器环境中，JavaScript原生提供两个方法，用来处理Base64转码：btoa方法将字符串或二进制值转化为Base64编码，atob方法将Base64编码转化为原来的编码。
+Base64是一种编码方法，可以将任意字符转成可打印字符。使用这种编码方法，主要不是为了加密，而是为了不出现特殊字符，简化程序的处理。
 
-{% highlight javascript %}
+JavaScript原生提供两个Base64相关方法。
 
-window.btoa("Hello World")
-// "SGVsbG8gV29ybGQ="
+- btoa()：字符串或二进制值转为Base64编码
+- atob()：Base64编码转为原来的编码
 
-window.atob("SGVsbG8gV29ybGQ=")
-// "Hello World"
+```javascript
+var string = 'Hello World!';
+btoa(string) // "SGVsbG8gV29ybGQh"
+atob('SGVsbG8gV29ybGQh') // "Hello World!"
+```
 
-{% endhighlight %}
+这两个方法不适合非ASCII码的字符，会报错。
 
-这两个方法不适合非ASCII码的字符，浏览器会报错。
+```javascript
+btoa('你好')
+// Uncaught DOMException: The string to be encoded contains characters outside of the Latin1 range.
+```
 
-{% highlight javascript %}
+要将非ASCII码字符转为Base64编码，必须中间插入一个转码环节，再使用这两个方法。
 
-window.btoa('你好')
-// InvalidCharacterError: An invalid or illegal character was specified, such as in an XML name.
-
-{% endhighlight %}
-
-要将非ASCII码字符转为Base64编码，必须中间插入一个浏览器转码的环节，再使用这两个方法。
-
-{% highlight javascript %}
-
+```javascript
 function b64Encode( str ) {
-    return window.btoa(unescape(encodeURIComponent( str )));
-}
- 
-function b64Decode( str ) {
-    return decodeURIComponent(escape(window.atob( str )));
+  return btoa(unescape(encodeURIComponent( str )));
 }
 
-// 使用方法
+function b64Decode( str ) {
+  return decodeURIComponent(escape(atob( str )));
+}
+
 b64Encode('你好') // "5L2g5aW9"
 b64Decode('5L2g5aW9') // "你好"
-
-{% endhighlight %}
+```
 
 ## 参考链接
 

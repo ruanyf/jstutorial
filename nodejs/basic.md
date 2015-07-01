@@ -379,62 +379,107 @@ Node是单线程运行环境，一旦抛出的异常没有被捕获，就会引�
 最常用的捕获异常的方式，就是使用try...catch结构。但是，这个结构无法捕获异步运行的代码抛出的异常。
 
 ```javascript
-
 try {
-    process.nextTick(function () {
-        throw new Error("error");
-    });
+  process.nextTick(function () {
+    throw new Error("error");
+  });
 } catch (err) {
-    //can not catch it
-    console.log(err);
+  //can not catch it
+  console.log(err);
 }
 
 try {
-    setTimeout(function(){
-        throw new Error("error");
-    },1)
+  setTimeout(function(){
+    throw new Error("error");
+  },1)
 } catch (err) {
-    //can not catch it
-    console.log(err);
+  //can not catch it
+  console.log(err);
 }
-
-
 ```
 
-上面代码抛出的两个异常，都无法被catch代码块捕获。
+上面代码分别用process.nextTick和setTimeout方法，在下一轮事件循环抛出两个异常，代表异步操作抛出的错误。它们都无法被catch代码块捕获，因此catch代码块所在的那部分已经运行结束了。
+
+一种解决方法是将错误捕获代码，也放到异步执行。
+
+```javascript
+function async(cb, err) {
+  setTimeout(function() {
+    try {
+      if (true)
+        throw new Error("woops!");
+      else
+        cb("done");
+    } catch(e) {
+      err(e);
+    }
+  }, 2000);
+}
+
+async(function(res) {
+  console.log("received:", res);
+}, function(err) {
+  console.log("Error: async threw an exception:", err);
+});
+// Error: async threw an exception: Error: woops!
+```
+
+上面代码中，async函数异步抛出的错误，可以同样部署在异步的catch代码块捕获。
+
+node采用的方法，是将错误作为第一个参数，传入回调函数。这样就避免了捕获代码与错误不在同一个阶段的问题。
+
+```javascript
+function async2(continuation) {
+  setTimeout(function() {
+    try {
+      var res = 42;
+      if (true)
+        throw new Error("woops!");
+      else
+        continuation(null, res); // pass 'null' for error
+    } catch(e) {
+      continuation(e, null);
+    }
+  }, 2000);
+}
+
+async2(function(err, res) {
+  if (err)
+    console.log("Error: (cps) failed:", err);
+  else
+    console.log("(cps) received:", res);
+});
+// Error: (cps) failed: woops!
+```
+
+上面代码中，async2函数的回调函数的第一个参数就是一个错误对象，这是为了处理异步操作抛出的错误。
 
 ### uncaughtException事件
 
 当一个异常未被捕获，就会触发uncaughtException事件，可以对这个事件注册回调函数，从而捕获异常。
 
 ```javascript
-
 process.on('uncaughtException', function(err) {
-    console.error('Error caught in uncaughtException event:', err);
+  console.error('Error caught in uncaughtException event:', err);
 });
 
-
 try {
-    setTimeout(function(){
-        throw new Error("error");
-    },1)
+  setTimeout(function(){
+    throw new Error("error");
+  },1)
 } catch (err) {
-    //can not catch it
-    console.log(err);
+  //can not catch it
+  console.log(err);
 }
-
-
 ```
 
 只要给uncaughtException配置了回调，Node进程不会异常退出，但异常发生的上下文已经丢失，无法给出异常发生的详细信息。而且，异常可能导致Node不能正常进行内存回收，出现内存泄露。所以，当uncaughtException触发后，最好记录错误日志，然后结束Node进程。
 
 ```javascript
-
 process.on('uncaughtException', function(err) {
   logger(err);
   process.exit(1);
 });
-
 ```
 
 ### 正确的编码习惯

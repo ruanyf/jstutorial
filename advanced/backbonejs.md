@@ -107,6 +107,101 @@ Promise库
 
 {% endhighlight %}
 
+## Backbone的用法
+
+Backbone是最早的JavaScript MVC框架，也是最简化的一个框架。它的设计思想是，只提供最基本的功能，给用户提供最大的自由。这意味着，好的一面是它没有一整套规则，强制你接受，坏的一面是很多功能你必须自己实现。Backbone的体积相当小，最小化后只有30多KB。
+
+定义一个对象，表示Web应用。
+
+```javascript
+var AppName = {
+  Models       :{},
+  Views        :{},
+  Collections  :{},
+  Controllers  :{}
+};
+```
+
+上面代码表示，应用由四部分组成：Model、Collection、Controller和View。
+
+定义Model，表示数据的一个基本单位。
+
+```javascript
+AppName.Models.Person = Backbone.Model.extend({
+  urlRoot: "/persons"
+});
+```
+
+定义Collection，表示Model的集合。
+
+```javascript
+AppName.Collections.Library = Backbone.Collection.extend({
+  model: AppName.Models.Book
+});
+```
+
+上面代码表示，Collection对象必须有model属性，指明由哪一个model构成。
+
+定义一个View。
+
+```javascript
+AppName.Views.Modals.AcceptDecline = Backbone.View.Extend({
+  el: ".modal-accept",
+
+  events: {
+    "ajax:success .link-accept" :"acceptSuccess",
+    "ajax:error   .link-accept" :"acceptError"
+  },
+
+  acceptSuccess :function(evt, response) {
+    this.$el.modal("hide");
+    alert('Cool! Thanks');
+  },
+
+  acceptError :function(evt, response) {
+    var $modalContent = this.$el.find('.panel-modal');
+
+    $modalContent.append("Something was wrong!");
+  }
+});
+```
+
+View对象必须有el属性，指明当前View绑定的DOM节点，events属性指明事件和对应的方法。
+
+定义一个Controller。
+
+```javascript
+AppName.Controllers.Person = {};
+AppName.Controllers.Person.show = function(id) {
+  var aMa = new AppName.Models.Person({id: id});
+  
+  aMa.updateAge(25);
+  
+  aMa.fetch().done(function(){
+    var view = new AppName.Views.Show({model: aMa});
+  });
+};
+```
+
+最后，定义路由，启动应用程序。
+
+```javascript
+var Workspace = Backbone.Router.extend({
+  routes: {
+    "*"                  :"wholeApp",
+    "users/:id"          :"usersShow",
+    "users/:id/orders/"  :"ordersIndex"
+  },
+  
+  wholeApp    :AppName.Controller.Application.default,
+  usersShow   :AppName.Controller.Users.show,
+  ordersIndex :AppName.Controller.Orders.index
+});
+ 
+new Workspace();
+Backbone.history.start({pushState: true});
+```
+
 ## Backbone.View
 
 ### 基本用法

@@ -265,9 +265,11 @@ f()
 
 {% endhighlight %}
 
+## 函数的属性和方法
+
 ### name属性
 
-大多数JavaScript引擎支持非标准的name属性。该属性返回紧跟在function关键字之后的那个函数名。
+大多数JavaScript引擎支持非标准的name属性，该属性返回紧跟在function关键字之后的那个函数名。
 
 {% highlight javascript %}
 
@@ -284,12 +286,28 @@ f3.name // 'myName'
 
 上面代码中，函数的name属性总是返回紧跟在function关键字之后的那个函数名。对于f2来说，返回空字符串，对于f3来说，返回函数表达式的名字（真正的函数名还是f3，myName这个名字只在函数体内部可用）。
 
-## toString方法
+### length属性
+
+length属性返回函数定义中参数的个数。
+
+{% highlight javascript %}
+
+function f(a,b) {}
+
+f.length
+// 2
+
+{% endhighlight %}
+
+上面代码定义了空函数f，它的length属性就是定义时参数的个数。不管调用时输入了多少个参数，length属性始终等于2。
+
+length属性提供了一种机制，判断定义时和调用时参数的差异，以便实现面向对象编程的”方法重载“（overload）。
+
+## toString()
 
 函数的toString方法返回函数的源码。
 
 ```javascript
-
 function f() {
   a();
   b();
@@ -302,7 +320,6 @@ f.toString()
 //  b();
 //  c();
 // }
-
 ```
 
 ## 函数作用域
@@ -443,21 +460,6 @@ square(3) // 9
 {% endhighlight %}
 
 上式的x就是square函数的参数。每次运行的时候，需要提供这个值，否则得不到结果。
-
-所有函数都有一个length属性，返回函数定义中参数的个数。
-
-{% highlight javascript %}
-
-function f(a,b) {}
-
-f.length
-// 2
-
-{% endhighlight %}
-
-上面代码定义了空函数f，它的length属性就是定义时参数的个数。不管调用时输入了多少个参数，length属性始终等于2。
-
-length属性提供了一种机制，判断定义时和调用时参数的差异，以便实现面向对象编程的”方法重载“（overload）。
 
 ### 参数的省略
 
