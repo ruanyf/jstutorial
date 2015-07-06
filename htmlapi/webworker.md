@@ -12,6 +12,8 @@ JavaScript语言采用的是单线程模型，也就是说，所有任务排成�
 
 Web Worker的目的，就是为JavaScript创造多线程环境，允许主线程将一些任务分配给子线程。在主线程运行的同时，子线程在后台运行，两者互不干扰。等到子线程完成计算任务，再把结果返回给主线程。因此，每一个子线程就好像一个“工人”（worker），默默地完成自己的工作。
 
+普通的Wek Worker，只能与创造它们的主进程通信。还有另一类Shared worker，能被所有同源的进程获取（比如来自不同的浏览器窗口、iframe窗口和其他Shared worker）。本节不涉及这一类的worker进程。
+
 Web Worker有以下几个特点：
 
 - **同域限制**。子线程加载的脚本文件，必须与主线程的脚本文件在同一个域。
@@ -24,55 +26,30 @@ Web Worker有以下几个特点：
 
 使用之前，检查浏览器是否支持这个API。支持的浏览器包括IE10、Firefox (从3.6版本开始)、Safari (从4.0版本开始)、Chrome 和 Opera 11，但是手机浏览器还不支持。
 
-{% highlight javascript %}
-
+```javascript
 if (window.Worker) {
   // 支持
 } else {
   // 不支持
 }
-
-{% endhighlight %}
-
-如果使用Modernizr库，则判断方法为：
-
-{% highlight javascript %}
-
-if (Modernizr.webworkers) {
-    // 支持
-} else {
-    // 不支持
-}
-
-{% endhighlight %}
+```
 
 ## 新建和启动子线程
 
-在主线程内部，采用new命令调用Worker方法，可以新建一个子线程。
+主线程采用new命令，调用Worker构造函数，可以新建一个子线程。
 
-{% highlight javascript %}
-
+```javascript
 var worker = new Worker('work.js');
+```
 
-{% endhighlight %}
+Worker构造函数的参数是一个脚本文件，这个文件就是子线程所要完成的任务，上面代码中是work.js。由于子线程不能读取本地文件系统，所以这个脚本文件必须来自网络端。如果下载没有成功，比如出现404错误，这个子线程就会默默地失败。
 
-Worker方法的参数是一个脚本文件，这个文件就是子线程所要完成的任务，上面代码中是work.js。由于子线程不能读取本地文件系统，所以这个脚本文件必须来自网络端。如果下载没有成功，比如出现404错误，这个子线程就会默默地失败。
+子线程新建之后，并没有启动，必需等待主线程调用postMessage方法，即发出信号之后才会启动。postMessage方法的参数，就是主线程传给子线程的信号。它可以是一个字符串，也可以是一个对象。
 
-子线程新建之后，并没有启动，必需等待主线程调用postMessage方法，即发出信号之后才会启动。
-
-{% highlight javascript %}
-
+```javascript
 worker.postMessage("Hello World");
-
-{% endhighlight %}
-
-postMessage方法的参数，就是主线程传给子线程的信号。它可以是一个字符串，也可以是一个对象。
-
-{% highlight javascript %}
-
 worker.postMessage({method: 'echo', args: ['Work']});
-
-{% endhighlight %}
+```
 
 ## 子线程的事件监听
 
@@ -82,10 +59,8 @@ worker.postMessage({method: 'echo', args: ['Work']});
 
 /* File: work.js */
 
-self.addEventListener('message', function(e) { 
-
-			self.postMessage('You said: ' + e.data);
-			
+self.addEventListener('message', function(e) {
+  self.postMessage('You said: ' + e.data);
 }, false);
 
 {% endhighlight %}

@@ -85,14 +85,6 @@ modifiedOn: 2014-05-18
 - [WebRTC](htmlapi/webrtc.html)
 - [Web Components](htmlapi/webcomponents.html)
 
-<h2 id="jquery">jQuery</h2>
-
-- [概述](jquery/basic.html)
-- [工具方法](jquery/utility.html)
-- [插件开发](jquery/plugin.html)
-- [deferred对象](jquery/deferred.html)
-- [如何做到jQuery-free？](jquery/jquery-free.html)
-
 <h2 id="tool">开发工具</h2>
 
 - [console对象](tool/console.html)
@@ -128,7 +120,15 @@ modifiedOn: 2014-05-18
 - [设计模式](library/designpattern.html)
 - [排序算法](library/sorting.html)
 
-<h2 id="nodejs">草稿二：Node.js</h2>
+<h2 id="jquery">草稿二：jQuery</h2>
+
+- [概述](jquery/basic.html)
+- [工具方法](jquery/utility.html)
+- [插件开发](jquery/plugin.html)
+- [deferred对象](jquery/deferred.html)
+- [如何做到jQuery-free？](jquery/jquery-free.html)
+
+<h2 id="nodejs">草稿三：Node.js</h2>
 
 - [概述](nodejs/basic.html)
 - [CommonJS规范](nodejs/commonjs.html)

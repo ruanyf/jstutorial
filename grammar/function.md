@@ -269,10 +269,9 @@ f()
 
 ### name属性
 
-大多数JavaScript引擎支持非标准的name属性，该属性返回紧跟在function关键字之后的那个函数名。
+name属性返回紧跟在function关键字之后的那个函数名。
 
-{% highlight javascript %}
-
+```javascript
 function f1() {}
 f1.name // 'f1'
 
@@ -281,10 +280,9 @@ f2.name // ''
 
 var f3 = function myName() {};
 f3.name // 'myName'
+```
 
-{% endhighlight %}
-
-上面代码中，函数的name属性总是返回紧跟在function关键字之后的那个函数名。对于f2来说，返回空字符串，对于f3来说，返回函数表达式的名字（真正的函数名还是f3，myName这个名字只在函数体内部可用）。
+上面代码中，函数的name属性总是返回紧跟在function关键字之后的那个函数名。对于f2来说，返回空字符串，匿名函数的name属性总是为空字符串；对于f3来说，返回函数表达式的名字（真正的函数名还是f3，myName这个名字只在函数体内部可用）。
 
 ### length属性
 
