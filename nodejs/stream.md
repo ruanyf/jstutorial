@@ -85,6 +85,12 @@ input=hello
 bye
 ```
 
+Stream接口分成三类。
+
+- 可读数据流接口，用于读取数据。
+- 可写数据流接口，用于写入数据。
+- 双向数据流接口，用于读取和写入数据，比如Node的tcp sockets、zlib、crypto都部署了这个接口。
+
 ## 可读数据流
 
 “可读数据流”表示数据的来源，只要一个对象提供“可读数据流”，就表示你可以从其中读取数据。
@@ -237,24 +243,30 @@ readable.isPaused() // === false
 
 ### pipe()
 
-该方法从“可读数据流”读出所有数据，将其写出指定的目的地。整个过程是自动的。
+pipe方法是自动传送数据的机制，就像管道一样。它从“可读数据流”读出所有数据，将其写出指定的目的地。整个过程是自动的。
 
 ```javascript
-var readable = getReadableStreamSomehow();
-var writable = fs.createWriteStream('file.txt');
-readable.pipe(writable);
+var fs = require('fs');
+var readableStream = fs.createReadStream('file1.txt');
+var writableStream = fs.createWriteStream('file2.txt');
+
+readableStream.pipe(writableStream);
 ```
 
-上面代码将读取的数据，写入file.txt文件。
+上面代码使用pipe方法，将file1的内容写入file2。整个过程由pipe方法管理，不用手动干预，所以可以将传送数据写得很简洁。
 
-该方法返回处理后的数据流，因此可以链式调用。
+pipe方法返回目的地的数据流，因此可以使用链式写法，将多个数据流操作连在一起。
 
 ```javascript
-var r = fs.createReadStream('file.txt');
-var z = zlib.createGzip();
-var w = fs.createWriteStream('file.txt.gz');
-r.pipe(z).pipe(w);
+var fs = require('fs');
+var zlib = require('zlib');
+
+fs.createReadStream('input.txt.gz')
+  .pipe(zlib.createGunzip())
+  .pipe(fs.createWriteStream('output.txt'));
 ```
+
+上面代码采用链式写法，先读取文件，然后进行压缩，最后输出。
 
 下面的写法模拟了Unix系统的cat命令，将标准输出写入标准输入。
 
@@ -339,7 +351,20 @@ readable.on('end', function() {
 
 ## 可写数据流
 
-“可写数据流”允许你将数据写入某个目的地。与“可读数据流”类似，它也会触发各种不同的事件。
+“可写数据流”允许你将数据写入某个目的地。它是数据写入的一种抽象，不同的数据目的地部署了这个接口以后，就可以用统一的方法写入。
+
+以下是部署了可写数据流的一些场合。
+
+- 客户端的http requests
+- 服务器的http responses
+- fs write streams
+- zlib streams
+- crypto streams
+- tcp sockets
+- child process stdin
+- process.stdout, process.stderr
+
+下面是fs模块的可写数据流的例子。
 
 ```javascript
 var fs = require('fs');
@@ -355,38 +380,122 @@ readableStream.on('data', function(chunk) {
 
 上面代码中，fs模块的createWriteStream方法针对特定文件，创建了一个“可写数据流”，本质上就是对写入操作部署了Stream接口。然后，“可写数据流”的write方法，可以将数据写入文件。
 
-“可写数据流”具有以下事件。
+### write()
 
-- error：：写入过程中出错时触发。
-- pipe： “可写数据流”发现有“可读数据流”接入时触发。
-- unpipe：对“可读数据流”调用unpipe方法时触发。
+write方法用于向“可写数据流”写入数据。它接受两个参数，一个是写入的内容，可以是字符串，也可以是一个stream对象（比如可读数据流），另一个是写入完成后的回调函数。
 
-## pipe()
+它返回一个布尔值，表示本次数据是否处理完成。如果返回true，就表示可以写入新的数据了。如果等待写入的数据被缓存了，就返回false。不过，在返回false的情况下，也可以继续传入新的数据等待写入。只是这时，新的数据不会真的写入，只会缓存在内存中。为了避免内存消耗，比较好的做法还是等待该方法返回true，然后再写入。
 
-pipe方法是自动传送数据的机制，就像管道一样。
+### cork()，uncork()
 
-```javascript
-var fs = require('fs');
-var readableStream = fs.createReadStream('file1.txt');
-var writableStream = fs.createWriteStream('file2.txt');
+cork方法可以强制等待写入的数据进入缓存。当调用uncork方法或end方法时，缓存的数据就会吐出。
 
-readableStream.pipe(writableStream);
-```
+### setDefaultEncoding()
 
-上面代码使用pipe方法，将file1的内容写入file2。整个过程由pipe方法管理，不用手动干预，所以可以将传送数据写得很简洁。
+setDefaultEncoding方法用于将写入的数据编码成新的格式。它返回一个布尔值，表示编码是否成功，如果返回false就表示编码失败。
 
-pipe方法返回目的地的数据流，因此可以使用链式写法，将多个数据流操作连在一起。
+### end()
+
+end方法用于终止“可写数据流”。该方法可以接受三个参数，全部都是可选参数。第一个参数是最后所要写入的数据，可以是字符串，也可以是stream对象；第二个参数是写入编码；第三个参数是一个回调函数，finish事件触发时，会调用这个回调函数。
 
 ```javascript
-var fs = require('fs');
-var zlib = require('zlib');
-
-fs.createReadStream('input.txt.gz')
-  .pipe(zlib.createGunzip())
-  .pipe(fs.createWriteStream('output.txt'));
+var file = fs.createWriteStream('example.txt');
+file.write('hello, ');
+file.end('world!');
 ```
 
-上面代码采用链式写法，先读取文件，然后进行压缩，最后输出。
+上面代码会在数据写入结束时，在尾部写入“world！”。
+
+调用end方法之后，再写入数据会报错。
+
+```javascript
+var file = fs.createWriteStream('example.txt');
+file.end('world!');
+file.write('hello, '); // 报错
+```
+
+### 事件
+
+（1）drain事件
+
+`writable.write(chunk)`返回false以后，当缓存数据全部写入完成，可以继续写入时，会触发drain事件。
+
+```javascript
+function writeOneMillionTimes(writer, data, encoding, callback) {
+  var i = 1000000;
+  write();
+  function write() {
+    var ok = true;
+    do {
+      i -= 1;
+      if (i === 0) {
+        writer.write(data, encoding, callback);
+      } else {
+        ok = writer.write(data, encoding);
+      }
+    } while (i > 0 && ok);
+    if (i > 0) {
+      writer.once('drain', write);
+    }
+  }
+}
+```
+
+上面代码是一个写入100万次的例子，通过drain事件得到可以继续写入的通知。
+
+（2）finish事件
+
+调用end方法时，所有缓存的数据释放，触发finish事件。该事件的回调函数没有参数。
+
+```javascript
+var writer = getWritableStreamSomehow();
+for (var i = 0; i < 100; i ++) {
+  writer.write('hello, #' + i + '!\n');
+}
+writer.end('this is the end\n');
+writer.on('finish', function() {
+  console.error('all writes are now complete.');
+});
+```
+
+（3）pipe事件
+
+“可写数据流”调用pipe方法，将数据流导向写入目的地时，触发该事件。
+
+该事件的回调函数，接受发出该事件的“可读数据流”对象作为参数。
+
+```javascript
+var writer = getWritableStreamSomehow();
+var reader = getReadableStreamSomehow();
+writer.on('pipe', function(src) {
+  console.error('something is piping into the writer');
+  assert.equal(src, reader);
+});
+reader.pipe(writer);
+```
+
+（4）unpipe事件
+
+“可读数据流”调用unpipe方法，将可写数据流移出写入目的地时，触发该事件。
+
+该事件的回调函数，接受发出该事件的“可读数据流”对象作为参数。
+
+```javascript
+var writer = getWritableStreamSomehow();
+var reader = getReadableStreamSomehow();
+writer.on('unpipe', function(src) {
+  console.error('something has stopped piping into the writer');
+  assert.equal(src, reader);
+});
+reader.pipe(writer);
+reader.unpipe(writer);
+```
+
+（5）error事件
+
+如果写入数据或pipe数据时发生错误，就会触发该事件。
+
+该事件的回调函数，接受一个Error对象作为参数。
 
 ## HTTP请求
 

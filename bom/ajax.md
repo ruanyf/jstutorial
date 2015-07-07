@@ -622,19 +622,30 @@ Ajax操作所用的XMLHttpRequest对象，已经有十多年的历史，它的AP
 检查浏览器是否部署了这个API的代码如下。
 
 ```javascript
-
 if (fetch in window){
   // 支持
 } else {
   // 不支持
 }
-
 ```
 
-下面是一个XMLHttpRequest对象发出Ajax请求的常规例子。
+下面是一个Fetch API的简单例子。
 
 ```javascript
+var URL = 'http://some/path';
 
+fetch(URL).then(function(response) {
+  return response.json();
+}).then(function(json) {
+  someOperator(json);
+});
+```
+
+上面代码向服务器请求JSON文件，获取后再做进一步处理。
+
+下面比较XMLHttpRequest写法与Fetch写法的不同。
+
+```javascript
 function reqListener() {
   var data = JSON.parse(this.responseText);
   console.log(data);
@@ -649,31 +660,30 @@ oReq.onload = reqListener;
 oReq.onerror = reqError;
 oReq.open('get', './api/some.json', true);
 oReq.send();
-
 ```
 
 同样的操作用Fetch实现如下。
 
 ```javascript
-
 fetch('./api/some.json')
   .then(function(response) {
-      if (response.status !== 200) {
-        console.log('请求失败，状态码：' + response.status);
-        return;
-      }
-      response.json().then(function(data) {
-        console.log(data);
-      });
+    if (response.status !== 200) {
+      console.log('请求失败，状态码：' + response.status);
+      return;
+    }
+    response.json().then(function(data) {
+      console.log(data);
+    });
   }).catch(function(err) {
     console.log('出错：', err);
   });
-
 ```
 
-上面代码中，因为HTTP请求返回的response对象是一个Stream对象，使用json方法转为JSON格式，但是json方法返回的是一个Promise对象。
+上面代码中，因为HTTP请求返回的response对象是一个Stream对象，所以需要使用`response.json`方法转为JSON格式，不过这个方法返回的是一个Promise对象。
 
-fetch函数的第一个参数可以是URL字符串，也可以是后文要讲到的Request对象实例。
+### fetch()
+
+fetch方法的第一个参数可以是URL字符串，也可以是后文要讲到的Request对象实例。Fetch方法返回一个Promise对象，并将一个response对象传给回调函数。
 
 response对象还有一个ok属性，如果返回的状态码在200到299之间（即请求成功），这个属性为true，否则为false。因此，上面的代码可以写成下面这样。
 
@@ -694,20 +704,17 @@ fetch("./api/some.json").then(function(response) {
 response对象除了json方法，还包含了HTTP回应的元数据。
 
 ```javascript
-
 fetch('users.json').then(function(response) {
   console.log(response.headers.get('Content-Type'));
   console.log(response.headers.get('Date'));
-
   console.log(response.status);
   console.log(response.statusText);
   console.log(response.type);
   console.log(response.url);
 });
-
 ```
 
-上面代码中，response对象有很多属性，其中的type属性比较特别，表示HTTP回应的类型，它有以下三个值。
+上面代码中，response对象有很多属性，其中的`response.type`属性比较特别，表示HTTP回应的类型，它有以下三个值。
 
 - basic：正常的同域请求
 - cors：CORS机制下的跨域请求
@@ -716,34 +723,29 @@ fetch('users.json').then(function(response) {
 如果需要在CORS机制下发出跨域请求，需要指明状态。
 
 ```javascript
-
-fetch('http://some-site.com/cors-enabled/some.json', {mode: 'cors'})  
-  .then(function(response) {  
-    return response.text();  
-  })  
-  .then(function(text) {  
-    console.log('Request successful', text);  
-  })  
-  .catch(function(error) {  
-    log('Request failed', error)  
+fetch('http://some-site.com/cors-enabled/some.json', {mode: 'cors'})
+  .then(function(response) {
+    return response.text();
+  })
+  .then(function(text) {
+    console.log('Request successful', text);
+  })
+  .catch(function(error) {
+    log('Request failed', error)
   });
-
 ```
 
 除了指定模式，fetch方法的第二个参数还可以用来配置其他值，比如指定cookie连同HTTP请求一起发出。
 
 ```javascript
-
 fetch(url, {
   credentials: 'include'
 })
-
 ```
 
 发出POST请求的写法如下。
 
 ```javascript
-
 fetch("http://www.example.org/submit.php", {
   method: "POST",
   headers: {
@@ -759,7 +761,6 @@ fetch("http://www.example.org/submit.php", {
 }, function(e) {
   console.log("Error submitting form!");
 });
-
 ```
 
 目前，还有一些XMLHttpRequest对象可以做到，但是Fetch API还没做到的地方，比如中途中断HTTP请求，以及获取HTTP请求的进度。这些不足与Fetch返回的是Promise对象有关。
@@ -801,7 +802,39 @@ reqHeaders.delete("X-Custom-Header")
 reqHeaders.getAll("X-Custom-Header") // []
 ```
 
-### Request
+生成Header实例以后，可以将它作为第二个参数，传入Request方法。
+
+```javascript
+var headers = new Headers();
+headers.append('Accept', 'application/json');
+var request = new Request(URL, {headers: headers});
+
+fetch(request).then(function(response) {
+  console.log(response.headers);
+});
+```
+
+同样地，Headers实例可以用来构造Response方法。
+
+```javascript
+var headers = new Headers({
+  'Content-Type': 'application/json',
+  'Cache-Control': 'max-age=3600'
+});
+
+var response = new Response(
+  JSON.stringify({photos: {photo: []}}),
+  {'status': 200, headers: headers}
+);
+
+response.json().then(function(json) {
+  insertPhotos(json);
+});
+```
+
+上面代码中，构造了一个HTTP回应。目前，浏览器构造HTTP回应没有太大用处，但是随着Service Worker的部署，不久浏览器就可以向Service Worker发出HTTP回应。
+
+### Request对象
 
 Request对象用来构造HTTP请求。
 
@@ -811,7 +844,7 @@ req.method // "GET"
 req.url // "http://example.com/index.html"
 ```
 
-Request对象实例的非url属性，只能通过Request构造函数的第二个参数进行设置。
+Request对象的第二个参数，表示配置对象。
 
 ```javascript
 var uploadReq = new Request("/uploadImage", {
@@ -822,6 +855,21 @@ var uploadReq = new Request("/uploadImage", {
   body: "image data"
 });
 ```
+
+上面代码指定Request对象使用POST方法发出，并指定HTTP头信息和信息体。
+
+下面是另一个例子。
+
+```javascript
+var req = new Request(URL, {method: 'GET', cache: 'reload'});
+fetch(req).then(function(response) {
+  return response.json();
+}).then(function(json) {
+  someOperator(json);
+});
+```
+
+上面代码中，指定请求方法为GET，并且要求浏览器不得缓存response。
 
 Request对象实例有两个属性是只读的，不能手动设置。一个是referrer属性，表示请求的来源，由浏览器设置，有可能是空字符串。另一个是context属性，表示请求发出的上下文，如果是image，表示是从img标签发出，如果是worker，表示是从worker脚本发出，如果是fetch，表示是从fetch函数发出的。
 
@@ -862,6 +910,12 @@ apiCall.then(function(response) {
 ```
 
 上面代码是向Flickr API发出图片请求的例子。
+
+Request对象的一个很有用的功能，是在其他Request实例的基础上，生成新的Request实例。
+
+```javascript
+var postReq = new Request(req, {method: 'POST'});
+```
 
 ### Response
 
@@ -956,3 +1010,5 @@ addEventListener('fetch', function(evt) {
 - MDN, [HTTP access control (CORS)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS)
 - Matt Gaunt, [Introduction to fetch()](http://updates.html5rocks.com/2015/03/introduction-to-fetch)
 - Nikhil Marathe, [This API is so Fetching!](https://hacks.mozilla.org/2015/03/this-api-is-so-fetching/)
+- Ludovico Fischer, [Introduction to the Fetch API](http://www.sitepoint.com/introduction-to-the-fetch-api/)
+

@@ -249,22 +249,118 @@ app.listen(8080)
 
 上面代码中，每一个中间件负责一个路径，如果路径不符合，就传递给下一个中间件。
 
-复杂的路由需要安装koa-route插件。
+复杂的路由需要安装koa-router插件。
 
 ```javascript
-var app = require("koa")();
-var route = require("koa-route");
+var app = require('koa')();
+var Router = require('koa-router');
 
-app.use(route.get("/", function *() {
-  try {
-    this.body = 'Hello World';
-  }
-  catch (err) {
-    this.status = 500;
-    this.body = {success: false, err: err};
-  }
-}));
+var myRouter = new Router();
+
+myRouter.get('/', function *(next) {
+  this.response.body = 'Hello World!';
+});
+
+app.use(myRouter.routes());
+
+app.listen(3000);
 ```
+
+上面代码对根路径设置路由。
+
+Koa-router实例提供一系列动词方法，即一种HTTP动词对应一种方法。典型的动词方法有以下五种。
+
+- router.get()
+- router.post()
+- router.put()
+- router.del()
+- router.patch()
+
+这些动词方法可以接受两个参数，第一个是路径模式，第二个是对应的控制器方法（中间件），定义用户请求该路径时服务器行为。
+
+```javascript
+router.get('/', function *(next) {
+  this.body = 'Hello World!';
+});
+```
+
+上面代码中，`router.get`方法的第一个参数是根路径，第二个参数是对应的函数方法。
+
+注意，路径匹配时，查询字符串不会考虑在内。
+
+Koa-router允许为路径模式起名。起名时，名称要添加到动词方法的第一个参数，即动词方法变成有三个参数。
+
+```javascript
+router.get('user', '/users/:id', function *(next) {
+ // ...
+});
+```
+
+上面代码中，路径模式`\users\:id`的名字就是`user`。路径的名称，可以用来引用对应的具体路径，比如url方法可以根据路径名称，结合给定的参数，生成具体的路径。
+
+```javascript
+router.url('user', 3);
+// => "/users/3"
+
+router.url('user', { id: 3 });
+// => "/users/3"
+```
+
+上面代码中，user就是路径模式的名称，对应具体路径`/users/:id`。url方法的第二个参数3，表示给定id的值是3，因此最后生成的路径是`/users/3`。
+
+Koa-router允许为路径统一添加前缀。
+
+```javascript
+var router = new Router({
+  prefix: '/users'
+});
+
+router.get('/', ...); // 等同于"/users"
+router.get('/:id', ...); // 等同于"/users/:id"
+```
+
+路径的参数通过`this.params`属性获取，该属性返回一个对象，所有命名参数都是该对象的成员。
+
+```javascript
+// 访问 /programming/how-to-node
+router.get('/:category/:title', function *(next) {
+  console.log(this.params);
+  // => { category: 'programming', title: 'how-to-node' }
+});
+```
+
+param方法可以针对命名参数，设置验证条件。
+
+```javascript
+router
+  .param('user', function *(id, next) {
+    this.user = users[id];
+    if (!this.user) return this.status = 404;
+    yield next;
+  })
+  .get('/users/:user', function *(next) {
+    this.body = this.user;
+  })
+  // /users/3 => {"id": 3, "name": "Alex"}
+```
+
+上面代码中，如果`/users/:user`的参数user对应的不是有效用户，param方法注册的中间件会查到，就会返回404错误。
+
+注意，param方法要放在动词方法之前，否则起不到验证效果。
+
+redirect方法会将某个路径的请求，重定向到另一个路径，并返回301状态码。
+
+```javascript
+router.redirect('/login', 'sign-in');
+
+// 等同于
+router.all('/login', function *() {
+  this.redirect('/sign-in');
+  this.status = 301;
+});
+```
+
+redirect方法的第一个参数是请求来源，第二个参数是目的地，两者都可以用路径模式的名字代替。
 
 ## context对象
 
