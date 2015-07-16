@@ -48,7 +48,7 @@ require方法用于在其他文件加载这个接口，具体用法参见《Requ
 var example = require('./example.js');
 
 console.log(example.x); // 5
-console.log(addX(1)); // 6
+console.log(example.addX(1)); // 6
 {% endhighlight %}
 
 ## module对象
@@ -294,7 +294,7 @@ Node寻找utils脚本的顺序是，首先寻找核心模块，然后是全局�
 ]
 ```
 
-（5）如果指定的模块文件没有发现，Node会尝试为文件名添加.js、.json、.node后，再去搜索。.js文件会以文本格式的JavaScript脚本文件解析，.json文件会以JSON格式的文本文件解析，.node文件会议编译后二进制文件解析。
+（5）如果指定的模块文件没有发现，Node会尝试为文件名添加.js、.json、.node后，再去搜索。.js文件会以文本格式的JavaScript脚本文件解析，.json文件会以JSON格式的文本文件解析，.node文件会以编译后二进制文件解析。
 
 （6）如果想得到require命令加载的确切文件名，使用require.resolve()方法。
 
@@ -386,4 +386,4 @@ require.main === module
 
 - Addy Osmani, [Writing Modular JavaScript With AMD, CommonJS & ES Harmony](http://addyosmani.com/writing-modular-js/)
 - Pony Foo, [A Gentle Browserify Walkthrough](http://blog.ponyfoo.com/2014/08/25/a-gentle-browserify-walkthrough)
-- Nico Reed, [What is require?]（https://docs.nodejitsu.com/articles/getting-started/what-is-require）
+- Nico Reed, [What is require?](https://docs.nodejitsu.com/articles/getting-started/what-is-require)
