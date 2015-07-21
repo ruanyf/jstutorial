@@ -480,7 +480,7 @@ Promise.prototype._handleThen = function () {
 
 之所以把回调函数的执行放在try...catch结构中，是因为一旦出错，就会自动执行catch代码块，从而可以运行下一个Promise实例对象的reject方法，这使得调用reject方法变得很简单。下面是try代码块中的代码。
 
-```javascrit
+```javascript
 try {
   switch (this.state) {
     case 'fulfilled':
