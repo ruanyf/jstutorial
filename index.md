@@ -99,7 +99,7 @@ modifiedOn: 2014-05-18
 
 <h2 id="advanced">JavaScript高级语法</h2>
 
-- [异步编程的模式](advanced/asynchronous.html)
+- [Promise](advanced/promise.html)
 - [有限状态机](advanced/fsm.html)
 - [MVC模式和Backbone.js](advanced/backbonejs.html)
 - [严格模式](advanced/strict.html)（基本完成）

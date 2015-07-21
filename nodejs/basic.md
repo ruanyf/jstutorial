@@ -374,6 +374,12 @@ m.print("这是自定义模块");
 
 Node是单线程运行环境，一旦抛出的异常没有被捕获，就会引起整个进程的崩溃。所以，Node的异常处理对于保证系统的稳定运行非常重要。
 
+一般来说，Node有三种方法，传播一个错误。
+
+- 使用throw语句抛出一个错误对象，即抛出异常。
+- 将错误对象传递给回调函数，由回调函数负责发出错误。
+- 通过EventEmitter接口，发出一个error事件。
+
 ### try...catch结构
 
 最常用的捕获异常的方式，就是使用try...catch结构。但是，这个结构无法捕获异步运行的代码抛出的异常。
@@ -413,7 +419,7 @@ function async(cb, err) {
     } catch(e) {
       err(e);
     }
-  }, 2000);
+  }, 2000)
 }
 
 async(function(res) {
@@ -426,7 +432,22 @@ async(function(res) {
 
 上面代码中，async函数异步抛出的错误，可以同样部署在异步的catch代码块捕获。
 
-node采用的方法，是将错误作为第一个参数，传入回调函数。这样就避免了捕获代码与错误不在同一个阶段的问题。
+这两种处理方法都不太理想。一般来说，Node只在很少场合才用try/catch语句，比如使用`JSON.parse`解析JSON文本。
+
+### 回调函数
+
+Node采用的方法，是将错误对象作为第一个参数，传入回调函数。这样就避免了捕获代码与发生错误的代码不在同一个时间段的问题。
+
+```javascript
+fs.readFile('/foo.txt', function(err, data) {
+  if (err !== null) throw err;
+  console.log(data);
+});
+```
+
+上面代码表示，读取文件`foo.txt`是一个异步操作，它的回调函数有两个参数，第一个是错误对象，第二个是读取到的文件数据。如果第一个参数不是null，就意味着发生错误，后面代码也就不再执行了。
+
+下面是一个完整的例子。
 
 ```javascript
 function async2(continuation) {
@@ -453,6 +474,25 @@ async2(function(err, res) {
 ```
 
 上面代码中，async2函数的回调函数的第一个参数就是一个错误对象，这是为了处理异步操作抛出的错误。
+
+### EventEmitter接口的error事件
+
+发生错误的时候，也可以用EventEmitter接口抛出error事件。
+
+```javascript
+var EventEmitter = require('events').EventEmitter;
+var emitter = new EventEmitter();
+
+emitter.emit('error', new Error('something bad happened'));
+```
+
+使用上面的代码必须小心，因为如果没有对error事件部署监听函数，会导致整个应用程序崩溃。所以，一般总是必须同时部署下面的代码。
+
+```javascript
+emitter.on('error', function(err) {
+  console.error('出错：' + err.message);
+});
+```
 
 ### uncaughtException事件
 
@@ -482,17 +522,66 @@ process.on('uncaughtException', function(err) {
 });
 ```
 
-### 正确的编码习惯
+### unhandledRejection事件
 
-由于异步中的异常无法被外部捕获，所以异常应该作为第一个参数传递给回调函数，Node的编码规则就是这么规定的。
+iojs有一个unhandledRejection事件，用来监听没有捕获的Promise对象的rejected状态。
 
 ```javascript
-
-fs.readFile('/t.txt', function (err, data) {
-  if (err) throw err;
-  console.log(data);
+var promise = new Promise(function(resolve, reject) {
+  reject(new Error("Broken."));
 });
 
+promise.then(function(result) {
+  console.log(result);
+})
+```
+
+上面代码中，promise的状态变为rejected，并且抛出一个错误。但是，不会有任何反应，因为没有设置任何处理函数。
+
+只要监听unhandledRejection事件，就能解决这个问题。
+
+```javascript
+process.on('unhandledRejection', function (err, p) {
+  console.error(err.stack);
+})
+```
+
+需要注意的是，unhandledRejection事件的监听函数有两个参数，第一个是错误对象，第二个是产生错误的promise对象。这可以提供很多有用的信息。
+
+```javascript
+var http = require('http');
+
+http.createServer(function (req, res) {
+  var promise = new Promise(function(resolve, reject) {
+    reject(new Error("Broken."))
+  })
+
+  p.info = {url: req.url}
+}).listen(8080)
+
+process.on('unhandledRejection', function (err, p) {
+  if (p.info && p.info.url) {
+    console.log('Error in URL', p.info.url)
+  }
+  console.error(err.stack)
+})
+```
+
+上面代码会在出错时，输出用户请求的网址。
+
+```javascript
+Error in URL /testurl
+Error: Broken.
+  at /Users/mikeal/tmp/test.js:9:14
+  at Server.<anonymous> (/Users/mikeal/tmp/test.js:4:17)
+  at emitTwo (events.js:87:13)
+  at Server.emit (events.js:169:7)
+  at HTTPParser.parserOnIncoming [as onIncoming] (_http_server.js:471:12)
+  at HTTPParser.parserOnHeadersComplete (_http_common.js:88:23)
+  at Socket.socketOnData (_http_server.js:322:22)
+  at emitOne (events.js:77:13)
+  at Socket.emit (events.js:166:7)
+  at readableAddChunk (_stream_readable.js:145:16)
 ```
 
 ## 命令行脚本

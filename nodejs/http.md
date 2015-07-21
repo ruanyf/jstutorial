@@ -185,62 +185,75 @@ function getTestPersonaLoginCredentials(callback) {
 
 ### request()
 
-request方法用于发出HTTP请求。
+request方法用于发出HTTP请求，它的使用格式如下。
 
-{% highlight javascript %}
+```javascript
+http.request(options[, callback])
+```
 
-var http = require('http');
+request方法的options参数，可以是一个对象，也可以是一个字符串。如果是字符串，就表示这是一个URL，Node内部就会自动调用`url.parse()`，处理这个参数。
+
+options对象可以设置如下属性。
+
+- host：HTTP请求所发往的域名或者IP地址，默认是localhost。
+- hostname：该属性会被`url.parse()`解析，优先级高于host。
+- port：远程服务器的端口，默认是80。
+- localAddress：本地网络接口。
+- socketPath：Unix网络套接字，格式为host:port或者socketPath。
+- method：指定HTTP请求的方法，格式为字符串，默认为GET。
+- path：指定HTTP请求的路径，默认为根路径（/）。可以在这个属性里面，指定查询字符串，比如`/index.html?page=12`。如果这个属性里面包含非法字符（比如空格），就会抛出一个错误。
+- headers：一个对象，包含了HTTP请求的头信息。
+- auth：一个代表HTTP基本认证的字符串`user:password`。
+- agent：控制缓存行为，如果HTTP请求使用了agent，则HTTP请求默认为`Connection: keep-alive`，它的可能值如下：
+  - undefined（默认）：对当前host和port，使用全局Agent。
+  - Agent：一个对象，会传入agent属性。
+  - false：不缓存连接，默认HTTP请求为`Connection: close`。
+- keepAlive：一个布尔值，表示是否保留socket供未来其他请求使用，默认等于false。
+- keepAliveMsecs：一个整数，当使用KeepAlive的时候，设置多久发送一个TCP KeepAlive包，使得连接不要被关闭。默认等于1000，只有keepAlive设为true的时候，该设置才有意义。
+
+request方法的callback参数是可选的，在response事件发生时触发，而且只触发一次。
+
+`http.request()`返回一个`http.ClientRequest`类的实例。它是一个可写数据流，如果你想通过POST方法发送一个文件，可以将文件写入这个ClientRequest对象。
+
+下面是发送POST请求的一个例子。
+
+```javascript
+var postData = querystring.stringify({
+  'msg' : 'Hello World!'
+});
 
 var options = {
-  host: 'www.random.org',
-  path: '/integers/?num=1&min=1&max=10&col=1&base=10&format=plain&rnd=new'
+  hostname: 'www.google.com',
+  port: 80,
+  path: '/upload',
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/x-www-form-urlencoded',
+    'Content-Length': postData.length
+  }
 };
 
-callback = function(response) {
-  var str = '';
-
-  //another chunk of data has been recieved, so append it to `str`
-  response.on('data', function (chunk) {
-    str += chunk;
+var req = http.request(options, function(res) {
+  console.log('STATUS: ' + res.statusCode);
+  console.log('HEADERS: ' + JSON.stringify(res.headers));
+  res.setEncoding('utf8');
+  res.on('data', function (chunk) {
+    console.log('BODY: ' + chunk);
   });
+});
 
-  //the whole response has been recieved, so we just print it out here
-  response.on('end', function () {
-    console.log(str);
-  });
-}
+req.on('error', function(e) {
+  console.log('problem with request: ' + e.message);
+});
 
-var req = http.request(options, callback);
-
-req.write("hello world!");
+// write data to request body
+req.write(postData);
 req.end();
+```
 
-{% endhighlight %}
+注意，上面代码中，`req.end()`必须被调用，即使没有在请求体内写入任何数据，也必须调用。因为这表示已经完成HTTP请求。
 
-request对象的第一个参数是options对象，用于指定请求的域名和路径，第二个参数是请求完成后的回调函数。
-
-如果使用POST方法发出请求，只需在options对象中设定即可。
-
-{% highlight javascript %}
-
-var options = {
-  host: 'www.example.com',
-  path: '/',
-  port: '80',
-  method: 'POST'
-};
-
-{% endhighlight %}
-
-指定HTTP头信息，也是在options对象中设定。
-
-{% highlight javascript %}
-
-var options = {
-  headers: {'custom': 'Custom Header Demo works'}
-};
-
-{% endhighlight %}
+发送过程的任何错误（DNS错误、TCP错误、HTTP解析错误），都会在request对象上触发error事件。
 
 ## 搭建HTTPs服务器
 

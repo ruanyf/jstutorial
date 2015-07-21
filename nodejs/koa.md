@@ -286,9 +286,9 @@ router.get('/', function *(next) {
 
 上面代码中，`router.get`方法的第一个参数是根路径，第二个参数是对应的函数方法。
 
-注意，路径匹配时，查询字符串不会考虑在内。
+注意，路径匹配的时候，不会把查询字符串考虑在内。比如，`/index?param=xyz`匹配路径`/index`。
 
-Koa-router允许为路径模式起名。起名时，名称要添加到动词方法的第一个参数，即动词方法变成有三个参数。
+有些路径模式比较复杂，Koa-router允许为路径模式起别名。起名时，别名要添加为动词方法的第一个参数，这时动词方法变成接受三个参数。
 
 ```javascript
 router.get('user', '/users/:id', function *(next) {
@@ -319,7 +319,7 @@ router.get('/', ...); // 等同于"/users"
 router.get('/:id', ...); // 等同于"/users/:id"
 ```
 
-路径的参数通过`this.params`属性获取，该属性返回一个对象，所有命名参数都是该对象的成员。
+路径的参数通过`this.params`属性获取，该属性返回一个对象，所有路径参数都是该对象的成员。
 
 ```javascript
 // 访问 /programming/how-to-node
@@ -333,20 +333,18 @@ param方法可以针对命名参数，设置验证条件。
 
 ```javascript
 router
+  .get('/users/:user', function *(next) {
+    this.body = this.user;
+  })
   .param('user', function *(id, next) {
+    var users = [ '0号用户', '1号用户', '2号用户'];
     this.user = users[id];
     if (!this.user) return this.status = 404;
     yield next;
   })
-  .get('/users/:user', function *(next) {
-    this.body = this.user;
-  })
-  // /users/3 => {"id": 3, "name": "Alex"}
 ```
 
-上面代码中，如果`/users/:user`的参数user对应的不是有效用户，param方法注册的中间件会查到，就会返回404错误。
-
-注意，param方法要放在动词方法之前，否则起不到验证效果。
+上面代码中，如果`/users/:user`的参数user对应的不是有效用户（比如访问`/users/3`），param方法注册的中间件会查到，就会返回404错误。
 
 redirect方法会将某个路径的请求，重定向到另一个路径，并返回301状态码。
 
@@ -360,7 +358,7 @@ router.all('/login', function *() {
 });
 ```
 
-redirect方法的第一个参数是请求来源，第二个参数是目的地，两者都可以用路径模式的名字代替。
+redirect方法的第一个参数是请求来源，第二个参数是目的地，两者都可以用路径模式的别名代替。
 
 ## context对象
 
