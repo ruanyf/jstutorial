@@ -301,7 +301,7 @@ f.length
 
 length属性提供了一种机制，判断定义时和调用时参数的差异，以便实现面向对象编程的”方法重载“（overload）。
 
-## toString()
+### toString()
 
 函数的toString方法返回函数的源码。
 
@@ -318,6 +318,39 @@ f.toString()
 //  b();
 //  c();
 // }
+```
+
+函数内部的注释也可以返回。
+
+```javascript
+function f() {/*
+  这是一个
+  多行注释
+*/}
+
+f.toString()
+// "function f(){/*
+//   这是一个
+//   多行注释
+// */}"
+```
+
+利用这一点，可以变相实现多行字符串。
+
+```javascript
+var multiline = function (fn) {
+  var arr = fn.toString().split('\n');
+  return arr.slice(1, arr.length - 1).join('\n');
+};
+
+function f() {/*
+  这是一个
+  多行注释
+*/}
+
+multiline(f.toString())
+// " 这是一个
+//   多行注释"
 ```
 
 ## 函数作用域

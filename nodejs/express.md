@@ -8,20 +8,17 @@ modifiedOn: 2013-10-04
 
 ## 概述
 
-Express是目前最流行的基于Node.js的Web开发框架，提供各种模块，可以快速地搭建一个具有完整功能的网站。
+Express是目前最流行的基于Node.js的Web开发框架，可以快速地搭建一个完整功能的网站。
 
-Express的上手非常简单，首先新建一个项目目录，假定叫做hello-world。
+Express上手非常简单，首先新建一个项目目录，假定叫做hello-world。
 
-{% highlight bash %}
-
+```bash
 $ mkdir hello-world
-
-{% endhighlight %}
+```
 
 进入该目录，新建一个package.json文件，内容如下。
 
 ```javascript
-
 {
   "name": "hello-world",
   "description": "hello world test app",
@@ -31,7 +28,6 @@ $ mkdir hello-world
     "express": "4.x"
   }
 }
-
 ```
 
 上面代码定义了项目的名称、描述、版本等，并且指定需要4.0版本以上的Express。
@@ -42,51 +38,51 @@ $ mkdir hello-world
 $ npm install
 ```
 
-安装了Express及其依赖的模块以后，在项目根目录下，新建一个启动文件，假定叫做index.js。
+执行上面的命令以后，在项目根目录下，新建一个启动文件，假定叫做index.js。
 
 ```javascript
-
 var express = require('express');
 var app = express();
 
 app.use(express.static(__dirname + '/public'));
 
 app.listen(8080);
-
 ```
 
-上面代码运行之后，访问`http://localhost:8080`，就会在浏览器中打开当前目录的public子目录。如果public目录之中有一个图片文件my_image.png，那么可以用`http://localhost:8080/my_image.png`访问该文件。
+然后，运行上面的启动脚本。
+
+```bash
+$ node index
+```
+
+现在就可以访问`http://localhost:8080`，它会在浏览器中打开当前目录的public子目录（严格来说，是打开public目录的index.html文件）。如果public目录之中有一个图片文件`my_image.png`，那么可以用`http://localhost:8080/my_image.png`访问该文件。
 
 你也可以在index.js之中，生成动态网页。
 
 ```javascript
-
 // index.js
+
 var express = require('express');
 var app = express();
 app.get('/', function (req, res) {
   res.send('Hello world!');
 });
 app.listen(3000);
-
 ```
 
-然后，在命令行下运行下面的命令，就可以在浏览器中访问项目网站了。
+然后，在命令行下运行启动脚本，就可以在浏览器中访问项目网站了。
 
-{% highlight bash %}
-
+```bash
 $ node index
+```
 
-{% endhighlight %}
+上面代码会在本机的3000端口启动一个网站，网页显示Hello World。
 
-默认情况下，网站运行在本机的3000端口，网页显示Hello World。
-
-index.js中的`app.get`用于指定不同的访问路径所对应的回调函数，这叫做“路由”（routing）。上面代码只指定了根目录的回调函数，因此只有一个路由记录。实际应用中，可能有多个路由记录。
-
+启动脚本index.js的`app.get`方法，用于指定不同的访问路径所对应的回调函数，这叫做“路由”（routing）。上面代码只指定了根目录的回调函数，因此只有一个路由记录。实际应用中，可能有多个路由记录。
 
 ```javascript
-
 // index.js
+
 var express = require('express');
 var app = express();
 
@@ -101,13 +97,11 @@ app.get('/admin', function(req, res){
 });
 
 app.listen(3000);
-
 ```
 
 这时，最好就把路由放到一个单独的文件中，比如新建一个routes子目录。
 
 ```javascript
-
 // routes/index.js
 
 module.exports = function (app) {
@@ -121,56 +115,25 @@ module.exports = function (app) {
     res.send('admin page');
   });
 };
-
 ```
 
 然后，原来的index.js就变成下面这样。
 
 ```javascript
-
 // index.js
 var express = require('express');
 var app = express();
 var routes = require('./routes')(app);
 app.listen(3000);
-
-```
-
-### 搭建HTTPs服务器
-
-使用Express搭建HTTPs加密服务器，也很简单。
-
-```javascript
-
-var fs = require('fs');
-var options = {
-  key: fs.readFileSync('E:/ssl/myserver.key'),
-  cert: fs.readFileSync('E:/ssl/myserver.crt'),
-  passphrase: '1234'
-};
-
-var https = require('https');
-var express = require('express');
-var app = express();
-
-app.get('/', function(req, res){
-  res.send('Hello World Expressjs');
-});
-
-var server = https.createServer(options, app);
-server.listen(8084);
-console.log('Server is running on port 8084');
-
 ```
 
 ## 运行原理
 
 ### 底层：http模块
 
-Express框架建立在node.js内置的http模块上。 http模块生成服务器的原始代码如下。
+Express框架建立在node.js内置的http模块上。http模块生成服务器的原始代码如下。
 
-{% highlight javascript %}
-
+```javascript
 var http = require("http");
 
 var app = http.createServer(function(request, response) {
@@ -179,76 +142,54 @@ var app = http.createServer(function(request, response) {
 });
 
 app.listen(3000, "localhost");
-
-{% endhighlight %}
+```
 
 上面代码的关键是http模块的createServer方法，表示生成一个HTTP服务器实例。该方法接受一个回调函数，该回调函数的参数，分别为代表HTTP请求和HTTP回应的request对象和response对象。
 
-### 对http模块的再包装
-
 Express框架的核心是对http模块的再包装。上面的代码用Express改写如下。
 
-{% highlight javascript %}
-
+```javascript
 var express = require('express');
 var app = express();
+
 app.get('/', function (req, res) {
-    res.send('Hello world!');
+  res.send('Hello world!');
 });
+
 app.listen(3000);
+```
 
-var express = require("express");
-var http = require("http");
-
-var app = express();
-
-app.use(function(request, response) {
-  response.writeHead(200, { "Content-Type": "text/plain" });
-  response.end("Hello world!\n");
-});
-
-http.createServer(app).listen(1337);
-
-{% endhighlight %}
-
-比较两段代码，可以看到它们非常接近，唯一的差别是createServer方法的参数，从一个回调函数变成了一个Epress对象的实例。而这个实例使用了use方法，加载了与上一段代码相同的回调函数。
-
-Express框架等于在http模块之上，加了一个中间层，而use方法则相当于调用中间件。
+比较两段代码，可以看到它们非常接近。原来是用`http.createServer`方法新建一个app实例，现在则是用Express的构造方法，生成一个Epress实例。两者的回调函数都是相同的。Express框架等于在http模块之上，加了一个中间层。
 
 ### 什么是中间件
 
-简单说，中间件（middleware）就是处理HTTP请求的函数，用来完成各种特定的任务，比如检查用户是否登录、分析数据、以及其他在需要最终将数据发送给用户之前完成的任务。它最大的特点就是，一个中间件处理完，再传递给下一个中间件。
+简单说，中间件（middleware）就是处理HTTP请求的函数。它最大的特点就是，一个中间件处理完，再传递给下一个中间件。App实例在运行过程中，会调用一系列的中间件。
 
-node.js的内置模块http的createServer方法，可以生成一个服务器实例，该实例允许在运行过程中，调用一系列函数（也就是中间件）。当一个HTTP请求进入服务器，服务器实例会调用第一个中间件，完成后根据设置，决定是否再调用下一个中间件。中间件内部可以使用服务器实例的response对象（ServerResponse，即回调函数的第二个参数），以及一个next回调函数（即第三个参数）。每个中间件都可以对HTTP请求（request对象）做出回应，并且决定是否调用next方法，将request对象再传给下一个中间件。
+每个中间件可以从App实例，接收三个参数，依次为request对象（代表HTTP请求）、response对象（代表HTTP回应），next回调函数（代表下一个中间件）。每个中间件都可以对HTTP请求（request对象）进行加工，并且决定是否调用next方法，将request对象再传给下一个中间件。
 
-一个不进行任何操作、只传递request对象的中间件，大概是下面这样：
+一个不进行任何操作、只传递request对象的中间件，就是下面这样。
 
-{% highlight javascript %}
-
-function uselessMiddleware(req, res, next) { 
-	next();
+```javascript
+function uselessMiddleware(req, res, next) {
+  next();
 }
+```
 
-{% endhighlight %}
+上面代码的next就是下一个中间件。如果它带有参数，则代表抛出一个错误，参数为错误文本。
 
-上面代码的next为中间件的回调函数。如果它带有参数，则代表抛出一个错误，参数为错误文本。
-
-{% highlight javascript %}
-
+```javascript
 function uselessMiddleware(req, res, next) {
   next('出错了！');
 }
-
-{% endhighlight %}
+```
 
 抛出错误以后，后面的中间件将不再执行，直到发现一个错误处理函数为止。
 
 ### use方法
 
-use是express调用中间件的方法，它返回一个函数。下面是一个连续调用两个中间件的例子。
+use是express注册中间件的方法，它返回一个函数。下面是一个连续调用两个中间件的例子。
 
-{% highlight javascript %}
-
+```javascript
 var express = require("express");
 var http = require("http");
 
@@ -265,15 +206,13 @@ app.use(function(request, response) {
 });
 
 http.createServer(app).listen(1337);
+```
 
-{% endhighlight %}
+上面代码使用`app.use`方法，注册了两个中间件。收到HTTP请求后，先调用第一个中间件，在控制台输出一行信息，然后通过next方法，将执行权传给第二个中间件，输出HTTP回应。由于第二个中间件没有调用next方法，所以request对象就不再向后传递了。
 
-上面代码先调用第一个中间件，在控制台输出一行信息，然后通过next方法，调用第二个中间件，输出HTTP回应。由于第二个中间件没有调用next方法，所以不再request对象就不再向后传递了。
+use方法内部可以对访问路径进行判断，据此就能实现简单的路由，根据不同的请求网址，返回不同的网页内容。
 
-使用use方法，可以根据请求的网址，返回不同的网页内容。
-
-{% highlight javascript %}
-
+```javascript
 var express = require("express");
 var http = require("http");
 
@@ -302,38 +241,34 @@ app.use(function(request, response) {
 });
 
 http.createServer(app).listen(1337);
+```
 
-{% endhighlight %}
+上面代码通过request.url属性，判断请求的网址，从而返回不同的内容。注意，`app.use`方法一共登记了三个中间件，只要请求路径匹配，就不会将执行权交给下一个中间件。因此，最后一个中间件会返回404错误，即前面的中间件都没匹配请求路径，找不到所要请求的资源。
 
-上面代码通过request.url属性，判断请求的网址，从而返回不同的内容。
+除了在回调函数内部，判断请求的网址，use方法也允许将请求网址写在第一个参数。这代表，只有请求路径匹配这个参数，后面的中间件才会生效。无疑，这样写更加清晰和方便。
 
-除了在回调函数内部，判断请求的网址，Express也允许将请求的网址写在use方法的第一个参数。
-
-{% highlight javascript %}
-
+```javascript
 app.use('/', someMiddleware);
-
-{% endhighlight %}
+```
 
 上面代码表示，只对根目录的请求，调用某个中间件。
 
 因此，上面的代码可以写成下面的样子。
 
-{% highlight javascript %}
-
+```javascript
 var express = require("express");
 var http = require("http");
 
 var app = express();
 
 app.use("/", function(request, response, next) {
-    response.writeHead(200, { "Content-Type": "text/plain" });
-    response.end("Welcome to the homepage!\n");
+  response.writeHead(200, { "Content-Type": "text/plain" });
+  response.end("Welcome to the homepage!\n");
 });
 
 app.use("/about", function(request, response, next) {
-    response.writeHead(200, { "Content-Type": "text/plain" });
-    response.end("Welcome to the about page!\n");
+  response.writeHead(200, { "Content-Type": "text/plain" });
+  response.end("Welcome to the about page!\n");
 });
 
 app.use(function(request, response) {
@@ -342,8 +277,7 @@ app.use(function(request, response) {
 });
 
 http.createServer(app).listen(1337);
-
-{% endhighlight %}
+```
 
 ## Express的方法
 
@@ -486,6 +420,31 @@ request.ip属性用于获得HTTP请求的IP地址。
 **（2）request.files**
 
 request.files用于获取上传的文件。
+
+### 搭建HTTPs服务器
+
+使用Express搭建HTTPs加密服务器，也很简单。
+
+```javascript
+var fs = require('fs');
+var options = {
+  key: fs.readFileSync('E:/ssl/myserver.key'),
+  cert: fs.readFileSync('E:/ssl/myserver.crt'),
+  passphrase: '1234'
+};
+
+var https = require('https');
+var express = require('express');
+var app = express();
+
+app.get('/', function(req, res){
+  res.send('Hello World Expressjs');
+});
+
+var server = https.createServer(options, app);
+server.listen(8084);
+console.log('Server is running on port 8084');
+```
 
 ## 项目开发实例
 
@@ -953,33 +912,31 @@ app.use(express.static('public'));
 
 服务器端就到public/bootstrap/css/目录中寻找bootstrap.css文件。
 
-## ExpressJS 4.0的Router用法
+## Express.Router用法
 
-Express 4.0的Router用法，做了大幅改变，增加了很多新的功能。Router成了一个单独的组件，好像小型的express应用程序一样，有自己的use、get、param和route方法。
+从Express 4.0开始，路由器功能成了一个单独的组件`Express.Router`。它好像小型的express应用程序一样，有自己的use、get、param和route方法。
 
 ### 基本用法
 
-Express 4.0的router对象，需要单独新建。然后，使用该对象的HTTP动词方法，为不同的访问路径，指定回调函数；最后，挂载到某个路径
+首先，`Express.Router`是一个构造函数，调用后返回一个路由器实例。然后，使用该实例的HTTP动词方法，为不同的访问路径，指定回调函数；最后，挂载到某个路径。
 
-{% highlight javascript %}
-
+```javascript
 var router = express.Router();
 
 router.get('/', function(req, res) {
-	res.send('首页');	
+  res.send('首页');
 });
 
 router.get('/about', function(req, res) {
-	res.send('关于');	
+  res.send('关于');
 });
 
 app.use('/', router);
+```
 
-{% endhighlight %}
+上面代码先定义了两个访问路径，然后将它们挂载到根目录。如果最后一行改为app.use('/app', router)，则相当于为`/app`和`/app/about`这两个路径，指定了回调函数。
 
-上面代码先定义了两个访问路径，然后将它们挂载到根目录。如果最后一行改为app.use('/app', router)，则相当于/app和/app/about这两个路径，指定了回调函数。
-
-这种挂载路径和router对象分离的做法，为程序带来了更大的灵活性，既可以定义多个router对象，也可以为将同一个router对象挂载到多个路径。
+这种路由器可以自由挂载的做法，为程序带来了更大的灵活性，既可以定义多个路由器实例，也可以为将同一个路由器实例挂载到多个路径。
 
 ### router.route方法
 

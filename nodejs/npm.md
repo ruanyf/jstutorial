@@ -37,7 +37,7 @@ $ npm config list -l
 
 ## npm info
 
-`npm info`命令可以查看每个模块的具体信息。比如，查看underscore模块信息的命令是：
+`npm info`命令可以查看每个模块的具体信息。比如，查看underscore模块的信息。
 
 ```bash
 $ npm info underscore
@@ -76,21 +76,41 @@ $ npm info underscore version
 
 ## npm search
 
-向npm仓库搜索某个模块，使用search命令（可使用正则搜索）。
+`npm search`命令用于搜索npm仓库，它后面可以跟字符串，也可以跟正则表达式。
 
 ```bash
 $ npm search <搜索词>
 ```
 
-如果不加搜索词，`npm search`默认返回npm仓库的所有模块。
+下面是一个例子。
+
+```bash
+$ npm search node-gyp
+// NAME                  DESCRIPTION
+// autogypi              Autogypi handles dependencies for node-gyp projects.
+// grunt-node-gyp        Run node-gyp commands from Grunt.
+// gyp-io                Temporary solution to let node-gyp run `rebuild` under…
+// ...
+```
 
 ## npm list
 
-`npm list`命令列出当前目录安装的所有模块。如果使用global参数，就是列出全局安装的模块。
+`npm list`命令以树型结构列出当前项目安装的所有模块，以及它们依赖的模块。
 
 ```bash
 $ npm list
-$ npm -global list
+```
+
+加上global参数，会列出全局安装的模块。
+
+```bash
+$ npm list -global
+```
+
+`npm list`命令也可以列出单个模块。
+
+```bash
+$ npm list underscore
 ```
 
 ## npm install
@@ -266,10 +286,9 @@ $ npm package <package name>
 
 ## npm run
 
-package.json文件有一项scripts，用于指定脚本命令，供npm直接调用。
+npm不经可以用于模块管理，还可以用于执行脚本。package.json文件有一个scripts字段，可以用于指定脚本命令，供npm直接调用。
 
 ```javascript
-
 {
   "name": "myproject",
   "devDependencies": {
@@ -282,23 +301,23 @@ package.json文件有一项scripts，用于指定脚本命令，供npm直接调�
     "test": "mocha test/"
   }
 }
-
 ```
 
-上面代码中，scripts指定了两项命令lint和test。命令行输入`npm run lint`，就会执行`jshint **.js`，输入`npm run test`，就会执行`mocha test/`。npm内置了两个命令简写，`npm test`等同于执行`npm run lint`，`npm start`等同于执行`npm run start`。
+上面代码中，scripts字段指定了两项命令lint和test。命令行输入`npm run lint`，就会执行`jshint **.js`，输入`npm run test`，就会执行`mocha test/`。
+
+npm内置了两个命令简写，`npm test`等同于执行`npm run test`，`npm start`等同于执行`npm run start`。
 
 `npm run`会创建一个shell，执行指定的命令，并将`node_modules/.bin`加入PATH变量，这意味着本地模块可以直接运行。也就是说，`npm run lint`直接运行`jshint **.js`即可，而不用`./node_modules/.bin/jshint **.js`。
 
 如果直接运行`npm run`不给出任何参数，就会列出scripts属性下所有命令。
 
 ```bash
-
+$ npm run
 Available scripts in the user-service package:
   lint
      jshint **.js
   test
     mocha test/
-
 ```
 
 下面是另一个package.json文件的例子。
@@ -378,19 +397,7 @@ browserify browser/main.js | uglifyjs -mc > static/bundle.js
 "build-js": "bin/build.sh"
 ```
 
-`npm run`为每条命令提供了pre和post两个钩子（hook）。以`npm run lint`为例，执行这条命令之前，npm会先查看有没有定义prelint和postlint两个钩子，如果有的话，就会先执行`npm run prelint`，然后执行`npm run lint`，最后执行`npm run postlint`。所有命令都是这样，包括`npm test`（即实际存在`npm run pretest`、`npm run test`、`npm run posttest`三条命令）。如果执行过程出错，就不会执行排在后面的命令，即如果pretest命令执行出错，就不会接着执行 test和posttest命令。不能在pre命令之前再加pre，即prepretest命令不起作用。另外，还可以为一些内部命令指定pre和post的钩子：install、uninstall、publish、update。
-
-```javascript
-"scripts": {
-  "lint": "jshint **.js",
-  "build": "browserify index.js > myproject.min.js",
-  "test": "mocha test/",
-
-  "prepublish": "npm run build # also runs npm run prebuild",
-  "prebuild": "npm run test # also runs npm run pretest",
-  "pretest": "npm run lint"
-}
-```
+### 参数
 
 `npm run`命令还可以添加参数。
 
@@ -400,7 +407,82 @@ browserify browser/main.js | uglifyjs -mc > static/bundle.js
 }
 ```
 
-上面代码指定`npm test`，实际运行`mocha test/`。可以在`npm test`命令后面加上参数，比如`npm run test -- anothertest.js`，实际运行的是`mocha test/ anothertest.js`。
+上面代码指定`npm test`，实际运行`mocha test/`。
+
+如果要通过`npm test`命令，将参数传到mocha，则参数之前要加上两个连词线。比如，`npm run test -- anothertest.js`，实际运行的是`mocha test/ anothertest.js`。
+
+### 默认脚本
+
+npm在执行某些命令时，会执行一些默认脚本（前提是这些脚本已经设置了）。
+
+- prepublish：发布一个模块前执行。
+- publish, postpublish：发布一个模块后执行。
+- preinstall：安装一个模块前执行。
+- install, postinstall：安装一个模块后执行。
+- preuninstall, uninstall：卸载一个模块前执行。
+- postuninstall：卸载一个模块后执行。
+- preversion, version：更改模块版本前执行。
+- postversion：更改模块版本后执行。
+- pretest, test, posttest：运行`npm test`命令时执行。
+- prestop, stop, poststop：运行`npm stop`命令时执行。
+- prestart, start, poststart：运行`npm start`命令时执行。
+- prerestart, restart, postrestart：运行`npm restart`命令时执行。如果没有设置restart脚本，则依次执行stop和start脚本。
+
+事实上，`npm run`为每条命令提供了pre和post两个钩子（hook）。以`npm run lint`为例，执行这条命令之前，npm会先查看有没有定义prelint和postlint两个钩子，如果有的话，就会先执行`npm run prelint`，然后执行`npm run lint`，最后执行`npm run postlint`。
+
+如果执行过程出错，就不会执行排在后面的脚本，即如果prelint脚本执行出错，就不会接着执行lint和postlint脚本。
+
+另外，不能在pre脚本之前再加pre，即preprelint脚本不起作用。
+
+下面是一个例子。
+
+```javascript
+"scripts": {
+  "lint": "jshint **.js",
+  "build": "browserify index.js > myproject.min.js",
+  "test": "mocha test/",
+  "prepublish": "npm run build # also runs npm run prebuild",
+  "prebuild": "npm run test # also runs npm run pretest",
+  "pretest": "npm run lint"
+}
+```
+
+如果start脚本没有配置，`npm start`命令默认执行下面的脚本，前提是模块的根目录存在一个server.js文件。
+
+```bash
+$ node server.js
+```
+
+### 内部变量
+
+scripts字段可以使用一些内部变量，主要是package.json的各种字段。
+
+比如，package.json的内容是`{"name":"foo", "version":"1.2.5"}`，那么变量`npm_package_name`的值是foo，变量`npm_package_version`的值是1.2.5。
+
+```javascript
+{
+  "scripts":{
+    "bundle": "mkdir -p build/$npm_package_version/"
+  }
+}
+```
+
+运行`npm run  bundle`以后，将会生成`build/1.2.5/`子目录。
+
+config字段也可以用于设置内部字段。
+
+```javascript
+"name": "fooproject",
+  "config": {
+    "reporter": "xunit"
+  },
+  "scripts": {
+    "test": "mocha test/ --reporter $npm_package_config_reporter"
+    "test:dev": "npm run test --fooproject:reporter=spec"
+  }
+```
+
+上面代码中，变量`npm_package_config_reporter`对应的就是reporter。
 
 ## npm link
 

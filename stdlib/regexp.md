@@ -8,92 +8,85 @@ modifiedOn: 2014-01-06
 
 ## 概述
 
-正则表达式（regular expression）是一种表达文本模式的方法，常常用作按照“给定模式”匹配文本的工具，比如给定一个Email地址的模式，然后用来确定一个字符串是否为Email地址。JavaScript的正则表达式体系是参照Perl 5建立的。
+正则表达式（regular expression）是一种表达文本模式的方法，常常用作按照“给定模式”匹配文本的工具。比如，正则表达式给出一个Email地址的模式，然后用它来确定一个字符串是否为Email地址。JavaScript的正则表达式体系是参照Perl 5建立的。
 
 新建正则表达式有两种方法。一种是使用字面量，以斜杠表示开始和结束。
 
-{% highlight javascript %}
-
+```javascript
 var regex = /xyz/;
-
-{% endhighlight %}
+```
 
 另一种是使用RegExp构造函数。
 
-{% highlight javascript %}
+```javascript
+var regex = new RegExp('xyz');
+```
 
-var regex = new RegExp("xyz");
-
-{% endhighlight %}
-
-上面两种写法是等价的，都建立了一个内容为xyz的正则表达式对象。
+上面两种写法是等价的，都新建了一个内容为xyz的正则表达式对象。
 
 RegExp构造函数还可以接受第二个参数，表示修饰符（详细解释见下文）。
 
-{% highlight javascript %}
-
-var regex = new RegExp("xyz", "i");
+```javascript
+var regex = new RegExp('xyz', "i");
 // 等价于
 var regex = /xyz/i;
+```
 
-{% endhighlight %}
-
-这两种写法在运行时有一个细微的区别。采用字面量的写法，正则对象在代码载入时（即编译时）生成；采用构造函数的方法，正则对象在代码运行时生成。考虑到书写的便利和直观，实际应用中，基本上都采用字面量的写法。
+这两种写法——字面量和构造函数——在运行时有一个细微的区别。采用字面量的写法，正则对象在代码载入时（即编译时）生成；采用构造函数的方法，正则对象在代码运行时生成。考虑到书写的便利和直观，实际应用中，基本上都采用字面量的写法。
 
 正则对象生成以后，有两种使用方式：
 
-- 使用正则对象本身的方法，将字符串作为参数，比如regex.test(string)。
+- 使用正则对象本身的方法，将字符串作为参数，比如`regex.test(string)`。
 
-- 使用字符串对象的方法，将正则对象作为参数，比如string.match(regex)。
+- 使用字符串对象的方法，将正则对象作为参数，比如`string.match(regex)`。
 
-下面逐一介绍这两种使用方式。
+这两种使用方式下面都会介绍。
 
 ## 正则对象的属性和方法
 
 ### 属性
 
-正则对象的属性主要如下：
+正则对象的属性分成两类。
+
+一类是修饰符相关，返回一个布尔值，表示对应的修饰符是否设置。
 
 - **ignoreCase**：返回一个布尔值，表示是否设置了i修饰符，该属性只读。
-
 - **global**：返回一个布尔值，表示是否设置了g修饰符，该属性只读。
-
-- **lastIndex**：返回下一次开始搜索的位置。该属性可读写，但是只在设置了g修饰符时有意义。
-
-- **source**：返回正则表达式的字符串形式（不包括反斜杠），该属性只读。
-
 - **multiline**：返回一个布尔值，表示是否设置了m修饰符，该属性只读。
 
-下面是属性应用的实例。
-
-{% highlight javascript %}
-
+```javascript
 var r = /abc/igm;
 
 r.ignoreCase // true
 r.global // true
 r.multiline // true
+```
+
+另一类是与修饰符无关的属性，主要是下面两个。
+
+- **lastIndex**：返回下一次开始搜索的位置。该属性可读写，但是只在设置了g修饰符时有意义。
+- **source**：返回正则表达式的字符串形式（不包括反斜杠），该属性只读。
+
+```javascript
+var r = /abc/igm;
+
 r.lastIndex // 0
 r.source // "abc"
+```
 
-{% endhighlight %}
+### test()
 
-### test方法
+正则对象的test方法返回一个布尔值，表示当前模式是否能匹配参数字符串。
 
-test方法返回布尔值，用来验证字符串是否符合某个模式。
-
-{% highlight javascript %}
-
+```javascript
 /cat/.test('cats and dogs') // true
-
-{% endhighlight %}
+```
 
 上面代码验证参数字符串之中是否包含cat，结果返回true。
 
 如果正则表达式带有g修饰符，则每一次test方法都从上一次结束的位置开始向后匹配。
 
-{% highlight javascript %}
-
+```javascript
 var r = /x/g;
 var s = '_x_x';
 
@@ -105,78 +98,73 @@ r.test(s) // true
 
 r.lastIndex // 4
 r.test(s) // false
-
-{% endhighlight %}
+```
 
 上面代码的正则对象使用了g修饰符，表示要记录搜索位置。接着，三次使用test方法，每一次开始搜索的位置都是上一次匹配的后一个位置。
 
+带有g修饰符时，可以通过正则对象的lastIndex属性指定开始搜索的位置。
+
+```javascript
+var r = /x/g;
+var s = '_x_x';
+
+r.lastIndex = 4;
+r.test(s) // false
+```
+
+上面代码指定从字符串的第五个位置开始搜索，这个位置是没有字符的，所以返回false。
+
 如果正则模式是一个空字符串，则匹配所有字符串。
 
-{% highlight javascript %}
-
-new RegExp("").test("abc")
+```javascript
+new RegExp('').test('abc')
 // true
+```
 
-{% endhighlight %}
+### exec()
 
-### exec方法
+正则对象的exec方法，可以返回匹配结果。如果发现匹配，就返回一个数组，每个匹配成功的子字符串，就是数组成员，否则返回null。
 
-exec方法返回匹配结果。
-
-{% highlight javascript %}
-
+```javascript
 var s = '_x_x';
 var r1 = /x/;
 var r2 = /y/;
 
 r1.exec(s) // ["x"]
 r2.exec(s) // null
+```
 
-{% endhighlight %}
+如果正则表示式包含圆括号（即要求“组匹配”），则返回的数组会包括多个元素。其中，第一个元素是整个匹配成功的结果，后面的元素就是圆括号对应的匹配成功的组。也就是说，第二个元素对应第一个括号，第三个元素对应第二个括号，以此类推。整个返回数组的length属性等于匹配成功的组数+1。
 
-上面代码表示，如果匹配成功，exec方法返回一个数组，里面是匹配结果。如果匹配失败，返回null。
-
-如果正则表示式包含圆括号，则返回的数组会包括多个元素。其中，第一个元素是整个匹配成功的结果，后面的元素就是圆括号对应的匹配成功的组，也就是说第二个元素就对应第一个括号，第三个元素对应第二个括号，以此类推。整个返回数组的length属性等于匹配成功的组数+1。
-
-{% highlight javascript %}
-
+```javascript
 var s = '_x_x';
 var r = /_(x)/;
 
 r.exec(s) // ["_x", "x"]
-
-{% endhighlight %}
+```
 
 上面代码的exex方法，返回一个数组。第一个元素是整个匹配的结果，第二个元素是圆括号匹配的结果。
 
 exec方法的返回数组还包含以下两个属性：
 
 - **input**：整个原字符串。
-- **index**：整个模式匹配成功的开始位置。
+- **index**：整个模式匹配成功的开始位置（从0开始）。
 
-{% highlight javascript %}
-
+```javascript
 var r = /a(b+)a/;
-
 var arr = regex.exec("_abbba_aba_");
 
-arr
-// ["abbba", "bbb"]
+arr // ["abbba", "bbb"]
 
-arr.index
-// 1
-
-arr.input
-// "_abbba_aba_"
-
-{% endhighlight %}
+arr.index // 1
+arr.input // "_abbba_aba_"
+```
 
 上面代码中的index属性等于1，是因为从原字符串的第二个位置开始匹配成功。
 
 如果正则表达式加上g修饰符，则可以使用多次exec方法，下一次搜索的位置从上一次匹配成功结束的位置开始。
 
-{% highlight javascript %}
-
+```javascript
 var r = /a(b+)a/g;
 
 var a1 = r.exec("_abbba_aba_");
@@ -198,164 +186,189 @@ var a4 = r.exec("_abbba_aba_");
 a4 // ["abbba", "bbb"]
 a4.index // 1
 r.lastIndex // 6
-
-{% endhighlight %}
+```
 
 上面代码连续用了四次exec方法，前三次都是从上一次匹配结束的位置向后匹配。当第三次匹配结束以后，整个字符串已经到达尾部，正则对象的lastIndex属性重置为0，意味着第四次匹配将从头开始。
 
 利用g修饰符允许多次匹配的特点，可以用一个循环完成全部匹配。
 
-{% highlight javascript %}
-
+```javascript
 var r = /a(b+)a/g;
-
 var s = "_abbba_aba_";
 
 while(true) {
-	var match = r.exec(s);
-	if (!match) break;
-	console.log(match[1]);
+ var match = r.exec(s);
+ if (!match) break;
+ console.log(match[1]);
 }
 // bbb
 // b
+```
 
-{% endhighlight %}
+正则对象的lastIndex属性不仅可读，还可写。一旦手动设置了lastIndex的值，就会从指定位置开始匹配。但是，这只在设置了g修饰符的情况下，才会有效。
+
+```javascript
+var r = /a/;
+
+r.lastIndex = 7; // 无效
+var match = r.exec('xaxa');
+match.index // 1
+r.lastIndex // 7
+```
+
+上面代码设置了lastIndex属性，但是因为正则表达式没有g修饰符，所以是无效的。每次匹配都是从字符串的头部开始。
+
+如果有g修饰符，lastIndex属性就会生效。
+
+```javascript
+var r = /a/g;
+
+r.lastIndex = 2;
+var match = r.exec('xaxa');
+match.index // 3
+r.lastIndex // 4
+```
+
+上面代码中，lastIndex属性指定从字符的第三个位置开始匹配。成功后，下一次匹配就是从第五个位置开始。
 
 如果正则对象是一个空字符串，则exec方法会匹配成功，但返回的也是空字符串。
 
-{% highlight javascript %}
-
+```javascript
 var r1 = new RegExp("");
 var a1 = r1.exec("abc");
 a1 // [""]
 a1.index // 0
-r1.lastIndex // 0 
+r1.lastIndex // 0
 
 var r2 = new RegExp("()");
 var a2 = r2.exec("abc");
 a2 // ["", ""]
 a2.index // 0
 r2.lastIndex // 0
-
-{% endhighlight %}
+```
 
 ## 字符串对象的方法
 
 字符串对象的方法之中，有4种与正则对象有关。
 
-- **match**：返回匹配的子字符串。
+- **match()**：返回匹配的子字符串。
 
-- **search**：按照给定的正则规则进行搜索。
+- **search()**：按照给定的正则表达式进行搜索。
 
-- **replace**：按照给定的正则规则进行替换。
+- **replace()**：按照给定的正则表达式进行替换。
 
-- **split**：按照给定规则进行字符串分割。
+- **split()**：按照给定规则进行字符串分割。
 
 下面逐一介绍。
 
-### match方法
+### match()
 
-match方法对字符串进行正则匹配，返回匹配结果。
+字符串对象的match方法对字符串进行正则匹配，返回匹配结果。
 
-{% highlight javascript %}
-
+```javascript
 var s = '_x_x';
 var r1 = /x/;
 var r2 = /y/;
 
 s.match(r1) // ["x"]
 s.match(r2) // null
-
-{% endhighlight %}
+```
 
 从上面代码可以看到，字符串的match方法与正则对象的exec方法非常类似：匹配成功返回一个数组，匹配失败返回null。
 
-如果正则表达式带有g修饰符，则该方法与正则对象的exec方法行为不同，会返回所有匹配成功的结果。
+如果正则表达式带有g修饰符，则该方法与正则对象的exec方法行为不同，会一次性返回所有匹配成功的结果。
 
-{% highlight javascript %}
-
+```javascript
 var s = "abba";
 var r = /a/g;
 
 s.match(r) // ["a", "a"]
 r.exec(s) // ["a"]
+```
 
-{% endhighlight %}
+设置正则表达式的lastIndex属性，对match方法无效，匹配总是从字符串的第一个字符开始。
 
-### search方法
+```javascript
+var r = /a|b/g;
+r.lastIndex = 7;
+'xaxb'.match(r) // ['a', 'b']
+r.lastIndex // 0
+```
 
-search方法返回第一个满足条件的匹配结果在整个字符串中的位置。如果没有任何匹配，则返回-1。该方法会忽略g参数。
+上面代码表示，设置lastIndex属性是无效的。
 
-{% highlight javascript %}
+### search()
 
+字符串对象的search方法，返回第一个满足条件的匹配结果在整个字符串中的位置。如果没有任何匹配，则返回-1。
+
+```javascript
 '_x_x'.search(/x/)
 // 1
+```
 
-{% endhighlight %}
+上面代码中，第一个匹配结果出现在字符串的第二个字符。
 
-### replace方法
+该方法会忽略g修饰符。
 
-replace方法可以替换匹配的值，它接受两个参数，第一个是搜索模式，第二个是替换的内容。
+```javascript
+var r = /x/g;
+r.lastIndex = 2; // 无效
+'_x_x'.search(r) // 1
+```
 
-{% highlight javascript %}
+上面代码中，正则表达式使用g修饰符之后，使用lastIndex属性指定开始匹配的位置，结果无效，还是从字符串的第一个字符开始匹配。
 
+### replace()
+
+字符串对象的replace方法可以替换匹配的值。它接受两个参数，第一个是搜索模式，第二个是替换的内容。
+
+```javascript
 str.replace(search, replacement)
-
-{% endhighlight %}
+```
 
 搜索模式如果不加g修饰符，就替换第一个匹配成功的值，否则替换所有匹配成功的值。
 
-{% highlight javascript %}
-
-"aaa".replace("a", "b")
+```javascript
+'aaa'.replace('a', 'b')
 // "baa"
 
-"aaa".replace(/a/, "b")
+'aaa'.replace(/a/, 'b')
 // "baa"
 
-"aaa".replace(/a/g, "b")
+'aaa'.replace(/a/g, 'b')
 // "bbb"
-
-{% endhighlight %}
+```
 
 上面代码中，最后一个正则表达式使用了g修饰符，导致所有的b都被替换掉了。
 
-replace方法的一个应用，就是消除字符串首尾两端的空格，下面给出两种写法。
+replace方法的一个应用，就是消除字符串首尾两端的空格。
 
 ```javascript
-
 var str = '  #id div.class  ';
 
 str.replace(/^\s+|\s+$/g, '')
 // "#id div.class"
-
-str.replace(/^\s\s*/,'').replace(/\s\s*$/,'')
-// "#id div.class"
-
 ```
 
 replace方法的第二个参数可以使用美元符号$，用来指代所替换的内容。
 
 - $& 指代匹配的子字符串。
-- $` 指代匹配结果前面的文本。
+- $\` 指代匹配结果前面的文本。
 - $' 指代匹配结果后面的文本。
 - $n 指代匹配成功的第n组内容，n是从1的自然数。
 - $$ 指代美元符号$。
 
-{% highlight javascript %}
-
+```javascript
 "hello world".replace(/(\w+)\s(\w+)/,"$2 $1")
 // "world hello"
 
 "abc".replace("b", "[$`-$&-$']")
 // "a[a-b-c]c"
-
-{% endhighlight %}
+```
 
 replace方法的第二个参数还可以是一个函数，将匹配内容替换为函数返回值。
 
-{% highlight javascript %}
-
+```javascript
 "3 and 5".replace(/[0-9]+/g, function(match){
   return 2 * match; })
 // "6 and 10"
@@ -366,13 +379,11 @@ a.replace( pattern, function replacer(match){
   return match.toUpperCase();
 } );
 // The QUICK BROWN fox jumped over the LAZY dog.
-
-{% endhighlight %}
+```
 
 作为replace方法第二个参数的替换函数，可以接受多个参数。它的第一个参数是捕捉到的内容，第二个参数是捕捉到的组匹配（有多少个组匹配，就有多少个对应的参数）。此外，最后还可以添加两个参数，倒数第二个参数是捕捉到的内容在整个字符串中的位置（比如从第五个位置开始），最后一个参数是原字符串。下面是一个网页模板替换的例子。
 
 ```javascript
-
 var prices = {
   "pr_1": "$1.99",
   "pr_2": "$9.99",
@@ -383,29 +394,25 @@ var template = ".."; // some ecommerce page template
 
 template.replace(
     /(<span id=")(.*?)(">)(<\/span>)/g,
-    function(match,$1,$2,$3,$4){
-        return $1 + $2 + $3 + prices[$2] + $4;
+    function(match, $1, $2, $3, $4){
+      return $1 + $2 + $3 + prices[$2] + $4;
     }
 );
-
 ```
 
 上面代码的捕捉模式中，有四个括号，所以会产生四个组匹配，在匹配函数中用$1到$4表示。匹配函数的作用是将价格插入模板中。
 
-### split方法
+### split()
 
-split方法按照正则规则分割字符串，返回一个由分割后的各个部分组成的数组。
+字符串对象的split方法按照正则规则分割字符串，返回一个由分割后的各个部分组成的数组。
 
-{% highlight javascript %}
-
+```javascript
 str.split(separator, [limit])
-
-{% endhighlight %}
+```
 
 该方法接受两个参数，第一个参数是分隔规则，第二个参数是返回数组的最大成员数。
 
-{% highlight javascript %}
-
+```javascript
 'a,  b,c, d'.split(',')
 // [ 'a', '  b', 'c', ' d' ]
 
@@ -414,45 +421,28 @@ str.split(separator, [limit])
 
 'a,  b,c, d'.split(/, */, 2)
 [ 'a', 'b' ]
+```
 
-{% endhighlight %}
+上面代码使用正则表达式，去除了子字符串的逗号后面的空格。
 
-上面代码使用正则表达式，去除了子字符串的逗号前面的空格。
-
-{% highlight javascript %}
-
+```javascript
 "aaa*a*".split(/a*/)
 // [ '', '*', '*' ]
 
 "aaa**a*".split(/a*/)
 // ["", "*", "*", "*"]
+```
 
-{% endhighlight %}
-
-上面代码的分割规则是出现0次或多次的a，所以第一个分隔符是“aaa”，第二个分割符是“a”，将整个字符串分成三个部分。出现0次的a，意味着只要没有a就可以分割，实际上就是按字符分割。
+上面代码的分割规则是出现0次或多次的a，所以第一个分隔符是“aaa”，第二个分割符是“a”，将两个字符串分成三个部分和四个部分。出现0次的a，意味着只要没有a就可以分割，实际上就是按字符分割。
 
 如果正则表达式带有括号，则括号匹配的部分也会作为数组成员返回。
 
-{% highlight javascript %}
-
+```javascript
 "aaa*a*".split(/(a*)/)
 // [ '', 'aaa', '*', 'a', '*' ]
-
-{% endhighlight %}
+```
 
 上面代码的正则表达式使用了括号，第一个组匹配是“aaa”，第二个组匹配是“a”，它们都作为数组成员返回。
-
-下面是另一个组匹配的例子。
-
-{% highlight javascript %}
-
-'a,  b  ,  '.split(/(,)/)
-// ["a", ",", "  b  ", ",", "  "]
-
-'a,  b  ,  '.split(/ *(,) */)
-// ["a", ",", "b", ",", ""]
-
-{% endhighlight %}
 
 ## 匹配规则
 
@@ -460,15 +450,13 @@ str.split(separator, [limit])
 
 ### 字面量字符和元字符
 
-大部分字符在正则表达式中，就是字面的含义，比如/a/匹配a，/b/匹配b。它们都叫做“字面量字符”（literal characters）。
+大部分字符在正则表达式中，就是字面的含义，比如`/a/`匹配a，`/b/`匹配b。如果字符只表示它字面的含义（就像前面的a和b），那么它们就叫做“字面量字符”（literal characters）。
 
-{% highlight javascript %}
-
+```javascript
 /dog/.test("old dog") // true
+```
 
-{% endhighlight %}
-
-上面代码中正则表达式的dog，就是字面量字符，所以/dog/匹配old dog，因为它就表示d、o、g三个字母连在一起。
+上面代码中正则表达式的dog，就是字面量字符，所以`/dog/`匹配old dog，因为它就表示d、o、g三个字母连在一起。
 
 除了字面量字符以外，还有一部分字符有特殊含义，不代表字面的意思。它们叫做“元字符”（metacharacters），主要有以下几个。
 

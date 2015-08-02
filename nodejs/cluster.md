@@ -10,12 +10,11 @@ modifiedOn: 2015-03-08
 
 ### 基本用法
 
-Node.js默认单进程运行，对于多核CPU的计算机来说，这样做效率很低，因为只有一个核在运行，其他核都在闲置。cluster模块就是为了解决这个问题而提出的。
+Node.js默认单进程运行，对于32位系统最高可以使用512MB内存，对于64位最高可以使用1GB内存。对于多核CPU的计算机来说，这样做效率很低，因为只有一个核在运行，其他核都在闲置。cluster模块就是为了解决这个问题而提出的。
 
-cluster模块允许设立一个主进程和若干个worker进程，由主进程监控和协调worker进程的运行。worker之间采用进程建通信交换消息，cluster模块内置一个负载均衡器，采用Round-robin算法协调各个worker进程之间的负载。运行时，所有新建立的链接都由主进程完成，然后主进程再把TCP连接分配给指定的worker进程。
+cluster模块允许设立一个主进程和若干个worker进程，由主进程监控和协调worker进程的运行。worker之间采用进程间通信交换消息，cluster模块内置一个负载均衡器，采用Round-robin算法协调各个worker进程之间的负载。运行时，所有新建立的链接都由主进程完成，然后主进程再把TCP连接分配给指定的worker进程。
 
-{% highlight javascript %}
-
+```javascript
 var cluster = require('cluster');
 var os = require('os');
 
@@ -29,16 +28,42 @@ if (cluster.isMaster){
     res.end("hello world\n");
   }).listen(8000);
 }
-
-{% endhighlight %}
+```
 
 上面代码先判断当前进程是否为主进程（cluster.isMaster），如果是的，就按照CPU的核数，新建若干个worker进程；如果不是，说明当前进程是worker进程，则在该进程启动一个服务器程序。
 
-### cluster.worker对象
+上面这段代码有一个缺点，就是一旦work进程挂了，主进程无法知道。为了解决这个问题，可以在主进程部署online事件和exit事件的监听函数。
 
-cluster.worker指向当前worker进程对象，主进程没有这个值。
+```javascript
+var cluster = require('cluster');
 
-它有如下属性。
+if(cluster.isMaster) {
+  var numWorkers = require('os').cpus().length;
+  console.log('Master cluster setting up ' + numWorkers + ' workers...');
+
+  for(var i = 0; i < numWorkers; i++) {
+    cluster.fork();
+  }
+
+  cluster.on('online', function(worker) {
+    console.log('Worker ' + worker.process.pid + ' is online');
+  });
+
+  cluster.on('exit', function(worker, code, signal) {
+    console.log('Worker ' + worker.process.pid + ' died with code: ' + code + ', and signal: ' + signal);
+    console.log('Starting a new worker');
+    cluster.fork();
+  });
+}
+```
+
+上面代码中，主进程一旦监听到worker进程的exit事件，就会重启一个worker进程。worker进程一旦启动成功，可以正常运行了，就会发出online事件。
+
+### worker对象
+
+worker对象是`cluster.fork()`的返回值，代表一个worker进程。
+
+它的属性和方法如下。
 
 （1）worker.id
 
@@ -65,11 +90,29 @@ if (cluster.isMaster) {
 
 上面代码的作用是，worker进程对主进程发出的每个消息，都做回声。
 
-在worker进程中调用这个方法，等同于process.send(message)。
+在worker进程中，要向主进程发送消息，使用`process.send(message)`；要监听主进程发出的消息，使用下面的代码。
+
+```javascript
+process.on('message', function(message) {
+  console.log(message);
+});
+```
+
+发出的消息可以字符串，也可以是JSON对象。下面是一个发送JSON对象的例子。
+
+```javascript
+worker.send({
+  type: 'task 1',
+  from: 'master',
+  data: {
+    // the data that you want to transfer
+  }
+});
+```
 
 ### cluster.workers对象
 
-该对象只有主进程才有，包含了所有worker进程。每个成员的键值就是一个worker进程，键名就是该worker进程的worker.id属性。
+该对象只有主进程才有，包含了所有worker进程。每个成员的键值就是一个worker进程对象，键名就是该worker进程的worker.id属性。
 
 ```javascript
 function eachWorker(callback) {
@@ -92,7 +135,7 @@ socket.on('data', function(id) {
 });
 ```
 
-## 属性与方法
+## cluster模块的属性与方法
 
 ### isMaster，isWorker
 
@@ -126,11 +169,54 @@ cluster.on('listening', function(worker, address) {
 });
 ```
 
-## 实例：不中断地重启Node服务
+## 不中断地重启Node服务
+
+### 思路
 
 重启服务需要关闭后再启动，利用cluster模块，可以做到先启动一个worker进程，再把原有的所有work进程关闭。这样就能实现不中断地重启Node服务。
 
-下面是主进程的代码master.js。
+首先，主进程向worker进程发出重启信号。
+
+```javascript
+workers[wid].send({type: 'shutdown', from: 'master'});
+```
+
+worker进程监听message事件，一旦发现内容是shutdown，就退出。
+
+```javascript
+process.on('message', function(message) {
+  if(message.type === 'shutdown') {
+    process.exit(0);
+  }
+});
+``
+
+下面是一个关闭所有worker进程的函数。
+
+```javascript
+function restartWorkers() {
+  var wid, workerIds = [];
+  for(wid in cluster.workers) {
+    workerIds.push(wid);
+  }
+
+  workerIds.forEach(function(wid) {
+    cluster.workers[wid].send({
+      text: 'shutdown',
+      from: 'master'
+     });
+    setTimeout(function() {
+      if(cluster.workers[wid]) {
+        cluster.workers[wid].kill('SIGKILL');
+      }
+    }, 5000);
+  });
+};
+```
+
+### 实例
+
+下面是一个完整的实例，先是主进程的代码master.js。
 
 ```javascript
 var cluster = require('cluster');
@@ -200,7 +286,6 @@ Reloading...
 http://localhost:8080
 Reloading...
 http://localhost:8080
-
 ```
 
 最后，向主进程发出SIGTERM信号，关闭主进程。
@@ -267,3 +352,4 @@ process.on('message', function(msg) {
 
 - José F. Romaniello, [Reloading node with no downtime](http://joseoncode.com/2015/01/18/reloading-node-with-no-downtime/)
 - Joni Shkurti, [Node.js clustering made easy with PM2](https://keymetrics.io/2015/03/26/pm2-clustering-made-easy/)
+- Behrooz Kamali, [How to Create a Node.js Cluster for Speeding Up Your Apps](http://www.sitepoint.com/how-to-create-a-node-js-cluster-for-speeding-up-your-apps/)

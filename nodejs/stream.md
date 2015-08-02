@@ -119,7 +119,21 @@ Stream接口分成三类。
 
 ## 可读数据流
 
-“可读数据流”表示数据的来源，只要一个对象提供“可读数据流”，就表示你可以从其中读取数据。
+“可读数据流”用来产生数据。它表示数据的来源，只要一个对象提供“可读数据流”，就表示你可以从其中读取数据。
+
+```javascript
+var Readable = require('stream').Readable;
+
+var rs = new Readable;
+rs.push('beep ');
+rs.push('boop\n');
+rs.push(null);
+
+rs.pipe(process.stdout);
+```
+
+上面代码产生了一个可写数据流，最后将其写入标注输出。可读数据流的push方法，用来将数据输入缓存。
+`rs.push(null)`中的null，用来告诉rs，数据输入完毕。
 
 “可读数据流”有两种状态：流动态和暂停态。处于流动态时，数据会尽快地从数据源导向用户的程序；处于暂停态时，必须显式调用`stream.read()`等指令，“可读数据流”才会释放数据。刚刚新建的时候，“可读数据流”处于暂停态。
 
@@ -207,6 +221,30 @@ readable.on('readable', function() {
 
 如果该方法返回一个数据块，那么它就触发了data事件。
 
+### _read()
+
+可读数据流的_read方法，可以将数据放入可读数据流。
+
+```javascript
+var Readable = require('stream').Readable;
+var rs = Readable();
+
+var c = 97;
+rs._read = function () {
+  rs.push(String.fromCharCode(c++));
+  if (c > 'z'.charCodeAt(0)) rs.push(null);
+};
+
+rs.pipe(process.stdout);
+```
+
+运行结果如下。
+
+```bash
+$ node read1.js
+abcdefghijklmnopqrstuvwxyz
+```
+
 ### setEncoding()
 
 调用该方法，会使得数据流返回指定编码的字符串，而不是缓存之中的二进制对象。比如，调用`setEncoding('utf8')`，数据流会返回UTF-8字符串，调用`setEncoding('hex')`，数据流会返回16进制的字符串。
@@ -272,6 +310,12 @@ readable.isPaused() // === false
 pipe方法是自动传送数据的机制，就像管道一样。它从“可读数据流”读出所有数据，将其写出指定的目的地。整个过程是自动的。
 
 ```javascript
+src.pipe(dst)
+```
+
+pipe方法必须在可读数据流上调用，它的参数必须是可写数据流。
+
+```javascript
 var fs = require('fs');
 var readableStream = fs.createReadStream('file1.txt');
 var writableStream = fs.createWriteStream('file2.txt');
@@ -282,6 +326,16 @@ readableStream.pipe(writableStream);
 上面代码使用pipe方法，将file1的内容写入file2。整个过程由pipe方法管理，不用手动干预，所以可以将传送数据写得很简洁。
 
 pipe方法返回目的地的数据流，因此可以使用链式写法，将多个数据流操作连在一起。
+
+```javascript
+a.pipe(b).pipe(c).pipe(d)
+// 等同于
+a.pipe(b);
+b.pipe(c);
+c.pipe(d);
+```
+
+下面是一个例子。
 
 ```javascript
 var fs = require('fs');
@@ -341,6 +395,28 @@ readable.on('readable', function() {
   // there is some data to read now
 });
 ```
+
+下面是一个例子。
+
+```javascript
+process.stdin.on('readable', function () {
+  var buf = process.stdin.read();
+  console.dir(buf);
+});
+```
+
+上面代码将标准输入的数据读出。
+
+read方法接受一个整数作为参数，表示以多少个字节为单位进行读取。
+
+```javascript
+process.stdin.on('readable', function () {
+    var buf = process.stdin.read(3);
+    console.dir(buf);
+});
+```
+
+上面代码将以3个字节为单位进行输出内容。
 
 （2）data
 
@@ -411,6 +487,19 @@ readableStream.on('data', function(chunk) {
 write方法用于向“可写数据流”写入数据。它接受两个参数，一个是写入的内容，可以是字符串，也可以是一个stream对象（比如可读数据流），另一个是写入完成后的回调函数。
 
 它返回一个布尔值，表示本次数据是否处理完成。如果返回true，就表示可以写入新的数据了。如果等待写入的数据被缓存了，就返回false。不过，在返回false的情况下，也可以继续传入新的数据等待写入。只是这时，新的数据不会真的写入，只会缓存在内存中。为了避免内存消耗，比较好的做法还是等待该方法返回true，然后再写入。
+
+```javascript
+var fs = require('fs');
+var ws = fs.createWriteStream('message.txt');
+
+ws.write('beep ');
+
+setTimeout(function () {
+    ws.end('boop\n');
+}, 1000);
+```
+
+上面代码调用end方法，数据就不再写入了。
 
 ### cork()，uncork()
 

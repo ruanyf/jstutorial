@@ -183,37 +183,38 @@ Array.prototype.join.call('hello', '-')
 
 concat方法将新数组的成员，添加到原数组的尾部，然后返回一个新数组，常用于连接多个数组。
 
-{% highlight javascript %}
-
-["hello"].concat(["world"])
+```javascript
+['hello'].concat(['world'])
 // ["hello", "world"]
 
-[1,2,3].concat(4,5,6)
-// [1, 2, 3, 4, 5, 6]
+['hello'].concat(['world'], ['!'])
+// ["hello", "world", "!"]
 
-{% endhighlight %}
+[1, 2, 3].concat(4, 5, 6)
+// [1, 2, 3, 4, 5, 6]
+```
 
 上面代码表明，concat方法的参数可以是一个或多个数组，以及原始类型的值。
 
 如果不提供参数，concat方法返回当前数组的一个浅拷贝。所谓“浅拷贝”，指的是如果数组成员包括复合类型的值（比如对象），则新数组拷贝的是该值的引用。
 
-{% highlight javascript %}
-
-var o = {a:1};
-var oldArray = [o];
+```javascript
+var obj = { a:1 };
+var oldArray = [obj];
 
 var newArray = oldArray.concat();
 
-o.a = 2;
+obj.a = 2;
 newArray[0].a // 2
-
-{% endhighlight %}
+```
 
 上面代码中，原数组包含一个对象，concat方法生成的新数组包含这个对象的引用。所以，改变原对象以后，新数组跟着改变。事实上，只要原数组的成员中包含对象，concat方法不管有没有参数，总是返回该对象的引用。
 
 concat方法也可以用于将对象合并为数组，但是必须借助call方法。
 
-{% highlight javascript %}
+```javascript
+[].concat.call({ a: 1 }, { b: 2 })
+// [{ a: 1 }, { b: 2 }]
 
 [].concat.call({ a: 1 }, [2])
 // [{a:1}, 2]
@@ -221,8 +222,7 @@ concat方法也可以用于将对象合并为数组，但是必须借助call方�
 // 等同于
 
 [2].concat({a:1})
-
-{% endhighlight %}
+```
 
 ### shift方法，unshift方法
 
