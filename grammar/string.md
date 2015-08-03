@@ -70,20 +70,17 @@ longString
 
 连接运算符（+）可以连接多个单行字符串，用来模拟多行字符串。
 
-{% highlight javascript %}
-
-var longString = "Long " + 
-"long " +
-"long " +
-"string";
-
-{% endhighlight %}
+```javascript
+var longString = 'Long '
+  + 'long '
+  + 'long '
+  + 'string';
+```
 
 另外，有一种利用多行注释，生成多行字符串的变通方法。
 
 ```javascript
-
-(function () { /*
+function () { /*
 line 1
 line 2
 line 3
@@ -91,7 +88,6 @@ line 3
 // "line 1
 // line 2
 // line 3"
-
 ```
 
 ### 转义
