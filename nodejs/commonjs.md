@@ -322,13 +322,17 @@ require('./example.js').message
 ```javascript
 // a.js
 exports.x = 'a1';
-console.log('a.js ', require('./b.js').x);
+console.log('a.js: set a1');
+console.log('a.js:', require('./b.js').x);
 exports.x = 'a2';
+console.log('a.js: set a2');
 
 // b.js
 exports.x = 'b1';
-console.log('b.js ', require('./a.js').x);
+console.log('b.js: set b1');
+console.log('b.js:', require('./a.js').x);
 exports.x = 'b2';
+console.log('b.js: set b2');
 
 // main.js
 console.log('main.js ', require('./a.js').x);
@@ -339,8 +343,12 @@ console.log('main.js ', require('./b.js').x);
 
 ```bash
 $ node main.js
-b.js  a1
-a.js  b2
+a.js: set a1
+b.js: set b1
+b.js: a1
+b.js: set b2
+a.js: b2
+a.js: set a2
 main.js  a2
 main.js  b2
 ```
