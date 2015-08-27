@@ -30,8 +30,6 @@ function m2(){
 
 这种做法的缺点很明显："污染"了全局变量，无法保证不与其他模块发生变量名冲突，而且模块成员之间看不出直接关系。
 
-## 对象写法
-
 为了解决上面的缺点，可以把模块写成一个对象，所有的模块成员都放到这个对象里面。
 
 ```javascript
@@ -58,9 +56,52 @@ module1.m1();
 module1._count = 5;
 ```
 
+## 使用构造函数封装私有变量
+
+可以利用构造函数，封装私有变量。
+
+{% highlight javascript %}
+
+function StringBuilder() {
+  var buffer = [];
+
+  this.add = function (str) {
+     buffer.push(str);
+  };
+
+  this.toString = function () {
+    return buffer.join('');
+  };
+
+}
+
+{% endhighlight %}
+
+这种方法将私有变量封装在构造函数中，违反了构造函数与实例对象相分离的原则。并且，非常耗费内存。
+
+{% highlight javascript %}
+
+function StringBuilder() {
+  this._buffer = [];
+}
+
+StringBuilder.prototype = {
+  constructor: StringBuilder,
+  add: function (str) {
+    this._buffer.push(str);
+  },
+  toString: function () {
+    return this._buffer.join('');
+  }
+};
+
+{% endhighlight %}
+
+这种方法将私有变量放入实例对象中，好处是看上去更自然，但是它的私有变量可以从外部读写，不是很安全。
+
 ## 立即执行函数写法
 
-使用"立即执行函数"（Immediately-Invoked Function Expression，IIFE），可以达到不暴露私有成员的目的。
+使用"立即执行函数"（Immediately-Invoked Function Expression，IIFE），将相关的属性和方法封装在一个函数作用域里面，可以达到不暴露私有成员的目的。
 
 ```javascript
 var module1 = (function(){
@@ -101,9 +142,7 @@ var module1 = (function (mod){
 
 上面的代码为module1模块添加了一个新方法m3()，然后返回新的module1模块。
 
-## 宽放大模式（Loose augmentation）
-
-在浏览器环境中，模块的各个部分通常都是从网上获取的，有时无法知道哪个部分会先加载。如果采用上一节的写法，第一个执行的部分有可能加载一个不存在空对象，这时就要采用"宽放大模式"。
+在浏览器环境中，模块的各个部分通常都是从网上获取的，有时无法知道哪个部分会先加载。如果采用上面的写法，第一个执行的部分有可能加载一个不存在空对象，这时就要采用"宽放大模式"（Loose augmentation）。
 
 ```javascript
 var module1 = ( function (mod){
@@ -112,7 +151,7 @@ var module1 = ( function (mod){
 })(window.module1 || {});
 ```
 
-与"放大模式"相比，＂宽放大模式＂就是"立即执行函数"的参数可以是空对象。
+与"放大模式"相比，“宽放大模式”就是“立即执行函数”的参数可以是空对象。
 
 ## 输入全局变量
 
@@ -128,74 +167,30 @@ var module1 = (function ($, YAHOO) {
 
 上面的module1模块需要使用jQuery库和YUI库，就把这两个库（其实是两个模块）当作参数输入module1。这样做除了保证模块的独立性，还使得模块之间的依赖关系变得明显。
 
-## 使用构造函数封装私有变量
+立即执行函数还可以起到命名空间的作用。
 
-可以利用构造函数，封装私有变量。
+```javascript
+(function($, window, document) {
 
-{% highlight javascript %}
+  function go(num) {
+  }
 
-function StringBuilder() {
-    var buffer = [];
+  function handleEvents() {
+  }
 
-    this.add = function (str) {
-        buffer.push(str);
-    };
+  function initialize() {
+  }
 
-    this.toString = function () {
-        return buffer.join('');
-    };
+  function dieCarouselDie() {
+  }
 
-}
+  //attach to the global scope
+  window.finalCarousel = {
+    init : initialize,
+    destroy : dieCouraselDie
+  }
 
-{% endhighlight %}
+})( jQuery, window, document );
+```
 
-这种方法将私有变量封装在构造函数中，违反了构造函数与实例对象相分离的原则。并且，非常耗费内存。
-
-{% highlight javascript %}
-
-function StringBuilder() {
-    this._buffer = [];
-}
-
-StringBuilder.prototype = {
-    constructor: StringBuilder,
-    add: function (str) {
-        this._buffer.push(str);
-    },
-    toString: function () {
-        return this._buffer.join('');
-    }
-};
-
-{% endhighlight %}
-
-这种方法将私有变量放入实例对象中，好处是看上去更自然，但是它的私有变量可以从外部读写，不是很安全。
-
-## IIFE封装私有变量
-
-{% highlight javascript %}
-
-var obj = function () {  // open IIFE
-
-    // public
-    var self = {
-        publicMethod: function (...) {
-            privateData = ...;
-            privateFunction(...);
-        },
-        publicData: ...
-    };
-
-    // private
-    var privateData = ...;
-    function privateFunction(...) {
-        privateData = ...;
-        self.publicData = ...;
-        self.publicMethod(...);
-    }
-
-    return self;
-}(); // close IIFE
-
-{% endhighlight %}
-
+上面代码中，finalCarousel对象输出到全局，对外暴露init和destroy接口，内部方法go、handleEvents、initialize、dieCarouselDie都是外部无法调用的。

@@ -149,6 +149,12 @@ $ npm install sax@0.1.1
 $ npm install sax@">=0.1.0 <0.2.0"
 ```
 
+如果使用`--save-exact`参数，会在package.json文件指定安装模块的确切版本。
+
+```bash
+$ npm install readable-stream --save --save-exact
+```
+
 install命令可以使用不同参数，指定所安装的模块属于哪一种性质的依赖关系，即出现在packages.json文件的哪一项中。
 
 - --save：模块名将被添加到dependencies，可以简化为参数`-S`。

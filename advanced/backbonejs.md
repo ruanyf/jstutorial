@@ -415,6 +415,36 @@ render : function (){
 
 {% endhighlight %}
 
+## Backbone.Events
+
+`Backbone.Events`是一个事件对象。任何继承了这个对象的对象，都具备了`Backbone.Events`的事件接口，可以调用on和trigger方法，发布和订阅消息。
+
+```javascript
+var EventChannel = _.extend({}, Backbone.Events);
+```
+
+下面是一些例子。
+
+```javascript
+var channel = $.extend( {}, Backbone.Events );
+channel.on('remove-node', function(msg) {
+   // code to remove the node
+});
+channel.trigger( 'remove-node', msg );
+// 'msg' can be everything: String, number, object and so forth
+// also we can pass more than one message like the example below
+channel.on('add-node', function(node, callback) {
+  // code to add a new node
+  callback();
+} );
+channel.trigger('add-node', {
+  label: 'I am a new node',
+  color: 'black'
+}, function() {
+  console.log( 'I am a callback' );
+});
+```
+
 ## Backbone.Router
 
 Router是Backbone提供的路由对象，用来将用户请求的网址与后端的处理函数一一对应。

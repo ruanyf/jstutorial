@@ -191,6 +191,23 @@ characterSet属性返回渲染当前文档的字符集，比如UTF-8、ISO-8859-
 
 readyState属性返回当前文档的状态，共有三种可能的值，加载HTML代码阶段（尚未完成解析）是“loading”，加载外部资源阶段是“interactive”，全部加载完成是“complete”。
 
+下面的代码用来检查网页是否加载成功。
+
+```javascript
+// 基本检查
+if (document.readyState === 'complete') {
+  // ...
+}
+
+// 轮询检查
+var interval = setInterval(function() {
+  if (document.readyState === 'complete') {
+    clearInterval(interval);
+    // ...
+  }
+}, 100);
+```
+
 **（2）designModed**
 
 designMode属性控制当前document是否可编辑。通常会打开iframe的designMode属性，将其变为一个所见即所得的编辑器。

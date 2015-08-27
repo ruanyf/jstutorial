@@ -13,17 +13,15 @@ child_process模块用于新建子进程。子进程的运行结果储存在系�
 exec方法用于执行bash命令。
 
 ```javascript
-
 var exec = require('child_process').exec;
 
 var ls = exec('ls -l', function (error, stdout, stderr) {
-   if (error) {
-     console.log(error.stack);
-     console.log('Error code: '+error.code);
-   }
-   console.log('Child Process STDOUT: '+stdout);
+  if (error) {
+    console.log(error.stack);
+    console.log('Error code: ' + error.code);
+  }
+  console.log('Child Process STDOUT: ' + stdout);
 });
-
 ```
 
 上面代码的exec方法用于新建一个子进程，然后缓存它的运行结果，运行结束后调用回调函数。
@@ -33,18 +31,17 @@ exec方法的第一个参数是所要执行的shell命令，第二个参数是�
 由于标准输出和标准错误都是流对象（stream），可以监听data事件，因此上面的代码也可以写成下面这样。
 
 ```javascript
-
 var exec = require('child_process').exec;
 var child = exec('ls -l');
 
 child.stdout.on('data', function(data) {
-    console.log('stdout: ' + data);
+  console.log('stdout: ' + data);
 });
 child.stderr.on('data', function(data) {
-    console.log('stdout: ' + data);
+  console.log('stdout: ' + data);
 });
 child.on('close', function(code) {
-    console.log('closing code: ' + code);
+  console.log('closing code: ' + code);
 });
 
 ```
@@ -56,18 +53,16 @@ child.on('close', function(code) {
 下面是另一个例子，假定有一个child.js文件。
 
 ```javascript
-
 // child.js
 
 var exec = require('child_process').exec;
 exec('node -v', function(error, stdout, stderr) {
-    console.log('stdout: ' + stdout);
-    console.log('stderr: ' + stderr);
-    if (error !== null) {
-        console.log('exec error: ' + error);
-    }
+  console.log('stdout: ' + stdout);
+  console.log('stderr: ' + stderr);
+  if (error !== null) {
+    console.log('exec error: ' + error);
+  }
 });
-
 ```
 
 运行后，该文件的输出结果如下。

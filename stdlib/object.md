@@ -122,15 +122,13 @@ Object.getOwnPropertyNames(o)
 上面的代码表示，对于一般的对象来说，这两个方法返回的结果是一样的。只有涉及不可枚举属性时，才会有不一样的结果。
 
 ```javascript
-
 var a = ["Hello", "World"];
 
-Object.keys(a) 
+Object.keys(a)
 // ["0", "1"]
 
 Object.getOwnPropertyNames(a)
 // ["0", "1", "length"]
-
 ```
 
 上面代码中，数组的length属性是不可枚举的属性，所以只出现在Object.getOwnPropertyNames方法的返回结果中。
@@ -138,10 +136,8 @@ Object.getOwnPropertyNames(a)
 由于JavaScript没有提供计算对象属性个数的方法，所以可以用这两个方法代替。
 
 ```javascript
-
 Object.keys(o).length
 Object.getOwnPropertyNames(o).length
-
 ```
 
 一般情况下，几乎总是使用Object.keys方法，遍历数组的属性。
@@ -218,7 +214,7 @@ valueOf方法的作用是返回一个对象的值，默认情况下返回对象�
 
 var o = new Object();
 
-o.valueOf() === o // true 
+o.valueOf() === o // true
 
 {% endhighlight %}
 
@@ -266,13 +262,11 @@ o2.toString() // "[object Object]"
 字符串[object Object]本身没有太大的用处，但是通过自定义toString方法，可以让对象在自动类型转换时，得到想要的字符串形式。
 
 {% highlight javascript %}
-
 var o = new Object();
 
-o.toString = function (){ return 'hello' }; 
+o.toString = function (){ return 'hello' };
 
 o + ' ' + 'world' // "hello world"
-
 {% endhighlight %}
 
 上面代码表示，当对象用于字符串加法时，会自动调用toString方法。由于自定义了toString方法，所以返回字符串hello world。
@@ -384,12 +378,12 @@ ECMAScript 5对于对象的属性，提出了一个精确的描述模型。
 
 var o = { p: 'a' };
 
-Object.getOwnPropertyDescriptor(o, 'p') 
-// Object { value: "a", 
-//			writable: true, 
-//			enumerable: true, 
-//			configurable: true
-//	}
+Object.getOwnPropertyDescriptor(o, 'p')
+// Object { value: "a",
+//   writable: true,
+//   enumerable: true,
+//   configurable: true
+// }
 
 {% endhighlight %}
 
@@ -414,9 +408,7 @@ attributes对象包含如下元信息：
 Object.defineProperty方法允许通过定义attributes对象，来定义或修改一个属性，然后返回修改后的对象。它的格式如下：
 
 ```javascript
-
 Object.defineProperty(object, propertyName, attributesObject)
-
 ```
 
 Object.defineProperty方法接受三个参数，第一个是属性所在的对象，第二个是属性名（它应该是一个字符串），第三个是属性的描述对象。比如，新建一个o对象，并定义它的p属性，可以这样写：
@@ -522,7 +514,6 @@ o.p // bar
 enumerable属性为false，表示对应的属性不会出现在for...in循环和Object.keys方法中。
 
 ```javascript
-
 var o = {
     p1: 10,
     p2: 13,
@@ -535,9 +526,8 @@ Object.defineProperty(o, "p3", {
 for (var i in o) {
   console.log(i, o[i]);
 }
-// p1 10 
+// p1 10
 // p2 13
-
 ```
 
 上面代码中，p3属性是用Object.defineProperty方法定义的，由于enumerable属性默认为false，所以不出现在for...in循环中。
@@ -553,27 +543,25 @@ for (var i in o) {
 因此，enumerable可以用来设置“秘密”属性。
 
 ```javascript
-
 var o = {a:1, b:2};
- 
+
 o.c = 3;
 Object.defineProperty(o, 'd', {
   value: 4,
   enumerable: false
 });
-    
+
 o.d
 // 4
-    
+
 for( var key in o ) console.log( o[key] ); 
 // 1
 // 2
 // 3
-     
-Object.keys(o)  // ["a", "b", "c"]
-     
-JSON.stringify(o // => "{a:1,b:2,c:3}"
 
+Object.keys(o)  // ["a", "b", "c"]
+
+JSON.stringify(o // => "{a:1,b:2,c:3}"
 ```
 
 上面代码中，d属性的enumerable为false，所以一般的遍历操作都无法获取该属性，使得它有点像“秘密”属性，但还是可以直接获取它的值。
@@ -583,23 +571,21 @@ JSON.stringify(o // => "{a:1,b:2,c:3}"
 考虑到JSON.stringify方法会排除enumerable为false的值，有时可以利用这一点，为对象添加注释信息。
 
 ```javascript
-
 var car = {
   id: 123,
   color: red,
   owner: 12
 };
-       
+
 var owner = {
   id: 12,
   name: Javi
 };
-         
+
 Object.defineProperty( car, 'ownerOb', {value: owner} );
 car.ownerOb // {id:12, name:Javi}
-         
-JSON.stringify(car) //  '{id: 123, color: "red", owner: 12}'
 
+JSON.stringify(car) //  '{id: 123, color: "red", owner: 12}'
 ```
 
 上面代码中，owner对象作为注释，加入car对象。由于ownerOb属性的enumerable为false，所以JSON.stringify最后正式输出car对象时，会忽略ownerOb属性。
@@ -857,8 +843,7 @@ o.foo // 'b'
 
 除了直接定义以外，属性还可以用存取器（accessor）定义。其中，存值函数称为setter，使用set命令；取值函数称为getter，使用get命令。
 
-{% highlight javascript %}
-
+```javascript
 var o = {
   get p() {
     return "getter";
@@ -867,14 +852,13 @@ var o = {
     console.log("setter: "+value);
   }
 }
-
-{% endhighlight %}
+```
 
 上面代码中，o对象内部的get和set命令，分别定义了p属性的取值函数和存值函数。定义了这两个函数之后，对p属性取值时，取值函数会自动调用；对p属性赋值时，存值函数会自动调用。
 
 ```javascript
-o.p // getter
-o.p = 123 // setter: 123
+o.p // "getter"
+o.p = 123 // "setter: 123"
 ```
 
 存取器往往用于，某个属性的值需要依赖对象内部数据的场合。
@@ -892,7 +876,7 @@ var o ={
 o.next // 5
 
 o.next = 10;
-o.next //10
+o.next // 10
 ```
 
 上面代码中，next属性的存值函数和取值函数，都依赖于对内部属性$n的操作。
@@ -900,22 +884,19 @@ o.next //10
 下面是另一个存取器的例子。
 
 ```javascript
-var user = {}
-var nameValue = 'Joe';
+var d = new Date();
 
-Object.defineProperty(user, 'name', {
-  get: function() { return nameValue },
-  set: function(newValue) { nameValue = newValue; },
-  configurable: true
+Object.defineProperty(d, 'month', {
+  get: function() {
+    return d.getMonth();
+  },
+  set: function(v) {
+    d.setMonth(v);
+  }
 });
-
-user.name //Joe
-user.name = 'Bob';
-user.name //Bob
-nameValue //Bob
 ```
 
-上面代码使用存取器，将user对象name绑定在nameValue属性上了。
+上面代码为Date的实例对象d，定义了一个可读写的month属性。
 
 存取器也可以使用Object.create方法定义。
 
@@ -950,6 +931,73 @@ Object.defineProperty(user, 'name', {
 
 上面代码使用存取函数，将DOM对象foo与数据对象user的name属性，实现了绑定。两者之中只要有一个对象发生变化，就能在另一个对象上实时反映出来。
 
+### 对象的拷贝
+
+有时，我们需要将一个对象的所有属性，拷贝到另一个对象。ES5没有提供这个方法，必须自己实现。
+
+```javascript
+var extend = function (to, from) {
+  for (var property in from) {
+    to[property] = from[property];
+  }
+
+  return to;
+}
+
+extend({}, {a: 1})
+// {a: 1}
+```
+
+上面这个方法的问题在于，如果遇到存取器定义的属性，会只拷贝值。
+
+```javascript
+extend({}, { get a(){ return 1 } })
+// {a: 1}
+```
+
+为了解决这个问题，我们可以通过`Object.defineProperty`方法来拷贝属性。
+
+```javascript
+var extend = function (to, from) {
+  for (var property in from) {
+    Object.defineProperty(to, property, Object.getOwnPropertyDescriptor(from, property));
+  }
+
+  return to;
+}
+
+extend({}, { get a(){ return 1 } })
+// { get a(){ return 1 } })
+```
+
+这段代码还是有问题，拷贝某些属性时会失效。
+
+```javascript
+extend(document.body.style, {
+  backgroundColor: "red"
+});
+```
+
+上面代码的目的是，设置`document.body.style.backgroundColor`属性为`red`，但是实际上网页的背景色并不会变红。但是，如果用第一种简单拷贝的方法，反而能够达到目的。这提示我们，可以把两种方法结合起来，对于简单属性，就直接拷贝，对于那些通过描述对象设置的属性，则使用`Object.defineProperty`方法拷贝。
+
+```javascript
+var extend = function (to, from) {
+  var descriptor = Object.getOwnPropertyDescriptor(from, property);
+
+  if (descriptor && ( !descriptor.writable
+    || !descriptor.configurable
+    || !descriptor.enumerable
+    || descriptor.get
+    || descriptor.set)) {
+    Object.defineProperty(to, property, descriptor);
+  } else {
+    to[property] = from[property];
+  }
+}
+```
+
+上面的这段代码，可以很好地拷贝任意属性。
+
 ## 控制对象状态
 
 JavaScript提供了三种方法，精确控制一个对象的读写状态，防止对象被改变。最弱一层的保护是preventExtensions，其次是seal，最强的freeze。
@@ -976,8 +1024,8 @@ o.p // undefined
 
 {% highlight javascript %}
 
-(function () { 
-  'use strict'; 
+(function () {
+  'use strict';
   o.p = '1'
 }());
 // TypeError: Can't add property bar, object is not extensible
@@ -1209,3 +1257,4 @@ o.hello // undefined
 - Bjorn Tipling, [Advanced objects in JavaScript](http://bjorn.tipling.com/advanced-objects-in-javascript)
 - Javier Márquez, [Javascript properties are enumerable, writable and configurable](http://arqex.com/967/javascript-properties-enumerable-writable-configurable)
 - Sella Rafaeli, [Native JavaScript Data-Binding](http://www.sellarafaeli.com/blog/native_javascript_data_binding): 使用存取函数实现model与view的双向绑定
+- Lea Verou, [Copying object properties, the robust way](http://lea.verou.me/2015/08/copying-properties-the-robust-way/)
