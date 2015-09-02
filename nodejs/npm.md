@@ -417,26 +417,38 @@ browserify browser/main.js | uglifyjs -mc > static/bundle.js
 
 如果要通过`npm test`命令，将参数传到mocha，则参数之前要加上两个连词线。比如，`npm run test -- anothertest.js`，实际运行的是`mocha test/ anothertest.js`。
 
-### 默认脚本
+### pre- 和 post- 脚本
 
-npm在执行某些命令时，会执行一些默认脚本（前提是这些脚本已经设置了）。
-
-- prepublish：发布一个模块前执行。
-- publish, postpublish：发布一个模块后执行。
-- preinstall：安装一个模块前执行。
-- install, postinstall：安装一个模块后执行。
-- preuninstall, uninstall：卸载一个模块前执行。
-- postuninstall：卸载一个模块后执行。
-- preversion, version：更改模块版本前执行。
-- postversion：更改模块版本后执行。
-- pretest, test, posttest：运行`npm test`命令时执行。
-- prestop, stop, poststop：运行`npm stop`命令时执行。
-- prestart, start, poststart：运行`npm start`命令时执行。
-- prerestart, restart, postrestart：运行`npm restart`命令时执行。如果没有设置restart脚本，则依次执行stop和start脚本。
-
-事实上，`npm run`为每条命令提供了pre和post两个钩子（hook）。以`npm run lint`为例，执行这条命令之前，npm会先查看有没有定义prelint和postlint两个钩子，如果有的话，就会先执行`npm run prelint`，然后执行`npm run lint`，最后执行`npm run postlint`。
+`npm run`为每条命令提供了`pre-`和`post-`两个钩子（hook）。以`npm run lint`为例，执行这条命令之前，npm会先查看有没有定义prelint和postlint两个钩子，如果有的话，就会先执行`npm run prelint`，然后执行`npm run lint`，最后执行`npm run postlint`。
 
 如果执行过程出错，就不会执行排在后面的脚本，即如果prelint脚本执行出错，就不会接着执行lint和postlint脚本。
+
+下面是一些常见的`pre-`和`post-`脚本。
+
+- prepublish：发布一个模块前执行。
+- postpublish：发布一个模块后执行。
+- preinstall：安装一个模块前执行。
+- postinstall：安装一个模块后执行。
+- preuninstall：卸载一个模块前执行。
+- postuninstall：卸载一个模块后执行。
+- preversion：更改模块版本前执行。
+- postversion：更改模块版本后执行。
+- pretest：运行`npm test`命令前执行。
+- posttest：运行`npm test`命令后执行。
+- prestop：运行`npm stop`命令前执行。
+- poststop：运行`npm stop`命令后执行。
+- prestart：运行`npm start`命令前执行。
+- poststart：运行`npm start`命令后执行。
+- prerestart：运行`npm restart`命令前执行。
+- postrestart：运行`npm restart`命令后执行。
+
+对于最后一个`npm restart`命令，如果没有设置restart脚本，prerestart和postrestart会依次执行stop和start脚本。
+
+如果start脚本没有配置，`npm start`命令默认执行下面的脚本，前提是模块的根目录存在一个server.js文件。
+
+```bash
+$ node server.js
+```
 
 另外，不能在pre脚本之前再加pre，即preprelint脚本不起作用。
 
@@ -444,19 +456,12 @@ npm在执行某些命令时，会执行一些默认脚本（前提是这些脚�
 
 ```javascript
 "scripts": {
-  "lint": "jshint **.js",
-  "build": "browserify index.js > myproject.min.js",
-  "test": "mocha test/",
-  "prepublish": "npm run build # also runs npm run prebuild",
-  "prebuild": "npm run test # also runs npm run pretest",
-  "pretest": "npm run lint"
+  "lint": "standard",
+  "test": "node test/my-tests.js",
+  "posttest": "npm run lint",
+  "predeploy": "npm test",
+  "deploy": "surge ./path/to/dist"
 }
-```
-
-如果start脚本没有配置，`npm start`命令默认执行下面的脚本，前提是模块的根目录存在一个server.js文件。
-
-```bash
-$ node server.js
 ```
 
 ### 内部变量

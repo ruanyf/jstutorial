@@ -6,7 +6,18 @@ date: 2013-03-10
 modifiedOn: 2013-12-22
 ---
 
-浏览器通过内置的JavaScript引擎，读取网页中的代码，对其处理后运行。
+浏览器的核心是两部分：渲染引擎和JavaScript解释器（又称JavaScript引擎）。
+
+不同的浏览器有不同的渲染引擎，Firefox浏览器为Gecko引擎，Safari为WebKit引擎，Chrome为Blink引擎。它的主要作用是生成网页，通常分成四个阶段。
+
+1. 解析HTML为DOM，解析CSS为CSSOM（CSS Object Model）
+1. 将DOM和CSSOM合成一棵渲染树（render tree）
+1. 完成渲染树的布局（layout）
+1. 将渲染树绘制到屏幕
+
+以上四步并非严格按顺序执行，往往第一步还没完成，第二步和第三步就已经开始了。所以，我们会看到这种情况：网页的HTML代码还没下载完，但浏览器可以显示内容了。
+
+JavaScript引擎的主要作用是，读取网页中的代码，对其处理后运行。
 
 ## JavaScript代码嵌入网页的方法
 
@@ -16,183 +27,235 @@ modifiedOn: 2013-12-22
 
 通过script标签，可以直接将JavaScript代码嵌入网页。
 
-{% highlight html %}
-
+```html
 <script>
 // some JavaScript code
 </script>
-
-{% endhighlight %}
+```
 
 ### 加载外部脚本
 
 script标签也可以指定加载外部的脚本文件。
 
-{% highlight html %}
-
+```html
 <script src="example.js"></script>
-
-{% endhighlight %}
+```
 
 如果脚本文件使用了非英语字符，还应该注明编码。
 
-{% highlight html %}
-
+```html
 <script charset="utf-8" src="example.js"></script>
-
-{% endhighlight %}
+```
 
 加载外部脚本和直接添加代码块，这两种方法不能混用。下面代码的console.log语句直接被忽略。
 
 ```html
-
 <script charset="utf-8" src="example.js">
   console.log('Hello World!');
 </script>
-
 ```
 
 ### 行内代码
 
 除了上面两种方法，HTML语言允许在某些元素的事件属性和a元素的href属性中，直接写入JavaScript。
 
-{% highlight html %}
-
+```html
 <div onclick="alert('Hello')"></div>
 
 <a href="javascript:alert('Hello')"></a>
-
-{% endhighlight %}
+```
 
 这种写法将HTML代码与JavaScript代码混写在一起，非常不利于代码管理，不建议使用。
 
-## 外部脚本的加载
-
-### 网页底部加载
+## script标签的工作原理
 
 正常的网页加载流程是这样的。
 
 1. 浏览器一边下载HTML网页，一边开始解析
-2. 解析过程中，发现script标签
-3. 暂停解析，下载script标签中的外部脚本
-4. 下载完成，执行脚本
-5. 恢复往下解析HTML网页
+1. 解析过程中，发现script标签
+1. 暂停解析，网页渲染的控制权转交给JavaScript引擎
+1. 如果script标签引用了外部脚本，就下载该脚本，否则就直接执行
+1. 执行完毕，控制权交还渲染引擎，恢复往下解析HTML网页
 
-也就是说，加载外部脚本时，浏览器会暂停页面渲染，等待脚本下载并执行完成后，再继续渲染。如果加载时间很长（比如一直无法完成下载），就会造成网页长时间失去响应，浏览器就会呈现“假死”状态，失去响应，这被称为“阻塞效应”。这样设计是因为JavaScript代码可能会修改页面，所以必须等它执行完才能继续渲染。为了避免这种情况，较好的做法是将script标签都放在页面底部，而不是头部。当然，如果某些脚本代码非常重要，一定要放在页面头部的话，最好直接将代码嵌入页面，而不是连接外部脚本文件，这样能缩短加载时间。
+也就是说，加载外部脚本时，浏览器会暂停页面渲染，等待脚本下载并执行完成后，再继续渲染。原因是JavaScript可以修改DOM（比如使用`document.write`方法），所以必须把控制权让给它，否则会导致复杂的线程竞赛的问题。
+
+如果外部脚本加载时间很长（比如一直无法完成下载），就会造成网页长时间失去响应，浏览器就会呈现“假死”状态，这被称为“阻塞效应”。
+
+为了避免这种情况，较好的做法是将script标签都放在页面底部，而不是头部。这样即使遇到脚本失去响应，网页主体的渲染也已经完成了，用户至少可以看到内容，而不是面对一张空白的页面。
+
+如果某些脚本代码非常重要，一定要放在页面头部的话，最好直接将代码嵌入页面，而不是连接外部脚本文件，这样能缩短加载时间。
 
 将脚本文件都放在网页尾部加载，还有一个好处。在DOM结构生成之前就调用DOM，JavaScript会报错，如果脚本都在网页尾部加载，就不存在这个问题，因为这时DOM肯定已经生成了。
 
-{% highlight html %}
-
+```html
 <head>
-	<script>
-		console.log(document.body.innerHTML); 
-	</script>
+  <script>
+    console.log(document.body.innerHTML);
+  </script>
 </head>
-
-{% endhighlight %}
+```
 
 上面代码执行时会报错，因为此时body元素还未生成。
 
 一种解决方法是设定DOMContentLoaded事件的回调函数。
 
 ```html
-
 <head>
-	<script>
-		document.addEventListener("DOMContentLoaded", function(event) {
-			console.log(document.body.innerHTML);
-		 });
-	</script>
+  <script>
+    document.addEventListener(
+      'DOMContentLoaded',
+      function(event) {
+        console.log(document.body.innerHTML);
+      }
+    );
+  </script>
 </head>
-
 ```
 
-另一种解决方法是，使用script标签的onload属性。当script标签指定的外部脚本文件下载和解析完成，会触发一个load事件，可以为这个事件指定回调函数。
+另一种解决方法是，使用script标签的onload属性。当script标签指定的外部脚本文件下载和解析完成，会触发一个load事件，可以把所需执行的代码，放在这个事件的回调函数里面。
 
-{% highlight html %}
-
+```html
 <script src="jquery.min.js" onload="console.log(document.body.innerHTML)">
 </script>
-
-{% endhighlight %}
+```
 
 但是，如果将脚本放在页面底部，就可以完全按照正常的方式写，上面两种方式都不需要。
 
 ```html
-
 <body>
-	<!-- 其他代码  -->
-	<script>
-		console.log(document.body.innerHTML);
-	</script>
+  <!-- 其他代码  -->
+  <script>
+    console.log(document.body.innerHTML);
+  </script>
 </body>
-
 ```
-
-### 多个脚本的加载
 
 如果有多个script标签，比如下面这样。
 
-{% highlight html %}
-
+```html
 <script src="1.js"></script>
 <script src="2.js"></script>
+```
 
-{% endhighlight %}
-
-浏览器会同时平行下载1.js和2.js，但是执行时会保证先执行1.js，然后再执行2.js，即使后者先下载完成，也是如此。也就是说，脚本的执行顺序由它们在页面中的出现顺序决定，这是为了保证脚本之间的依赖关系不受到破坏。
+浏览器会同时平行下载`1.js`和`2.js`，但是，执行时会保证先执行`1.js`，然后再执行`2.js`，即使后者先下载完成，也是如此。也就是说，脚本的执行顺序由它们在页面中的出现顺序决定，这是为了保证脚本之间的依赖关系不受到破坏。
 
 当然，加载这两个脚本都会产生“阻塞效应”，必须等到它们都加载完成，浏览器才会继续页面渲染。
 
-此外，对于来自同一个域名的资源，比如脚本文件、样式表文件、图片文件等，浏览器一般最多同时下载六个。如果是来自不同域名的资源，就没有这个限制。所以，通常把静态文件放在不同的域名之下，以加快下载速度。
+Gecko和Webkit引擎在网页被阻塞后，会生成第二个线程解析文档，下载外部资源，但是不会修改DOM，网页还是处于阻塞状态。
 
-### defer属性
+解析和执行CSS，也会产生阻塞。Firefox会等到脚本前面的所有样式表，都下载并解析完，再执行脚本；Webkit则是一旦发现脚本引用了样式，就会暂停执行脚本执行，等到样式表下载并解析完，再恢复执行。
+
+此外，对于来自同一个域名的资源，比如脚本文件、样式表文件、图片文件等，浏览器一般最多同时下载六个（IE11允许同时下载13个）。如果是来自不同域名的资源，就没有这个限制。所以，通常把静态文件放在不同的域名之下，以加快下载速度。
+
+## defer属性
 
 为了解决脚本文件下载阻塞网页渲染的问题，一个方法是加入defer属性。
 
-{% highlight html %}
-
+```html
 <script src="1.js" defer></script>
 <script src="2.js" defer></script>
+```
 
-{% endhighlight %}
-
-defer属性的运行过程是这样的。
+`defer`属性的作用是，告诉浏览器，等到DOM加载完成后，再执行指定脚本。
 
 1. 浏览器开始解析HTML网页
-2. 解析过程中，发现带有defer属性的script标签
+2. 解析过程中，发现带有`defer`属性的script标签
 3. 浏览器继续往下解析HTML网页，同时并行下载script标签中的外部脚本
 4. 浏览器完成解析HTML网页，此时再执行下载的脚本
 
-有了defer属性，浏览器下载脚本文件的时候，不会阻塞页面渲染。下载的脚本文件在DOMContentLoaded事件触发前执行（即刚刚读取完&lt;/html&gt;标签），而且可以保证执行顺序就是它们在页面上出现的顺序。但是，浏览器对这个属性的支持不够理想，IE（<=9）还有一个bug，无法保证2.js一定在1.js之后执行。如果需要支持老版本的IE，且脚本之间有依赖关系，建议不要使用defer属性。
+有了`defer`属性，浏览器下载脚本文件的时候，不会阻塞页面渲染。下载的脚本文件在`DOMContentLoaded`事件触发前执行（即刚刚读取完`</html>`标签），而且可以保证执行顺序就是它们在页面上出现的顺序。
 
-对于内置而不是连接外部脚本的script标签，以及动态生成的script标签，defer属性不起作用。
+对于内置而不是连接外部脚本的script标签，以及动态生成的script标签，`defer`属性不起作用。
 
-### async属性
+## async属性
 
-解决“阻塞效应”的另一个方法是加入async属性。
+解决“阻塞效应”的另一个方法是加入`async`属性。
 
-{% highlight html %}
-
+```html
 <script src="1.js" async></script>
 <script src="2.js" async></script>
+```
 
-{% endhighlight %}
-
-async属性的运行过程是这样的。
+`async`属性的作用是，使用另一个进程下载脚本，下载时不会阻塞渲染。
 
 1. 浏览器开始解析HTML网页
-2. 解析过程中，发现带有async属性的script标签
+2. 解析过程中，发现带有`async`属性的script标签
 3. 浏览器继续往下解析HTML网页，同时并行下载script标签中的外部脚本
 4. 脚本下载完成，浏览器暂停解析HTML网页，开始执行下载的脚本
 5. 脚本执行完毕，浏览器恢复解析HTML网页
 
-async属性可以保证脚本下载的同时，浏览器继续渲染。需要注意的是，一旦采用这个属性，就无法保证脚本的执行顺序。哪个脚本先下载结束，就先执行那个脚本。使用async属性的脚本文件中，不应该使用document.write方法。IE 10支持async属性，低于这个版本的IE都不支持。
+async属性可以保证脚本下载的同时，浏览器继续渲染。需要注意的是，一旦采用这个属性，就无法保证脚本的执行顺序。哪个脚本先下载结束，就先执行那个脚本。使用`async`属性的脚本文件中，不应该使用`document.write`方法。
 
-defer属性和async属性到底应该使用哪一个？一般来说，如果脚本之间没有依赖关系，就使用async属性，如果脚本之间有依赖关系，就使用defer属性。如果同时使用async和defer属性，后者不起作用，浏览器行为由async属性决定。
+`defer`属性和`async`属性到底应该使用哪一个？
 
-### 脚本的动态嵌入
+一般来说，如果脚本之间没有依赖关系，就使用`async`属性，如果脚本之间有依赖关系，就使用`defer`属性。如果同时使用`async`和`defer`属性，后者不起作用，浏览器行为由async属性决定。
+
+## 重流和重绘
+
+渲染树转换为网页布局，称为“布局流”（flow）；布局显示到页面的这个过程，称为“绘制”（paint）。它们都具有阻塞效应，并且会耗费很多时间和计算资源。
+
+页面生成以后，脚本操作和样式表操作，都会触发重流（reflow）和重绘（repaint）。用户的互动，也会触发，比如设置了鼠标悬停（`a:hover`）效果、页面滚动、在输入框中输入文本、改变窗口大小等等。
+
+重流和重绘并不一定一起发生，重流必然导致重绘，重绘不一定需要重流。比如改变元素颜色，只会导致重绘，而不会导致重流；改变元素的布局，则会导致重绘和重流。
+
+大多数情况下，浏览器会智能判断，将“重流”和“重绘”只限制到相关的子树上面，最小化所耗费的代价，而不会全局重新生成网页。
+
+作为开发者，应该尽量设法降低重绘的次数和成本。比如，尽量不要变动高层的DOM元素，而以底层DOM元素的变动代替；再比如，重绘table布局和flex布局，开销都会比较大。
+
+```javascript
+var foo = document.getElementById(‘foobar’);
+
+foo.style.color = ‘blue’;
+foo.style.marginTop = ‘30px’;
+```
+
+上面的代码只会导致一次重绘，因为浏览器会累积DOM变动，然后一次性执行。
+
+下面的代码则会导致两次重绘。
+
+```javascript
+var foo = document.getElementById(‘foobar’);
+
+foo.style.color = ‘blue’;
+var margin = parseInt(foo.style.marginTop);
+foo.style.marginTop = (margin + 10) + ‘px’;
+```
+
+下面是一些优化技巧。
+
+- 读取DOM或者写入DOM，尽量写在一起，不要混杂
+- 缓存DOM信息
+- 不要一项一项地改变样式，而是使用CSS class一次性改变样式
+- 使用document fragment操作DOM
+- 动画时使用absolute定位或fixed定位，这样可以减少对其他元素的影响
+- 只在必要时才显示元素
+- 使用`window.requestAnimationFrame()`，因为它可以把代码推迟到下一次重流时执行，而不是立即要求页面重流
+- 使用虚拟DOM（virtual DOM）库
+
+下面是一个`window.requestAnimationFrame()`对比效果的例子。
+
+```javascript
+// 重绘代价高
+function doubleHeight(element) {
+  var currentHeight = element.clientHeight;
+  element.style.height = (currentHeight * 2) + ‘px’;
+}
+
+all_my_elements.forEach(doubleHeight);
+
+// 重绘代价低
+function doubleHeight(element) {
+  var currentHeight = element.clientHeight;
+
+  window.requestAnimationFrame(function () {
+    element.style.height = (currentHeight * 2) + ‘px’;
+  });
+}
+
+all_my_elements.forEach(doubleHeight);
+```
+
+## 脚本的动态嵌入
 
 除了用静态的script标签，还可以动态嵌入script标签。
 
@@ -226,7 +289,6 @@ defer属性和async属性到底应该使用哪一个？一般来说，如果脚�
 我们可以把上面的写法，封装成一个函数。
 
 ```javascript
-
 (function() {
   var script,
   scripts = document.getElementsByTagName('script')[0];
@@ -240,36 +302,29 @@ defer属性和async属性到底应该使用哪一个？一般来说，如果脚�
   load('//platform.twitter.com/widgets.js');
   load('//s.thirdpartywidget.com/widget.js');
 }());
-
 ```
 
 此外，动态嵌入还有一个地方需要注意。动态嵌入必须等待CSS文件加载完成后，才会去下载外部脚本文件。静态加载就不存在这个问题，script标签指定的外部脚本文件，都是与CSS文件同时并发下载的。
 
-### 加载使用的协议
+## 加载使用的协议
 
 如果不指定协议，浏览器默认采用HTTP协议下载。
 
-{% highlight html %}
-
+```html
 <script src="example.js"></script>
+```
 
-{% endhighlight %}
+上面的`example.js`默认就是采用HTTP协议下载，如果要采用HTTPs协议下载，必需写明（假定服务器支持）。
 
-上面的example.js默认就是采用http协议下载，如果要采用HTTPs协议下载，必需写明（假定服务器支持）。
-
-{% highlight html %}
-
+```html
 <script src="https://example.js"></script>
-
-{% endhighlight %}
+```
 
 但是有时我们会希望，根据页面本身的协议来决定加载协议，这时可以采用下面的写法。
 
-{% highlight html %}
-
+```html
 <script src="//example.js"></script>
-
-{% endhighlight %}
+```
 
 ## JavaScript虚拟机
 
@@ -357,3 +412,4 @@ JavaScript之所以采用单线程，而不是多线程，跟历史有关系。J
 - Axel Rauschmayer, [ECMAScript 6 promises (1/2): foundations](http://www.2ality.com/2014/09/es6-promises-foundations.html)
 - Daniel Imms, [async vs defer attributes](http://www.growingwiththeweb.com/2014/02/async-vs-defer-attributes.html)
 - Craig Buckler, [Load Non-blocking JavaScript with HTML5 Async and Defer](http://www.sitepoint.com/non-blocking-async-defer/)
+- Domenico De Felice, [How browsers work](http://domenicodefelice.blogspot.sg/2015/08/how-browsers-work.html?t=2)
