@@ -6,29 +6,34 @@ date: 2013-02-16
 modifiedOn: 2014-02-27
 ---
 
-Ajax指的是不刷新页面，发出异步请求，向服务器端要求数据，然后再进行处理的方法。
+Ajax指的是一种JavaScript在浏览器中的使用方法。它通过原生的XMLHttpRequest对象发出HTTP请求，得到服务器返回的数据后，再进行处理。
+
+Ajax可以是同步请求，也可以是异步请求。但是，大多数情况下，特指异步请求。因为同步的Ajax请求，对浏览器有”堵塞效应“。
 
 ## XMLHttpRequest对象
 
-XMLHttpRequest对象用于从JavaScript发出HTTP请求，下面是典型用法。
+### 基本用法
 
-{% highlight javascript %}
+`XMLHttpRequest`对象用于从JavaScript发出HTTP请求，下面是典型用法。
 
+```javascript
 // 新建一个XMLHttpRequest实例对象
 var xhr = new XMLHttpRequest();
 
 // 指定通信过程中状态改变时的回调函数
 xhr.onreadystatechange = function(){
-
-	// 通信成功时，状态值为4
-    var completed = 4;
-    if(xhr.readyState === completed){
-        if(xhr.status === 200){
-            // 处理服务器发送过来的数据
-        }else{
-            // 处理错误
-        }
+  // 通信成功时，状态值为4
+  if (xhr.readyState === 4){
+    if (xhr.status === 200){
+      console.log(xhr.responseText);
+    } else {
+      console.error(xhr.statusText);
     }
+  }
+};
+
+xhr.onerror = function (e) {
+  console.error(xhr.statusText);
 };
 
 // open方式用于指定HTTP动词、请求的网址、是否异步
@@ -36,12 +41,11 @@ xhr.open('GET', '/endpoint', true);
 
 // 发送HTTP请求
 xhr.send(null);
+```
 
-{% endhighlight %}
+### xhr.open()
 
-### Open()
-
-open方法用于指定发送HTTP请求的参数，它有三个参数如下：
+`XMLHttpRequest`对象的`open`方法用于指定发送HTTP请求的参数，它有三个参数。
 
 - 发送方法，一般来说为“GET”、“POST”、“PUT”和“DELETE”中的一个值。
 - 网址。
@@ -50,21 +54,31 @@ open方法用于指定发送HTTP请求的参数，它有三个参数如下：
 下面发送POST请求的例子。
 
 ```javascript
-
 xhr.open('POST', encodeURI('someURL'));
 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 xhr.onload = function() {};
 xhr.send(encodeURI('dataString'));
-
 ```
 
 上面方法中，open方法向指定URL发出POST请求，send方法送出实际的数据。
 
-### setRequestHeader()
+下面是一个同步AJAX请求的例子。
+
+```javascript
+var request = new XMLHttpRequest();
+request.open('GET', '/bar/foo.txt', false);
+request.send(null);
+
+if (request.status === 200) {
+  console.log(request.responseText);
+}
+```
+
+### xhr.setRequestHeader()
 
 setRequestHeader方法用于设置HTTP请求的头信息。
 
-### send()
+### xhr.send()
 
 send方法用于实际发出HTTP请求。如果不带参数，就表示HTTP请求只包含头信息，也就是只有一个URL，典型例子就是GET请求；如果带有参数，就表示除了头信息，还带有包含具体数据的信息体，典型例子就是POST请求。
 

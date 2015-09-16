@@ -90,6 +90,18 @@ var o = {
 
 上面的代码中m属性后面的那个逗号，有或没有都不算错。但是，ECMAScript 3不允许添加逗号，所以如果要兼容老式浏览器（比如IE 8），那就不能加这个逗号。
 
+由于对象的方法就是函数，因此也有`name`属性。
+
+```javascript
+var obj = {
+  m1: function m1() {},
+  m2: function () {}
+};
+
+obj.m1.name // m1
+obj.m2.name // undefined
+```
+
 ### 生成方法
 
 对象的生成方法，通常有三种方法。除了像上面那样直接使用大括号生成（{}），还可以用new命令生成一个Object对象的实例，或者使用Object.create方法生成。

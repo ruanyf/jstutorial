@@ -30,34 +30,27 @@ JavaScript语言本身并不慢，慢的是读写外部数据，比如等待Ajax
 
 假定有两个函数f1和f2，后者等待前者的执行结果。
 
-{% highlight javascript %}
-
+```javascript
 f1();
-
 f2();
+```
 
-{% endhighlight %}
+如果`f1`是一个很耗时的任务，可以考虑改写`f1`，把`f2`写成`f1`的回调函数。
 
-如果f1是一个很耗时的任务，可以考虑改写f1，把f2写成f1的回调函数。
-
-{% highlight javascript %}
-
+```javascript
 function f1(callback){
   setTimeout(function () {
     // f1的任务代码
     callback();
   }, 1000);
 }
-
-{% endhighlight %}
+```
 
 执行代码就变成下面这样：
 
-{% highlight javascript %}
-
+```javascript
 f1(f2);
-
-{% endhighlight %}
+```
 
 采用这种方式，我们把同步操作变成了异步操作，f1不会堵塞程序运行，相当于先执行程序的主要逻辑，将耗时的操作推迟执行。
 
@@ -518,7 +511,24 @@ try {
 module.exports = Promise;
 ```
 
-### 实例：Ajax操作
+## Promise的应用
+
+### 加载图片
+
+我们可以把图片的加载写成一个`Promise`。
+
+```javascript
+var preloadImage = function (path) {
+  return new Promise(function (resolve, reject) {
+    var image = new Image();
+    image.onload  = resolve;
+    image.onerror = reject;
+    image.src = path;
+  });
+};
+```
+
+### Ajax操作
 
 Ajax操作是典型的异步操作，传统上往往写成下面这样。
 

@@ -8,81 +8,74 @@ modifiedOn: 2013-11-24
 
 ## 数组的定义
 
-数组（array）是按次序排列的一组值，单个值称为元素，它们的位置都有编号（从0开始）。整个数组用方括号表示。
+数组（array）是按次序排列的一组值，每个值的位置都有编号（从0开始）。整个数组用方括号表示。
 
-{% highlight javascript %}
-
+```javascript
 var arr = ['a', 'b', 'c'];
+```
 
-{% endhighlight %}
-
-上面代码中的a、b、c就构成一个数组，两端的方括号是数组的标志，a是0号位置，b是1号位置，c是2号位置。
+上面代码中的`a`、`b`、`c`就构成一个数组，两端的方括号是数组的标志，`a`是0号位置，`b`是1号位置，`c`是2号位置。
 
 除了在定义时赋值，数组也可以先定义后赋值。
 
-{% highlight javascript %}
-
+```javascript
 var arr = [];
 
 arr[0] = 'a';
 arr[1] = 'b';
 arr[2] = 'c';
-
-{% endhighlight %}
+```
 
 任意一种类型的数据，都可以放入数组。
 
-{% highlight javascript %}
-
-var arr = [{a:1}, [1,2,3],function (){return true;}];
+```javascript
+var arr = [
+  {a: 1},
+  [1, 2, 3],
+  function() {return true;}
+];
 
 arr[0] // Object {a: 1}
 arr[1] // [1, 2, 3]
 arr[2] // function (){return true;}
+```
 
-{% endhighlight %}
-
-上面数组的3个成员分别是对象、数组、函数。
+上面数组`arr`的3个成员依次是对象、数组、函数。
 
 如果数组的元素还是数组，就形成了多维数组。
 
-{% highlight javascript %}
-
-var a = [[1,2],[3,4]];
+```javascript
+var a = [[1, 2], [3, 4]];
 a[0][1] // 2
 a[1][1] // 4
-
-{% endhighlight %}
+```
 
 ## 数组与对象的关系
 
 本质上，数组也属于对象，是字典结构（dictionary）的一个变种。
 
-{% highlight javascript %}
+```javascript
+typeof [1, 2, 3] // "object"
+```
 
-typeof [1,2,3] // "object"
+上面代码表明，数组只是一种特殊的对象，所以`typeof`运算符返回数组的类型是`object`。
 
-{% endhighlight %}
+数组的特殊性体现在，它的键默认是按次序排列的整数（0，1，2...），所以数组不用为每个元素指定键名，而对象的每个成员都必须指定键名。
 
-上面代码表明，数组只是一种特殊的对象，所以typeof运算符返回数组的类型是object。
+此外，对象以字符串来识别键名，非字符串的键名会被转为字符串。数组的键名其实也是字符串，所有的整数键名默认都会转为字符串。所以，使用数值或字符串作为键名，都能读取数组的成员。
 
-数组的特殊性体现在，它的键默认是按次序排列的整数（0，1，2...），所以数组不用为每个元素指定键名，而对象的每个成员都必须指定键名。此外，对象以字符串来识别键名，非字符串的键名会被转为字符串，所以使用数值或字符串作为键名，都能读取数组的成员。
-
-{% highlight javascript %}
-
+```javascript
 var arr = ['a', 'b', 'c'];
 
 arr['0'] // 'a'
 arr[0] // 'a'
-
-{% endhighlight %}
+```
 
 上面代码分别用数值和字符串作为键名，结果都能读取数组。
 
-需要注意的是，这一条在赋值时也成立，即如果一个值可以被转换为整数，则以该值为键名，等于以对应的整数为键名。
+需要注意的是，这一条在赋值时也成立。如果一个值可以被转换为整数，则以该值为键名，等于以对应的整数为键名。
 
 ```javascript
-
 var a = [];
 
 a['1000'] = 'abc';
@@ -90,12 +83,11 @@ a[1000] // 'abc'
 
 a[1.00] = 6;
 a[1] // 1
-
 ```
 
-上面代码表明，由于字符串“1000”和浮点数1.00都可以转换为整数，则视同为整数键赋值。
+上面代码表明，由于字符串“1000”和浮点数1.00都可以转换为整数，所以视同为整数键赋值。
 
-上一节说过，对象有两种读取成员的方法：“点”结构（object.key）和方括号结构（object[key]）。但是，对于数字的键名，不能使用点结构，arr.0的写法不合法，因为单独的数字不能作为标识符（identifier）。所以，数组成员只能用方括号arr[0]表示（方括号是运算符，可以接受数值）。
+上一节说过，对象有两种读取成员的方法：“点”结构（`object.key`）和方括号结构（`object[key]`）。但是，对于数字的键名，不能使用点结构，`arr.0`的写法不合法，因为单独的数字不能作为标识符（identifier）。所以，数组成员只能用方括号`arr[0]`表示（方括号是运算符，可以接受数值）。
 
 ## length属性
 
@@ -205,83 +197,87 @@ a.length // 0
 
 当数组的某个位置是空元素（比如两个逗号之间没有任何值，或者值为undefined），我们称该数组存在空位（hole）。
 
-{% highlight javascript %}
-
+```javascript
 var a = [1,,1];
 a // [1, undefined, 1]
 a.length // 3
+```
 
-{% endhighlight %}
+上面代码表明，数组的空位不影响`length`属性。
 
-需要注意的是，如果最后一个元素后面有逗号，并不会产生空位。也就是说，有没有这个逗号，结果都是一样的。不过，IE 8及以下版本不支持这条语法规则，会报错。
+需要注意的是，如果最后一个元素后面有逗号，并不会产生空位。也就是说，有没有这个逗号，结果都是一样的。
 
-{% highlight javascript %}
-
-var a = [1,2,3,];
+```javascript
+var a = [1, 2, 3,];
 
 a.length // 3
 a // [1, 2, 3]
+```
 
-{% endhighlight %}
+上面代码中，数组最后一个成员后面有一个逗号，这不影响`length`属性的值，与没有这个逗号时效果一样。
 
-上面代码中，数组最后一个成员后面有一个逗号，这不影响length属性的值，与没有这个逗号时效果一样。
+使用`delete`命令删除一个值，会形成空位。
 
-使用delete命令删除一个值，会形成空位。
-
-{% highlight javascript %}
-
-var a = [1,2,3];
+```javascript
+var a = [1, 2, 3];
 
 delete a[1];
 a // [1, undefined, 3]
+```
 
-{% endhighlight %}
+需要注意的是，`delete`命令不影响`length`属性。
 
-需要注意的是，如果使用delete命令删除一个值，不影响length属性。
-
-{% highlight javascript %}
-
-var a = [1,2,3];
+```javascript
+var a = [1, 2, 3];
 delete a[1];
 delete a[2];
 a // [1, undefined, undefined]
 a.length // 3
+```
 
-{% endhighlight %}
+上面代码用`delete`命令删除了两个键，对`length`属性没有影响。因为这两个键还在，只是值变为了`undefined`。也就是说，`length`属性不过滤`undefined`的值。所以，使用`length`属性进行数组遍历，一定要非常小心。
 
-上面代码用delete命令删除了两个键，对length属性没有影响。因为这两个键还在，只是值变为了undefined。也就是说，length属性不过滤undefined的值。所以，使用length属性进行数组遍历，一定要非常小心。
+空位通过空值生成，还是通过显式设为`undefined`生成，有一个细微的差别。如果通过空值生成，使用数组的`forEach`方法、`for...in`结构、以及`Object.keys`方法进行遍历，空位都会被跳过。
 
-空位通过空值生成，还是通过显式设为undefined生成，有一个细微的差别。如果通过空值生成，使用数组的forEach方法或者for...in结构进行遍历，空位就会被跳过。
-
-{% highlight javascript %}
-
+```javascript
 var a = [,,,];
 
-a.forEach(function (x, i) { console.log(i+". "+x) })
-// 不产生任何输出 
-
-for (var i in a){console.log(i)}
+a.forEach(function (x, i) {
+  console.log(i + '. ' + x);
+})
 // 不产生任何输出
 
-{% endhighlight %}
+for (var i in a) {
+  console.log(i);
+}
+// 不产生任何输出
 
-如果空位是通过显式定义undefined生成，遍历的时候就不会被跳过。
+Object.keys(a)
+// []
+```
 
-{% highlight javascript %}
+如果空位是通过显式定义`undefined`生成，遍历的时候就不会被跳过。
 
+```javascript
 var a = [undefined,undefined,undefined];
 
-a.forEach(function (x, i) { console.log(i+". "+x) });
+a.forEach(function (x, i) {
+  console.log(i + '. ' + x);
+});
 // 0. undefined
 // 1. undefined
 // 2. undefined
 
-for (var i in a){console.log(i)}
+for (var i in a) {
+  console.log(i);
+}
 // 0
 // 1
 // 2
 
-{% endhighlight %}
+Object.keys(a)
+// ['0', '1', '2']
+```
 
 ## in运算符，for...in循环
 

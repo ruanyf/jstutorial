@@ -278,6 +278,63 @@ it('logs a', function(done) {
 
 上面代码中，正常情况下，函数f还没有执行，Mocha就已经结束运行了。为了保证Mocha等到测试用例跑完再结束运行，可以手动调用done方法
 
+## Promise的测试
+
+对于异步的测试，测试用例之中，通常必须调用`done`方法，显式表明异步操作的结束。
+
+```javascript
+var expect = require('chai').expect;
+
+it('should do something with promises', function(done) {
+  var result = asyncTest();
+
+  result.then(function(data) {
+    expect(data).to.equal('foobar');
+    done();
+  }, function(error) {
+    assert.fail(error);
+    done();
+  });
+});
+```
+
+上面代码之中，Promise对象的`then`方法之中，必须指定`reject`时的回调函数，并且使用`assert.fail`方法抛出错误，否则这个错误就不会被外界感知。
+
+```javascript
+result.then(function(data) {
+  expect(data).to.equal(blah);
+  done();
+});
+```
+
+上面代码之中，如果Promise被`reject`，是不会被捕获的，因为Promise之中的错误，不会”泄漏“到外界。
+
+Mocha内置了对Promise的支持。
+
+```javascript
+it('should fail the test', function() {
+  var p = Promise.reject('Promise被reject');
+
+  return p;
+});
+```
+
+上面代码中，Mocha能够捕获`reject`的Promise。
+
+因此，使用Mocha时，Promise的测试可以简化成下面的写法。
+
+```javascript
+var expect = require('chai').expect;
+
+it('should do something with promises', function() {
+  var result = asyncTest();
+
+  return result.then(function(data) {
+    expect(data).to.equal('foobar');
+  });
+});
+```
+
 ## WebDriver
 
 WebDriver是一个浏览器的自动化框架。它在各种浏览器的基础上，提供一个统一接口，将接收到的指令转为浏览器的原生指令，驱动浏览器。
@@ -718,3 +775,7 @@ alert.authenticateUsing(user);
 - moveToElement()：移动鼠标到另一个网页元素
 - release()：释放拖拉的元素
 - sendKeys()：控制键盘输出
+
+## 参考链接
+
+- Jani Hartikainen, [http://www.sitepoint.com/promises-in-javascript-unit-tests-the-definitive-guide/](http://www.sitepoint.com/promises-in-javascript-unit-tests-the-definitive-guide/)

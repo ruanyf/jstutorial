@@ -8,33 +8,54 @@ modifiedOn: 2013-11-29
 
 ## 概述
 
-Array是JavaScript的内置对象，同时也是一个构造函数，可以用它生成新的数组。
+`Array`是JavaScript的内置对象，同时也是一个构造函数，可以用它生成新的数组。
 
-作为构造函数时，Array可以接受参数，但是不同的参数，会使得Array产生不同的行为。
+作为构造函数时，`Array`可以接受参数，但是不同的参数，会使得`Array`产生不同的行为。
 
-- 无参数时，返回一个空数组。
+```javascript
+// 无参数时，返回一个空数组
+new Array() // []
 
-- 单个参数时，如果该参数是正整数，则这个正整数表示新数组的长度；如果该参数是非正整数（比如字符串、布尔值、对象等），则该值是新数组的成员。
+// 单个正整数参数，表示返回的新数组的长度
+new Array(1) // [undefined × 1]
+new Array(2) // [undefined x 2]
 
-- 多个参数时，这些参数都是新数组的成员。
+// 单个非正整数参数（比如字符串、布尔值、对象等），
+// 则该参数是返回的新数组的成员
+new Array('abc') // ['abc']
+new Array([1]) // [Array[1]]
 
-{% highlight javascript %}
+// 多参数时，所有参数都是返回的新数组的成员
+new Array(1, 2) // [1, 2]
+```
 
-var a1 = new Array();
-var a2 = new Array(1);
-var a3 = new Array('abc');
-var a4 = new Array([1]);
-var a5 = new Array(1,2);
+从上面代码可以看到，`Array`作为构造函数，行为很不一致。因此，不建议使用它生成新数组，直接使用数组的字面量是更好的方法。
 
-a1 // []
-a2 // [undefined × 1]
-a3 // ['abc']
-a4 // [Array[1]]
-a5 // [1, 2]
+```javascript
+// bad
+var arr = new Array(1, 2);
 
-{% endhighlight %}
+// good
+var arr = [1, 2];
+```
 
-从上面代码可以看到，Array的构造函数行为很不一致。因此，不建议使用它生成新数组，直接使用数组的字面量是更好的方法。
+另外，`Array`作为构造函数时，如果参数是一个正整数，返回的空数组虽然可以取到`length`属性，但是取不到键名。
+
+```javascript
+Array(3).length // 3
+
+Array(3)[0] // undefined
+Array(3)[1] // undefined
+Array(3)[2] // undefined
+
+0 in Array(3) // false
+1 in Array(3) // false
+2 in Array(3) // false
+```
+
+上面代码中，`Array(3)`是一个长度为3的空数组。虽然可以取到每个位置的键值，但是所有的键名都取不到。
+
+JavaScript语言的设计规格，就是这么规定的，虽然不是一个大问题，但是还是必须小心。这也是不推荐使用`Array`构造函数的一个理由。
 
 ## Array对象的静态方法
 
@@ -430,44 +451,34 @@ ECMAScript 5新增了9个数组实例的方法，分别是map、forEach、filter
 
 对于不支持这些方法的老式浏览器（主要是IE 8及以下版本），可以使用函数库[es5-shim](https://github.com/kriskowal/es5-shim)，或者[Underscore](http://underscorejs.org/#filter)和[Lo-Dash](http://lodash.com/docs#filter)。
 
-### map方法，forEach方法
+### Array.prototype.map()
 
-map方法对数组的所有成员依次调用一个函数，根据函数结果返回一个新数组。
+`map`方法对数组的所有成员依次调用一个函数，根据函数结果返回一个新数组。
 
 ```javascript
 var numbers = [1, 2, 3];
 
-numbers.map(function(n){ return n+1 });
+numbers.map(function(n) { return n+1 });
 // [2, 3, 4]
 
 numbers
 // [1, 2, 3]
 ```
 
-上面代码中，原数组的成员都加上1，组成一个新数组返回，原数组没有变化。
+上面代码中，`numbers`数组的所有成员都加上1，组成一个新数组返回，原数组没有变化。
 
-只要数组的成员可以被索引到，map方法就不会跳过它。
-
-```javascript
-var f = function(n){ return n+1 };
-
-[1, undefined, 2].map(f) // [2, NaN, 3]
-[1, null, 2].map(f) // [2, 1, 3]
-[1, , 2].map(f) // [2, undefined, 3]
-```
-
-上面代码中，数组的成员分别是undefined、null和空位，map方法都不会跳过它们。
-
-map方法的回调函数依次接受三个参数，分别是当前的数组成员、当前成员的位置和数组本身。
+`map`方法的回调函数依次接受三个参数，分别是当前的数组成员、当前成员的位置和数组本身。
 
 ```javascript
-[1, 2, 3].map(function(elem, index, arr){
+[1, 2, 3].map(function(elem, index, arr) {
   return elem * elem;
 });
 // [1, 4, 9]
 ```
 
-有时，我们需要对字符串的每个字符进行遍历。这时可以通过函数的call方法，将map方法用于字符串。
+上面代码中，map方法的回调函数的三个参数之中，`elem`为当前元素的键值，`index`为当前元素的位置（格式为数值），`arr`为原数组（`[1, 2, 3]`）。
+
+`map`方法不仅可以用于数组，还可以用于字符串，用来遍历字符串的每个字符。但是，不能直接用，而要通过函数的`call`方法间接使用，或者先将字符串转为数组，然后使用。
 
 ```javascript
 var upper = function (x) { return x.toUpperCase() };
@@ -480,11 +491,62 @@ var upper = function (x) { return x.toUpperCase() };
 // [ 'A', 'B', 'C' ]
 ```
 
-其他类似数组的对象（比如querySelectorAll方法返回DOM节点集合），也可以用上面的方法遍历。
+其他类似数组的对象（比如`document.querySelectorAll`方法返回DOM节点集合），也可以用上面的方法遍历。
 
-map方法还可以接受第二个参数，表示回调函数执行时this所指向的对象。
+`map`方法还可以接受第二个参数，表示回调函数执行时`this`所指向的对象。
 
-数组实例的forEach方法与map方法很相似，也是遍历数组的所有成员，执行某种操作，但是forEach方法没有返回值。如果需要有返回值，一般使用map方法，如果只是单纯操作数据，一般使用forEach方法。
+```javascript
+var arr = ['a', 'b', 'c'];
+
+[1, 2].map(function(e){
+  return this[e];
+}, arr)
+// ['b', 'c']
+```
+
+上面代码通过`map`方法的第二个参数，将回调函数内部的`this`对象，指向`arr`数组。
+
+`map`方法通过键名，遍历数组的所有成员。所以，只要数组的某个成员取不到键名，`map`方法就会跳过它。
+
+```javascript
+var f = function(n){ return n + 1 };
+
+[1, undefined, 2].map(f) // [2, NaN, 3]
+[1, null, 2].map(f) // [2, 1, 3]
+[1, , 2].map(f) // [2, undefined, 3]
+```
+
+上面代码中，数组的成员依次包含`undefined`、`null`和空位。前两种情况，`map`方法都不会跳过它们，因为可以取到`undefined`和`null`的键名。第三种情况，`map`方法实际上跳过第二个位置，因为取不到它的键名。
+
+```javascript
+1 in [1, , 2] // false
+```
+
+上面代码说明，第二个位置的空位是取不到键名的，因此`map`方法会跳过它。
+
+下面的例子会更清楚地说明这一点。
+
+```javascript
+[undefined, undefined].map(function (){
+  console.log('enter...');
+  return 1;
+})
+// enter...
+// enter...
+// [1, 1]
+
+Array(2).map(function (){
+  console.log('enter...');
+  return 1;
+})
+// [undefined x 2]
+```
+
+上面代码中，`Array(2)`生成的空数组是取不到键名的，因此`map`方法根本没有执行，直接返回了`Array(2)`生成的空数组。
+
+### Array.prototype.forEach()
+
+数组实例的`forEach`方法与`map`方法很相似，也是遍历数组的所有成员，执行某种操作，但是forEach方法没有返回值。如果需要有返回值，一般使用map方法，如果只是单纯操作数据，一般使用forEach方法。
 
 ```javascript
 function log(element, index, array) {
