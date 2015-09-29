@@ -8,7 +8,7 @@ modifiedOn: 2013-08-13
 
 ## 概述
 
-CommonJS是服务器模块的规范，Node.js采用了这个规范。
+Node程序由许多个模块组成，每个模块就是一个文件。Node模块采用了CommonJS规范。
 
 根据CommonJS规范，一个单独的文件就是一个模块。每一个模块都是一个单独的作用域，也就是说，在一个文件定义的变量（还包括函数和类），都是私有的，对其他文件是不可见的。
 
@@ -19,7 +19,7 @@ var addX = function(value) {
 };
 ```
 
-上面代码中，变量x和函数addX，是当前文件私有的，其他文件不可见。
+上面代码中，变量`x`和函数`addX`，是当前文件私有的，其他文件不可见。
 
 如果想在多个文件分享变量，必须定义为global对象的属性。
 
@@ -40,23 +40,23 @@ module.exports.x = x;
 module.exports.addX = addX;
 ```
 
-上面代码通过module.exports对象，定义对外接口，输出变量x和函数addX。module.exports对象是可以被其他文件导入的，它其实就是文件内部与外部通信的桥梁。
+上面代码通过`module.exports`对象，定义对外接口，输出变量x和函数addX。`module.exports`对象是可以被其他文件导入的，它其实就是文件内部与外部通信的桥梁。
 
 require方法用于在其他文件加载这个接口，具体用法参见《Require命令》的部分。
 
-{% highlight javascript %}
+```javascript
 var example = require('./example.js');
 
 console.log(example.x); // 5
 console.log(addX(1)); // 6
-{% endhighlight %}
+```
 
 ## module对象
 
-每个模块都有一个module变量，该变量指向当前模块。module不是全局变量，而是每个模块都有的本地变量。
+每个模块内部，都有一个`module`对象，代表当前模块。它有以下属性。
 
 - module.id 模块的识别符，通常是带有绝对路径的模块文件名。
-- module.filename 模块的文件名。
+- module.filename 模块的文件名，带有绝对路径。
 - module.loaded 返回一个布尔值，表示模块是否已经完成加载。
 - module.parent 返回一个对象，表示调用该模块的模块。
 - module.children 返回一个数组，表示该模块要用到的其他模块。
@@ -120,16 +120,13 @@ a.on('ready', function() {
 
 为了方便，Node为每个模块提供一个exports变量，指向module.exports。这等同在每个模块头部，有一行这样的命令。
 
-{% highlight javascript %}
-
+```javascript
 var exports = module.exports;
-
-{% endhighlight %}
+```
 
 造成的结果是，在对外输出模块接口时，可以向exports对象添加方法。
 
-{% highlight javascript %}
-
+```javascript
 exports.area = function (r) {
   return Math.PI * r * r;
 };
@@ -137,18 +134,15 @@ exports.area = function (r) {
 exports.circumference = function (r) {
   return 2 * Math.PI * r;
 };
+```
 
-{% endhighlight %}
+注意，不能直接将exports变量指向一个值，因为这样等于切断了`exports`与`module.exports`的联系。
 
-注意，不能直接将exports变量指向一个函数。因为这样等于切断了exports与module.exports的联系。
+```javascript
+exports = function(x) {console.log(x)};
+```
 
-{% highlight javascript %}
-
-exports = function (x){ console.log(x);};
-
-{% endhighlight %}
-
-上面这样的写法是无效的，因为它切断了exports与module.exports之间的链接。
+上面这样的写法是无效的，因为`exports`不再指向`module.exports`了。
 
 下面的写法也是无效的。
 
@@ -160,17 +154,15 @@ exports.hello = function() {
 module.exports = 'Hello world';
 ```
 
-上面代码中，hello函数是无法对外输出的，因为`module.exports`被重新赋值了。
+上面代码中，`hello`函数是无法对外输出的，因为`module.exports`被重新赋值了。
 
-如果一个模块的对外接口，就是一个函数或对象时，不能使用exports输出，只能使用module.exports输出。
+这意味着，如果一个模块的对外接口，就是一个单一的值，不能使用`exports`输出，只能使用`module.exports`输出。
 
-{% highlight javascript %}
-
+```javascript
 module.exports = function (x){ console.log(x);};
+```
 
-{% endhighlight %}
-
-如果你觉得，exports与module.exports之间的区别很难分清，一个简单的处理方法，就是放弃使用exports，只使用module.exports。
+如果你觉得，`exports`与`module.exports`之间的区别很难分清，一个简单的处理方法，就是放弃使用`exports`，只使用`module.exports`。
 
 ## AMD规范与CommonJS规范的兼容性
 
@@ -178,8 +170,7 @@ CommonJS规范加载模块是同步的，也就是说，只有加载完成，才
 
 AMD规范使用define方法定义模块，下面就是一个例子：
 
-{% highlight javascript %}
-
+```javascript
 define(['package/lib'], function(lib){
   function foo(){
     lib.log('hello world!');
@@ -189,13 +180,11 @@ define(['package/lib'], function(lib){
     foo: foo
   };
 });
-
-{% endhighlight %}
+```
 
 AMD规范允许输出的模块兼容CommonJS规范，这时define方法需要写成下面这样：
 
-{% highlight javascript %}
-
+```javascript
 define(function (require, exports, module){
   var someModule = require("someModule");
   var anotherModule = require("anotherModule");
@@ -208,8 +197,7 @@ define(function (require, exports, module){
     anotherModule.doMoarAwesome();
   };
 });
-
-{% endhighlight %}
+```
 
 ## require命令
 
@@ -217,7 +205,7 @@ define(function (require, exports, module){
 
 Node.js使用CommonJS模块规范，内置的require命令用于加载模块文件。
 
-require命令的基本功能是，读入并执行一个JavaScript文件，然后返回该模块的exports对象。如果没有发现指定模块，会报错。
+`require`命令的基本功能是，读入并执行一个JavaScript文件，然后返回该模块的exports对象。如果没有发现指定模块，会报错。
 
 ```javascript
 // example.js
@@ -257,16 +245,25 @@ require('./example2.js')()
 
 ### 加载规则
 
-require命令接受模块名作为参数。
+`require`命令用于加载文件，后缀名默认为`.js`。
 
-（1）如果参数字符串以“/”开头，则表示加载的是一个位于绝对路径的模块文件。比如，`require('/home/marco/foo.js')`将加载/home/marco/foo.js。
+```javascript
+var foo = require('foo');
+//  等同于
+var foo = require('foo.js');
+```
 
-（2）如果参数字符串以“./”开头，则表示加载的是一个位于相对路径（跟当前执行脚本的位置相比）的模块文件。比如，`require('./circle')`将加载当前脚本同一目录的circle.js。
+根据参数的不同格式，`require`命令去不同路径寻找模块文件。
+
+（1）如果参数字符串以“/”开头，则表示加载的是一个位于绝对路径的模块文件。比如，`require('/home/marco/foo.js')`将加载`/home/marco/foo.js`。
+
+（2）如果参数字符串以“./”开头，则表示加载的是一个位于相对路径（跟当前执行脚本的位置相比）的模块文件。比如，`require('./circle')`将加载当前脚本同一目录的`circle.js`。
 
 （3）如果参数字符串不以“./“或”/“开头，则表示加载的是一个默认提供的核心模块（位于Node的系统安装目录中），或者一个位于各级node_modules目录的已安装模块（全局安装或局部安装）。
 
 举例来说，脚本`/home/user/projects/foo.js`执行了`require('bar.js')`命令，Node会依次搜索以下文件。
 
+- /usr/local/lib/node/bar.js
 - /home/user/projects/node_modules/bar.js
 - /home/user/node_modules/bar.js
 - /home/node_modules/bar.js
@@ -274,29 +271,25 @@ require命令接受模块名作为参数。
 
 这样设计的目的是，使得不同的模块可以将所依赖的模块本地化。
 
-（4）如果传入require方法的是一个目录，那么require会先查看该目录的package.json文件，然后加载main字段指定的脚本文件。否则取不到main字段，则会加载`index.js`文件或`index.node`文件。
+（4）如果参数字符串不以“./“或”/“开头，而且是一个路径，比如`require('example-module/path/to/file')`，则将先找到`example-module`的位置，然后再以它为参数，找到后续路径。
 
-举例来说，下面是一行普通的require命令语句。
+（5）如果指定的模块文件没有发现，Node会尝试为文件名添加`.js`、`.json`、`.node`后，再去搜索。`.js`件会以文本格式的JavaScript脚本文件解析，`.json`文件会以JSON格式的文本文件解析，`.node`文件会以编译后的二进制文件解析。
+
+（6）如果想得到`require`命令加载的确切文件名，使用`require.resolve()`方法。
+
+### 目录的加载规则
+
+通常，我们会把相关的文件会放在一个目录里面，便于组织。这时，最好为该目录设置一个入口文件，让`require`方法可以通过这个入口文件，加载整个目录。
+
+在目录中放置一个`package.json`文件，并且将入口文件写入`main`字段。下面是一个例子。
 
 ```javascript
-var utils = require( "utils" );
+// package.json
+{ "name" : "some-library",
+  "main" : "./lib/some-library.js" }
 ```
 
-Node寻找utils脚本的顺序是，首先寻找核心模块，然后是全局安装模块，接着是项目安装的模块。
-
-```bash
-[
-  '/usr/local/lib/node',
-  '~/.node_modules',
-  './node_modules/utils.js',
-  './node_modules/utils/package.json',
-  './node_modules/utils/index.js'
-]
-```
-
-（5）如果指定的模块文件没有发现，Node会尝试为文件名添加.js、.json、.node后，再去搜索。.js文件会以文本格式的JavaScript脚本文件解析，.json文件会以JSON格式的文本文件解析，.node文件会议编译后二进制文件解析。
-
-（6）如果想得到require命令加载的确切文件名，使用require.resolve()方法。
+`require`发现参数字符串指向一个目录以后，会自动查看该目录的`package.json`文件，然后加载`main`字段指定的入口文件。如果`package.json`文件没有`main`字段，或者根本就没有`package.json`文件，则会加载该目录下的`index.js`文件或`index.node`文件。
 
 ### 模块的缓存
 
@@ -311,9 +304,43 @@ require('./example.js').message
 
 上面代码中，连续三次使用require命令，加载同一个模块。第二次加载的时候，为输出的对象添加了一个message属性。但是第三次加载的时候，这个message属性依然存在，这就证明require命令并没有重新加载模块文件，而是输出了缓存。
 
-如果想要多次执行某个模块，可以输出一个函数，然后多次调用这个函数。
+如果想要多次执行某个模块，可以让该模块输出一个函数，然后每次`require`这个模块的时候，重新执行一下输出的函数。
 
-缓存是根据绝对路径识别模块的，如果同样的模块名，但是保存在不同的路径，require命令还是会重新加载该模块。
+注意，缓存是根据绝对路径识别模块的，如果同样的模块名，但是保存在不同的路径，require命令还是会重新加载该模块。
+
+### 环境变量NODE_PATH
+
+Node执行一个脚本时，会先查看环境变量`NODE_PATH`。它是一组以冒号分隔的绝对路径。在其他位置找不到指定模块时，Node会去这些路径查找。
+
+可以将NODE_PATH添加到`.bashrc`。
+
+```javascript
+export NODE_PATH="/usr/local/lib/node"
+```
+
+所以，如果遇到复杂的相对路径，比如下面这样。
+
+```javascript
+var myModule = require('../../../../lib/myModule');
+```
+
+有两种解决方法，一是将该文件加入`node_modules`目录，二是修改`NODE_PATH`环境变量，`package.json`文件可以采用下面的写法。
+
+```javascript
+{
+  "name": "node_path",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "NODE_PATH=lib node index.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
+```
+
+`NODE_PATH`是历史遗留下来的一个路径解决方案，通常不应该使用，而应该使用`node_modules`目录机制。
 
 ### 模块的循环加载
 
@@ -371,16 +398,16 @@ main.js  b2
 
 ### require.main
 
-正常的脚本调用时，require.main属性指向模块本身。
+`require`方法有一个`main`属性，可以用来判断模块是直接执行，还是被调用执行。
+
+直接执行的时候（`node module.js`），`require.main`属性指向模块本身。
 
 ```javascript
 require.main === module
 // true
 ```
 
-如果是在REPL环境使用require命令，则上面的表达式返回false。
-
-通过require.main属性，可以获取模块的信息。比如，module对象有一个filename属性（正常情况下等于 __filename），可以通过require.main.filename属性，得知当前模块的入口文件。
+调用执行的时候（通过`require`加载该脚本执行），上面的表达式返回false。
 
 ## 参考链接
 

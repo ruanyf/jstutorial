@@ -132,7 +132,7 @@ modifiedOn: 2014-05-18
 <h2 id="nodejs">草稿三：Node.js</h2>
 
 - [概述](nodejs/basic.html)
-- [CommonJS规范](nodejs/commonjs.html)
+- [Module](nodejs/module.html)
 - [package.json文件](nodejs/packagejson.html)
 - [npm模块管理器](nodejs/npm.html)
 - [fs模块](nodejs/fs.html)

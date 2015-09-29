@@ -225,35 +225,27 @@ npm允许使用特殊符号，指定所要使用的版本范围，假定当前�
 
 npm update 命令可以升级本地安装的模块。
 
-{% highlight bash %}
-
-npm update [package name]
-
-{% endhighlight %}
+```bash
+$ npm update [package name]
+```
 
 加上global参数，可以升级全局安装的模块。
 
-{% highlight bash %}
-
-npm update -global [package name]
-
-{% endhighlight %}
+```bash
+$ npm update -global [package name]
+```
 
 npm uninstall 命令，删除本地安装的模块。
 
-{% highlight bash %}
-
-npm uninstall [package name]
-
-{% endhighlight %}
+```bash
+$ npm uninstall [package name]
+```
 
 加上global参数，可以删除全局安装的模块。
 
-{% highlight bash %}
-
-sudo npm uninstall [package name] -global
-
-{% endhighlight %}
+```bash
+$ sudo npm uninstall [package name] -global
+```
 
 ## npm shrinkwrap
 
@@ -292,7 +284,7 @@ $ npm package <package name>
 
 ## npm run
 
-npm不经可以用于模块管理，还可以用于执行脚本。package.json文件有一个scripts字段，可以用于指定脚本命令，供npm直接调用。
+npm不仅可以用于模块管理，还可以用于执行脚本。`package.json`文件有一个`scripts`字段，可以用于指定脚本命令，供npm直接调用。
 
 ```javascript
 {
@@ -309,7 +301,9 @@ npm不经可以用于模块管理，还可以用于执行脚本。package.json�
 }
 ```
 
-上面代码中，scripts字段指定了两项命令lint和test。命令行输入`npm run lint`，就会执行`jshint **.js`，输入`npm run test`，就会执行`mocha test/`。
+上面代码中，`scripts`字段指定了两项命令`lint`和`test`。命令行输入`npm run lint`，就会执行`jshint **.js`，输入`npm run test`，就会执行`mocha test/`。
+
+`npm run`命令会自动在环境变量`$PATH`添加`node_modules/.bin`目录，所以`scripts`字段里面调用命令时不用加上路径，这就避免了全局安装NPM模块。
 
 npm内置了两个命令简写，`npm test`等同于执行`npm run test`，`npm start`等同于执行`npm run start`。
 
@@ -362,9 +356,7 @@ npm test
 如果希望一个操作的输出，是另一个操作的输入，可以借用Linux系统的管道命令，将两个操作连在一起。
 
 ```javascript
-
 "build-js": "browserify browser/main.js | uglifyjs -mc > static/bundle.js"
-
 ```
 
 但是，更方便的写法是引用其他`npm run`命令。

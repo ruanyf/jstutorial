@@ -380,83 +380,76 @@ isFinite(NaN) // false
 
 ### parseInt方法
 
-parseInt方法可以将字符串或小数转化为整数。如果字符串头部有空格，空格会被自动去除。
+`parseInt`方法可以将字符串或小数转化为整数。如果字符串头部有空格，空格会被自动去除。
 
-{% highlight javascript %}
-
-parseInt("123") // 123
+```javascript
+parseInt('123') // 123
 parseInt(1.23) // 1
 parseInt('   81') // 81
+```
 
-{% endhighlight %}
+将字符串转为整数的时候，是一个个字符依次转换，如果遇到不能转化为数字的字符，就不再进行下去，返回已经转好的部分。
 
-如果字符串包含不能转化为数字的字符，则不再进行转化，返回已经转好的部分。
+```javascript
+parseInt('8a') // 8
+parseInt('12**') // 12
+parseInt('12.34') // 12
+parseInt('0xf00') // 3840
+```
 
-{% highlight javascript %}
+上面代码中，`parseInt`的参数都是字符串，结果只返回字符串头部可以转为数字的部分。最后一行的`0xf00`之所以可以转为数字，因为这是一个十六进制的数。
 
-parseInt("8a") // 8
-parseInt("12**") // 12
-parseInt("12.34") // 12
+如果字符串的第一个字符不能转化为数字（正负号除外），返回`NaN`。
 
-{% endhighlight %}
+```javascript
+parseInt('abc') // NaN
+parseInt('.3') // NaN
+parseInt('') // NaN
+```
 
-如果字符串的第一个字符不能转化为数字（正负号除外），返回NaN。
+`parseInt`方法还可以接受第二个参数（2到36之间），表示被解析的值的进制。
 
-{% highlight javascript %}
-
-parseInt("abc") // NaN
-parseInt(".3") // NaN
-parseInt("") // NaN
-
-{% endhighlight %}
-
-parseInt方法还可以接受第二个参数（2到36之间），表示被解析的值的进制。
-
-{% highlight javascript %}
-
+```javascript
 parseInt(1000, 2) // 8
 parseInt(1000, 6) // 216
 parseInt(1000, 8) // 512
+```
 
-{% endhighlight %}
+上面代码中，二进制、六进制、八进制的1000，分别等于十进制的8、216和512。这意味着，可以用`parseInt`方法进行进制的转换。
 
-这意味着，可以用parseInt方法进行进制的转换。
+需要注意的是，进制转换的时候，参数是字符串或数值，`parseInt`的行为不一致。如果第一个参数是数值，会将这个数值先转为十进制，然后再应用第二个参数。
 
-{% highlight javascript %}
-
-parseInt("1011", 2) // 11
-
-{% endhighlight %}
-
-需要注意的是，如果第一个参数是数值，则会将这个数值先转为10进制，然后再应用第二个参数。
-
-{% highlight javascript %}
-
+```javascript
 parseInt(010, 10) // 8
 parseInt(010, 8) // NaN
 parseInt(020, 10) // 16
 parseInt(020, 8) // 14
+```
 
-{% endhighlight %}
+上面代码中，010会被先转为十进制8，然后再应用第二个参数，由于八进制中没有8这个数字，所以`parseInt(010, 8)`返回`NaN`。同理，`020`会被先转为十进制的16，然后再应用第二个参数。
 
-上面代码中，010会被先转为十进制8，然后再应用第二个参数，由于八进制中没有8这个数字，所以parseInt(010, 8)会返回NaN。同理，020会被先转为十进制16，然后再应用第二个参数。
+如果第一个参数是字符串，则会先将字符串转为数值，然后再转换进制。
 
-如果第一个参数是字符串，则不会将其先转为十进制。
+```javascript
+parseInt('010', 10) // 10
+parseInt('010', 2) // 2
+parseInt('010', 8) // 8
+```
 
-{% highlight javascript %}
+上面代码中，字符串`010`转为数值是`10`，分别对应二进制、八进制、十进制的2、8、10。
 
-parseInt("010") // 10
-parseInt("010",10) // 10
-parseInt("010",8) // 8
+可以看到，parseInt的很多复杂行为，都是由八进制的前缀0引发的。
 
-{% endhighlight %}
+```javascript
+parseInt(010, 8) // NaN
+parseInt('010', 8) // 8
+```
 
-可以看到，parseInt的很多复杂行为，都是由八进制的前缀0引发的。因此，ECMAScript 5不再允许parseInt将带有前缀0的数字，视为八进制数。但是，为了保证兼容性，大部分浏览器并没有部署这一条规定。
+因此，ECMAScript 5不再允许parseInt将带有前缀0的数字，视为八进制数，而是要求忽略这个`0`。但是，为了保证兼容性，大部分浏览器并没有部署这一条规定。
 
-另外，对于那些会自动转为科学计数法的数字，parseInt会出现一些奇怪的错误。
+另外，对于那些会自动转为科学计数法的数字，`parseInt`会将科学计数法的表示方法视为字符串，因此导致一些奇怪的结果。
 
-{% highlight javascript %}
-
+```javascript
 parseInt(1000000000000000000000.5, 10) // 1
 // 等同于
 parseInt('1e+21', 10) // 1
@@ -464,12 +457,11 @@ parseInt('1e+21', 10) // 1
 parseInt(0.0000008, 10) // 8
 // 等同于
 parseInt('8e-7', 10) // 8
-
-{% endhighlight %}
+```
 
 ### parseFloat方法
 
-parseFloat方法用于将一个字符串转为浮点数。
+`parseFloat`方法用于将一个字符串转为浮点数。
 
 如果字符串包含不能转化为浮点数的字符，则不再进行转化，返回已经转好的部分。
 

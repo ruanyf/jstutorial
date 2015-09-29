@@ -8,20 +8,18 @@ modifiedOn: 2014-10-24
 
 ## 概述
 
-每个项目的根目录下面，一般都有一个package.json文件，定义了这个项目所需要的各种模块，以及项目的配置信息（比如名称、版本、许可证等元数据）。npm install 命令根据这个配置文件，自动下载所需的模块，也就是配置项目所需的运行和开发环境。
+每个项目的根目录下面，一般都有一个`package.json`文件，定义了这个项目所需要的各种模块，以及项目的配置信息（比如名称、版本、许可证等元数据）。`npm install`命令根据这个配置文件，自动下载所需的模块，也就是配置项目所需的运行和开发环境。
 
 下面是一个最简单的package.json文件，只定义两项元数据：项目名称和项目版本。
 
-{% highlight javascript %}
-
+```javascript
 {
   "name" : "xxx",
   "version" : "0.0.0",
 }
+```
 
-{% endhighlight %}
-
-上面代码说明，package.json文件内部就是一个json对象，该对象的每一个成员就是当前项目的一项设置。比如name就是项目名称，version是版本（遵守“大版本.次要版本.小版本”的格式）。
+上面代码说明，`package.json`文件内部就是一个JSON对象，该对象的每一个成员就是当前项目的一项设置。比如`name`就是项目名称，`version`是版本（遵守“大版本.次要版本.小版本”的格式）。
 
 下面是一个更完整的package.json文件。
 
@@ -129,11 +127,9 @@ npm install express --save-dev
 bin项用来指定各个内部命令对应的可执行文件的位置。
 
 ```javascript
-
 "bin": {
   "someTool": "./bin/someTool.js"
 }
-
 ```
 
 上面代码指定，someTool 命令对应的可执行文件为 bin 子目录下的 someTool.js。Npm会寻找这个文件，在`node_modules/.bin/`目录下建立符号链接。在上面的例子中，someTool.js会建立符号链接`npm_modules/.bin/someTool`。由于`node_modules/.bin/`目录会在运行时加入系统的PATH变量，因此在运行npm时，就可以不带路径，直接通过命令来调用这些脚本。

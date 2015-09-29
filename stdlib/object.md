@@ -534,16 +534,16 @@ for (var i in o) {
 
 ### 可枚举性（enumerable）
 
-可枚举性（enumerable）用来控制所描述的属性，是否将被包括在for...in循环之中。具体来说，如果一个属性的enumerable为false，下面三个操作不会取到该属性。
+可枚举性（enumerable）用来控制所描述的属性，是否将被包括在`for...in`循环之中。具体来说，如果一个属性的`enumerable`为`false`，下面三个操作不会取到该属性。
 
-- for..in循环
-- Object.keys方法
-- JSON.stringify方法
+- `for..in`循环
+- `Object.keys`方法
+- `JSON.stringify`方法
 
-因此，enumerable可以用来设置“秘密”属性。
+因此，`enumerable`可以用来设置“秘密”属性。
 
 ```javascript
-var o = {a:1, b:2};
+var o = {a: 1, b: 2};
 
 o.c = 3;
 Object.defineProperty(o, 'd', {
@@ -554,7 +554,7 @@ Object.defineProperty(o, 'd', {
 o.d
 // 4
 
-for( var key in o ) console.log( o[key] ); 
+for( var key in o ) console.log( o[key] );
 // 1
 // 2
 // 3
@@ -564,31 +564,33 @@ Object.keys(o)  // ["a", "b", "c"]
 JSON.stringify(o // => "{a:1,b:2,c:3}"
 ```
 
-上面代码中，d属性的enumerable为false，所以一般的遍历操作都无法获取该属性，使得它有点像“秘密”属性，但还是可以直接获取它的值。
+上面代码中，`d`属性的`enumerable`为`false`，所以一般的遍历操作都无法获取该属性，使得它有点像“秘密”属性，但还是可以直接获取它的值。
 
-至于for...in循环和Object.keys方法的区别，在于前者包括对象继承自原型对象的属性，而后者只包括对象本身的属性。如果需要获取对象自身的所有属性，不管enumerable的值，可以使用Object.getOwnPropertyNames方法，详见下文。
+至于`for...in`循环和`Object.keys`方法的区别，在于前者包括对象继承自原型对象的属性，而后者只包括对象本身的属性。如果需要获取对象自身的所有属性，不管enumerable的值，可以使用`Object.getOwnPropertyNames`方法，详见下文。
 
-考虑到JSON.stringify方法会排除enumerable为false的值，有时可以利用这一点，为对象添加注释信息。
+考虑到`JSON.stringify`方法会排除`enumerable`为`false`的值，有时可以利用这一点，为对象添加注释信息。
 
 ```javascript
 var car = {
   id: 123,
-  color: red,
-  owner: 12
+  color: 'red',
+  ownerId: 12
 };
 
 var owner = {
   id: 12,
-  name: Javi
+  name: 'Jack'
 };
 
-Object.defineProperty( car, 'ownerOb', {value: owner} );
-car.ownerOb // {id:12, name:Javi}
+Object.defineProperty(car, 'ownerInfo', {value: owner, enumerable: false});
+car.ownerInfo // {id: 12, name: "Jack"}
 
 JSON.stringify(car) //  '{id: 123, color: "red", owner: 12}'
 ```
 
-上面代码中，owner对象作为注释，加入car对象。由于ownerOb属性的enumerable为false，所以JSON.stringify最后正式输出car对象时，会忽略ownerOb属性。
+上面代码中，`owner`对象作为注释，加入`car`对象。由于`ownerInfo`属性的`enumerable`为`false`，所以`JSON.stringify`最后正式输出`car`对象时，会忽略`ownerInfo`属性。
+
+这提示我们，如果你不愿意某些属性出现在JSON输出之中，可以把它的`enumerable`属性设为`false`。
 
 ### Object.getOwnPropertyNames()
 

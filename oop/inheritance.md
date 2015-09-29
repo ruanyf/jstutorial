@@ -6,11 +6,59 @@ modifiedOn: 2013-05-04
 category: oop
 ---
 
+## 概述
+
+JavaScript语言的所有对象，都有自己的继承链。也就是说，每个对象都有一个上级对象，称为prototype对象（只有`null`除外，它没有自己的prototype对象）。上级对象的属性和方法，都可以从下级对象上获取。
+
+ES5提供方法，可以读取当前对象的prototype对象，而没有提供改写它的标准方法。
+
+```javascript
+var p = Object.getPrototypeOf(obj);
+```
+
+所以，ES5一般不改写prototype对象，而是重新生成一个新的对象。
+
+```javascript
+var obj = Object.create(p);
+```
+
+但是，大多数浏览器都支持使用一个非标准的`__proto__`属性（前后各两个下划线），改写原型对象。
+
+```javascript
+var obj = {};
+var p = {};
+
+obj.__proto__ = p;
+obj.__proto__ === p // true
+```
+
+上面代码通过`__proto__`属性，将`p`对象设为`obj`对象的原型。
+
+下面是一个实际的例子。
+
+```javascript
+var a = { x: 1};
+var b = { __proto__: a};
+b.x // 1
+```
+
+上面代码中，`b`对象本身并没有`x`属性，但是JavaScript引擎通过`__proto__`属性，找到它的原型对象`a`，然后读取`a`的`x`属性。
+
+原型对象自己的`__proto__`属性，也可以指向其他对象，从而一级一级地形成“原型链”（prototype chain）。
+
+```javascript
+var a = { x: 1 };
+var b = { __proto__: a};
+var c = { __proto__: b};
+
+c.x // 1
+```
+
 ## 构造函数的继承
 
-JavaScript通过构造函数生成实例对象，所以要实现对象的继承，就是要实现构造函数的继承。
+这个小节介绍，如何让一个构造函数，继承另一个构造函数。
 
-假定有一个Shape构造函数。
+假定有一个`Shape`构造函数。
 
 ```javascript
 function Shape() {
@@ -25,7 +73,7 @@ Shape.prototype.move = function(x, y) {
 };
 ```
 
-Rectangle构造函数继承Shape。
+`Rectangle`构造函数继承`Shape`。
 
 ```javascript
 function Rectangle() {
@@ -42,143 +90,91 @@ rect instanceof Rectangle  // true
 rect instanceof Shape  // true
 
 rect.move(1, 1) // 'Shape moved.'
-
 ```
 
-上面代码表示，构造函数的继承分成两部分，一部分是子类调用父类构造方法，另一部分是子类的原型指向父类的原型。
+上面代码表示，构造函数的继承分成两部分，一部分是子类调用父类的构造方法，另一部分是子类的原型指向父类的原型。
 
-上面代码中，子类的原型是整体指向父类的原型。有时，只需单个方法指向原型，或修改父类同名方法，这时可以采用下面的写法。
+上面代码中，子类是整体继承父类。有时，只需要单个方法的继承，这时可以采用下面的写法。
 
 ```javascript
-
 ClassB.prototype.print = function() {
   ClassA.prototype.print.call(this);
   // some code
 }
-
 ```
 
-上面代码中，子类B的print方法先调用父类A的print方法，再部署自己的代码。这就等于继承了父类A的print方法。
+上面代码中，子类B的`print`方法先调用父类A的`print`方法，再部署自己的代码。这就等于继承了父类A的`print`方法。
 
-## \_\_proto\_\_属性
+## `__proto__`属性
 
-除了IE浏览器，其他浏览器都在Object对象的实例上，部署了一个非标准的\_\_proto\_\_属性（前后各两个下划线），指向该对象的原型对象，即构造函数的prototype属性。
-
-{% highlight javascript %}
-
-var o = new Object();
-
-o.__proto__ === Object.prototype
-// true
-
-o.__proto__ === o.constructor.prototype
-// true
-
-{% endhighlight %}
-
-上面代码首先新建了一个对象o，它的`__proto__`属性，指向构造函数（Object或o.constructor）的prototype属性。所以，两者比较以后，返回true。因此，获取一个实例对象的原型，直接的方法是`o.__proto__`，间接的方法是`o.constructor.prototype`。
-
-获取对象原型还有第三种方法，就是使用Object.getPrototypeOf方法。该方法的参数是实例对象，返回值是实例对象的原型对象。因此，上面代码改写如下。
+`__proto__`属性指向当前对象的原型对象，即构造函数的prototype属性。
 
 ```javascript
+var obj = new Object();
 
+obj.__proto__ === Object.prototype
+// true
+
+obj.__proto__ === o.constructor.prototype
+// true
+```
+
+上面代码首先新建了一个对象`obj`，它的`__proto__`属性，指向构造函数（`Object`或`obj.constructor`）的prototype属性。所以，两者比较以后，返回`true`。
+
+因此，获取实例对象`obj`的原型对象，有三种方法。
+
+- `o.__proto__`
+- `o.constructor.prototype`
+- `Object.getPrototypeOf(obj)`
+
+第三种方法的用法如下。
+
+```javascript
 var o = new Object();
 
 o.__proto__ === Object.getPrototypeOf(o)
 // true
-
 ```
 
-因此，可以使用Object.getPrototypeOf方法，检查浏览器是否支持\_\_proto\_\_属性，毕竟这个属性不是标准属性。
-
-{% highlight javascript %}
-
-Object.getPrototypeOf({ __proto__: null }) === null
-
-{% endhighlight %}
-
-上面代码将一个对象的`__proto__`属性设为null，然后使用Object.getPrototypeOf方法获取这个对象的原型，判断是否等于null。如果当前环境支持`__proto__`属性，两者的比较结果应该是true。否则，等式左边的值等于Object。
-
-有了`__proto__`属性，就可以很方便得设置实例对象的原型了。假定有三个对象machine、vehicle和car，其中machine是vehicle的原型，vehicle又是car的原型，只要两行代码就可以设置。
+可以使用Object.getPrototypeOf方法，检查浏览器是否支持`__proto__`属性，老式浏览器不支持这个属性。
 
 ```javascript
-
-vehicle.__proto__ = machine;
-car.__proto__ = vehicle;
-
+Object.getPrototypeOf({ __proto__: null }) === null
 ```
 
-下面是一个实例，通过`__proto__`属性与constructor.prototype两种方法，分别读取定义在原型对象上的属性。
+上面代码将一个对象的`__proto__`属性设为`null`，然后使用`Object.getPrototypeOf`方法获取这个对象的原型，判断是否等于`null`。如果当前环境支持`__proto__`属性，两者的比较结果应该是`true`。
 
-{% highlight javascript %}
+有了`__proto__`属性，就可以很方便得设置实例对象的原型了。假定有三个对象`machine`、`vehicle`和`car`，其中`machine`是`vehicle`的原型，`vehicle`又是`car`的原型，只要两行代码就可以设置。
 
+```javascript
+vehicle.__proto__ = machine;
+car.__proto__ = vehicle;
+```
+
+下面是一个实例，通过`__proto__`属性与`constructor.prototype`属性两种方法，分别读取定义在原型对象上的属性。
+
+```javascript
 Array.prototype.p = 'abc';
 var a = new Array();
 
 a.__proto__.p // abc
 a.constructor.prototype.p // abc
-
-{% endhighlight %}
+```
 
 显然，`__proto__`看上去更简洁一些。
 
-因为这个属性目前还不是标准，所以不应该在生产代码中使用。我们这里用它，只是因为它可以帮助理解继承。
-
-{% highlight javascript %}
-
-var a = { x: 1};
-
-var b = { __proto__: a};
-
-b.x
-// 1
-
-{% endhighlight %}
-
-上面代码中，b对象本身并没有x属性，但是JavaScript引擎通过`__proto__`属性，找到它的原型对象a，然后读取a的x属性。
-
-原型对象自己的`__proto__`属性，也可以指向其他对象，从而一级一级地形成“原型链”（prototype chain）。
-
-{% highlight javascript %}
-
-var a = { x: 1 };
-
-var b = { __proto__: a};
-
-var c = { __proto__: b};
-
-c.x
-// 1
-
-{% endhighlight %}
-
-空对象的`__proto__`属性，默认指向Object.prototype。
-
-{% highlight javascript %}
-
-var a = {};
-
-a.__proto__ === Object.prototype
-// true
-
-{% endhighlight %}
-
 通过构造函数生成实例对象时，实例对象的`__proto__`属性自动指向构造函数的prototype对象。
 
-{% highlight javascript %}
-
+```javascript
 var f = function (){};
-
 var a = {};
 
 f.prototype = a;
-
 var o = new f();
 
 o.__proto__ === a
 // true
-
-{% endhighlight %}
+```
 
 ## 属性的继承
 
