@@ -10,7 +10,7 @@ child_process模块用于新建子进程。子进程的运行结果储存在系�
 
 ## exec()
 
-exec方法用于执行bash命令。
+exec方法用于执行bash命令，它的参数是一个命令字符串。
 
 ```javascript
 var exec = require('child_process').exec;
@@ -26,7 +26,7 @@ var ls = exec('ls -l', function (error, stdout, stderr) {
 
 上面代码的exec方法用于新建一个子进程，然后缓存它的运行结果，运行结束后调用回调函数。
 
-exec方法的第一个参数是所要执行的shell命令，第二个参数是回调函数，该函数接受三个参数，分别是发生的错误、标准输出的显示结果、标准错误的显示结果。
+exec方法最多可以接受两个参数，第一个参数是所要执行的shell命令，第二个参数是回调函数，该函数接受三个参数，分别是发生的错误、标准输出的显示结果、标准错误的显示结果。
 
 由于标准输出和标准错误都是流对象（stream），可以监听data事件，因此上面的代码也可以写成下面这样。
 
@@ -43,10 +43,9 @@ child.stderr.on('data', function(data) {
 child.on('close', function(code) {
   console.log('closing code: ' + code);
 });
-
 ```
 
-上面的代码还表明，子进程本身有close事件，可以设置回调函数。
+上面的代码还表明，子进程本身有`close`事件，可以设置回调函数。
 
 上面的代码还有一个好处。监听data事件以后，可以实时输出结果，否则只有等到子进程结束，才会输出结果。所以，如果子进程运行时间较长，或者是持续运行，第二种写法更好。
 
@@ -84,24 +83,22 @@ child_process.exec('ls -l ' + path, function (err, data) {
 });
 ```
 
-上面代码表示，在bash环境下，`ls -l; user input`会直接运行。如果用户输入恶意代码，将会带来安全风险。因此，在有用户输入的情况下，最好不使用exec方法，而是使用execFile方法。
+上面代码表示，在bash环境下，`ls -l; user input`会直接运行。如果用户输入恶意代码，将会带来安全风险。因此，在有用户输入的情况下，最好不使用`exec`方法，而是使用`execFile`方法。
 
 ## execFile()
 
 execFile方法直接执行特定的程序，参数作为数组传入，不会被bash解释，因此具有较高的安全性。
 
 ```javascript
-
 var child_process = require('child_process');
 
 var path = ".";
 child_process.execFile('/bin/ls', ['-l', path], function (err, result) {
     console.log(result)
 });
-
 ```
 
-上面代码中，假定path来自用户输入，如果其中包含了分号或反引号，ls程序不理解它们的含义，因此也就得不到运行结果，安全性就得到了提高。
+上面代码中，假定`path`来自用户输入，如果其中包含了分号或反引号，ls程序不理解它们的含义，因此也就得不到运行结果，安全性就得到了提高。
 
 ## spawn()
 
@@ -127,7 +124,7 @@ ls.on('close', function (code) {
 
 spawn方法接受两个参数，第一个是可执行文件，第二个是参数数组。
 
-spawn对象返回一个对象，代表子进程。该对象部署了EventEmitter接口，它的data事件可以监听，从而得到子进程的输出结果。
+spawn对象返回一个对象，代表子进程。该对象部署了EventEmitter接口，它的`data`事件可以监听，从而得到子进程的输出结果。
 
 spawn方法与exec方法非常类似，只是使用格式略有区别。
 

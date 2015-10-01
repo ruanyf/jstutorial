@@ -80,7 +80,7 @@ var longString = 'Long '
 另外，有一种利用多行注释，生成多行字符串的变通方法。
 
 ```javascript
-function () { /*
+(function () { /*
 line 1
 line 2
 line 3
