@@ -120,7 +120,7 @@ describe('Counter', function() {
 
 ```javascript
 // assert风格
-assert.equal(event.detail.item, '(item).);
+assert.equal(event.detail.item, '(item)‘);
 
 // expect风格
 expect(event.detail.item).to.equal('(item)');
