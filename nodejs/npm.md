@@ -35,6 +35,25 @@ $ npm -v
 $ npm config list -l
 ```
 
+## npm set
+
+`npm set`用来设置环境变量。
+
+```bash
+$ npm set init-author-name 'Your name'
+$ npm set init-author-email 'Your email'
+$ npm set init-author-url 'http://yourdomain.com'
+$ npm set init-license 'MIT'
+```
+
+上面命令等于为`npm init`设置了默认值，以后执行`npm init`的时候，`package.json`的作者姓名、邮件、主页、许可证字段就会自动写入预设的值。这些信息会存放在用户主目录的` ~/.npmrc`文件，使得用户不用每个项目都输入。如果某个项目有不同的设置，可以针对该项目运行`npm config`。
+
+```bash
+$ npm set save-exact true
+```
+
+上面命令设置加入模块时，`package.json`将记录模块的确切版本，而不是一个可选的版本范围。
+
 ## npm info
 
 `npm info`命令可以查看每个模块的具体信息。比如，查看underscore模块的信息。
@@ -168,6 +187,16 @@ $ npm install sax -S
 $ npm install node-tap -D
 ```
 
+如果要安装beta版本的模块，需要使用下面的命令。
+
+```bash
+# 安装最新的beta版
+$ npm install <module-name>@beta (latest beta)
+
+# 安装指定的beta版
+$ npm install <module-name>@1.3.1-beta.3
+```
+
 `npm install`默认会安装dependencies字段和devDependencies字段中的所有模块，如果使用production参数，可以只安装dependencies字段的模块。
 
 ```bash
@@ -271,15 +300,13 @@ $ npm shrinkwrap --dev
 
 ## npm prune
 
-`npm prune`命令与`npm shrinkwrap`配套使用。
+`npm prune`命令与`npm shrinkwrap`配套使用。使用`npm shrinkwrap`的时候，有时可能存在某个已经安装的模块不在`dependencies`字段内的情况，这时`npm shrinkwrap`就会报错。
 
-使用`npm shrinkwrap`的时候，有时可能存在某个已经安装的模块不在dependencies字段内的情况，这时`npm shrinkwrap` 就会报错。
-
-`npm prune`命令可以移除所有不在dependencies字段内的模块。所有指定模块名，则移除单个模块。
+`npm prune`命令可以移除所有不在`dependencies`字段内的模块。如果指定模块名，则移除指定的模块。
 
 ```bash
 $ npm prune
-$ npm package <package name>
+$ npm prune <package name>
 ```
 
 ## npm run
@@ -320,38 +347,32 @@ Available scripts in the user-service package:
     mocha test/
 ```
 
-下面是另一个package.json文件的例子。
+下面是另一个`package.json`文件的例子。
 
-{% highlight javascript %}
-
+```javascript
 "scripts": {
   "watch": "watchify client/main.js -o public/app.js -v",
   "build": "browserify client/main.js -o public/app.js",
   "start": "npm run watch & nodemon server.js",
   "test": "node test/all.js"
 },
+```
 
-{% endhighlight %}
+上面代码在`scripts`项，定义了四个别名，每个别名都有对应的脚本命令。
 
-上面代码在scripts项，定义了四个别名，每个别名都有对应的脚本命令。
+```bash
+$ npm run watch
+$ npm run build
+$ npm run start
+$ npm run test
+```
 
-{% highlight bash %}
+其中，`start`和`test`属于特殊命令，可以省略`run`。
 
-npm run watch
-npm run build
-npm run start
-npm run test
-
-{% endhighlight %}
-
-其中，start和test属于特殊命令，可以省略run。
-
-{% highlight bash %}
-
-npm start
-npm test
-
-{% endhighlight %}
+```bash
+$ npm start
+$ npm test
+```
 
 如果希望一个操作的输出，是另一个操作的输入，可以借用Linux系统的管道命令，将两个操作连在一起。
 
@@ -380,12 +401,12 @@ npm test
 }
 ```
 
-写在scripts属性中的命令，也可以在`node_modules/.bin`目录中直接写成bash脚本。
+写在`scripts`属性中的命令，也可以在`node_modules/.bin`目录中直接写成bash脚本。下面是一个bash脚本。
 
 ```javascript
 #!/bin/bash
 
-cd site/main;
+cd site/main
 browserify browser/main.js | uglifyjs -mc > static/bundle.js
 ```
 
@@ -405,9 +426,149 @@ browserify browser/main.js | uglifyjs -mc > static/bundle.js
 }
 ```
 
-上面代码指定`npm test`，实际运行`mocha test/`。
+上面代码指定`npm test`，实际运行`mocha test/`。如果要通过`npm test`命令，将参数传到mocha，则参数之前要加上两个连词线。
 
-如果要通过`npm test`命令，将参数传到mocha，则参数之前要加上两个连词线。比如，`npm run test -- anothertest.js`，实际运行的是`mocha test/ anothertest.js`。
+```bash
+$ npm run test -- anothertest.js
+# 等同于
+$ mocha test/ anothertest.js
+```
+
+上面命令表示，mocha要运行所有`test`子目录的测试脚本，以及另外一个测试脚本`anothertest.js`。
+
+### scripts脚本命令最佳实践
+
+`scripts`字段的脚本命令，有一些最佳实践，可以方便开发。首先，安装`npm-run-all`模块。
+
+```bash
+$ npm install npm-run-all --save-dev
+```
+
+这个模块用于运行多个`scripts`脚本命令。
+
+```bash
+# 继发执行
+$ npm-run-all build:html build:js
+# 等同于
+$ npm run build:html && npm run build:js
+
+# 并行执行
+$ npm-run-all --parallel watch:html watch:js
+# 等同于
+$ npm run watch:html & npm run watch:js
+
+# 混合执行
+$ npm-run-all clean lint --parallel watch:html watch:js
+# 等同于
+$ npm-run-all clean lint
+$ npm-run-all --parallel watch:html watch:js
+
+# 通配符
+$ npm-run-all --parallel watch:*
+```
+
+（1）start脚本命令
+
+`start`脚本命令，用于启动应用程序。
+
+```javascript
+"start": "npm-run-all --parallel dev serve"
+```
+
+上面命令并行执行`dev`脚本命令和`serve`脚本命令，等同于下面的形式。
+
+```bash
+$ npm run dev & npm run serve
+```
+
+（2）dev脚本命令
+
+`dev`脚本命令，规定开发阶段所要做的处理，比如构建网页资源。
+
+```javascript
+"dev": "npm-run-all dev:*"
+```
+
+上面命令用于继发执行所有`dev`的子命令。
+
+```javascript
+"predev:sass": "node-sass --source-map src/css/hoodie.css.map --output-style nested src/sass/base.scss src/css/hoodie.css"
+```
+
+上面命令将sass文件编译为css文件，并生成source map文件。
+
+```javascript
+"dev:sass": "node-sass --source-map src/css/hoodie.css.map --watch --output-style nested src/sass/base.scss src/css/hoodie.css"
+```
+
+上面命令会监视sass文件的变动，只要有变动，就自动将其编译为css文件。
+
+```javascript
+"dev:autoprefix": "postcss --use autoprefixer --autoprefixer.browsers \"> 5%\" --output src/css/hoodie.css src/css/hoodie.css"
+```
+
+上面命令为css文件加上浏览器前缀，限制条件是只考虑市场份额大于5%的浏览器。
+
+（3）serve脚本命令
+
+`serve`脚本命令用于启动服务。
+
+```javascript
+"serve": "live-server dist/ --port=9090"
+```
+
+上面命令启动服务，用的是[live-server](http://npmjs.com/package/live-server)模块，将服务启动在9090端口，展示`dist`子目录。
+
+`live-server`模块有三个功能。
+
+- 启动一个HTTP服务器，展示指定目录的`index.html`文件，通过该文件加载各种网络资源，这是`file://`协议做不到的。
+- 添加自动刷新功能。只要指定目录之中，文件有任何变化，它就会刷新页面。
+- `npm run serve`命令执行以后，自动打开浏览器。、
+
+以前，上面三个功能需要三个模块来完成：`http-server`、`live-reload`和`opener`，现在只要`live-server`一个模块就够了。
+
+（4）test脚本命令
+
+`test`脚本命令用于执行测试。
+
+```javascript
+"test": "npm-run-all test:*",
+"test:lint": "sass-lint --verbose --config .sass-lint.yml src/sass/*"
+```
+
+上面命令规定，执行测试时，运行`lint`脚本，检查脚本之中的语法错误。
+
+（5）prod脚本命令
+
+`prod`脚本命令，规定进入生产环境时需要做的处理。
+
+```javascript
+"prod": "npm-run-all prod:*",
+"prod:sass": "node-sass --output-style compressed src/sass/base.scss src/css/prod/hoodie.min.css",
+"prod:autoprefix": "postcss --use autoprefixer --autoprefixer.browsers "> 5%" --output src/css/prod/hoodie.min.css src/css/prod/hoodie.min.css"
+```
+
+上面命令将sass文件转为css文件，并加上浏览器前缀。
+
+（6）help脚本命令
+
+`help`脚本命令用于展示帮助信息。
+
+```javascript
+"help": "markdown-chalk --input DEVELOPMENT.md"
+```
+
+上面命令之中，`markdown-chalk`模块用于将指定的markdown文件，转为彩色文本显示在终端之中。
+
+（7）docs脚本命令
+
+`docs`脚本命令用于生成文档。
+
+```javascript
+"docs": "kss-node --source src/sass --homepage ../../styleguide.md"
+```
+
+上面命令使用`kss-node`模块，提供源码的注释生成markdown格式的文档。
 
 ### pre- 和 post- 脚本
 
@@ -581,25 +742,24 @@ root权限了。
 export PATH=~/npm/bin:$PATH
 ```
 
-## npm publish
+## npm adduser
 
-在发布你的模块之前，需要先设定个人信息。
+`npm adduser`用于在npmjs.com注册一个用户。
 
 ```bash
-$ npm set init.author.name “张三”
-$ npm set init.author.email “zhangsan@email.com”
-$ npm set init.author.url “http://your.url.com"
+$ npm adduser
+Username: YOUR_USER_NAME
+Password: YOUR_PASSWORD
+Email: YOUR_EMAIL@domain.com
 ```
 
-这些信息会存放在用户主目录的` ~/.npmrc`文件，使得用户不用每个项目都输入。如果遇到某个模块的作者信息，与全局设置不同，可以在项目目录中，单独设置一次上面这些命令。
+## npm publish
 
-然后，向npm系统申请用户名。
+`npm publish`用于将当前模块发布到`npmjs.com`。执行之前，需要向`npmjs.com`申请用户名。
 
 ```bash
 $ npm adduser
 ```
-
-运行上面的命令之后，屏幕上会提示输入用户名，然后是输入Email地址和密码。
 
 如果已经注册过，就使用下面的命令登录。
 
@@ -611,6 +771,12 @@ $ npm login
 
 ```bash
 $ npm publish
+```
+
+如果当前模块是一个beta版，比如`1.3.1-beta.3`，那么发布的时候需要使用`tag`参数。
+
+```bash
+$ npm publish --tag beta
 ```
 
 ## npm version
@@ -639,8 +805,19 @@ $ npm version patch -m "Version %s - xxxxxx"
 
 由于更新npm网站的唯一方法，就是发布一个新的版本。因此，除了第一次发布，这个命令与`npm publish`几乎是配套的，先使用它，再使用`npm publish`。
 
+## npm deprecate
+
+如果想废弃某个版本的模块，可以使用`npm deprecate`命令。
+
+```bash
+$ npm deprecate my-thing@"< 0.2.3" "critical bug fixed in v0.2.3"
+```
+
+运行上面的命令以后，小于0.2.3版本的模块的`package.json`都会写入一行警告，用户安装这些版本时，这行警告就会在命令行显示。
+
 ## 参考链接
 
 - James Halliday, [task automation with npm run](http://substack.net/task_automation_with_npm_run): npm run命令（package.json文件的script属性）的用法
 - Keith Cirkel, [How to Use npm as a Build Tool](http://blog.keithcirkel.co.uk/how-to-use-npm-as-a-build-tool/)
 - justjs, [npm link: developing your own npm modules without tears](http://justjs.com/posts/npm-link-developing-your-own-npm-modules-without-tears)
+- hoodie-css, [Development Environment Help](https://github.com/hoodiehq/hoodie-css/blob/feature/build-automation/DEVELOPMENT.md)

@@ -10,24 +10,20 @@ modifiedOn: 2013-12-15
 
 JavaScript原生提供一个Object对象（注意起首的O是大写），所有其他对象都继承自这个对象。Object本身也是一个构造函数，可以直接通过它来生成新对象。
 
-{% highlight javascript %}
-
+```javascript
 var o = new Object();
-
-{% endhighlight %}
+```
 
 Object作为构造函数使用时，可以接受一个参数。如果该参数是一个对象，则直接返回这个对象；如果是一个原始类型的值，则返回该值对应的包装对象。
 
-{% highlight javascript %}
-
+```javascript
 var o1 = {a:1};
 var o2 = new Object(o1);
 o1 === o2 // true
 
 new Object(123) instanceof Number
 // true
-
-{% endhighlight %}
+```
 
 > 注意，通过new Object() 的写法生成新对象，与字面量的写法 o = {} 是等价的。
 
@@ -72,8 +68,7 @@ o.print() // Object
 
 Object本身当作工具方法使用时，可以将任意值转为对象。其中，原始类型的值转为对应的包装对象（参见《原始类型的包装对象》一节）。
 
-{% highlight javascript %}
-
+```javascript
 Object() // 返回一个空对象
 Object(undefined) // 返回一个空对象
 Object(null) // 返回一个空对象
@@ -85,8 +80,7 @@ Object(true) // 等同于 new Boolean(true)
 Object([]) // 返回原数组
 Object({}) // 返回原对象
 Object(function(){}) // 返回原函数
-
-{% endhighlight %}
+```
 
 上面代码表示Object函数将各种值，转为对应的对象。
 
@@ -104,20 +98,18 @@ function isObject(value) {
 
 Object.keys方法和Object.getOwnPropertyNames方法很相似，一般用来遍历对象的属性。它们的参数都是一个对象，都返回一个数组，该数组的成员都是对象自身的（而不是继承的）所有属性名。它们的区别在于，Object.keys方法只返回可枚举的属性（关于可枚举性的详细解释见后文），Object.getOwnPropertyNames方法还返回不可枚举的属性名。
 
-{% highlight javascript %}
-
+```javascript
 var o = {
 	p1: 123,
 	p2: 456
-}; 
+};
 
 Object.keys(o)
 // ["p1", "p2"]
 
 Object.getOwnPropertyNames(o)
 // ["p1", "p2"]
-
-{% endhighlight %}
+```
 
 上面的代码表示，对于一般的对象来说，这两个方法返回的结果是一样的。只有涉及不可枚举属性时，才会有不一样的结果。
 
@@ -222,13 +214,11 @@ o.valueOf() === o // true
 
 valueOf方法的主要用途是，JavaScript自动类型转换时会默认调用这个方法（详见上一章《数据类型转换》一节）。
 
-{% highlight javascript %}
-
+```javascript
 var o = new Object();
 
 1 + o // "1[object Object]"
-
-{% endhighlight %}
+```
 
 上面代码将对象o与数字1相加，这时JavaScript就会默认调用valueOf()方法。所以，如果自定义valueOf方法，就可以得到想要的结果。
 
@@ -247,66 +237,65 @@ o.valueOf = function (){return 2;};
 
 toString方法的作用是返回一个对象的字符串形式。
 
-{% highlight javascript %}
-
+```javascript
 var o1 = new Object();
 o1.toString() // "[object Object]"
 
 var o2 = {a:1};
 o2.toString() // "[object Object]"
+```
 
-{% endhighlight %}
+上面代码表示，对于一个对象调用toString方法，会返回字符串`[object Object]`。
 
-上面代码表示，对于一个对象调用toString方法，会返回字符串[object Object]。
+字符串`[object Object]`本身没有太大的用处，但是通过自定义toString方法，可以让对象在自动类型转换时，得到想要的字符串形式。
 
-字符串[object Object]本身没有太大的用处，但是通过自定义toString方法，可以让对象在自动类型转换时，得到想要的字符串形式。
-
-{% highlight javascript %}
+```javascript
 var o = new Object();
 
 o.toString = function (){ return 'hello' };
 
 o + ' ' + 'world' // "hello world"
-{% endhighlight %}
+```
 
 上面代码表示，当对象用于字符串加法时，会自动调用toString方法。由于自定义了toString方法，所以返回字符串hello world。
 
 数组、字符串和函数都分别部署了自己版本的toString方法。
 
-{% highlight javascript %}
-
+```javascript
 [1,2,3].toString() // "1,2,3"
 
 '123'.toString() // "123"
 
 (function (){return 123}).toString() // "function (){return 123}"
-
-{% endhighlight %}
+```
 
 ### toString()的应用：判断数据类型
 
-toString方法的主要用途是返回对象的字符串形式，除此之外，还有一个重要的作用，就是判断一个值的类型。
+`toString`方法的主要用途是返回对象的字符串形式，除此之外，还有一个重要的作用，就是判断一个值的类型。
 
-{% highlight javascript %}
-
+```javascript
 var o = {};
 o.toString() // "[object Object]"
-
-{% endhighlight %}
+```
 
 上面代码调用空对象的toString方法，结果返回一个字符串“object Object”，其中第二个Object表示该值的准确类型。这是一个十分有用的判断数据类型的方法。
 
-实例对象的toString方法，实际上是调用Object.prototype.toString方法。使用call方法，可以在任意值上调用Object.prototype.toString方法，从而帮助我们判断这个值的类型。不同数据类型的toString方法返回值如下：
+实例对象的`toString`方法，实际上是调用`Object.prototype.toString`方法。使用`call`方法，可以在任意值上调用`Object.prototype.toString`方法，从而帮助我们判断这个值的类型。不同数据类型的`toString`方法返回值如下：
 
-- 数值：返回[object Number]。
-- 字符串：返回[object String]。
-- 布尔值：返回[object Boolean]。
-- undefined：返回[object Undefined]。
-- null：返回[object Null]。
-- 对象：返回"[object " + 构造函数的名称 + "]" 。
+- 数值：返回`[object Number]`。
+- 字符串：返回`[object String]`。
+- 布尔值：返回`[object Boolean]`。
+- undefined：返回`[object Undefined]`。
+- null：返回`[object Null]`。
+- 数组：返回`[object Array]`。
+- arguments对象：返回`[object Arguments]`。
+- 函数：返回`[object Function]`。
+- Error对象：返回`[object Error]`。
+- Date对象：返回`[object Date]`。
+- RegExp对象：返回`[object RegExp]`。
+- 其他对象：返回`[object " + 构造函数的名称 + "]`。
 
-{% highlight javascript %}
-
+```javascript
 Object.prototype.toString.call(2) // "[object Number]"
 Object.prototype.toString.call('') // "[object String]"
 Object.prototype.toString.call(true) // "[object Boolean]"
@@ -315,13 +304,11 @@ Object.prototype.toString.call(null) // "[object Null]"
 Object.prototype.toString.call(Math) // "[object Math]"
 Object.prototype.toString.call({}) // "[object Object]"
 Object.prototype.toString.call([]) // "[object Array]"
+```
 
-{% endhighlight %}
+可以利用这个特性，写出一个比`typeof`运算符更准确的类型判断函数。
 
-可以利用这个特性，写出一个比typeof运算符更准确的类型判断函数。
-
-{% highlight javascript %}
-
+```javascript
 var type = function (o){
 	var s = Object.prototype.toString.call(o);
 		return s.match(/\[object (.*?)\]/)[1].toLowerCase();
@@ -334,13 +321,11 @@ type(null); // "null"
 type(); // "undefined"
 type(/abcd/); // "regex"
 type(new Date()); // "date"
-
-{% endhighlight %}
+```
 
 在上面这个type函数的基础上，还可以加上专门判断某种类型数据的方法。
 
-{% highlight javascript %}
-
+```javascript
 ['Null',
  'Undefined',
  'Object',
@@ -363,8 +348,7 @@ type.isObject({}); // true
 type.isNumber(NaN); // false
 type.isElement(document.createElement('div')); // true
 type.isRegExp(/abc/); // true
-
-{% endhighlight %}
+```
 
 ## 对象的属性模型
 
@@ -372,10 +356,9 @@ ECMAScript 5对于对象的属性，提出了一个精确的描述模型。
 
 ### 属性的attributes对象，Object.getOwnPropertyDescriptor()
 
-在JavaScript内部，每个属性都有一个对应的attributes对象，保存该属性的一些元信息。使用Object.getOwnPropertyDescriptor方法，可以读取attributes对象。
+在JavaScript内部，每个属性都有一个对应的attributes对象，保存该属性的一些元信息。使用`Object.getOwnPropertyDescriptor`方法，可以读取attributes对象。
 
-{% highlight javascript %}
-
+```javascript
 var o = { p: 'a' };
 
 Object.getOwnPropertyDescriptor(o, 'p')
@@ -384,24 +367,23 @@ Object.getOwnPropertyDescriptor(o, 'p')
 //   enumerable: true,
 //   configurable: true
 // }
+```
 
-{% endhighlight %}
-
-上面代码表示，使用Object.getOwnPropertyDescriptor方法，读取o对象的p属性的attributes对象。
+上面代码表示，使用`Object.getOwnPropertyDescriptor`方法，读取`o`对象的`p`属性的attributes对象。
 
 attributes对象包含如下元信息：
 
-- **value**：表示该属性的值，默认为undefined。
+- **value**：表示该属性的值，默认为`undefined`。
 
-- **writable**：表示该属性的值（value）是否可以改变，默认为true。
+- **writable**：表示该属性的值（value）是否可以改变，默认为`true`。
 
-- **enumerable**： 表示该属性是否可枚举，默认为true，也就是该属性会出现在for...in和Object.keys()等操作中。
+- **enumerable**： 表示该属性是否可枚举，默认为true。如果设为false，会使得某些操作（比如`for...in`循环、`Object.keys()`）跳过该属性。
 
-- **configurable**：表示“可配置性”，默认为true。如果设为false，表示无法删除该属性，也不得改变attributes对象（value属性除外），也就是configurable属性控制了attributes对象的可写性。
+- **configurable**：表示“可配置性”，默认为true。如果设为false，将阻止某些操作改写该属性，比如，无法删除该属性，也不得改变该属性的attributes对象（value属性除外），也就是说，configurable属性控制了attributes对象的可写性。
 
-- **get**：表示该属性的取值函数（getter），默认为undefined。
+- **get**：表示该属性的取值函数（getter），默认为`undefined`。
 
-- **set**：表示该属性的存值函数（setter），默认为undefined。
+- **set**：表示该属性的存值函数（setter），默认为`undefined`。
 
 ### Object.defineProperty()，Object.defineProperties()
 

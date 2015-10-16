@@ -21,9 +21,9 @@ Web应用程序越来越复杂，这意味着有更多的可能出错。测试�
 
 ### 单元测试
 
-单元测试（unit testing）指的是以软件的单元为单位，对软件进行测试。单元（unit）可以是一个函数，也可以是一个模块或组件。它的基本特征就是，只要输入不变，必定返回同样的输出。
+单元测试（unit testing）指的是以软件的单元（unit）为单位，对软件进行测试。单元可以是一个函数，也可以是一个模块或组件。它的基本特征就是，只要输入不变，必定返回同样的输出。
 
-单元测试这个词，本身就暗示，软件应该以模块化结构存在。每个模块的运作，是独立于其他模块的。一个软件越容易写单元测试，往往暗示着它的模块化结构越好，各模块之间的耦合就越弱；越难写单元测试，或者每次单元测试，不得不模拟大量的外部条件，很可能暗示软件的模块化结构越差，模块之间存在较强的耦合。
+“单元测试”这个词，本身就暗示，软件应该以模块化结构存在。每个模块的运作，是独立于其他模块的。一个软件越容易写单元测试，往往暗示着它的模块化结构越好，各模块之间的耦合就越弱；越难写单元测试，或者每次单元测试，不得不模拟大量的外部条件，很可能暗示软件的模块化结构越差，模块之间存在较强的耦合。
 
 单元测试的要求是，每个模块都必须有单元测试，而软件由模块组成。
 
@@ -35,22 +35,36 @@ Web应用程序越来越复杂，这意味着有更多的可能出错。测试�
 
 单元测试应该避免依赖性问题，比如不存取数据库、不访问网络等等，而是使用工具虚拟出运行环境。这种虚拟使得测试成本最小化，不用花大力气搭建各种测试环境。
 
-单元测试的步骤
+一般来说，单元测试的步骤如下。
 
 - 准备所有的测试条件
 - 调用（触发）所要测试的函数
 - 验证运行结果是否正确
 - 还原被修改的记录
 
-### 集成测试
+### 其他测试类型
 
-集成测试（Integration test）指的是多个部分在一起测试，比如在一个测试数据库上，测试数据库连接模块。
+（1）集成测试
 
-### 功能测试
+集成测试（Integration test）指的是多个部分在一起测试，比如测试一个数据库连接模块，是否能够连接数据库。
+
+（2）功能测试
 
 功能测试（Functional test）指的是，自动测试整个应用程序的某个功能，比如使用Selenium工具自动打开浏览器运行程序。
 
+（3）端对端测试
+
+端对端测试（End-to-End testing）指的是全链路测试，即从开始端到终止端的测试，比如测试从用户界面、通过网络、经过应用程序处理、到达数据库，是否能够返回正确结果。端对端测试的目的是，确保整个系统能够正常运行，各个子系统之间依赖关系正常，数据能够在子系统之间、模块之间正确传递。
+
+（4）冒烟测试
+
+冒烟测试（smoke testing）指的是，正式的全面测试开始之前，对主要功能进行的预测试。它的主要目的是，确认主要功能能否满足需要，软件是否能运行。冒烟测试可以是手工测试，也可以是自动化测试。
+
+这个名字最早来自对电子元件的测试，第一次对电子元件通电，看看它是否会冒烟。如果没有冒烟，说明通过了测试；如果电流达到某个临界点之后，才出现冒烟，这时可以评估是否能够接受这个临界点。
+
 ## 开发模式
+
+测试不仅能够验证软件功能、保证代码质量，也能够影响软件开发的模式。
 
 ### TDD
 
@@ -90,7 +104,7 @@ BDD是“行为驱动的开发”（Behavior-Driven Development）的简称，�
 
 BDD认为，不应该针对代码的实现细节写测试，而是要针对行为写测试。BDD测试的是行为，即软件应该怎样运行。
 
-BDD接口提供以下四个方法。
+BDD接口提供以下方法。
 
 - describe()
 - it()
@@ -108,6 +122,76 @@ describe('Counter', function() {
     var expectedCount = counter.count + 1;
     counter.tick();
     assert.equal(counter.count, expectedCount);
+  });
+});
+```
+
+下面是一个BDD开发的示例。现在，需要开发一个`Foo`类，该类的实例有一个`sayHi`方法，会对类参数说“Hi”。这就是`Foo`类的规格，根据这个规格，我们可以写出测试用例文件`foo.spec.js`。
+
+```javascript
+describe('Simple object', function() {
+  var foo;
+
+  beforeEach(function() {
+    foo = new Foo('John');
+  });
+
+  it('should say hi', function() {
+    expect(foo.sayHi()).toEqual('John says hi!');
+  });
+});
+```
+
+有了测试用例以后，我们再写出实际的脚本文件`foo.js`。
+
+```javascript
+function Foo(name) {
+  this.name = name;
+}
+
+Foo.prototype.sayHi = function() {
+  return this.name + ' says hi!';
+};
+```
+
+为了把测试用例与脚本文件分开，我们通常把测试用例放在`test`子目录之中。然后，我们就可以使用Mocha、Jasmine等测试框架，执行测试用例，看看脚本文件是否通过测试。
+
+### BDD术语
+
+（1）测试套件
+
+测试套件（test suite）指的是，一组针对软件规格的某个方面的测试用例。也可以看作，对软件的某个方面的描述（describe）。
+
+测试套件由一个`describe`函数构成，它接受两个参数：第一个参数是字符串，表示测试套件的名字或标题，表示将要测试什么；第二个参数是函数，用来实现这个测试套件。
+
+```javascript
+describe("A suite", function() {
+  // ...
+});
+```
+
+（2）测试用例
+
+测试用例（test case）指的是，针对软件一个功能点的测试，是软件测试的最基本单位。一组相关的测试用例，构成一个测试套件。测试用例由`it`函数构成，它与`describe`函数一样，接受两个参数：第一个参数是字符串，表示测试用例的标题；第二个参数是函数，用来实现这个测试用例。
+
+```javascript
+describe("A suite", function() {
+  it("contains spec with an expectation", function() {
+    // ...
+  });
+});
+```
+
+（3）断言
+
+断言（assert）指的是对代码行为的预期。一个测试用例内部，包含一个或多个断言（assert）。
+
+断言会返回一个布尔值，表示代码行为是否符合预期。测试用例之中，只要有一个断言为false，这个测试用例就会失败，只有所有断言都为`true`，测试用例才会通过。
+
+```javascript
+describe("A suite", function() {
+  it("contains spec with an expectation", function() {
+    expect(true).toBe(true);
   });
 });
 ```
@@ -174,19 +258,29 @@ beverages.should.have.property('tea').with.length(3);
 
 ## Mocha.js
 
-Mocha是一个测试框架，也就是运行测试的工具。它使用下面的命令安装。
+测试框架是运行测试的工具。目前，常用的测试框架有下面这些。
+
+- Mocha
+- [Tape](https://github.com/substack/tape/)
+- [zuul](https://github.com/defunctzombie/zuul/)
+
+Mocha使用下面的命令安装。
 
 ```bash
-$ npm install -g mocha
+$ npm i -D mocha chai
 ```
 
-Mocha自身不带断言库，所以还需要安装一个断言库，这里选用Chai.js。
+由于Mocha自身不带断言库，所以上面还需要安装一个断言库，这里选用Chai.js。
 
-```bash
-$ npm install -g chai
+测试脚本可以叫做`src/index.test.js`或者`src/index.spec.js`，然后写入`package.json`的`test`字段。
+
+```javascript
+"test": "mocha src/index.test.js -w"
 ```
 
-Mocha默认执行test目录的脚本文件，所以我们将所有测试脚本放在test子目录。
+以后，执行`npm test`命令就可以运行测试脚本。
+
+如果测试脚本不止一个，最好将它们放在专门的目录当中。Mocha默认执行`test`目录的测试脚本，所以可以将所有测试脚本放在`test`子目录。
 
 Mocha允许指定测试脚本文件，可以使用通配符，同时指定多个文件。
 
@@ -333,6 +427,95 @@ it('should do something with promises', function() {
     expect(data).to.equal('foobar');
   });
 });
+```
+
+## 模拟数据
+
+单元测试时，很多时候，测试的代码会请求HTTP服务器。这时，我们就需要模拟服务器的回应，不能在单元测试时去请求真实服务器数据，否则就不叫单元测试了，而是连同服务器一起测试了。
+
+一些工具库可以模拟服务器回应。
+
+- [nock](https://github.com/pgte/nock)
+- [sinon](http://sinonjs.org/docs/#server)
+- [faux-jax](https://github.com/algolia/faux-jax)
+- [MITM](https://github.com/moll/node-mitm)
+
+## 覆盖率
+
+测试的覆盖率需要安装istanbul模块。
+
+```bash
+$ npm i -D istanbul
+```
+
+然后，在package.json设置运行覆盖率检查的命令。
+
+```javascript
+"scripts": {
+  "test:cover": "istanbul cover -x *.test.js _mocha -- -R spec src/index.test.js",
+  "check-coverage": "istanbul check-coverage --statements 100 --branches 100 --functions 100 --lines 100"
+}
+```
+
+上面代码中，`test:cover`是生成覆盖率报告，`check-coverage`是设置覆盖率通过的门槛。
+
+然后，将`coverage`目录写入`.gitignore`防止连这个目录一起提交。
+
+如果希望在`git commit`提交之前，先运行一次测试，可以安装ghooks模块，配置`pre-commit`钩子。
+
+安装ghooks。
+
+```bash
+$ npm i -D ghooks
+```
+
+在package.json之中，配置`pre-commit`钩子。
+
+```javascript
+"config": {
+  "ghooks": {
+    "pre-commit": "npm run test:cover && npm run check-coverage"
+  }
+}
+```
+
+还可以把覆盖率检查，加入`.travis.yml`文件。
+
+```bash
+script:
+  - npm run test:cover
+  - npm run check-coverage
+```
+
+如果测试脚本使用ES6，`scripts`字段还需要加入Babel转码。
+
+```javascript
+"scripts": {
+  "test": "mocha src/index.test.js -w --compilers js:babel/register",
+  "test:cover": "istanbul cover -x *.test.js _mocha -- -R spec src/index.test.js --compilers js:babel/register"
+}
+```
+
+覆盖率报告可以上传到[codecov.io](https://codecov.io/)。先安装这个模块。
+
+```bash
+$ npm i -D codecov.io
+```
+
+然后在package.json增加一个字段。
+
+```javascript
+"scripts": {
+  "report-coverage": "cat ./coverage/lcov.info | codecov"
+}
+```
+
+最后，在CI的配置文件`.travis.yml`之中，增加运行这个命令。
+
+```
+after_success:
+  - npm run report-coverage
+  - npm run semantic-release
 ```
 
 ## WebDriver
