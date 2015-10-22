@@ -258,61 +258,48 @@ beverages.should.have.property('tea').with.length(3);
 
 ## Mocha.js
 
-测试框架是运行测试的工具。目前，常用的测试框架有下面这些。
+### 概述
 
-- Mocha
-- [Tape](https://github.com/substack/tape/)
-- [zuul](https://github.com/defunctzombie/zuul/)
+Mocha是一种测试框架，即运行测试的工具。除了它以外，常用的测试框架还有Jasmine、[Tape](https://github.com/substack/tape/)、[zuul](https://github.com/defunctzombie/zuul/)等。
 
 Mocha使用下面的命令安装。
 
 ```bash
+# 全局安装
+$ npm install -g mocha chai
+
+# 项目内安装
 $ npm i -D mocha chai
 ```
 
-由于Mocha自身不带断言库，所以上面还需要安装一个断言库，这里选用Chai.js。
+上面代码中，由于Mocha自身不带断言库，所以还需要安装一个断言库，这里选用`Chai.js`。
 
-测试脚本可以叫做`src/index.test.js`或者`src/index.spec.js`，然后写入`package.json`的`test`字段。
+只要提供测试脚本的路径，Mocha就可以运行这个测试脚本。
 
 ```javascript
-"test": "mocha src/index.test.js -w"
+$ mocha -w src/index.test.js
 ```
 
-以后，执行`npm test`命令就可以运行测试脚本。
+上面命令运行测试脚本`src/index.test.js`，参数`-w`表示watch，即当这个脚本一有变动，就会运行。
 
-如果测试脚本不止一个，最好将它们放在专门的目录当中。Mocha默认执行`test`目录的测试脚本，所以可以将所有测试脚本放在`test`子目录。
-
-Mocha允许指定测试脚本文件，可以使用通配符，同时指定多个文件。
+指定测试脚本时，可以使用通配符，同时指定多个文件。
 
 ```bash
 $ mocha --reporter spec spec/{my,awesome}.js
 $ mocha --ui tdd test/unit/*.js etc
 ```
 
-如果希望测试非存放于test子目录的测试用例，可以在test子目录中新建Mocha的配置文件mocha.opts。在该文件中写入以下内容。
+上面代码中，参数`--reporter`指定生成的报告格式（上面代码是spec格式），`-ui`指定采用哪一种测试模式（上面代码是tdd模式）。
+
+如果测试脚本不止一个，最好将它们放在专门的目录当中。Mocha默认执行`test`目录的测试脚本，所以可以将所有测试脚本放在`test`子目录。`--recursive`参数可以指定运行子目录之中的测试脚本。
 
 ```bash
-server-tests
+$ mocha --recursive
 ```
 
-上面代码指定Mocha默认测试server-tests子目录的测试脚本。
+上面命令会运行`test`子目录之中的所有测试脚本。
 
-```bash
-server-tests
---recursive
-```
-
-上面代码中，--recursive参数指定同时运行子目录中的测试用例脚本。
-
-report参数用于指定Mocha的报告格式。
-
-```bash
-$ mocha --reporter spec server-test/*.js
-```
-
-上面代码指定报告格式是spec。
-
-grep参数用于搜索测试用例的名称（即it方法的第一个参数），然后只执行匹配的测试用例。
+`--grep`参数用于搜索测试用例的名称（即it方法的第一个参数），然后只执行匹配的测试用例。
 
 ```bash
 $ mocha --reporter spec --grep "Fnord:" server-test/*.js
@@ -320,11 +307,47 @@ $ mocha --reporter spec --grep "Fnord:" server-test/*.js
 
 上面代码只测试名称中包含“Fnord：”的测试用例。
 
-invert参数表示只运行不符合条件的测试脚本。
+`--invert`参数表示只运行不符合条件的测试脚本。
 
 ```bash
 $ mocha --grep auth --invert
 ```
+
+如果测试脚本用到了ES6语法，还需要用`--compiler`参数指定babel进行转码。
+
+```bash
+$ mocha --compilers js:babel/register --recursive
+```
+
+上面命令会在运行测试脚本之前，先用Babel进行转码。
+
+`--require`参数指定测试脚本默认包含的文件。下面是一个`test_helper.js`文件。
+
+```javascript
+// test/test_helper.js
+import chai from 'chai';
+```
+
+使用`--require`参数，将上面这个脚本包含进所有测试脚本。
+
+```bash
+$ mocha --compilers js:babel/register --require ./test/test_helper.js  --recursive
+```
+
+### mocha.opts
+
+所有Mocha的命令行参数，都可以写在`test`目录下的配置文件`mocha.opts`之中。
+
+如果希望测试非存放于test子目录的测试用例，可以在`mocha.opts`写入以下内容。
+
+```bash
+server-tests
+--recursive
+```
+
+上面代码指定运行`server-tests`目录及其子目录之中的测试脚本。
+
+### 测试脚本的写法
 
 测试脚本中，describe方法和it方法都允许调用only方法，表示只运行某个测试套件或测试用例。
 

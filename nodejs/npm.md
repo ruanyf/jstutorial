@@ -617,6 +617,25 @@ $ node server.js
 }
 ```
 
+以上都是npm相关操作的钩子，如果安装某些模块，还能支持Git相关的钩子。下面以[husky](https://github.com/typicode/husky)模块为例。
+
+```bash
+$ npm install husky --save-dev
+```
+
+安装以后，就能在`package.json`添加`precommit`、`prepush`等钩子。
+
+```javascript
+{
+    "scripts": {
+        "lint": "eslint yourJsFiles.js",
+        "precommit": "npm run test && npm run lint",
+        "prepush": "npm run test && npm run lint",
+        "...": "..."
+    }
+}
+```
+
 ### 内部变量
 
 scripts字段可以使用一些内部变量，主要是package.json的各种字段。
