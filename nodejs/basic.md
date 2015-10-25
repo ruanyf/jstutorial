@@ -14,7 +14,16 @@ Node内部采用Google公司的V8引擎，作为JavaScript语言解释器；通�
 
 ### 安装与更新
 
-访问官方网站[nodejs.org](http://nodejs.org)了解安装细节。
+访问官方网站[nodejs.org](http://nodejs.org)或者[github.com/nodesource/distributions](https://github.com/nodesource/distributions)，查看Node的最新版本和安装方法。
+
+下面是Ubuntu和Debian的安装方法。
+
+```bash
+$ curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
+$ sudo apt-get install -y nodejs
+
+$ apt-get install nodejs
+```
 
 安装完成以后，运行下面的命令，查看是否能正常运行。
 
@@ -24,16 +33,16 @@ $ node --version
 $ node -v
 ```
 
-更新node.js版本，可以通过node.js的n模块完成。
+更新node.js版本，可以通过node.js的`n`模块完成。
 
 ```bash
 $ sudo npm install n -g
 $ sudo n stable
 ```
 
-上面代码通过n模块，将node.js更新为最新发布的稳定版。
+上面代码通过`n`模块，将node.js更新为最新发布的稳定版。
 
-n模块也可以指定安装特定版本的node。
+`n`模块也可以指定安装特定版本的node。
 
 ```bash
 $ sudo n 0.10.21

@@ -6,15 +6,17 @@ date: 2013-02-16
 modifiedOn: 2014-02-27
 ---
 
-Ajax指的是一种JavaScript在浏览器中的使用方法。它通过原生的XMLHttpRequest对象发出HTTP请求，得到服务器返回的数据后，再进行处理。
+Ajax指的是一种JavaScript在浏览器中的使用方法。它通过原生的`XMLHttpRequest`对象发出HTTP请求，得到服务器返回的数据后，再进行处理。
 
 Ajax可以是同步请求，也可以是异步请求。但是，大多数情况下，特指异步请求。因为同步的Ajax请求，对浏览器有”堵塞效应“。
 
 ## XMLHttpRequest对象
 
-### 基本用法
+XMLHttpRequest对象用来在浏览器与服务器之间传送数据。它提供了一种方法，使得页面不用全部刷新，就可以从浏览器端获取新的数据。这意味着，通过XMLHttpRequest对象，可以每次只更新网页的一个部分，从而不打断用户正在做的事情。Ajax操作就是基于XMLHttpRequest对象的。
 
-`XMLHttpRequest`对象用于从JavaScript发出HTTP请求，下面是典型用法。
+虽然名字里面有`XML`，但是实际上，XMLHttpRequest可以报送各种数据，包括字符串和二进制，而且除了HTTP，它还支持通过其他协议传送（比如File和FTP）。
+
+下面是`XMLHttpRequest`对象的典型用法。
 
 ```javascript
 // 新建一个XMLHttpRequest实例对象
@@ -43,13 +45,209 @@ xhr.open('GET', '/endpoint', true);
 xhr.send(null);
 ```
 
-### xhr.open()
+下面是发出同步请求的一个例子。
 
-`XMLHttpRequest`对象的`open`方法用于指定发送HTTP请求的参数，它有三个参数。
+```javascript
+var request = new XMLHttpRequest();
+request.open('GET', '/bar/foo.txt', false);
+request.send(null);
 
-- 发送方法，一般来说为“GET”、“POST”、“PUT”和“DELETE”中的一个值。
-- 网址。
-- 是否异步，true表示异步，false表示同步。
+if (request.status === 200) {
+  console.log(request.responseText);
+}
+```
+
+## XMLHttpRequest实例的属性
+
+### readyState
+
+`readyState`是一个只读属性，用一个整数和对应的常量，表示XMLHttpRequest请求当前所处的状态。
+
+- 0，对应常量`UNSENT`，表示XMLHttpRequest实例已经生成，但是`open()`方法还没有被调用。
+- 1，对应常量`OPENED`，表示`send()`方法还没有被调用，仍然可以使用`setRequestHeader()`，设定HTTP请求的头信息。
+- 2，对应常量`HEADERS_RECEIVED`，表示`send()`方法已经执行，并且头信息和状态码已经收到。
+- 3，对应常量`LOADING`，表示正在接收服务器传来的body部分的数据，如果`responseType`属性是`text`或者空字符串，`responseText`就会包含已经收到的部分信息。
+- 4，对应常量`DONE`，表示服务器数据已经完全接收，或者本次接收已经失败了。
+
+在通信过程中，每当发生状态变化的时候，readyState属性的值就会发生改变。这个值每一次变化，都会触发readyStateChange事件。
+
+### onreadystatechange
+
+`onreadystatechange`属性指向一个回调函数，当`readystatechange`事件发生的时候，这个回调函数就会调用，并且XMLHttpRequest实例的`readyState`属性也会发生变化。
+
+另外，如果使用`abort()`方法，终止XMLHttpRequest请求，`onreadystatechange`回调函数也会被调用。
+
+```javascript
+var xmlhttp = new XMLHttpRequest();
+xmlhttp.open( 'GET', 'http://example.com' , true );
+xmlhttp.onreadystatechange = function () {
+  if ( XMLHttpRequest.DONE != xmlhttp.readyState ) {
+    return;
+  }
+  if ( 200 != xmlhttp.status ) {
+    return;
+  }
+  console.log( xmlhttp.responseText );
+};
+xmlhttp.send();
+```
+
+### response
+
+`response`属性为只读，返回接收到的数据体（即body部分）。它的类型可以是ArrayBuffer、Blob、Document、JSON对象、或者一个字符串，这由`XMLHttpRequest.responseType`属性的值决定。
+
+如果本次请求没有成功或者数据不完整，该属性就会等于`null`。
+
+### responseType
+
+`responseType`属性用来指定服务器返回数据（`xhr.response`）的类型。
+
+- ""：字符串（默认值）
+- "arraybuffer"：ArrayBuffer对象
+- "blob"：Blob对象
+- "document"：Document对象
+- "json"：JSON对象
+- "text"：字符串
+
+text类型适合大多数情况，而且直接处理文本也比较方便，document类型适合返回XML文档的情况，blob类型适合读取二进制数据，比如图片文件。
+
+```javascript
+var xhr = new XMLHttpRequest();
+xhr.open('GET', '/path/to/image.png', true);
+xhr.responseType = 'blob';
+
+xhr.onload = function(e) {
+  if (this.status == 200) {
+    var blob = new Blob([this.response], {type: 'image/png'});
+    // 或者
+    var blob = oReq.response;
+  }
+};
+
+xhr.send();
+```
+
+如果将这个属性设为ArrayBuffer，就可以按照数组的方式处理二进制数据。
+
+```javascript
+var xhr = new XMLHttpRequest();
+xhr.open('GET', '/path/to/image.png', true);
+xhr.responseType = 'arraybuffer';
+
+xhr.onload = function(e) {
+  var uInt8Array = new Uint8Array(this.response);
+  for (var i = 0, len = binStr.length; i < len; ++i) {
+  // var byte = uInt8Array[i];
+  }
+};
+
+xhr.send();
+```
+
+如果将这个属性设为“json”，支持JSON的浏览器（Firefox>9，chrome>30），就会自动对返回数据调用JSON.parse() 方法。也就是说，你从xhr.response属性（注意，不是xhr.responseText属性）得到的不是文本，而是一个JSON对象。
+
+XHR2支持Ajax的返回类型为文档，即xhr.responseType="document" 。这意味着，对于那些打开CORS的网站，我们可以直接用Ajax抓取网页，然后不用解析HTML字符串，直接对XHR回应进行DOM操作。
+
+### responseText
+
+`responseText`属性为只读，返回接收到的字符串。如果本次请求没有成功或者数据不完整，该属性就会等于`null`。
+
+### responseXML
+
+`responseXML`属性为只读，返回接收到的Document对象。如果本次请求没有成功或者数据不完整ontaining，或者不能被解析为XML或HTML，该属性等于null。
+
+返回的数据会被解析为`text/xml`类型的数据流。如果`responseType`设为`document`，且这个请求是异步的，则返回的数据会被解析为`text/html`数据流。
+
+如果服务器返回的数据，没有明示`Content-Type`头信息等于`text/xml`，可以使用`overrideMimeType()`方法，指定XMLHttpRequest对象将返回的数据解析为XML。
+
+### status
+
+`status`属性为只读属性，表示本次请求所得到的HTTP状态码，它是一个整数。一般来说，如果通信成功的话，这个状态码是200。
+
+### statusText
+
+`statusText`属性为只读属性，返回一个字符串，表示服务器发送的状态提示。不同于`status`属性，该属性包含整个状态信息，比如”200 OK“。
+
+### timeout
+
+`timeout`属性等于一个整数，表示多少毫秒后，如果请求仍然没有得到结果，就会自动终止。如果该属性等于0，就表示没有时间限制。
+
+```javascript
+  var xhr = new XMLHttpRequest();
+  xhr.ontimeout = function () {
+    console.error("The request for " + url + " timed out.");
+  };
+  xhr.onload = function() {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        callback.apply(xhr, args);
+      } else {
+        console.error(xhr.statusText);
+      }
+    }
+  };
+  xhr.open("GET", url, true);
+  xhr.timeout = timeout;
+  xhr.send(null);
+}
+```
+
+### ontimeout
+
+`ontimeout`属性指向一个回调函数，发生timeout事件时，该函数会被调用。
+
+### withCredentials
+
+`withCredentials`属性是一个布尔值，表示跨域请求时，用户信息（比如cookie和认证的HTTP头信息）是否会包含在请求之中，默认为false。
+
+## XMLHttpRequest实例的方法
+
+### abort()
+
+`abort`方法用来终止已经发出的HTTP请求。
+
+### getAllResponseHeaders()
+
+`getAllResponseHeaders`方法返回服务器发来的所有HTTP头信息。格式为字符串，每个头信息之间使用`CRLF`分隔，如果没有受到服务器回应，该属性返回`null`。
+
+### getResponseHeader()
+
+`getResponseHeader`方法返回HTTP头信息指定字段的值，如果还没有收到服务器回应或者指定字段不存在，则该属性为`null`。
+
+```html
+function getHeaderTime () {
+  console.log(this.getResponseHeader("Last-Modified"));
+}
+
+var oReq = new XMLHttpRequest();
+oReq.open("HEAD", "yourpage.html");
+oReq.onload = getHeaderTime;
+oReq.send();
+```
+
+如果有多个字段同名，则它们的值会被连接为一个字符串，每个字段之间使用”逗号+空格“分隔。
+
+### open()
+
+`XMLHttpRequest`对象的`open`方法用于指定发送HTTP请求的参数，它的使用格式如下，一共可以接受五个参数。
+
+```javascript
+void open(
+   string method,
+   string url,
+   optional boolean async,
+   optional string user,
+   optional string password
+);
+```
+
+- method：表示HTTP动词，比如“GET”、“POST”、“PUT”和“DELETE”。
+- url: 表示请求发送的网址。
+- async: 格式为布尔值，默认为`true`，表示请求是否为异步。如果设为`false`，则`send()`方法只有等到收到服务器返回的结果，才会有返回值。
+- user：表示用于认证的用户名，默认为空字符串。
+- password：表示用于认证的密码，默认为空字符串。
+
+如果对使用过`open()`方法的请求，再次使用这个方法，等同于调用`abort()`。
 
 下面发送POST请求的例子。
 
@@ -74,60 +272,80 @@ if (request.status === 200) {
 }
 ```
 
-### xhr.setRequestHeader()
+### send()
 
-setRequestHeader方法用于设置HTTP请求的头信息。
+`send`方法用于实际发出HTTP请求。如果不带参数，就表示HTTP请求只包含头信息，也就是只有一个URL，典型例子就是GET请求；如果带有参数，就表示除了头信息，还带有包含具体数据的信息体，典型例子就是POST请求。
 
-### xhr.send()
+如果请求是异步的（默认为异步），该方法在发出请求后会立即返回。如果请求为同步，该方法只有等到收到服务器回应后，才会返回。
 
-send方法用于实际发出HTTP请求。如果不带参数，就表示HTTP请求只包含头信息，也就是只有一个URL，典型例子就是GET请求；如果带有参数，就表示除了头信息，还带有包含具体数据的信息体，典型例子就是POST请求。
+注意，所有XMLHttpRequest的监听事件，都必须在`send()`方法调用之前设定。
 
-在XHR 2之中，send方法可以发送许多类型的数据。
+该方法的参数就是发送的数据。多种格式的数据，都可以作为它的参数。
 
-{% highlight javascript %}
-
+```javascript
 void send();
-void send(ArrayBuffer data);
+void send(ArrayBufferView data);
 void send(Blob data);
 void send(Document data);
-void send(DOMString data);
+void send(String data);
 void send(FormData data);
+```
 
-{% endhighlight %}
+如果发送`Document`数据，在发送之前，数据会先被串行化。
 
-Blob类型可以用来发送二进制数据，这使得通过Ajax上传文件成为可能。
+发送二进制数据，最好使用`ArrayBufferView`或`Blob`对象，这使得通过Ajax上传文件成为可能。
+
+下面是一个上传ArrayBuffer对象的例子。
+
+```javascript
+function sendArrayBuffer() {
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', '/server', true);
+  xhr.onload = function(e) { ... };
+
+  var uInt8Array = new Uint8Array([1, 2, 3]);
+
+  xhr.send(uInt8Array.buffer);
+}
+```
 
 FormData类型可以用于构造表单数据。
 
-{% highlight javascript %}
-
+```javascript
 var formData = new FormData();
 
 formData.append('username', '张三');
 formData.append('email', 'zhangsan@example.com');
 formData.append('birthDate', 1940);
 
+var xhr = new XMLHttpRequest();
+xhr.open("POST", "/register");
 xhr.send(formData);
+```
 
-{% endhighlight %}
+上面的代码构造了一个`formData`对象，然后使用send方法发送。它的效果与点击下面表单的submit按钮是一样的。
 
-上面的代码构造了一个formData对象，然后使用send方法发送。它的效果与点击下面表单的submit按钮是一样的。
-
-{% highlight html %}
-
+```html
 <form id='registration' name='registration' action='/register'>
     <input type='text' name='username' value='张三'>
     <input type='email' name='email' value='zhangsan@example.com'>
     <input type='number' name='birthDate' value='1940'>
     <input type='submit' onclick='return sendForm(this.form);'>
 </form>
+```
 
-{% endhighlight %}
+FormData也可以将现有表单构造生成。
+
+```javascript
+var formElement = document.querySelector("form");
+var request = new XMLHttpRequest();
+request.open("POST", "submitform.php");
+request.send(new FormData(formElement));
+```
 
 FormData对象还可以对现有表单添加数据，这为我们操作表单提供了极大的灵活性。
 
-{% highlight javascript %}
-
+```javascript
 function sendForm(form) {
     var formData = new FormData(form);
     formData.append('csrf', 'e69a18d7db1286040586e6da1950128c');
@@ -139,23 +357,21 @@ function sendForm(form) {
     };
     xhr.send(formData);
 
-    return false; 
+    return false;
 }
 
 var form = document.querySelector('#registration');
 sendForm(form);
-
-{% endhighlight %}
+```
 
 FormData对象也能用来模拟File控件，进行文件上传。
 
-{% highlight javascript %}
-
+```javascript
 function uploadFiles(url, files) {
   var formData = new FormData();
 
   for (var i = 0, file; file = files[i]; ++i) {
-    formData.append(file.name, file);
+    formData.append(file.name, file); // 可加入第三个参数，表示文件名
   }
 
   var xhr = new XMLHttpRequest();
@@ -168,14 +384,77 @@ function uploadFiles(url, files) {
 document.querySelector('input[type="file"]').addEventListener('change', function(e) {
   uploadFiles('/server', this.files);
 }, false);
+```
 
-{% endhighlight %}
+FormData也可以加入JavaScript生成的文件。
 
-### readyState属性和readyStateChange事件
+```javascript
+// 添加JavaScript生成的文件
+var content = '<a id="a"><b id="b">hey!</b></a>';
+var blob = new Blob([content], { type: "text/xml"});
+formData.append("webmasterfile", blob);        
+```
 
-在通信过程中，每当发生状态变化的时候，readyState属性的值就会发生改变。
+### setRequestHeader()
 
-这个值每一次变化，都会触发readyStateChange事件。我们可以指定这个事件的回调函数，对不同状态进行不同处理。尤其是当状态变为4的时候，表示通信成功，这时回调函数就可以处理服务器传送回来的数据。
+`setRequestHeader`方法用于设置HTTP头信息。该方法必须在`open()`之后、`send()`之前调用。如果该方法多次调用，设定同一个字段，则每一次调用的值会被合并成一个单一的值发送。
+
+```javascript
+xhr.setRequestHeader('Content-Type', 'application/json');
+xhr.setRequestHeader('Content-Length', JSON.stringify(data).length);
+xhr.send(JSON.stringify(data));
+```
+
+上面代码首先设置头信息`Content-Type`，表示发送JSON格式的数据；然后设置`Content-Length`，表示数据长度；最后发送JSON数据。
+
+### overrideMimeType()
+
+该方法用来指定服务器返回数据的MIME类型。该方法必须在`send()`之前调用。
+
+传统上，如果希望从服务器取回二进制数据，就要使用这个方法，人为将数据类型伪装成文本数据。
+
+```javascript
+var xhr = new XMLHttpRequest();
+xhr.open('GET', '/path/to/image.png', true);
+
+// 强制将MIME改为文本类型
+xhr.overrideMimeType('text/plain; charset=x-user-defined');
+
+xhr.onreadystatechange = function(e) {
+  if (this.readyState == 4 && this.status == 200) {
+    var binStr = this.responseText;
+    for (var i = 0, len = binStr.length; i < len; ++i) {
+      var c = binStr.charCodeAt(i);
+      var byte = c & 0xff;  // 去除高位字节，留下低位字节
+    }
+  }
+};
+
+xhr.send();
+```
+
+上面代码中，因为传回来的是二进制数据，首先用`xhr.overrideMimeType`方法强制改变它的MIME类型，伪装成文本数据。字符集必需指定为“x-user-defined”，如果是其他字符集，浏览器内部会强制转码，将其保存成UTF-16的形式。字符集“x-user-defined”其实也会发生转码，浏览器会在每个字节前面再加上一个字节（0xF700-0xF7ff），因此后面要对每个字符进行一次与运算（&），将高位的8个位去除，只留下低位的8个位，由此逐一读出原文件二进制数据的每个字节。
+
+这种方法很麻烦，在XMLHttpRequest版本升级以后，一般采用指定`responseType`的方法。
+
+```javascript
+var xhr = new XMLHttpRequest();
+xhr.onload = function(e) {
+  var arraybuffer = xhr.response;
+  // ...
+}
+xhr.open("GET", url);
+xhr.responseType = "arraybuffer";
+xhr.send();
+```
+
+## XMLHttpRequest实例的事件
+
+### readyStateChange事件
+
+`readyState`属性的值发生改变，就会触发readyStateChange事件。
+
+我们可以通过`onReadyStateChange`属性，指定这个事件的回调函数，对不同状态进行不同处理。尤其是当状态变为4的时候，表示通信成功，这时回调函数就可以处理服务器传送回来的数据。
 
 ### progress事件
 
@@ -183,16 +462,13 @@ document.querySelector('input[type="file"]').addEventListener('change', function
 
 假定网页上有一个progress元素。
 
-{% highlight javascript %}
-
+```http
 <progress min="0" max="100" value="0">0% complete</progress>
-
-{% endhighlight %}
+```
 
 文件上传时，对upload属性指定progress事件回调函数，即可获得上传的进度。
 
-{% highlight javascript %}
-
+```javascript
 function upload(blobOrFile) {
   var xhr = new XMLHttpRequest();
   xhr.open('POST', '/server', true);
@@ -211,160 +487,149 @@ function upload(blobOrFile) {
 }
 
 upload(new Blob(['hello world'], {type: 'text/plain'}));
+```
 
-{% endhighlight %}
+### load事件、error事件、abort事件
 
-下面是一个上传ArrayBuffer对象的例子。
+load事件表示服务器传来的数据接收完毕，error事件表示请求出错，abort事件表示请求被中断。
 
-{% highlight javascript %}
+```javascript
+var xhr = new XMLHttpRequest();
 
-function sendArrayBuffer() {
-  var xhr = new XMLHttpRequest();
-  xhr.open('POST', '/server', true);
-  xhr.onload = function(e) { ... };
+xhr.addEventListener("progress", updateProgress);
+xhr.addEventListener("load", transferComplete);
+xhr.addEventListener("error", transferFailed);
+xhr.addEventListener("abort", transferCanceled);
 
-  var uInt8Array = new Uint8Array([1, 2, 3]);
+xhr.open();
 
-  xhr.send(uInt8Array.buffer);
+function updateProgress (oEvent) {
+  if (oEvent.lengthComputable) {
+    var percentComplete = oEvent.loaded / oEvent.total;
+    // ...
+  } else {
+    // 回应的总数据量未知，导致无法计算百分比
+  }
 }
 
-{% endhighlight %}
+function transferComplete(evt) {
+  console.log("The transfer is complete.");
+}
 
-### 服务器返回的信息
+function transferFailed(evt) {
+  console.log("An error occurred while transferring the file.");
+}
 
-（1）status属性
+function transferCanceled(evt) {
+  console.log("The transfer has been canceled by the user.");
+}
+```
 
-status属性表示返回的HTTP状态码。一般来说，如果通信成功的话，这个状态码是200。
+### loadend事件
 
-（2）responseText属性
+`abort`、`load`和`error`这三个事件，会伴随一个`loadend`事件，表示请求结束，但不知道其是否成功。
 
-responseText属性表示服务器返回的文本数据。
+```javascript
+req.addEventListener("loadend", loadEnd);
 
-### setRequestHeader方法
-
-setRequestHeader方法用于设置HTTP头信息。
-
-{% highlight javascript %}
-
-xhr.setRequestHeader('Content-Type', 'application/json');
-
-xhr.setRequestHeader('Content-Length', JSON.stringify(data).length);
-
-xhr.send(JSON.stringify(data));
-
-{% endhighlight %}
-
-上面代码首先设置头信息Content-Type，表示发送JSON格式的数据；然后设置Content-Length，表示数据长度；最后发送JSON数据。
-
-### overrideMimeType方法
-
-该方法用来指定服务器返回数据的MIME类型。
-
-传统上，如果希望从服务器取回二进制数据，就要使用这个方法，人为将数据类型伪装成文本数据。
-
-{% highlight javascript %}
-
-var xhr = new XMLHttpRequest();
-xhr.open('GET', '/path/to/image.png', true);
-
-// 强制将MIME改为文本类型
-xhr.overrideMimeType('text/plain; charset=x-user-defined');
-
-xhr.onreadystatechange = function(e) {
-  if (this.readyState == 4 && this.status == 200) {
-    var binStr = this.responseText;
-    for (var i = 0, len = binStr.length; i < len; ++i) {
-      var c = binStr.charCodeAt(i);
-      var byte = c & 0xff;  // 去除高位字节，留下低位字节
-    }
-  }
-};
-
-xhr.send();
-
-{% endhighlight %}
-
-上面代码中，因为传回来的是二进制数据，首先用xhr.overrideMimeType方法强制改变它的MIME类型，伪装成文本数据。字符集必需指定为“x-user-defined”，如果是其他字符集，浏览器内部会强制转码，将其保存成UTF-16的形式。字符集“x-user-defined”其实也会发生转码，浏览器会在每个字节前面再加上一个字节（0xF700-0xF7ff），因此后面要对每个字符进行一次与运算（&），将高位的8个位去除，只留下低位的8个位，由此逐一读出原文件二进制数据的每个字节。
-
-这种方法很麻烦，在XMLHttpRequest版本升级以后，一般采用下面的指定responseType的方法。
-
-### responseType属性
-
-XMLHttpRequest对象有一个responseType属性，用来指定服务器返回数据（xhr.response）的类型。
-
-XHR 2允许用户自行设置这个属性，也就是指定返回数据的类型，可以设置如下的值：
-
-- 'text'：返回类型为字符串，这是默认值。
-- 'arraybuffer'：返回类型为ArrayBuffer。
-- 'blob'：返回类型为Blob。
-- 'document'：返回类型为Document。
-- 'json'：返回类型为JSON object。
-
-text类型适合大多数情况，而且直接处理文本也比较方便，document类型适合返回XML文档的情况，blob类型适合读取二进制数据，比如图片文件。
-
-{% highlight javascript %}
-
-var xhr = new XMLHttpRequest();
-xhr.open('GET', '/path/to/image.png', true);
-xhr.responseType = 'blob';
-
-xhr.onload = function(e) {
-  if (this.status == 200) {
-    var blob = new Blob([this.response], {type: 'image/png'});
-    // ...
-  }
-};
-
-xhr.send();
-
-{% endhighlight %}
-
-如果将这个属性设为ArrayBuffer，就可以按照数组的方式处理二进制数据。
-
-{% highlight javascript %}
-
-var xhr = new XMLHttpRequest();
-xhr.open('GET', '/path/to/image.png', true);
-xhr.responseType = 'arraybuffer';
-
-xhr.onload = function(e) {
-  var uInt8Array = new Uint8Array(this.response);
-  for (var i = 0, len = binStr.length; i < len; ++i) {
-	// var byte = uInt8Array[i]; 
-  }
-};
-
-xhr.send();
-
-{% endhighlight %}
-
-如果将这个属性设为“json”，支持JSON的浏览器（Firefox>9，chrome>30），就会自动对返回数据调用JSON.parse() 方法。也就是说，你从xhr.response属性（注意，不是xhr.responseText属性）得到的不是文本，而是一个JSON对象。
-
-XHR2支持Ajax的返回类型为文档，即xhr.responseType="document" 。这意味着，对于那些打开CORS的网站，我们可以直接用Ajax抓取网页，然后不用解析HTML字符串，直接对XHR回应进行DOM操作。
+function loadEnd(e) {
+  alert("请求结束（不知道是否成功）");
+}
+```
 
 ## 文件上传
 
+HTML网页的`<form>`元素能够以四种格式，向服务器发送数据。
+
+- 使用`POST`方法，将`enctype`属性设为`application/x-www-form-urlencoded`，这是默认方法。
+
+```html
+<form action="register.php" method="post" onsubmit="AJAXSubmit(this); return false;">
+</form>
+```
+
+- 使用`POST`方法，将`enctype`属性设为`text/plain`。
+
+```html
+<form action="register.php" method="post" enctype="text/plain" onsubmit="AJAXSubmit(this); return false;">
+</form>
+```
+
+- 使用`POST`方法，将`enctype`属性设为`multipart/form-data`。
+
+```html
+<form action="register.php" method="post" enctype="multipart/form-data" onsubmit="AJAXSubmit(this); return false;">
+</form>
+```
+
+- 使用`GET`方法，`enctype`属性将被忽略。
+
+```html
+<form action="register.php" method="get" onsubmit="AJAXSubmit(this); return false;">
+</form>
+```
+
+某个表单有两个字段，分别是`foo`和`baz`，其中`foo`字段的值等于`bar`，`baz`字段的值一个分为两行的字符串。上面四种方法，都可以将这个表单发送到服务器。
+
+第一种方法是默认方法，POST发送，Encoding type为application/x-www-form-urlencoded。
+
+```http
+Content-Type: application/x-www-form-urlencoded
+
+foo=bar&baz=The+first+line.&#37;0D%0AThe+second+line.%0D%0A
+```
+
+第二种方法是POST发送，Encoding type为text/plain。
+
+```javascript
+Content-Type: text/plain
+
+foo=bar
+baz=The first line.
+The second line.
+```
+
+第三种方法是POST发送，Encoding type为multipart/form-data。
+
+```http
+Content-Type: multipart/form-data; boundary=---------------------------314911788813839
+
+-----------------------------314911788813839
+Content-Disposition: form-data; name="foo"
+
+bar
+-----------------------------314911788813839
+Content-Disposition: form-data; name="baz"
+
+The first line.
+The second line.
+
+-----------------------------314911788813839--
+```
+
+第四种方法是GET请求。
+
+```http
+?foo=bar&baz=The%20first%20line.%0AThe%20second%20line.
+```
+
 通常，我们使用file控件实现文件上传。
 
-{% highlight html %}
-
+```html
 <form id="file-form" action="handler.php" method="POST">
   <input type="file" id="file-select" name="photos[]" multiple/>
   <button type="submit" id="upload-button">上传</button>
 </form>
-
-{% endhighlight %}
+```
 
 上面HTML代码中，file控件的multiple属性，指定可以一次选择多个文件；如果没有这个属性，则一次只能选择一个文件。
 
 file对象的files属性，返回一个FileList对象，包含了用户选中的文件。
 
-{% highlight javascript %}
-
+```javascript
 var fileSelect = document.getElementById('file-select');
 var files = fileSelect.files;
-
-{% endhighlight %}
+```
 
 然后，新建一个FormData对象的实例，用来模拟发送到服务器的表单数据，把选中的文件添加到这个对象上面。
 
