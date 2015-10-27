@@ -327,7 +327,7 @@ cleansUp()
 
 {% endhighlight %}
 
-上面代码说明，throw语句抛出错误以后，finanlly继续得到执行。
+上面代码说明，throw语句抛出错误以后，finally继续得到执行。
 
 {% highlight javascript %}
 
@@ -349,7 +349,7 @@ idle('hello')
 
 上面代码说明，即使有return语句在前，finally代码块依然会得到执行，且在其执行完毕后，才会显示return语句的值。
 
-下面的例子说明，return语句的执行是排在finanlly代码之前，只是等finnally代码执行完毕后才返回。
+下面的例子说明，return语句的执行是排在finally代码之前，只是等finally代码执行完毕后才返回。
 
 {% highlight javascript %}
 
