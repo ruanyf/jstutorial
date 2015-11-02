@@ -588,7 +588,7 @@ forEach方法也可以接受第二个参数，用来绑定回调函数的this关
 ```javascript
 var out = [];
 
-[1, 2, 3].map(function(elem, index, arr){
+[1, 2, 3].forEach(function(elem, index, arr){
   this.push(elem * elem);
 }, out);
 
