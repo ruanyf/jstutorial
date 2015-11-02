@@ -33,6 +33,13 @@ JavaScript引擎的主要作用是，读取网页中的代码，对其处理后�
 </script>
 ```
 
+`script`标签有一个`type`属性，用来指定服务器发来的JavaScript脚本的类型。注意，HTML5的推荐做法是，如果`script`标签包含的是JavaScript脚本，建议省略script标签的type属性。
+
+对JavaScript脚本来说，type属性可以设为两种值。
+
+- text/javascript：这是默认值，也是历史上一贯设定的值。如果你省略`script`标签的`type`属性，得到的就是这个值。对于老式浏览器，设为这个值比较好。
+- application/javascript：对于较新的浏览器，建议设为这个值。
+
 ### 加载外部脚本
 
 script标签也可以指定加载外部的脚本文件。

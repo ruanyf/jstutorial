@@ -1082,74 +1082,70 @@ y // 10
 
 JavaScript各种运算符的优先级别（Operator Precedence）是不一样的。优先级高的运算符先执行，优先级低的运算符后执行。
 
-{% highlight javascript %}
-
-4+5*6 // 34
-
-{% endhighlight %}
+```javascript
+4 + 5 * 6 // 34
+```
 
 上面的代码中，乘法运算符（*）的优先性高于加法运算符（+），所以先执行乘法，再执行加法，相当于下面这样。
 
-{% highlight javascript %}
+```javascript
+4 + (5 * 6) // 34
+```
 
-4+(5*6) // 34
+如果多个运算符混写在一起，常常会导致令人困惑的代码。
 
-{% endhighlight %}
+```javascript
+var x = 1;
+var arr = [];
+
+var y = arr.length <= 0 || arr[0] === undefined ? x : arr[0];
+```
+
+上面代码中，变量`y`的值就很难看出来，因为这个表达式涉及5个运算符，到底谁的优先级最高，实在不容易记住。
+
+根据语言规格，这五个运算符的优先级从高到低依次为：小于等于（<=)、严格相等（===）、或（||）、三元（?:）、等号（=）。因此上面的表达式，实际的运算顺序如下。
+
+```javascript
+var y = ((arr.length <= 0) || (arr[0] === undefined)) ? x : arr[0];
+```
+
+记住所有运算符的优先级，几乎是不可能的，也是没有必要的。
 
 **（2）圆括号的作用**
 
-圆括号可以用来提高运算的优先级，即圆括号中的运算符会第一个运算。
+圆括号可以用来提高运算的优先级，因为它的优先级是最高的，即圆括号中的运算符会第一个运算。
 
-{% highlight javascript %}
-
-(4+5)*6 // 54
-
-{% endhighlight %}
+```javascript
+(4 + 5) * 6 // 54
+```
 
 上面代码中，由于使用了圆括号，加法会先于乘法执行。
 
 由于运算符的优先级别十分繁杂，且都是来自硬性规定，所以本书不打算列出具体的规则，只是建议读者总是使用圆括号，保证运算顺序清晰可读，这对代码的维护和除错至关重要。
 
-{% highlight javascript %}
-
-5 + 2 * 4 / 2 % 3 + 10 - 3 
-
-total = 5;
-total *= 2 + 3
-
-{% endhighlight %}
-
-上面代码的运算顺序，就不容易一眼看出来，容易导致错误，应该加上圆括号帮助阅读。
-
 **（3）左结合与右结合**
 
 对于优先级别相同的运算符，大多数情况，计算顺序总是从左到右，这叫做运算符的“左结合”（left-to-right associativity），即从左边开始计算。
 
-{% highlight javascript %}
-
+```javascript
 x + y + z
-
-{% endhighlight %}
+```
 
 上面代码先计算最左边的x与y的和，然后再计算与z的和。
 
 但是少数运算符的计算顺序是从右到左，即从右边开始计算，这叫做运算符的“右结合”（right-to-left associativity）。其中，最主要的是赋值运算符（=）和三元条件运算符（?:）。
 
-{% highlight javascript %}
-
+```javascript
 w = x = y = z;
-q = a?b:c?d:e?f:g;
-
-{% endhighlight %}
+q = a ? b : c ? d : e ? f : g;
+```
 
 上面代码的运算结果，相当于下面的样子。
 
-{% highlight javascript %}
-
-w = (x = (y = z)); 
-q = a?b:(c?d:(e?f:g));
-
-{% endhighlight %}
+```javascript
+w = (x = (y = z));
+q = a ? b : (c ? d : (e ? f : g));
+```
 
 ## 参考链接
 

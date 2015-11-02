@@ -40,7 +40,7 @@ module.exports.x = x;
 module.exports.addX = addX;
 ```
 
-上面代码通过`module.exports`对象，定义对外接口，输出变量x和函数addX。`module.exports`对象是可以被其他文件导入的，它其实就是文件内部与外部通信的桥梁。
+上面代码通过`module.exports`对象，定义对外接口，输出变量`x`和函数`addX`。`module.exports`对象是可以被其他文件导入的，它其实就是文件内部与外部通信的桥梁。
 
 require方法用于在其他文件加载这个接口，具体用法参见《Require命令》的部分。
 
@@ -96,7 +96,7 @@ console.log(module);
 
 ### module.exports属性
 
-module.exports属性表示当前模块对外输出的接口，其他文件加载该模块，实际上就是读取module.exports变量。
+`module.exports`属性表示当前模块对外输出的接口，其他文件加载该模块，实际上就是读取`module.exports`变量。
 
 ```javascript
 var EventEmitter = require('events').EventEmitter;
@@ -182,7 +182,7 @@ define(['package/lib'], function(lib){
 });
 ```
 
-AMD规范允许输出的模块兼容CommonJS规范，这时define方法需要写成下面这样：
+AMD规范允许输出的模块兼容CommonJS规范，这时`define`方法需要写成下面这样：
 
 ```javascript
 define(function (require, exports, module){
@@ -408,6 +408,40 @@ require.main === module
 ```
 
 调用执行的时候（通过`require`加载该脚本执行），上面的表达式返回false。
+
+## 模块的加载机制
+
+CommonJS模块的加载机制是，输入的是被输出的值的拷贝。也就是说，一旦输出一个值，模块内部的变化就影响不到这个值。请看下面这个例子。
+
+下面是一个模块文件`lib.js`。
+
+```javascript
+// lib.js
+var counter = 3;
+function incCounter() {
+  counter++;
+}
+module.exports = {
+  counter: counter,
+  incCounter: incCounter,
+};
+```
+
+上面代码输出内部变量`counter`和改写这个变量的内部方法`incCounter`。
+
+然后，加载上面的模块。
+
+```javascript
+// main.js
+var counter = require('./lib').counter;
+var incCounter = require('./lib').incCounter;
+
+console.log(counter);  // 3
+incCounter();
+console.log(counter); // 3
+```
+
+上面代码说明，`counter`输出以后，`lib.js`模块内部的变化就影响不到`counter`了。
 
 ## 参考链接
 
