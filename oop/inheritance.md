@@ -115,7 +115,7 @@ var obj = new Object();
 obj.__proto__ === Object.prototype
 // true
 
-obj.__proto__ === o.constructor.prototype
+obj.__proto__ === obj.constructor.prototype
 // true
 ```
 
@@ -123,8 +123,8 @@ obj.__proto__ === o.constructor.prototype
 
 因此，获取实例对象`obj`的原型对象，有三种方法。
 
-- `o.__proto__`
-- `o.constructor.prototype`
+- `obj.__proto__`
+- `obj.constructor.prototype`
 - `Object.getPrototypeOf(obj)`
 
 第三种方法的用法如下。
