@@ -86,15 +86,15 @@ document对象本身的ownerDocument属性，返回null。
 
 **（2）nextSibling**
 
-nextsibling属性返回紧跟在当前节点后面的第一个同级节点。如果当前节点后面没有同级节点，则返回null。注意，该属性还包括文本节点和评论节点。因此如果当前节点后面有空格，该属性会返回一个文本节点，内容为空格。
+nextSibling属性返回紧跟在当前节点后面的第一个同级节点。如果当前节点后面没有同级节点，则返回null。注意，该属性还包括文本节点和评论节点。因此如果当前节点后面有空格，该属性会返回一个文本节点，内容为空格。
 
 ```javascript
-var el = document.getelementbyid('div-01').firstchild;
+var el = document.getElementById('div-01').firstChild;
 var i = 1;
 
 while (el) {
-  console.log(i + '. ' + el.nodename);
-  el = el.nextsibling;
+  console.log(i + '. ' + el.nodeName);
+  el = el.nextSibling;
   i++;
 }
 ```
@@ -103,14 +103,14 @@ while (el) {
 
 **（3）previousSibling**
 
-previoussibling属性返回当前节点前面的、距离最近的一个同级节点。如果当前节点前面没有同级节点，则返回null。
+previousSibling属性返回当前节点前面的、距离最近的一个同级节点。如果当前节点前面没有同级节点，则返回null。
 
 ```javascript
 // html代码如下
 // <a><b1 id="b1"/><b2 id="b2"/></a>
 
-document.getelementbyid("b1").previoussibling // null
-document.getelementbyid("b2").previoussibling.id // "b1"
+document.getElementById("b1").previousSibling // null
+document.getElementById("b2").previousSibling.id // "b1"
 ```
 
 对于当前节点前面有空格，则previoussibling属性会返回一个内容为空格的文本节点。
@@ -175,11 +175,11 @@ document节点和doctype节点的textContent属性为null。如果要读取整�
 
 在IE浏览器，所有Element节点都有一个innerText属性。它与textContent属性基本相同，但是有几点区别。
 
-- innerText受CSS影响，textcontent不受。比如，如果CSS规则隐藏（hidden）了某段文本，innerText就不会返回这段文本，textcontent则照样返回。
+- innerText受CSS影响，textContent不受。比如，如果CSS规则隐藏（hidden）了某段文本，innerText就不会返回这段文本，textContent则照样返回。
 
-- innerText返回的文本，会过滤掉空格、换行和回车键，textcontent则不会。
+- innerText返回的文本，会过滤掉空格、换行和回车键，textContent则不会。
 
-- innerText属性不是DOM标准的一部分，Firefox浏览器甚至没有部署这个属性，而textcontent是DOM标准的一部分。
+- innerText属性不是DOM标准的一部分，Firefox浏览器甚至没有部署这个属性，而textContent是DOM标准的一部分。
 
 **（2）nodeValue**
 
