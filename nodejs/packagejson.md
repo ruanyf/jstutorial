@@ -80,7 +80,7 @@ scripts指定了运行脚本命令的npm命令行缩写，比如start指定了�
 
 {% endhighlight %}
 
-## dependencies字段，devDependencies字段
+## dependencies字段，devDependencies字段，peerDependencies字段
 
 dependencies和devDependencies两项，分别指定了项目运行所依赖的模块、项目开发所需要的模块。
 
@@ -117,6 +117,21 @@ npm install express --save-dev
 {% endhighlight %}
 
 上面代码表示单独安装express模块，--save参数表示将该模块写入dependencies属性，--save-dev表示将该模块写入devDependencies属性。
+
+`peerDependencies`字段主要用来，供插件指定其所需要的主软件的版本。
+
+```javascript
+{
+  "name": "chai-as-promised",
+  "peerDependencies": {
+    "chai": "1.x"
+  }
+}
+```
+
+上面代码指定，安装`chai-as-promised`模块时，主程序`chai`必须一起安装，而且`chai`的版本必须是`1.x`。
+
+注意，从npm 3.0版开始，`peerDependencies`不再会默认安装了。
 
 ## bin字段
 

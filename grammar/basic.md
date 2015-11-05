@@ -85,7 +85,7 @@ x
 
 上面代码直接使用变量`x`，系统就报错，告诉你变量`x`没有声明。
 
-可以在同一条var命令中声明多个变量。
+可以在同一条`var`命令中声明多个变量。
 
 ```javascript
 var a, b;
@@ -98,7 +98,30 @@ var a = 1;
 a = "hello";
 ```
 
-上面代码中，变量`a`起先被赋值为一个数值，后来又被重新赋值为一个字符串。第二次赋值的时候，因为变量`a`已经存在，所以不需要使用var命令。如果用了，就等于重新声明一个变量`a`，会覆盖掉前面的同名变量。
+上面代码中，变量`a`起先被赋值为一个数值，后来又被重新赋值为一个字符串。第二次赋值的时候，因为变量`a`已经存在，所以不需要使用`var`命令。
+
+如果使用`var`重新声明一个已经存在的变量，是无效的。
+
+```javascript
+var x = 1;
+var x;
+x // 1
+```
+
+上面代码中，变量`x`声明了两次，第二次声明是无效的。
+
+但是，如果第二次声明的同时还赋值了，则会覆盖掉前面的值。
+
+```javascript
+var x = 1;
+var x = 2;
+
+// 等同于
+
+var x = 1;
+var x;
+x = 2;
+```
 
 ### 变量提升
 
@@ -622,9 +645,9 @@ JavaScript语言的每一个值，都属于某一种数据类型。JavaScript的
 - null
 - 对象（object）
 
-“数值”是整数和小数(比如1和3.14)；“字符串”是由字符组成的文本（比如"Hello World"）；“布尔值”则是`true`（真）和`false`（假）两个特定值；`undefined`表示不存在，即没有任何值；`null`表示空缺，即此处应该有一个值，但目前为空；至于对象，这是各种值组成的集合。
+“数值”是整数和小数（比如1和3.14）；“字符串”是由字符组成的文本（比如"Hello World"）；“布尔值”则是`true`（真）和`false`（假）两个特定值；`undefined`表示不存在，即此处目前没有任何值；`null`表示空缺，即此处应该有一个值，但目前为空；至于对象，这是各种值组成的集合。
 
-通常，我们将数值、字符串、布尔值称为原始类型（primitive type）的值，将`undefined`和`null`看成两个特数值，而将对象称为合成类型（complex type）的值，因为一个对象是多个值的合成。
+通常，我们将数值、字符串、布尔值称为原始类型（primitive type）的值，即它们是最基本的数据类型，不能再细分了。而将对象称为合成类型（complex type）的值，因为一个对象往往是多个原始类型的值的合成。至于`undefined`和`null`，一般将它们看成两个特殊值。
 
 对象又可以分成三个子类型。
 
@@ -634,9 +657,9 @@ JavaScript语言的每一个值，都属于某一种数据类型。JavaScript的
 
 （狭义的）对象和数组是两种不同的数据组合方式，而函数其实是处理数据的方法。JavaScript把函数当成一种数据类型，可以像其他类型的数据一样，进行赋值和传递，这为编程带来了很大的灵活性，体现了JavaScript作为“函数式语言”的本质。
 
-这里需要明确的是，JavaScript的所有数据，都可以视为（广义的）对象。不仅合成类型的数组和函数属于对象，就连原始类型的数据（数值、字符串、布尔值）也可以用对象方式调用。
+这里需要明确的是，JavaScript的所有数据，都可以视为（广义的）对象。不仅合成类型的数组和函数属于对象，就连原始类型的数据（数值、字符串、布尔值）也可以用对象方式调用。此后，除非声明，本书的”对象“都特指狭义的对象。
 
-本教程将分别详细所有的数据类型。两个特殊值和布尔类型比较简单，将在本节介绍，其他类型将各自有单独的一节。
+本教程将分别详细介绍所有的数据类型。两个特殊值和布尔类型比较简单，将在本节介绍，其他类型将各自有单独的一节。
 
 ### typeof运算符
 
@@ -680,12 +703,10 @@ typeof f
 
 undefined返回undefined。
 
-{% highlight javascript %}
-
+```javascript
 typeof undefined
 // "undefined"
-
-{% endhighlight %}
+```
 
 利用这一点，typeof可以用来检查一个没有声明的变量，而不报错。
 
@@ -749,36 +770,34 @@ instanceof运算符的详细解释，请见《面向对象编程》一章。
 
 **（1）相似性**
 
-首先，null与undefined都可以表示“无”，含义非常相似。将一个变量赋值为undefined或null，老实说，几乎没区别。
+首先，null与undefined都可以表示“没有”，含义非常相似。将一个变量赋值为undefined或null，老实说，语法效果几乎没区别。
 
-{% highlight javascript %}
-
+```javascript
 var a = undefined;
 
 // 或者
 
 var a = null;
+```
 
-{% endhighlight %}
+上面代码中，a变量分别被赋值为`undefined`和`null`，这两种写法的效果几乎等价。
 
-上面代码中，a变量分别被赋值为undefined和null，这两种写法几乎等价。
+在if语句中，它们都会被自动转为false，相等运算符（`==`）甚至直接报告两者相等。
 
-在if语句中，都会被自动转为false，相等运算符甚至直接报告两者相等。
-
-{% highlight javascript %}
-
-if (!undefined) 
-    console.log('undefined is false');
+```javascript
+if (!undefined) {
+  console.log('undefined is false');
+}
 // undefined is false
 
-if (!null) 
-    console.log('null is false');
+if (!null) {
+  console.log('null is false');
+}
 // null is false
 
 undefined == null
 // true
-
-{% endhighlight %}
+```
 
 上面代码说明，两者的行为是何等相似！Google公司开发的JavaScript语言的替代品Dart语言，就明确规定只有null，没有undefined！
 
@@ -788,15 +807,10 @@ undefined == null
 
 1995年JavaScript诞生时，最初像Java一样，只设置了null作为表示"无"的值。根据C语言的传统，null被设计成可以自动转为0。
 
-{% highlight javascript %}
-
-Number(null)
-// 0
-
-5 + null
-// 5
-
-{% endhighlight %}
+```javascript
+Number(null) // 0
+5 + null // 5
+```
 
 但是，JavaScript的设计者Brendan Eich，觉得这样做还不够，有两个原因。
 
@@ -804,42 +818,32 @@ Number(null)
 
 其次，JavaScript的最初版本没有包括错误处理机制，发生数据类型不匹配时，往往是自动转换类型或者默默地失败。Brendan Eich觉得，如果null自动转为0，很不容易发现错误。
 
-因此，Brendan Eich又设计了一个undefined。他是这样区分的：null是一个表示"无"的对象，转为数值时为0；undefined是一个表示"无"的原始值，转为数值时为NaN。
+因此，Brendan Eich又设计了一个undefined。他是这样区分的：`null`是一个表示"无"的**对象**，转为数值时为0；`undefined`是一个表示"无"的原始值，转为数值时为**NaN**。
 
-{% highlight javascript %}
-
-Number(undefined)
-// NaN
-
-5 + undefined
-// NaN
-
-{% endhighlight %}
+```javascript
+Number(undefined) // NaN
+5 + undefined // NaN
+```
 
 但是，这样的区分在实践中很快就被证明不可行。目前，null和undefined基本是同义的，只有一些细微的差别。
 
 **（3）用法和含义**
 
-对于null和undefined，可以大致上像下面这样理解。
+对于null和undefined，可以大致可以像下面这样理解。
 
-null表示"没有对象"，即该处不应该有值。典型用法是：
+`null`表示空值，即该处的值现在为空。典型用法是：
 
-- 作为函数的参数，表示该函数的参数不是对象。
-
+- 作为函数的参数，表示该函数的参数是一个没有任何内容的对象。
 - 作为对象原型链的终点。
 
-undefined表示"缺少值"，就是此处应该有一个值，但是还未定义。典型用法是：
+undefined表示不存在值，就是此处目前不存在任何值。典型用法是：
 
 - 变量被声明了，但没有赋值时，就等于undefined。
-
 - 调用函数时，应该提供的参数没有提供，该参数等于undefined。
-
 - 对象没有赋值的属性，该属性的值为undefined。
-
 - 函数没有返回值时，默认返回undefined。
 
-{% highlight javascript %}
-
+```javascript
 var i;
 i // undefined
 
@@ -851,18 +855,15 @@ o.p // undefined
 
 var x = f();
 x // undefined
-
-{% endhighlight %}
+```
 
 **（4）null的特殊之处**
 
 null的特殊之处在于，JavaScript把它包含在对象类型（object）之中。
 
-{% highlight javascript %}
-
+```javascript
 typeof null // "object"
-
-{% endhighlight %}
+```
 
 上面代码表示，查询null的类型，JavaScript返回object（对象）。
 
@@ -870,7 +871,7 @@ typeof null // "object"
 
 **（5）注意点**
 
-JavaScript的标识名区分大小写，所以undefined和null不同于Undefined和Null（或者其他仅仅大小写不同的词形），后者只是普通的变量名。
+JavaScript的标识名区分大小写，所以`undefined`和`null`不同于`Undefined`和`Null`（或者其他仅仅大小写不同的词形），后者只是普通的变量名。
 
 ### 布尔值
 

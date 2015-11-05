@@ -266,32 +266,28 @@ all_my_elements.forEach(doubleHeight);
 
 除了用静态的script标签，还可以动态嵌入script标签。
 
-{% highlight javascript %}
-
+```javascript
 ['1.js', '2.js'].forEach(function(src) {
   var script = document.createElement('script');
   script.src = src;
   document.head.appendChild(script);
 });
-
-{% endhighlight %}
+```
 
 这种方法的好处是，动态生成的script标签不会阻塞页面渲染，也就不会造成浏览器假死。但是问题在于，这种方法无法保证脚本的执行顺序，哪个脚本文件先下载完成，就先执行哪个。
 
 如果想避免这个问题，可以设置async属性为false。
 
-{% highlight javascript %}
-
+```javascript
 ['1.js', '2.js'].forEach(function(src) {
   var script = document.createElement('script');
   script.src = src;
   script.async = false;
   document.head.appendChild(script);
 });
+```
 
-{% endhighlight %}
-
-上面的代码依然不会阻塞页面渲染，而且可以保证2.js在1.js后面执行。不过需要注意的是，在这段代码后面加载的脚本文件，会因此都等待2.js执行完成后再执行。
+上面的代码依然不会阻塞页面渲染，而且可以保证`2.js`在`1.js`后面执行。不过需要注意的是，在这段代码后面加载的脚本文件，会因此都等待`2.js`执行完成后再执行。
 
 我们可以把上面的写法，封装成一个函数。
 
@@ -370,9 +366,15 @@ JavaScript之所以采用单线程，而不是多线程，跟历史有关系。J
 
 ## Event Loop
 
-所谓Event Loop，指的是一种内部循环，用来排列和处理事件，以及执行函数。[Wikipedia](http://en.wikipedia.org/wiki/Event_loop)的定义是：“**Event Loop是一个程序结构，用于等待和发送消息和事件。**（a programming construct that waits for and dispatches events or messages in a program.）”
+所谓Event Loop，指的是一种内部循环，用来排列和处理事件，以及执行函数。[Wikipedia](http://en.wikipedia.org/wiki/Event_loop)的定义是：“**Event Loop是一个程序结构，用于等待和发送消息和事件**（a programming construct that waits for and dispatches events or messages in a program）”。可以简单把Event Loop理解成，一个动态更新的任务队列。
 
-所有任务可以分成两种，一种是同步任务（synchronous），另一种是异步任务（asynchronous）。同步任务指的是，在主线程上排队执行的任务，只有前一个任务执行完毕，才能执行后一个任务；异步任务指的是，不进入主线程、而进入“任务队列”（task queue）的任务，只有“任务队列”通知主线程，某个异步任务可以执行了，该任务才会进入主线程执行。
+下面是一些常见的JavaScript任务。
+
+- 执行JavaScript代码
+- 对用户的输入（包含鼠标点击、键盘输入等等）做出反应
+- 处理异步的网络请求
+
+所有任务可以分成两种，一种是同步任务（synchronous），另一种是异步任务（asynchronous）。同步任务指的是，在JavaScript执行线程上排队执行的任务，只有前一个任务执行完毕，才能执行后一个任务；异步任务指的是，不进入JavaScript执行线程、而进入“任务队列”（task queue）的任务，只有“任务队列”通知主线程，某个异步任务可以执行了，该任务才会进入JavaScript线程执行。
 
 以Ajax操作为例，它可以当作同步任务处理，也可以当作异步任务处理，由开发者决定。如果是同步任务，主线程就等着Ajax操作返回结果，再往下执行；如果是异步任务，该任务直接进入“任务队列”，主线程跳过Ajax操作，直接往下执行，等到Ajax操作有了结果，主线程再执行对应的回调函数。
 

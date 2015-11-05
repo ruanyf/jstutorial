@@ -319,7 +319,7 @@ $ mocha --grep auth --invert
 $ mocha --compilers js:babel/register --recursive
 ```
 
-上面命令会在运行测试脚本之前，先用Babel进行转码。
+上面命令会在运行测试脚本之前，先用Babel进行转码。`--compilers`参数的值是用冒号分隔的一个字符串，冒号左边是文件的后缀名，右边是用来处理这一类文件的模块名。上面代码表示，运行测试之前，先用`babel/register`模块，处理一下JS文件。
 
 `--require`参数指定测试脚本默认包含的文件。下面是一个`test_helper.js`文件。
 

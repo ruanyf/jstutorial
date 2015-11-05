@@ -49,7 +49,6 @@ $ pwd
 更多例子。
 
 ```javascript
-
 path.resolve('/foo/bar', './baz')
 // '/foo/bar/baz'
 
@@ -59,7 +58,24 @@ path.resolve('/foo/bar', '/tmp/file/')
 path.resolve('wwwroot', 'static_files/png/', '../gif/image.gif')
 // 如果当前目录是/home/myself/node，返回
 // /home/myself/node/wwwroot/static_files/gif/image.gif
-
 ```
 
 该方法忽略非字符串的参数。
+
+## accessSync()
+
+`accessSync`方法用于同步读取一个路径。
+
+下面的代码可以用于判断一个目录是否存在。
+
+```javascript
+function exists(pth, mode) {
+  try {
+    fs.accessSync(pth, mode);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+```
+
