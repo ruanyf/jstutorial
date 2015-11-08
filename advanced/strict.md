@@ -8,28 +8,26 @@ modifiedOn: 2013-01-25
 
 ## 概述
 
-除了正常运行模式，ECMAscript 5添加了第二种运行模式：“严格模式”（strict mode）。顾名思义，这种模式使得Javascript在更严格的条件下运行。
+除了正常运行模式，ECMAScript 5添加了第二种运行模式：“严格模式”（strict mode）。顾名思义，这种模式使得JavaScript在更严格的条件下运行。
 
 设立”严格模式“的目的，主要有以下几个：
 
-- 消除Javascript语法的一些不合理、不严谨之处，减少一些怪异行为;
+- 消除JavaScript语法的一些不合理、不严谨之处，减少一些怪异行为;
 - 消除代码运行的一些不安全之处，保证代码运行的安全；
 - 提高编译器效率，增加运行速度；
-- 为未来新版本的Javascript做好铺垫。
+- 为未来新版本的JavaScript做好铺垫。
 
-“严格模式”体现了Javascript更合理、更安全、更严谨的发展方向，包括IE 10在内的主要浏览器，都已经[支持](http://kangax.github.com/es5-compat-table/)它，许多大项目已经开始全面拥抱它。
+“严格模式”体现了JavaScript更合理、更安全、更严谨的发展方向。
 
-另一方面，同样的代码，在"严格模式"中，可能会有不一样的运行结果；一些在"正常模式"下可以运行的语句，在"严格模式"下将不能运行。掌握这些内容，有助于更细致深入地理解Javascript，让你变成一个更好的程序员。
+同样的代码，在”正常模式“和”严格模式“中，可能会有不一样的运行结果。一些在"正常模式"下可以运行的语句，在"严格模式"下将不能运行。掌握这些内容，有助于更细致深入地理解JavaScript，让你变成一个更好的程序员。
 
 ## 进入标志
 
 进入“严格模式”的标志，是下面这行语句：
 
-{% highlight javascript %}
-
+```javascript
  "use strict";
-
-{% endhighlight %}
+```
 
 老版本的浏览器会把它当作一行普通字符串，加以忽略。
 
@@ -39,70 +37,52 @@ modifiedOn: 2013-01-25
 
 （1） 针对整个脚本文件
 
-将"use strict"放在脚本文件的第一行，则整个脚本都将以“严格模式”运行。如果这行语句不在第一行，则无效，整个脚本以“正常模式”运行。如果不同模式的代码文件合并成一个文件，这一点需要特别注意。
+将”use strict“放在脚本文件的第一行，则整个脚本都将以“严格模式”运行。如果这行语句不在第一行，则无效，整个脚本以“正常模式”运行。如果不同模式的代码文件合并成一个文件，这一点需要特别注意。
 
 (严格地说，只要前面不是产生实际运行结果的语句，"use strict"可以不在第一行，比如直接跟在一个空的分号后面。)
 
-{% highlight html %}
-
+```html
 <script>
-
-"use strict";
-  
-console.log("这是严格模式。");
-
+  'use strict';
+  console.log('这是严格模式');
 </script>
 
 <script>
-
-console.log("这是正常模式。");
-
+  console.log('这是正常模式');
 </script>
+```
 
-{% endhighlight %}
-
-上面的代码表示，一个网页文件中依次有两段Javascript代码。前一个script标签是严格模式，后一个不是。
+上面的代码表示，一个网页文件中依次有两段JavaScript代码。前一个`<script>`标签是严格模式，后一个不是。
 
 （2）针对单个函数
 
 将“use strict”放在函数体的第一行，则整个函数以“严格模式”运行。
 
-{% highlight javascript %}
-
-function strict(){
-
-  "use strict";
-
-  return "这是严格模式。";
+```javascript
+function strict() {
+  'use strict';
+  return '这是严格模式';
 }
 
 function notStrict() {
-	
-	return "这是正常模式。";
-
+  return '这是正常模式';
 }
-
-{% endhighlight %}
+```
 
 （3）脚本文件的变通写法
 
 因为第一种调用方法不利于文件合并，所以更好的做法是，借用第二种方法，将整个脚本文件放在一个立即执行的匿名函数之中。
 
-{% highlight javascript %}
-
-(function (){
- 
-	"use strict";
-
-	// some code here
- 
- })();
-
-{% endhighlight %}
+```javascript
+(function () {
+  "use strict";
+  // some code here
+})();
+```
 
 ## 语法和行为改变
 
-严格模式对Javascript的语法和行为，都做了一些改变。
+严格模式对JavaScript的语法和行为，都做了一些改变。
 
 ### 全局变量显式声明
 
@@ -131,39 +111,29 @@ Javascript语言的一个特点，就是允许“动态绑定”，即某些属�
 
 （1）禁止使用with语句
 
-因为with语句无法在编译时就确定，某个属性到底归属哪个对象，从而影响了编译效果。
+严格模式下，使用`with`语句将报错。因为`with`语句无法在编译时就确定，某个属性到底归属哪个对象，从而影响了编译效果。
 
-{% highlight javascript %}
-
+```javascript
 "use strict";
-
 var v  = 1;
 
-with (o){ // 语法错误 
-
-	v = 2;
-
+with (o) { // SyntaxError
+  v = 2;
 }
-
-{% endhighlight %}
+```
 
 （2）创设eval作用域
 
-正常模式下，Javascript语言有两种变量作用域（scope）：全局作用域和函数作用域。严格模式创设了第三种作用域：eval作用域。
+正常模式下，JavaScript语言有两种变量作用域（scope）：全局作用域和函数作用域。严格模式创设了第三种作用域：eval作用域。
 
-正常模式下，eval语句的作用域，取决于它处于全局作用域，还是函数作用域。严格模式下，eval语句本身就是一个作用域，不再能够生成全局变量了，它所生成的变量只能用于eval内部。
+正常模式下，eval语句的作用域，取决于它处于全局作用域，还是函数作用域。严格模式下，eval语句本身就是一个作用域，不再能够在其所运行的作用域创设新的变量了，也就是说，`eval`所生成的变量只能用于`eval`内部。
 
-{% highlight javascript %}
-
-"use strict";
-
+```javascript
+'use strict';
 var x = 2;
-
 console.info(eval("var x = 5; x")); // 5
-
 console.info(x); // 2
-
-{% endhighlight %}
+```
 
 ### 增强的安全措施
 
@@ -201,31 +171,25 @@ f();// 报错，this未定义
 
 （2）禁止在函数内部遍历调用栈
 
-{% highlight javascript %}
+函数内部不得使用`func.caller`、`func.arguments`，否则会报错。
 
-function f1(){
-
-  "use strict";
-
+```javascript
+function f1() {
+  'use strict';
   f1.caller;    // 报错
   f1.arguments; // 报错
-
 }
 
 f1();
-
-{% endhighlight %}
+```
 
 ### 禁止删除变量
 
-严格模式下无法删除变量。只有configurable设置为true的对象属性，才能被删除。
+严格模式下无法删除变量，如果使用`delete`命令删除一个变量，会报错。只有对象的属性，且属性的描述对象的`configurable`属性设置为true，才能被`delete`命令删除。
 
-{% highlight javascript %}
-
+```javascript
 "use strict";
-
 var x;
-
 delete x; // 语法错误
 
 var o = Object.create(null, {
@@ -234,10 +198,8 @@ var o = Object.create(null, {
     configurable: true
   }
 });
-
 delete o.x; // 删除成功
-
-{% endhighlight %}
+```
 
 ### 显式报错
 
@@ -249,6 +211,8 @@ delete o.x; // 删除成功
 'abc'.length = 5;
 
 {% endhighlight %}
+
+使用`eval`，或者在函数内部使用`arguments`，作为函数名，将会报错。
 
 正常模式下，对一个对象的只读属性进行赋值，不会报错，只会默默地失败。严格模式下，将报错。
 
@@ -312,51 +276,43 @@ delete Object.prototype; // 报错
 
 正常模式下，如果对象有多个重名属性，最后赋值的那个属性会覆盖前面的值。严格模式下，这属于语法错误。
 
-{% highlight javascript %}
-
+```javascript
 "use strict";
 
 var o = {
-	p: 1,
-	p: 2
+ p: 1,
+ p: 2
 }; // 语法错误
-
-{% endhighlight %}
+```
 
 （2）函数不能有重名的参数
 
-正常模式下，如果函数有多个重名的参数，可以用arguments[i]读取。严格模式下，这属于语法错误。
+正常模式下，如果函数有多个重名的参数，可以用`arguments[i]`读取。严格模式下，这属于语法错误。
 
-{% highlight javascript %}
-
+```javascript
 "use strict";
 
 function f(a, a, b) { // 语法错误
-	return ; 
+  return ;
 }
-
-{% endhighlight %}
+```
 
 ### 禁止八进制表示法
 
-正常模式下，整数的第一位如果是0，表示这是八进制数，比如0100等于十进制的64。严格模式禁止这种表示法，整数第一位为0，将报错。
+正常模式下，整数的第一位如果是`0`，表示这是八进制数，比如`0100`等于十进制的64。严格模式禁止这种表示法，整数第一位为`0`，将报错。
 
-{% highlight javascript %}
-
+```javascript
 "use strict";
-
-var n = 0100; // 语法错误
-
-{% endhighlight %}
+var n = 0100; // SyntaxError
+```
 
 ### arguments对象的限制
 
-arguments是函数的参数对象，严格模式对它的使用做了限制。
+`arguments`是函数的参数对象，严格模式对它的使用做了限制。
 
-（1）不允许对arguments赋值
+（1）不允许对`arguments`赋值
 
-{% highlight javascript %}
-
+```javascript
 "use strict";
 
 arguments++; // 语法错误
@@ -367,14 +323,15 @@ try { } catch (arguments) { }  // 语法错误
 
 function arguments() { }  // 语法错误
 
-var f = new Function("arguments", "'use strict'; return 17;");  // 语法错误
-
-{% endhighlight %}
+var f = new Function(
+  'arguments',
+  '"use strict"; return 17;'
+);  // 语法错误
+```
 
 （2）arguments不再追踪参数的变化
 
-{% highlight javascript %}
-
+```javascript
 function f(a) {
   a = 2;
   return [a, arguments[0]];
@@ -389,31 +346,27 @@ function f(a) {
 }
 
 f(1); // 严格模式为[2,1]
+```
 
-{% endhighlight %}
+（3）禁止使用arguments.callee、arguments.caller
 
-（3）禁止使用arguments.callee
+函数内部使用`arguments.callee`、`arguments.caller`将会报错。这意味着，你无法在匿名函数内部调用自身了。
 
-这意味着，你无法在匿名函数内部调用自身了。
-
-{% highlight javascript %}
-
-"use strict";
-
-var f = function() { return arguments.callee; };
+```javascript
+'use strict';
+var f = function() {
+  return arguments.callee;
+};
 
 f(); // 报错
-
-{% endhighlight %}
+```
 
 ### 函数必须声明在顶层
 
 将来JavaScript的新版本会引入“块级作用域”。为了与新版本接轨，严格模式只允许在全局作用域或函数作用域的顶层声明函数。也就是说，不允许在非函数的代码块内声明函数。
 
-{% highlight javascript %}
-
+```javascript
 "use strict";
-
 if (true) {
   function f1() { } // 语法错误
 }
@@ -421,30 +374,24 @@ if (true) {
 for (var i = 0; i < 5; i++) {
   function f2() { } // 语法错误
 }
+```
 
-{% endhighlight %}
-
-上面代码在if代码块和for代码块中声明了函数，在严格模式下都会报错。
+上面代码在`if`代码块和`for`代码块中声明了函数，在严格模式下都会报错。
 
 ### 保留字
 
-为了向将来Javascript的新版本过渡，严格模式新增了一些保留字：implements, interface, let, package, private, protected, public, static, yield。
+为了向将来JavaScript的新版本过渡，严格模式新增了一些保留字：implements, interface, let, package, private, protected, public, static, yield。
 
 使用这些词作为变量名将会报错。
 
-{% highlight javascript %}
-
+```javascript
 function package(protected) { // 语法错误
-
-  "use strict";
-
+  'use strict';
   var implements; // 语法错误
-
 }
+```
 
-{% endhighlight %}
-
-此外，ECMAscript第五版本身还规定了另一些保留字（class, enum, export, extends, import, super），以及各大浏览器自行增加的const保留字，也是不能作为变量名的。
+此外，ECMAscript第五版本身还规定了另一些保留字（class, enum, export, extends, import, super），以及各大浏览器自行增加的`const`保留字，也是不能作为变量名的。
 
 ## 参考链接
 

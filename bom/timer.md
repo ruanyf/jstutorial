@@ -6,7 +6,7 @@ date: 2014-10-12
 modifiedOn: 2014-10-12
 ---
 
-JavaScript提供定时执行代码的功能，叫做定时器（timer），主要由setTimeout()和setInterval()这两个函数来完成。
+JavaScript提供定时执行代码的功能，叫做定时器（timer），主要由setTimeout()和setInterval()这两个函数来完成。它们向任务队列添加定时任务。
 
 ## setTimeout()
 
