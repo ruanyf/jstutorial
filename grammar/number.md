@@ -226,54 +226,58 @@ NaN / 32 // NaN
 
 **（3）判断NaN的方法**
 
-isNaN方法可以用来判断一个值是否为NaN。
+`isNaN`方法可以用来判断一个值是否为`NaN`。
 
-{% highlight javascript %}
-
+```javascript
 isNaN(NaN) // true
 isNaN(123) // false
+```
 
-{% endhighlight %}
+但是，`isNaN`只对数值有效，如果传入其他值，会被先转成数值。比如，传入字符串的时候，字符串会被先转成`NaN`，所以最后返回`true`，这一点要特别引起注意。也就是说，`isNaN`为`true`的值，有可能不是`NaN`，而是一个字符串。
 
-但是，isNaN只对数值有效，如果传入其他值，会被先转成数值。比如，传入字符串的时候，字符串会被先转成NaN，所以最后返回true，这一点要特别引起注意。也就是说，isNaN为true的值，有可能不是NaN，而是一个字符串。
-
-{% highlight javascript %}
-
-isNaN("Hello") // true
+```javascript
+isNaN('Hello') // true
 // 相当于
-isNaN(Number("Hello")) // true
+isNaN(Number('Hello')) // true
+```
 
-{% endhighlight %}
-
-出于同样的原因，对于数组和对象，isNaN也返回true。
+出于同样的原因，对于对象和数组，`isNaN`也返回`true`。
 
 ```javascript
 isNaN({}) // true
+// 等同于
 isNaN(Number({})) // true
 
-isNaN(["xzy"]) // true
-isNaN(Number(["xzy"])) // true
+isNaN(['xzy']) // true
+// 等同于
+isNaN(Number(['xzy'])) // true
 ```
 
-因此，使用isNaN之前，最好判断一下数据类型。
+但是，对于空数组和只有一个数值成员的数组，`isNaN`返回`false`。
 
-{% highlight javascript %}
+```javascript
+isNaN([]) // false
+isNaN([123]) // false
+isNaN(['123']) // false
+```
 
+上面代码之所以返回`false`，原因是这些数组能被`Number`函数转成数值，请参见《数据类型转换》一节。
+
+因此，使用`isNaN`之前，最好判断一下数据类型。
+
+```javascript
 function myIsNaN(value) {
-	return typeof value === 'number' && isNaN(value);
+  return typeof value === 'number' && isNaN(value);
 }
+```
 
-{% endhighlight %}
+判断NaN更可靠的方法是，利用`NaN`是JavaScript之中唯一不等于自身的值这个特点，进行判断。
 
-判断NaN更可靠的方法是，利用NaN是JavaScript之中唯一不等于自身的值这个特点，进行判断。
-
-{% highlight javascript %}
-
+```javascript
 function myIsNaN(value) {
-    return value !== value;
+  return value !== value;
 }
-
-{% endhighlight %}
+```
 
 ### Infinity
 
@@ -488,41 +492,34 @@ parseInt('8e-7', 10) // 8
 
 如果字符串包含不能转化为浮点数的字符，则不再进行转化，返回已经转好的部分。
 
-{% highlight javascript %}
-
+```javascript
 parseFloat("3.14");
 parseFloat("314e-2");
 parseFloat("0.0314E+2");
 parseFloat("3.14more non-digit characters");
-
-{% endhighlight %}
+```
 
 上面四个表达式都返回3.14。
 
 parseFloat方法会自动过滤字符串前导的空格。
 
-{% highlight javascript %}
-
+```javascript
 parseFloat("\t\v\r12.34\n ")
 // 12.34
-
-{% endhighlight %}
+```
 
 如果第一个字符不能转化为浮点数，则返回NaN。
 
-{% highlight javascript %}
-
+```javascript
 parseFloat("FF2") // NaN
 parseFloat("") // NaN
-
-{% endhighlight %}
+```
 
 上面代码说明，parseFloat将空字符串转为NaN。
 
 这使得parseFloat的转换结果不同于Number函数。
 
-{% highlight javascript %}
-
+```javascript
 parseFloat(true)  // NaN
 Number(true) // 1
 
@@ -534,8 +531,7 @@ Number('') // 0
 
 parseFloat('123.45#') // 123.45
 Number('123.45#') // NaN
-
-{% endhighlight %}
+```
 
 ## 参考链接
 

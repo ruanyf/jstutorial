@@ -17,11 +17,9 @@ Viewport指的是网页的显示区域，也就是不借助滚动条的情况下
 viewport缩放规则，需要在HTML网页的head部分指定。
 
 ```html
-
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
 </head>
-
 ```
 
 上面代码指定，viewport的缩放规则是，缩放到当前设备的屏幕宽度（device-width），初始缩放比例（initial-scale）为1倍，禁止用户缩放（user-scalable）。
@@ -38,10 +36,8 @@ viewport 全部属性如下。
 其他的例子如下。
 
 ```html
-
 <meta name = "viewport" content = "width = 320,
-       initial-scale = 2.3, user-scalable = no">
-
+  initial-scale = 2.3, user-scalable = no">
 ```
 
 ## Geolocation API
@@ -80,7 +76,7 @@ navigator.geolocation.getCurrentPosition(geoSuccess,geoError);
 
 {% highlight javascript %}
 
-function geoSuccess(event) { 
+function geoSuccess(event) {
    console.log(event.coords.latitude + ', ' + event.coords.longitude);
 }
 
@@ -167,52 +163,43 @@ Vibration接口用于在浏览器中发出命令，使得设备振动。显然�
 
 使用下面的代码检查该接口是否可用。目前，只有Chrome和Firefox的Android平台最新版本支持它。
 
-{% highlight javascript %}
+```javascript
+navigator.vibrate = navigator.vibrate
+  || navigator.webkitVibrate
+  || navigator.mozVibrate
+  || navigator.msVibrate;
 
-navigator.vibrate = navigator.vibrate 
-					|| navigator.webkitVibrate 
-					|| navigator.mozVibrate 
-					|| navigator.msVibrate;
- 
 if (navigator.vibrate) {
-    // 支持
+  // 支持
 }
-
-{% endhighlight %}
+```
 
 vibrate方法可以使得设备振动，它的参数就是振动持续的毫秒数。
 
-{% highlight javascript %}
-
+```javascript
 navigator.vibrate(1000);
-
-{% endhighlight %}
+```
 
 上面的代码使得设备振动1秒钟。
 
 vibrate方法还可以接受一个数组作为参数，表示振动的模式。偶数位置的数组成员表示振动的毫秒数，奇数位置的数组成员表示等待的毫秒数。
 
 ```javascript
-
 navigator.vibrate([500, 300, 100]);
-
 ```
 
-上面代码表示，设备先振动500毫秒，然后等待300毫秒，再接着振动500毫秒。
+上面代码表示，设备先振动500毫秒，然后等待300毫秒，再接着振动100毫秒。
 
 vibrate是一个非阻塞式的操作，即手机振动的同时，JavaScript代码继续向下运行。要停止振动，只有将0毫秒或者一个空数组传入vibrate方法。
 
 ```javascript
-
 navigator.vibrate(0);
 navigator.vibrate([]);
-
 ```
 
 如果要让振动一直持续，可以使用setInterval不断调用vibrate。
 
 ```javascript
-
 var vibrateInterval;
 
 function startVibrate(duration) {
@@ -229,7 +216,6 @@ function startPeristentVibrate(duration, interval) {
 		startVibrate(duration);
 	}, interval);
 }
-
 ```
 
 ## Luminosity API

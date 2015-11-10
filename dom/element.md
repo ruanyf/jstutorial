@@ -573,7 +573,7 @@ var rect = obj.getBoundingClientRect();
 
 **（1）getClientRects()**
 
-getClientRects方法返回一个类似数组的对象，里面是当前元素在页面上形成的所有矩形。每个矩形都有botto、height、left、right、top和width六个属性，表示它们相对于视口的四个坐标，以及本身的高度和宽度。
+getClientRects方法返回一个类似数组的对象，里面是当前元素在页面上形成的所有矩形。每个矩形都有`bottom`、`height`、`left`、`right`、`top`和`width`六个属性，表示它们相对于视口的四个坐标，以及本身的高度和宽度。
 
 对于盒状元素（比如div和p），该方法返回的对象中只有该元素一个成员。对于行内元素（比如span、a、em），该方法返回的对象有多少个成员，取决于该元素在页面上占据多少行。
 
