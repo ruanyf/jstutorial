@@ -798,6 +798,12 @@ $ npm publish
 $ npm publish --tag beta
 ```
 
+如果发布私有模块，模块初始化的时候，需要加上`scope`参数。只有npm的付费用户才能发布私有模块。
+
+```bash
+$ npm init --scope=<yourscope>
+```
+
 ## npm version
 
 `npm version`命令用来修改项目的版本号。当你完成代码修改，要发布新版本的时候，就用这个命令更新一下软件的版本。
@@ -823,6 +829,12 @@ $ npm version patch -m "Version %s - xxxxxx"
 除了增加版本号，`npm version`命令还会为这次修改，新增一个git commit记录，以及一个新的git tag。
 
 由于更新npm网站的唯一方法，就是发布一个新的版本。因此，除了第一次发布，这个命令与`npm publish`几乎是配套的，先使用它，再使用`npm publish`。
+
+```bash
+$ npm version patch -m "Version %s - add sweet badges"$
+$ git push && git push --tags (or git push origin master --tags)
+$ npm publish
+```
 
 ## npm deprecate
 

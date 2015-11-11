@@ -19,14 +19,14 @@ modifiedOn: 2014-09-06
 
 - Date.now()
 - Date.parse()
-- Date.prototype.getDate() 
+- Date.prototype.getDate()
 - Date.prototype.getDay()
 - Date.prototype.getFullYear()
 - Date.prototype.getHours()
 - Date.prototype.getMiliseconds()
 - Date.prototype.getMinutes()
 - Date.prototype.getMonth()
-- Date.prototype.getSeconds() 
+- Date.prototype.getSeconds()
 - Date.prototype.toDateString()
 - Date.prototype.toLocaleDateString()
 - Date.prototype.toLocaleString()
@@ -43,7 +43,7 @@ modifiedOn: 2014-09-06
 
 ## document
 
-- document.getElementByID()
+- document.getElementById()
 - document.getElementsByClassName()
 - document.getElementsByTagName()
 - document.querySelectorAll()
