@@ -14,14 +14,17 @@ jQuery的最大优势有两个。首先，它基本是一个DOM操作工具，�
 
 一般采用下面的写法，在网页中加载jQuery。
 
-{% highlight html %}
-
-<script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-<script>
-window.jQuery || document.write('<script src="js/jquery-1.11.0.min.js" type="text/javascript"><\/script>')
+```html
+<script type="text/javascript"
+  src="//code.jquery.com/jquery-1.11.0.min.js">
 </script>
-
-{% endhighlight %}
+<script>
+window.jQuery ||
+  document.write(
+    '<script src="js/jquery-1.11.0.min.js" type="text/javascript"><\/script>'
+  );
+</script>
+```
 
 上面代码有两点需要注意。一是采用[CDN](http://jquery.com/download/#using-jquery-with-a-cdn)加载。如果CDN加载失败，则退回到本地加载。二是采用协议无关的加载网址（使用双斜线表示），同时支持http协议和https协议。
 
@@ -39,42 +42,39 @@ window.jQuery || document.write('<script src="js/jquery-1.11.0.min.js" type="tex
 
 ### jQuery对象
 
-jQuery最重要的概念，就是jQuery对象。它是一个全局对象，可以简写为美元符号$。也就是说，jQuery和$两者是等价的。
+jQuery最重要的概念，就是`jQuery`对象。它是一个全局对象，可以简写为美元符号`$`。也就是说，`jQuery`和`$`两者是等价的。
 
 在网页中加载jQuery函数库以后，就可以使用jQuery对象了。jQuery的全部方法，都定义在这个对象上面。
 
-{% highlight javascript %}
-
+```javascript
 var listItems = jQuery('li');
 // or
 var listItems = $('li');
+```
 
-{% endhighlight %}
-
-上面两行代码是等价的，表示选中网页中所有的li元素。
+上面两行代码是等价的，表示选中网页中所有的`li`元素。
 
 ### jQuery构造函数
 
-jQuery对象本质上是一个构造函数，主要作用是返回jQuery对象的实例。比如，上面代码表面上是选中li元素，实际上是返回对应于li元素的jQuery实例。因为只有这样，才能在DOM对象上使用jQuery提供的各种方法。
+`jQuery`对象本质上是一个构造函数，主要作用是返回`jQuery`对象的实例。比如，上面代码表面上是选中`li`元素，实际上是返回对应于`li`元素的`jQuery`实例。因为只有这样，才能在DOM对象上使用jQuery提供的各种方法。
 
-{% highlight javascript %}
-
+```javascript
 $('body').nodeType
 // undefined
 
 $('body') instanceof jQuery
 // true
+```
 
-{% endhighlight %}
+上面代码表示，由于jQuery返回的不是DOM对象，所以没有DOM属性`nodeType`。它返回的是jQuery对象的实例。
 
-上面代码表示，由于jQuery返回的不是DOM对象，所以没有DOM属性nodeType。它返回的是jQuery对象的实例。 
+jQuery构造函数可以多种参数，返回不同的值。
 
 **（1）CSS选择器作为参数**
 
 jQuery构造函数的参数，主要是CSS选择器，就像上面的那个例子。下面是另外一些CSS选择器的例子。
 
-{% highlight javascript %}
-
+```javascript
 $("*")
 $("#lastname")
 $(".intro")
@@ -87,69 +87,68 @@ $("div + p")
 $("div:has(p)")
 $(":empty")
 $("[title^='Tom']")
-
-{% endhighlight %}
+```
 
 本书不讲解CSS选择器，请读者参考有关书籍和jQuery文档。
+
+除了CSS选择器，jQuery还定义了一些自有的选择器，比如`contains`选择器用来选择包含特定文本的元素。下面是一个例子。
+
+```javascript
+var search = $('#search').val();
+$('div:not(:contains("' + search + '"))').hide();
+```
+
+上面代码用来选中包含搜索框输入文本的元素。
 
 **（2）DOM对象作为参数**
 
 jQuery构造函数的参数，还可以是DOM对象。它也会被转为jQuery对象的实例。
 
-{% highlight javascript %}
-
+```javascript
 $(document.body) instanceof jQuery
 // true
-
-{% endhighlight %}
+```
 
 上面代码中，jQuery的参数不是CSS选择器，而是一个DOM对象，返回的依然是jQuery对象的实例。
 
 如果有多个DOM元素要转为jQuery对象的实例，可以把DOM元素放在一个数组里，输入jQuery构造函数。
 
-{% highlight javascript %}
+```javascript
+$([document.body, document.head])
+```
 
-$([document.body, document.head]) 
+**（3）HTML字符串作为参数**
 
-{% endhighlight %}
+如果直接在jQuery构造函数中输入HTML字符串，返回的也是jQuery实例。
 
-**（3）HTML代码作为参数**
-
-如果直接在jQuery构造函数中输入HTML代码，返回的也是jQuery实例。
-
-{% highlight javascript %}
-
+```javascript
 $('<li class="greet">test</li>')
-
-{% endhighlight %}
+```
 
 上面代码从HTML代码生成了一个jQuery实例，它与从CSS选择器生成的jQuery实例完全一样。唯一的区别就是，它对应的DOM结构不属于当前文档。
 
 上面代码也可以写成下面这样。
 
-{% highlight javascript %}
-
+```javascript
 $( '<li>', {
   html: 'test',
   'class': 'greet'
 });
+```
 
-{% endhighlight %}
-
-上面代码中，由于class是javaScript的保留字，所以只能放在引号中。
+上面代码中，由于`class`是javaScript的保留字，所以只能放在引号中。
 
 通常来说，上面第二种写法是更好的写法。
 
 ```javascript
-
 $('<input class="form-control" type="hidden" name="foo" value="bar" />')
 
 // 相当于
 $('<input/>', {
-	class: 'form-control',
-    type: 'hidden',
-    name: 'foo',
-    value: 'bar'
+  'class': 'form-control',
+  type: 'hidden',
+  name: 'foo',
+  value: 'bar'
 })
 
 // 或者
@@ -158,18 +157,27 @@ $('<input/>')
 .attr('type', 'hidden')
 .attr('name', 'foo')
 .val('bar')
+```
 
+由于新增的DOM节点不属于当前文档，所以可以用这种写法预加载图片。
+
+```javascript
+$.preloadImages = function () {
+  for (var i = 0; i < arguments.length; i++) {
+    $('<img>').attr('src', arguments[i]);
+  }
+};
+
+$.preloadImages('img/hover-on.png', 'img/hover-off.png');
 ```
 
 **（4）第二个参数**
 
-默认情况下，jQuery将文档的根元素（html）作为寻找匹配对象的起点。如果要指定某个网页元素（比如某个div元素）作为寻找的起点，可以将它放在jQuery函数的第二个参数。
+默认情况下，jQuery将文档的根元素（`html`）作为寻找匹配对象的起点。如果要指定某个网页元素（比如某个`div`元素）作为寻找的起点，可以将它放在jQuery函数的第二个参数。
 
-{% highlight javascript %}
-
+```javascript
 $('li', someElement);
-
-{% endhighlight %}
+```
 
 上面代码表示，只寻找属于someElement对象下属的li元素。someElement可以是jQuery对象的实例，也可以是DOM对象。
 
@@ -419,36 +427,31 @@ $("li").last()
 
 next方法返回紧邻的下一个同级元素，prev方法返回紧邻的上一个同级元素。
 
-{% highlight javascript %}
-
+```javascript
 $("li").first().next()
 $("li").last().prev()
 
 $("li").first().next('.item')
 $("li").last().prev('.item')
+```
 
-{% endhighlight %}
-
-如果next方法和prev方法带有参数，表示选择符合该参数的同级元素。
+如果`next`方法和`prev`方法带有参数，表示选择符合该参数的同级元素。
 
 **（3）parent方法，parents方法，children方法**
 
 parent方法返回当前元素的父元素，parents方法返回当前元素的所有上级元素（直到html元素）。
 
-{% highlight javascript %}
-
+```javascript
 $("p").parent()
 $("p").parent(".selected")
 
 $("p").parents()
 $("p").parents("div")
-
-{% endhighlight %}
+```
 
 children方法返回选中元素的所有子元素。
 
-{% highlight javascript %}
-
+```javascript
 $("div").children()
 $("div").children(".selected")
 
@@ -456,8 +459,7 @@ $("div").children(".selected")
 
 $('div > *')
 $('div > .selected')
-
-{% endhighlight %}
+```
 
 上面这三个方法都接受一个选择器作为参数。
 
@@ -465,31 +467,25 @@ $('div > .selected')
 
 siblings方法返回当前元素的所有同级元素。
 
-{% highlight javascript %}
-
+```javascript
 $('li').first().siblings()
 $('li').first().siblings('.item')
-
-{% endhighlight %}
+```
 
 nextAll方法返回当前元素其后的所有同级元素，prevAll方法返回当前元素前面的所有同级元素。
 
-{% highlight javascript %}
-
+```javascript
 $('li').first().nextAll()
 $('li').last().prevAll()
-
-{% endhighlight %}
+```
 
 **（5）closest方法，find方法**
 
 closest方法返回当前元素，以及当前元素的所有上级元素之中，第一个符合条件的元素。find方法返回当前元素的所有符合条件的下级元素。
 
 ```javascript
-
 $('li').closest('div')
 $('div').find('li')
-
 ```
 
 上面代码中的find方法，选中所有div元素下面的li元素，等同于$('li', 'div')。由于这样写缩小了搜索范围，所以要优于$('div li')的写法。
@@ -524,8 +520,7 @@ $('li').first().end()
 
 filter方法用于过滤结果集，它可以接受多种类型的参数，只返回与参数一致的结果。
 
-{% highlight javascript %}
-
+```javascript
 // 返回符合CSS选择器的结果
 $('li').filter('.item')
 
@@ -539,24 +534,19 @@ $("li").filter(document.getElementById("unique"))
 
 // 返回符合特定jQuery实例的结果
 $("li").filter($("#unique"))
+```
 
-{% endhighlight %}
+`not`方法的用法与`filter`方法完全一致，但是返回相反的结果，即过滤掉匹配项。
 
-not方法的用法与filter方法完全一致，但是返回相反的结果，即过滤掉匹配项。
-
-{% highlight javascript %}
-
+```javascript
 $('li').not('.item')
-
-{% endhighlight %}
+```
 
 has方法与filter方法作用相同，但是只过滤出子元素符合条件的元素。
 
-{% highlight javascript %}
-
+```javascript
 $("li").has("ul")
-
-{% endhighlight %}
+```
 
 上面代码返回具有ul子元素的li元素。
 
@@ -664,43 +654,44 @@ $('li').css({
 
 val方法返回结果集第一个元素的值，或者设置当前结果集所有元素的值。
 
-{% highlight javascript %}
-
+```javascript
 $('input[type="text"]').val()
-
 $('input[type="text"]').val('new value')
-
-{% endhighlight %}
+```
 
 **（5）prop方法，attr方法**
 
 首先，这里要区分两种属性。
 
-一种是网页元素的属性，比如a元素的href属性、img元素的src属性。这要使用attr方法读写。
+一种是网页元素的属性，比如`a`元素的`href`属性、`img`元素的`src`属性。这要使用`attr`方法读写。
 
-{% highlight javascript %}
-
+```javascript
 // 读取属性值
 $('textarea').attr(name)
 
 //写入属性值
 $('textarea').attr(name, val)
+```
 
-{% endhighlight %}
+下面是通过设置`a`元素的`target`属性，使得网页上的外部链接在新窗口打开的例子。
 
-另一种是DOM元素的属性，比如tagName、nodeName、nodeType等等。这要使用prop方法读写。
+```javascript
+$('a[href^="http"]').attr('target', '_blank');
+$('a[href^="//"]').attr('target', '_blank');
+$('a[href^="' + window.location.origin + '"]').attr('target', '_self');
+```
 
-{% highlight javascript %}
+另一种是DOM元素的属性，比如`tagName`、`nodeName`、`nodeType`等等。这要使用`prop`方法读写。
 
+```javascript
 // 读取属性值
 $('textarea').prop(name)
 
 // 写入属性值
 $('textarea').prop(name, val)
+```
 
-{% endhighlight %}
-
-所以，attr方法和prop方法针对的是不同的属性。在英语中，attr是attribute的缩写，prop是property的缩写，中文很难表达出这种差异。有时，attr方法和prop方法对同一个属性会读到不一样的值。比如，网页上有一个单选框。
+所以，`attr`方法和`prop`方法针对的是不同的属性。在英语中，`attr`是attribute的缩写，`prop`是property的缩写，中文很难表达出这种差异。有时，`attr`方法和`prop`方法对同一个属性会读到不一样的值。比如，网页上有一个单选框。
 
 {% highlight html %}
 
@@ -982,79 +973,93 @@ jQuery提供以下一些动画效果方法。
 - toggle：显示或隐藏当前元素。
 - fadeIn：将当前元素的不透明度（opacity）逐步提升到100%。
 - fadeOut：将当前元素的不透明度逐步降为0%。
+- fadeToggle：以逐渐透明或逐渐不透明的方式，折叠显示当前元素。
 - slideDown：以从上向下滑入的方式显示当前元素。
 - slideUp：以从下向上滑出的方式隐藏当前元素。
 - slideToggle：以垂直滑入或滑出的方式，折叠显示当前元素。
 
 上面这些方法可以不带参数调用，也可以接受毫秒或预定义的关键字作为参数。
 
-{% highlight javascript %}
-
+```javascript
 $('.hidden').show();
 $('.hidden').show(300);
 $('.hidden').show('slow');
-
-{% endhighlight %}
+```
 
 上面三行代码分别表示，以默认速度、300毫秒、较慢的速度隐藏一个元素。
 
-jQuery预定义的关键字是在jQuery.fx.speeds对象上面，可以自行改动这些值，或者创造新的值。
+jQuery预定义的关键字是在`jQuery.fx.speeds`对象上面，可以自行改动这些值，或者创造新的值。
 
-{% highlight javascript %}
-
+```javascript
 jQuery.fx.speeds.fast = 50;
 jQuery.fx.speeds.slow = 3000;
 jQuery.fx.speeds.normal = 1000;
+```
 
-{% endhighlight %}
+上面三行代码重新定义fast、normal、slow关键字对应的毫秒数。
 
-上面三行代码重新定义fast和slow关键字对应的毫秒数，并且自定义了normal关键字，表示动画持续时间为1500毫秒。
+你还可以定义自己的关键字。
 
-你可以定义自己的关键字。
-
-{% highlight javascript %}
-
+```javascript
 jQuery.fx.speeds.blazing = 30;
 
 // 调用
 $('.hidden').show('blazing');
-
-{% endhighlight %}
+```
 
 这些方法还可以接受一个函数，作为第二个参数，表示动画结束后的回调函数。
 
-{% highlight javascript %}
-
+```javascript
 $('p').fadeOut(300, function() {
   $(this).remove();
 });
+```
 
-{% endhighlight %}
+上面代码表示，`p`元素以300毫秒的速度淡出，然后调用回调函数，将其从DOM中移除。
 
-上面代码表示，p元素以300毫秒的速度淡出，然后调用回调函数，将其从DOM中移除。
+使用按钮控制某个元素折叠显示的代码如下。
+
+```javascript
+// Fade
+$('.btn').click(function () {
+  $('.element').fadeToggle('slow');
+});
+
+// Toggle
+$('.btn').click(function () {
+  $('.element').slideToggle('slow');
+});
+```
 
 **（2）animate方法**
 
 上面这些动画效果方法，实际上都是animate方法的简便写法。在幕后，jQuery都是统一使用animate方法生成各种动画效果。
 
-animate方法接受三个参数。
+```javascript
+$('a.top').click(function (e) {
+  e.preventDefault();
+  $('html, body').animate({scrollTop: 0}, 800);
+});
+```
 
-{% highlight javascript %}
+上面代码是点击链接，回到页面头部的写法。其中，`animate`方法接受两个参数，第一个参数是一个对象，表示动画结束时相关CSS属性的值，第二个参数是动画持续的毫秒数。需要注意的是，第一个参数对象的成员名称，必须与CSS属性名称一致，如果CSS属性名称带有连字号，则需要用“骆驼拼写法”改写。
 
+animate方法还可以接受第三个参数，表示动画结束时的回调函数。
+
+```javascript
 $('div').animate({
     left: '+=50', // 增加50
     opacity: 0.25,
     fontSize: '12px'
   },
-  300, // 持续事件
+  300, // 持续时间
   function() { // 回调函数
      console.log('done!');
   }
 );
+```
 
-{% endhighlight %}
-
-上面代码表示，animate方法的第一个参数是一个对象，表示动画结束时相关CSS属性的值，第二个参数是动画持续的毫秒数，第三个参数是动画结束时的回调函数。需要注意的是，第一个参数对象的成员名称，必须与CSS属性名称一致，如果CSS属性名称带有连字号，则需要用“骆驼拼写法”改写。
+上面代码表示，动画结束时，在控制台输出“done！”。
 
 **（3）stop方法，delay方法**
 
@@ -1098,8 +1103,7 @@ $( "form" ).on( "submit", function( event ) {
 
 serializeArray方法用于将表单元素的值转为数组。
 
-{% highlight javascript %}
-
+```javascript
 $("form").submit(function (event){
   console.log($(this).serializeArray());
   event.preventDefault();
@@ -1108,8 +1112,7 @@ $("form").submit(function (event){
 //		{name : 'field1', value : 123},
 //		{name : 'field2', value : 'hello world'}
 //	]
-
-{% endhighlight %}
+```
 
 ## 事件处理
 
@@ -1170,17 +1173,31 @@ $(document).keyup(function(e) {
 
 上面代码中，用户按下escape键，jQuery就会为body元素添加/去除名为show-nav的class。
 
-hover方法需要特别说明。它接受两个回调函数作为参数，分别代表mouseenter和mouseleave事件的回调函数。
+`hover`方法需要特别说明。它接受两个回调函数作为参数，分别代表`mouseenter`和`mouseleave`事件的回调函数。
 
-{% highlight javascript %}
-
+```javascript
 $(selector).hover(handlerIn, handlerOut)
-
 // 等同于
-
 $(selector).mouseenter(handlerIn).mouseleave(handlerOut)
+```
 
-{% endhighlight %}
+下面是一个例子，当按钮发生`hover`事件，添加一个class样式，当`hover`事件结束时，再取消这个class。
+
+```javascript
+$('.btn').hover(function () {
+  $(this).addClass('hover');
+}, function () {
+  $(this).removeClass('hover');
+});
+```
+
+使用`toggleClass`可以简化上面的代码。
+
+```javascript
+$('.btn').hover(function () {
+  $(this).toggleClass('hover');
+});
+```
 
 ### on方法，trigger方法，off方法
 
@@ -1188,57 +1205,71 @@ $(selector).mouseenter(handlerIn).mouseleave(handlerOut)
 
 **（1）on方法**
 
-on方法是jQuery事件绑定的统一接口。事件绑定的那些简便方法，其实都是on方法的简写形式。
+`on`方法是jQuery事件绑定的统一接口。事件绑定的那些简便方法，其实都是`on`方法的简写形式。
 
-on方法接受两个参数，第一个是事件名称，第二个是回调函数。
+`on`方法接受两个参数，第一个是事件名称，第二个是回调函数。
 
-{% highlight javascript %}
-
+```javascript
 $('li').on('click', function (e){
   console.log($(this).text());
 });
+```
 
-{% endhighlight %}
+上面代码为`li`元素绑定`click`事件的回调函数。
 
-上面代码为li元素绑定click事件的回调函数。
+> 注意，在回调函数内部，`this`关键字指的是发生该事件的DOM对象。为了使用jQuery提供的方法，必须将DOM对象转为jQuery对象，因此写成`$(this)`。
 
-> 注意，在回调函数内部，this关键字指的是发生该事件的DOM对象。为了使用jQuery提供的方法，必须将DOM对象转为jQuery对象，因此写成$(this)。
+`on`方法允许一次为多个事件指定同样的回调函数。
 
-on方法允许一次为多个事件指定同样的回调函数。
-
-{% highlight javascript %}
-
+```javascript
 $('input[type="text"]').on('focus blur', function (){
   console.log('focus or blur');
 });
+```
 
-{% endhighlight %}
+上面代码为文本框的`focus`和`blur`事件绑定同一个回调函数。
 
-上面代码为文本框的focus和blur事件绑定同一个回调函数。
+下面是一个例子，当图片加载失败，使用`error`事件，替换另一张图片。
 
-on方法还可以为当前元素的某一个子元素，添加回调函数。
+```javascript
+$('img').on('error', function () {
+  if(!$(this).hasClass('broken-image')) {
+    $(this).prop('src', 'img/broken.png').addClass('broken-image');
+  }
+});
+```
 
-{% highlight javascript %}
+下面是检查用户是否切换浏览器tab的例子。
 
+```javascript
+$(document).on('visibilitychange', function (e) {
+  if (e.target.visibilityState === "visible") {
+    console.log('Tab is now in view!');
+  } else if (e.target.visibilityState === "hidden") {
+    console.log('Tab is now hidden!');
+  }
+});
+```
+
+`on`方法还可以为当前元素的某一个子元素，添加回调函数。
+
+```javascript
 $('ul').on('click', 'li', function (e){
   console.log(this);
 });
+```
 
-{% endhighlight %}
-
-上面代码为ul的子元素li绑定click事件的回调函数。采用这种写法时，on方法接受三个参数，子元素选择器作为第二个参数，夹在事件名称和回调函数之间。
+上面代码为`ul`的子元素`li`绑定click事件的回调函数。采用这种写法时，on方法接受三个参数，子元素选择器作为第二个参数，夹在事件名称和回调函数之间。
 
 这种写法有两个好处。首先，click事件还是在ul元素上触发回调函数，但是会检查event对象的target属性是否为li子元素，如果为true，再调用回调函数。这样就比为li元素一一绑定回调函数，节省了内存空间。其次，这种绑定的回调函数，对于在绑定后生成的li元素依然有效。
 
 on方法还允许向回调函数传入数据。
 
-{% highlight javascript %}
-
+```javascript
 $("ul" ).on("click", {name: "张三"}, function (event){
 	console.log(event.data.name);
 });
-
-{% endhighlight %}
+```
 
 上面代码在发生click事件之后，会通过event对象的data属性，在控制台打印出所传入的数据（即“张三”）。
 

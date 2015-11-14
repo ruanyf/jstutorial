@@ -260,7 +260,7 @@ beverages.should.have.property('tea').with.length(3);
 
 ### 概述
 
-Mocha是一种测试框架，即运行测试的工具。除了它以外，常用的测试框架还有Jasmine、[Tape](https://github.com/substack/tape/)、[zuul](https://github.com/defunctzombie/zuul/)等。
+Mocha（发音“摩卡”）是现在最流行的前端测试框架之一，此外常用的测试框架还有[Jasmine](http://jasmine.github.io/)、[Tape](https://github.com/substack/tape/)、[zuul](https://github.com/defunctzombie/zuul/)等。所谓“测试框架”，就是运行测试的工具。
 
 Mocha使用下面的命令安装。
 
@@ -272,7 +272,155 @@ $ npm install -g mocha chai
 $ npm i -D mocha chai
 ```
 
-上面代码中，由于Mocha自身不带断言库，所以还需要安装一个断言库，这里选用`Chai.js`。
+上面代码中，除了安装Mocha以外，还安装了断言库`chai`，这是因为Mocha自身不带断言库，必须安装外部断言库。
+
+测试套件文件一般放在`test`子目录下面，配置文件`mocha.opts`也放在这个目录里面。
+
+### 浏览器测试
+
+使用浏览器测试时，先用`mocha init`命令在指定目录生成初始化文件。
+
+```bash
+$ mocha init <path>
+```
+
+运行上面命令，就会在该目录下生成一个`index.html`文件，以及配套的脚本和样式表。
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Unit.js tests in the browser with Mocha</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="mocha.css" />
+  </head>
+  <body>
+    <h1>Unit.js tests in the browser with Mocha</h1>
+    <div id="mocha"></div>
+    <script src="mocha.js"></script>
+    <script>
+      mocha.setup('bdd');
+    </script>
+    <script src="tests.js"></script>
+    <script>
+      mocha.run();
+    </script>
+  </body>
+</html>
+```
+
+然后在该文件中，加入你要测试的文件（比如`app.js`）、测试脚本（`app.spec.js`）和断言库（`chai.js`）。
+
+```html
+<script src="app.js"></script>
+<script src="http://chaijs.com/chai.js"></script>
+<script src="app.spec.js"></script>
+```
+
+各个文件的内容如下。
+
+```javascript
+// app.js
+function add(x, y){
+  return x + y;
+}
+
+// app.spec.js
+var expect = chai.expect;
+
+describe('测试add函数', function () {
+  it('1加1应该等于2', function () {
+    expect(add(1, 1)).to.equal(2);
+  });
+});
+```
+
+### 命令行测试
+
+Mocha除了在浏览器运行，还可以在命令行运行。
+
+还是使用上面的文件，作为例子，但是要改成CommonJS格式。
+
+```javascript
+// app.js
+function add(x, y){
+  return x + y;
+}
+
+module.exports = add;
+
+// app.spec.js
+var expect = require('chai').expect;
+var add = require('../app');
+
+describe('测试add函数', function () {
+  it('1加1应该等于2', function () {
+    expect(add(1, 1)).to.equal(2);
+  });
+});
+```
+
+然后，在命令行下执行`mocha`，就会执行测试。
+
+```bash
+$ mocha
+```
+
+上面的命令等同于下面的形式。
+
+```bash
+$ mocha test --reporter spec --recursive --growl
+```
+
+### mocha.opts
+
+所有Mocha的命令行参数，都可以写在`test`目录下的配置文件`mocha.opts`之中。
+
+下面是一个典型的配置文件。
+
+```javascript
+--reporter spec
+--recursive
+--growl
+```
+
+上面三个设置的含义如下。
+
+- 使用spec报告模板
+- 包括子目录
+- 打开桌面通知插件growl
+
+如果希望测试非存放于test子目录的测试用例，可以在`mocha.opts`写入以下内容。
+
+```bash
+server-tests
+--recursive
+```
+
+上面代码指定运行`server-tests`目录及其子目录之中的测试脚本。
+
+### 生成规格文件
+
+Mocha支持从测试用例生成规格文件。
+
+```bash
+$ mocha test/app.spec.js -R markdown > spec.md
+```
+
+上面命令生成单个`app.spec.js`规格。
+
+生成HTML格式的报告，使用下面的命令。
+
+```bash
+$ mocha test/app.spec.js -R doc > spec.html
+```
+
+如果要生成整个`test`目录，对应的规格文件，使用下面的命令。
+
+```bash
+$ mocha test -R markdown > spec.md --recursive
+```
 
 只要提供测试脚本的路径，Mocha就可以运行这个测试脚本。
 
@@ -334,24 +482,19 @@ import chai from 'chai';
 $ mocha --compilers js:babel/register --require ./test/test_helper.js  --recursive
 ```
 
-### mocha.opts
-
-所有Mocha的命令行参数，都可以写在`test`目录下的配置文件`mocha.opts`之中。
-
-如果希望测试非存放于test子目录的测试用例，可以在`mocha.opts`写入以下内容。
-
-```bash
-server-tests
---recursive
-```
-
-上面代码指定运行`server-tests`目录及其子目录之中的测试脚本。
-
 ### 测试脚本的写法
 
 测试脚本中，describe方法和it方法都允许调用only方法，表示只运行某个测试套件或测试用例。
 
 ```javascript
+// 例一
+describe('Array', function(){
+  describe.only('#indexOf()', function(){
+    ...
+  });
+});
+
+// 例二
 describe("using only", function() {
   it.only("this is the only test to be run", function() {
 
@@ -363,11 +506,17 @@ describe("using only", function() {
 });
 ```
 
-上面代码中，只有第一个测试用例会运行。
+上面代码中，只有带有`only`方法的测试套件或测试用例会运行。
 
 describe方法和it方法还可以调用skip方法，表示跳过指定的测试套件或测试用例。
 
 ```javascript
+// 例一
+describe.skip('Article', function() {
+  // ...
+});
+
+// 例二
 describe("using only", function() {
   it.skip("this is the only test to be run", function() {
 
@@ -379,7 +528,7 @@ describe("using only", function() {
 });
 ```
 
-上面代码中，只有第二个测试用例会执行。
+上面代码中，带有`skip`方法的测试套件或测试用例会被忽略。
 
 如果测试用例包含异步操作，可以done方法显式指定测试用例的运行结束时间。
 

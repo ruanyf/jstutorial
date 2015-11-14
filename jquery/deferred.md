@@ -379,17 +379,15 @@ try{
 
 上面代码对promise对象，调用resolve方法，结果报错。
 
-jQuery的ajax() 方法返回的就是一个promise对象。此外，Animation类操作也可以使用promise方法。
+jQuery的`ajax()`方法返回的就是一个Promise对象。此外，Animation类操作也可以使用`promise`方法。
 
-{% highlight javascript %}
-
+```javascript
 $('body').toggle('blinds').promise().then(
   function(){
     $('body').toggle('blinds')
   }
 )
-
-{% endhighlight %}
+```
 
 ## 辅助方法
 

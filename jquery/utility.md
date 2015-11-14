@@ -627,13 +627,19 @@ jQuery提供以下一些方法，用于指定特定的AJAX事件的回调函数�
 
 下面是示例。
 
-{% highlight javascript %}
-
+```javascript
 $('#loading_indicator')
 .ajaxStart(function (){$(this).show();})
 .ajaxStop(function (){$(this).hide();});
+```
 
-{% endhighlight %}
+下面是处理Ajax请求出错（返回404或500错误）的例子。
+
+```javascript
+$(document).ajaxError(function (e, xhr, settings, error) {
+  console.log(error);
+});
+```
 
 ### 返回值
 
