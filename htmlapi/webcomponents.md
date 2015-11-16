@@ -40,7 +40,6 @@ template标签表示网页中某些重复出现的部分的代码模板。它存
 下面的代码用来检查，浏览器是否支持template标签。
 
 ```javascript
-
 function supportsTemplate() {
   return 'content' in document.createElement('template');
 }
@@ -50,13 +49,11 @@ if (supportsTemplate()) {
 } else {
   // 不支持
 }
-
 ```
 
 下面是一个模板的例子。
 
 ```html
-
 <template id="profileTemplate">
   <div class="profile">
     <img src="" class="profile__img">
@@ -64,34 +61,28 @@ if (supportsTemplate()) {
     <div class="profile__social"></div>
   </div>
 </template>
-
 ```
 
 使用的时候，需要用JavaScript在模板中插入内容，然后将其插入DOM。
 
 ```javascript
-
 var template = document.querySelector('#profileTemplate');
-template.querySelector('.profile__img').src = 'profile.jpg';
-template.querySelector('.profile__name').textContent = 'Barack Obama';
-template.querySelector('.profile__social').textContent = 'Follow me on Twitter';
+template.content.querySelector('.profile__img').src = 'profile.jpg';
+template.content.querySelector('.profile__name').textContent = 'Barack Obama';
+template.content.querySelector('.profile__social').textContent = 'Follow me on Twitter';
 document.body.appendChild(template.content);
-
 ```
 
 上面的代码是将模板直接插入DOM，更好的做法是克隆template节点，然后将克隆的节点插入DOM。这样做可以多次使用模板。
 
 ```javascript
-
 var clone = document.importNode(template.content, true);
 document.body.appendChild(clone);
-
 ```
 
 接受template插入的元素，叫做宿主元素（host）。在template之中，可以对宿主元素设置样式。
 
 ```html
-
 <template>
 <style>
   :host {
@@ -102,7 +93,6 @@ document.body.appendChild(clone);
   }
 </style>
 </template>
-
 ```
 
 ### document.importNode()
@@ -110,12 +100,10 @@ document.body.appendChild(clone);
 document.importNode方法用于克隆外部文档的DOM节点。
 
 ```javascript
-
 var iframe = document.getElementsByTagName("iframe")[0];
 var oldNode = iframe.contentWindow.document.getElementById("myNode");
 var newNode = document.importNode(oldNode, true);
 document.getElementById("container").appendChild(newNode);
-
 ```
 
 上面例子是将iframe窗口之中的节点oldNode，克隆进入当前文档。
