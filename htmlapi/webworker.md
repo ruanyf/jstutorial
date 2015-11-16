@@ -55,22 +55,19 @@ worker.postMessage({method: 'echo', args: ['Work']});
 
 在子线程内，必须有一个回调函数，监听message事件。
 
-{% highlight javascript %}
-
+```javascript
 /* File: work.js */
 
 self.addEventListener('message', function(e) {
   self.postMessage('You said: ' + e.data);
 }, false);
-
-{% endhighlight %}
+```
 
 self代表子线程自身，self.addEventListener表示对子线程的message事件指定回调函数（直接指定onmessage属性的值也可）。回调函数的参数是一个事件对象，它的data属性包含主线程发来的信号。self.postMessage则表示，子线程向主线程发送一个信号。
 
 根据主线程发来的不同的信号值，子线程可以调用不同的方法。
 
-{% highlight javascript %}
-
+```javascript
 /* File: work.js */
 
 self.onmessage = function(event) {
@@ -80,29 +77,25 @@ self.onmessage = function(event) {
   var reply = doSomething(args);
   self.postMessage({method: method, reply: reply});
 };
-
-{% endhighlight %}
+```
 
 ## 主线程的事件监听
 
 主线程也必须指定message事件的回调函数，监听子线程发来的信号。
 
-{% highlight javascript %}
-
+```javascript
 /* File: main.js */
 
 worker.addEventListener('message', function(e) {
 	console.log(e.data);
 }, false);
-
-{% endhighlight %}
+```
 
 ## 错误处理
 
 主线程可以监听子线程是否发生错误。如果发生错误，会触发主线程的error事件。
 
-{% highlight javascript %}
-
+```javascript
 worker.onerror(function(event) {
   console.log(event);
 });
@@ -112,26 +105,21 @@ worker.onerror(function(event) {
 worker.addEventListener('error', function(event) {
   console.log(event);
 });
-
-{% endhighlight %}
+```
 
 ## 关闭子线程
 
 使用完毕之后，为了节省系统资源，我们必须在主线程调用terminate方法，手动关闭子线程。
 
-{% highlight javascript %}
-
-worker.terminate(); 
-
-{% endhighlight %}
+```javascript
+worker.terminate();
+```
 
 也可以子线程内部关闭自身。
 
-{% highlight javascript %}
-
+```javascript
 self.close();
-
-{% endhighlight %}
+```
 
 ## 主线程与子线程的数据通信
 
@@ -143,19 +131,16 @@ self.close();
 
 如果要使用该方法，postMessage方法的最后一个参数必须是一个数组，用来指定前面发送的哪些值可以被转移给子线程。
 
-{% highlight javascript %}
-
+```javascript
 worker.postMessage(arrayBuffer, [arrayBuffer]);
 window.postMessage(arrayBuffer, targetOrigin, [arrayBuffer]);
-
-{% endhighlight %}
+```
 
 ## 同页面的Web Worker
 
 通常情况下，子线程载入的是一个单独的JavaScript文件，但是也可以载入与主线程在同一个网页的代码。假设网页代码如下：
 
-{% highlight html %}
-
+```html
 <!DOCTYPE html>
     <body>
         <script id="worker" type="app/worker">
@@ -166,83 +151,166 @@ window.postMessage(arrayBuffer, targetOrigin, [arrayBuffer]);
         </script>
     </body>
 </html>
-
-{% endhighlight %}
+```
 
 我们可以读取页面中的script，用worker来处理。
 
-{% highlight javascript %}
-
+```javascript
 var blob = new Blob([document.querySelector('#worker').textContent]);
-
-{% endhighlight %}
+```
 
 这里需要把代码当作二进制对象读取，所以使用Blob接口。然后，这个二进制对象转为URL，再通过这个URL创建worker。
 
-{% highlight javascript %}
-
+```javascript
 var url = window.URL.createObjectURL(blob);
-
 var worker = new Worker(url);
-
-{% endhighlight %}
+```
 
 部署事件监听代码。
 
-{% highlight javascript %}
-
+```javascript
 worker.addEventListener('message', function(e) {
    console.log(e.data);
 }, false);
-
-{% endhighlight %}
+```
 
 最后，启动worker。
 
-{% highlight javascript %}
-
+```javascript
 worker.postMessage('');
-
-{% endhighlight %}
+```
 
 整个页面的代码如下：
 
-{% highlight html %}
-
+```html
 <!DOCTYPE html>
-    <body>
-        <script id="worker" type="app/worker">
+<body>
+  <script id="worker" type="app/worker">
+    addEventListener('message', function() {
+      postMessage('Work done!');
+    }, false);
+   </script>
 
-            addEventListener('message', function() {
-                postMessage('Work done!');
-            }, false);
+  <script>
+    (function() {
+      var blob = new Blob([document.querySelector('#worker').textContent]);
+      var url = window.URL.createObjectURL(blob);
+      var worker = new Worker(url);
 
-        </script>
+      worker.addEventListener('message', function(e) {
+        console.log(e.data);
+      }, false);
 
-		<script>
-            (function() {
-
-                var blob = new Blob([document.querySelector('#worker').textContent]);
-
-                var url = window.URL.createObjectURL(blob);
-
-                var worker = new Worker(url);
-
-                worker.addEventListener('message', function(e) {
-                    console.log(e.data);
-                }, false);
-
-                worker.postMessage('');
-            })();
-        </script>
-    </body>
+      worker.postMessage('');
+    })();
+  </script>
+</body>
 </html>
-
-{% endhighlight %}
+```
 
 可以看到，主线程和子线程的代码都在同一个网页上面。
 
 上面所讲的Web Worker都是专属于某个网页的，当该网页关闭，worker就自动结束。除此之外，还有一种共享式的Web Worker，允许多个浏览器窗口共享同一个worker，只有当所有网口关闭，它才会结束。这种共享式的Worker用SharedWorker对象来建立，因为适用场合不多，这里就省略了。
+
+## Service Worker
+
+Service worker是一个在浏览器后台运行的脚本，与网页不相干，专注于那些不需要网页或用户互动就能完成的功能。
+
+Service Worker的特点。
+
+（1）它属于JavaScript Worker，不能直接接触DOM，通过`postMessage`接口与页面通信。
+
+（2）Service worker可以作为网络请求的代理，从而控制页面的网路通信。
+
+（3）它可以在使用结束时终止，也可以在需要的时候重启。所以，不能依赖它内部的`onfetch`和`onmessage`监听函数。如果确实需要它一直运行，就必须让它可以使用IndexedDB API。
+
+（4）它大量使用Promise。
+
+使用Service Worker有以下步骤。
+
+首先，需要向浏览器登记Service Worker。
+
+```javascript
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').then(function(registration) {
+    // 登记成功
+    console.log('ServiceWorker registration successful with scope: ',    registration.scope);
+  }).catch(function(err) {
+    // 登记失败
+    console.log('ServiceWorker registration failed: ', err);
+  });
+}
+```
+
+上面代码向浏览器登记`sw.js`脚本，实质就是浏览器加载`sw.js`。这段代码可以多次调用，浏览器会自行判断`sw.js`是否登记过，如果已经登记过，就不再重复执行了。
+
+`sw.js`位于域名的根目录下，这表明这个Service worker的范围（scope）是整个域，即会接收整个域下面的`fetch`事件。如果脚本的路径是`/example/sw.js`，那么Service worker只对`/example/`开头的URL有效（比如`/example/page1/`、`/example/page2/`）。如果脚本不在根目录下，但是希望对整个域都有效，可以指定`scope`属性。
+
+```javascript
+navigator.serviceWorker.register('/path/to/serviceworker.js', {
+  scope: '/'
+});
+```
+
+一旦登记完成，这段脚本就会用户的浏览器之中长期存在，不会随着用户离开你的网站而消失。
+
+登记成功后，可以在Chrome浏览器访问`chrome://inspect/#service-workers`，查看整个浏览器目前正在运行的Service worker。访问`chrome://serviceworker-internals`，可以查看浏览器目前安装的所有Service worker。
+
+登记以后，浏览器就开始安装，也就是执行这个脚本，并将涉及的外部资源存入浏览器。
+
+```javascript
+var staticCacheName = 'static';
+var version = 'v1::';
+
+self.addEventListener('install', function (event) {
+  event.waitUntil(updateStaticCache());
+});
+
+function updateStaticCache() {
+  return caches.open(version + staticCacheName)
+    .then(function (cache) {
+      return cache.addAll([
+        '/path/to/javascript.js',
+        '/path/to/stylesheet.css',
+        '/path/to/someimage.png',
+        '/path/to/someotherimage.png',
+        '/',
+        '/offline'
+      ]);
+    });
+};
+```
+
+上面代码将JavaScript脚本、CSS样式表、图像文件、网站首页、离线页面，存入浏览器缓存。这些资源都要等全部进入缓存之后，才会安装。
+
+安装以后，就需要激活。
+
+```javascript
+self.addEventListener('activate', function (event) {
+  event.waitUntil(
+    caches.keys()
+      .then(function (keys) {
+        return Promise.all(keys
+          .filter(function (key) {
+            return key.indexOf(version) !== 0;
+          })
+          .map(function (key) {
+            return caches.delete(key);
+          })
+        );
+      })
+  );
+});
+```
+
+每一次浏览器向服务器要求一个文件的时候，就会触发`fetch`事件。Service worker可以在发出这个请求之前，前拦截它。
+
+```javascript
+self.addEventListener('fetch', function (event) {
+  var request = event.request;
+  ...
+});
+```
 
 ## 参考链接
 
@@ -251,3 +319,4 @@ worker.postMessage('');
 - Eric Bidelman, [Transferable Objects: Lightning Fast!](http://updates.html5rocks.com/2011/12/Transferable-Objects-Lightning-Fast)
 - Jesse Cravens, [Web Worker Patterns](http://tech.pro/tutorial/1487/web-worker-patterns)
 - Bipin Joshi, [7 Things You Need To Know About Web Workers](http://www.developer.com/lang/jscript/7-things-you-need-to-know-about-web-workers.html)
+- Jeremy Keith, [My first Service Worker](https://adactio.com/journal/9775)

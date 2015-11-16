@@ -14,41 +14,36 @@ Date对象是JavaScript提供的日期和时间的操作接口。它有多种用
 
 作为一个函数，Date对象可以直接调用，返回一个当前日期和时间的字符串。
 
-{% highlight javascript %}
-
+```javascript
 Date()
 // "Sat Mar 09 2013 08:46:54 GMT+0800 (CST)"
 
 Date(2000, 1, 1)
 // "Sat Mar 09 2013 08:46:54 GMT+0800 (CST)"
+```
 
-{% endhighlight %}
-
-上面代码说明，无论有没有参数，直接调用Date总是返回当前时间。
+上面代码说明，无论有没有参数，直接调用`Date`总是返回当前时间。
 
 ### new Date()
 
 Date对象还是一个构造函数，对它使用new命令，会返回一个Date对象的实例。如果不加参数，生成的就是代表当前时间的对象。
 
-{% highlight javascript %}
-
+```javascript
 var today = new Date();
 
-today 
+today
 // "Sat Mar 09 2013 08:46:54 GMT+0800 (CST)"
 
 // 等同于
-today.toString() 
+today.toString()
 // "Sat Mar 09 2013 08:46:54 GMT+0800 (CST)"
-
-{% endhighlight %}
+```
 
 ### new Date(milliseconds)
 
 Date对象接受从1970年1月1日00:00:00 UTC开始计算的毫秒数作为参数。这意味着如果将Unix时间戳作为参数，必须将Unix时间戳乘以1000。
 
-{% highlight javascript %}
-
+```javascript
 new Date(1378218728000)
 // Tue Sep 03 2013 22:32:08 GMT+0800 (CST)
 
@@ -59,8 +54,7 @@ var Jan02_1970 = new Date(3600*24*1000);
 // 1969年12月31日的零时
 var Dec31_1969 = new Date(-3600*24*1000);
 // Wed Dec 31 1969 08:00:00 GMT+0800 (CST)
-
-{% endhighlight %}
+```
 
 上面代码说明，Date构造函数的参数可以是一个负数，表示1970年1月1日之前的时间。Date对象能够表示的日期范围是1970年1月1日前后各一亿天。
 
@@ -68,29 +62,55 @@ var Dec31_1969 = new Date(-3600*24*1000);
 
 Date对象还接受一个日期字符串作为参数，返回所对应的时间。
 
-{% highlight javascript %}
-
+```javascript
 new Date("January 6, 2013");
 // Sun Jan 06 2013 00:00:00 GMT+0800 (CST)
-
-{% endhighlight %}
+```
 
 所有可以被Date.parse()方法解析的日期字符串，都可以当作Date对象的参数。
 
-{% highlight javascript %}
-
-new Date("2013-02-15")
+```javascript
+new Date("2013-2-15")
+new Date('2013/2/15')
 new Date("2013-FEB-15")
 new Date("FEB, 15, 2013")
 new Date("FEB 15, 2013")
 new Date("Feberuary, 15, 2013")
 new Date("Feberuary 15, 2013")
 new Date("15, Feberuary, 2013")
-// Fri Feb 15 2013 08:00:00 GMT+0800 (CST)
 
-{% endhighlight %}
+// Fri Feb 15 2013 00:00:00 GMT+0800 (CST)
+```
 
 上面多种写法，返回的都是同一个时间。
+
+注意，如果日期采用连词线（`-`）格式分隔，且具有前导0，结果会不一样。
+
+```javascript
+new Date('2014-01-01')
+// Wed Jan 01 2014 08:00:00 GMT+0800 (CST)
+
+new Date('2014-1-1')
+// Wed Jan 01 2014 00:00:00 GMT+0800 (CST)
+```
+
+上面代码中，日期字符串有没有前导0，返回的结果是不一样的。如果没有前导0，JavaScript引擎就以本地时区为计时标准，所以返回0点0分。如果有前导0，就以格林尼治国际标准时的时区作为计时标准，所以返回8点0分。
+
+对于那些不需要前导0的数字（10、11、12），一律视为采用前导0格式，采用格林尼治国际标准时的时区作为计时标准。
+
+```javascript
+new Date('2014-12-1')
+// Mon Dec 01 2014 00:00:00 GMT+0800 (CST)
+
+new Date('2014-12-01')
+// Mon Dec 01 2014 08:00:00 GMT+0800 (CST)
+
+new Date('2014-12-11')
+// Thu Dec 11 2014 08:00:00 GMT+0800 (CST)
+
+new Date('2014/12/11')
+// Thu Dec 11 2014 00:00:00 GMT+0800 (CST)
+```
 
 ### new Date(year, month [, day, hours, minutes, seconds, ms])
 

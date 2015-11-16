@@ -436,6 +436,16 @@ $ mocha test/ anothertest.js
 
 上面命令表示，mocha要运行所有`test`子目录的测试脚本，以及另外一个测试脚本`anothertest.js`。
 
+`npm run`本身有一个参数`-s`，表示关闭npm本身的输出，只输出脚本产生的结果。
+
+```bash
+// 输出npm命令头
+$ npm run test
+
+// 不输出npm命令头
+$ npm run -s test
+```
+
 ### scripts脚本命令最佳实践
 
 `scripts`字段的脚本命令，有一些最佳实践，可以方便开发。首先，安装`npm-run-all`模块。
@@ -574,6 +584,28 @@ $ npm run dev & npm run serve
 
 `npm run`为每条命令提供了`pre-`和`post-`两个钩子（hook）。以`npm run lint`为例，执行这条命令之前，npm会先查看有没有定义prelint和postlint两个钩子，如果有的话，就会先执行`npm run prelint`，然后执行`npm run lint`，最后执行`npm run postlint`。
 
+```javascript
+{
+  "name": "myproject",
+  "devDependencies": {
+    "eslint": "latest"
+    "karma": "latest"
+  },
+  "scripts": {
+    "lint": "eslint --cache --ext .js --ext .jsx src",
+    "test": "karma start --log-leve=error karma.config.js --single-run=true",
+    "pretest": "npm run lint",
+    "posttest": "echo 'Finished running tests'"
+  }
+}
+```
+
+上面代码是一个`package.json`文件的例子。如果执行`npm test`，会按下面的顺序执行相应的命令。
+
+1. pretest
+1. test
+1. posttest
+
 如果执行过程出错，就不会执行排在后面的脚本，即如果prelint脚本执行出错，就不会接着执行lint和postlint脚本。
 
 下面是一些常见的`pre-`和`post-`脚本。
@@ -635,6 +667,8 @@ $ npm install husky --save-dev
     }
 }
 ```
+
+类似作用的模块还有`pre-commit`、`precommit-hook`等。
 
 ### 内部变量
 
