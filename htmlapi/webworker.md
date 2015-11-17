@@ -214,17 +214,22 @@ worker.postMessage('');
 
 ## Service Worker
 
-Service worker是一个在浏览器后台运行的脚本，与网页不相干，专注于那些不需要网页或用户互动就能完成的功能。
+Service worker是一个在浏览器后台运行的脚本，与网页不相干，专注于那些不需要网页或用户互动就能完成的功能。它主要用于操作离线缓存。
 
-Service Worker的特点。
+Service Worker有以下特点。
 
-（1）它属于JavaScript Worker，不能直接接触DOM，通过`postMessage`接口与页面通信。
+- 属于JavaScript Worker，不能直接接触DOM，通过`postMessage`接口与页面通信。
+- 不需要任何页面，就能执行。
+- 不用的时候会终止执行，需要的时候又重新执行，即它是事件驱动的。
+- 有一个精心定义的升级策略。
+- 只在HTTPs协议下可用，这是因为它能拦截网络请求，所以必须保证请求是安全的。
+- 可以拦截发出的网络请求，从而控制页面的网路通信。
+- 内部大量使用Promise。
 
-（2）Service worker可以作为网络请求的代理，从而控制页面的网路通信。
+Service worker的常见用途。
 
-（3）它可以在使用结束时终止，也可以在需要的时候重启。所以，不能依赖它内部的`onfetch`和`onmessage`监听函数。如果确实需要它一直运行，就必须让它可以使用IndexedDB API。
-
-（4）它大量使用Promise。
+- 通过拦截网络请求，使得网站运行得更快，或者在离线情况下，依然可以执行。
+- 作为其他后台功能的基础，比如消息推送和背景同步。
 
 使用Service Worker有以下步骤。
 
@@ -232,17 +237,18 @@ Service Worker的特点。
 
 ```javascript
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').then(function(registration) {
+  navigator.serviceWorker.register('/sw.js')
+    .then(function(registration) {
     // 登记成功
-    console.log('ServiceWorker registration successful with scope: ',    registration.scope);
-  }).catch(function(err) {
+    console.log('ServiceWorker登记成功，范围为', registration.scope);
+    }).catch(function(err) {
     // 登记失败
-    console.log('ServiceWorker registration failed: ', err);
-  });
+      console.log('ServiceWorker登记失败：', err);
+    });
 }
 ```
 
-上面代码向浏览器登记`sw.js`脚本，实质就是浏览器加载`sw.js`。这段代码可以多次调用，浏览器会自行判断`sw.js`是否登记过，如果已经登记过，就不再重复执行了。
+上面代码向浏览器登记`sw.js`脚本，实质就是浏览器加载`sw.js`。这段代码可以多次调用，浏览器会自行判断`sw.js`是否登记过，如果已经登记过，就不再重复执行了。注意，Service worker脚本必须与页面在同一个域，且必须在HTTPs协议下正常运行。
 
 `sw.js`位于域名的根目录下，这表明这个Service worker的范围（scope）是整个域，即会接收整个域下面的`fetch`事件。如果脚本的路径是`/example/sw.js`，那么Service worker只对`/example/`开头的URL有效（比如`/example/page1/`、`/example/page2/`）。如果脚本不在根目录下，但是希望对整个域都有效，可以指定`scope`属性。
 
@@ -254,9 +260,216 @@ navigator.serviceWorker.register('/path/to/serviceworker.js', {
 
 一旦登记完成，这段脚本就会用户的浏览器之中长期存在，不会随着用户离开你的网站而消失。
 
+`.register`方法返回一个Promise对象。
+
+登记成功后，浏览器执行下面步骤。
+
+1. 下载资源（Download）
+2. 安装（Install）
+3. 激活（Activate）
+
+安装和激活，主要通过事件来判断。
+
+```javascript
+self.addEventListener('install', function(event) {
+  event.waitUntil(
+    fetchStuffAndInitDatabases()
+  );
+});
+
+self.addEventListener('activate', function(event) {
+  // You're good to go!
+});
+```
+
+Service worker一旦激活，就开始控制页面。网页加载的时候，可以选择一个Service worker作为自己的控制器。不过，页面第一次加载的时候，它不受Service worker控制，因为这时还没有一个Service worker在运行。只有重新加载页面后，Service worker才会生效，控制加载它的页面。
+
+你可以查看`navigator.serviceWorker.controller`，了解当前哪个ServiceWorker掌握控制权。如果后台没有任何Service worker，`navigator.serviceWorker.controller`返回`null`。
+
+Service worker激活以后，就能监听`fetch`事件。
+
+```javascript
+self.addEventListener('fetch', function(event) {
+  console.log(event.request);
+});
+```
+
+`fetch`事件会在两种情况下触发。
+
+- 用户访问Service worker范围内的网页。
+- 这些网页发出的任何网络请求（页面本身、CSS、JS、图像、XHR等等），即使这些请求是发向另一个域。但是，`iframe`和`<object>`标签发出的请求不会被拦截。
+
+`fetch`事件的`event`对象的`request`属性，返回一个对象，包含了所拦截的网络请求的所有信息，比如URL、请求方法和HTTP头信息。
+
+Service worker的强大之处，在于它会拦截请求，并会返回一个全新的回应。
+
+```javascript
+self.addEventListener('fetch', function(event) {
+  event.respondWith(new Response("Hello world!"));
+});
+```
+
+`respondWith`方法的参数是一个Response对象实例，或者一个Promise对象（resolved以后返回一个Response实例）。上面代码手动创造一个Response实例。
+
+下面是完整的[代码](https://github.com/jakearchibald/isserviceworkerready/tree/gh-pages/demos/manual-response)。
+
+先看网页代码`index.html`。
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      white-space: pre-line;
+      font-family: monospace;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body><script>
+    function log() {
+      document.body.appendChild(document.createTextNode(Array.prototype.join.call(arguments, ", ") + '\n'));
+      console.log.apply(console, arguments);
+    }
+    window.onerror = function(err) {
+      log("Error", err);
+    };
+    navigator.serviceWorker.register('sw.js', {
+      scope: './'
+    }).then(function(sw) {
+      log("Registered!", sw);
+      log("You should get a different response when you refresh");
+    }).catch(function(err) {
+      log("Error", err);
+    });
+  </script></body>
+</html>
+```
+
+然后是Service worker脚本`sw.js`。
+
+```javascript
+// The SW will be shutdown when not in use to save memory,
+// be aware that any global state is likely to disappear
+console.log("SW startup");
+
+self.addEventListener('install', function(event) {
+  console.log("SW installed");
+});
+
+self.addEventListener('activate', function(event) {
+  console.log("SW activated");
+});
+
+self.addEventListener('fetch', function(event) {
+  console.log("Caught a fetch!");
+  event.respondWith(new Response("Hello world!"));
+});
+```
+
+每一次浏览器向服务器要求一个文件的时候，就会触发`fetch`事件。Service worker可以在发出这个请求之前，前拦截它。
+
+```javascript
+self.addEventListener('fetch', function (event) {
+  var request = event.request;
+  ...
+});
+```
+
+实际应用中，我们使用`fetch`方法去抓取资源，该方法返回一个Promise对象。
+
+```javascript
+self.addEventListener('fetch', function(event) {
+  if (/\.jpg$/.test(event.request.url)) {
+    event.respondWith(
+      fetch('//www.google.co.uk/logos/example.gif', {
+        mode: 'no-cors'
+      })
+    );
+  }
+});
+```
+
+上面代码中，如果网页请求JPG文件，就会被Service worker拦截，转而返回一个Google的Logo图像。`fetch`方法默认会加上CORS信息头，，上面设置了取消这个头。
+
+下面的代码是一个将所有JPG、PNG图片请求，改成WebP格式返回的例子。
+
+```javascript
+"use strict";
+
+// Listen to fetch events
+self.addEventListener('fetch', function(event) {
+
+  // Check if the image is a jpeg
+  if (/\.jpg$|.png$/.test(event.request.url)) {
+    // Inspect the accept header for WebP support
+    var supportsWebp = false;
+    if (event.request.headers.has('accept')){
+      supportsWebp = event.request.headers.get('accept').includes('webp');
+    }
+
+    // If we support WebP
+    if (supportsWebp) {
+      // Clone the request
+      var req = event.request.clone();
+      // Build the return URL
+      var returnUrl = req.url.substr(0, req.url.lastIndexOf(".")) + ".webp";
+      event.respondWith(fetch(returnUrl, {
+        mode: 'no-cors'
+      }));
+    }
+  }
+});
+```
+
+如果请求失败，可以通过Promise的`catch`方法处理。
+
+```javascript
+self.addEventListener('fetch', function(event) {
+  event.respondWith(
+    fetch(event.request).catch(function() {
+      return new Response("Request failed!");
+    })
+  );
+});
+```
+
 登记成功后，可以在Chrome浏览器访问`chrome://inspect/#service-workers`，查看整个浏览器目前正在运行的Service worker。访问`chrome://serviceworker-internals`，可以查看浏览器目前安装的所有Service worker。
 
-登记以后，浏览器就开始安装，也就是执行这个脚本，并将涉及的外部资源存入浏览器。
+一个已经登记过的Service worker脚本，如果发生改动，浏览器就会重新安装，这被称为“升级”。
+
+Service worker有一个Cache API，用来缓存外部资源。
+
+```javascript
+self.addEventListener('install', function(event) {
+  // pre cache a load of stuff:
+  event.waitUntil(
+    caches.open('myapp-static-v1').then(function(cache) {
+      return cache.addAll([
+        '/',
+        '/styles/all.css',
+        '/styles/imgs/bg.png',
+        '/scripts/all.js'
+      ]);
+    })
+  )
+});
+
+self.addEventListener('fetch', function(event) {
+  event.respondWith(
+    caches.match(event.request).then(function(response) {
+      return response || fetch(event.request);
+    })
+  );
+});
+```
+
+上面代码中，`caches.open`方法用来建立缓存，然后使用`addAll`方法添加资源。`caches.match`方法则用来建立缓存以后，匹配当前请求是否在缓存之中，如果命中就取出缓存，否则就正常发出这个请求。一旦一个资源进入缓存，它原来指定是否过期的HTTP信息头，就会被忽略。缓存之中的资源，只在你移除它们的时候，才会被移除。
+
+单个资源可以使用`cache.put(request, response)`方法添加。
+
+下面是一个在安装阶段缓存资源的例子。
 
 ```javascript
 var staticCacheName = 'static';
@@ -303,15 +516,6 @@ self.addEventListener('activate', function (event) {
 });
 ```
 
-每一次浏览器向服务器要求一个文件的时候，就会触发`fetch`事件。Service worker可以在发出这个请求之前，前拦截它。
-
-```javascript
-self.addEventListener('fetch', function (event) {
-  var request = event.request;
-  ...
-});
-```
-
 ## 参考链接
 
 - Matt West, [Using Web Workers to Speed-Up Your JavaScript Applications](http://blog.teamtreehouse.com/using-web-workers-to-speed-up-your-javascript-applications)
@@ -320,3 +524,4 @@ self.addEventListener('fetch', function (event) {
 - Jesse Cravens, [Web Worker Patterns](http://tech.pro/tutorial/1487/web-worker-patterns)
 - Bipin Joshi, [7 Things You Need To Know About Web Workers](http://www.developer.com/lang/jscript/7-things-you-need-to-know-about-web-workers.html)
 - Jeremy Keith, [My first Service Worker](https://adactio.com/journal/9775)
+- Alex Russell, [ServiceWorker](https://github.com/slightlyoff/ServiceWorker)
