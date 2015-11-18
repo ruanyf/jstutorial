@@ -16,8 +16,7 @@ WebSocket协议完全可以取代Ajax方法，用来向服务器端发送文本�
 
 WebSocket不使用HTTP协议，而是使用自己的协议。浏览器发出的WebSocket请求类似于下面的样子：
 
-{% highlight http %}
-
+```http
 GET / HTTP/1.1
 Connection: Upgrade
 Upgrade: websocket
@@ -25,23 +24,20 @@ Host: example.com
 Origin: null
 Sec-WebSocket-Key: sN9cRrP/n9NdMgdcy2VJFQ==
 Sec-WebSocket-Version: 13
-
-{% endhighlight %}
+```
 
 上面的头信息显示，有一个HTTP头是Upgrade。HTTP1.1协议规定，Upgrade头信息表示将通信协议从HTTP/1.1转向该项所指定的协议。“Connection: Upgrade”就表示浏览器通知服务器，如果可以，就升级到webSocket协议。Origin用于验证浏览器域名是否在服务器许可的范围内。Sec-WebSocket-Key则是用于握手协议的密钥，是base64编码的16字节随机字符串。
 
 服务器端的WebSocket回应则是
 
-{% highlight http %}
-
+```http
 HTTP/1.1 101 Switching Protocols
 Connection: Upgrade
 Upgrade: websocket
 Sec-WebSocket-Accept: fFBooB7FAkLlXgRSz0BT3v4hq5s=
 Sec-WebSocket-Origin: null
 Sec-WebSocket-Location: ws://example.com/
-
-{% endhighlight %}
+```
 
 服务器端同样用“Connection: Upgrade”通知浏览器，需要改变协议。Sec-WebSocket-Accept是服务器在浏览器提供的Sec-WebSocket-Key字符串后面，添加“258EAFA5-E914-47DA-95CA-C5AB0DC85B11” 字符串，然后再取sha-1的hash值。浏览器将对这个值进行验证，以证明确实是目标服务器回应了webSocket请求。Sec-WebSocket-Location表示进行通信的WebSocket网址。
 
@@ -274,16 +270,13 @@ wss.on('connection', function connection(ws) {
 
 第一步，在服务器端的项目根目录下，安装socket.io模块。
 
-{% highlight bash %}
+```bash
+$ npm install socket.io
+```
 
-npm install socket.io
+第二步，在根目录下建立`app.js`，并写入以下代码（假定使用了Express框架）。
 
-{% endhighlight %}
-
-第二步，在根目录下建立app.js，并写入以下代码（假定使用了Express框架）。
-
-{% highlight javascript %}
-
+```javascript
 var app = require('express')();
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
@@ -293,59 +286,48 @@ server.listen(80);
 app.get('/', function (req, res) {
   res.sendfile(__dirname + '/index.html');
 });
-
-{% endhighlight %}
+```
 
 上面代码表示，先建立并运行HTTP服务器。Socket.io的运行建立在HTTP服务器之上。
 
 第三步，将Socket.io插入客户端网页。
 
-{% highlight html %}
-
+```html
 <script src="/socket.io/socket.io.js"></script>
-
-{% endhighlight %}
+```
 
 然后，在客户端脚本中，建立WebSocket连接。
 
-{% highlight javascript	%}
-
+```javascript
 var socket = io.connect('http://localhost');
-
-{% endhighlight %}
+```
 
 由于本例假定WebSocket主机与客户端是同一台机器，所以connect方法的参数是`http://localhost`。接着，指定news事件（即服务器端发送news）的回调函数。
 
-{% highlight javascript	%}
-
+```javascript
 socket.on('news', function (data){
    console.log(data);
 });
-
-{% endhighlight %}
+```
 
 最后，用emit方法向服务器端发送信号，触发服务器端的anotherNews事件。
 
-{% highlight javascript	%}
-
+```javascript
 socket.emit('anotherNews');
-
-{% endhighlight %}
+```
 
 > 请注意，emit方法可以取代Ajax请求，而on方法指定的回调函数，也等同于Ajax的回调函数。
 
 第四步，在服务器端的app.js，加入以下代码。
 
-{% highlight javascript	%}
-
+```javascript
 io.sockets.on('connection', function (socket) {
   socket.emit('news', { hello: 'world' });
   socket.on('anotherNews', function (data) {
     console.log(data);
   });
 });
-
-{% endhighlight %}
+```
 
 上面代码的io.sockets.on方法指定connection事件（WebSocket连接建立）的回调函数。在回调函数中，用emit方法向客户端发送数据，触发客户端的news事件。然后，再用on方法指定服务器端anotherNews事件的回调函数。
 

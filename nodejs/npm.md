@@ -35,6 +35,16 @@ $ npm -v
 $ npm config list -l
 ```
 
+## npm init
+
+`npm init`用来初始化生成一个新的`package.json`文件。它会向用户提问一系列问题，如果你觉得不用修改默认配置，一路回车就可以了。
+
+如果使用了`-f`（代表force）、`-y`（代表yes），则跳过提问阶段，直接生成一个新的`package.json`文件。
+
+```bash
+$ npm init -y
+```
+
 ## npm set
 
 `npm set`用来设置环境变量。

@@ -278,7 +278,7 @@ var o = {};
 o.toString() // "[object Object]"
 ```
 
-上面代码调用空对象的toString方法，结果返回一个字符串“object Object”，其中第二个Object表示该值的准确类型。这是一个十分有用的判断数据类型的方法。
+上面代码调用空对象的`toString`方法，结果返回一个字符串`object Object`，其中第二个`Object`表示该值的准确类型。这是一个十分有用的判断数据类型的方法。
 
 实例对象的`toString`方法，实际上是调用`Object.prototype.toString`方法。使用`call`方法，可以在任意值上调用`Object.prototype.toString`方法，从而帮助我们判断这个值的类型。不同数据类型的`toString`方法返回值如下：
 
@@ -310,8 +310,8 @@ Object.prototype.toString.call([]) // "[object Array]"
 
 ```javascript
 var type = function (o){
-	var s = Object.prototype.toString.call(o);
-		return s.match(/\[object (.*?)\]/)[1].toLowerCase();
+  var s = Object.prototype.toString.call(o);
+  return s.match(/\[object (.*?)\]/)[1].toLowerCase();
 };
 
 type({}); // "object"
@@ -323,7 +323,7 @@ type(/abcd/); // "regex"
 type(new Date()); // "date"
 ```
 
-在上面这个type函数的基础上，还可以加上专门判断某种类型数据的方法。
+在上面这个`type`函数的基础上，还可以加上专门判断某种类型数据的方法。
 
 ```javascript
 ['Null',
@@ -335,7 +335,6 @@ type(new Date()); // "date"
  'Boolean',
  'Function',
  'RegExp',
- 'Element',
  'NaN',
  'Infinite'
 ].forEach(function (t) {
@@ -344,10 +343,9 @@ type(new Date()); // "date"
     };
 });
 
-type.isObject({}); // true
-type.isNumber(NaN); // false
-type.isElement(document.createElement('div')); // true
-type.isRegExp(/abc/); // true
+type.isObject({}) // true
+type.isNumber(NaN) // true
+type.isRegExp(/abc/) // true
 ```
 
 ## 对象的属性模型
@@ -387,16 +385,15 @@ attributes对象包含如下元信息：
 
 ### Object.defineProperty()，Object.defineProperties()
 
-Object.defineProperty方法允许通过定义attributes对象，来定义或修改一个属性，然后返回修改后的对象。它的格式如下：
+`Object.defineProperty`方法允许通过定义`attributes`对象，来定义或修改一个属性，然后返回修改后的对象。它的格式如下：
 
 ```javascript
 Object.defineProperty(object, propertyName, attributesObject)
 ```
 
-Object.defineProperty方法接受三个参数，第一个是属性所在的对象，第二个是属性名（它应该是一个字符串），第三个是属性的描述对象。比如，新建一个o对象，并定义它的p属性，可以这样写：
+`Object.defineProperty`方法接受三个参数，第一个是属性所在的对象，第二个是属性名（它应该是一个字符串），第三个是属性的描述对象。比如，新建一个`o`对象，并定义它的`p`属性，写法如下。
 
-{% highlight javascript %}
-
+```javascript
 var o = Object.defineProperty({}, "p", {
         value: 123,
         writable: false,
@@ -411,44 +408,41 @@ o.p = 246;
 o.p
 // 123
 // 因为writable为false，所以无法改变该属性的值
+```
 
-{% endhighlight %}
+需要注意的是，`Object.defineProperty`方法和后面的`Object.defineProperties`方法，都有性能损耗，会拖慢执行速度，不宜大量使用。
 
-如果一次性定义或修改多个属性，可以使用Object.defineProperties方法。
+如果一次性定义或修改多个属性，可以使用`Object.defineProperties`方法。
 
-{% highlight javascript %}
-
+```javascript
 var o = Object.defineProperties({}, {
-		p1: { value: 123, enumerable: true },
-        p2: { value: "abc", enumerable: true },
-		p3: { get: function() { return this.p1+this.p2 },
-			  enumerable:true,
-			  configurable:true
-		}
+  p1: { value: 123, enumerable: true },
+  p2: { value: 'abc', enumerable: true },
+  p3: { get: function() { return this.p1+this.p2 },
+    enumerable:true,
+    configurable:true
+  }
 });
 
 o.p1 // 123
 o.p2 // "abc"
 o.p3 // "123abc"
-
-{% endhighlight %}
-
-上面代码中的p3属性，定义了取值函数get。这时需要注意的是，一旦定义了取值函数get（或存值函数set），就不能将writable设为true，或者同时定义value属性，否则会报错。
-
-```javascript
-
-var o = {};
-
-Object.defineProperty(o, "p", {
-	value: 123, 
-    get: function() { return 456; } 
-});
-// TypeError: Invalid property. 
-// A property cannot both have accessors and be writable or have a value,
-
 ```
 
-上面代码同时定义了get属性和value属性，结果就报错。
+上面代码中的`p3`属性，定义了取值函数`get`。这时需要注意的是，一旦定义了取值函数`get`（或存值函数`set`），就不能将`writable`设为`true`，或者同时定义`value`属性，否则会报错。
+
+```javascript
+var o = {};
+
+Object.defineProperty(o, 'p', {
+  value: 123,
+    get: function() { return 456; }
+});
+// TypeError: Invalid property.
+// A property cannot both have accessors and be writable or have a value,
+```
+
+上面代码同时定义了`get`属性和`value`属性，结果就报错。
 
 Object.defineProperty() 和Object.defineProperties() 的第三个参数，是一个属性对象。它的writable、configurable、enumerable这三个属性的默认值都为false。
 
