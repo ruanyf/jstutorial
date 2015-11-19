@@ -439,6 +439,20 @@ $ mocha --ui tdd test/unit/*.js etc
 
 上面代码中，参数`--reporter`指定生成的报告格式（上面代码是spec格式），`-ui`指定采用哪一种测试模式（上面代码是tdd模式）。
 
+除了使用shell通配符，还可以使用node通配符。
+
+```bash
+$ mocha --compilers js:babel-core/register 'test/**/*.@(js|jsx)'
+```
+
+上面代码指定运行`test`目录下面任何子目录中，文件后缀名为`js`或`jsx`的测试脚本。注意，Node的通配符要放在单引号之中，因为否则星号（`*`）会先被shell解释。
+
+如果要改用shell通配符，执行`test`目录下面任何子目录的测试脚本，要写成下面这样。
+
+```bash
+$ mocha test/**.js
+```
+
 如果测试脚本不止一个，最好将它们放在专门的目录当中。Mocha默认执行`test`目录的测试脚本，所以可以将所有测试脚本放在`test`子目录。`--recursive`参数可以指定运行子目录之中的测试脚本。
 
 ```bash
