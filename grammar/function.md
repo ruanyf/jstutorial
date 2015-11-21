@@ -104,7 +104,7 @@ function f(){
   console.log(1);
 }
 
-f() // 2
+f() // 1
 
 function f(){
   console.log(2);
