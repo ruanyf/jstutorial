@@ -9,7 +9,7 @@ modifiedOn: 2014-05-18
 
 - [前言](introduction/preface.html)
 - [为什么学习JavaScript？](introduction/why.html)
-- [JavaScript的历史](introduction/history.html)
+- [JavaScript简介](introduction/intro.html)
 
 <h2 id="grammar">基本语法</h2>
 
