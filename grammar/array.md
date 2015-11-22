@@ -93,18 +93,15 @@ a[1] // 6
 
 数组的length属性，返回数组的成员数量。
 
-{% highlight javascript %}
-
+```javascript
 ['a', 'b', 'c'].length // 3
-
-{% endhighlight %}
+```
 
 JavaScript使用一个32位整数，保存数组的元素个数。这意味着，数组成员最多只有4294967295个（2<sup>32</sup>-1）个，也就是说length属性的最大值就是4294967295。
 
-数组的length属性与对象的length属性有区别，只要是数组，就一定有length属性，而对象不一定有。而且，数组的length属性是一个动态的值，等于键名中的最大整数加上1。
+数组的`length`属性与对象的`length`属性有区别，只要是数组，就一定有`length`属性，而对象不一定有。而且，数组的`length`属性是一个动态的值，等于键名中的最大整数加上1。
 
-{% highlight javascript %}
-
+```javascript
 var arr = ['a', 'b'];
 arr.length // 2
 
@@ -116,53 +113,45 @@ arr.length // 10
 
 arr[1000] = 'e';
 arr.length // 1001
-
-{% endhighlight %}
+```
 
 上面代码表示，数组的数字键不需要连续，length属性的值总是比最大的那个整数键大1。另外，这也表明数组是一种动态的数据结构，可以随时增减数组的成员。
 
-length属性是可写的。如果人为设置一个小于当前成员个数的值，该数组的成员会自动减少到length设置的值。
+`length`属性是可写的。如果人为设置一个小于当前成员个数的值，该数组的成员会自动减少到`length`设置的值。
 
-{% highlight javascript %}
-
+```javascript
 var arr = [ 'a', 'b', 'c' ];
 arr.length // 3
 
 arr.length = 2;
 arr // ["a", "b"]
+```
 
-{% endhighlight %}
+上面代码表示，当数组的`length`属性设为2（即最大的整数键只能是1）那么整数键2（值为`c`）就已经不在数组中了，被自动删除了。
 
-上面代码表示，当数组的length属性设为2，即最大的整数键只能是1，那么整数键2（值为c）就已经不在数组中了，被自动删除了。
+将数组清空的一个有效方法，就是将`length`属性设为0。
 
-将数组清空的一个有效方法，就是将length属性设为0。
-
-{% highlight javascript %}
-
+```javascript
 var arr = [ 'a', 'b', 'c' ];
 
 arr.length = 0;
 arr // []
+```
 
-{% endhighlight %}
+如果人为设置`length`大于当前元素个数，则数组的成员数量会增加到这个值，新增的位置都是空位。
 
-如果人为设置length大于当前元素个数，则数组的成员数量会增加到这个值，新增的位置填入空元素。
-
-{% highlight javascript %}
-
+```javascript
 var a = ['a'];
 
 a.length = 3;
-a // ["a", undefined × 2]
+a[1] // undefined
+```
 
-{% endhighlight %}
+上面代码表示，当`length`属性设为大于数组个数时，读取新增的位置都会返回`undefined`。
 
-上面代码表示，当length属性设为大于数组个数时，新增的位置都填充为undefined。
+如果人为设置`length`为不合法的值，JavaScript会报错。
 
-如果人为设置length为不合法的值，JavaScript会报错。
-
-{% highlight javascript %}
-
+```javascript
 // 设置负值
 [].length = -1
 // RangeError: Invalid array length
@@ -174,32 +163,28 @@ a // ["a", undefined × 2]
 // 设置字符串
 [].length = 'abc'
 // RangeError: Invalid array length
+```
 
-{% endhighlight %}
+值得注意的是，由于数组本质上是对象的一种，所以我们可以为数组添加属性，但是这不影响`length`属性的值。
 
-值得注意的是，由于数组本质上是对象的一种，所以我们可以为数组添加属性，但是这不影响length属性的值。
-
-{% highlight javascript %}
-
+```javascript
 var a = [];
 
-a["p"] = "abc";
+a['p'] = 'abc';
 a.length // 0
 
-a[2.1] = "abc";
+a[2.1] = 'abc';
 a.length // 0
+```
 
-{% endhighlight %}
-
-上面代码将数组的键分别设为字符串和小数，结果都不影响length属性。因为，length属性的值就是等于最大的数字键加1，而这个数组没有整数键，所以length属性保持为0。
+上面代码将数组的键分别设为字符串和小数，结果都不影响`length`属性。因为，`length`属性的值就是等于最大的数字键加1，而这个数组没有整数键，所以`length`属性保持为0。
 
 ## 数组的空位
 
-当数组的某个位置是空元素（比如两个逗号之间没有任何值，或者值为undefined），我们称该数组存在空位（hole）。
+当数组的某个位置是空元素，即两个逗号之间没有任何值，我们称该数组存在空位（hole）。
 
 ```javascript
-var a = [1,,1];
-a // [1, undefined, 1]
+var a = [1, , 1];
 a.length // 3
 ```
 
@@ -216,13 +201,20 @@ a // [1, 2, 3]
 
 上面代码中，数组最后一个成员后面有一个逗号，这不影响`length`属性的值，与没有这个逗号时效果一样。
 
+数组的空位是可以读取的，返回`undefined`。
+
+```javascript
+var a = [, , ,];
+a[1] // undefined
+```
+
 使用`delete`命令删除一个值，会形成空位。
 
 ```javascript
 var a = [1, 2, 3];
 
 delete a[1];
-a // [1, undefined, 3]
+a[1] // undefined
 ```
 
 需要注意的是，`delete`命令不影响`length`属性。
@@ -231,16 +223,15 @@ a // [1, undefined, 3]
 var a = [1, 2, 3];
 delete a[1];
 delete a[2];
-a // [1, undefined, undefined]
 a.length // 3
 ```
 
-上面代码用`delete`命令删除了两个键，对`length`属性没有影响。因为这两个键还在，只是值变为了`undefined`。也就是说，`length`属性不过滤`undefined`的值。所以，使用`length`属性进行数组遍历，一定要非常小心。
+上面代码用`delete`命令删除了两个键，对`length`属性没有影响。也就是说，`length`属性不过滤空位。所以，使用`length`属性进行数组遍历，一定要非常小心。
 
-空位通过空值生成，还是通过显式设为`undefined`生成，有一个细微的差别。如果通过空值生成，使用数组的`forEach`方法、`for...in`结构、以及`Object.keys`方法进行遍历，空位都会被跳过。
+数组的某个位置是空位，与某个位置是`undefined`，是不一样的。如果是空位，使用数组的`forEach`方法、`for...in`结构、以及`Object.keys`方法进行遍历，空位都会被跳过。
 
 ```javascript
-var a = [,,,];
+var a = [, , ,];
 
 a.forEach(function (x, i) {
   console.log(i + '. ' + x);
@@ -256,10 +247,10 @@ Object.keys(a)
 // []
 ```
 
-如果空位是通过显式定义`undefined`生成，遍历的时候就不会被跳过。
+如果某个位置是`undefined`，遍历的时候就不会被跳过。
 
 ```javascript
-var a = [undefined,undefined,undefined];
+var a = [undefined, undefined, undefined];
 
 a.forEach(function (x, i) {
   console.log(i + '. ' + x);
@@ -278,6 +269,8 @@ for (var i in a) {
 Object.keys(a)
 // ['0', '1', '2']
 ```
+
+这就是说，空位就是数组没有这个元素，所以不会被遍历到，而`undeinfed`则表示数组有这个元素，值是`undefined`，所以遍历不会跳过。
 
 ## in运算符，for...in循环
 

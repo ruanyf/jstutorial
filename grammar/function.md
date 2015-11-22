@@ -12,36 +12,31 @@ modifiedOn: 2013-12-19
 
 **（1）function命令**
 
-函数就是使用function命令命名的代码区块，便于反复调用。
+函数就是使用`function`命令命名的代码区块，便于反复调用。
 
-{% highlight javascript %}
-
+```javascript
 function print(){
   // ...
 }
+```
 
-{% endhighlight %}
-
-上面的代码命名了一个print函数，以后使用print()这种形式，就可以调用相应的代码。这叫做函数的声明（Function Declaration）。
+上面的代码命名了一个`print`函数，以后使用`print()`这种形式，就可以调用相应的代码。这叫做函数的声明（Function Declaration）。
 
 **（2）函数表达式**
 
 除了用function命令声明函数，还可以采用变量赋值的写法。
 
-{% highlight javascript %}
-
-var print = function (){
+```javascript
+var print = function () {
   // ...
 };
-
-{% endhighlight %}
+```
 
 这种写法将一个匿名函数赋值给变量。这时，这个匿名函数又称函数表达式（Function Expression），因为赋值语句的等号右侧只能放表达式。
 
 采用函数表达式声明函数时，function命令后面不带有函数名。如果加上函数名，该函数名只在函数体内部有效，在函数体外部无效。
 
-{% highlight javascript %}
-
+```javascript
 var print = function x(){
   console.log(typeof x);
 };
@@ -51,16 +46,13 @@ x
 
 print()
 // function
+```
 
-{% endhighlight %}
+上面代码在函数表达式中，加入了函数名`x`。这个`x`只在函数体内部可用，指代函数表达式本身，其他地方都不可用。这种写法的用处有两个，一是可以在函数体内部调用自身，二是方便除错（除错工具显示函数调用栈时，将显示函数名，而不再显示这里是一个匿名函数）。因此，需要时，可以采用下面的形式声明函数。
 
-上面代码在函数表达式中，加入了函数名x。这个x只在函数体内部可用，指代函数表达式本身，其他地方都不可用。这种写法的用处有两个，一是可以在函数体内部调用自身，二是方便除错（除错工具显示函数调用栈时，将显示函数名，而不再显示这里是一个匿名函数）。因此，需要时，可以采用下面的形式声明函数。
-
-{% highlight javascript %}
-
+```javascript
 var f = function f(){};
-
-{% endhighlight %}
+```
 
 需要注意的是，函数的表达式需要在语句的结尾加上分号，表示语句结束。而函数的声明在结尾的大括号后面不用加分号。总的来说，这两种声明函数的方式，差别很细微（参阅后文《变量提升》一节），这里可以近似认为是等价的。
 
@@ -68,29 +60,35 @@ var f = function f(){};
 
 还有第三种声明函数的方式：通过Function构造函数声明。
 
-{% highlight javascript %}
-
-var add = new Function("x","y","return (x+y)");
-// 相当于定义了如下函数
-// function add(x, y) {
-//   return (x+y);
-// }
-
-{% endhighlight %}
-
-在上面代码中，Function对象接受若干个参数，除了最后一个参数是add函数的“函数体”，其他参数都是add函数的参数。如果只有一个参数，该参数就是函数体。
-
 ```javascript
+var add = new Function(
+  'x',
+  'y',
+  'return (x + y)'
+);
 
-var foo = new Function('return "hello world"');
-// 相当于定义了如下函数
-// function foo() {
-//   return "hello world";
-// }
+// 等同于
 
+function add(x, y) {
+  return (x + y);
+}
 ```
 
-Function构造函数可以不使用new命令，返回结果完全一样。
+在上面代码中，Function对象接受若干个参数，除了最后一个参数是`add`函数的“函数体”，其他参数都是`add`函数的参数。如果只有一个参数，该参数就是函数体。
+
+```javascript
+var foo = new Function(
+  'return "hello world"'
+);
+
+// 等同于
+
+function foo() {
+  return "hello world";
+}
+```
+
+`Function`构造函数可以不使用`new`命令，返回结果完全一样。
 
 总的来说，这种声明函数的方式非常不直观，几乎无人使用。
 
@@ -98,8 +96,7 @@ Function构造函数可以不使用new命令，返回结果完全一样。
 
 如果多次采用function命令，重复声明同一个函数，则后面的声明会覆盖前面的声明。
 
-{% highlight javascript %}
-
+```javascript
 function f(){
   console.log(1);
 }
@@ -111,8 +108,7 @@ function f(){
 }
 
 f() // 2
-
-{% endhighlight %}
+```
 
 上面代码说明，由于存在函数名的提升，前面的声明在任何时候都是无效的，这一点要特别注意。
 
@@ -357,83 +353,84 @@ multiline(f.toString())
 
 ### 定义
 
-作用域（scope）指的是变量存在的范围。Javascript只有两种作用域：一种是全局作用域，变量在整个程序中一直存在；另一种是函数作用域，变量只在函数内部存在。
+作用域（scope）指的是变量存在的范围。Javascript只有两种作用域：一种是全局作用域，变量在整个程序中一直存在，所有地方都可以读取；另一种是函数作用域，变量只在函数内部存在。
 
 在函数外部声明的变量就是全局变量（global variable），它可以在函数内部读取。
 
-{% highlight javascript %}
-
+```javascript
 var v = 1;
 
 function f(){
-   console.log(v);
+  console.log(v);
 }
 
 f()
 // 1
+```
 
-{% endhighlight %}
-
-上面的代码表明，函数f内部可以读取全局变量v。
+上面的代码表明，函数`f`内部可以读取全局变量`v`。
 
 在函数内部定义的变量，外部无法读取，称为“局部变量”（local variable）。
 
-{%highlight javascript %}
-
+```javascript
 function f(){
-   var v = 1;
+  var v = 1;
 }
 
-v
-// ReferenceError: v is not defined
+v // ReferenceError: v is not defined
+```
 
-{% endhighlight %}
+上面代码中，变量`v`在函数内部定义，所以是一个局部变量，函数之外就无法读取。
 
 函数内部定义的变量，会在该作用域内覆盖同名全局变量。
 
-{% highlight javascript %}
-
+```javascript
 var v = 1;
 
 function f(){
-   var v = 2;
-   console.log(v);
+  var v = 2;
+  console.log(v);
 }
 
-f()
-// 2
+f() // 2
+v // 1
+```
 
-v
-// 1
+上面代码中，变量`v`同时在函数的外部和内部有定义。结果，在函数内部定义，局部变量`v`覆盖了全局变量`v`。
 
-{% endhighlight %}
+注意，对于`var`命令来说，局部变量只能在函数内部声明，在其他区块中声明，一律都是全局变量。
+
+```javascript
+if (true) {
+  var x = 5;
+}
+console.log(x);  // 5
+```
+
+上面代码中，变量`x`在条件判断区块之中声明，结果就是一个全局变量，可以在区块之外读取。
 
 ### 函数内部的变量提升
 
 与全局作用域一样，函数作用域内部也会产生“变量提升”现象。var命令声明的变量，不管在什么位置，变量声明都会被提升到函数体的头部。
 
-{% highlight javascript %}
-
+```javascript
 function foo(x) {
-    if (x > 100) {
-         var tmp = x - 100;
-    }
+  if (x > 100) {
+    var tmp = x - 100;
+  }
 }
-
-{% endhighlight %}
+```
 
 上面的代码等同于
 
-{% highlight javascript %}
-
+```javascript
 function foo(x) {
   var tmp;
   if (x > 100) {
     tmp = x - 100;
   };
 }
-
-{% endhighlight %}
+```
 
 ### 函数本身的作用域
 

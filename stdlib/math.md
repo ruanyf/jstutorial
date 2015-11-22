@@ -6,18 +6,14 @@ date: 2013-02-12
 modifiedOn: 2013-10-27
 ---
 
-Math对象是JavaScript的内置对象，提供一系列数学常数和数学方法。
+Math对象是JavaScript的内置对象，提供一系列数学常数和数学方法。该对象不是构造函数，所以不能生成实例，所有的属性和方法都必须在Math对象上调用。
 
-该对象不是构造函数，所以不能生成实例，所有的属性和方法都必须在Math对象上调用。
-
-{% highlight javascript %}
-
+```javascript
 new Math()
 // TypeError: object is not a function
+```
 
-{% endhighlight %}
-
-上面代码表示，Math不能当作构造函数用。
+上面代码表示，`Math`能当作构造函数用。
 
 ## 属性
 
@@ -164,8 +160,7 @@ Math.exp(3) // 20.085536923187668
 
 该方法返回0到1之间的一个伪随机数，可能等于0，但是一定小于1。
 
-{% highlight javascript %}
-
+```javascript
 Math.random() // 0.7151307314634323
 
 // 返回给定范围内的随机数
@@ -177,8 +172,24 @@ function getRandomArbitrary(min, max) {
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+```
 
-{% endhighlight %}
+下面是返回随机字符的例子。
+
+```javascript
+var ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+
+random_base64 = function random_base64(length) {
+  var str = "";
+  for (var i=0; i < length; ++i) {
+    var rand = Math.floor(Math.random() * ALPHABET.length);
+    str += ALPHABET.substring(rand, rand+1);
+  }
+  return str;
+}
+```
+
+上面代码中，函数`random_base64`可以在给定范围`ALPHABET`之中，返回一个随机字符。
 
 ### 三角函数方法
 

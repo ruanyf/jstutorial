@@ -42,7 +42,6 @@ var a = 1 + 3 ; var b = "abc";
 
 ```javascript
 1 + 3;
-
 "abc";
 ```
 
@@ -56,7 +55,7 @@ var a = 1 + 3 ; var b = "abc";
 var a = 1;
 ```
 
-上面的代码先声明变量a，然后在变量a与数值1之间建立引用关系，也称将数值1“赋值”给变量a。以后，引用变量a就会得到数值1。最前面的var，是变量声明命令。它表示通知解释引擎，要创建一个变量a。
+上面的代码先声明变量`a`，然后在变量`a`与数值1之间建立引用关系，也称为将数值1“赋值”给变量`a`。以后，引用变量`a`就会得到数值1。最前面的`var`，是变量声明命令。它表示通知解释引擎，要创建一个变量`a`。
 
 变量的声明和赋值，是分开的两个步骤，上面的代码将它们合在了一起，实际的步骤是下面这样。
 
@@ -65,16 +64,16 @@ var a;
 a = 1;
 ```
 
-如果只是声明变量而没有赋值，则该变量的值为`undefined`。
+如果只是声明变量而没有赋值，则该变量的值是不存在的，JavaScript使用`undefined`表示这种情况。
 
 ```javascript
 var a;
 a // undefined
 ```
 
-JavaScript允许省略`var`，直接对未声明的变量赋值。也就是说，`var a = 1`与`a = 1`，这两条语句的效果相同。但是由于这样的做法很容易不知不觉地创建全局变量（尤其是在函数内部），所以建议总是使用var命令声明变量。
+JavaScript允许省略`var`，直接对未声明的变量赋值。也就是说，`var a = 1`与`a = 1`，这两条语句的效果相同。但是由于这样的做法很容易不知不觉地创建全局变量（尤其是在函数内部），所以建议总是使用`var`命令声明变量。
 
-> 严格地说，var a = 1 与 a = 1，这两条语句的效果不完全一样，主要体现在delete命令无法删除前者。不过，绝大多数情况下，这种差异是可以忽略的。
+> 严格地说，`var a = 1` 与 `a = 1`，这两条语句的效果不完全一样，主要体现在`delete`命令无法删除前者。不过，绝大多数情况下，这种差异是可以忽略的。
 
 如果一个变量没有声明就直接使用，JavaScript会报错，告诉你变量未定义。
 
@@ -95,7 +94,7 @@ JavaScirpt是一种动态类型语言，也就是说，变量的类型没有限�
 
 ```javascript
 var a = 1;
-a = "hello";
+a = 'hello';
 ```
 
 上面代码中，变量`a`起先被赋值为一个数值，后来又被重新赋值为一个字符串。第二次赋值的时候，因为变量`a`已经存在，所以不需要使用`var`命令。
@@ -127,88 +126,75 @@ x = 2;
 
 JavaScript引擎的工作方式是，先解析代码，获取所有被声明的变量，然后再一行一行地运行。这造成的结果，就是所有的变量的声明语句，都会被提升到代码的头部，这就叫做变量提升（hoisting）。
 
-{% highlight javascript %}
-
+```javascript
 console.log(a);
 var a = 1;
+```
 
-{% endhighlight %}
+上面代码首先使用`console.log`方法，在控制台（console）显示变量a的值。这时变量a还没有声明和赋值，所以这是一种错误的做法，但是实际上不会报错。因为存在变量提升，真正运行的是下面的代码。
 
-上面代码首先使用console.log方法，在控制台（console）显示变量a的值。这时变量a还没有声明和赋值，所以这是一种错误的做法，但是实际上不会报错。因为存在变量提升，真正运行的是下面的代码：
-
-{% highlight javascript %}
-
+```javascript
 var a;
 console.log(a);
 a = 1;
+```
 
-{% endhighlight %}
+最后的结果是显示`undefined`，表示变量`a`已声明，但还未赋值。
 
-最后的结果是显示undefined，表示变量a已声明，但还未赋值。
+请注意，变量提升只对`var`命令声明的变量有效，如果一个变量不是用`var`命令声明的，就不会发生变量提升。
 
-请注意，变量提升只对var命令声明的变量有效，如果一个变量不是用var命令声明的，就不会发生变量提升。
-
-{% highlight javascript %}
-
+```javascript
 console.log(b);
 b = 1;
+```
 
-{% endhighlight %}
-
-上面的语句将会报错，提示“ReferenceError: b is not defined”，即变量b未声明，这是因为b不是用var命令声明的，JavaScript引擎不会将其提升，而只是视为对顶层对象的b属性的赋值。
+上面的语句将会报错，提示“ReferenceError: b is not defined”，即变量`b`未声明，这是因为`b`不是用`var`命令声明的，JavaScript引擎不会将其提升，而只是视为对顶层对象的`b`属性的赋值。
 
 ### 标识符
 
-标识符（identifier）是用来识别具体对象的一个名称。最常见的标识符就是变量名，以及后面要提到的函数名。JavaScript语言的标识符对大小写敏感，所以a和A是两个不同的标识符。
+标识符（identifier）是用来识别具体对象的一个名称。最常见的标识符就是变量名，以及后面要提到的函数名。JavaScript语言的标识符对大小写敏感，所以`a`和`A`是两个不同的标识符。
 
 标识符有一套命名规则，不符合规则的就是非法标识符。JavaScript引擎遇到非法标识符，就会报错。
 
 简单说，标识符命名规则如下：
 
-- 第一个字符可以是任意Unicode字母，以及美元符号（$）和下划线（_）。
-- 第二个字符及后面的字符，还可以用数字。
+- 第一个字符，可以是任意Unicode字母，以及美元符号（`$`）和下划线（`_`）。
+- 第二个字符及后面的字符，除了Unicode字母、美元符号和下划线，还可以用数字`0-9`。
 
 下面这些都是合法的标识符。
 
-{% highlight javascript %}
-
+```javascript
 arg0
 _tmp
 $elem
 π
-
-{% endhighlight %}
+```
 
 下面这些则是不合法的标识符。
 
-{% highlight javascript %}
-
-1a
-23
-***
-a+b
--d
-
-{% endhighlight %}
+```javascript
+1a  // 第一个字符不能是数字
+23  // 同上
+***  // 标识符不能包含星号
+a+b  // 标识符不能包含加号
+-d  // 标识符不能包含减号或连词线
+```
 
 中文是合法的标识符，可以用作变量名。
 
-{% highlight javascript %}
-
+```javascript
 var 临时变量 = 1;
-
-{% endhighlight %}
+```
 
 > JavaScript有一些保留字，不能用作标识符：arguments、break、case、catch、class、const、continue、debugger、default、delete、do、else、enum、eval、export、extends、false、finally、for、function、if、implements、import、in、instanceof、interface、let、new、null、package、private、protected、public、return、static、super、switch、this、throw、true、try、typeof、var、void、while、with、yield。
 
-另外，还有三个词虽然不是保留字，但是因为具有特别含义，也不应该用作标识符：Infinity、NaN、undefined。
+另外，还有三个词虽然不是保留字，但是因为具有特别含义，也不应该用作标识符：`Infinity`、`NaN`、`undefined`。
 
 ### 注释
 
 源码中被JavaScript引擎忽略的部分就叫做注释，它的作用是对代码进行解释。Javascript提供两种注释：一种是单行注释，用//起头；另一种是多行注释，放在/\* 和 \*/之间。
 
-{% highlight javascript %}
-
+```javascript
 // 这是单行注释
 
 /*
@@ -216,10 +202,7 @@ var 临时变量 = 1;
  多行
  注释
 */
-
-{% endhighlight %}
-
-本教程后面的代码部分，会采用这两种形式说明代码的运行结果，以及需要注意的地方。
+```
 
 此外，由于历史上JavaScript兼容HTML代码的注释，所以&lt;!--和--&gt;也被视为单行注释。
 
@@ -250,17 +233,15 @@ JavaScript使用大括号，将多个相关的语句组合在一起，称为“�
 
 与大多数编程语言不一样，JavaScript的区块不构成单独的作用域（scope）。也就是说，区块中的变量与区块外的变量，属于同一个作用域。
 
-{% highlight javascript %}
-
-{ 
-	var a = 1;
+```javascript
+{
+  var a = 1;
 }
 
 a // 1
+```
 
-{% endhighlight %}
-
-上面代码在区块内部，声明并赋值了变量a，然后在区块外部，变量a依然有效，这说明区块不构成单独的作用域，与不使用区块的情况没有任何区别。所以，单独使用的区块在JavaScript中意义不大，很少出现。区块往往用来构成其他更复杂的语法结构，比如for、if、while、functions等。
+上面代码在区块内部，声明并赋值了变量`a`，然后在区块外部，变量`a`依然有效，这说明区块不构成单独的作用域，与不使用区块的情况没有任何区别。所以，单独使用的区块在JavaScript中意义不大，很少出现。区块往往用来构成其他更复杂的语法结构，比如for、if、while、function等。
 
 ### 条件语句
 
@@ -496,26 +477,22 @@ for(initialize; test; increment){
 
 下面是一个循环打印数组每个元素的例子。
 
-{% highlight javascript %}
-
+```javascript
 for (var i=0; i < arr.length; i++) {
-	console.log(arr[i]);
+  console.log(arr[i]);
 }
-
-{% endhighlight %}
+```
 
 所有for循环，都可以改写成while循环。
 
-{% highlight javascript %}
-
+```javascript
 var i = 0;
 
 while (i < arr.length) {
-	console.log(arr[i]);
-    i++;
+  console.log(arr[i]);
+  i++;
 }
-
-{% endhighlight %}
+```
 
 for语句表达式的三个部分（initialize，test，increment），可以省略任何一个，也可以全部省略。
 
@@ -638,70 +615,62 @@ top:
 
 JavaScript语言的每一个值，都属于某一种数据类型。JavaScript的数据类型，共有六种。（ES6又新增了第七种Symbol类型的值，本教程不涉及。）
 
-- 数值（number）
-- 字符串（string）
-- 布尔值（boolean）
-- undefined
-- null
-- 对象（object）
+- 数值（number）：整数和小数（比如1和3.14）
+- 字符串（string）：字符组成的文本（比如"Hello World"）
+- 布尔值（boolean）：`true`（真）和`false`（假）两个特定值
+- undefined：表示“未定义”或不存在，即此处目前没有任何值
+- null：表示空缺，即此处应该有一个值，但目前为空
+- 对象（object）：各种值组成的集合
 
-“数值”是整数和小数（比如1和3.14）；“字符串”是由字符组成的文本（比如"Hello World"）；“布尔值”则是`true`（真）和`false`（假）两个特定值；`undefined`表示不存在，即此处目前没有任何值；`null`表示空缺，即此处应该有一个值，但目前为空；至于对象，这是各种值组成的集合。
-
-通常，我们将数值、字符串、布尔值称为原始类型（primitive type）的值，即它们是最基本的数据类型，不能再细分了。而将对象称为合成类型（complex type）的值，因为一个对象往往是多个原始类型的值的合成。至于`undefined`和`null`，一般将它们看成两个特殊值。
+通常，我们将数值、字符串、布尔值称为原始类型（primitive type）的值，即它们是最基本的数据类型，不能再细分了。而将对象称为合成类型（complex type）的值，因为一个对象往往是多个原始类型的值的合成，可以看作是一个存放各种值的容器。至于`undefined`和`null`，一般将它们看成两个特殊值。
 
 对象又可以分成三个子类型。
 
-- （狭义的）对象（object）
+- 狭义的对象（object）
 - 数组（array）
 - 函数（function）
 
-（狭义的）对象和数组是两种不同的数据组合方式，而函数其实是处理数据的方法。JavaScript把函数当成一种数据类型，可以像其他类型的数据一样，进行赋值和传递，这为编程带来了很大的灵活性，体现了JavaScript作为“函数式语言”的本质。
+狭义的对象和数组是两种不同的数据组合方式，而函数其实是处理数据的方法。JavaScript把函数当成一种数据类型，可以像其他类型的数据一样，进行赋值和传递，这为编程带来了很大的灵活性，体现了JavaScript作为“函数式语言”的本质。
 
-这里需要明确的是，JavaScript的所有数据，都可以视为（广义的）对象。不仅合成类型的数组和函数属于对象，就连原始类型的数据（数值、字符串、布尔值）也可以用对象方式调用。此后，除非声明，本书的”对象“都特指狭义的对象。
+这里需要明确的是，JavaScript的所有数据，都可以视为广义的对象。不仅数组和函数属于对象，就连原始类型的数据（数值、字符串、布尔值）也可以用对象方式调用。为了避免混淆，此后除非特别声明，本教程的”对象“都特指狭义的对象。
 
-本教程将分别详细介绍所有的数据类型。两个特殊值和布尔类型比较简单，将在本节介绍，其他类型将各自有单独的一节。
+本教程将详细介绍所有的数据类型。`undefined`和`null`两个特殊值和布尔类型Boolean比较简单，将在本节介绍，其他类型将各自有单独的一节。
 
 ### typeof运算符
 
 JavaScript有三种方法，可以确定一个值到底是什么类型。
 
-- typeof运算符
-- instanceof运算符
-- Object.prototype.toString方法
+- `typeof`运算符
+- `instanceof`运算符
+- `Object.prototype.toString`方法
 
-instanceof运算符和Object.prototype.toString方法，将在后文相关章节介绍。这里着重介绍typeof 运算符。
+`instanceof`运算符和`Object.prototype.toString`方法，将在后文相关章节介绍。这里着重介绍`typeof`运算符。
 
 typeof运算符可以返回一个值的数据类型，可能有以下结果。
 
 **（1）原始类型**
 
-数值、字符串、布尔值分别返回number、string、boolean。
+数值、字符串、布尔值分别返回`number`、`string`、`boolean`。
 
-{% highlight javascript %}
-
+```javascript
 typeof 123 // "number"
-typeof "123" // "string"
+typeof '123' // "string"
 typeof false // "boolean"
-
-{% endhighlight %}
+```
 
 **（2）函数**
 
-函数返回function。
+函数返回`function`。
 
-{% highlight javascript %}
-
-// 定义一个空函数
-function f(){}
-
+```javascript
+function f() {}
 typeof f
 // "function"
-
-{% endhighlight %}
+```
 
 **（3）undefined**
 
-undefined返回undefined。
+`undefined`返回`undefined`。
 
 ```javascript
 typeof undefined
@@ -710,61 +679,53 @@ typeof undefined
 
 利用这一点，typeof可以用来检查一个没有声明的变量，而不报错。
 
-{% highlight javascript %}
-
+```javascript
 v
 // ReferenceError: v is not defined
 
 typeof v
 // "undefined"
-
-{% endhighlight %}
+```
 
 实际编程中，这个特点通常用在判断语句。
 
-{% highlight javascript %}
-
+```javascript
 // 错误的写法
-if (v){
-	// ...
+if (v) {
+  // ...
 }
 // ReferenceError: v is not defined
 
 // 正确的写法
-if (typeof v === "undefined"){
-	// ...
+if (typeof v === "undefined") {
+  // ...
 }
-
-{% endhighlight %}
+```
 
 **（4）其他**
 
-除此以外，都返回object。
+除此以外，都返回`object`。
 
-{% highlight javascript %}
-
+```javascript
 typeof window // "object"
 typeof {} // "object"
 typeof [] // "object"
 typeof null // "object"
+```
 
-{% endhighlight %}
+从上面代码可以看到，空数组（`[]`）的类型也是`object`，这表示在JavaScript内部，数组本质上只是一种特殊的对象。另外，`null`的类型也是`object`，这是由于历史原因造成的，为了兼容以前的代码，后来就没法修改了，并不是说`null`就属于对象，本质上`null`是一个类似于`undefined`的特殊值。
 
-从上面代码可以看到，空数组（[]）的类型也是object，这表示在JavaScript内部，数组本质上只是一种特殊的对象。另外，null的类型也是object，这是由于历史原因造成的，为了兼容以前的代码，后来就没法修改了，并不是说null就属于对象，本质上null是一个类似于undefined的特殊值。
+既然`typeof`对数组（array）和对象（object）的显示结果都是`object`，那么怎么区分它们呢？instanceof运算符可以做到。
 
-既然typeof对数组（array）和对象（object）的显示结果都是object，那么怎么区分它们呢？instanceof运算符可以做到。
-
-{% highlight javascript %}
-
+```javascript
 var o = {};
 var a = [];
 
 o instanceof Array // false
 a instanceof Array // true
+```
 
-{% endhighlight %}
-
-instanceof运算符的详细解释，请见《面向对象编程》一章。
+`instanceof`运算符的详细解释，请见《面向对象编程》一章。
 
 ### null和undefined
 

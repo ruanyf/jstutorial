@@ -10,50 +10,46 @@ modifiedOn: 2014-01-05
 
 ### 定义
 
-字符串就是若干个排在一起的字符，放在单引号或双引号之中。
+字符串就是零个或多个排在一起的字符，放在单引号或双引号之中。
 
-{% highlight javascript %}
-
+```javascript
 'abc'
 "abc"
-
-{% endhighlight %}
+```
 
 单引号字符串的内部，可以使用双引号；双引号字符串的内部，可以使用单引号。
 
-{% highlight javascript %}
-
+```javascript
 'key="value"'
 "It's a long journey"
+```
 
-{% endhighlight %}
+上面两个都是合法的字符串。
 
 如果要在单引号字符串的内部，使用单引号（或者在双引号字符串的内部，使用双引号），就必须在内部的单引号（或者双引号）前面加上反斜杠，用来转义。
 
-{% highlight javascript %}
-
+```javascript
 'Did she say \'Hello\'?'
-"Did she say \"Hello\"?"
+// "Did she say 'Hello'?"
 
-{% endhighlight %}
+"Did she say \"Hello\"?"
+// "Did she say "Hello"?"
+```
 
 字符串默认只能写在一行内，分成多行将会报错。
 
-{% highlight javascript %}
-
+```javascript
 'a
 b
 c'
 // SyntaxError: Unexpected token ILLEGAL
-
-{% endhighlight %}
+```
 
 上面代码将一个字符串分成三行，JavaScript就会报错。
 
 如果长字符串必须分成多行，可以在每一行的尾部使用反斜杠。
 
-{% highlight javascript %}
-
+```javascript
 var longString = "Long \
 long \
 long \
@@ -61,12 +57,9 @@ string";
 
 longString
 // "Long long long string"
+```
 
-{% endhighlight %}
-
-上面代码表示，加了反斜杠以后，原来写在一行的字符串，可以分成多行，效果与写在同一行完全一样。
-
-但是，这种写法有两个注意点，首先，它是ECMAScript 5新添加的，老式浏览器（如IE 8）不支持，其次，反斜杠的后面必须是换行符，而不能有其他字符（比如空格），否则会报错。
+上面代码表示，加了反斜杠以后，原来写在一行的字符串，可以分成多行，效果与写在同一行完全一样。注意，反斜杠的后面必须是换行符，而不能有其他字符（比如空格），否则会报错。
 
 连接运算符（+）可以连接多个单行字符串，用来模拟多行字符串。
 
@@ -85,30 +78,28 @@ line 1
 line 2
 line 3
 */}).toString().split('\n').slice(1,-1).join('\n')
-// "line 1
-// line 2
-// line 3"
+// "line 1 line 2 line 3"
 ```
 
 ### 转义
 
-反斜杠在字符串内有特殊含义，用来表示一些特殊字符，所以又称为转义符。
+反斜杠（`\\`）在字符串内有特殊含义，用来表示一些特殊字符，所以又称为转义符。
 
 需要用反斜杠转义的特殊字符，主要有下面这些：
 
-- \0	代表没有内容的字符（\u0000）
-- \b	后退键（\u0008）
-- \f	换页符（\u000C）
-- \n	换行符（\u000A）
-- \r	回车键（\u000D）
-- \t	制表符（\u0009）
-- \v	垂直制表符（\u000B）
-- \'	单引号（\u0027）
-- \"	双引号（\u0022）
-- \\\\	反斜杠（\u005C）
-- \XXX	用三个八进制数（000到377）表示字符，XXX对应该字符的Unicode，比如\251表示版权符号。
-- \xXX	用两个十六进制数（00到FF）表示字符，XX对应该字符的Unicode，比如\xA9表示版权符号。
-- \uXXXX	用四位十六进制的Unicode编号代表某个字符，比如\u00A9表示版权符号。
+- `\0` 代表没有内容的字符（\u0000）
+- `\b` 后退键（\u0008）
+- `\f` 换页符（\u000C）
+- `\n` 换行符（\u000A）
+- `\r` 回车键（\u000D）
+- `\t` 制表符（\u0009）
+- `\v` 垂直制表符（\u000B）
+- `\'` 单引号（\u0027）
+- `\"` 双引号（\u0022）
+- `\\\\` 反斜杠（\u005C）
+- `\XXX` 用三个八进制数（000到377）表示字符，`XXX`对应该字符的Unicode，比如`\251`表示版权符号。
+- `\xXX` 用两个十六进制数（00到FF）表示字符，`XX`对应该字符的Unicode，比如`\xA9`表示版权符号。
+- `\uXXXX` 用四位十六进制的Unicode编号代表某个字符，比如`\u00A9`表示版权符号。
 
 下面是最后三种字符的特殊写法的例子。
 
@@ -133,19 +124,16 @@ line 3
 
 如果字符串的正常内容之中，需要包含反斜杠，则反斜杠前需要再加一个反斜杠，用来对自身转义。
 
-{% highlight javascript %}
-
+```javascript
 "Prev \\ Next"
 // "Prev \ Next"
-
-{% endhighlight %}
+```
 
 ### 字符串与数组
 
 字符串可以被视为字符数组，因此可以使用数组的方括号运算符，用来返回某个位置的字符（从0开始）。
 
-{% highlight javascript %}
-
+```javascript
 var s = 'hello';
 
 s[0] // "h"
@@ -154,23 +142,19 @@ s[4] // "o"
 
 // 也可以直接对字符串使用方括号运算符
 'hello'[1] // "e"
+```
 
-{% endhighlight %}
+如果方括号中的数字超过字符串的范围，或者方括号中根本不是数字，则返回`undefined`。
 
-如果方括号中的数字超过字符串的范围，或者方括号中根本不是数字，则返回undefined。
-
-{% highlight javascript %}
-
+```javascript
 'abc'[3] // undefined
 'abc'[-1] // undefined
 'abc'["x"] // undefined
-
-{% endhighlight %}
+```
 
 但是，字符串与数组的相似性仅此而已。实际上，字符串是类似数组的对象，且无法改变字符串之中的单个字符。
 
-{% highlight javascript %}
-
+```javascript
 var s = 'hello';
 
 delete s[0];
@@ -181,15 +165,13 @@ s // "hello"
 
 s[5] = '!';
 s // "hello"
-
-{% endhighlight %}
+```
 
 上面代码表示，字符串内部的单个字符无法改变和增删，这些操作会默默地失败。
 
-length属性返回字符串的长度，该属性也是无法改变的。
+`length`属性返回字符串的长度，该属性也是无法改变的。
 
-{% highlight javascript %}
-
+```javascript
 var s = 'hello';
 s.length // 5
 
@@ -198,22 +180,19 @@ s.length // 5
 
 s.length = 7;
 s.length // 5
+```
 
-{% endhighlight %}
-
-上面代码表示字符串的length属性无法改变，但是不会报错。
+上面代码表示字符串的`length`属性无法改变，但是不会报错。
 
 字符串也无法添加新属性。
 
 ```javascript
-
 var s = "Hello World";
 s.x = 123;
 s.x // undefined
-
 ```
 
-上面代码为字符串s添加了一个x属性，结果无效，总是返回undefined。
+上面代码为字符串`s`添加了一个`x`属性，结果无效，总是返回`undefined`。
 
 上面这些行为的原因是，在JavaScript内部，变量s其实指向字符串“Hello World”的地址，而“Hello World”本身是一个常量，所以无法改变它，既不能新增，也不能删除。另一方面，当一个字符串被调用属性时，它会自动转为String对象的实例（参见《标准库》一章），调用结束后，该对象自动销毁。这意味着，下一次调用字符串的属性时，实际是调用一个临时生成的新对象，而不是上一次调用时生成的那个对象，所以取不到赋值在上一个对象的属性。如果想要为字符串添加属性，只有在它的原型对象String.prototype上定义（参见《面向对象编程》一章）。
 
