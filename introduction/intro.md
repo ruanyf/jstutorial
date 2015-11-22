@@ -1,16 +1,10 @@
 ---
-title: JavaScript语言简介
+title: JavaScript语言的历史
 category: introduction
 layout: page
 date: 2015-11-21
 modifiedOn: 2015-11-21
 ---
-
-JavaScript是一种轻量级的脚本语言，可以部署在多种环境，最常见的部署环境就是浏览器。JavaScript使用对象模型，对部署环境提供控制。
-
-JavaScript的核心部分相当精简，只包括基本的语法构造（比如操作符、控制结构、各种语句）和标准库（就是一系列具有各种功能的对象比如Array、Date、Math等）。各种部署环境提供额外的API，也就是自己的底层接口包装成各种对象，以便JavaScript调用。
-
-浏览器提供的额外API可以分成两大类：浏览器控制类和DOM类。前者用来操作浏览器，后者用来操作网页的各种元素。如果部署环境是服务器，则会提供各种操作系统的API，比如文件操作API、网络通信API等等，现在最流行的JavaScript服务器环境是Node。
 
 ## JavaScript的诞生
 
@@ -182,29 +176,6 @@ TC39的总体考虑是，ECMAScript 5与ECMAScript 3基本保持兼容，较大�
 2015年6月，ECMA标准化组织正式批准了ECMAScript 6语言标准，JavaScript语言正式进入了下一个阶段，成为一种企业级的、开发大规模应用的语言。这个标准从提出到批准，历时10年，而JavaScript语言从诞生至今也已经20年了。
 
 2015年6月，Mozilla在asm.js的基础上发布WebAssembly项目。这是一种JavaScript语言编译后的二进制格式，类似于Java的字节码，有利于移动设备加载JavaScript脚本，解析速度提高了20+倍。这意味着将来的软件，会发布JavaScript二进制包。
-
-## 实验环境
-
-JavaScript的上手非常方便，只要电脑安装了浏览器，就可以用来实验了。只要打开Chrome浏览器的“开发者工具”（Developer Tools），就可以在它的“控制台”（console）运行JavaScript代码。
-
-进入“控制台”，有两种方法。
-
-- 快捷键。在Chrome浏览器中，直接按`Option + Command + J`（Mac）或者`Ctrl + Shift + J`（Windows/Linux）。
-
-- 菜单。从“工具”（Tools）菜单中打开“开发者工具”，然后点击Console选项卡。“开发者工具”的快捷键是F12，或者`Option + Command + I`（Mac）以及`Ctrl + Shift + I`（Windows/Linux）。
-
-进入控制台以后，就可以在提示符后输入代码，然后按`Enter`键，代码就会执行。如果按`Shift + Enter`键，就是代码换行，不会触发执行。建议阅读本教程时，将代码复制到控制台进行实验。
-
-将下面的程序复制到“控制台”，按下回车后，就可以看到运行结果。
-
-```javascript
-function greetMe(yourName) {
-  console.log('Hello ' + yourName);
-}
-
-greetMe('World')
-// Hello World
-```
 
 ## 参考链接
 
