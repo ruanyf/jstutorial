@@ -1,12 +1,10 @@
 ---
-title: JavaScript的历史
-layout: page
+title: JavaScript语言的历史
 category: introduction
-date: 2013-01-10
-modifiedOn: 2013-12-05
+layout: page
+date: 2015-11-21
+modifiedOn: 2015-11-21
 ---
-
-理解现在的最好方法之一，就是了解历史，本节将全面介绍JavaScript的历史。了解这些内容，还有助于把握JavaScript在整个计算机编程体系和计算机工业中所处的位置，以及这门语言涉及的全部内容。
 
 ## JavaScript的诞生
 
@@ -41,23 +39,41 @@ Netscape公司的这种浏览器脚本语言，最初名字叫做Mocha，1995年
 
 之所以起这个名字，并不是因为JavaScript本身与Java语言有多么深的关系（事实上，两者关系并不深），而是因为Netscape公司已经决定，使用Java语言开发网络应用程序，JavaScript可以像胶水一样，将各个部分连接起来。当然，后来的历史是Java语言的浏览器插件（applet）失败了，JavaScript反而发扬光大。
 
-## JavaScript的发布和标准化
-
 1995年12月4日，Netscape公司与Sun公司联合发布了JavaScript语言。值得一提的是，17天之后Ruby语言也发布了它的第一个版本。
 
 1996年3月，Navigator 2.0浏览器正式内置了JavaScript脚本语言。
 
+## JavaScript与ECMAScript的关系
+
 1996年8月，微软模仿JavaScript开发了一种相近的语言，取名为JScript（JavaScript是Netscape的注册商标，微软不能用），首先内置于IE 3.0。网景公司面临丧失浏览器脚本语言的主导权的局面。
 
-1996年11月，网景公司决定将JavaScript提交给国际标准化组织ECMA，希望JavaScript能够成为国际标准，以此抵抗微软。
+1996年11月，网景公司决定将JavaScript提交给国际标准化组织ECMA（European Computer Manufacturers Association），希望JavaScript能够成为国际标准，以此抵抗微软。
 
 1997年7月，ECMA组织发布262号标准文件（ECMA-262）的第一版，规定了浏览器脚本语言的标准，并将这种语言称为ECMAScript。这个版本就是ECMAScript 1.0版。之所以不叫JavaScript，一方面是由于商标的关系，Java是Sun公司的商标，根据一份授权协议，只有Netscape公司可以合法地使用JavaScript这个名字，且JavaScript已经被Netscape公司注册为商标，另一方面也是想体现这门语言的制定者是ECMA，不是Netscape，这样有利于保证这门语言的开放性和中立性。因此，ECMAScript和JavaScript的关系是，前者是后者的规格，后者是前者的一种实现。在日常场合，这两个词是可以互换的。
+
+ECMAScript只用来标准化JavaScript这种语言的基本语法结构，与部署环境相关的标准都由其他标准规定，比如DOM的标准就是由W3C组织（World Wide Web Consortium）制定的。
+
+ECMA-262标准后来也被另一个国际标准化组织ISO（International Organization for Standardization）批准，标准号是ISO-16262。
+
+## JavaScript与Java的关系
+
+JavaScript和Java是两种不一样的语言，但是它们之间存在联系。
+
+JavaScript的基本语法和对象体系，是模仿Java而设计的。但是，JavaScript没有采用Java的静态类型。正是因为JavaScript与Java有很大的相似性，所以这门语言才从一开始的LiveScript改名为JavaScript。基本上，JavaScript这个名字的原意是“很像Java的脚本语言”。
+
+在JavaScript语言中，函数是一种独立的数据类型，以及采用基于原型对象（prototype）的继承链。这是它与Java语法最大的两点区别。JavaScript语法要比Java自由得多。
+
+另外，Java语言需要编译，而JavaScript语言则是运行时由解释器直接执行。
+
+总之，JavaScript的原始设计目标是一种小型的、简单的动态语言，与Java有足够的相似性，使得使用者（尤其是Java程序员）可以快速上手。
+
+## JavaScript的版本
+
+1997年7月，ECMAScript 1.0发布。
 
 1998年6月，ECMAScript 2.0版发布。
 
 1999年12月，ECMAScript 3.0版发布，成为JavaScript的通行标准，得到了广泛支持。
-
-## ECMAScript和JavaScript的版本
 
 2007年10月，ECMAScript 4.0版草案发布，对3.0版做了大幅升级，预计次年8月发布正式版本。草案发布后，由于4.0版的目标过于激进，各方对于是否通过这个标准，发生了严重分歧。以Yahoo、Microsoft、Google为首的大公司，反对JavaScript的大幅升级，主张小幅改动；以JavaScript创造者Brendan Eich为首的Mozilla公司，则坚持当前的草案。
 
@@ -65,7 +81,7 @@ Netscape公司的这种浏览器脚本语言，最初名字叫做Mocha，1995年
 
 2009年12月，ECMAScript 5.0版正式发布。Harmony项目则一分为二，一些较为可行的设想定名为Javascript.next继续开发，后来演变成ECMAScript 6；一些不是很成熟的设想，则被视为JavaScript.next.next，在更远的将来再考虑推出。
 
-2011年6月，ECMAscript 5.1版发布，并且成为ISO国际标准（ISO/IEC 16262:2011）。
+2011年6月，ECMAscript 5.1版发布，并且成为ISO国际标准（ISO/IEC 16262:2011）。到了2012年底，所有主要浏览器都支持ECMAScript 5.1版的全部功能。
 
 2013年3月，ECMAScript 6草案冻结，不再添加新功能。新的功能设想将被放到ECMAScript 7。
 
@@ -75,29 +91,7 @@ Netscape公司的这种浏览器脚本语言，最初名字叫做Mocha，1995年
 
 TC39的总体考虑是，ECMAScript 5与ECMAScript 3基本保持兼容，较大的语法修正和新功能加入，将由JavaScript.next完成。当前，JavaScript.next指的是ECMAScript 6。第六版发布以后，将指ECMAScript 7。 TC39预计，ECMAScript 5会在2013年的年中成为Javascript开发的主流标准，并在今后五年中一直保持这个位置。
 
-虽然ECMAScript是JavaScript的标准，但是Netscape公司（以及后来的Mozilla基金会）在内部依然使用自己的版本号。这导致了JavaScript有自己不同于ECMAScript的版本号。
-
-1996年3月，Navigator 2.0内置了JavaScript 1.0。
-
-1996年8月，Navigator 3.0内置了JavaScript 1.1。
-
-1997年6月，Navigator 4.0内置了JavaScript 1.2。
-
-1998年10月，Navigator 4.06内置了JavaScript 1.3。
-
-1999年，Netscape服务器版提供JavaScript 1.4。
-
-2000年11月，Navigator 6.0内置了JavaScript 1.5。
-
-2005年11月，Firefox 1.5内置了JavaScript 1.6。
-
-2006年10月，Firfox 2.0内置了JavaScript 1.7。
-
-2008年6月，Firefox 3.0内置了JavaScript 1.8。
-
-JavaScript 1.1版对应ECMAScript 1.0，但是直到JavaScript 1.4版才完全兼容ECMAScript 1.0。JavaScript 1.5版完全兼容ECMAScript 3.0。目前的JavaScript 1.8版完全兼容ECMAScript 5。
-
-到2013年初，所有主要浏览器都支持ECMAScript 5.1版的全部功能。
+除了ECMAScript的版本，很长一段时间中，Netscape公司（以及继承它的Mozilla基金会）在内部依然使用自己的版本号。这导致了JavaScript有自己不同于ECMAScript的版本号。1996年3月，Navigator 2.0内置了JavaScript 1.0。JavaScript 1.1版对应ECMAScript 1.0，但是直到JavaScript 1.4版才完全兼容ECMAScript 1.0。JavaScript 1.5版完全兼容ECMAScript 3.0。目前的JavaScript 1.8版完全兼容ECMAScript 5。
 
 ## 周边大事记
 

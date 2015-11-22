@@ -5,11 +5,10 @@ date: 2012-11-18
 modifiedOn: 2014-05-18
 ---
 
-<h2 id="introduction">导论</h2>
+<h2 id="introduction">导论与历史</h2>
 
-- [前言](introduction/preface.html)
-- [为什么学习JavaScript？](introduction/why.html)
-- [JavaScript简介](introduction/intro.html)
+- [导论](introduction/intro.html)
+- [JavaScript的历史](introduction/history.html)
 
 <h2 id="grammar">基本语法</h2>
 
