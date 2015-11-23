@@ -6,20 +6,17 @@ date: 2013-03-10
 modifiedOn: 2013-12-03
 ---
 
-console对象是JavaScript的原生对象，它有点像Unix系统的标准输出stdout和标准错误stderr，可以输出各种信息用来调试程序，而且还提供了很多额外的方法，供开发者调用。它的常见用途有两个。
+`console`对象是JavaScript的原生对象，它有点像Unix系统的标准输出`stdout`和标准错误`stderr`，可以输出各种信息用来调试程序，而且还提供了很多额外的方法，供开发者调用。它的常见用途有两个。
 
 - 显示网页代码运行时的错误信息。
-
 - 提供了一个命令行接口，用来与网页代码互动。
 
 ## 浏览器实现
 
-console对象的浏览器实现，包含在浏览器自带的开发工具之中。以Chrome浏览器的“开发者工具”（Developer Tools）为例，首先使用下面三种方法的一种打开它。
+`console`对象的浏览器实现，包含在浏览器自带的开发工具之中。以Chrome浏览器的“开发者工具”（Developer Tools）为例，首先使用下面三种方法的一种打开它。
 
-1. 按F12或者Control+Shift+i（PC平台）/ Alt+Command+i（Mac平台）。
-
+1. 按F12或者`Control + Shift + i`（PC平台）/ `Alt + Command + i`（Mac平台）。
 2. 在菜单中选择“工具/开发者工具”。
-
 3. 在一个页面元素上，打开右键菜单，选择其中的“Inspect Element”。
 
 ![开发者工具](https://developers.google.com/chrome-developer-tools/images/image03.png)
@@ -27,42 +24,33 @@ console对象的浏览器实现，包含在浏览器自带的开发工具之中�
 打开“开发者工具”以后，可以看到在顶端有八个面板卡可供选择，分别是：
 
 - **Elements**：用来调试网页的HTML源码和CSS代码。
-
 - **Resources**：查看网页加载的各种资源文件（比如代码文件、字体文件、css文件等），以及在硬盘上创建的各种内容（比如本地缓存、Cookie、Local Storage等）。
-
 - **Network**：查看网页的HTTP通信情况。
-
 - **Sources**：调试JavaScript代码。
-
 - **Timeline**：查看各种网页行为随时间变化的情况。
-
 - **Profiles**：查看网页的性能情况，比如CPU和内存消耗。
-
 - **Audits**：提供网页优化的建议。
-
 - **Console**：用来运行JavaScript命令。
 
-这八个面板都有各自的用途，以下内容针对Console面板，又称为控制台。Console面板基本上就是一个命令行窗口，你可以在提示符下，键入各种命令。
-
-下面介绍console对象提供的各种方法。
+这八个面板都有各自的用途。以下内容只针对Console面板，又称为控制台。Console面板基本上就是一个命令行窗口，你可以在提示符下，键入各种命令。
 
 ## console对象的方法
 
+`console`对象提供的各种方法，用来与控制台窗口互动。
+
 ### log()，info()，debug()
 
-console.log方法用于在console窗口输出信息。它可以接受多个参数，将它们的结果连接起来输出。
+`console.log`方法用于在console窗口输出信息。它可以接受多个参数，将它们的结果连接起来输出。
 
-{% highlight javascript %}
-
+```javascript
 console.log("Hello World")
 // Hello World
 
 console.log("a","b","c")
 // a b c
+```
 
-{% endhighlight %}
-
-console.log方法会自动在每次输出的结尾，添加换行符。
+`console.log`方法会自动在每次输出的结尾，添加换行符。
 
 ```javascript
 console.log(1);
@@ -75,14 +63,12 @@ console.log(3);
 
 如果第一个参数是格式字符串（使用了格式占位符），console.log方法将依次用后面的参数替换占位符，然后再进行输出。
 
-{% highlight javascript %}
-
-console.log(" %s + %s = %s", 1, 1, 2)
+```javascript
+console.log(' %s + %s = %s', 1, 1, 2)
 //  1 + 1 = 2
+```
 
-{% endhighlight %}
-
-上面代码中，console.log方法的第一个参数有三个占位符（%s），第二、三、四个参数会在显示时，依次替换掉这个三个占位符。console.log方法支持的占位符有以下几个，不同格式的数据必须使用对应格式的占位符。
+上面代码中，`console.log`方法的第一个参数有三个占位符（`%s`），第二、三、四个参数会在显示时，依次替换掉这个三个占位符。`console.log`方法支持的占位符格式有以下一些，不同格式的数据必须使用对应格式的占位符。
 
 - %s 字符串
 - %d 整数
@@ -92,71 +78,61 @@ console.log(" %s + %s = %s", 1, 1, 2)
 - %c CSS格式字符串
 
 ```javascript
-
 var number = 11 * 9;
 var color = 'red';
 
 console.log('%d %s balloons', number, color);
 // 99 red balloons
-
 ```
 
-上面代码中，第二个参数是数值，对应的占位符是%d，第三个参数是字符串，对应的占位符是%s。
+上面代码中，第二个参数是数值，对应的占位符是`%d`，第三个参数是字符串，对应的占位符是`%s`。
 
-使用%c占位符时，对应的参数必须是CSS语句，用来对输出内容进行CSS渲染。
+使用`%c`占位符时，对应的参数必须是CSS语句，用来对输出内容进行CSS渲染。
 
 ```javascript
-
 console.log('%cThis text is styled!',
-  'color: #86CC00; background-color: blue; font-size: 20px; padding: 3px;'
+  'color: red; background: yellow; font-size: 24px;'
 )
-
 ```
 
 上面代码运行后，输出的内容将显示为蓝底绿字。
 
-log方法的两种参数格式，可以结合在一起使用。
+`console.log`方法的两种参数格式，可以结合在一起使用。
 
 ```javascript
-
-console.log(" %s + %s ", 1, 1, "= 2")
+console.log(' %s + %s ', 1, 1, '= 2')
 // 1 + 1  = 2
-
 ```
 
-如果参数是一个对象，console.log会显示该对象的值。
+如果参数是一个对象，`console.log`会显示该对象的值。
 
 ```javascript
-
 console.log({foo: 'bar'})
 // Object {foo: "bar"}
 
 console.log(Date)
 // function Date() { [native code] }
-
 ```
 
-上面代码输出Date对象的值，结果为一个构造函数。
+上面代码输出`Date`对象的值，结果为一个构造函数。
 
-console.info()和console.debug()都是console.log方法的别名，用法完全一样。console.info方法会在输出信息的前面，加上一个蓝色图标。
+`console.info()`和`console.debug()`都是`console.log`方法的别名，用法完全一样。只不过`console.info`方法会在输出信息的前面，加上一个蓝色图标。
 
 console对象的所有方法，都可以被覆盖。因此，可以按照自己的需要，定义console.log方法。
 
 ```javascript
-
-["log", "info", "warn", "error"].forEach(function(method) {
-    console[method] = console[method].bind(
-        console,
-        new Date().toISOString()
-    );
+['log', 'info', 'warn', 'error'].forEach(function(method) {
+  console[method] = console[method].bind(
+    console,
+    new Date().toISOString()
+  );
 });
 
 console.log("出错了！");
 // 2014-05-18T09:00.000Z 出错了！
-
 ```
 
-上面代码表示，使用自定义的console.log方法，可以在显示结果添加当前时间。
+上面代码表示，使用自定义的`console.log`方法，可以在显示结果添加当前时间。
 
 ### warn()，error()
 

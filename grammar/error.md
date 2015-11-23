@@ -178,36 +178,38 @@ new UserError("这是自定义的错误！");
 
 ## throw语句
 
-throw语句的作用是中断程序执行，抛出一个意外或错误。它接受一个表达式作为参数。
+`throw`语句的作用是中断程序执行，抛出一个意外或错误。它接受一个表达式作为参数，可以抛出各种值。
 
-{% highlight javascript %}
-
+```javascript
+// 抛出一个字符串
 throw "Error！";
+
+// 抛出一个数值
 throw 42;
+
+// 抛出一个布尔值
 throw true;
+
+// 抛出一个对象
 throw {toString: function() { return "Error!"; } };
+```
 
-{% endhighlight %}
+上面代码表示，`throw`可以接受各种值作为参数。JavaScript引擎一旦遇到`throw`语句，就会停止执行后面的语句，并将`throw`语句的参数值，返回给用户。
 
-上面代码表示，throw可以接受各种值作为参数。JavaScript引擎一旦遇到throw语句，就会停止执行后面的语句，并将throw语句的参数值，返回给用户。
+如果只是简单的错误，返回一条出错信息就可以了，但是如果遇到复杂的情况，就需要在出错以后进一步处理。这时最好的做法是使用`throw`语句手动抛出一个`Error`对象。
 
-如果只是简单的错误，返回一条出错信息就可以了，但是如果遇到复杂的情况，就需要在出错以后进一步处理。这时最好的做法是使用throw语句手动抛出一个Error对象。
-
-{% highlight javascript %}
-
+```javascript
 throw new Error('出错了!');
+```
 
-{% endhighlight %}
+上面语句新建一个`Error`对象，然后将这个对象抛出，整个程序就会中断在这个地方。
 
-上面语句新建一个Error对象，然后将这个对象抛出，整个程序就会中断在这个地方。
+`throw`语句还可以抛出用户自定义的错误。
 
-throw语句还可以抛出用户自定义的错误。
-
-{% highlight javascript %}
-
+```javascript
 function UserError(message) {
-   this.message = message || "默认信息";
-   this.name = "UserError";
+  this.message = message || "默认信息";
+  this.name = "UserError";
 }
 
 UserError.prototype.toString = function (){
@@ -215,36 +217,32 @@ UserError.prototype.toString = function (){
 }
 
 throw new UserError("出错了！");
-
-{% endhighlight %}
+```
 
 ## try...catch结构
 
-为了对错误进行处理，需要使用try...catch结构。
+为了对错误进行处理，需要使用`try...catch`结构。
 
 ```javascript
 try {
   throw new Error('出错了!');
 } catch (e) {
-  console.log(e.name + ": " + e.message);  // Error: 出错了！
-  console.log(e.stack);  // 不是标准属性，但是浏览器支持
+  console.log(e.name + ": " + e.message);
+  console.log(e.stack);
 }
 // Error: 出错了!
-// Error: 出错了!
 //   at <anonymous>:3:9
-//   at Object.InjectedScript._evaluateOn (<anonymous>:895:140)
-//   at Object.InjectedScript._evaluateAndWrap (<anonymous>:828:34)
-//   at Object.InjectedScript.evaluate (<anonymous>:694:21)
+//   ...
 ```
 
-上面代码中，try代码块抛出的错误（包括用throw语句抛出错误），可以被catch代码块捕获。catch接受一个参数，表示try代码块传入的错误对象。
+上面代码中，`try`代码块一抛出错误（上例用的是`throw`语句），JavaScript引擎就立即把代码的执行，转到`catch`代码块。可以看作，错误可以被`catch`代码块捕获。`catch`接受一个参数，表示`try`代码块抛出的值。
 
 ```javascript
 function throwIt(exception) {
   try {
     throw exception;
   } catch (e) {
-    console.log('Caught: '+e);
+    console.log('Caught: '+ e);
   }
 }
 
@@ -256,7 +254,9 @@ throwIt(new Error('An error happened'));
 // Caught: Error: An error happened
 ```
 
-catch代码块捕获错误之后，程序不会中断，会按照正常流程继续执行下去。
+上面代码中，`throw`语句先后抛出数值、字符串和错误对象。
+
+`catch`代码块捕获错误之后，程序不会中断，会按照正常流程继续执行下去。
 
 ```javascript
 try {
@@ -269,29 +269,29 @@ console.log(222);
 // 222
 ```
 
-上面代码中，try代码块抛出的错误，被catch代码块捕获后，程序会继续向下执行。
+上面代码中，`try`代码块抛出的错误，被`catch`代码块捕获后，程序会继续向下执行。
 
-catch代码块之中，还可以再抛出错误，甚至使用嵌套的try...catch结构。
+`catch`代码块之中，还可以再抛出错误，甚至使用嵌套的`try...catch`结构。
 
-{% highlight javascript %}
+```javascript
+var n = 100;
 
 try {
-   throw n; // 这里抛出一个整数
+  throw n;
 } catch (e) {
-   if (e <= 50) {
-      // 针对1-50的错误的处理
-   } else {
-      // 大于50的错误无法处理，再抛出一个错误
-      throw e;
-   }
+  if (e <= 50) {
+    // ...
+  } else {
+    throw e;
+  }
 }
+```
 
-{% endhighlight %}
+上面代码中，`catch`代码之中又抛出了一个错误。
 
-为了捕捉不同类型的错误，catch代码块之中可以加入判断语句。
+为了捕捉不同类型的错误，`catch`代码块之中可以加入判断语句。
 
-{% highlight javascript %}
-
+```javascript
 try {
   foo.bar();
 } catch (e) {
@@ -300,139 +300,154 @@ try {
   } else if (e instanceof RangeError) {
     console.log(e.name + ": " + e.message);
   }
-  // ... 
+  // ...
 }
+```
 
-{% endhighlight %}
+上面代码中，`catch`捕获错误之后，会判断错误类型（`EvalError`还是`RangeError`），进行不同的处理。
 
-try...catch结构是JavaScript语言受到Java语言影响的一个明显的例子。这种结构多多少少是对结构化编程原则一种破坏，处理不当就会变成类似goto语句的效果，应该谨慎使用。
+`try...catch`结构是JavaScript语言受到Java语言影响的一个明显的例子。这种结构多多少少是对结构化编程原则一种破坏，处理不当就会变成类似`goto`语句的效果，应该谨慎使用。
 
 ## finally代码块
 
-try...catch结构允许在最后添加一个finally代码块，表示不管是否出现错误，都必需在最后运行的语句。
+`try...catch`结构允许在最后添加一个`finally`代码块，表示不管是否出现错误，都必需在最后运行的语句。
 
-{% highlight javascript %}
-
+```javascript
 function cleansUp() {
-    try {
-        throw new Error('Sorry...');
-    } finally {
-        console.log('Performing clean-up');
-    }
+  try {
+    throw new Error('Sorry...');
+  } finally {
+    console.log('Performing clean-up');
+  }
 }
 
 cleansUp()
 // Performing clean-up
 // Error: Sorry...
+```
 
-{% endhighlight %}
+上面代码说明，`throw`语句抛出错误以后，`finanlly`继续得到执行。
 
-上面代码说明，throw语句抛出错误以后，finanlly继续得到执行。
-
-{% highlight javascript %}
-
+```javascript
 function idle(x) {
-    try {
-        console.log(x);
-        return 'result';
-    } finally {
-        console.log("FINALLY");
-    }
+  try {
+    console.log(x);
+    return 'result';
+  } finally {
+    console.log("FINALLY");
+  }
 }
 
 idle('hello')
 // hello
 // FINALLY
 // "result"
+```
 
-{% endhighlight %}
+上面代码说明，即使有`return`语句在前，`finally`代码块依然会得到执行，且在其执行完毕后，才会显示`return`语句的值。
 
-上面代码说明，即使有return语句在前，finally代码块依然会得到执行，且在其执行完毕后，才会显示return语句的值。
+下面的例子说明，`return`语句的执行是排在`finanlly`代码之前，只是等`finnally`代码执行完毕后才返回。
 
-下面的例子说明，return语句的执行是排在finanlly代码之前，只是等finnally代码执行完毕后才返回。
-
-{% highlight javascript %}
-
+```javascript
 var count = 0;
 function countUp() {
-    try {
-        return count;
-    } finally {
-        count++;
-    }
+  try {
+    return count;
+  } finally {
+    count++;
+  }
 }
 
 countUp()
 // 0
 count
 // 1
+```
 
-{% endhighlight %}
+上面代码说明，`return`语句的`count`的值，是在`finally`代码块运行之前，就获取完成了。
 
-上面代码说明，return语句的count的值，是在finally代码块运行之前，就获取完成了。
+下面是`finally`代码块用法的典型场景。
 
-下面是另一个例子。
-
-{% highlight javascript %}
-
+```javascript
 openFile();
 
 try {
-   writeFile(Data);
+  writeFile(Data);
 } catch(e) {
-    handleError(e);
+  handleError(e);
 } finally {
-   closeFile();
+  closeFile();
 }
+```
 
-{% endhighlight %}
+上面代码首先打开一个文件，然后在`try`代码块中写入文件，如果没有发生错误，则运行`finally`代码块关闭文件；一旦发生错误，则先使用`catch`代码块处理错误，再使用`finally`代码块关闭文件。
 
-上面代码首先打开一个文件，然后在try代码块中写入文件，如果没有发生错误，则运行finally代码块关闭文件；一旦发生错误，则先使用catch代码块处理错误，再使用finally代码块关闭文件。
+下面的例子充分反应了`try...catch...finally`这三者之间的执行顺序。
 
-下面的例子充分反应了try...catch...finally这三者之间的执行顺序。
-
-{% highlight javascript %}
-
+```javascript
 function f() {
-    try {
-        console.log(0);
-        throw "bug";
-    } catch(e) {
-        console.log(1);
-        return true; // 这句会延迟到finally代码块结束再执行
-        console.log(2); // 不会运行
-    } finally {
-        console.log(3);
-        return false; // 这句会覆盖掉前面那句return
-        console.log(4); // 不会运行
-    }
-    
-    console.log(5); // 不会运行
+  try {
+    console.log(0);
+    throw "bug";
+  } catch(e) {
+    console.log(1);
+    return true; // 这句原本会延迟到finally代码块结束再执行
+    console.log(2); // 不会运行
+  } finally {
+    console.log(3);
+    return false; // 这句会覆盖掉前面那句return
+    console.log(4); // 不会运行
+  }
+
+  console.log(5); // 不会运行
 }
 
-var result = f(); 
+var result = f();
 // 0
 // 1
 // 3
 
 result
 // false
+```
 
-{% endhighlight %}
+上面代码中，`catch`代码块结束执行之前，会先执行`finally`代码块。从`catch`转入`finally`的标志，不仅有`return`语句，还有`throw`语句。
 
-某些情况下，甚至可以省略catch代码块，只使用finally代码块。
+```javascript
+function f() {
+  try {
+    throw '出错了！';
+  } catch(e) {
+    console.log('捕捉到内部错误');
+    throw e; // 这句原本会等到finally结束再执行
+  } finally {
+    return false; // 直接返回
+  }
+}
 
-{% highlight javascript %}
+try {
+  f();
+} catch(e) {
+  // 此处不会执行
+  console.log('caught outer "bogus"');
+}
 
+//  捕捉到内部错误
+```
+
+上面代码中，进入`catch`代码块之后，一遇到`throw`语句，就会去执行`finally`代码块，其中有`return false`语句，因此就直接返回了，不再会回去执行`catch`代码块剩下的部分了。
+
+某些情况下，甚至可以省略`catch`代码块，只使用`finally`代码块。
+
+```javascript
 openFile();
 
 try {
-   writeFile(Data);
+  writeFile(Data);
 } finally {
-   closeFile();
+  closeFile();
 }
-
-{% endhighlight %}
+```
 
 ## 参考连接
 

@@ -245,62 +245,68 @@ a // 1
 
 ### 条件语句
 
-JavaScript提供if结构和switch结构，完成条件判断。
+条件语句提供一种语法构造，只有满足某个条件，才会执行相应的语句。JavaScript提供`if`结构和`switch`结构，完成条件判断。
 
 **（1）if 结构**
 
 if结构先判断一个表达式的布尔值，然后根据布尔值的真伪，执行不同的语句。
 
-{% highlight javascript %}
-
-if (expression) 
+```javascript
+if (expression)
   statement
+```
 
-{% endhighlight %}
+上面是if结构的基本形式。需要注意的是，expression（表达式）必须放在圆括号中，表示对表达式求值。如果结果为`true`，就执行紧跟在后面的语句（statement）；如果结果为`false`，则跳过statement的部分。
 
-上面是if结构的基本形式。需要注意的是，expression（表达式）必须放在圆括号中，表示对表达式求值。如果结果为true，就执行紧跟在后面的statement（语句）；如果结果为false，则跳过statement。
-
-{% highlight javascript %}
-
-if (m === 3) 
+```javascript
+if (m === 3)
   m += 1;	
+```
 
-{% endhighlight %}
+上面代码表示，只有在`m`等于3时，才会将其值加上1。
 
-上面代码表示，只有在m等于3时，才会将其值加上1。
+这种写法要求条件表达式后面只能有一个语句。如果想执行多个语句，必须在`if`的条件判断之后，加上大括号。
 
-这种写法要求statement只能有一个语句。如果想将多个语句放在statement之中，必须在if的条件判断之后，加上大括号。
-
-{% highlight javascript %}
-
+```javascript
 if (m === 3) {
   m += 1;	
 }
+```
 
-{% endhighlight %}
+建议总是在`if`语句中使用大括号，因为这样方便插入语句。
 
-建议总是在if语句中使用大括号，因为这样方便插入语句。
+注意，`if`后面的表达式，不要混淆“赋值表达式”（`=`）与“严格相等运算符”（`===`）或“相等运算符”（`==`）。因为，“赋值表达式”不具有比较作用。
+
+```javascript
+var x = 1;
+var y = 2;
+if (x = y) {
+  console.log(x);
+}
+// "2"
+```
+
+上面代码的原意是，当`x`等于`y`的时候，才执行相关语句。但是，不小心将“严格相等运算符”写成“赋值表达式”，结果变成了将`y`赋值给`x`，然后条件就变成了，判断变量`x`的值（等于2）是否为`true`。
+
+至于为什么优先采用“严格相等运算符”，而不是“相等运算符”（`==`），请参考《运算符》一节。
 
 **（2）if...else结构**
 
-if代码块后面，还可以跟一个else代码块，表示括号中的表示式为false时，所要执行的代码。
+`if`代码块后面，还可以跟一个`else`代码块，表示不满足条件时，所要执行的代码。
 
-{% highlight javascript %}
+```javascript
+if (m === 3) {
+  // then
+} else {
+  // else
+}
+```
 
- if (m === 3) {
-    // then
- } else {
-   // else
- }
+上面代码判断变量`m`是否等于3，如果等于就执行`if`代码块，否则执行`else`代码块。
 
-{% endhighlight %}
+对同一个变量进行多次判断时，多个`if...else`语句可以连写在一起。
 
-上面代码判断变量m是否等于3，如果等于就执行if代码块，否则执行else代码块。
-
-对同一个变量进行多次判断时，多个if...else语句可以连写在一起。
-
-{% highlight javascript %}
-
+```javascript
 if (m === 0) {
     // ...
 } else if (m === 1) {
@@ -310,107 +316,126 @@ if (m === 0) {
 } else {
    // ...
 }
+```
 
-{% endhighlight %}
+`else`代码块总是跟随离自己最近的那个`if`语句。
 
-else代码块总是跟随离自己最近的那个if语句。
-
-{% highlight javascript %}
-
+```javascript
 var m = 1;
 var n = 2;
 
-if (m !== 1) 
-if (n === 2) console.log('hello');	
+if (m !== 1)
+if (n === 2) console.log('hello');
 else console.log('world');
+```
 
-{% endhighlight %}
+上面代码不会有任何输出，`else`代码块不会得到执行，因为它跟着的是最近的那个`if`语句，相当于下面这样。
 
-上面代码不会有任何输出，else代码块也不会得到执行，因为它跟着的是最近的那个if语句，相当于下面这样。
-
-{% highlight javascript %}
-
+```javascript
 if (m !== 1) {
-	if (n === 2) {
-		console.log('hello');	
-	} else {
-		console.log('world');
-	}
+  if (n === 2) {
+    console.log('hello');	
+  } else {
+    console.log('world');
+  }
 }
+```
 
-{% endhighlight %}
+如果想让`else`代码块跟随最上面的那个`if`语句，就要改变大括号的位置。
 
-如果想让else代码块跟随最上面的那个if语句，就要改变大括号的位置。
-
-{% highlight javascript %}
-
+```javascript
 if (m !== 1) {
-	if (n === 2) {
-		console.log('hello');	
-	} 
+  if (n === 2) {
+    console.log('hello');	
+  }
 } else {
-		console.log('world');
-} 
+  console.log('world');
+}
 // world
-
-{% endhighlight %}
+```
 
 **（3）switch结构**
 
-多个if...else连在一起使用的时候，可以转为使用更方便的switch结构。
+多个`if...else`连在一起使用的时候，可以转为使用更方便的switch结构。
 
-{% highlight javascript %}
-
+```javascript
 switch (fruit) {
-	case "banana":
-		// ...
-		break;
-    case "apple":
-        // ...
-        break;
-    default:
-        // ...
+  case "banana":
+    // ...
+    break;
+  case "apple":
+    // ...
+    break;
+  default:
+    // ...
 }
+```
 
-{% endhighlight %}
+上面代码根据变量`fruit`的值，选择执行相应的`case`。如果所有`case`都不符合，则执行最后的`default`部分。需要注意的是，每个`case`代码块内部的`break`语句不能少，否则会接下去执行下一个`case`代码块，而不是跳出`switch`结构。
 
-上面代码根据变量fruit的值，选择执行相应的case。如果所有case都不符合，则执行最后的default部分。需要注意的是，每个case代码块内部的break语句不能少，否则会接下去执行下一个case代码块，而不是跳出switch结构。
+```javascript
+var x = 1;
 
-switch语句部分和case语句部分，都可以使用表达式。
+switch (x) {
+  case 1:
+    console.log('x等于1');
+  case 2:
+    console.log('x等于2');
+  default:
+    console.log('x等于其他值');
+}
+// x等于1
+// x等于2
+// x等于其他值
+```
 
-{% highlight javascript %}
+上面代码中，`case`代码块之中没有`break`语句，导致不会跳出`switch`结构，而会一直执行下去。
 
+`switch`语句部分和`case`语句部分，都可以使用表达式。
+
+```javascript
 switch(1 + 3) {
-    case 2 + 2:
-        f();
-        break;
-    default:
-        neverhappens();
+  case 2 + 2:
+    f();
+    break;
+  default:
+    neverhappens();
 }
+```
 
-{% endhighlight %}
+上面代码的`default`部分，是永远不会执行到的。
 
-上面代码的default部分，是永远不会执行到的。
+需要注意的是，`switch`语句后面的表达式与`case`语句后面的表示式，在比较运行结果时，采用的是严格相等运算符（`===`），而不是相等运算符（`==`），这意味着比较时不会发生类型转换。
 
-需要注意的是，switch语句后面的表达式与case语句后面的表示式，在比较运行结果时，采用的是严格相等运算符（===），而不是相等运算符（==），这意味着比较时不会发生类型转换。
+```javascript
+var x = 1;
 
-switch结构不利于代码重用，往往可以用对象形式重写。
+switch (x) {
+  case true:
+    console.log('x发生类型转换');
+  default:
+    console.log('x没有发生类型转换');
+}
+// x没有发生类型转换
+```
 
-{% highlight javascript %}
+上面代码中，由于变量`x`没有发生类型转换，所以不会执行`case true`的情况。这表明，`switch`语句内部采用的是“严格相等运算符”，详细解释请参考《运算符》一节。
 
+`switch`结构不利于代码重用，往往可以用对象形式重写。
+
+```javascript
 var o = {
-	banana: function (){ return },
-	apple: function (){ return },
-	default: function (){ return }
+  banana: function () {},
+  apple: function () {},
+  default: function () {}
 };
 
 if (o[fruit]){
-	o[fruit]();
+  o[fruit]();
 } else {
-	o['default']();
+  o['default']();
 }
-
-{% endhighlight %}
+```
 
 ### 循环语句
 
