@@ -10,24 +10,25 @@ modifiedOn: 2014-01-09
 
 本教程全面介绍JavaScript核心语法（ECMAScript 5.1版本），从最简单的开始讲起，循序渐进、由浅入深，力求清晰易懂。所有章节都带有大量的代码实例，便于理解和模仿，可以用到实际项目中，即学即用。
 
-更新的ES6/ES7语法请参考我写的[《ECMAScript 6入门》](http://es6.ruanyifeng.com/)。
+更新的ES6 / ES7语法请参考我写的[《ECMAScript 6入门》](http://es6.ruanyifeng.com/)。
 
 ## JavaScript是什么？
 
 JavaScript是一种轻量级的脚本语言，可以部署在多种环境，最常见的部署环境就是浏览器。所谓“脚本语言”，指的是它不具备开发操作系统的能力，而是只用来编写控制其他大型应用程序的“脚本”。
 
-进一步说，JavaScript语言本质上，是一种“对象模型”。各种部署环境通过这个模型，描述自己的功能和操作接口，从而实现通过JavaScript来控制这些功能的目的。
+本质上，JavaScript语言是一种“对象模型”。各种部署环境通过这个模型，描述自己的功能和操作接口，从而通过JavaScript控制这些功能。
 
-JavaScript的核心部分相当精简，只包括基本的语法构造（比如操作符、控制结构、各种语句）和标准库（就是一系列具有各种功能的对象比如Array、Date、Math等）。各种部署环境提供额外的API，也就是自己的底层接口包装成各种对象，以便JavaScript调用。
+JavaScript的核心部分相当精简，只包括两个部分：基本的语法构造（比如操作符、控制结构、语句）和标准库（就是一系列具有各种功能的对象比如`Array`、`Date`、`Math`等）。
 
-浏览器提供的额外API可以分成两大类：浏览器控制类和DOM类。前者用来操作浏览器，后者用来操作网页的各种元素。如果部署环境是服务器，则会提供各种操作系统的API，比如文件操作API、网络通信API等等，现在最流行的JavaScript服务器环境是Node。
+除此之外，各种部署环境提供额外的API（即只能在某个环境使用的接口），以便JavaScript调用。如果部署环境是浏览器，提供的额外API可以分成三大类：浏览器控制类、DOM类、Web类。浏览器控制类的接口用来操作浏览器，DOM类的接口用来操作网页的各种元素，Web类的接口用来实现互联网的各种功能。如果部署环境是服务器，则会提供各种操作系统的API，比如文件操作API、网络通信API等等，现在最流行的JavaScript服务器环境是Node。
 
-本教程主要介绍JavaScript语言的最基本知识，可以分成以下四大部分。
+本教程主要介绍JavaScript语言和网页开发的基本知识，可以分成以下五大部分。
 
 - 基本语法
 - 标准库
 - 浏览器API
 - DOM
+- Web API
 
 服务器环境的编程，将有单独的Node教程。
 
@@ -37,9 +38,9 @@ JavaScript语言有一些显著特点，使得它非常值得学习。它既适�
 
 ### 操控浏览器的能力
 
-JavaScript的发明目的，就是作为浏览器的内置脚本语言，为网页开发者提供操控浏览器的能力。它是目前唯一一种通用的浏览器脚本语言，所有主流浏览器全部支持。它可以让网页呈现各种特殊效果，为用户提供良好的互动体验。
+JavaScript的发明目的，就是作为浏览器的内置脚本语言，为网页开发者提供操控浏览器的能力。它是目前唯一一种通用的浏览器脚本语言，所有浏览器都支持。它可以让网页呈现各种特殊效果，为用户提供良好的互动体验。
 
-目前，全世界大部分网页都使用JavaScript。如果不用，网站的易用性和使用效率将大打折扣，无法成为操作便利、对用户友好的网站。
+目前，全世界几乎所有网页都使用JavaScript。如果不用，网站的易用性和使用效率将大打折扣，无法成为操作便利、对用户友好的网站。
 
 对于一个互联网开发者来说，如果你想提供漂亮的网页、令用户满意的上网体验、各种基于浏览器的便捷功能、前后端之间紧密高效的联系，JavaScript是必不可少的工具。
 
@@ -71,9 +72,9 @@ Mozilla基金会的手机操作系统Firefox OS，更是直接将JavaScript作�
 
 越来越多的应用程序，将JavaScript作为内嵌的脚本语言，比如Adobe公司的著名PDF阅读器Acrobat、Linux桌面环境GNOME 3。
 
-**（6）跨平台的桌面应用程序** 
+**（6）跨平台的桌面应用程序**
 
-Chromium OS、Windows 8等操作系统直接支持JavaScript编写应用程序。Mozilla的Open Web Apps项目、Google的[Chrome App项目](http://developer.chrome.com/apps/about_apps)、以及[TideSDK项目](http://www.tidesdk.org/)，可以用来编写运行于Windows、Mac OS和Android等多个桌面平台的程序，不依赖浏览器。
+Chromium OS、Windows 8等操作系统直接支持JavaScript编写应用程序。Mozilla的Open Web Apps项目、Google的[Chrome App项目](http://developer.chrome.com/apps/about_apps)、Github的[Electron项目](http://electron.atom.io/)、以及[TideSDK项目](http://www.tidesdk.org/)，都可以用来编写运行于Windows、Mac OS和Android等多个桌面平台的程序，不依赖浏览器。
 
 **（7）小结**
 
@@ -87,15 +88,15 @@ Chromium OS、Windows 8等操作系统直接支持JavaScript编写应用程序�
 
 相比学习其他语言，学习JavaScript有一些有利条件。
 
-**（1）学习环境无处不在。**
+**（1）学习环境无处不在**
 
 只要有浏览器，就能运行JavaScript程序；只要有文本编辑器，就能编写JavaScript程序。这意味着，几乎所有电脑都原生提供JavaScript学习环境，不用另行安装复杂的IDE（集成开发环境）和编译器。
 
-**（2）简单性。**
+**（2）简单性**
 
 相比其他脚本语言（比如Python或Ruby），JavaScript的语法相对简单一些，本身的语法特性并不是特别多。而且，那些语法中的复杂部分，也不是必需要学会。你完全可以只用简单命令，完成大部分的操作。
 
-**（3）与主流语言的相似性。**
+**（3）与主流语言的相似性**
 
 JavaScript的语法很类似C/C++和Java，如果学过这些语言（事实上大多数学校都教），JavaScript的入门会非常容易。
 
