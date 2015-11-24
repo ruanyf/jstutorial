@@ -62,26 +62,22 @@ f1(f2);
 
 还是以f1和f2为例。首先，为f1绑定一个事件（这里采用的jQuery的[写法](http://api.jquery.com/on/)）。
 
-{% highlight javascript %}
-
+```javascript
 f1.on('done', f2);
-
-{% endhighlight %}
+```
 
 上面这行代码的意思是，当f1发生done事件，就执行f2。然后，对f1进行改写：
 
-{% highlight javascript %}
-
+```javascript
 function f1(){
-	setTimeout(function () {
-		// f1的任务代码
-		f1.trigger('done');
-	}, 1000);
+  setTimeout(function () {
+    // f1的任务代码
+    f1.trigger('done');
+  }, 1000);
 }
+```
 
-{% endhighlight %}
-
-f1.trigger('done')表示，执行完成后，立即触发done事件，从而开始执行f2。
+上面代码中，`f1.trigger('done')`表示，执行完成后，立即触发`done`事件，从而开始执行`f2`。
 
 这种方法的优点是比较容易理解，可以绑定多个事件，每个事件可以指定多个回调函数，而且可以"[去耦合](http://en.wikipedia.org/wiki/Decoupling)"（Decoupling），有利于实现模块化。缺点是整个程序都要变成事件驱动型，运行流程会变得很不清晰。
 
@@ -242,89 +238,144 @@ launcher();
 
 ### 简介
 
-Promises对象是CommonJS工作组提出的一种规范，目的是为异步操作提供[统一接口](http://wiki.commonjs.org/wiki/Promises/A)。
+Promise对象是CommonJS工作组提出的一种规范，目的是为异步操作提供[统一接口](http://wiki.commonjs.org/wiki/Promises/A)。
 
-那么，什么是Promises？首先，它是一个对象，也就是说与其他JavaScript对象的用法，没有什么两样；其次，它起到代理作用（proxy），使得异步操作具备同步操作（synchronous code）的接口，即充当异步操作与回调函数之间的中介，使得程序具备正常的同步运行的流程，回调函数不必再一层层包裹起来。
+那么，什么是Promises？
 
-简单说，它的思想是，每一个异步任务立刻返回一个Promise对象，由于是立刻返回，所以可以采用同步操作的流程。这个Promises对象有一个then方法，允许指定回调函数，在异步任务完成后调用。比如，f1的回调函数f2,可以写成：
+首先，它是一个对象，也就是说与其他JavaScript对象的用法，没有什么两样；其次，它起到代理作用（proxy），充当异步操作与回调函数之间的中介。它使得异步操作具备同步操作的接口，使得程序具备正常的同步运行的流程，回调函数不必再一层层嵌套。
+
+简单说，它的思想是，每一个异步任务立刻返回一个Promise对象，由于是立刻返回，所以可以采用同步操作的流程。这个Promises对象有一个then方法，允许指定回调函数，在异步任务完成后调用。
+
+比如，异步操作`f1`返回一个Promise对象，它的回调函数`f2`写法如下。
 
 ```javascript
 (new Promise(f1)).then(f2);
 ```
 
-这种写法对于嵌套的回调函数尤其有用。
+这种写法对于多层嵌套的回调函数尤其方便。
 
 ```javascript
 // 传统写法
-
 step1(function (value1) {
-    step2(value1, function(value2) {
-        step3(value2, function(value3) {
-            step4(value3, function(value4) {
-                // ...
-            });
-        });
+  step2(value1, function(value2) {
+    step3(value2, function(value3) {
+      step4(value3, function(value4) {
+        // ...
+      });
     });
+  });
 });
 
 // Promises的写法
-
 (new Promise(step1))
-.then(step2)
-.then(step3)
-.then(step4);
+  .then(step2)
+  .then(step3)
+  .then(step4);
 ```
 
 从上面代码可以看到，采用Promises接口以后，程序流程变得非常清楚，十分易读。
 
+注意，为了便于理解，上面代码的Promise对象的生成格式，做了简化，真正的语法请参照下文。
+
 总的来说，传统的回调函数写法使得代码混成一团，变得横向发展而不是向下发展。Promises规范就是为了解决这个问题而提出的，目标是使用正常的程序流程（同步），来处理异步操作。它先返回一个Promise对象，后面的操作以同步的方式，寄存在这个对象上面。等到异步操作有了结果，再执行前期寄放在它上面的其他操作。
 
-Promises原本只是社区提出的一个构想，一些外部函数库率先实现了这个功能。ECMAScript 6将其写入语言标准，Chrome和Firefox浏览器都已经部署了这个功能。
+Promises原本只是社区提出的一个构想，一些外部函数库率先实现了这个功能。ECMAScript 6将其写入语言标准，因此目前JavaScript语言原生支持Promise对象。
 
 ### Promise接口
 
-当异步任务返回一个promise对象（小写表示这是Promise的实例）时，该对象只有三种状态：未完成（pending）、已完成（fulfilled）、失败（rejected）。
+前面说过，Promise接口的基本思想是，异步任务返回一个Promise对象。
 
-这三种的状态的变化途径只有两个，且只能发生一次：从“未完成”到“已完成”，或者从“未完成”到“失败”。一旦当前状态变为“已完成”或“失败”，就意味着不会再发生状态变化了。
+Promise对象只有三种状态。
 
-Promise对象的运行结果，最终只有两种。
+- 异步操作“未完成”（pending）
+- 异步操作“已完成”（resolved，又称fulfilled）
+- 异步操作“失败”（rejected）
 
-- 得到一个值，状态变为fulfilled
-- 抛出一个错误，状态变为rejected
+这三种的状态的变化途径只有两种。
 
-promise对象的then方法用来添加回调函数。它可以接受两个回调函数，第一个是操作成功（fulfilled）时的回调函数，第二个是操作失败（rejected）时的回调函数（可以不提供）。一旦状态改变，就调用相应的回调函数。
+- 异步操作从“未完成”到“已完成”
+- 异步操作从“未完成”到“失败”。
+
+这种变化只能发生一次，一旦当前状态变为“已完成”或“失败”，就意味着不会再有新的状态变化了。因此，Promise对象的最终结果只有两种。
+
+- 异步操作成功，Promise对象传回一个值，状态变为`resolved`。
+- 异步操作失败，Promise对象抛出一个错误，状态变为`rejected`。
+
+Promise对象使用`then`方法添加回调函数。`then`方法可以接受两个回调函数，第一个是异步操作成功时（变为`resolved`状态）时的回调函数，第二个是异步操作失败（变为`rejected`）时的回调函数（可以省略）。一旦状态改变，就调用相应的回调函数。
 
 ```javascript
-(new Promise(step1))
-.then(step2)
-.then(step3)
-.then(step4)
-.then(console.log, console.error);
+// po是一个Promise对象
+po.then(
+  console.log,
+  console.error
+);
 ```
 
-再来看上面的代码就很清楚，step1是一个耗时很长的异步任务，然后使用then方法，依次绑定了三个step1操作成功后的回调函数step2、step3、step4，最后再用then方法绑定两个回调函数：操作成功时的回调函数console.log，操作失败时的回调函数console.error。
+上面代码中，Promise对象`po`使用`then`方法绑定两个回调函数：操作成功时的回调函数`console.log`，操作失败时的回调函数`console.error`（可以省略）。这两个函数都接受异步操作传回的值作为参数。
 
-console.log和console.error这两个最后的回调函数，用法上有一点重要的区别。console.log只显示回调函数step4的返回值，而console.error可以显示step2、step3、step4之中任何一个发生的错误。也就是说，假定step2操作失败，抛出一个错误，这时step3和step4都不会再运行了，promises对象开始寻找接下来的第一个错误回调函数，在上面代码中是console.error。所以，结论就是Promises对象的错误有传递性。
+`then`方法可以链式使用。
 
-换言之，上面的代码等同于下面的形式。
+```javascript
+po
+  .then(step1)
+  .then(step2)
+  .then(step3)
+  .then(
+    console.log,
+    console.error
+  );
+```
+
+上面代码中，`po`的状态一旦变为`resolved`，就依次调用后面每一个`then`指定的回调函数，每一步都必须等到前一步完成，才会执行。最后一个`then`方法的回调函数`console.log`和`console.error`，用法上有一点重要的区别。`console.log`只显示回调函数`step3`的返回值，而`console.error`可以显示`step1`、`step2`、`step3`之中任意一个发生的错误。也就是说，假定`step1`操作失败，抛出一个错误，这时`step2`和`step3`都不会再执行了（因为它们是操作成功的回调函数，而不是操作失败的回调函数）。Promises对象开始寻找，接下来第一个操作失败时的回调函数，在上面代码中是`console.error`。这就是说，Promises对象的错误有传递性。
+
+从同步的角度看，上面的代码大致等同于下面的形式。
 
 ```javascript
 try {
-  var v1 = step1();
+  var v1 = step1(po);
   var v2 = step2(v1);
   var v3 = step3(v2);
-  var v4 = step4(v3);
-  console.log(v4);
+  console.log(v3);
 } catch (error) {
   console.error(error);
 }
 ```
 
-上面代码表示，try部分任何一步的错误，都会被catch部分捕获，并导致整个Promise操作的停止。
+### Promise对象的生成
+
+ES6提供了原生的Promise构造函数，用来生成Promise实例。
+
+下面代码创造了一个Promise实例。
+
+```javascript
+var promise = new Promise(function(resolve, reject) {
+  // 异步操作的代码
+
+  if (/* 异步操作成功 */){
+    resolve(value);
+  } else {
+    reject(error);
+  }
+});
+```
+
+Promise构造函数接受一个函数作为参数，该函数的两个参数分别是`resolve`和`reject`。它们是两个函数，由JavaScript引擎提供，不用自己部署。
+
+`resolve`函数的作用是，将Promise对象的状态从“未完成”变为“成功”（即从`Pending`变为`Resolved`），在异步操作成功时调用，并将异步操作的结果，作为参数传递出去；`reject`函数的作用是，将Promise对象的状态从“未完成”变为“失败”（即从`Pending`变为`Rejected`），在异步操作失败时调用，并将异步操作报出的错误，作为参数传递出去。
+
+Promise实例生成以后，可以用`then`方法分别指定`Resolved`状态和`Reject`状态的回调函数。
+
+```javascript
+po.then(function(value) {
+  // success
+}, function(value) {
+  // failure
+});
+```
 
 ### 用法辨析
 
-Promise的用法，简单说就是一句话：使用then方法添加回调函数。但是，不同的写法有一些细微的差别，请看下面四种写法，它们的差别在哪里？
+Promise的用法，简单说就是一句话：使用`then`方法添加回调函数。但是，不同的写法有一些细微的差别，请看下面四种写法，它们的差别在哪里？
 
 ```javascript
 // 写法一
@@ -344,9 +395,7 @@ doSomething().then(doSomethingElse());
 doSomething().then(doSomethingElse);
 ```
 
-为了便于解释，上面四种写法都再用then方法接一个回调函数。
-
-写法一的finalHandler回调函数的参数，是doSomethingElse函数的运行结果。
+为了便于讲解，这四种写法都再用`then`方法接一个回调函数`finalHandler`。写法一的`finalHandler`回调函数的参数，是`doSomethingElse`函数的运行结果。
 
 ```javascript
 doSomething().then(function () {
@@ -354,168 +403,34 @@ doSomething().then(function () {
 }).then(finalHandler);
 ```
 
-写法二的finalHandler回调函数的参数，是undefined。
+写法二的`finalHandler`回调函数的参数是`undefined`。
 
 ```javascript
 doSomething().then(function () {
   doSomethingElse();
+  return;
 }).then(finalHandler);
 ```
 
-写法三的finalHandler回调函数的参数，是doSomethingElse函数返回的回调函数的运行结果。
+写法三的`finalHandler`回调函数的参数，是`doSomethingElse`函数返回的回调函数的运行结果。
 
 ```javascript
 doSomething().then(doSomethingElse())
   .then(finalHandler);
 ```
 
-写法四与写法一只有一个差别，那就是doSomethingElse会接收到`doSomething()`返回的结果。
+写法四与写法一只有一个差别，那就是`doSomethingElse`会接收到`doSomething()`返回的结果。
 
 ```javascript
 doSomething().then(doSomethingElse)
   .then(finalHandler);
 ```
 
-### Promises对象的实现
-
-为了真正理解Promise对象，下面我们自己动手写一个Promise的实现。
-
-首先，将Promise定义成构造函数。
-
-```javascript
-var Promise = function () {
-  this.state = 'pending';
-  this.thenables = [];
-};
-```
-
-上面代码表示，Promise的实例对象的state属性默认为“未完成”状态（pending），还有一个thenables属性指向一个数组，用来存放then方法生成的内部对象。
-
-接下来，部署实例对象的resolve方法，该方法用来将实例对象的状态从“未完成”变为“已完成”。
-
-```javascript
-Promise.prototype.resolve = function (value) {
-  if (this.state != 'pending') return;
-
-  this.state = 'fulfilled';
-  this.value = value;
-  this._handleThen();
-  return this;
-}
-```
-
-上面代码除了改变实例的状态，还将异步任务的返回值存入实例对象的value属性，然后调用内部方法_handleThen，最后返回实例对象本身。
-
-类似地，部署实例对象的reject方法。
-
-```javascript
-Promise.prototype.reject = function (reason) {
-  if (this.state != 'pending') return;
-
-  this.state = 'rejected';
-  this.reason = reason;
-  this._handleThen();
-  return this;
-};
-```
-
-然后，部署实例对象的then方法。它接受两个参数，分别是异步任务成功时的回调函数（onFulfilled）和出错时的回调函数（onRejected）。为了可以部署链式操作，它必须返回一个新的Promise对象。
-
-```javascript
-Promise.prototype.then = function (onFulfilled, onRejected) {
-  var thenable = {};
-
-  if (typeof onFulfilled == 'function') {
-    thenable.fulfill = onFulfilled;
-  };
-
-  if (typeof onRejected == 'function') {
-    thenable.reject = onRejected;
-  };
-
-  if (this.state != 'pending') {
-    setImmediate(function () {
-      this._handleThen();
-    }.bind(this));
-  }
-
-  thenable.promise = new Promise();
-  this.thenables.push(thenable);
-
-  return thenable.promise;
-}
-```
-
-上面代码首先定义了一个内部变量thenable对象，将then方法的两个参数都加入这个对象的属性。然后，检查当前状态，如果不等于“未完成”，则在当前操作结束后，立即调用_handleThen方法。接着，在thenable对象的promise属性上生成一个新的Promise对象，并在稍后返回这个对象。最后，将thenable对象加入实例对象的thenables数组。
-
-下一步就要部署内部方法_handleThen，它用来处理通过then方法绑定的回调函数。
-
-```javascript
-Promise.prototype._handleThen = function () {
-  if (this.state === 'pending') return;
-
-  if (this.thenables.length) {
-    for (var i = 0; i < this.thenables.length; i++) {
-      var thenPromise = this.thenables[i].promise;
-      var returnedVal;
-      try {
-        // 运行回调函数
-      } catch (e) {
-        thenPromise.reject(e);
-      }
-    }
-    this.thenables = [];
-  }
-}
-```
-
-上面代码的逻辑是这样的：如果实例对象的状态是“未完成”，就返回，否则检查thenables属性是否有值。如果有值，表明里面储存了需要执行的回调函数，则依次运行回调函数。运行完成后，清空thenables属性。
-
-之所以把回调函数的执行放在try...catch结构中，是因为一旦出错，就会自动执行catch代码块，从而可以运行下一个Promise实例对象的reject方法，这使得调用reject方法变得很简单。下面是try代码块中的代码。
-
-```javascript
-try {
-  switch (this.state) {
-    case 'fulfilled':
-      if (this.thenables[i].fulfill) {
-        returnedVal = this.thenables[i].fulfill(this.value);
-      } else {
-        thenPromise.resolve(this.value);
-      }
-      break;
-    case 'rejected':
-      if (this.thenables[i].reject) {
-        returnedVal = this.thenables[i].reject(this.reason);
-      } else {
-        thenPromise.reject(this.reason);
-      }
-      break;
-  }
-  if (returnedVal === null) {
-    this.thenables[i].promise.resolve(returnedVal);
-  } else if (returnedVal instanceof Promise || typeof returnedVal.then === 'function') {
-    returnedVal.then(thenPromise.resolve.bind(thenPromise), thenPromise.reject.bind(thenPromise));
-  } else {
-    this.thenables[i].promise.resolve(returnedVal);
-  }
-}
-```
-
-上面代码首先根据实例对象的状态，分别调用fulfill或reject回调函数，并传入相应的参数，并将返回值存入returnVal变量。然后再去改变this.thenables[i].promise对象的状态，触发下一个Promise对象的resolve或者reject方法。
-
-针对returnedVal的判断，目的是如果returnedVal是一个Promise对象，那么后面的回调函数都要改为绑定在它上面。
-
-最后，由于我们写的是供调用的函数库，需要将构造函数输出。
-
-```javascript
-module.exports = Promise;
-```
-
 ## Promise的应用
 
 ### 加载图片
 
-我们可以把图片的加载写成一个`Promise`。
+我们可以把图片的加载写成一个`Promise`对象。
 
 ```javascript
 var preloadImage = function (path) {
@@ -532,76 +447,86 @@ var preloadImage = function (path) {
 
 Ajax操作是典型的异步操作，传统上往往写成下面这样。
 
-{% highlight javascript %}
-
+```javascript
 function search(term, onload, onerror) {
-	var xhr, results, url;
+  var xhr, results, url;
+  url = 'http://example.com/search?q=' + term;
 
-	url = 'http://example.com/search?q=' + term;
+  xhr = new XMLHttpRequest();
+  xhr.open('GET', url, true);
 
-	xhr = new XMLHttpRequest();
-	xhr.open('GET', url, true);
+  xhr.onload = function (e) {
+    if (this.status === 200) {
+      results = JSON.parse(this.responseText);
+      onload(results);
+    }
+  };
+  xhr.onerror = function (e) {
+    onerror(e);
+  };
 
-	xhr.onload = function (e) {
-		if (this.status === 200) {
-			results = JSON.parse(this.responseText);
-			onload(results);
-		}
-	};
-
-	xhr.onerror = function (e) {
-		onerror(e);
-	};
-
-	xhr.send();
+  xhr.send();
 }
 
-search("Hello World", f1, f2);
+search("Hello World", console.log, console.error);
+```
 
-{% endhighlight %}
+如果使用Promise对象，就可以写成下面这样。
 
-上面代码的回调函数，必须直接传入。如果使用Promises方法，就可以写成下面这样。
-
-{% highlight javascript %}
-
+```javascript
 function search(term) {
+  var url = 'http://example.com/search?q=' + term;
+  var xhr = new XMLHttpRequest();
+  var result;
 
-	var url = 'http://example.com/search?q=' + term;
-	var p = new Promise();
-	var xhr = new XMLHttpRequest();
-	var result;
+  var p = new Promise(function (resolve, reject) {
+    xhr.open('GET', url, true);
+    xhr.onload = function (e) {
+      if (this.status === 200) {
+        result = JSON.parse(this.responseText);
+        resolve(result);
+      }
+    };
+    xhr.onerror = function (e) {
+      reject(e);
+    };
+    xhr.send();
+  });
 
-	xhr.open('GET', url, true);
- 
-	xhr.onload = function (e) {
-		if (this.status === 200) {
-			results = JSON.parse(this.responseText);
-			p.resolve(results);
-		}
-	};
- 
-	xhr.onerror = function (e) {
-		p.reject(e);
-	};
- 
-	xhr.send();
- 
-	return p;
+  return p;
 }
 
-search("Hello World").then(f1, f2);
+search("Hello World").then(console.log, console.error);
+```
 
-{% endhighlight %}
+加载图片的例子，也可以用Ajax操作完成。
 
-用了Promises以后，回调函数就可以用then方法加载。
+```javascript
+function imgLoad(url) {
+  return new Promise(function(resolve, reject) {
+    var request = new XMLHttpRequest();
+    request.open('GET', url);
+    request.responseType = 'blob';
+    request.onload = function() {
+      if (request.status === 200) {
+        resolve(request.response);
+      } else {
+        reject(new Error('图片加载失败：' + request.statusText));
+      }
+    };
+    request.onerror = function() {
+      reject(new Error('发生网络错误'));
+    };
+    request.send();
+  });
+}
+```
 
 ### 小结
 
-Promises的优点在于，让回调函数变成了规范的链式写法，程序流程可以看得很清楚。它的一整套接口，可以实现许多强大的功能，比如为多个异步操作部署一个回调函数、为多个回调函数中抛出的错误统一指定处理方法等等。
+Promise对象的优点在于，让回调函数变成了规范的链式写法，程序流程可以看得很清楚。它的一整套接口，可以实现许多强大的功能，比如为多个异步操作部署一个回调函数、为多个回调函数中抛出的错误统一指定处理方法等等。
 
 而且，它还有一个前面三种方法都没有的好处：如果一个任务已经完成，再添加回调函数，该回调函数会立即执行。所以，你不用担心是否错过了某个事件或信号。这种方法的缺点就是，编写和理解都相对比较难。
-
-实际可以使用的Promises实现，参见jQuery的deferred对象一节。
 
 ## 参考链接
 
