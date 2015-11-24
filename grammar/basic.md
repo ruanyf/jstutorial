@@ -443,196 +443,212 @@ if (o[fruit]){
 
 **（1）while循环**
 
-While语句包括一个循环条件，只要该条件为真，就不断循环。
-
-{% highlight javascript %}
-
-while (expression)	
-statement
-
-{% endhighlight %}
-
-while语句的循环条件是一个表达式（express），必须放在圆括号中。语句（statement）部分默认只能写一条语句，如果需要包括多条语句，必须添加大括号。
-
-{% highlight javascript %}
-
-while (expression){	
-	statement
-}
-
-{% endhighlight %}
-
-下面是while语句的一个例子。
-
-{% highlight javascript %}
-
-var i = 0;
-
-while (i<100){
-	console.log('i当前为：' + i);
-	i++;
-}	
-
-{% endhighlight %}
-
-上面的代码将循环100次，直到i等于100为止。
-
-**（2）for循环**
-
-for语句是循环命令的另一种形式。
-
-{% highlight javascript %}
-
-for(initialize; test; increment)
-statement
-
-// 或者
-
-for(initialize; test; increment){
-	statement
-}
-
-{% endhighlight %}
-
-它分成三步：
-
-- 初始化（initialize）：确定循环的初始值，只在循环开始时执行一次;
-- 测试（test）：检查循环条件，只要为真就进行后续操作;
-- 递增（increment）：完成后续操作，然后返回上一步，再一次检查循环条件。
-
-下面是一个循环打印数组每个元素的例子。
+`While`语句包括一个循环条件和一段代码块，只要条件为真，就不断循环执行代码块。
 
 ```javascript
-for (var i=0; i < arr.length; i++) {
-  console.log(arr[i]);
+while (expression)
+  statement
+```
+
+`while`语句的循环条件是一个表达式（express），必须放在圆括号中。代码块部分，如果只有一条语句（statement），可以省略大括号，否则就必须加上大括号。
+
+```javascript
+while (expression) {
+  statement
 }
 ```
 
-所有for循环，都可以改写成while循环。
+下面是`while`语句的一个例子。
 
 ```javascript
 var i = 0;
 
-while (i < arr.length) {
-  console.log(arr[i]);
+while (i < 100){
+  console.log('i当前为：' + i);
   i++;
 }
 ```
 
-for语句表达式的三个部分（initialize，test，increment），可以省略任何一个，也可以全部省略。
+上面的代码将循环100次，直到`i`等于100为止。
 
-{% highlight javascript %}
+下面的例子是一个无限循环，因为条件总是为真。
 
-for (;;){
-	console.log('Hello World');
+```javascript
+while (true) {
+  console.log("Hello, world");
 }
+```
 
-{% endhighlight %}
+**（2）for循环**
 
-上面代码省略了for语句表达式的三个部分，结果就导致了一个无限循环。
+`for`语句是循环命令的另一种形式。
+
+```javascript
+for(initialize; test; increment)
+  statement
+
+// 或者
+
+for(initialize; test; increment) {
+  statement
+}
+```
+
+`for`语句后面的括号里面，有三个表达式。
+
+- 初始化表达式（initialize）：确定循环的初始值，只在循环开始时执行一次。
+- 测试表达式（test）：检查循环条件，只要为真就进行后续操作。
+- 递增表达式（increment）：完成后续操作，然后返回上一步，再一次检查循环条件。
+
+下面是一个例子。
+
+```javascript
+var x = 3;
+for (var i = 0; i < x; i++) {
+  console.log(i);
+}
+// 0
+// 1
+// 2
+```
+
+上面代码中，初始化表达式是`var i = 0`，即初始化一个变量`i`；测试表达式是`i < x`，即只要`i`小于`x`，就会执行循环；递增表达式是`i++`，即每次循环结束后，`i`增大1。
+
+所有`for`循环，都可以改写成`while`循环。上面的例子改为`while`循环，代码如下。
+
+```javascript
+var x = 3;
+var i = 0;
+
+while (i < x) {
+  console.log(i);
+  i++;
+}
+```
+
+`for`语句的三个部分（initialize，test，increment），可以省略任何一个，也可以全部省略。
+
+```javascript
+for ( ; ; ){
+  console.log('Hello World');
+}
+```
+
+上面代码省略了`for`语句表达式的三个部分，结果就导致了一个无限循环。
 
 **（3）do...while循环**
 
-do...while循环与while循环类似，唯一的区别就是先运行一次循环体，然后判断循环条件。
+`do...while`循环与`while`循环类似，唯一的区别就是先运行一次循环体，然后判断循环条件。
 
-{% highlight javascript %}
-
-do 
-statement
+```javascript
+do
+  statement
 while(expression);
 
 // 或者
 
-do { 
-	statement
+do {
+  statement
 } while(expression);
+```
 
-{% endhighlight %}
+不管条件是否为真，`do..while`循环至少运行一次，这是这种结构最大的特点。另外，`while`语句后面的分号不能省略。
 
-不管条件是否为真，do..while循环至少运行一次，这是这种结构最大的特点。另外，while语句后面的分号不能省略。
+下面是一个例子。
+
+```javascript
+var x = 3;
+var i = 0;
+
+do {
+  console.log(i);
+  i++;
+} while(i < x);
+```
 
 **（4）break语句和continue语句**
 
-break语句和continue语句都具有跳转作用，可以让代码不按既有的顺序执行。
+`break`语句和`continue`语句都具有跳转作用，可以让代码不按既有的顺序执行。
 
-break语句用于跳出代码块或循环。
+`break`语句用于跳出代码块或循环。
 
-{% highlight javascript %}
-
+```javascript
 var i = 0;
 
-while (i<100){
-	console.log('i当前为：' + i);
-	i++;
-	if (i === 10) break;
+while(i < 100) {
+  console.log('i当前为：' + i);
+  i++;
+  if (i === 10) break;
 }
+```
 
-{% endhighlight %}
+上面代码只会执行10次循环，一旦`i`等于10，就会跳出循环。
 
-上面代码只会执行10次循环，一旦i等于10，就会跳出循环。
+continue语句用于立即终止本轮循环，返回循环结构的头部，开始下一轮循环。
 
-continue语句用于立即终止本次循环，返回循环结构的头部，开始下一次循环。
-
-{% highlight javascript %}
-
+```javascript
 var i = 0;
 
-while (i<100){
-	i++;
-	if (i%2===0) continue;
-	console.log('i当前为：' + i);
+while (i < 100){
+  i++;
+  if (i%2 === 0) continue;
+  console.log('i当前为：' + i);
 }
+```
 
-{% endhighlight %}
+上面代码只有在`i`为奇数时，才会输出`i`的值。如果`i`为偶数，则直接进入下一轮循环。
 
-上面代码只有在i为奇数时，才会输出i的值。如果i为偶数，则直接进入下一轮循环。
-
-如果存在多重循环，不带参数的break语句和continue语句都只针对最内层循环。
+如果存在多重循环，不带参数的`break`语句和`continue`语句都只针对最内层循环。
 
 **（5）标签（label）**
 
-JavaScript语言允许，语句的前面有标签（label）。标签通常与break语句和continue语句配合使用，跳出特定的循环。
+JavaScript语言允许，语句的前面有标签（label），相当于定位符，用于跳转到程序的任意位置，标签的格式如下。
 
-{% highlight javascript %}
+```javascript
+label:
+  statement
+```
 
+标签可以是任意的标识符，但是不能是保留字，语句部分可以是任意语句。
+
+标签通常与`break`语句和`continue`语句配合使用，跳出特定的循环。
+
+```javascript
 top:
-	for (var i=0;i<3;i++){
-		for (var j=0;j<3;j++){
-			if (i===1 && j===1) break top;
-			console.log("i="+i+",j="+j);
-		}
+  for (var i = 0; i < 3; i++){
+    for (var j = 0; j < 3; j++){
+      if (i === 1 && j === 1) break top;
+      console.log('i=' + i + ', j=' + j);
+  }
 }
-// i=0,j=0
-// i=0,j=1
-// i=0,j=2
-// i=1,j=0
+// i=0, j=0
+// i=0, j=1
+// i=0, j=2
+// i=1, j=0
+```
 
-{% endhighlight %}
+上面代码为一个双重循环区块，`break`命令后面加上了`top`标签（注意，`top`不用加引号），满足条件时，直接跳出双层循环。如果`break`语句后面不使用标签，则只能跳出内层循环，进入下一次的外层循环。
 
-上面代码为一个双重循环区块，加上了top标签（注意，top不用加引号）。当满足一定条件时，使用break语句加上标签名，直接跳出双层循环。如果break语句后面不使用标签，则只能跳出内层循环，进入下一次的外层循环。
+`continue`语句也可以与标签配合使用。
 
-continue语句也可以与标签配合使用。
-
-{% highlight javascript %}
-
+```javascript
 top:
-	for (var i=0;i<3;i++){
-		for (var j=0;j<3;j++){
-			if (i===1 && j===1) continue top;
-			console.log("i="+i+",j="+j);
-		}
+  for (var i = 0; i < 3; i++){
+    for (var j = 0; j < 3; j++){
+      if (i === 1 && j === 1) continue top;
+      console.log('i=' + i + ', j=' + j);
+  }
 }
-// i=0,j=0
-// i=0,j=1
-// i=0,j=2
-// i=1,j=0
-// i=2,j=0
-// i=2,j=1
-// i=2,j=2
+// i=0, j=0
+// i=0, j=1
+// i=0, j=2
+// i=1, j=0
+// i=2, j=0
+// i=2, j=1
+// i=2, j=2
+```
 
-{% endhighlight %}
-
-上面代码在满足一定条件时，使用continue语句加上标签名，直接进入下一轮外层循环。如果continue语句后面不使用标签，则只能进入下一轮的内层循环。
+上面代码中，`continue`命令后面有一个标签名，满足条件时，会跳过当前循环，直接进入下一轮外层循环。如果`continue`语句后面不使用标签，则只能进入下一轮的内层循环。
 
 ## 数据类型
 

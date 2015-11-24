@@ -66,20 +66,20 @@ Object.keys(obj)
 
 对象的每一个“键名”又称为“属性”（property），它的“键值”可以是任何数据类型。如果一个属性的值为函数，通常把这个属性称为“方法”，它可以像函数那样调用。
 
-{% highlight javascript %}
-
+```javascript
 var o = {
-  p: function(x) {return 2*x;}
+  p: function(x) {
+   return 2 * x;
+  }
 };
 
 o.p(1)
 // 2
+```
 
-{% endhighlight %}
+上面的对象就有一个方法`p`，它就是一个函数。
 
-上面的对象就有一个方法p，它就是一个函数。
-
-对象的属性之间用逗号分隔，ECMAScript 5规定最后一个属性后面可以加逗号（trailing comma），也可以不加。
+对象的属性之间用逗号分隔，最后一个属性后面可以加逗号（trailing comma），也可以不加。
 
 ```javascript
 var o = {
@@ -122,40 +122,34 @@ var o3 = Object.create(null);
 
 读取对象的属性，有两种方法，一种是使用点运算符，还有一种是使用方括号运算符。
 
-{% highlight javascript %}
-
+```javascript
 var o = {
   p: "Hello World"
 };
 
 o.p // "Hello World"
 o["p"] // "Hello World"
-
-{% endhighlight %}
+```
 
 上面代码分别采用点运算符和方括号运算符，读取属性p。
 
 请注意，如果使用方括号运算符，键名必须放在引号里面，否则会被当作变量处理。但是，数字键可以不加引号，因为会被当作字符串处理。
 
-{% highlight javascript %}
-
+```javascript
 var o = {
   0.7: "Hello World"
 };
 
 o.["0.7"] // "Hello World"
 o[0.7] // "Hello World"
-
-{% endhighlight %}
+```
 
 方括号运算符内部可以使用表达式。
 
-{% highlight javascript %}
-
+```javascript
 o['hello' + ' world']
 o[3+3]
-
-{% endhighlight %}
+```
 
 数值键名不能使用点运算符（因为会被当成小数点），只能使用方括号运算符。
 
@@ -172,16 +166,14 @@ obj[0xFF]
 
 如果读取一个不存在的键，会返回undefined，而不是报错。可以利用这一点，来检查一个变量是否被声明。
 
-{% highlight javascript %}
-
+```javascript
 // 检查a变量是否被声明
 
 if(a) {...} // 报错
 
 if(window.a) {...} // 不报错
 if(window['a']) {...} // 不报错
-
-{% endhighlight %}
+```
 
 上面的后二种写法之所以不报错，是因为在浏览器环境，所有全局变量都是window对象的属性。window.a的含义就是读取window对象的a属性，如果该属性不存在，就返回undefined，并不会报错。
 
@@ -375,11 +367,10 @@ o.hasOwnProperty('toString') // false
 
 ### for...in循环
 
-for...in循环用来遍历一个对象的全部属性。
+`for...in`循环用来遍历一个对象的全部属性。
 
-{% highlight javascript %}
-
-var o = {a:1, b:2, c:3};
+```javascript
+var o = {a: 1, b: 2, c: 3};
 
 for (i in o){
   console.log(o[i]);
@@ -387,14 +378,12 @@ for (i in o){
 // 1
 // 2
 // 3
+```
 
-{% endhighlight %}
+注意，`for...in`循环遍历的是对象所有可enumberable的属性，其中不仅包括定义在对象本身的属性，还包括对象继承的属性。
 
-注意，for...in循环遍历的是对象所有可enumberable的属性，其中不仅包括定义在对象本身的属性，还包括对象继承的属性。
-
-{% highlight javascript %}
-
-// name是Person本身的属性
+```javascript
+// name 是 Person 本身的属性
 function Person(name) {
   this.name = name;
 }
@@ -413,10 +402,9 @@ for (var key in person) {
 }
 // name
 // describe
+```
 
-{% endhighlight %}
-
-上面代码中，name是对象本身的属性，describe是对象继承的属性，for-in循环的遍历会包括这两者。
+上面代码中，`name`是对象本身的属性，`describe`是对象继承的属性，`for...in`循环的遍历会包括这两者。
 
 如果只想遍历对象本身的属性，可以使用hasOwnProperty方法，在循环内部做一个判断。
 
