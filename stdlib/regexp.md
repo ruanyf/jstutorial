@@ -8,7 +8,7 @@ modifiedOn: 2014-01-06
 
 ## 概述
 
-正则表达式（regular expression）是一种表达文本模式的方法，常常用作按照“给定模式”匹配文本的工具。比如，正则表达式给出一个Email地址的模式，然后用它来确定一个字符串是否为Email地址。JavaScript的正则表达式体系是参照Perl 5建立的。
+正则表达式（regular expression）是一种表达文本模式（即字符串结构）的方法，有点像字符串的模板，常常用作按照“给定模式”匹配文本的工具。比如，正则表达式给出一个Email地址的模式，然后用它来确定一个字符串是否为Email地址。JavaScript的正则表达式体系是参照Perl 5建立的。
 
 新建正则表达式有两种方法。一种是使用字面量，以斜杠表示开始和结束。
 
@@ -32,13 +32,14 @@ var regex = new RegExp('xyz', "i");
 var regex = /xyz/i;
 ```
 
+上面代码中，正则表达式`/xyz/`有一个修饰符`i`。
+
 这两种写法——字面量和构造函数——在运行时有一个细微的区别。采用字面量的写法，正则对象在代码载入时（即编译时）生成；采用构造函数的方法，正则对象在代码运行时生成。考虑到书写的便利和直观，实际应用中，基本上都采用字面量的写法。
 
 正则对象生成以后，有两种使用方式：
 
-- 使用正则对象本身的方法，将字符串作为参数，比如`regex.test(string)`。
-
-- 使用字符串对象的方法，将正则对象作为参数，比如`string.match(regex)`。
+- 正则对象的方法：将字符串作为参数，比如`regex.test(string)`。
+- 字符串对象的方法：将正则对象作为参数，比如`string.match(regex)`。
 
 这两种使用方式下面都会介绍。
 
@@ -252,11 +253,8 @@ r2.lastIndex // 0
 字符串对象的方法之中，有4种与正则对象有关。
 
 - **match()**：返回匹配的子字符串。
-
 - **search()**：按照给定的正则表达式进行搜索。
-
 - **replace()**：按照给定的正则表达式进行替换。
-
 - **split()**：按照给定规则进行字符串分割。
 
 下面逐一介绍。
@@ -352,11 +350,11 @@ str.replace(/^\s+|\s+$/g, '')
 
 replace方法的第二个参数可以使用美元符号$，用来指代所替换的内容。
 
-- $& 指代匹配的子字符串。
-- $\` 指代匹配结果前面的文本。
-- $' 指代匹配结果后面的文本。
-- $n 指代匹配成功的第n组内容，n是从1的自然数。
-- $$ 指代美元符号$。
+- `$&` 指代匹配的子字符串。
+- `$\`` 指代匹配结果前面的文本。
+- `$'` 指代匹配结果后面的文本。
+- `$n` 指代匹配成功的第n组内容，n是从1的自然数。
+- `$$` 指代美元符号$。
 
 ```javascript
 "hello world".replace(/(\w+)\s(\w+)/,"$2 $1")
@@ -366,7 +364,7 @@ replace方法的第二个参数可以使用美元符号$，用来指代所替换
 // "a[a-b-c]c"
 ```
 
-replace方法的第二个参数还可以是一个函数，将匹配内容替换为函数返回值。
+`replace`方法的第二个参数还可以是一个函数，将匹配内容替换为函数返回值。
 
 ```javascript
 "3 and 5".replace(/[0-9]+/g, function(match){
@@ -450,404 +448,446 @@ str.split(separator, [limit])
 
 ### 字面量字符和元字符
 
-大部分字符在正则表达式中，就是字面的含义，比如`/a/`匹配a，`/b/`匹配b。如果字符只表示它字面的含义（就像前面的a和b），那么它们就叫做“字面量字符”（literal characters）。
+大部分字符在正则表达式中，就是字面的含义，比如`/a/`匹配`a`，`/b/`匹配`b`。如果在正则表达式之中，某个字符只表示它字面的含义（就像前面的`a`和`b`），那么它们就叫做“字面量字符”（literal characters）。
 
 ```javascript
 /dog/.test("old dog") // true
 ```
 
-上面代码中正则表达式的dog，就是字面量字符，所以`/dog/`匹配old dog，因为它就表示d、o、g三个字母连在一起。
+上面代码中正则表达式的`dog`，就是字面量字符，所以`/dog/`匹配“old dog”，因为它就表示“d”、“o”、“g”三个字母连在一起。
 
 除了字面量字符以外，还有一部分字符有特殊含义，不代表字面的意思。它们叫做“元字符”（metacharacters），主要有以下几个。
 
 **（1）点字符（.)**
 
-点字符（.）匹配除回车（\r）、换行(\n) 、行分隔符（\u2028）和段分隔符（\u2029）以外的所有字符。
+点字符（`.`）匹配除回车（`\r`）、换行(`\n`) 、行分隔符（`\u2028`）和段分隔符（`\u2029`）以外的所有字符。
 
-{% highlight javascript %}
-
+```javascript
 /c.t/
+```
 
-{% endhighlight %}
-
-上面代码中的c.t匹配c和t之间包含任意一个字符的情况，只要这三个字符在同一行，比如cat、c2t、c-t等等，但是不匹配coot。
+上面代码中，`c.t`匹配`c`和`t`之间包含任意一个字符的情况，只要这三个字符在同一行，比如`cat`、`c2t`、`c-t`等等，但是不匹配`coot`。
 
 **（2）位置字符**
 
 位置字符用来提示字符所处的位置，主要有两个字符。
 
-- ^ 表示字符串的起首。
-- $ 表示字符串的行尾。
+- `^` 表示字符串的开始位置
+- `$` 表示字符串的结束位置
 
-{% highlight javascript %}
+```javascript
+// test必须出现在开始位置
+/^test/.test('test123') // true
 
-/^test/.test("test123") // true
-/test$/.test("new test") // true
-/^test$/.test("test") // true
-/^test$/.test("test test") // false
+// test必须出现在结束位置
+/test$/.test('new test') // true
 
-{% endhighlight %}
+// 从开始位置到结束位置只有test
+/^test$/.test('test') // true
+/^test$/.test('test test') // false
+```
 
 **（3）选择符（|）**
 
-竖线符号（|）在正则表达式中表示“或关系”（OR），即 cat|dog 表示匹配cat或dog。
+竖线符号（`|`）在正则表达式中表示“或关系”（OR），即`cat|dog`表示匹配`cat`或`dog`。
 
-{% highlight javascript %}
+```javascript
+/11|22/.test('911') // true
+```
 
-/11|22/.test("911") // true
+上面代码中，必须匹配`11`或`22`。
 
-{% endhighlight %}
+多个选择符可以联合使用。
+
+```javascript
+// 匹配fred、barney、betty之中的一个
+/fred|barney|betty/
+```
+
+选择符会包括它前后的多个字符，比如`/ab|cd/`指的是匹配“ab”或者“cd”，而不是指匹配“b”或者“c”。如果想修改这个行为，可以使用圆括号。
+
+```javascript
+/a( |\t)b/.test('a\tb') // true
+```
+
+上面代码指的是，“a”和“b”之间有一个空格或者一个制表符。
+
+### 重复类
+
+模式的精确匹配次数，使用大括号（`{}`）表示。`{n}`表示恰好重复n次，`{n,}`表示至少重复n次，`{n,m}`表示重复不少于n次，不多于m次。
+
+```javascript
+/lo{2}k/.test(‘look") // true
+/lo{2, 5}k/.test("looook") // true
+```
+
+上面代码中，第一个模式指定`o`连续出现2次，第二个模式指定`o`连续出现2次到5次之间。
+
+### 量词符
+
+量词符用来设定某个模式出现的次数。
+
+- `?` 问号表示某个模式出现0次或1次，等同于`{0, 1}`。
+- `*` 星号表示某个模式出现0次或多次，等同于`{0,}`。
+- `+` 加号表示某个模式出现1次或多次，等同于`{1,}`。
+
+```javascript
+// t出现0次或1次
+/t?est/.test('test') // true
+/t?est/.test('est') // true
+
+// t出现1次或多次
+/t+est/.test('test") // true
+/t+est/.test('ttest') // true
+/t+est/.test('ttest') // true
+/t+est/.test('est') // false
+
+// t出现0次或多次
+/t*est/.test('test') // true
+/t*est/.test('ttest') // true
+/t*est/.test('tttest') // true
+/t*est/.test('est') // true
+```
+
+### 贪婪模式
+
+上一小节的三个量词符，默认情况下都是最大可能匹配，即匹配直到下一个字符不满足匹配规则为止。这被称为贪婪模式。
+
+```javascript
+var s = 'aaa';
+s.match(/a+/) // ["aaa"]
+```
+
+上面代码中，模式是`/a+/`，表示匹配1个`a`或多个`a`，那么到底会匹配几个`a`呢？因为默认是贪婪模式，会一直匹配到字符`a`不出现为止，所以匹配结果是3个`a`。
+
+如果想将贪婪模式改为非贪婪模式，可以在量词符后面加一个问号。
+
+```javascript
+var s = 'aaa';
+s.match(/a+?/) // ["a"]
+```
+
+上面代码中，模式结尾添加了一个问号`/a+?/`，这时就改为非匹配模式，一旦条件满足，就不再往下匹配。
+
+除了非贪婪模式的加号，还有非贪婪模式的星号（`*`）和加号（`+`）。
+
+- `*?`：表示某个模式出现0次或多次，匹配时采用非贪婪模式。
+- `+?`：表示某个模式出现1次或多次，匹配时采用非贪婪模式。
 
 ### 字符类
 
-字符类（class）表示有一系列字符可供选择，只要匹配其中一个就可以了。所有可供选择的字符都放在方括号内，比如[xyz] 表示x、y、z之中任选一个匹配。
+字符类（class）表示有一系列字符可供选择，只要匹配其中一个就可以了。所有可供选择的字符都放在方括号内，比如`[xyz]` 表示`x`、`y`、`z`之中任选一个匹配。
 
-{% highlight javascript %}
+```javascript
+/[abc]/.test('hello world') // false
+/[abc]/.test('apple') // true
+```
 
-/[abc]/.test("hello world") // false
-/[abc]/.test("apple") // true
-
-{% endhighlight %}
-
-上面代码表示，字符串hello world不包含abc这三个字母中的任一个，而字符串apple包含字母a。
+上面代码表示，字符串“hello world”不包含`a`、`b`、`c`这三个字母中的任一个，而字符串“apple”包含字母`a`。
 
 有两个字符在字符类中有特殊含义。
 
 **（1）脱字符（&#94;）**
 
-如果方括号内的第一个字符是[&#94;]，则表示除了字符类之中的字符，其他字符都可以匹配。比如，[&#94;xyz] 表示除了x、y、z之外都可以匹配。
-
-{% highlight javascript %}
-
-/[^abc]/.test("hello world") // true
-/[^abc]/.test("bbc") // false
-
-{% endhighlight %}
-
-上面代码表示，字符串hello world不包含字母abc中的任一个，所以返回true；字符串bbc不包含abc以外的字母，所以返回false。
-
-如果方括号内没有其他字符，即只有[&#94;]，就表示匹配一切字符，其中包括换行符，而点号（.）是不包括换行符的。
+如果方括号内的第一个字符是`[^]`，则表示除了字符类之中的字符，其他字符都可以匹配。比如，`[^xyz]`表示除了`x`、`y`、`z`之外都可以匹配。
 
 ```javascript
+/[^abc]/.test('hello world') // true
+/[^abc]/.test('bbc') // false
+```
 
+上面代码表示，字符串“hello world”不包含字母`a`、`b`、`c`中的任一个，所以返回`true`；字符串“bbc”不包含`a`、`b`、`c`以外的字母，所以返回`false`。
+
+如果方括号内没有其他字符，即只有`[^]`，就表示匹配一切字符，其中包括换行符，而点号（`.`）是不包括换行符的。
+
+```javascript
 var s = 'Please yes\nmake my day!';
 
 s.match(/yes.*day/) // null
 s.match(/yes[^]*day/) // [ 'yes\nmake my day']
-
 ```
 
-上面代码中，字符串s含有一个换行符，点号不包括换行符，所以第一个正则表达式匹配失败；第二个正则表达式[&#94;]包含一切字符，所以匹配成功。
+上面代码中，字符串`s`含有一个换行符，点号不包括换行符，所以第一个正则表达式匹配失败；第二个正则表达式`[^]`包含一切字符，所以匹配成功。
 
 > 注意，脱字符只有在字符类的第一个位置才有特殊含义，否则就是字面含义。
 
 **（2）连字符（-）**
 
-某些情况下，对于连续序列的字符，连字符（-）用来提供简写形式，表示字符的连续范围。比如，[abc]可以写成[a-c]，[0123456789]可以写成[0-9]，同理[A-Z]表示26个大写字母。
+某些情况下，对于连续序列的字符，连字符（`-`）用来提供简写形式，表示字符的连续范围。比如，`[abc]`可以写成`[a-c]`，`[0123456789]`可以写成`[0-9]`，同理`[A-Z]`表示26个大写字母。
 
-{% highlight javascript %}
+```javascript
+/a-z/.test('b') // false
+/[a-z]/.test('b') // true
+```
 
-/a-z/.test("b") // false
-/[a-z]/.test("b") // true
-
-{% endhighlight %}
-
-上面代码中，当连字号（dash）不出现在方括号之中，就不具备简写的作用，只代表字面的含义，所以不匹配字符b。只有当连字号用在方括号之中，才表示连续的字符序列。
+上面代码中，当连字号（dash）不出现在方括号之中，就不具备简写的作用，只代表字面的含义，所以不匹配字符`b`。只有当连字号用在方括号之中，才表示连续的字符序列。
 
 以下都是合法的字符类简写形式。
 
-{% highlight javascript %}
-
+```javascript
 [0-9.,]
 [0-9a-fA-F]
 [a-zA-Z0-9-]
 [1-31]
+```
 
-{% endhighlight %}
-
-上面代码中最后一个字符类[1-31]，不代表1到31，只代表1到3。
+上面代码中最后一个字符类`[1-31]`，不代表1到31，只代表1到3。
 
 > 注意，字符类的连字符必须在头尾两个字符中间，才有特殊含义，否则就是字面含义。比如，`[-9]`就表示匹配连字符和9，而不是匹配0到9。
 
 连字符还可以用来指定Unicode字符的范围。
 
 ```javascript
-
 var str = "\u0130\u0131\u0132";
 /[\u0128-\uFFFF]/.test(str)
 // true
-
 ```
 
-另外，不要过分使用连字符，设定一个很大的范围，结果选中意料之外的字符。最典型的例子就是[A-z]，表面上它是选中从大写的A到小写的z之间52个字母，但是由于在ASCII编码之中，大写字母与小写字母之间还有其他字符，结果就会出现意料之外的结果。
+另外，不要过分使用连字符，设定一个很大的范围，否则很可能选中意料之外的字符。最典型的例子就是`[A-z]`，表面上它是选中从大写的`A`到小写的`z`之间52个字母，但是由于在ASCII编码之中，大写字母与小写字母之间还有其他字符，结果就会出现意料之外的结果。
 
 ```javascript
 /[A-z]/.test('\\') // true
 ```
 
-上面代码中，由于反斜杠（\）的ASCII码在大写字母与小写字母之间，结果会被选中。
-
-### 重复类
-
-{} 表示模式的重复次数。{n}表示重复n次，{n,}表示至少重复n次，{n,m}表示重复不少于n次，不多于m次。
-
-{% highlight javascript %}
-
-/lo{2}k/.test("look") // true
-/lo{2,5}k/.test("looook") // true
-
-{% endhighlight %}
-
-### 量词符
-
-- ? 表示某个模式出现1次或0次，等同于{0, 1}。
-- \* 表示某个模式出现0次或多次，等同于 {0,}。
-- \+ 表示某个模式出现1次或多次，等同于 {1,}。
-
-{% highlight javascript %}
-
-/t?est/.test("test") // true
-/t?est/.test("est") // true
-
-/t+est/.test("test") // true
-/t+est/.test("ttest") // true
-/t+est/.test("tttest") // true
-/t+est/.test("est") // false
-
-/t*est/.test("test") // true
-/t*est/.test("ttest") // true
-/t*est/.test("tttest") // true
-/t*est/.test("est") // true
-
-{% endhighlight %}
-
-以上三个量词符，默认情况下的匹配规则都是贪婪模式，即最大可能匹配，直到下一个字符不满足匹配规则为止。比如，对于字符串“aaa”来说，/a+/将会匹配“aaa”，而不会匹配“aa”。为了将贪婪模式改为非贪婪模式，可以在量词符后面加一个问号，/a+?/将会只匹配“a”。
-
-也就是说，星号（\*）和加号（\+）还有非贪婪模式的版本。
-
-- \*?：表示某个模式出现0次或多次，匹配时采用非贪婪模式。
-- \+?：表示某个模式出现1次或多次，匹配时采用非贪婪模式。
+上面代码中，由于反斜杠（`\\`）的ASCII码在大写字母与小写字母之间，结果会被选中。
 
 ### 转义符
 
-正则表达式中那些有特殊含义的字符，如果要匹配它们本身，就需要在它们前面要加上反斜杠。比如要匹配加号，就要写成\\+。
+正则表达式中那些有特殊含义的字符，如果要匹配它们本身，就需要在它们前面要加上反斜杠。比如要匹配加号，就要写成`\\+`。
 
-{% highlight javascript %}
-
-/1+1/.test("1+1")
+```javascript
+/1+1/.test('1+1')
 // false
 
-/1\+1/.test("1+1")
+/1\+1/.test('1+1')
 // true
+```
 
-{% endhighlight %}
+上面代码中，第一个正则表达式直接用加号匹配，结果加号解释成量词，导致不匹配。第二个正则表达式使用反斜杠对加号转义，就能匹配成功。
 
-正则模式中，需要用斜杠转义的，一共有12个字符：&#94;、.、[、$、(、)、|、*、+、?、{和 \。需要特别注意的是，如果使用RegExp方法生成正则对象，转义需要使用两个斜杠，因为字符串内部会先转义一次。
+正则模式中，需要用斜杠转义的，一共有12个字符：`^`、`.`、`[`、`$`、`(`、`)`、`|`、`*`、`+`、`?`、`{`和`\\`。需要特别注意的是，如果使用`RegExp`方法生成正则对象，转义需要使用两个斜杠，因为字符串内部会先转义一次。
 
-{% highlight javascript %}
+```javascript
+(new RegExp('1\+1')).test('1+1')
+// false
 
-(new RegExp("1\+1")).test("1+1") // false
-(new RegExp("1\\+1")).test("1+1") // true
+(new RegExp('1\\+1')).test('1+1')
+// true
+```
 
-{% endhighlight %}
+上面代码中，`RegExp`作为构造函数，参数是一个字符串。但是，在字符串内部，反斜杠也是转义字符，所以它会先被反斜杠转义一次，然后再被正则表达式转义一次，因此需要两个反斜杠转义。
 
 ### 修饰符
 
 修饰符（modifier）表示模式的附加规则，放在正则模式的最尾部。
 
+修饰符可以单个使用，也可以多个一起使用。
+
+```javascript
+// 单个修饰符
+var regex = /test/i;
+
+// 多个修饰符
+var regex = /test/ig;
+```
+
 **（1）g修饰符**
 
-默认情况下，第一次匹配成功后，正则对象就停止向下匹配了。g修饰符表示全局匹配（global），加上它以后，正则对象将匹配全部符合条件的结果，主要用于搜索和替换。
+默认情况下，第一次匹配成功后，正则对象就停止向下匹配了。`g`修饰符表示全局匹配（global），加上它以后，正则对象将匹配全部符合条件的结果，主要用于搜索和替换。
 
-{% highlight javascript %}
-
+```javascript
 var regex = /b/;
-
 var str = 'abba';
 
 regex.test(str); // true
 regex.test(str); // true
 regex.test(str); // true
+```
 
-{% endhighlight %}
+上面代码中，正则模式不含`g`修饰符，每次都是从字符串头部开始匹配。所以，连续做了三次匹配，都返回`true`。
 
-上面代码连续做了三次匹配，都返回true。它的含义是如果不加g修饰符，每次匹配时都是从字符串头部开始匹配。
-
-{% highlight javascript %}
-
+```javascript
 var regex = /b/g;
-
 var str = 'abba';
 
 regex.test(str); // true
 regex.test(str); // true
 regex.test(str); // false
+```
 
-{% endhighlight %}
-
-上面代码中，因为字符串“abba”只有两个“b”，所以前两次匹配结果为true，第三次匹配结果为false。它的含义是加上g修饰符以后，每次匹配都是从上一次匹配成功处开始往后匹配。
+上面代码中，正则模式含有`g`修饰符，每次都是从上一次匹配成功处，开始向后匹配。因为字符串“abba”只有两个“b”，所以前两次匹配结果为`true`，第三次匹配结果为`false`。
 
 **（2）i修饰符**
 
-默认情况下，正则对象区分字母的大小写，加上i修饰符以后表示忽略大小写（ignorecase）。
+默认情况下，正则对象区分字母的大小写，加上`i`修饰符以后表示忽略大小写（ignorecase）。
 
-{% highlight javascript %}
+```javascript
+/abc/.test('ABC') // false
+/abc/i.test('ABC') // true
+```
 
-/abc/.test("ABC") // false
-/abc/i.test("ABC") // true
-
-{% endhighlight %}
-
-上面代码表示，加了i修饰符以后，不考虑大小写，所以模式abc匹配字符串ABC。
+上面代码表示，加了`i`修饰符以后，不考虑大小写，所以模式`abc`匹配字符串`ABC`。
 
 **（3）m修饰符**
 
-有时，字符串的头部或尾部可能会有换行符。默认情况下，正则对象会将换行符算入字符串的开头或结尾。m修饰符表示多行模式（multiline），加上它以后，正则对象会忽略字符串头部或尾部的换行符，即&#94;和$会忽略换行符。
+`m`修饰符表示多行模式（multiline），会修改`^`和`$`的行为。默认情况下（即不加`m`修饰符时），`^`和`$`匹配字符串的开始处和结尾处，加上`m`修饰符以后，`^`和`$`还会匹配行首和行尾，即`^`和`$`会识别换行符（`\n`）。
 
-{% highlight javascript %}
+```javascript
+/world$/.test('hello world\n') // false
+/world$/m.test('hello world\n') // true
+```
 
-/world$/.test("hello world\n") // false
-/world$/m.test("hello world\n") // true
+上面的代码中，字符串结尾处有一个换行符。如果不加`m`修饰符，匹配不成功，因为字符串的结尾不是“world”；加上以后，`$`可以匹配行尾。
 
-{% endhighlight %}
+```javascript
+/^b/m.test('a\nb') // true
+```
 
-上面的代码中，字符串结尾处有一个换行符。如果不加m修饰符，匹配不成功，因为字符串的结尾不是world；加上以后，换行符被省略，匹配成功。
-
-修饰符可以多个一起使用。
-
-{% highlight javascript %}
-
-var regex = /test/ig;
-
-{% endhighlight %}
+上面代码要求匹配行首的`b`，如果不加`m`修饰符，就相当于`b`只能处在字符串的开始处。
 
 ### 预定义模式
 
 预定义模式指的是某些常见模式的简写方式。
 
-- \d 匹配0-9之间的任一数字，相当于[0-9]。
-- \D 匹配所有0-9以外的字符，相当于[^0-9]。
-- \w 匹配任意的字母、数字和下划线，相当于[A-Za-z0-9_]。
-- \W 除所有字母、数字和下划线以外的字符，相当于/[&#94;A-Za-z0-9_]/ 。
-- \s 匹配空格（包括制表符、空格符、断行符等），相等于[\t\r\n\v\f]。
-- \S 匹配非空格的字符，相当于[&#94;\t\r\n\v\f]。
-- \b 匹配词的边界。
-- \B 匹配非词边界，即在词的内部。
+- `\d` 匹配0-9之间的任一数字，相当于`[0-9]`。
+- `\D` 匹配所有0-9以外的字符，相当于`[^0-9]`。
+- `\w` 匹配任意的字母、数字和下划线，相当于`[A-Za-z0-9_]`。
+- `\W` 除所有字母、数字和下划线以外的字符，相当于`[^A-Za-z0-9_]`。
+- `\s` 匹配空格（包括制表符、空格符、断行符等），相等于`[\t\r\n\v\f]`。
+- `\S` 匹配非空格的字符，相当于`[^\t\r\n\v\f]`。
+- `\b` 匹配词的边界。
+- `\B` 匹配非词边界，即在词的内部。
 
 下面是一些例子。
 
-{% highlight javascript %}
-
+```javascript
 // \s的例子
-/\s\w*/.exec("hello world") // [" world"]
+/\s\w*/.exec('hello world') // [" world"]
 
 // \b的例子
-/\bworld/.test("hello world") // true
-/\bworld/.test("hello-world") // true
-/\bworld/.test("helloworld") // false
+/\bworld/.test('hello world') // true
+/\bworld/.test('hello-world') // true
+/\bworld/.test('helloworld') // false
 
 // \B的例子
-/\Bworld/.test("hello-world") // false
-/\Bworld/.test("helloworld") // true
-
-{% endhighlight %}
-
-通常，正则表达式遇到换行符（\n）就会停止匹配。
-
-```javascript
-
-var html = "<b>Hello</b>\n<i>world!</i>";
-/.*/.exec(html)[0]
-// "<b>Hello</b>"
-
+/\Bworld/.test('hello-world') // false
+/\Bworld/.test('helloworld') // true
 ```
 
-上面代码中，字符串html包含一个换行符，结果点字符（.）不匹配换行符，导致匹配结果可能不符合原意。这时使用\s字符类，就能包括换行符。
+上面代码中，`\s`表示空格，所以匹配结果会包括空格。`\b`表示词的边界，所以“world”的词首必须独立（词尾是否独立未指定），才会匹配。同理，`\B`表示非词的边界，只有“world”的词首不独立，才会匹配。
+
+通常，正则表达式遇到换行符（`\n`）就会停止匹配。
 
 ```javascript
-
 var html = "<b>Hello</b>\n<i>world!</i>";
+
+/.*/.exec(html)[0]
+// "<b>Hello</b>"
+```
+
+上面代码中，字符串`html`包含一个换行符，结果点字符（`.`）不匹配换行符，导致匹配结果可能不符合原意。这时使用`\s`字符类，就能包括换行符。
+
+```javascript
+var html = "<b>Hello</b>\n<i>world!</i>";
+
 /[\S\s]*/.exec(html)[0]
 // "<b>Hello</b>\n<i>world!</i>"
 
 // 另一种写法（用到了非捕获组）
 /(?:.|\s)*/.exec(html)[0]
 // "<b>Hello</b>\n<i>world!</i>"
-
 ```
 
 上面代码中，`[\S\s]`指代一切字符。
 
 ### 特殊字符
 
-正则对象对一些不能打印的特殊字符，提供了表达形式。
+正则表达式对一些不能打印的特殊字符，提供了表达方法。
 
-- \cX 表示 Ctrl-X
-- [\b] 匹配退格键(U+0008)，不要与\b混淆。
-- \n 匹配换行键。
-- \r 匹配回车键。
-- \t 匹配制表符tab（U+0009）。
-- \v 匹配垂直制表符（U+000B）。
-- \f 匹配换页符（U+000C）。
-- \0 匹配null字符（U+0000）。
-- \xhh 匹配一个以两位十六进制数表示的字符。
-- \uhhhh 匹配一个以四位十六进制数表示的unicode字符。
+- `\cX` 表示 Ctrl-X，用来匹配控制字符。
+- `[\b]` 匹配退格键(U+0008)，不要与`\b`混淆。
+- `\n` 匹配换行键。
+- `\r` 匹配回车键。
+- `\t` 匹配制表符tab（U+0009）。
+- `\v` 匹配垂直制表符（U+000B）。
+- `\f` 匹配换页符（U+000C）。
+- `\0` 匹配null字符（U+0000）。
+- `\xhh` 匹配一个以两位十六进制数表示的字符。
+- `\uhhhh` 匹配一个以四位十六进制数表示的unicode字符。
 
 ### 组匹配
 
 **（1）概述**
 
-正则表达式的括号表示分组匹配，括号中的模式可以用来捕获分组的内容。
+正则表达式的括号表示分组匹配，括号中的模式可以用来匹配分组的内容。
 
-{% highlight javascript %}
+```javascript
+/fred+/.test('fredd') // true
+/(fred)+/.test('fredfred') // true
+```
 
-var m = "abcabc".match(/(.)b(.)/);
+上面代码中，第一个模式没有括号，结果`+`只表示重复字母`d`，第二个模式有括号，结果`+`就表示匹配“fred”这个词。
+
+下面是另外一个分组捕获的例子。
+
+```javascript
+var m = 'abcabc'.match(/(.)b(.)/);
 m
-// ["abc", "a", "c"]
+// ['abc', 'a', 'c']
+```
 
-{% endhighlight %}
+上面代码中，正则表达式`/(.)b(.)/`一共使用两个括号，第一个括号捕获`a`，第二个括号捕获`c`。
 
-上面代码中，正则表达式/(.)b(.)/一共使用两个括号，第一个括号捕获a，第二个括号捕获c。
+注意，使用组匹配时，不宜同时使用`g`修饰符，否则`match`方法不会捕获分组的内容。
 
-注意，使用组匹配时，不宜同时使用g修饰符，否则match方法不会捕获分组的内容。
-
-{% highlight javascript %}
-
-var m = "abcabc".match(/(.)b(.)/g);
+```javascript
+var m = 'abcabc'.match(/(.)b(.)/g);
 m
-// ["abc", "abc"]
+// ['abc', 'abc']
+```
 
-{% endhighlight %}
+上面代码使用带`g`修饰符的正则表达式，结果`match`方法只捕获了匹配整个表达式的部分。
 
-上面代码使用带g修饰符的正则表达式，结果match方法只捕获了匹配整个表达式的部分。
+在正则表达式内部，可以用`\n`引用括号匹配的内容，`n`是从1开始的自然数，表示对应顺序的括号。
 
-在正则表达式内部，可以用\n引用括号匹配的内容，n是从1开始的自然数，表示对应顺序的括号。
-
-{% highlight javascript %}
-
+```javascript
 /(.)b(.)\1b\2/.test("abcabc")
 // true
+```
 
-{% endhighlight %}
+上面的代码中，`\1`表示前一个括号匹配的内容（即“a”），`\2`表示第二个括号匹配的内容（即“b”）。
 
-上面的代码中，\1表示前一个括号匹配的内容（即“a”），\2表示第二个括号匹配的内容（即“b”）。
+下面是另外一个例子。
+
+```javascript
+/y(..)(.)\2\1/.test('yabccab') // true
+```
+
+括号还可以嵌套。
+
+```javascript
+/y((..)\2)\1/.test('yabababab') // true
+```
+
+上面代码中，`\1`指向外层括号，`\2`指向内层括号。
 
 组匹配非常有用，下面是一个匹配网页标签的例子。
 
-{% highlight javascript %}
-
+```javascript
 var tagName = /<([^>]+)>[^<]*<\/\1>/;
+
 tagName.exec("<b>bold</b>")[1]
 // 'b'
+```
 
-{% endhighlight %}
+上面代码中，圆括号匹配尖括号之中的标签，而`\1`就表示对应的闭合标签。
 
 上面代码略加修改，就能捕获带有属性的标签。
 
 ```javascript
-
 var html = '<b class="hello">Hello</b><i>world</i>';
 var tag = /<(\w+)([^>]*)>(.*?)<\/\1>/g;
+
 var match = tag.exec(html);
 
 match[1] // "b"
@@ -859,71 +899,61 @@ match = tag.exec(html);
 match[1] // "i"
 match[2] // ""
 match[3] // "world"
-
 ```
 
 **（2）非捕获组**
 
-(?:x)称为非捕获组（Non-capturing group），表示不返回该组匹配的内容，即匹配的结果中不计入这个括号。
+`(?:x)`称为非捕获组（Non-capturing group），表示不返回该组匹配的内容，即匹配的结果中不计入这个括号。
 
-{% highlight javascript %}
-
-var m = "abc".match(/(?:.)b(.)/);
-
-m[1]
-// "c"
-
-{% endhighlight %}
+```javascript
+var m = 'abc'.match(/(?:.)b(.)/);
+m[1] // "c"
+```
 
 上面代码中的模式，一共使用了两个括号。其中第一个括号是非捕获组，所以返回的第一个被捕获的组是第二个括号所匹配的“c”。
 
 下面是用来分解网址的正则表达式。
 
-{% highlight javascript %}
-
+```javascript
+// 正常匹配
 var url = /(http|ftp):\/\/([^/\r\n]+)(\/[^\r\n]*)?/;
 
-url.exec("http://google.com/");
+url.exec('http://google.com/');
 // ["http://google.com/", "http", "google.com", "/"]
 
+// 非捕获组匹配
 var url = /(?:http|ftp):\/\/([^/\r\n]+)(\/[^\r\n]*)?/;
 
-url.exec("http://google.com/");
+url.exec('http://google.com/');
 // ["http://google.com/", "google.com", "/"]
-
-{% endhighlight %}
+```
 
 上面的代码中，前一个正则表达式是正常匹配，第一个括号返回网络协议；后一个正则表达式是非捕获匹配，返回结果中不包括网络协议。
 
 **（3）先行断言**
 
-x(?=y)称为先行断言（Positive look-ahead），x只有在y前面才匹配，y不会被计入返回结果。
+`x(?=y)`称为先行断言（Positive look-ahead），`x`只有在`y`前面才匹配，`y`不会被计入返回结果。
 
-{% highlight javascript %}
+```javascript
+var m = 'abc'.match(/b(?=c)/);
+m // ["b"]
+```
 
-var m = "abc".match(/b(?=c)/);
-m
-// "b"
-
-{% endhighlight %}
-
-上面的代码使用了先行断言，b在c前面所以被匹配，但是括号对应的c不会被返回。
+上面的代码使用了先行断言，`b`在`c`前面所以被匹配，但是括号对应的`c`不会被返回。
 
 **（4）后行断言**
 
-x(?!y)称为后行断言（Negative look-ahead），x只有不在y前面才匹配，y不会被计入返回结果。
+`x(?!y)`称为后行断言（Negative look-ahead），`x`只有不在`y`前面才匹配，`y`不会被计入返回结果。
 
-{% highlight javascript %}
+```javascript
+var m = 'abd'.match(/b(?!c)/);
+m // ['b']
+```
 
-var m = "abd".match(/b(?!c)/);
-m
-// ["b"]
-
-{% endhighlight %}
-
-上面的代码使用了后行断言，b不在c前面所以被匹配，而且括号对应的d不会被返回。
+上面的代码使用了后行断言，`b`不在`c`前面所以被匹配，而且括号对应的`d`不会被返回。
 
 ## 参考链接
+
 - Axel Rauschmayer, [JavaScript: an overview of the regular expression API](http://www.2ality.com/2011/04/javascript-overview-of-regular.html)
 - Mozilla Developer Network, [Regular Expressions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions)
 - Axel Rauschmayer, [The flag /g of JavaScript’s regular expressions](http://www.2ality.com/2013/08/regexp-g.html)
