@@ -8,15 +8,19 @@ modifiedOn: 2013-12-19
 
 ## 概述
 
+函数就是一段预先设置的代码块，可以反复调用，根据输入参数的不同，返回不同的值。
+
+JavaScript有三种方法，可以声明一个函数。
+
 ### 函数的声明
 
 **（1）function命令**
 
-函数就是使用`function`命令命名的代码区块，便于反复调用。
+`function`命令声明的代码区块，就是一个函数。`function`命令后面是函数名，函数名后面是一对圆括号，里面是传入函数的参数。函数体放在大括号里面。
 
 ```javascript
-function print(){
-  // ...
+function print(s) {
+  console.log(s);
 }
 ```
 
@@ -24,17 +28,17 @@ function print(){
 
 **（2）函数表达式**
 
-除了用function命令声明函数，还可以采用变量赋值的写法。
+除了用`function`命令声明函数，还可以采用变量赋值的写法。
 
 ```javascript
-var print = function () {
-  // ...
+var print = function(s) {
+  console.log(s);
 };
 ```
 
 这种写法将一个匿名函数赋值给变量。这时，这个匿名函数又称函数表达式（Function Expression），因为赋值语句的等号右侧只能放表达式。
 
-采用函数表达式声明函数时，function命令后面不带有函数名。如果加上函数名，该函数名只在函数体内部有效，在函数体外部无效。
+采用函数表达式声明函数时，`function`命令后面不带有函数名。如果加上函数名，该函数名只在函数体内部有效，在函数体外部无效。
 
 ```javascript
 var print = function x(){
@@ -48,17 +52,17 @@ print()
 // function
 ```
 
-上面代码在函数表达式中，加入了函数名`x`。这个`x`只在函数体内部可用，指代函数表达式本身，其他地方都不可用。这种写法的用处有两个，一是可以在函数体内部调用自身，二是方便除错（除错工具显示函数调用栈时，将显示函数名，而不再显示这里是一个匿名函数）。因此，需要时，可以采用下面的形式声明函数。
+上面代码在函数表达式中，加入了函数名`x`。这个`x`只在函数体内部可用，指代函数表达式本身，其他地方都不可用。这种写法的用处有两个，一是可以在函数体内部调用自身，二是方便除错（除错工具显示函数调用栈时，将显示函数名，而不再显示这里是一个匿名函数）。因此，下面的形式声明函数也非常常见。
 
 ```javascript
-var f = function f(){};
+var f = function f() {};
 ```
 
 需要注意的是，函数的表达式需要在语句的结尾加上分号，表示语句结束。而函数的声明在结尾的大括号后面不用加分号。总的来说，这两种声明函数的方式，差别很细微（参阅后文《变量提升》一节），这里可以近似认为是等价的。
 
 **（3）Function构造函数**
 
-还有第三种声明函数的方式：通过Function构造函数声明。
+还有第三种声明函数的方式：`Function`构造函数。
 
 ```javascript
 var add = new Function(
@@ -74,7 +78,7 @@ function add(x, y) {
 }
 ```
 
-在上面代码中，Function对象接受若干个参数，除了最后一个参数是`add`函数的“函数体”，其他参数都是`add`函数的参数。如果只有一个参数，该参数就是函数体。
+在上面代码中，`Function`构造函数接受三个参数，除了最后一个参数是`add`函数的“函数体”，其他参数都是`add`函数的参数。如果只有一个参数，该参数就是函数体。
 
 ```javascript
 var foo = new Function(
@@ -92,46 +96,43 @@ function foo() {
 
 总的来说，这种声明函数的方式非常不直观，几乎无人使用。
 
-**（4）函数的重复声明**
+### 函数的重复声明
 
-如果多次采用function命令，重复声明同一个函数，则后面的声明会覆盖前面的声明。
+如果同一个函数被多次声明，后面的声明就会覆盖前面的声明。
 
 ```javascript
-function f(){
+function f() {
   console.log(1);
 }
-
 f() // 2
 
-function f(){
+function f() {
   console.log(2);
 }
-
 f() // 2
 ```
 
-上面代码说明，由于存在函数名的提升，前面的声明在任何时候都是无效的，这一点要特别注意。
+上面代码中，后一次的函数声明覆盖了前面一次。而且，由于函数名的提升（参见下文），前一次声明在任何时候都是无效的，这一点要特别注意。
 
-### 圆括号运算符和return语句
+### 圆括号运算符，return语句和递归
 
 调用函数时，要使用圆括号运算符。圆括号之中，可以加入函数的参数。
 
-{% highlight javascript %}
-
-function add(x,y) {
-  return x+y;
+```javascript
+function add(x, y) {
+  return x + y;
 }
 
-add(1,1) // 2
+add(1, 1) // 2
+```
 
-{% endhighlight %}
+上面代码中，函数名后面紧跟一对圆括号，就会调用这个函数。
 
-函数体内部的return语句，表示返回。JavaScript引擎遇到return语句，就直接返回return后面的那个表达式的值，后面即使还有语句，也不会得到执行。也就是说，return语句所带的那个表达式，就是函数的返回值。return语句不是必需的，如果没有的话，该函数就不返回任何值，或者说返回undefined。
+函数体内部的`return`语句，表示返回。JavaScript引擎遇到`return`语句，就直接返回`return`后面的那个表达式的值，后面即使还有语句，也不会得到执行。也就是说，`return`语句所带的那个表达式，就是函数的返回值。`return`语句不是必需的，如果没有的话，该函数就不返回任何值，或者说返回`undefined`。
 
-函数可以调用自身，这就是递归（recursion）。下面就是使用递归，计算斐波那契数列的代码。
+函数可以调用自身，这就是递归（recursion）。下面就是通过递归，计算斐波那契数列的代码。
 
-{% highlight javascript %}
-
+```javascript
 function fib(num) {
   if (num > 2) {
     return fib(num - 2) + fib(num - 1);
@@ -140,19 +141,20 @@ function fib(num) {
   }
 }
 
-fib(6)
-// 8
+fib(6) // 8
+```
 
-{% endhighlight %}
+上面代码中，`fib`函数内部又调用了`fib`，计算得到斐波那契数列的第6个元素是8。
 
 ### 第一等公民
 
-JavaScript的函数与其他数据类型处于同等地位，可以使用其他数据类型的地方就能使用函数。比如，可以把函数赋值给变量和对象的属性，也可以当作参数传入其他函数，或者作为函数的结果返回。这表示函数与其他数据类型的地方是平等，所以又称函数为第一等公民。
+JavaScript的函数与其他数据类型（数值、字符串、布尔值等等）处于同等地位，可以使用其他数据类型的地方，就能使用函数。比如，可以把函数赋值给变量和对象的属性，也可以当作参数传入其他函数，或者作为函数的结果返回。
 
-{% highlight javascript %}
+这表明，函数与其他数据类型完全是平等的，所以又称函数为第一等公民。
 
-function add(x,y){
-  return x+y;
+```javascript
+function add(x, y) {
+  return x + y;
 }
 
 // 将函数赋值给一个变量
@@ -162,104 +164,87 @@ var operator = add;
 function a(op){
   return op;
 }
-a(add)(1,1)
+a(add)(1, 1)
 // 2
-
-{% endhighlight %}
+```
 
 ### 函数名的提升
 
-JavaScript引擎将函数名视同变量名，所以采用function命令声明函数时，整个函数会被提升到代码头部。所以，下面的代码不会报错。
+JavaScript引擎将函数名视同变量名，所以采用`function`命令声明函数时，整个函数会像变量声明一样，被提升到代码头部。所以，下面的代码不会报错。
 
 ```javascript
-
 f();
-function f(){}
 
+function f() {}
 ```
 
-表面上，上面代码好像在声明之前就调用了函数f。但是实际上，由于“变量提升”，函数f被提升到了代码头部，也就是在调用之前已经声明了。但是，如果采用赋值语句定义函数，JavaScript就会报错。
+表面上，上面代码好像在声明之前就调用了函数`f`。但是实际上，由于“变量提升”，函数`f`被提升到了代码头部，也就是在调用之前已经声明了。但是，如果采用赋值语句定义函数，JavaScript就会报错。
 
 ```javascript
-
 f();
 var f = function (){};
 // TypeError: undefined is not a function
-
 ```
 
-上面的代码等同于
+上面的代码等同于下面的形式。
 
 ```javascript
-
 var f;
 f();
-f = function (){};
-
+f = function () {};
 ```
 
-当调用f的时候，f只是被声明，还没有被赋值，等于undefined，所以会报错。因此，如果同时采用function命令和赋值语句声明同一个函数，最后总是采用赋值语句的定义。
+上面代码第二行，调用`f`的时候，`f`只是被声明了，还没有被赋值，等于`undefined`，所以会报错。因此，如果同时采用`function`命令和赋值语句声明同一个函数，最后总是采用赋值语句的定义。
 
-{% highlight javascript %}
-
+```javascript
 var f = function() {
-  console.log ('1');
+  console.log('1');
 }
 
 function f() {
   console.log('2');
 }
 
-f()
-// 1
-
-{% endhighlight %}
+f() // 1
+```
 
 ### 不能在条件语句中声明函数
 
 根据ECMAScript的规范，不得在非函数的代码块中声明函数，最常见的情况就是if和try语句。
 
 ```javascript
-
 if (foo) {
-  function x() { return; }
+  function x() {}
 }
 
 try {
-  function x() {return; }
+  function x() {}
 } catch(e) {
   console.log(e);
 }
-
 ```
 
-上面代码分别在if代码块和try代码块中声明了两个函数，按照语言规范，这是不合法的。但是，实际情况是各家浏览器往往并不报错，能够运行。
+上面代码分别在`if`代码块和`try`代码块中声明了两个函数，按照语言规范，这是不合法的。但是，实际情况是各家浏览器往往并不报错，能够运行。
 
-但是由于存在函数名的提升，所以在条件语句中声明函数是无效的，这是非常容易出错的地方。
+但是由于存在函数名的提升，所以在条件语句中声明函数，可能是无效的，这是非常容易出错的地方。
 
-{% highlight javascript %}
-
+```javascript
 if (false){
-  function f(){}
+  function f() {}
 }
 
-f()
-// 不报错
+f() // 不报错
+```
 
-{% endhighlight %}
+上面代码的原始意图是不声明函数`f`，但是由于`f`的提升，导致`if`语句无效，所以上面的代码不会报错。要达到在条件语句中定义函数的目的，只有使用函数表达式。
 
-由于函数f的声明被提升到了if语句的前面，导致if语句无效，所以上面的代码不会报错。要达到在条件语句中定义函数的目的，只有使用函数表达式。
-
-{% highlight javascript %}
-
-if (false){
-  var f = function (){};
+```javascript
+if (false) {
+  var f = function () {};
 }
 
-f()
-// undefined
-
-{% endhighlight %}
+f() // undefined
+```
 
 ## 函数的属性和方法
 
@@ -282,20 +267,16 @@ f3.name // 'myName'
 
 ### length属性
 
-length属性返回函数定义中参数的个数。
+`length`属性返回函数预期传入的参数个数，即函数定义之中的参数个数。
 
-{% highlight javascript %}
+```javascript
+function f(a, b) {}
+f.length // 2
+```
 
-function f(a,b) {}
+上面代码定义了空函数`f`，它的`length`属性就是定义时的参数个数。不管调用时输入了多少个参数，`length`属性始终等于2。
 
-f.length
-// 2
-
-{% endhighlight %}
-
-上面代码定义了空函数f，它的length属性就是定义时参数的个数。不管调用时输入了多少个参数，length属性始终等于2。
-
-length属性提供了一种机制，判断定义时和调用时参数的差异，以便实现面向对象编程的”方法重载“（overload）。
+`length`属性提供了一种机制，判断定义时和调用时参数的差异，以便实现面向对象编程的”方法重载“（overload）。
 
 ### toString()
 
@@ -476,213 +457,193 @@ y(x)
 
 函数运行的时候，有时需要提供外部数据，不同的外部数据会得到不同的结果，这种外部数据就叫参数。
 
-{% highlight javascript %}
-
-function square(x){
-	return x*x;
+```javascript
+function square(x) {
+  return x * x;
 }
 
 square(2) // 4
 square(3) // 9
+```
 
-{% endhighlight %}
-
-上式的x就是square函数的参数。每次运行的时候，需要提供这个值，否则得不到结果。
+上式的`x`就是`square`函数的参数。每次运行的时候，需要提供这个值，否则得不到结果。
 
 ### 参数的省略
 
-参数不是必需的，Javascript语言允许省略参数。
+函数参数不是必需的，Javascript允许省略参数。
 
-{% highlight javascript %}
-
-function f(a,b){
-	return a;
+```javascript
+function f(a, b) {
+  return a;
 }
 
-f(1,2,3) // 1
+f(1, 2, 3) // 1
 f(1) // 1
 f() // undefined
 
 f.length // 2
+```
 
-{% endhighlight %}
+上面代码的函数`f`定义了两个参数，但是运行时无论提供多少个参数（或者不提供参数），JavaScript都不会报错。
 
-上面代码的函数f定义了两个参数，但是运行时无论提供多少个参数（或者不提供参数），JavaScript都不会报错。被省略的参数的值就变为undefined。需要注意的是，函数的length属性与实际传入的参数个数无关，只反映定义时的参数个数。
+被省略的参数的值就变为`undefined`。需要注意的是，函数的`length`属性与实际传入的参数个数无关，只反映函数预期传入的参数个数。
 
-但是，没有办法只省略靠前的参数，而保留靠后的参数。如果一定要省略靠前的参数，只有显式传入undefined。
+但是，没有办法只省略靠前的参数，而保留靠后的参数。如果一定要省略靠前的参数，只有显式传入`undefined`。
 
-{% highlight javascript %}
-
-function f(a,b){
-	return a;
+```javascript
+function f(a, b) {
+  return a;
 }
 
-f(,1) // error
-f(undefined,1) // undefined
+f( , 1) // SyntaxError: Unexpected token ,(…)
+f(undefined, 1) // undefined
+```
 
-{% endhighlight %}
+上面代码中，如果省略第一个参数，就会报错。
 
 ### 默认值
 
-通过下面的方法，可以为函数的参数设置默认值。 
+通过下面的方法，可以为函数的参数设置默认值。
 
-{% highlight javascript %}
-
+```javascript
 function f(a){
-	a = a || 1;
-	return a;
+  a = a || 1;
+  return a;
 }
 
 f('') // 1
 f(0) // 1
+```
 
-{% endhighlight %}
+上面代码的`||`表示“或运算”，即如果`a`有值，则返回`a`，否则返回事先设定的默认值（上例为1）。
 
-上面代码的||表示“或运算”，即如果a有值，则返回a，否则返回事先设定的默认值（上例为1）。
-
-这种写法会对a进行一次布尔运算，只有为true时，才会返回a。可是，除了undefined以外，0、空字符、null等的布尔值也是false。也就是说，在上面的函数中，不能让a等于0或空字符串，否则在明明有参数的情况下，也会返回默认值。
+这种写法会对`a`进行一次布尔运算，只有为`true`时，才会返回`a`。可是，除了`undefined`以外，`0`、空字符、`null`等的布尔值也是`false`。也就是说，在上面的函数中，不能让`a`等于`0`或空字符串，否则在明明有参数的情况下，也会返回默认值。
 
 为了避免这个问题，可以采用下面更精确的写法。
 
-{% highlight javascript %}
-
-function f(a){
-	(a !== undefined && a != null)?(a = a):(a = 1);
-	return a;
+```javascript
+function f(a) {
+  (a !== undefined && a !== null) ? a = a : a = 1;
+  return a;
 }
 
+f() // 1
 f('') // ""
 f(0) // 0
+```
 
-{% endhighlight %}
+上面代码中，函数`f`的参数是空字符或`0`，都不会触发参数的默认值。
 
 ### 传递方式
 
-JavaScript的函数参数传递方式是传值传递（passes by value），这意味着，在函数体内修改参数值，不会影响到函数外部。
+函数参数如果是原始类型的值（数值、字符串、布尔值），传递方式是传值传递（passes by value）。这意味着，在函数体内修改参数值，不会影响到函数外部。
 
-{% highlight javascript %}
+```javascript
+var p = 2;
 
-// 修改原始类型的参数值
-var p = 2; 
-
-function f(p){
-	p = 3;
+function f(p) {
+  p = 3;
 }
-
 f(p);
-p // 2
 
-// 修改复合类型的参数值
-var o = [1,2,3];
+p // 2
+```
+
+上面代码中，变量`p`是一个原始类型的值，传入函数`f`的方式是传值传递。因此，在函数内部，`p`的值是原始值的拷贝，无论怎么修改，都不会影响到原始值。
+
+但是，如果函数参数是复合类型的值（数组、对象、其他函数），传递方式是传址传递（pass by reference）。也就是说，传入函数的原始值的地址，因此在函数内部修改参数，将会影响到原始值。
+
+```javascript
+var obj = {p: 1};
+
+function f(o) {
+  o.p = 2;
+}
+f(obj);
+
+obj.p // 2
+```
+
+上面代码中，传入函数`f`的是参数对象`obj`的地址。因此，在函数内部修改`obj`的属性`p`，会影响到原始值。
+
+注意，如果函数内部修改的，不是参数对象的某个属性，而是替换掉整个参数，这时不会影响到原始值。
+
+```javascript
+var obj = [1, 2, 3];
 
 function f(o){
-	o = [2,3,4];
+  o = [2, 3, 4];
 }
+f(obj);
 
-f(o);
-o // [1, 2, 3]
+obj // [1, 2, 3]
+```
 
-{% endhighlight %}
+上面代码中，在函数`f`内部，参数对象`obj`被整个替换成另一个值。这时不会影响到原始值。这是因为，形式参数（`o`）与实际参数`obj`存在一个赋值关系。
 
-上面代码分成两段，分别修改原始类型的参数值和复合类型的参数值。两种情况下，函数内部修改参数值，都不会影响到函数外部。
+```javascript
+// 函数f内部
+o = obj;
+```
 
-需要十分注意的是，虽然参数本身是传值传递，但是对于复合类型的变量来说，属性值是传址传递（pass by reference），也就是说，属性值是通过地址读取的。所以在函数体内修改复合类型变量的属性值，会影响到函数外部。
+上面代码中，对`o`的修改都会反映在`obj`身上。但是，如果对`o`赋予一个新的值，就等于切断了`o`与`obj`的联系，导致此后的修改都不会影响到`obj`了。
 
-{% highlight javascript %}
+某些情况下，如果需要对某个原始类型的变量，获取传址传递的效果，可以将它写成全局对象的属性。
 
-// 修改对象的属性值
-var o = { p:1 };
-
-function f(obj){
-	obj.p = 2;
-}
-
-f(o);
-o.p // 2
-
-// 修改数组的属性值
-var a = [1,2,3];
-
-function f(a){
-	a[0]=4;
-}
-
-f(a);
-a // [4,2,3]
-
-{% endhighlight %}
-
-上面代码在函数体内，分别修改对象和数组的属性值，结果都影响到了函数外部，这证明复合类型变量的属性值是传址传递。
-
-某些情况下，如果需要对某个变量达到传址传递的效果，可以将它写成全局对象的属性。
-
-{% highlight javascript %}
-
+```javascript
 var a = 1;
 
-function f(p){
-	window[p]=2;
+function f(p) {
+  window[p] = 2;
 }
-
 f('a');
 
 a // 2
+```
 
-{% endhighlight %}
-
-上面代码中，变量a本来是传值传递，但是写成window对象的属性，就达到了传址传递的效果。
+上面代码中，变量`a`本来是传值传递，但是写成`window`对象的属性，就达到了传址传递的效果。
 
 ### 同名参数
 
 如果有同名的参数，则取最后出现的那个值。
 
-{% highlight javascript %}
-
-function f(a, a){
-	console.log(a);
+```javascript
+function f(a, a) {
+  console.log(a);
 }
 
-f(1,2)
-// 2
+f(1, 2) // 2
+```
 
-{% endhighlight %}
+上面的函数`f`有两个参数，且参数名都是`a`。取值的时候，以后面的`a`为准。即使后面的`a`没有值或被省略，也是以其为准。
 
-上面的函数f有两个参数，且参数名都是a。取值的时候，以后面的a为准。即使后面的a没有值或被省略，也是以其为准。
-
-{% highlight javascript %}
-
+```javascript
 function f(a, a){
-	console.log(a);
+  console.log(a);
 }
 
-f(1)
-// undefined
+f(1) // undefined
+```
 
-{% endhighlight %}
+调用函数`f`的时候，没有提供第二个参数，`a`的取值就变成了`undefined`。这时，如果要获得第一个`a`的值，可以使用`arguments`对象。
 
-调用函数f的时候，没有提供第二个参数，a的取值就变成了undefined。这时，如果要获得第一个a的值，可以使用arguments对象。
-
-{% highlight javascript %}
-
+```javascript
 function f(a, a){
-	console.log(arguments[0]);
+  console.log(arguments[0]);
 }
 
-f(1)
-// 1
-
-{% endhighlight %}
+f(1) // 1
+```
 
 ### arguments对象
 
 **（1）定义**
 
-由于JavaScript允许函数有不定数目的参数，所以我们需要一种机制，可以在函数体内部读取所有参数。这就是arguments对象的由来。
+由于JavaScript允许函数有不定数目的参数，所以我们需要一种机制，可以在函数体内部读取所有参数。这就是`arguments`对象的由来。
 
-arguments对象包含了函数运行时的所有参数，arguments[0]就是第一个参数，arguments[1]就是第二个参数，依次类推。这个对象只有在函数体内部，才可以使用。
+`arguments`对象包含了函数运行时的所有参数，`arguments[0]`就是第一个参数，`arguments[1]`就是第二个参数，以此类推。这个对象只有在函数体内部，才可以使用。
 
-{% highlight javascript %}
-
+```javascript
 var f = function(one) {
   console.log(arguments[0]);
   console.log(arguments[1]);
@@ -693,131 +654,112 @@ f(1, 2, 3)
 // 1
 // 2
 // 3
+```
 
-{% endhighlight %}
+`arguments`对象除了可以读取参数，还可以为参数赋值（严格模式不允许这种用法）。
 
-arguments对象除了可以读取参数，还可以为参数赋值（严格模式不允许这种用法）。
-
-{% highlight javascript %}
-
-var f = function(a,b) {
+```javascript
+var f = function(a, b) {
   arguments[0] = 3;
   arguments[1] = 2;
-  return a+b;
+  return a + b;
 }
 
 f(1, 1)
 // 5
+```
 
-{% endhighlight %}
+可以通过`arguments`对象的`length`属性，判断函数调用时到底带几个参数。
 
-可以通过arguments对象的length属性，判断函数调用时到底带几个参数。
-
-{% highlight javascript %}
-
-function f(){
-	return arguments.length;
+```javascript
+function f() {
+  return arguments.length;
 }
 
-f(1,2,3) // 3
+f(1, 2, 3) // 3
 f(1) // 1
 f() // 0
-
-{% endhighlight %}
+```
 
 **（2）与数组的关系**
 
-需要注意的是，虽然arguments很像数组，但它是一个对象。某些用于数组的方法（比如slice和forEach方法），不能在arguments对象上使用。
+需要注意的是，虽然`arguments`很像数组，但它是一个对象。数组专有的方法（比如`slice`和`forEach`），不能在`arguments`对象上直接使用。
 
-但是，有时arguments可以像数组一样，用在某些只用于数组的方法。比如，用在apply方法中，或使用concat方法完成数组合并。
+但是，可以通过`apply`方法，把`arguments`作为参数传进去，这样就可以让`arguments`使用数组方法了。
 
-{% highlight javascript %}
-
+```javascript
 // 用于apply方法
 myfunction.apply(obj, arguments).
 
 // 使用与另一个数组合并
 Array.prototype.concat.apply([1,2,3], arguments)
-
-{% endhighlight %}
+```
 
 要让arguments对象使用数组方法，真正的解决方法是将arguments转为真正的数组。下面是两种常用的转换方法：slice方法和逐一填入新数组。
 
-{% highlight javascript %}
-
+```javascript
 var args = Array.prototype.slice.call(arguments);
 
-// or 
+// or
 
 var args = [];
-for(var i = 0; i < arguments.length; i++) {
-	  args.push(arguments[i]);
+for (var i = 0; i < arguments.length; i++) {
+  args.push(arguments[i]);
 }
-
-{% endhighlight %}
+```
 
 **（3）callee属性**
 
-arguments对象带有一个callee属性，返回它所对应的原函数。
+`arguments`对象带有一个`callee`属性，返回它所对应的原函数。
 
-{% highlight javascript %}
-
+```javascript
 var f = function(one) {
   console.log(arguments.callee === f);
 }
 
-f()
-// true
+f() // true
+```
 
-{% endhighlight %}
+可以通过`arguments.callee`，达到调用函数自身的目的。
 
 ## 函数的其他知识点
 
 ### 闭包
 
-闭包（closure）就是定义在函数体内部的函数。更理论性的表达是，闭包是函数与其生成时所在的作用域对象（scope object）的一种结合。
+函数的内部，还可以定义另一个函数，这就是闭包（closure），即定义在函数体内部的函数。闭包只在声明它的函数内部有效。
 
-{% highlight javascript %}
-
+```javascript
 function f() {
-    var c = function (){}; 
+  var c = function() {};
 }
+```
 
-{% endhighlight %}
+上面的代码中，`c`是定义在函数`f`内部的函数，因此`c`就是`f`的闭包。
 
-上面的代码中，c是定义在函数f内部的函数，就是闭包。
+一旦外层函数返回闭包，我们就可以通过闭包，从外部读取函数的内部变量。
 
-闭包的特点在于，在函数外部可以读取函数的内部变量。
-
-{% highlight javascript %}
-
+```javascript
 function f() {
-    var v = 1;
-
-	var c = function (){
-        return v;
-    };
-
-    return c;
+  var v = 1;
+  var c = function (){
+    return v;
+  };
+  return c;
 }
 
 var o = f();
+o() // 1
+```
 
-o();
-// 1
-
-{% endhighlight %}
-
-上面代码表示，原先在函数f外部，我们是没有办法读取内部变量v的。但是，借助闭包c，可以读到这个变量。
+上面代码中，函数`f`返回了闭包`c`，借助`c`就可以读取`f`的内部变量`v`。如果不通过闭包，就没有其他办法，可以读到`v`。（注意，反之不成立，`f`无法读取`c`的内部变量。）
 
 闭包不仅可以读取函数内部变量，还可以使得内部变量记住上一次调用时的运算结果。
 
-{% highlight javascript %}
-
+```javascript
 function createIncrementor(start) {
-        return function () { 
-            return start++;
-        }
+  return function () {
+    return start++;
+  };
 }
 
 var inc = createIncrementor(5);
@@ -825,10 +767,13 @@ var inc = createIncrementor(5);
 inc() // 5
 inc() // 6
 inc() // 7
+```
 
-{% endhighlight %}
+上面代码中，`start`是函数`createIncrementor`的内部变量。通过闭包，`start`的状态被保留了，每一次调用都是在上一次调用的基础上进行计算。
 
-上面代码表示，函数内部的start变量，每一次调用时都是在上一次调用时的值的基础上进行计算的。 
+通过这个例子可以看到，闭包的实质就是保留并获取到函数内部的作用域。闭包就是函数内部作用域的一个接口。
+
+外层函数每次运行，都会生成一个新的闭包。而这个闭包又会保留外层的作用域，这导致闭包非常耗费内存。这是使用时需要注意的。
 
 ### 立即调用的函数表达式（IIFE）
 
