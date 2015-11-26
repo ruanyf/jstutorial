@@ -546,25 +546,27 @@ Array(2).map(function (){
 
 ### Array.prototype.forEach()
 
-数组实例的`forEach`方法与`map`方法很相似，也是遍历数组的所有成员，执行某种操作，但是forEach方法没有返回值。如果需要有返回值，一般使用map方法，如果只是单纯操作数据，一般使用forEach方法。
+数组实例的`forEach`方法与`map`方法很相似，也是遍历数组的所有成员，执行某种操作，但是`forEach`方法没有返回值，一般只用来操作数据。如果需要有返回值，一般使用`map`方法。
 
 ```javascript
 function log(element, index, array) {
   console.log('[' + index + '] = ' + element);
 }
 
-[2, 5, , 9].forEach(log);
+[2, 5, 9].forEach(log);
 // [0] = 2
 // [1] = 5
-// [3] = 9
+// [2] = 9
 ```
 
-从上面代码可以看到，forEach方法和map方法的参数格式是一样的，第一个参数都是一个函数。该函数接受三个参数，分别是当前元素、当前元素的位置（从0开始）、整个数组。
+从上面代码可以看到，`forEach`方法和`map`方法的参数格式是一样的，第一个参数都是一个函数。该函数接受三个参数，分别是当前元素、当前元素的位置（从0开始）、整个数组。
 
-forEach方法会跳过数组的空位。
+`forEach`方法会跳过数组的空位。
 
 ```javascript
-var log = function(n){ console.log(n + 1) };
+var log = function(n) {
+ console.log(n + 1);
+};
 
 [1, undefined, 2].forEach(log)
 // 2
@@ -576,26 +578,26 @@ var log = function(n){ console.log(n + 1) };
 // 1
 // 3
 
-[1, , 2].map(f)
+[1, , 2].forEach(log)
 // 2
 // 3
 ```
 
-上面代码中，forEach方法不会跳过undefined和null，但会跳过空位。
+上面代码中，`forEach`方法不会跳过`undefined`和`null`，但会跳过空位。
 
-forEach方法也可以接受第二个参数，用来绑定回调函数的this关键字。
+`forEach`方法也可以接受第二个参数，用来绑定回调函数的this关键字。
 
 ```javascript
 var out = [];
 
-[1, 2, 3].forEach(function(elem, index, arr){
+[1, 2, 3].forEach(function(elem) {
   this.push(elem * elem);
 }, out);
 
 out // [1, 4, 9]
 ```
 
-上面代码表示，如果提供一个数组作为第二个参数，则函数内部的this关键字就指向这个数组。
+上面代码中，空数组`out`是`forEach`方法的第二个参数，结果，回调函数内部的`this`关键字就指向`out`。
 
 ### filter方法
 
