@@ -104,7 +104,7 @@ BDD是“行为驱动的开发”（Behavior-Driven Development）的简称，�
 
 BDD认为，不应该针对代码的实现细节写测试，而是要针对行为写测试。BDD测试的是行为，即软件应该怎样运行。
 
-BDD接口提供以下方法。
+BDD接口提供以下六个方法。
 
 - describe()
 - it()

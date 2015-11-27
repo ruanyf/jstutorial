@@ -13,25 +13,24 @@ new Math()
 // TypeError: object is not a function
 ```
 
-上面代码表示，`Math`能当作构造函数用。
+上面代码表示，`Math`不能当作构造函数用。
 
 ## 属性
 
-Math对象提供以下一些只读的数学常数。
+`Math`对象提供以下一些只读的数学常数。
 
-- E：常数e。
-- LN2：2的自然对数。
-- LN10：10的自然对数。
-- LOG2E：以2为底的e的对数。
-- LOG10E：以10为底的e的对数。
-- PI：常数Pi。
-- SQRT1_2：0.5的平方根。
-- SQRT2：2的平方根。
+- `E`：常数e。
+- `LN2`：2的自然对数。
+- `LN10`：10的自然对数。
+- `LOG2E`：以2为底的e的对数。
+- `LOG10E`：以10为底的e的对数。
+- `PI`：常数Pi。
+- `SQRT1_2`：0.5的平方根。
+- `SQRT2`：2的平方根。
 
 这些常数的值如下。
 
-{% highlight javascript %}
-
+```javascript
 Math.E // 2.718281828459045
 Math.LN2 // 0.6931471805599453
 Math.LN10 // 2.302585092994046
@@ -40,121 +39,98 @@ Math.LOG10E // 0.4342944819032518
 Math.PI // 3.141592653589793
 Math.SQRT1_2 // 0.7071067811865476
 Math.SQRT2 // 1.4142135623730951
-
-{% endhighlight %}
+```
 
 ## 方法
 
-Math对象提供以下一些数学方法。
+`Math`对象提供以下一些数学方法。
 
 ### round方法
 
-round方法用于四舍五入。
+`round`方法用于四舍五入。
 
-{% highlight javascript %}
-
+```javascript
 Math.round(0.1) // 0
 Math.round(0.5) // 1
+```
 
-{% endhighlight %}
+它对于负值的运算结果与正值略有不同，主要体现在对0.5的处理。
 
-它对于负值的运算结果与正值略有不同，主要体现在对.5的处理。
-
-{% highlight javascript %}
-
+```javascript
 Math.round(-1.1) // -1
 Math.round(-1.5) // -1
-
-{% endhighlight %}
+```
 
 ### abs方法，max方法，min方法
 
-abs方法返回参数值的绝对值。
+`abs`方法返回参数值的绝对值。
 
-{% highlight javascript %}
-
+```javascript
 Math.abs(1) // 1
 Math.abs(-1) // 1
+```
 
-{% endhighlight %}
+`max`方法返回最大的参数，min方法返回最小的参数。
 
-max方法返回最大的参数，min方法返回最小的参数。
-
-{% highlight javascript %}
-
+```javascript
 Math.max(2, -1, 5) // 5
 Math.min(2, -1, 5) // -1
-
-{% endhighlight %}
+```
 
 ### floor方法，ceil方法
 
 floor方法返回小于参数值的最大整数。
 
-{% highlight javascript %}
-
+```javascript
 Math.floor(3.2) // 3
 Math.floor(-3.2) // -4
-
-{% endhighlight %}
+```
 
 ceil方法返回大于参数值的最小整数。
 
-{% highlight javascript %}
-
+```javascript
 Math.ceil(3.2) // 4
 Math.ceil(-3.2) // -3
-
-{% endhighlight %}
+```
 
 ### pow方法，sqrt方法
 
 power方法返回以第一个参数为底数、第二个参数为幂的指数值。
 
-{% highlight javascript %}
-
+```javascript
 Math.pow(2, 2) // 4
 Math.pow(2, 3) // 8
-
-{% endhighlight %}
+```
 
 sqrt方法法返回参数值的平方根。如果参数是一个负值，则返回NaN。
 
-{% highlight javascript %}
-
+```javascript
 Math.sqrt(4) // 2
 Math.sqrt(-4) // NaN
-
-{% endhighlight %}
+```
 
 ### log方法，exp方法
 
 log方法返回以e为底的自然对数值。
 
-{% highlight javascript %}
-
+```javascript
 Math.log(Math.E) // 1
 Math.log(10) // 2.302585092994046
-
-{% endhighlight %}
+```
 
 求以10为底的对数，可以除以Math.LN10；求以2为底的对数，可以除以Math.LN2。
 
-{% highlight javascript %}
-
+```javascript
 Math.log(100)/Math.LN10 // 2
 Math.log(8)/Math.LN2 // 3
-
-{% endhighlight %}
+```
 
 exp方法返回常数e的参数次方。
 
-{% highlight javascript %}
-
+```javascript
 Math.exp(1) // 2.718281828459045
 Math.exp(3) // 20.085536923187668
-
-{% endhighlight %}
+```
 
 ### random方法
 
@@ -195,20 +171,16 @@ random_base64 = function random_base64(length) {
 
 sin方法返回参数的正弦，cos方法返回参数的余弦，tan方法返回参数的正切。
 
-{% highlight javascript %}
-
+```javascript
 Math.sin(0) // 0
 Math.cos(0) // 1
 Math.tan(0) // 0
+```
 
-{% endhighlight %}
+`asin`方法返回参数的反正弦，acos方法返回参数的反余弦，atan方法返回参数的反正切。这个三个方法的返回值都是弧度值。
 
-asin方法返回参数的反正弦，acos方法返回参数的反余弦，atan方法返回参数的反正切。这个三个方法的返回值都是弧度值。
-
-{% highlight javascript %}
-
-Math.asin(1) // 1.5707963267948966
+```javascript
+th.asin(1) // 1.5707963267948966
 Math.acos(1) // 0
 Math.atan(1) // 0.7853981633974483
-
-{% endhighlight %}
+```
