@@ -242,9 +242,33 @@ function Fubar (foo, bar) {
 
 ### 涵义
 
-构造函数内部需要用到this关键字。那么，this关键字到底是什么意思呢？
+构造函数内部需要用到`this`关键字。那么，`this`关键字到底是什么意思呢？
 
-简单说，this就是指函数当前的运行环境。在JavaScript语言之中，所有函数都是在某个运行环境之中运行，this就是这个环境。对于JavaScipt语言来说，一切皆对象，运行环境也是对象，所以可以理解成，所有函数总是在某个对象之中运行，this就指向这个对象。这本来并不会让用户糊涂，但是JavaScript支持运行环境动态切换，也就是说，this的指向是动态的，没有办法事先确定到底指向哪个对象，这才是最让初学者感到困惑的地方。
+`this`就是指当前对象，或者说，指函数当前的运行环境。
+
+```javascript
+this['property']
+this.property
+```
+
+上面代码中，`this`就代表`property`属性当前所在的对象。
+
+再看一个例子。
+
+```html
+<input type="text" name="age" size=3 onChange="validate(this, 18, 99);">
+
+<script>
+function validate(obj, lowval, hival){
+  if ((obj.value < lowval) || (obj.value > hival))
+    console.log('Invalid Value!');
+}
+</script>
+```
+
+上面代码是一个文本输入框，每当用户输入一个值，就会调用`onChange`回调函数，验证这个值是否在指定范围。回调函数传入`this`，就代表传入当前对象（即文本框），然后就可以从`this.value`上面读到用户的输入值。
+
+在JavaScript语言之中，所有函数都是在某个运行环境之中运行，`this`就是这个环境。对于JavaScipt语言来说，一切皆对象，运行环境也是对象，所以可以理解成，所有函数总是在某个对象之中运行，`this`就指向这个对象。这本来并不会让用户糊涂，但是JavaScript支持运行环境动态切换，也就是说，this的指向是动态的，没有办法事先确定到底指向哪个对象，这才是最让初学者感到困惑的地方。
 
 举例来说，有一个函数f，它同时充当a对象和b对象的方法。JavaScript允许函数f的运行环境动态切换，即一会属于a对象，一会属于b对象，这就要靠this关键字来办到。
 

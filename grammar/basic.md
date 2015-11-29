@@ -687,7 +687,7 @@ JavaScript有三种方法，可以确定一个值到底是什么类型。
 
 `instanceof`运算符和`Object.prototype.toString`方法，将在后文相关章节介绍。这里着重介绍`typeof`运算符。
 
-typeof运算符可以返回一个值的数据类型，可能有以下结果。
+`typeof`运算符可以返回一个值的数据类型，可能有以下结果。
 
 **（1）原始类型**
 
@@ -745,7 +745,7 @@ if (typeof v === "undefined") {
 
 **（4）其他**
 
-除此以外，都返回`object`。
+除此以外，其他情况都返回`object`。
 
 ```javascript
 typeof window // "object"

@@ -316,7 +316,9 @@ var allSheets = [].slice.call(document.styleSheets);
 
 **（1）概述**
 
-cookie属性返回当前网页的cookie。
+cookie是服务器要求浏览器保存的一段信息。以后，浏览器每次向服务器发出请求，就会自动附上这段信息。
+
+`document.cookie`属性返回当前网页的cookie。
 
 ```javascript
 // 读取当前网页的所有cookie
@@ -333,10 +335,9 @@ document.cookie = "test2=world";
 
 document.cookie
 // test1=hello;test2=world
-
 ```
 
-cookie属性的读写操作含义不同，跟服务器与浏览器的通信格式有关。浏览器向服务器发送cookie，是一次性所有cookie全部发送。
+`document.cookie`属性的读写操作含义不同，跟服务器与浏览器的通信格式有关。浏览器向服务器发送cookie，是一次性所有cookie全部发送。
 
 ```http
 GET /sample_page.html HTTP/1.1

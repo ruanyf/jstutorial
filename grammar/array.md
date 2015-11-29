@@ -276,75 +276,66 @@ Object.keys(a)
 
 检查某个键是否存在的运算符in，适用于对象，也适用于数组。
 
-{% highlight javascript %}
+```javascript
+2 in [ 'a', 'b', 'c' ] // true
+'2' in [ 'a', 'b', 'c' ] // true
+```
 
-2 in [ 'a', 'b', 'c' ]
-// true
+上面代码表明，数组存在键名为2的键。由于键名都是字符串，所以数值2会自动转成字符串。
 
-'2' in [ 'a', 'b', 'c' ]
-// true
+使用`for...in`循环，可以遍历数组的所有元素。
 
-{% endhighlight %}
-
-使用for-in循环，可以遍历数组的所有元素。
-
-{% highlight javascript %}
-
-var a = [1,2,3];
+```javascript
+var a = [1, 2, 3];
 
 for (var i in a){
-	console.log(a[i]);
+  console.log(a[i]);
 }
 // 1
 // 2
 // 3
+```
 
-{% endhighlight %}
+需要注意的是，`for...in`会遍历数组所有的键，即使是非数字键。
 
-需要注意的是，for-in会遍历数组所有的键，即使是非数字键。
-
-{% highlight javascript %}
-
-var a = [1,2,3];
+```javascript
+var a = [1, 2, 3];
 a.foo = true;
 
-for (var key in a) { 
-	console.log(key); 
+for (var key in a) {
+  console.log(key);
 }
 // 0
 // 1
 // 2
 // foo
+```
 
-{% endhighlight %}
+上面代码在遍历数组时，也遍历到了非整数键`foo`。所以，使用`for...in`遍历数组的时候，一定要小心。
 
-上面代码在遍历数组时，也遍历到了非整数键foo。所以，使用for-in遍历数组的时候，一定要小心。
+另一种遍历的做法是用`for`循环或者`while`循环结合`length`属性。
 
-另一种遍历的做法是用for循环或者while循环结合length属性。
-
-{% highlight javascript %}
-
-var a = [1,2,3];
-for(var i = 0; i < a.length; i++){
-	console.log(a[i]);
+```javascript
+var a = [1, 2, 3];
+for(var i = 0; i < a.length; i++) {
+  console.log(a[i]);
 }
 
 // or
 
 var i = 0;
-while (i< a.length){
-	console.log(a[i]);
-	i++;
+while (i < a.length) {
+  console.log(a[i]);
+  i++;
 }
 
 // or
 
 var l = a.length;
-while (l--){
-	console.log(a[l]);
+while (l--) {
+  console.log(a[l]);
 }
-
-{% endhighlight %}
+```
 
 上面代码是三种遍历数组的写法。最后一种写法是逆向遍历，即从最后一个元素向第一个元素遍历。
 

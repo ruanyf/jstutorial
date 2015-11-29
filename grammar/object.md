@@ -191,12 +191,10 @@ if('a' in window) {
 
 点运算符和方括号运算符，不仅可以用来读取值，还可以用来赋值。
 
-{% highlight javascript %}
-
-o.p = "abc";
-o["p"] = "abc";
-
-{% endhighlight %}
+```javascript
+o.p = 'abc';
+o['p'] = 'abc';
+```
 
 上面代码分别使用点运算符和方括号运算符，对属性p赋值。
 
@@ -215,49 +213,39 @@ o.p = 1;
 
 **（4）查看所有属性**
 
-查看一个对象本身的所有属性，可以使用Object.keys方法。
+查看一个对象本身的所有属性，可以使用`Object.keys`方法。
 
-{% highlight javascript %}
-
+```javascript
 var o = {
   key1: 1,
   key2: 2
 };
 
 Object.keys(o);
-// ["key1", "key2"]
-
-{% endhighlight %}
+// ['key1', 'key2']
+```
 
 ### 属性的删除
 
-删除一个属性，需要使用delete命令。
+删除一个属性，需要使用`delete`命令。
 
-{% highlight javascript %}
-
-var o = { p:1 };
-
+```javascript
+var o = {p: 1};
 Object.keys(o) // ["p"]
 
 delete o.p // true
-
 o.p // undefined
-
 Object.keys(o) // []
+```
 
-{% endhighlight %}
-
-上面代码表示，一旦使用delete命令删除某个属性，再读取该属性就会返回undefined，而且Object.keys方法返回的该对象的所有属性中，也将不再包括该属性。
+上面代码表示，一旦使用`delete`命令删除某个属性，再读取该属性就会返回`undefined`，而且`Object.keys`方法返回的该对象的所有属性中，也将不再包括该属性。
 
 麻烦的是，如果删除一个不存在的属性，delete不报错，而且返回true。
 
-{% highlight javascript %}
-
+```
 var o = {};
-
 delete o.p // true
-
-{% endhighlight %}
+```
 
 上面代码表示，delete命令只能用来保证某个属性的值为undefined，而无法保证该属性是否真的存在。
 
@@ -314,47 +302,31 @@ y // 1
 
 ### in运算符
 
-in运算符用于检查对象是否包含某个属性（注意，检查的是键名，不是键值），如果包含就返回true，否则返回false。
+in运算符用于检查对象是否包含某个属性（注意，检查的是键名，不是键值），如果包含就返回`true`，否则返回`false`。
 
 ```javascript
 var o = { p: 1 };
 'p' in o // true
 ```
 
-该运算符对数组也适用。
-
-```javascript
-var a = ["hello", "world"];
-
-0 in a // true
-1 in a // true
-2 in a // false
-
-'0' in a // true
-'1' in a // true
-'2' in a // false
-```
-
-上面代码表示，数字键0和1都在数组之中。由于数组是一种特殊对象，而对象的键名都是字符串，所以字符串的”0“和”1“，也是数组的键名。
-
-在JavaScript语言中，所有全局变量都是顶层对象（浏览器的顶层对象就是window对象）的属性，因此可以用in运算符判断，一个全局变量是否存在。
+在JavaScript语言中，所有全局变量都是顶层对象（浏览器的顶层对象就是`window`对象）的属性，因此可以用`in`运算符判断，一个全局变量是否存在。
 
 ```javascript
 // 假设变量x未定义
 
 // 写法一：报错
-if (x){ return 1; }
+if (x) { return 1; }
 
 // 写法二：不正确
-if (window.x){ return 1; }
+if (window.x) { return 1; }
 
 // 写法三：正确
 if ('x' in window) { return 1; }
 ```
 
-上面三种写法之中，如果x不存在，第一种写法会报错；如果x的值对应布尔值false（比如x等于空字符串），第二种写法无法得到正确结果；只有第三种写法，才能正确判断变量x是否存在。
+上面三种写法之中，如果`x`不存在，第一种写法会报错；如果`x`的值对应布尔值`false`（比如`x`等于空字符串），第二种写法无法得到正确结果；只有第三种写法，才能正确判断变量`x`是否存在。
 
-in运算符的一个问题是，它不能识别对象继承的属性。
+`in`运算符的一个问题是，它不能识别对象继承的属性。
 
 ```javascript
 var o = new Object();
@@ -363,7 +335,7 @@ o.hasOwnProperty('toString') // false
 'toString' in o // true
 ```
 
-上面代码中，toString方法不是对象o自身的属性，而是继承的属性，hasOwnProperty方法可以说明这一点。但是，in运算符不能识别，对继承的属性也返回true。
+上面代码中，`toString`方法不是对象`o`自身的属性，而是继承的属性，`hasOwnProperty`方法可以说明这一点。但是，`in`运算符不能识别，对继承的属性也返回`true`。
 
 ### for...in循环
 

@@ -50,18 +50,16 @@ window.pageXOffset属性返回页面的水平滚动距离，window.pageYOffset�
 
 ### iframe元素
 
-window.frames返回一个类似数组的对象，成员为页面内的所有框架，包括frame元素和iframe元素。需要注意的是，window.frames的每个成员对应的是框架内的窗口（即框架的window对象），获取每个框架的DOM树，需要使用window.frames[0].document。
+window.frames返回一个类似数组的对象，成员为页面内的所有框架，包括`frame`元素和`iframe`元素。需要注意的是，`window.frames`的每个成员对应的是框架内的窗口（即框架的window对象），获取每个框架的DOM树，需要使用`window.frames[0].document`。
 
-{% highlight javascript %}
-
+```javascript
 var iframe = window.getElementsByTagName("iframe")[0];
 var iframe_title = iframe.contentWindow.title;
-
-{% endhighlight %}
+```
 
 上面代码用于获取框架页面的标题。
 
-iframe元素遵守同源政策，只有当父页面与框架页面来自同一个域名，两者之间才可以用脚本通信，否则只有使用window.postMessage方法。
+`iframe`元素遵守同源政策，只有当父页面与框架页面来自同一个域名，两者之间才可以用脚本通信，否则只有使用window.postMessage方法。
 
 在iframe框架内部，使用window.parent指向父页面。
 
@@ -195,9 +193,7 @@ Access-Control-Allow-Origin:*
 然后，在网页的script标签中设置crossorigin属性。
 
 ```html
-
 <script crossorigin="anonymous" src="//example.com/file.js"></script>
-
 ```
 
 上面代码的`crossorigin="anonymous"`表示，读取文件不需要身份信息，即不需要cookie和HTTP认证信息。如果设为`crossorigin="use-credentials"`，就表示浏览器会上传cookie和HTTP认证信息，同时还需要服务器端打开HTTP头信息Access-Control-Allow-Credentials。
@@ -258,13 +254,11 @@ prompt方法的第二个参数是可选的，但是如果不提供的话，IE浏
 confirm方法弹出的对话框，除了提示信息之外，只有“确定”和“取消”两个按钮，往往用来征询用户的意见。
 
 ```javascript
-
 // 格式
 var result = confirm(message);
 
 // 实例
 var result = confirm("你最近好吗？");
-
 ```
 
 上面代码弹出一个对话框，上面只有一行文字“你最近好吗？”，用户选择点击“确定”或“取消”。
