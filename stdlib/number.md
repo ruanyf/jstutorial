@@ -13,57 +13,41 @@ Number对象是数值对应的包装对象，可以作为构造函数使用，�
 作为构造函数时，它用于生成值为数值的对象。
 
 ```javascript
-
 var n = new Number(1);
 typeof n // "object"
-
 ```
 
-上面代码中，Number对象作为构造函数使用，返回一个值为1的对象。
+上面代码中，`Number`对象作为构造函数使用，返回一个值为1的对象。
 
 作为工具函数时，它可以将任何类型的值转为数值。
 
-{% highlight javascript %}
-
+```javascript
 Number(true) // 1
+```
 
-{% endhighlight %}
-
-上面代码将布尔值true转为数值1。Number对象的工具方法，详细介绍参见上一章的《数据类型转换》一节。
+上面代码将布尔值`true`转为数值1。Number对象的工具方法，详细介绍参见上一章的《数据类型转换》一节。
 
 ## Number对象的属性
 
-Number对象拥有一些特别的属性。
+Number对象拥有以下一些属性。
 
-（1）Number.POSITIVE_INFINITY 
+- `Number.POSITIVE_INFINITY`：正的无限，指向`Infinity`。
+- `Number.NEGATIVE_INFINITY`：负的无限，指向`-Infinity`。
+- `Number.NaN`：表示非数值，指向`NaN`。
+- `Number.MAX_VALUE`：表示最大的正数，相应的，最小的负数为`-Number.MAX_VALUE`。
+- `Number.MIN_VALUE`：表示最小的正数（即最接近0的正数，在64位浮点数体系中为`5e-324`），相应的，最接近0的负数为`-Number.MIN_VALUE`。
+- `Number.MAX_SAFE_INTEGER`：表示能够精确表示的最大整数，即`9007199254740991`。
+- `Number.MIN_SAFE_INTEGER`：表示能够精确表示的最小整数，即`-9007199254740991`。
 
-表示正的无限，指向关键字Infinity。
-
-（2）Number.NEGATIVE_INFINITY 
-
-表示负的无限，指向-Infinity。
-
-（3）Number.NaN 
-
-表示非数值，指向NaN。
-
-（4）Number.MAX_VALUE 
-
-表示最大的正数，相应的，最小的负数为-Number.MAX_VALUE。
-
-（5）Number.MIN_VALUE 
-
-表示最小的正数（即最接近0的正数，在64位浮点数体系中为5e-324），相应的，最接近0的负数为-Number.MIN_VALUE。
-
-{% highlight javascript %}
-
+```javascript
 Number.POSITIVE_INFINITY // Infinity
 Number.NEGATIVE_INFINITY // -Infinity
 Number.NaN // NaN
 Number.MAX_VALUE // 1.7976931348623157e+308
 Number.MIN_VALUE // 5e-324
-
-{% endhighlight %}
+Number.MAX_SAFE_INTEGER // 9007199254740991
+Number.MIN_SAFE_INTEGER // -9007199254740991
+```
 
 ## Number对象实例的方法
 
@@ -154,60 +138,38 @@ toExponential方法的参数表示小数点后有效数字的位数，范围为0
 
 ### Number.prototype.toPrecision()
 
-toPrecision方法用于将一个数转为指定位数的有效数字。
+`toPrecision`方法用于将一个数转为指定位数的有效数字。
 
-{% highlight javascript %}
+```javascript
+(12.34).toPrecision(1) // "1e+1"
+(12.34).toPrecision(2) // "12"
+(12.34).toPrecision(3) // "12.3"
+(12.34).toPrecision(4) // "12.34"
+(12.34).toPrecision(5) // "12.340"
+```
 
-(12.34).toPrecision(1)
-// "1e+1"
+`toPrecision`方法的参数为有效数字的位数，范围是1到21，超出这个范围会抛出RangeError错误。
 
-(12.34).toPrecision(2)
-// "12"
+`toPrecision`方法用于四舍五入时不太可靠，跟浮点数不是精确储存有关。
 
-(12.34).toPrecision(3)
-// "12.3"
-
-(12.34).toPrecision(4)
-// "12.34"
-
-(12.34).toPrecision(5)
-// "12.340"
-
-{% endhighlight %}
-
-toPrecision方法的参数为有效数字的位数，范围是1到21，超出这个范围会抛出RangeError错误。
-
-toPrecision方法用于四舍五入时不太可靠，可能跟浮点数不是精确储存有关。
-
-{% highlight javascript %}
-
-(12.35).toPrecision(3)
-// "12.3"
-
-(12.25).toPrecision(3)
-// "12.3"
-
-(12.15).toPrecision(3)
-// "12.2"
-
-(12.45).toPrecision(3)
-// "12.4"
-
-{% endhighlight %}
+```javascript
+(12.35).toPrecision(3) // "12.3"
+(12.25).toPrecision(3) // "12.3"
+(12.15).toPrecision(3) // "12.2"
+(12.45).toPrecision(3) // "12.4"
+```
 
 ## 自定义方法
 
-与其他对象一样，Number.prototype对象上面可以自定义方法，被Number的实例继承。
+与其他对象一样，`Number.prototype`对象上面可以自定义方法，被`Number`的实例继承。
 
 ```javascript
-
 Number.prototype.add = function (x) {
   return this + x;
 };
-
 ```
 
-上面代码为Number对象实例定义了一个add方法。
+上面代码为`Number`对象实例定义了一个`add`方法。
 
 由于Number对象的实例就是数值，在数值上调用某个方法，数值会自动转为对象，所以就得到了下面的结果。
 

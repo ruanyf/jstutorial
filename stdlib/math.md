@@ -45,9 +45,9 @@ Math.SQRT2 // 1.4142135623730951
 
 `Math`对象提供以下一些数学方法。
 
-### round方法
+### Math.round()
 
-`round`方法用于四舍五入。
+`Math.round`方法用于四舍五入。
 
 ```javascript
 Math.round(0.1) // 0
@@ -61,25 +61,25 @@ Math.round(-1.1) // -1
 Math.round(-1.5) // -1
 ```
 
-### abs方法，max方法，min方法
+### Math.abs()，Math.max()，Math.min()
 
-`abs`方法返回参数值的绝对值。
+`Math.abs`方法返回参数值的绝对值。
 
 ```javascript
 Math.abs(1) // 1
 Math.abs(-1) // 1
 ```
 
-`max`方法返回最大的参数，min方法返回最小的参数。
+`Math.max`方法返回最大的参数，`Math.min`方法返回最小的参数。
 
 ```javascript
 Math.max(2, -1, 5) // 5
 Math.min(2, -1, 5) // -1
 ```
 
-### floor方法，ceil方法
+### Math.floor()，Math.ceil()
 
-floor方法返回小于参数值的最大整数。
+`Math.floor`方法返回小于参数值的最大整数。
 
 ```javascript
 Math.floor(3.2) // 3
