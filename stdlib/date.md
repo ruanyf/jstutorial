@@ -182,18 +182,16 @@ new Date(-1, 0)
 
 类型转换时，Date对象的实例如果转为数值，则等于对应的毫秒数；如果转为字符串，则等于对应的日期字符串。所以，两个日期对象进行减法运算，返回的就是它们间隔的毫秒数；进行加法运算，返回的就是连接后的两个字符串。
 
-{% highlight javascript %}
+```javascript
+var d1 = new Date(2000, 2, 1);
+var d2 = new Date(2000, 3, 1);
 
-var then = new Date(2013,2,1);
-var now = new Date(2013,3,1);
-
-now - then
+d2 - d1
 // 2678400000
 
-now + then
-// "Mon Apr 01 2013 00:00:00 GMT+0800 (CST)Fri Mar 01 2013 00:00:00 GMT+0800 (CST)"
-
-{% endhighlight %}
+d2 + d1
+// "Sat Apr 01 2000 00:00:00 GMT+0800 (CST)Wed Mar 01 2000 00:00:00 GMT+0800 (CST)"
+```
 
 ## Date对象的静态方法
 
@@ -436,7 +434,7 @@ d.getUTCDate() // 5
 Date对象提供了一系列`set*`方法，用来设置实例对象的各个方面。
 
 - `setDate(date)`：设置实例对象对应的每个月的几号（1-31），返回改变后毫秒时间戳。
-- `setYear(year - 1900)`: 设置距离1900年的年数。
+- `setYear(year)`: 设置距离1900年的年数。
 - `setFullYear(year [, month, date])`：设置四位年份。
 - `setHours(hour [, min, sec, ms])`：设置小时（0-23）。
 - `setMilliseconds()`：设置毫秒（0-999）。
