@@ -700,47 +700,37 @@ document.documentElement.clientWidth和document.documentElement.clientHeight，�
 
 ### dataset属性
 
-dataset属性用于操作HTML标签元素的data-*属性。目前，Firefox、Chrome、Opera、Safari浏览器支持该API。
+`dataset`属性用于操作HTML标签元素的`data-*`属性。下面是一个有`data-*`属性的`div`节点。
 
-假设有如下的网页代码。
-
-{% highlight html %}
-
+```html
 <div id="myDiv" data-id="myId"></div>
+```
 
-{% endhighlight %}
+要读取`data-id`属性，可以从当前节点的`dataset.id`属性读取。
 
-以data-id属性为例，要读取这个值，可以用dataset.id。
-
-{% highlight javascript %}
-
+```javascript
 var id = document.getElementById("myDiv").dataset.id;
+```
 
-{% endhighlight %}
+要设置`data-id`属性，可以直接对`dataset.id`赋值。如果该属性不存在，将会被新建。
 
-要设置data-id属性，可以直接对dataset.id赋值。这时，如果data-id属性不存在，将会被创造出来。
+```javascript
+document.getElementById('myDiv').dataset.id = 'hello';
+```
 
-{% highlight javascript %}
+删除一个`data-*`属性，可以直接使用`delete`命令。
 
-document.getElementById("myDiv").dataset.id = "hello";
+```javascript
+delete document.getElementById("myDiv").dataset.id;
+```
 
-{% endhighlight %}
+除了`dataset`属性，也可以用`getAttribute('data-foo')`、`removeAttribute('data-foo')`、`setAttribute('data-foo')`、`hasAttribute('data-foo')`等方法操作`data-*`属性。
 
-删除一个data-*属性，可以直接使用delete命令。
-
-{% highlight javascript %}
-
-delete document.getElementById("myDiv").dataset.id
-
-{% endhighlight %}
-
-IE 9不支持dataset属性，可以用 getAttribute('data-foo')、removeAttribute('data-foo')、setAttribute('data-foo')、hasAttribute('data-foo') 代替。
-
-需要注意的是，dataset属性使用骆驼拼写法表示属性名，这意味着data-hello-world会用dataset.helloWorld表示。而如果此时存在一个data-helloWorld属性，该属性将无法读取，也就是说，data属性本身只能使用连词号，不能使用骆驼拼写法。
+需要注意的是，`dataset`属性使用骆驼拼写法表示属性名，这意味着`data-hello-world`会用`dataset.helloWorld`表示。而如果此时存在一个`data-helloWorld`属性，该属性将无法读取，也就是说，`data-*`属性本身只能使用连词号，不能使用骆驼拼写法。
 
 ### tabindex属性
 
-tabindex属性用来指定，当前HTML元素节点是否被tab键遍历，以及遍历的优先级。
+`tabindex`属性用来指定，当前HTML元素节点是否被tab键遍历，以及遍历的优先级。
 
 ```javascript
 var b1 = document.getElementById("button1");

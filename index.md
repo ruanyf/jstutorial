@@ -19,22 +19,21 @@ modifiedOn: 2014-05-18
 - [数组](grammar/array.html)
 - [函数](grammar/function.html)
 - [运算符](grammar/operator.html)
-- [数据类型转换](grammar/conversion.html)（基本完成）
-- [错误处理机制](grammar/error.html)（基本完成）
-- [编程风格](grammar/style.html)（基本完成）
+- [数据类型转换](grammar/conversion.html)
+- [错误处理机制](grammar/error.html)
+- [编程风格](grammar/style.html)
 
 <h2 id="stdlib">标准库</h2>
 
-- [Object对象](stdlib/object.html)（基本完成）
+- [Object对象](stdlib/object.html)
 - [Array 对象](stdlib/array.html)
-- [包装对象和Boolean对象](stdlib/wrapper.html)（基本完成）
+- [包装对象和Boolean对象](stdlib/wrapper.html)
 - [Number对象](stdlib/number.html)
 - [String对象](stdlib/string.html)
 - [Math对象](stdlib/math.html)
-- [Date对象](stdlib/date.html)（基本完成）
+- [Date对象](stdlib/date.html)
 - [RegExp对象](stdlib/regexp.html)
 - [JSON对象](stdlib/json.html)
-- [二进制数组](stdlib/arraybuffer.html)
 
 <h2 id="oop">面向对象编程</h2>
 
@@ -75,12 +74,12 @@ modifiedOn: 2014-05-18
 - [表单](htmlapi/form.html)
 - [文件与二进制数据的操作](htmlapi/file.html)
 - [Web Worker](htmlapi/webworker.html)
-- [SSE：服务器发送事件](htmlapi/eventsource.html)（基本完成）
+- [SSE：服务器发送事件](htmlapi/eventsource.html)
 - [Page Visiblity](htmlapi/pagevisibility.html)
 - [FullScreen API：全屏操作](htmlapi/fullscreen.html)
 - [Web Speech](htmlapi/webspeech.html)
 - [requestAnimationFrame](htmlapi/requestanimationframe.html)
-- [WebSocket](htmlapi/websocket.html)（基本完成）
+- [WebSocket](htmlapi/websocket.html)
 - [WebRTC](htmlapi/webrtc.html)
 - [Web Components](htmlapi/webcomponents.html)
 
@@ -102,8 +101,7 @@ modifiedOn: 2014-05-18
 - [Promise](advanced/promise.html)
 - [有限状态机](advanced/fsm.html)
 - [MVC模式和Backbone.js](advanced/backbonejs.html)
-- [严格模式](advanced/strict.html)（基本完成）
-- [ECMAScript 6 介绍](advanced/ecmascript6.html)
+- [严格模式](advanced/strict.html)
 
 <hr></hr>
 

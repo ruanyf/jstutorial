@@ -241,13 +241,13 @@ JavaScript使用大括号，将多个相关的语句组合在一起，称为“�
 a // 1
 ```
 
-上面代码在区块内部，声明并赋值了变量`a`，然后在区块外部，变量`a`依然有效，这说明区块不构成单独的作用域，与不使用区块的情况没有任何区别。所以，单独使用的区块在JavaScript中意义不大，很少出现。区块往往用来构成其他更复杂的语法结构，比如for、if、while、function等。
+上面代码在区块内部，声明并赋值了变量`a`，然后在区块外部，变量`a`依然有效，这说明区块不构成单独的作用域，与不使用区块的情况没有任何区别。所以，单独使用的区块在JavaScript中意义不大，很少出现。区块往往用来构成其他更复杂的语法结构，比如`for`、`if`、`while`、`function`等。
 
-### 条件语句
+## 条件语句
 
 条件语句提供一种语法构造，只有满足某个条件，才会执行相应的语句。JavaScript提供`if`结构和`switch`结构，完成条件判断。
 
-**（1）if 结构**
+### if 结构
 
 if结构先判断一个表达式的布尔值，然后根据布尔值的真伪，执行不同的语句。
 
@@ -290,7 +290,7 @@ if (x = y) {
 
 至于为什么优先采用“严格相等运算符”，而不是“相等运算符”（`==`），请参考《运算符》一节。
 
-**（2）if...else结构**
+### if...else结构
 
 `if`代码块后面，还可以跟一个`else`代码块，表示不满足条件时，所要执行的代码。
 
@@ -354,9 +354,9 @@ if (m !== 1) {
 // world
 ```
 
-**（3）switch结构**
+### switch结构
 
-多个`if...else`连在一起使用的时候，可以转为使用更方便的switch结构。
+多个`if...else`连在一起使用的时候，可以转为使用更方便的`switch`结构。
 
 ```javascript
 switch (fruit) {
@@ -437,11 +437,11 @@ if (o[fruit]){
 }
 ```
 
-### 循环语句
+## 循环语句
 
 循环语句用于重复执行某个操作，它有多种形式。
 
-**（1）while循环**
+### while循环
 
 `While`语句包括一个循环条件和一段代码块，只要条件为真，就不断循环执行代码块。
 
@@ -479,7 +479,7 @@ while (true) {
 }
 ```
 
-**（2）for循环**
+### for循环
 
 `for`语句是循环命令的另一种形式。
 
@@ -536,7 +536,7 @@ for ( ; ; ){
 
 上面代码省略了`for`语句表达式的三个部分，结果就导致了一个无限循环。
 
-**（3）do...while循环**
+### do...while循环
 
 `do...while`循环与`while`循环类似，唯一的区别就是先运行一次循环体，然后判断循环条件。
 
@@ -566,7 +566,7 @@ do {
 } while(i < x);
 ```
 
-**（4）break语句和continue语句**
+### break语句和continue语句
 
 `break`语句和`continue`语句都具有跳转作用，可以让代码不按既有的顺序执行。
 
@@ -600,7 +600,7 @@ while (i < 100){
 
 如果存在多重循环，不带参数的`break`语句和`continue`语句都只针对最内层循环。
 
-**（5）标签（label）**
+### 标签（label）
 
 JavaScript语言允许，语句的前面有标签（label），相当于定位符，用于跳转到程序的任意位置，标签的格式如下。
 
@@ -768,23 +768,21 @@ a instanceof Array // true
 
 `instanceof`运算符的详细解释，请见《面向对象编程》一章。
 
-### null和undefined
+## null和undefined
 
-**（1）相似性**
+### 概述
 
-首先，null与undefined都可以表示“没有”，含义非常相似。将一个变量赋值为undefined或null，老实说，语法效果几乎没区别。
+`null`与`undefined`都可以表示“没有”，含义非常相似。将一个变量赋值为`undefined`或`null`，老实说，语法效果几乎没区别。
 
 ```javascript
 var a = undefined;
-
 // 或者
-
 var a = null;
 ```
 
 上面代码中，a变量分别被赋值为`undefined`和`null`，这两种写法的效果几乎等价。
 
-在if语句中，它们都会被自动转为false，相等运算符（`==`）甚至直接报告两者相等。
+在`if`语句中，它们都会被自动转为false，相等运算符（`==`）甚至直接报告两者相等。
 
 ```javascript
 if (!undefined) {
@@ -801,13 +799,11 @@ undefined == null
 // true
 ```
 
-上面代码说明，两者的行为是何等相似！Google公司开发的JavaScript语言的替代品Dart语言，就明确规定只有null，没有undefined！
+上面代码说明，两者的行为是何等相似！Google公司开发的JavaScript语言的替代品Dart语言，就明确规定只有`null`，没有`undefined`！
 
 既然含义与用法都差不多，为什么要同时设置两个这样的值，这不是无端增加复杂度，令初学者困扰吗？这与历史原因有关。
 
-**（2）历史原因**
-
-1995年JavaScript诞生时，最初像Java一样，只设置了null作为表示"无"的值。根据C语言的传统，null被设计成可以自动转为0。
+1995年JavaScript诞生时，最初像Java一样，只设置了`null`作为表示"无"的值。根据C语言的传统，`null`被设计成可以自动转为0。
 
 ```javascript
 Number(null) // 0
@@ -818,27 +814,39 @@ Number(null) // 0
 
 首先，null像在Java里一样，被当成一个对象。但是，JavaScript的数据类型分成原始类型和合成类型两大类，Brendan Eich觉得表示"无"的值最好不是对象。
 
-其次，JavaScript的最初版本没有包括错误处理机制，发生数据类型不匹配时，往往是自动转换类型或者默默地失败。Brendan Eich觉得，如果null自动转为0，很不容易发现错误。
+其次，JavaScript的最初版本没有包括错误处理机制，发生数据类型不匹配时，往往是自动转换类型或者默默地失败。Brendan Eich觉得，如果`null`自动转为0，很不容易发现错误。
 
-因此，Brendan Eich又设计了一个undefined。他是这样区分的：`null`是一个表示"无"的**对象**，转为数值时为0；`undefined`是一个表示"无"的原始值，转为数值时为**NaN**。
+因此，Brendan Eich又设计了一个`undefined`。他是这样区分的：`null`是一个表示"无"的对象，转为数值时为0；`undefined`是一个表示"无"的原始值，转为数值时为`NaN`。
 
 ```javascript
 Number(undefined) // NaN
 5 + undefined // NaN
 ```
 
-但是，这样的区分在实践中很快就被证明不可行。目前，null和undefined基本是同义的，只有一些细微的差别。
+但是，这样的区分在实践中很快就被证明不可行。目前`null`和`undefined`基本是同义的，只有一些细微的差别。
 
-**（3）用法和含义**
+`null`的特殊之处在于，JavaScript把它包含在对象类型（object）之中。
 
-对于null和undefined，可以大致可以像下面这样理解。
+```javascript
+typeof null // "object"
+```
+
+上面代码表示，查询`null`的类型，JavaScript返回`object`（对象）。
+
+这并不是说null的数据类型就是对象，而是JavaScript早期部署中的一个约定俗成，其实不完全正确，后来再想改已经太晚了，会破坏现存代码，所以一直保留至今。
+
+注意，JavaScript的标识名区分大小写，所以`undefined`和`null`不同于`Undefined`和`Null`（或者其他仅仅大小写不同的词形），后者只是普通的变量名。
+
+### 用法和含义
+
+对于`null`和`undefined`，可以大致可以像下面这样理解。
 
 `null`表示空值，即该处的值现在为空。典型用法是：
 
 - 作为函数的参数，表示该函数的参数是一个没有任何内容的对象。
 - 作为对象原型链的终点。
 
-undefined表示不存在值，就是此处目前不存在任何值。典型用法是：
+`undefined`表示不存在值，就是此处目前不存在任何值。典型用法是：
 
 - 变量被声明了，但没有赋值时，就等于undefined。
 - 调用函数时，应该提供的参数没有提供，该参数等于undefined。
@@ -859,267 +867,52 @@ var x = f();
 x // undefined
 ```
 
-**（4）null的特殊之处**
-
-null的特殊之处在于，JavaScript把它包含在对象类型（object）之中。
-
-```javascript
-typeof null // "object"
-```
-
-上面代码表示，查询null的类型，JavaScript返回object（对象）。
-
-这并不是说null的数据类型就是对象，而是JavaScript早期部署中的一个约定俗成，其实不完全正确，后来再想改已经太晚了，会破坏现存代码，所以一直保留至今。
-
-**（5）注意点**
-
-JavaScript的标识名区分大小写，所以`undefined`和`null`不同于`Undefined`和`Null`（或者其他仅仅大小写不同的词形），后者只是普通的变量名。
-
-### 布尔值
+## 布尔值
 
 布尔值代表“真”和“假”两个状态。“真”用关键字true表示，“假”用关键字false表示。布尔值只有这两个值。
 
 下列运算符会返回布尔值：
 
-- 两元逻辑运算符： && (And)，|| (Or)
-- 前置逻辑运算符： ! (Not)
-- 相等运算符：===，!==，==，!=
-- 比较运算符：>，>=，<，<=
+- 两元逻辑运算符： `&&` (And)，`||` (Or)
+- 前置逻辑运算符： `!` (Not)
+- 相等运算符：`===`，`!==`，`==`，`!=`
+- 比较运算符：`>`，`>=`，`<`，`<=`
 
-如果JavaScript预期某个位置应该是布尔值，会将该位置上现有的值自动转为布尔值。转换规则是除了下面六个值被转为false，其他值都视为true。
+如果JavaScript预期某个位置应该是布尔值，会将该位置上现有的值自动转为布尔值。转换规则是除了下面六个值被转为`false`，其他值都视为`true`。
 
-- undefined
-- null
-- false
-- 0
-- NaN
-- ""（空字符串）
+- `undefined`
+- `null`
+- `false`
+- `0`
+- `NaN`
+- `""`（空字符串）
 
 布尔值往往用于程序流程的控制，请看一个例子。
 
-{% highlight javascript %}
-
-if (""){ console.log(true);}
+```javascript
+if ('') {
+  console.log(true);
+}
 // 没有任何输出
+```
 
-{% endhighlight %}
+上面代码的`if`命令后面的判断条件，预期应该是一个布尔值，所以JavaScript自动将空字符串，转为布尔值`false`，导致程序不会进入代码块，所以没有任何输出。
 
-上面代码的if命令后面的判断条件，预期应该是一个布尔值，所以JavaScript自动将空字符串，转为布尔值false，导致程序不会进入代码块，所以没有任何输出。
+需要特别注意的是，空数组（`[]`）和空对象（`{}`）对应的布尔值，都是`true`。
 
-需要特别注意的是，空数组（[]）和空对象（{}）对应的布尔值，都是true。
-
-{% highlight javascript %}
-
-if ([]){ console.log(true);}
+```javascript
+if ([]) {
+  console.log(true);
+}
 // true
 
-if ({}){ console.log(true);}
+if ({}) {
+  console.log(true);
+}
 // true
-
-{% endhighlight %}
+```
 
 更多关于数据类型转换的介绍，参见《数据类型转换》一节。
-
-## 结尾的分号
-
-### 不使用分号结尾的语句 
-
-分号表示一条语句的结尾。但是，有一些语法结构不需要在语句的结尾添加分号，主要是以下三种情况。
-
-**（1）for和while循环**
-
-{% highlight javascript %}
-
-for(;;){} // 没有分号
-
-while(true){} // 没有分号
-
-{% endhighlight %}
-
-需要注意的是do...while循环是有分号的。
-
-{% highlight javascript %}
-
-do {
-	a--;
-} while(a > 0); // 分号不能省略
-
-{% endhighlight %}
-
-**（2）分支语句：if， switch， try**
-
-{% highlight javascript %}
-
-if (true) {} // 没有分号
-
-switch () {} // 没有分号
-
-try {} catch {} // 没有分号
-
-{% endhighlight %}
-
-**（3）函数的声明语句**
-
-{% highlight javascript %}
-
-function f() {} // 没有分号
-
-{% endhighlight %}
-
-但是函数表达式仍然要使用分号。
-
-{% highlight javascript %}
-
-var f = function f() {};
-
-{% endhighlight %}
-
-以上三种情况，如果使用了分号，并不会出错。因为，解释引擎会把这个分号解释为空语句。
-
-### 分号的自动添加
-
-除了本来就不写分号的情况，JavaScript引擎还有一个特点，就是在应该写分号却没写的情况下，它会自动添加（Automatic Semicolon Insertion，简称ASI）。
-
-{% highlight javascript %}
-
-var a = b + c
-// 等同于
-var a = b + c;
-
-{% endhighlight %}
-
-但是，这种自动添加不是绝对的。如果下一行的开始可以与本行的结尾连在一起解释，就不会自动添加分号。
-
-{% highlight javascript %}
-
-var
-a
-=
-3
-
-// 等同于
-
-var a = 3;
-
-"abc"
-.length
-
-// 等同于
-
-"abc".length
-
-{% endhighlight %}
-
-上面代码举了两个例子，每行的尾部都没有分号，JavaScript并不会自动添加分号，因为每行的结尾与下一行的开头可以放在一起解释。下面这个例子也不会自动添加分号。
-
-{% highlight javascript %}
-
-3 * (2 * (4 + (3 - 5))) 
-+ 
-(10 * (27 / 6))
-
-// 等同于
-
-3 * (2 * (4 + (3 - 5))) + (10 * (27 / 6))
-
-{% endhighlight %}
-
-这些例子还是比较容易看出来的，但是下面的例子就不那么容易发现了。它们都不会自动添加分号。
-
-{% highlight javascript %}
-
-var a = b + c
-(d+e).toString();
-/* 结果报错，因为两行连在一起，
-   解释为c(d+e)，
-   即对函数 c 的调用 */
-
-a = b
-/hi/g.exec(c).map(d);
-/* 解释为 a = b / hi / g.exec(c).map(d)，
-   即把正则表达式的斜杠当作除法运算符 */ 
-
-var a = "b"
-[ "red", "green" ].forEach(function(c) { console.log(c) })
-/* 结果报错，因为两行连在一起，
- 解释为"b"["red", "green"]，
- 即把字符串当作一个数组，按索引取值 */ 
-
-var a = 0;
-var f = function(x) { return x }
-(a++)
-/* f等于0，因为(a++)被
- * 视为匿名函数的调用 */
-
-return a +
-b;
-
-return (a
-+ b)
- 
-obj.foo(arg1,
-arg2)
-
-{% endhighlight %}
-
-一般来说，在没有分号结尾的情况下，如果下一行起首的是(、 [ 、+、-、/这五个字符中的一个，分号不会被自动添加。只有下一行的开始与本行的结尾，无法放在一起解释，JavaScript引擎才会自动添加分号。
-
-{% highlight javascript %}
-
-if (a < 0) a = 0
-console.log(a)
-
-// 等同于下面的代码，
-// 因为0console没有意义
-
-if (a < 0) a = 0;
-console.log(a)
-
-{% endhighlight %}
-
-另外，如果一行的起首是“自增”（++）或“自减”（--）运算符，则它们的前面会自动添加分号。
-
-{% highlight javascript %}
-
-a = b = c = 1
-a
-++
-b
---
-c
-
-console.log(a, b, c)
-// 1 2 0
-
-{% endhighlight %}
-
-之所以会得到“1 2 0”的结果，原因是自增和自减运算符前，自动被加上了分号。上面的代码实际上等同于下面的形式：
-
-{% highlight javascript %}
-
-a = b = c = 1;
-a;
-++b;
---c;
-
-{% endhighlight %}
-
-如果continue、break、return和throw这四个语句后面，直接跟换行符，则会自动添加分号。这意味着，如果return语句返回的是一个对象的字面量，起首的大括号一定要写在同一行，否则得不到预期结果。
-
-{% highlight javascript %}
-
-return
-{ first: "Jane" };
-
-// 解释成
-return;
-{ first: "Jane" };
-
-{% endhighlight %}
-
-由于解释引擎自动添加分号的行为难以预测，因此编写代码的时候不应该省略行尾的分号。
-
-省略结尾的分号，还有一个问题。有些JavaScript代码压缩器不会自动添加分号，因此遇到没有分号的结尾，就会让代码保持原状，而不是压缩成一行。
 
 ## 参考链接
 
