@@ -27,7 +27,7 @@ process对象是Node的一个全局对象，提供当前node进程的信息。�
 process对象提供一系列属性，用于返回系统信息。
 
 - **process.argv**：返回当前进程的命令行参数数组。
-- **process.env**：返回一个对象，成员为当前shell的环境变量，比如process.env.HOME。
+- **process.env**：返回一个对象，成员为当前Shell的环境变量，比如`process.env.HOME`。
 - **process.installPrefix**：node的安装路径的前缀，比如`/usr/local`，则node的执行文件目录为`/usr/local/bin/node`。
 - **process.pid**：当前进程的进程号。
 - **process.platform**：当前系统平台，比如Linux。
@@ -210,19 +210,17 @@ setTimeout(function () {
 
 ### process.exit()
 
-process.exit方法用来退出当前进程，它可以接受一个数值参数。如果参数大于0，表示执行失败；如果等于0表示执行成功。
+`process.exit`方法用来退出当前进程，它可以接受一个数值参数。如果参数大于0，表示执行失败；如果等于0表示执行成功。
 
 ```bash
-
 if (err) {
   process.exit(1);
 } else {
   process.exit(0);
 }
-
 ```
 
-process.exit()执行时，会触发exit事件。
+`process.exit()`执行时，会触发`exit`事件。
 
 ### process.on()
 

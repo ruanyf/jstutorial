@@ -13,13 +13,14 @@ Node程序由许多个模块组成，每个模块就是一个文件。Node模块
 根据CommonJS规范，一个单独的文件就是一个模块。每一个模块都是一个单独的作用域，也就是说，在一个文件定义的变量（还包括函数和类），都是私有的，对其他文件是不可见的。
 
 ```javascript
+// example.js
 var x = 5;
 var addX = function(value) {
   return value + x;
 };
 ```
 
-上面代码中，变量`x`和函数`addX`，是当前文件私有的，其他文件不可见。
+上面代码中，变量`x`和函数`addX`，是当前文件`example.js`私有的，其他文件不可见。
 
 如果想在多个文件分享变量，必须定义为global对象的属性。
 
@@ -27,9 +28,9 @@ var addX = function(value) {
 global.warning = true;
 ```
 
-上面代码的waining变量，可以被所有文件读取。当然，这样写法是不推荐的。
+上面代码的`warning`变量，可以被所有文件读取。当然，这样写法是不推荐的。
 
-CommonJS规定，每个文件的对外接口是module.exports对象。这个对象的所有属性和方法，都可以被其他文件导入。
+CommonJS规定，每个文件的对外接口是`module.exports`对象。这个对象的所有属性和方法，都可以被其他文件导入。
 
 ```javascript
 var x = 5;
@@ -42,7 +43,7 @@ module.exports.addX = addX;
 
 上面代码通过`module.exports`对象，定义对外接口，输出变量`x`和函数`addX`。`module.exports`对象是可以被其他文件导入的，它其实就是文件内部与外部通信的桥梁。
 
-require方法用于在其他文件加载这个接口，具体用法参见《Require命令》的部分。
+`require`方法用于在其他文件加载这个接口，具体用法参见《Require命令》的部分。
 
 ```javascript
 var example = require('./example.js');
@@ -50,6 +51,12 @@ var example = require('./example.js');
 console.log(example.x); // 5
 console.log(addX(1)); // 6
 ```
+
+CommonJS模块的特点如下。
+
+- 所有代码都运行在模块作用域，不会污染全局作用域。
+- 模块可以多次加载，但是只会在第一次加载时运行一次，然后运行结果就被缓存了，以后再加载，就直接读取缓存结果。要想让模块再次运行，必须清除缓存。
+- 模块加载的顺序，按照其在代码中出现的顺序。
 
 ## module对象
 

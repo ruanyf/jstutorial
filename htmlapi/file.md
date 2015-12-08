@@ -23,18 +23,14 @@ Blob（Binary Large Object）对象代表了一段二进制数据，提供了一
 
 （1）Blob构造函数，接受两个参数。第一个参数是一个包含实际数据的数组，第二个参数是数据的类型，这两个参数都不是必需的。
 
-{% highlight javascript %}
-
+```javascript
 var htmlParts = ["<a id=\"a\"><b id=\"b\">hey!<\/b><\/a>"];
-
 var myBlob = new Blob(htmlParts, { "type" : "text\/xml" });
-
-{% endhighlight %}
+```
 
 下面是一个利用Blob对象，生成可下载文件的例子。
 
-{% highlight javascript %}
-
+```javascript
 var blob = new Blob(["Hello World"]);
 
 var a = document.createElement("a");
@@ -43,23 +39,19 @@ a.download = "hello-world.txt";
 a.textContent = "Download Hello World!";
 
 body.appendChild(a);
-
-{% endhighlight %}
+```
 
 上面的代码生成了一个超级链接，点击后提示下载文本文件hello-world.txt，文件内容为“Hello World”。
 
 （2）Blob对象的slice方法，将二进制数据按照字节分块，返回一个新的Blob对象。
 
-{% highlight javascript %}
-
+```javascript
 var newBlob = oldBlob.slice(startingByte, endindByte);
-
-{% endhighlight %}
+```
 
 下面是一个使用XMLHttpRequest对象，将大文件分割上传的例子。
 
-{% highlight javascript %}
-
+```javascript
 function upload(blobOrFile) {
   var xhr = new XMLHttpRequest();
   xhr.open('POST', '/server', true);
@@ -85,8 +77,7 @@ document.querySelector('input[type="file"]').addEventListener('change', function
 }, false);
 
 })();
-
-{% endhighlight %}
+```
 
 （3）Blob对象有两个只读属性：
 
@@ -99,24 +90,19 @@ document.querySelector('input[type="file"]').addEventListener('change', function
 
 FileList对象针对表单的file控件。当用户通过file控件选取文件后，这个控件的files属性值就是FileList对象。它在结构上类似于数组，包含用户选取的多个文件。
 
-{% highlight html %}
-
+```html
 <input type="file" id="input" onchange="console.log(this.files.length)" multiple />
-
-{% endhighlight %}
+```
 
 当用户选取文件后，就可以读取该文件。
 
-{% highlight javascript %}
-
+```javascript
 var selected_file = document.getElementById('input').files[0];
-
-{% endhighlight %}
+```
 
 采用拖放方式，也可以得到FileList对象。
 
-{% highlight javascript %}
-
+```javascript
 var dropZone = document.getElementById('drop_zone');
 dropZone.addEventListener('drop', handleFileSelect, false);
 
@@ -128,109 +114,103 @@ function handleFileSelect(evt) {
 
     // ...
 }
-
-{% endhighlight %}
+```
 
 上面代码的 handleFileSelect 是拖放事件的回调函数，它的参数evt是一个事件对象，该参数的dataTransfer.files属性就是一个FileList对象，里面包含了拖放的文件。
 
-## File对象
+## File API
 
-File对象是FileList对象的成员，包含了文件的一些元信息，比如文件名、上次改动时间、文件大小和文件类型。它的属性值如下：
+File API提供`File`对象，它是`FileList`对象的成员，包含了文件的一些元信息，比如文件名、上次改动时间、文件大小和文件类型。
 
-- name：文件名，该属性只读。
-- size：文件大小，单位为字节，该属性只读。
-- type：文件的MIME类型，如果分辨不出类型，则为空字符串，该属性只读。
-- lastModifiedDate：文件的上次修改时间。
-
-{% highlight javascript %}
-
+```javascript
 var selected_file = document.getElementById('input').files[0];
 
 var fileName = selected_file.name;
 var fileSize = selected_file.size;
 var fileType = selected_file.type;
+```
 
-{% endhighlight %}
+`File`对象的属性值如下。
 
-## FileReader对象
-
-FileReader对象用于读取文件，即把文件内容读入内存。它的参数是File对象或Blob对象。
-
-对于不同类型的文件，FileReader使用不同的方法读取。
-
-- **readAsBinaryString(Blob|File)**：返回二进制字符串，该字符串每个字节包含一个0到255之间的整数。
-
-- **readAsText(Blob|File, opt_encoding)** ：返回文本字符串。默认情况下，文本编码格式是'UTF-8'，可以通过可选的格式参数，指定其他编码格式的文本。
-
-- **readAsDataURL(Blob|File)**：返回一个基于Base64编码的data-uri对象。
-
-- **readAsArrayBuffer(Blob|File)** ：返回一个ArrayBuffer对象。
-
-readAsText方法用于读取文本文件，它的第一个参数是File或Blob对象，第二个参数是前一个参数的编码方法，如果省略就默认为UTF-8编码。该方法是异步方法，一般监听onload事件，用来确定文件是否加载结束，方法是判断FileReader实例的result属性是否有值。其他三种读取方法，用法与readAsText方法类似。
+- `name`：文件名，该属性只读。
+- `size`：文件大小，单位为字节，该属性只读。
+- `type`：文件的MIME类型，如果分辨不出类型，则为空字符串，该属性只读。
+- `lastModified`：文件的上次修改时间，格式为时间戳。
+- `lastModifiedDate`：文件的上次修改时间，格式为`Date`对象实例。
 
 ```javascript
+$('#upload-file').files[0]
+// {
+//   lastModified: 1449370355682,
+//   lastModifiedDate: Sun Dec 06 2015 10:52:35 GMT+0800 (CST),
+//   name: "HTTP 2 is here Goodbye SPDY Not quite yet.png",
+//   size: 17044,
+//   type: "image/png"
+// }
+```
 
+## FileReader API
+
+FileReader API用于读取文件，即把文件内容读入内存。它的参数是`File`对象或`Blob`对象。
+
+对于不同类型的文件，FileReader提供不同的方法读取文件。
+
+- `readAsBinaryString(Blob|File)`：返回二进制字符串，该字符串每个字节包含一个0到255之间的整数。
+- `readAsText(Blob|File, opt_encoding)`：返回文本字符串。默认情况下，文本编码格式是'UTF-8'，可以通过可选的格式参数，指定其他编码格式的文本。
+- `readAsDataURL(Blob|File)`：返回一个基于Base64编码的data-uri对象。
+- `readAsArrayBuffer(Blob|File)`：返回一个ArrayBuffer对象。
+
+`readAsText`方法用于读取文本文件，它的第一个参数是`File`或`Blob`对象，第二个参数是前一个参数的编码方法，如果省略就默认为`UTF-8`编码。该方法是异步方法，一般监听`onload`件，用来确定文件是否加载结束，方法是判断`FileReader`实例的`result`属性是否有值。其他三种读取方法，用法与`readAsText`方法类似。
+
+```javascript
 var reader = new FileReader();
-
 reader.onload = function(e) {
   var text = reader.result;
 }
 
 reader.readAsText(file, encoding);
-
 ```
 
-readAsDataURL方法返回一个data URL，它的作用基本上是将文件数据进行Base64编码。你可以将返回值设为图像的src属性。
+`readAsDataURL`方法返回一个data URL，它的作用基本上是将文件数据进行Base64编码。你可以将返回值设为图像的`src`属性。
 
 ```javascript
-
-var reader = new FileReader();
-
-reader.onload = function(e) {
-  var dataURL = reader.result;
+var file = document.getElementById('destination').files[0];
+if(file.type.indexOf('image') !== -1) {
+  var reader = new FileReader();
+  reader.onload = function (e) {
+    var dataURL = reader.result;
+  }
+  reader.readAsDataURL(file);
 }
-
-reader.readAsDataURL(file);
-
 ```
 
-readAsBinaryString方法可以读取任意类型的文件，而不仅仅是文本文件，返回文件的原始的二进制内容。这个方法与XMLHttpRequest.sendAsBinary方法结合使用，就可以使用JavaScript上传任意文件到服务器。
+`readAsBinaryString`方法可以读取任意类型的文件，而不仅仅是文本文件，返回文件的原始的二进制内容。这个方法与XMLHttpRequest.sendAsBinary方法结合使用，就可以使用JavaScript上传任意文件到服务器。
 
 ```javascript
-
 var reader = new FileReader();
-
 reader.onload = function(e) {
   var rawData = reader.result;
 }
-
 reader.readAsBinaryString(file);
-
 ```
 
-readAsArrayBuffer方法读取文件，返回一个类型化数组（ArrayBuffer），即固定长度的二进制缓存数据。在文件操作时（比如将JPEG图像转为PNG图像），这个方法非常方便。
+`readAsArrayBuffer`方法读取文件，返回一个类型化数组（ArrayBuffer），即固定长度的二进制缓存数据。在文件操作时（比如将JPEG图像转为PNG图像），这个方法非常方便。
 
 ```javascript
-
 var reader = new FileReader();
-
 reader.onload = function(e) {
   var arrayBuffer = reader.result;
 }
 
 reader.readAsArrayBuffer(file);
-
 ```
 
-除了以上四种不同的读取文件方法，FileReader对象还有一个abort方法，用于中止文件上传。
+除了以上四种不同的读取文件方法，FileReader API还有一个`abort`方法，用于中止文件上传。
 
-{% highlight javascript %}
-
+```javascript
 var reader = new FileReader();
-
 reader.abort();
-
-{% endhighlight %}
+```
 
 FileReader对象采用异步方式读取文件，可以为一系列事件指定回调函数。
 
@@ -243,39 +223,29 @@ FileReader对象采用异步方式读取文件，可以为一系列事件指定�
 
 下面的代码是如何展示文本文件的内容。
 
-{% highlight javascript %}
-
+```javascript
 var reader = new FileReader();
-
-reader.onload = function(e){
+reader.onload = function(e) {
   console.log(e.target.result);
 }
-
 reader.readAsText(blob);
+```
 
-{% endhighlight %}
+`onload`事件的回调函数接受一个事件对象，该对象的`target.result`就是文件的内容。
 
-onload事件的回调函数接受一个事件对象，该对象的target.result就是文件的内容。
+下面是一个使用`readAsDataURL`方法，为`img`元素添加`src`属性的例子。
 
-下面是一个使用readAsDataURL方法，为img元素添加src属性的例子。
-
-{% highlight javascript %}
-
+```javascript
 var reader = new FileReader();
-
 reader.onload = function(e) {
-	document.createElement('img').src = e.target.result;
-
+  document.createElement('img').src = e.target.result;
 };
-
 reader.readAsDataURL(f);
+```
 
-{% endhighlight %}
+下面是一个`onerror`事件回调函数的例子。
 
-下面是一个onerror事件回调函数的例子。
-
-{% highlight javascript %}
-
+```javascript
 var reader = new FileReader();
 reader.onerror = errorHandler;
 
@@ -293,20 +263,17 @@ function errorHandler(evt) {
       alert('An error occurred reading this file.');
   };
 }
+```
 
-{% endhighlight %}
+下面是一个`onprogress`事件回调函数的例子，主要用来显示读取进度。
 
-下面是一个onprogress事件回调函数的例子，主要用来显示读取进度。
-
-{% highlight javascript %}
-
+```javascript
 var reader = new FileReader();
 reader.onprogress = updateProgress;
 
 function updateProgress(evt) {
   if (evt.lengthComputable) {
     var percentLoaded = Math.round((evt.loaded / evt.totalEric Bidelman) * 100);
-	  
     var progress = document.querySelector('.percent');
     if (percentLoaded < 100) {
       progress.style.width = percentLoaded + '%';
@@ -314,10 +281,9 @@ function updateProgress(evt) {
     }
   }
 }
+```
 
-{% endhighlight %}
-
-读取大文件的时候，可以利用Blob对象的slice方法，将大文件分成小段，逐一读取，这样可以加快处理速度。
+读取大文件的时候，可以利用`Blob`对象的`slice`方法，将大文件分成小段，逐一读取，这样可以加快处理速度。
 
 ## 综合实例：显示用户选取的本地图片
 

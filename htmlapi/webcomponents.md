@@ -304,34 +304,29 @@ var XFoo = document.registerElement('x-foo-with-markup',
 
 ## Shadow DOM
 
-所谓Shadow DOM指的是，浏览器将模板、样式表、属性、JavaScript代码等，封装成一个独立的DOM元素。外部的设置无法影响到其内部，而内部的设置也不会影响到外部，与浏览器处理原生网页元素（比如&lt;video&gt;元素）的方式很像。Shadow DOM最大的好处有两个，一是可以向用户隐藏细节，直接提供组件，二是可以封装内部样式表，不会影响到外部。Chrome 35+支持Shadow DOM。
+所谓Shadow DOM指的是，浏览器将模板、样式表、属性、JavaScript代码等，封装成一个独立的DOM元素。外部的设置无法影响到其内部，而内部的设置也不会影响到外部，与浏览器处理原生网页元素（比如`<video>`元素）的方式很像。Shadow DOM最大的好处有两个，一是可以向用户隐藏细节，直接提供组件，二是可以封装内部样式表，不会影响到外部。Chrome 35+支持Shadow DOM。
 
-Shadow DOM元素必须依存在一个现有的DOM元素之下，通过createShadowRoot方法创造，然后将其插入该元素。
+Shadow DOM元素必须依存在一个现有的DOM元素之下，通过`createShadowRoot`方法创造，然后将其插入该元素。
 
 ```javascript
-
 var shadowRoot = element.createShadowRoot();
-shadowRoot.appendChild(document.body);
-
+document.body.appendChild(shadowRoot);
 ```
 
-上面代码创造了一个shadowRoot元素，然后将其插入HTML文档。
+上面代码创造了一个`shadowRoot`元素，然后将其插入HTML文档。
 
 下面的例子是指定网页中某个现存的元素，作为Shadom DOM的根元素。
 
 ```html
-
 <button>Hello, world!</button>
-
 <script>
   var host = document.querySelector('button');
   var root = host.createShadowRoot();
   root.textContent = '你好';
 </script>
-
 ```
 
-上面代码指定现存的button元素，为Shadow DOM的根元素，并将button的文字从英文改为中文。
+上面代码指定现存的`button`元素，为Shadow DOM的根元素，并将`button`的文字从英文改为中文。
 
 通过innerHTML属性，可以为Shadow DOM指定内容。
 
@@ -344,39 +339,35 @@ shadow.innerHTML += '<style>p { color: red };</style>';
 下面的例子是为Shadow DOM加上独立的模板。
 
 ```html
-
 <div id="nameTag">张三</div>
 
 <template id="nameTagTemplate">
-	<style>
-		.outer {
-			border: 2px solid brown;
-		}
-	</style>
+  <style>
+    .outer {
+      border: 2px solid brown;
+    }
+  </style>
 
-	<div class="outer">
-		<div class="boilerplate">
-			Hi! My name is
-		</div>
-		<div class="name">
-			Bob
-		</div>
-	</div>
+  <div class="outer">
+    <div class="boilerplate">
+      Hi! My name is
+    </div>
+    <div class="name">
+      Bob
+    </div>
+  </div>
 </template>
-
 ```
 
-上面代码是一个div元素和模板。接下来，就是要把模板应用到div元素上。
+上面代码是一个`div`元素和模板。接下来，就是要把模板应用到`div`元素上。
 
 ```javascript
-
 var shadow = document.querySelector('#nameTag').createShadowRoot();
 var template = document.querySelector('#nameTagTemplate');
-shadow.appendChild(template.content.cloneNode());
-
+shadow.appendChild(template.content.cloneNode(true));
 ```
 
-上面代码先用createShadowRoot方法，对div创造一个根元素，用来指定Shadow DOM，然后把模板元素添加为Shadow的子元素。
+上面代码先用`createShadowRoot`方法，对`div`创造一个根元素，用来指定Shadow DOM，然后把模板元素添加为`Shadow`的子元素。
 
 ## HTML Import
 

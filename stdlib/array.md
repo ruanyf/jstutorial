@@ -63,74 +63,58 @@ JavaScript语言的设计规格，就是这么规定的，虽然不是一个大�
 
 Array.isArray方法用来判断一个值是否为数组。它可以弥补typeof运算符的不足。
 
-{% highlight javascript %}
-
-var a = [1,2,3];
+```javascript
+var a = [1, 2, 3];
 
 typeof a // "object"
-
 Array.isArray(a) // true
+```
 
-{% endhighlight %}
-
-上面代码表示，typeof运算符只能显示数组的类型是Object，而Array.isArray方法可以对数组返回true。
+上面代码表示，`typeof`运算符只能显示数组的类型是Object，而Array.isArray方法可以对数组返回true。
 
 ## Array实例的方法
 
-以下这些Array实例对象的方法，都是数组实例才能使用。如果不想创建实例，只是想单纯调用这些方法，可以写成 [].method.call(调用对象，参数) 的形式，或者 Array.prototype.method.call(调用对象，参数)的形式。
+以下这些Array实例对象的方法，都是数组实例才能使用。如果不想创建实例，只是想单纯调用这些方法，可以写成`[].method.call`(调用对象，参数) 的形式，或者`Array.prototype.method.call`(调用对象，参数)的形式。
 
 ### valueOf方法，toString方法
 
-valueOf方法返回数组本身。
+`valueOf`方法返回数组本身。
 
-{% highlight javascript %}
-
-var a = [1,2,3];
-
-a.valueOf()
-// [1,2,3]
-
-{% endhighlight %}
+```javascript
+var a = [1, 2, 3];
+a.valueOf() // [1, 2, 3]
+```
 
 toString 方法返回数组的字符串形式。
 
-{% highlight javascript %}
+```javascript
+var a = [1, 2, 3];
+a.toString() // "1,2,3"
 
-var a = [1,2,3];
-
-a.toString()
-// "1,2,3"
-
-var a = [1,2,3,[4,5,6]];
-
-a.toString()
-// "1,2,3,4,5,6"
-
-{% endhighlight %}
+var a = [1, 2, 3, [4, 5, 6]];
+a.toString() // "1,2,3,4,5,6"
+```
 
 ### push方法，pop方法
 
-push方法用于在数组的末端添加一个或多个元素，并返回添加后的数组的长度。
+`push`方法用于在数组的末端添加一个或多个元素，并返回添加后的数组的长度。
 
-{% highlight javascript %}
-
+```javascript
 var a = [];
 
 a.push(1) // 1
-a.push("a") // 2
+a.push('a') // 2
 a.push(true, {}) // 4
-a // [1, "a", true, {}]
+a // [1, 'a', true, {}]
+```
 
-{% endhighlight %}
-
-上面代码使用push方法，先后往数组中添加了四个成员。
+上面代码使用`push`方法，先后往数组中添加了四个成员。
 
 如果需要合并两个数组，可以这样写。
 
-{% highlight javascript %}
-
-var a = [1,2,3];
-var b = [4,5,6];
+```javascript
+var a = [1, 2, 3];
+var b = [4, 5, 6];
 
 Array.prototype.push.apply(a, b)
 // 或者
@@ -139,16 +123,13 @@ a.push.apply(a,b)
 // 上面两种写法等同于
 a.push(4,5,6)
 
-a
-// [1, 2, 3, 4, 5, 6]
+a // [1, 2, 3, 4, 5, 6]
+```
 
-{% endhighlight %}
+`push`方法还可以用于向对象添加元素，添加后的对象变成“类似数组的”对象，即新加入元素的键对应数组的索引，并且对象有一个length属性。
 
-push方法还可以用于向对象添加元素，添加后的对象变成“类似数组的”对象，即新加入元素的键对应数组的索引，并且对象有一个length属性。
-
-{% highlight javascript %}
-
-var a = { a: 1 };
+```javascript
+var a = {a: 1};
 
 [].push.call(a, 2);
 a
@@ -157,52 +138,43 @@ a
 [].push.call(a, [3]);
 a
 // {a:1, 0:2, 1:[3], length: 2}
-
-{% endhighlight %}
+```
 
 pop方法用于删除数组的最后一个元素，并返回该元素。
 
-{% highlight javascript %}
-
+```javascript
 var a = ['a', 'b', 'c'];
 
 a.pop() // 'c'
 a // ['a', 'b']
-
-{% endhighlight %}
+```
 
 对空数组使用pop方法，不会报错，而是返回undefined。
 
-{% highlight javascript %}
-
+```javascript
 [].pop() // undefined
-
-{% endhighlight %}
+```
 
 ### join方法，concat方法
 
-join方法以参数作为分隔符，将所有数组成员组成一个字符串返回。如果不提供参数，默认用逗号分隔。
+`join`方法以参数作为分隔符，将所有数组成员组成一个字符串返回。如果不提供参数，默认用逗号分隔。
 
-{% highlight javascript %}
-
-var a = [1,2,3,4];
+```javascript
+var a = [1, 2, 3, 4];
 
 a.join() // "1,2,3,4"
 a.join('') // '1234'
 a.join("|") // "1|2|3|4"
+```
 
-{% endhighlight %}
+通过函数的call方法，`join`方法（即Array.prototype.join）也可以用于字符串。
 
-通过函数的call方法，join方法（即Array.prototype.join）也可以用于字符串。
-
-{% highlight javascript %}
-
+```javascript
 Array.prototype.join.call('hello', '-')
 // "h-e-l-l-o"
+```
 
-{% endhighlight %}
-
-concat方法将新数组的成员，添加到原数组的尾部，然后返回一个新数组，常用于连接多个数组。
+concat方法用于多个数组的合并。它将新数组的成员，添加到原数组的尾部，然后返回一个新数组。
 
 ```javascript
 ['hello'].concat(['world'])
@@ -249,19 +221,16 @@ concat方法也可以用于将对象合并为数组，但是必须借助call方�
 
 shift方法用于删除数组的第一个元素，并返回该元素。
 
-{% highlight javascript %}
-
+```javascript
 var a = ['a', 'b', 'c'];
 
 a.shift() // 'a'
 a // ['b', 'c']
-
-{% endhighlight %}
+```
 
 shift方法可以遍历并清空一个数组。
 
-{% highlight javascript %}
-
+```javascript
 var list = [1,2,3,4,5,6,7,8,9,10];
 
 var item;
@@ -271,40 +240,40 @@ while (item = list.shift()) {
 }
 
 list // []
-
-{% endhighlight %}
+```javascript
 
 unshift方法用于在数组的第一个位置添加元素，并返回添加新元素后的数组长度。
 
-{% highlight javascript %}
-
+```javascript
 var a = ['a', 'b', 'c'];
 
 a.unshift('x'); // 4
 a // ['x', 'a', 'b', 'c']
-
-{% endhighlight %}
+```
 
 ### reverse方法
 
 reverse方法用于颠倒数组中元素的顺序，使用这个方法以后，返回改变后的原数组。
 
-{% highlight javascript %}
-
+```javascript
 var a = ['a', 'b', 'c'];
 
 a.reverse() // ["c", "b", "a"] 
 a // ["c", "b", "a"] 
-
-{% endhighlight %}
+```
 
 ### slice方法
 
-slice方法返回指定位置的数组成员组成的新数组，原数组不变。它的第一个参数为起始位置（从0开始），第二个参数为终止位置（但该位置的元素本身不包括在内）。如果省略第二个参数，则一直返回到原数组的最后一个成员。
+`slice`方法用于提取原数组的一部分，返回一个新数组，原数组不变。
 
-{% highlight javascript %}
+它的第一个参数为起始位置（从0开始），第二个参数为终止位置（但该位置的元素本身不包括在内）。如果省略第二个参数，则一直返回到原数组的最后一个成员。
 
-var a = ["a","b","c"];
+```javascript
+// 格式
+arr.slice(start_index, upto_index);
+
+// 用法
+var a = ['a', 'b', 'c'];
 
 a.slice(1,2) // ["b"]
 a.slice(1) // ["b", "c"]
@@ -313,8 +282,7 @@ a.slice(-2) // ["b", "c"]
 a.slice(4) // []
 a.slice(2, 6) // ["c"]
 a.slice(2, 1) // []
-
-{% endhighlight %}
+```
 
 上面代码表示，如果slice方法的参数是负数，则从尾部开始选择的成员个数；如果参数值大于数组成员的个数，或者第二个参数小于第一个参数，则返回空数组。
 
@@ -335,12 +303,15 @@ Array.prototype.slice.call(arguments);
 
 ### splice()
 
-splice方法用于删除元素，并可以在被删除的位置添加入新的数组元素。它的返回值是被删除的元素。需要特别注意的是，该方法会改变原数组。
+splice方法用于删除原数组的一部分成员，并可以在被删除的位置添加入新的数组成员。它的返回值是被删除的元素。该方法会改变原数组。
 
 splice的第一个参数是删除的起始位置，第二个参数是被删除的元素个数。如果后面还有更多的参数，则表示这些就是要被插入数组的新元素。
 
 {% highlight javascript %}
+// 格式
+arr.splice(index, count_to_remove, addElement1, addElement2, ...);
 
+// 用法
 var a = ["a","b","c","d","e","f"];
 
 a.splice(4,2)
@@ -397,27 +368,25 @@ a
 
 ### sort()
 
-sort方法对数组元素进行排序，默认是按照字典顺序排序。排序后，原数组将被改变。
+`sort`方法对数组成员进行排序，默认是按照字典顺序排序。排序后，原数组将被改变。
 
-{% highlight javascript %}
+```javascript
+['d', 'c', 'b', 'a'].sort()
+// ['a', 'b', 'c', 'd']
 
-["d","c","b","a"].sort()
-// ["a", "b", "c", "d"]
-
-[4,3,2,1].sort()
+[4, 3, 2, 1].sort()
 // [1, 2, 3, 4]
 
-[11,101].sort()
+[11, 101].sort()
 // [101, 11]
 
 [10111,1101,111].sort()
 // [10111, 1101, 111]
-
-{% endhighlight %}
+```
 
 上面代码的最后两个例子，需要特殊注意。sort方法不是按照大小排序，而是按照对应字符串的字典顺序排序，所以101排在11的前面。
 
-如果想让sort方法按照大小排序，可以传入一个函数作为参数，表示按照自定义方法进行排序。该函数本身又接受两个参数，表示进行比较的两个元素。如果返回值大于0，表示第一个元素排在第二个元素后面；其他情况下，都是第一个元素排在第二个元素前面。
+如果想让sort方法按照自定义方式排序，可以传入一个函数作为参数，表示按照自定义方法进行排序。该函数本身又接受两个参数，表示进行比较的两个元素。如果返回值大于0，表示第一个元素排在第二个元素后面；其他情况下，都是第一个元素排在第二个元素前面。
 
 {% highlight javascript %}
 
@@ -746,34 +715,24 @@ function findLongest(entries) {
 
 ### indexOf 和 lastIndexOf
 
-ECMAScript 5新增的9个方法之中，有2个与函数式编程无关，分别是indexOf和lastIndexOf。
+`indexOf`方法返回给定元素在数组中第一次出现的位置，如果没有出现则返回`-1`。
 
-indexOf方法返回给定元素在数组中第一次出现的位置，如果没有出现则返回-1。
+```javascript
+var a = ['a', 'b', 'c'];
 
-{% highlight javascript %}
-
-var a = ['a','b','c'];
-
-a.indexOf('b')
-// 1
-
-a.indexOf('y')
-// -1
-
-{% endhighlight %}
+a.indexOf('b') // 1
+a.indexOf('y') // -1
+```
 
 indexOf方法还可以接受第二个参数，表示搜索的开始位置。
 
-{% highlight javascript %}
+```javascript
+['a', 'b', 'c'].indexOf('a', 1) // -1
+```
 
-['a','b','c'].indexOf('a', 1)
-// -1
+上面代码从位置1开始搜索字符`a`，结果为-1，表示没有搜索到。
 
-{% endhighlight %}
-
-上面代码从位置1开始搜索字符a，结果为-1，表示没有搜索到。
-
-lastIndexOf方法返回给定元素在数组中最后一次出现的位置，如果没有出现则返回-1。
+`lastIndexOf`方法返回给定元素在数组中最后一次出现的位置，如果没有出现则返回-1。
 
 {% highlight javascript %}
 

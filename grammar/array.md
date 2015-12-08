@@ -50,19 +50,45 @@ a[0][1] // 2
 a[1][1] // 4
 ```
 
+除了使用字面量，数组还可以通过`Array`构造函数生成。
+
+```javascript
+var arr = new Array(element0, element1, ..., elementN);
+var arr = Array(element0, element1, ..., elementN);
+var arr = [element0, element1, ..., elementN];
+```
+
+上面三种数组的生成方式，都是等价的。但是，通常不用前两种方法生成数组，因为它们的行为会因为参数个数的不同，而发生变化。
+
+```javascript
+var arr = new Array(1);
+arr // [ ,]
+arr.length // 1
+
+var a = new Array(2);
+arr // [ , ,]
+arr.length // 2
+
+var arr = new Array(1, 2);
+arr // [1, 2]
+arr.length // 2
+```
+
+上面代码说明，如果Array构造函数只有一个参数，且该参数是一个整数，那么会返回一个指定长度的空数组。这与多个参数时的行为不一致，详见《标准库》一章的`Array`对象部分。
+
 ## 数组与对象的关系
 
-本质上，数组也属于对象，是字典结构（dictionary）的一个变种。
+本质上，数组也属于对象，是字典结构（dictionary）的一个变种，每一个成员就是一个键值对。
 
 ```javascript
 typeof [1, 2, 3] // "object"
 ```
 
-上面代码表明，数组只是一种特殊的对象，所以`typeof`运算符返回数组的类型是`object`。
+上面代码表明，数组只是一种特殊的对象，`typeof`运算符返回数组的类型是`object`。
 
-数组的特殊性体现在，它的键默认是按次序排列的整数（0，1，2...），所以数组不用为每个元素指定键名，而对象的每个成员都必须指定键名。
+数组的特殊性体现在，它的键名是按次序排列的一组整数（0，1，2...），所以数组不用为每个元素指定键名，而对象的每个成员都必须指定键名。
 
-此外，对象以字符串来识别键名，非字符串的键名会被转为字符串。数组的键名其实也是字符串，所有的整数键名默认都会转为字符串。所以，使用数值或字符串作为键名，都能读取数组的成员。
+对象的键名，一律为字符串，非字符串的键名会被转为字符串。数组的键名其实也是字符串，所有的整数键名默认都会转为字符串。
 
 ```javascript
 var arr = ['a', 'b', 'c'];
@@ -71,7 +97,7 @@ arr['0'] // 'a'
 arr[0] // 'a'
 ```
 
-上面代码分别用数值和字符串作为键名，结果都能读取数组。
+上面代码分别用数值和字符串作为键名，结果都能读取数组。原因是数值键名被自动转为了字符串。
 
 需要注意的是，这一条在赋值时也成立。如果一个值可以被转换为整数，则以该值为键名，等于以对应的整数为键名。
 
@@ -87,7 +113,7 @@ a[1] // 6
 
 上面代码表明，由于字符串“1000”和浮点数1.00都可以转换为整数，所以视同为整数键赋值。
 
-上一节说过，对象有两种读取成员的方法：“点”结构（`object.key`）和方括号结构（`object[key]`）。但是，对于数字的键名，不能使用点结构，`arr.0`的写法不合法，因为单独的数字不能作为标识符（identifier）。所以，数组成员只能用方括号`arr[0]`表示（方括号是运算符，可以接受数值）。
+上一节说过，对象有两种读取成员的方法：“点”结构（`object.key`）和方括号结构（`object[key]`）。但是，对于数值的键名，不能使用点结构，`arr.0`的写法不合法，因为单独的数值不能作为标识符（identifier）。所以，数组成员只能用方括号`arr[0]`表示（方括号是运算符，可以接受数值）。
 
 ## length属性
 
@@ -97,7 +123,7 @@ a[1] // 6
 ['a', 'b', 'c'].length // 3
 ```
 
-JavaScript使用一个32位整数，保存数组的元素个数。这意味着，数组成员最多只有4294967295个（2<sup>32</sup>-1）个，也就是说length属性的最大值就是4294967295。
+JavaScript使用一个32位整数，保存数组的元素个数。这意味着，数组成员最多只有4294967295个（2<sup>32</sup>-1）个，也就是说`length`属性的最大值就是4294967295。
 
 数组的`length`属性与对象的`length`属性有区别，只要是数组，就一定有`length`属性，而对象不一定有。而且，数组的`length`属性是一个动态的值，等于键名中的最大整数加上1。
 
@@ -115,7 +141,7 @@ arr[1000] = 'e';
 arr.length // 1001
 ```
 
-上面代码表示，数组的数字键不需要连续，length属性的值总是比最大的那个整数键大1。另外，这也表明数组是一种动态的数据结构，可以随时增减数组的成员。
+上面代码表示，数组的数字键不需要连续，`length`属性的值总是比最大的那个整数键大1。另外，这也表明数组是一种动态的数据结构，可以随时增减数组的成员。
 
 `length`属性是可写的。如果人为设置一个小于当前成员个数的值，该数组的成员会自动减少到`length`设置的值。
 
@@ -179,6 +205,174 @@ a.length // 0
 
 上面代码将数组的键分别设为字符串和小数，结果都不影响`length`属性。因为，`length`属性的值就是等于最大的数字键加1，而这个数组没有整数键，所以`length`属性保持为0。
 
+## 类似数组的对象
+
+在JavaScript中，有些对象被称为“类似数组的对象”（array-like object）。意思是，它们看上去很像数组，可以使用`length`属性，但是它们并不是数组，所以无法使用一些数组的方法。
+
+下面就是一个类似数组的对象。
+
+```javascript
+var obj = {
+  0: 'a',
+  1: 'b',
+  2: 'c',
+  length: 3
+};
+
+obj[0] // 'a'
+obj[2] // 'c'
+obj.length // 3
+```
+
+上面代码的变量`obj`是一个对象，但是看上去跟数组很像。所以只要有数字键和`length`属性，就是一个类似数组的对象。当然，变量`obj`无法使用数组特有的一些方法，比如`pop`和`push`方法。而且，`length`属性不是动态值，不会随着成员的变化而变化。
+
+```javascript
+var obj = {
+  length: 0
+};
+obj[3] = 'd';
+obj.length // 0
+```
+
+上面代码为对象`obj`添加了一个数字键，但是`length`属性没变。这就说明了`obj`不是数组。
+
+典型的类似数组的对象是函数的arguments对象，以及大多数DOM元素集，还有字符串。
+
+{% highlight javascript %}
+
+// arguments对象
+function args() { return arguments }
+var arrayLike = args('a', 'b');
+
+arrayLike[0] // 'a'
+arrayLike.length // 2
+arrayLike instanceof Array // false
+
+// DOM元素集
+var elts = document.getElementsByTagName('h3');
+elts.length // 3
+elts instanceof Array // false
+
+// 字符串
+'abc'[1] // 'b'
+'abc'.length // 3
+'abc' instanceof Array // false
+
+{% endhighlight %}
+
+通过函数的call方法，可以用slice方法将类似数组的对象，变成真正的数组。
+
+{% highlight javascript %}
+
+var arr = Array.prototype.slice.call(arguments);
+
+{% endhighlight %}
+
+遍历类似数组的对象，可以采用for循环，也可以采用数组的forEach方法。
+
+```javascript
+// for循环
+function logArgs() {
+    for (var i=0; i<arguments.length; i++) {
+        console.log(i+'. '+arguments[i]);
+    }
+}
+
+// forEach方法
+function logArgs() {
+    Array.prototype.forEach.call(arguments, function (elem, i) {
+        console.log(i+'. '+elem);
+    });
+}
+```
+
+由于字符串也是类似数组的对象，所以也可以用`Array.prototype.forEach.call`遍历。
+
+```javascript
+Array.prototype.forEach.call('abc', function(chr) {
+  console.log(chr);
+});
+// a
+// b
+// c
+```
+
+## in运算符
+
+检查某个键名是否存在的运算符`in`，适用于对象，也适用于数组。
+
+```javascript
+2 in [ 'a', 'b', 'c' ] // true
+'2' in [ 'a', 'b', 'c' ] // true
+```
+
+上面代码表明，数组存在键名为`2`的键。由于键名都是字符串，所以数值`2`会自动转成字符串。
+
+## for...in循环和数组的遍历
+
+使用`for...in`循环，可以遍历数组的所有元素。
+
+```javascript
+var a = [1, 2, 3];
+
+for (var i in a) {
+  console.log(a[i]);
+}
+// 1
+// 2
+// 3
+```
+
+需要注意的是，`for...in`会遍历数组所有的键，即使是非数字键。
+
+```javascript
+var a = [1, 2, 3];
+a.foo = true;
+
+for (var key in a) {
+  console.log(key);
+}
+// 0
+// 1
+// 2
+// foo
+```
+
+上面代码在遍历数组时，也遍历到了非整数键`foo`。所以，使用`for...in`遍历数组的时候，一定要小心。
+
+其他的数组遍历方法，就是使用`length`属性，结合`for`循环或者`while`循环。
+
+```javascript
+// for循环
+var a = [1, 2, 3];
+for(var i = 0; i < a.length; i++) {
+  console.log(a[i]);
+}
+
+// while循环
+var i = 0;
+while (i < a.length) {
+  console.log(a[i]);
+  i++;
+}
+
+var l = a.length;
+while (l--) {
+  console.log(a[l]);
+}
+```
+
+上面代码是三种遍历数组的写法。最后一种写法是逆向遍历，即从最后一个元素向第一个元素遍历。
+
+数组的`forEach`方法，也可以用来遍历数组，详见《标准库》一章的Array对象部分。
+
+```javascript
+var colors = ['red', 'green', 'blue'];
+colors.forEach(function(color) {
+  console.log(color);
+});
+```
+
 ## 数组的空位
 
 当数组的某个位置是空元素，即两个逗号之间没有任何值，我们称该数组存在空位（hole）。
@@ -217,7 +411,7 @@ delete a[1];
 a[1] // undefined
 ```
 
-需要注意的是，`delete`命令不影响`length`属性。
+`delete`命令不影响`length`属性。
 
 ```javascript
 var a = [1, 2, 3];
@@ -271,99 +465,6 @@ Object.keys(a)
 ```
 
 这就是说，空位就是数组没有这个元素，所以不会被遍历到，而`undefined`则表示数组有这个元素，值是`undefined`，所以遍历不会跳过。
-
-## in运算符，for...in循环
-
-检查某个键是否存在的运算符in，适用于对象，也适用于数组。
-
-```javascript
-2 in [ 'a', 'b', 'c' ] // true
-'2' in [ 'a', 'b', 'c' ] // true
-```
-
-上面代码表明，数组存在键名为2的键。由于键名都是字符串，所以数值2会自动转成字符串。
-
-使用`for...in`循环，可以遍历数组的所有元素。
-
-```javascript
-var a = [1, 2, 3];
-
-for (var i in a){
-  console.log(a[i]);
-}
-// 1
-// 2
-// 3
-```
-
-需要注意的是，`for...in`会遍历数组所有的键，即使是非数字键。
-
-```javascript
-var a = [1, 2, 3];
-a.foo = true;
-
-for (var key in a) {
-  console.log(key);
-}
-// 0
-// 1
-// 2
-// foo
-```
-
-上面代码在遍历数组时，也遍历到了非整数键`foo`。所以，使用`for...in`遍历数组的时候，一定要小心。
-
-另一种遍历的做法是用`for`循环或者`while`循环结合`length`属性。
-
-```javascript
-var a = [1, 2, 3];
-for(var i = 0; i < a.length; i++) {
-  console.log(a[i]);
-}
-
-// or
-
-var i = 0;
-while (i < a.length) {
-  console.log(a[i]);
-  i++;
-}
-
-// or
-
-var l = a.length;
-while (l--) {
-  console.log(a[l]);
-}
-```
-
-上面代码是三种遍历数组的写法。最后一种写法是逆向遍历，即从最后一个元素向第一个元素遍历。
-
-## Array构造函数
-
-除了直接使用方括号创建，数组还可以使用JavaScript内置的Array构造函数创建。
-
-{% highlight javascript %}
-
-var a = new Array();
-a // []
-a.length // 0
-
-var a = new Array(1);
-a // [undefined × 1]
-a.length // 1
-
-var a = new Array(2);
-a // [undefined × 2]
-a.length // 2
-
-var a = new Array(1,2);
-a // [1,2]
-a.length // 2
-
-{% endhighlight %}
-
-上面代码说明，Array构造函数的用法不符合直觉。没有参数时，返回一个空数组；使用一个参数时，返回一个指定长度的空数组；使用多个参数，返回一个指定成员的数组。所以，建议总是直接采用方括号创建数组。Array构造函数的详细介绍，参见《标准库》一章的《Array对象》。
 
 ## 参考链接
 
