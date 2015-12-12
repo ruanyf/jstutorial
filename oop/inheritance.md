@@ -8,28 +8,28 @@ category: oop
 
 ## 概述
 
-JavaScript语言的所有对象，都有自己的继承链。也就是说，每个对象都有一个上级对象，称为prototype对象（只有`null`除外，它没有自己的prototype对象）。上级对象的属性和方法，都可以从下级对象上获取。
+JavaScript的所有对象，都有自己的继承链。也就是说，每个对象都继承另一个对象，该对象称为`prototype`对象。只有`null`除外，它没有自己的`prototype`对象。`prototype`对象的属性和方法，都可以从下级对象上获取。
 
-ES5提供方法，可以读取当前对象的prototype对象，而没有提供改写它的标准方法。
+`Object.getPrototypof`方法，用来获取当前对象的`prototype`对象。
 
 ```javascript
 var p = Object.getPrototypeOf(obj);
 ```
 
-所以，ES5一般不改写prototype对象，而是重新生成一个新的对象。
+`Object.create`方法生成一个新的对象，继承原型对象。
 
 ```javascript
 var obj = Object.create(p);
 ```
 
-但是，大多数浏览器都支持使用一个非标准的`__proto__`属性（前后各两个下划线），改写原型对象。
+`__proto__`属性（前后各两个下划线），可以改写某个对象的原型对象。
 
 ```javascript
 var obj = {};
 var p = {};
 
 obj.__proto__ = p;
-obj.__proto__ === p // true
+Object.getPrototypeOf(obj) === p // true
 ```
 
 上面代码通过`__proto__`属性，将`p`对象设为`obj`对象的原型。
@@ -37,8 +37,8 @@ obj.__proto__ === p // true
 下面是一个实际的例子。
 
 ```javascript
-var a = { x: 1};
-var b = { __proto__: a};
+var a = {x: 1};
+var b = {__proto__: a};
 b.x // 1
 ```
 
@@ -47,7 +47,7 @@ b.x // 1
 原型对象自己的`__proto__`属性，也可以指向其他对象，从而一级一级地形成“原型链”（prototype chain）。
 
 ```javascript
-var a = { x: 1 };
+var a = {x: 1};
 var b = { __proto__: a};
 var c = { __proto__: b};
 
@@ -66,7 +66,7 @@ function Shape() {
   this.y = 0;
 }
 
-Shape.prototype.move = function(x, y) {
+Shape.prototype.move = function (x, y) {
   this.x += x;
   this.y += y;
   console.info('Shape moved.');
@@ -78,6 +78,11 @@ Shape.prototype.move = function(x, y) {
 ```javascript
 function Rectangle() {
   Shape.call(this); // 调用父类构造函数
+}
+// 另一种写法
+function Rectangle() {
+  this.base = Shape;
+  this.base();
 }
 
 // 子类继承父类的方法
@@ -184,70 +189,52 @@ o.__proto__ === a
 
 对象本身的所有属性，可以用Object.getOwnPropertyNames方法获得。
 
-{% highlight javascript %}
-
+```javascript
 Object.getOwnPropertyNames(Date)
 // ["parse", "arguments", "UTC", "caller", "name", "prototype", "now", "length"]
-
-{% endhighlight %}
+```
 
 对象本身的属性之中，有的是可以枚举的（enumerable），有的是不可以枚举的。只获取那些可以枚举的属性，使用Object.keys方法。
 
-{% highlight javascript %}
-
-Object.keys(Date)
-// []
-
-{% endhighlight %}
+```javascript
+Object.keys(Date) // []
+```
 
 判断对象是否具有某个属性，使用hasOwnProperty方法。
 
-{% highlight javascript %}
-
+```javascript
 Date.hasOwnProperty('length')
 // true
 
 Date.hasOwnProperty('toString')
 // false
-
-{% endhighlight %}
+```
 
 ### 对象的继承属性
 
 用Object.create方法创造的对象，会继承所有原型对象的属性。
 
-{% highlight javascript %}
-
+```javascript
 var proto = { p1: 123 };
 var o = Object.create(proto);
 
-o.p1
-// 123
-
-o.hasOwnProperty("p1")
-// false
-
-{% endhighlight %}
+o.p1 // 123
+o.hasOwnProperty("p1") // false
+```
 
 ### 获取所有属性
 
 判断一个对象是否具有某个属性（不管是自身的还是继承的），使用in运算符。
 
-{% highlight javascript %}
-
-"length" in Date
-// true
-
-"toString" in Date
-// true
-
-{% endhighlight %}
+```javascript
+"length" in Date // true
+"toString" in Date // true
+```
 
 获得对象的所有可枚举属性（不管是自身的还是继承的），可以使用for-in循环。
 
-{% highlight javascript %}
-
-var o1 = {p1:123};
+```javascript
+var o1 = {p1: 123};
 
 var o2 = Object.create(o1,{
   p2: { value: "abc", enumerable: true }
@@ -256,25 +243,21 @@ var o2 = Object.create(o1,{
 for (p in o2) {console.info(p);}
 // p2
 // p1
+```
 
-{% endhighlight %}
+为了在`for...in`循环中获得对象自身的属性，可以采用hasOwnProperty方法判断一下。
 
-为了在for...in循环中获得对象自身的属性，可以采用hasOwnProperty方法判断一下。
-
-{% highlight javascript %}
-
+```javascript
 for ( var name in object ) {
   if ( object.hasOwnProperty(name) ) {
     /* loop code */
   }
 }
-
-{% endhighlight %}
+```
 
 获得对象的所有属性（不管是自身的还是继承的，以及是否可枚举），可以使用下面的函数。
 
-{% highlight javascript %}
-
+```javascript
 function inheritedPropertyNames(obj) {
   var props = {};
   while(obj) {
@@ -285,17 +268,14 @@ function inheritedPropertyNames(obj) {
   }
   return Object.getOwnPropertyNames(props);
 }
-
-{% endhighlight %}
+```
 
 用法如下：
 
-{% highlight javascript %}
-
+```javascript
 inheritedPropertyNames(Date)
 // ["caller", "constructor", "toString", "UTC", "call", "parse", "prototype", "__defineSetter__", "__lookupSetter__", "length", "arguments", "bind", "__lookupGetter__", "isPrototypeOf", "toLocaleString", "propertyIsEnumerable", "valueOf", "apply", "__defineGetter__", "name", "now", "hasOwnProperty"]
-
-{% endhighlight %}
+```
 
 ## 对象的拷贝
 
@@ -306,8 +286,7 @@ inheritedPropertyNames(Date)
 
 下面就是根据上面两点，编写的对象拷贝的函数。
 
-{% highlight javascript %}
-
+```javascript
 function copyObject(orig) {
   var copy = Object.create(Object.getPrototypeOf(orig));
   copyOwnPropertiesFrom(copy, orig);
@@ -323,8 +302,35 @@ function copyOwnPropertiesFrom(target, source) {
   });
   return target;
 }
+```
 
-{% endhighlight %}
+## 多重继承
+
+JavaScript不提供多重继承功能，即不允许一个对象同时继承多个对象。但是，可以通过变通方法，实现这个功能。
+
+```javascript
+function M1(prop) {
+  this.hello = prop;
+}
+
+function M2(prop) {
+  this.world = prop;
+}
+
+function S(p1, p2) {
+  this.base1 = M1;
+  this.base1(p1);
+  this.base2 = M2;
+  this.base2(p2);
+}
+S.prototype = new M1();
+
+var s = new S(111, 222);
+s.hello // 111
+s.world // 222
+```
+
+上面代码中，子类`S`同时继承了父类`M1`和`M2`。当然，从继承链来看，`S`只有一个父类`M1`，但是由于在`S`的实例上，同时执行`M1`和`M2`的构造函数，所以它同时继承了这两个类的方法。
 
 ## 参考链接
 

@@ -6,11 +6,11 @@ date: 2014-10-20
 modifiedOn: 2014-10-20
 ---
 
-process对象是Node的一个全局对象，提供当前node进程的信息。它可以在脚本的任意位置使用，不必通过require命令加载。该对象部署了EventEmitter接口。
+`process`对象是Node的一个全局对象，提供当前Node进程的信息。它可以在脚本的任意位置使用，不必通过`require`命令加载。该对象部署了`EventEmitter`接口。
 
 ## 进程信息
 
-通过process对象，可以获知当前进程的很多信息。
+通过`process`对象，可以获知当前进程的很多信息。
 
 ### 退出码
 
@@ -173,40 +173,42 @@ process对象提供以下方法：
 
 ### process.cwd()，process.chdir()
 
-cwd方法返回进程的当前目录，chdir方法用来切换目录。
+`cwd`方法返回进程的当前目录，`chdir`方法用来切换目录。
 
-{% highlight bash %}
-
+```bash
 > process.cwd()
 '/home/aaa'
 
 > process.chdir('/home/bbb')
 > process.cwd()
 '/home/bbb'
-
-{% endhighlight %}
+```
 
 ## process.nextTick()
 
-process.nextTick()将任务放到当前执行栈的尾部。
+`process.nextTick`将任务放到当前一轮事件循环（Event Loop）的尾部。
 
-{% highlight bash %}
-
+```bash
 process.nextTick(function () {
-    console.log('下一次Event Loop即将开始!');
+  console.log('下一次Event Loop即将开始!');
 });
+```
 
-{% endhighlight %}
+上面代码可以用`setTimeout(f,0)`改写，效果接近，但是原理不同。
 
-上面代码可以用`setTimeout(f,0)`改写，效果接近，但是原理不同。`setTimeout(f,0)`是将任务放到当前任务队列的尾部，在下一次Event Loop时执行。另外，nextTick的效率更高，因为不用检查是否到了指定时间。
-
-{% highlight bash %}
-
+```bash
 setTimeout(function () {
-   console.log('已经到了下一轮Event Loop！');
+  console.log('已经到了下一轮Event Loop！');
 }, 0)
+```
 
-{% endhighlight %}
+`setTimeout(f,0)`是将任务放到下一轮事件循环的头部，因此`nextTick`会比它先执行。另外，`nextTick`的效率更高，因为不用检查是否到了指定时间。
+
+根据Node的事件循环的实现，基本上，进入下一轮事件循环后的执行顺序如下。
+
+1. `setTimeout(f,0)`
+1. 各种到期的回调函数
+1. `process.nextTick`
 
 ### process.exit()
 
@@ -308,15 +310,20 @@ setTimeout(function(){
 
 ### exit事件
 
-当前进程退出时，会触发exit事件，可以对该事件指定回调函数。
+当前进程退出时，会触发`exit`事件，可以对该事件指定回调函数。
 
-{% highlight javascript %}
-
+```javascript
 process.on('exit', function () {
   fs.writeFileSync('/tmp/myfile', '需要保存到硬盘的信息');
 });
+```
 
-{% endhighlight %}
+下面是一个例子，进程退出时，显示一段日志。
+
+```javascript
+process.on("exit", code =>
+  console.log("exiting with code: " + code))
+```
 
 注意，此时回调函数只能执行同步操作，不能包含异步操作，因为执行完回调函数，进程就会退出，无法监听到回调函数的操作结果。
 
@@ -329,7 +336,7 @@ process.on('exit', function(code) {
 });
 ```
 
-上面代码在exit事件的回调函数里面，指定了一个下一轮事件循环，所要执行的操作。这是无效的，不会得到执行。
+上面代码在`exit`事件的回调函数里面，指定了一个下一轮事件循环，所要执行的操作。这是无效的，不会得到执行。
 
 ### beforeExit事件
 
@@ -341,16 +348,17 @@ beforeExit事件与exit事件的主要区别是，beforeExit的监听函数可�
 
 ### uncaughtException事件
 
-当前进程抛出一个没有被捕捉的错误时，会触发uncaughtException事件。
+当前进程抛出一个没有被捕捉的错误时，会触发`uncaughtException`事件。
 
 ```javascript
 process.on('uncaughtException', function (err) {
   console.error('An uncaught error occurred!');
   console.error(err.stack);
+  throw new Error('未捕获错误');
 });
 ```
 
-部署uncaughtException事件的监听函数，是免于node进程终止的最后措施，否则node就要执行`process.exit()`。出于除错的目的，并不建议发生错误，还保持进程运行。
+部署`uncaughtException`事件的监听函数，是免于Node进程终止的最后措施，否则Node就要执行`process.exit()`。出于除错的目的，并不建议发生错误后，还保持进程运行。
 
 抛出错误之前部署的异步操作，还是会继续执行。只有完成以后，Node进程才会退出。
 

@@ -18,7 +18,7 @@ $ npm install npm@latest -g
 
 上面的命令之所以最后一个参数是npm，是因为npm本身也是Node.js的一个模块。
 
-node安装完成后，可以用下面的命令，查看一下npm的帮助文件。
+Node安装完成后，可以用下面的命令，查看一下npm的帮助文件。
 
 ```bash
 # npm命令列表
@@ -222,6 +222,56 @@ var backbone = require('backbone')
 
 console.log(backbone.VERSION)
 ```
+
+## 模块标签
+
+Npm允许为模块的某个版本，新建一个标签。
+
+```bash
+$ npm dist-tag add <pkg>@<version> [<tag>]
+```
+
+同一种方法是发布的时候，加上标签。
+
+```bash
+$ npm publish --tag=beta
+```
+
+有了标签以后，就可以指定安装该标签的版本，或者该标签的依赖。
+
+```bash
+# 安装模块
+$ npm install <name>@<tag>
+
+# 安装依赖
+$ npm install --tag <tag>
+```
+
+常见的标签有`latest`、`stable`、`next`等。
+
+Npm默认会为最新一次发布的版本，新建`latest`标签。然后，下载的时候，默认是下载带有`latest`标签的版本。但是，这可能并不是我们想要的行为。比如，当前最新版本是4.2版，然后发布了一个3.6版，`latest`的标签就会打在3.6版上面，用户`npm install`安装的就是这个版本。
+
+为了避免这个问题，可以为3.6版加上`previous`标签。
+
+```bash
+# 发布
+$ npm publish --tag=previous
+
+# 安装
+$ npm install <package>@previous
+```
+
+`package.json`文件可以设置默认标签。
+
+```javascript
+{
+  "publishConfig": {
+    "tag": "next"
+  }
+}
+```
+
+上面的`publishConfig`设置了最新发布的默认标签是`next`。`publishConfig`属性设置的值，可以在publish过程中使用。
 
 ## 语义版本（SemVer）
 
@@ -694,18 +744,17 @@ scripts字段可以使用一些内部变量，主要是package.json的各种字�
 }
 ```
 
-运行`npm run  bundle`以后，将会生成`build/1.2.5/`子目录。
+运行`npm run bundle`以后，将会生成`build/1.2.5/`子目录。
 
-config字段也可以用于设置内部字段。
+`config`字段也可以用于设置内部字段。
 
 ```javascript
-"name": "fooproject",
+  "name": "fooproject",
   "config": {
     "reporter": "xunit"
   },
   "scripts": {
     "test": "mocha test/ --reporter $npm_package_config_reporter"
-    "test:dev": "npm run test --fooproject:reporter=spec"
   }
 ```
 
@@ -910,3 +959,4 @@ $ npm deprecate my-thing@"< 0.2.3" "critical bug fixed in v0.2.3"
 - Keith Cirkel, [How to Use npm as a Build Tool](http://blog.keithcirkel.co.uk/how-to-use-npm-as-a-build-tool/)
 - justjs, [npm link: developing your own npm modules without tears](http://justjs.com/posts/npm-link-developing-your-own-npm-modules-without-tears)
 - hoodie-css, [Development Environment Help](https://github.com/hoodiehq/hoodie-css/blob/feature/build-automation/DEVELOPMENT.md)
+- Stephan Bönnemann, [How to make use of npm’s package distribution tags to create release channels](https://medium.com/greenkeeper-blog/one-simple-trick-for-javascript-package-maintainers-to-avoid-breaking-their-user-s-software-and-to-6edf06dc5617#.5omqgsg45)

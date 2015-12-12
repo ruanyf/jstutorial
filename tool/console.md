@@ -138,15 +138,13 @@ console.log("出错了！");
 
 warn方法和error方法也是输出信息，它们与log方法的不同之处在于，warn方法输出信息时，在最前面加一个黄色三角，表示警告；error方法输出信息时，在最前面加一个红色的叉，表示出错，同时会显示错误发生的堆栈。其他用法都一样。
 
-{% highlight javascript %}
-
+```javascript
 console.error("Error: %s (%i)", "Server is not responding",500)
 // Error: Server is not responding (500)
 
 console.warn('Warning! Too few nodes (%d)', document.childNodes.length)
 // Warning! Too few nodes (1)
-
-{% endhighlight %}
+```
 
 本质上，log方法是写入标准输出（stdout），warn方法和error方法是写入标准错误（stderr）。
 
@@ -154,8 +152,7 @@ console.warn('Warning! Too few nodes (%d)', document.childNodes.length)
 
 对于某些复合类型的数据，console.table方法可以将其转为表格显示。
 
-{% highlight javascript %}
-
+```javascript
 var languages = [
   { name: "JavaScript", fileExtension: ".js" },
   { name: "TypeScript", fileExtension: ".ts" },
@@ -163,8 +160,7 @@ var languages = [
 ];
 
 console.table(languages);
-
-{% endhighlight %}
+```
 
 上面代码的language，转为表格显示如下。
 
@@ -176,16 +172,14 @@ console.table(languages);
 
 复合型数据转为表格显示的条件是，必须拥有主键。对于上面的数组来说，主键就是数字键。对于对象来说，主键就是它的最外层键。
 
-{% highlight javascript %}
-
+```javascript
 var languages = {
-    csharp: { name: "C#", paradigm: "object-oriented" },
-    fsharp: { name: "F#", paradigm: "functional" }
+  csharp: { name: "C#", paradigm: "object-oriented" },
+  fsharp: { name: "F#", paradigm: "functional" }
 };
 
 console.table(languages);
-
-{% endhighlight %}
+```
 
 上面代码的language，转为表格显示如下。
 
@@ -199,7 +193,6 @@ fsharp|"F#"|"functional"
 count方法用于计数，输出它被调用了多少次。
 
 ```javascript
-
 function greet(user) {
   console.count();
   return "hi " + user;
@@ -216,7 +209,6 @@ greet('alice')
 greet('bob')
 //  : 3
 // "hi bob"
-
 ```
 
 上面代码每次调用greet函数，内部的console.count方法就输出执行次数。
@@ -297,8 +289,7 @@ console.assert(list.childNodes.length < 500, "节点个数大于等于500")
 
 这两个方法用于计时，可以算出一个操作所花费的准确时间。
 
-{% highlight javascript %}
-
+```javascript
 console.time("Array initialize");
 
 var array= new Array(1000000);
@@ -309,8 +300,7 @@ for (var i = array.length - 1; i >= 0; i--) {
 console.timeEnd("Array initialize");
 
 // Array initialize: 1914.481ms
-
-{% endhighlight %}
+```
 
 time方法表示计时开始，timeEnd方法表示计时结束。它们的参数是计时器的名称。调用timeEnd方法之后，console窗口会显示“计时器名称: 所耗费的时间”。
 
@@ -387,7 +377,7 @@ console.groupEnd();
 
 ### trace()，clear()
 
-console.trace方法显示当前执行的代码在堆栈中的调用路径。
+`console.trace`方法显示当前执行的代码在堆栈中的调用路径。
 
 ```javascript
 console.trace()

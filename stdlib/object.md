@@ -369,19 +369,14 @@ Object.getOwnPropertyDescriptor(o, 'p')
 
 上面代码表示，使用`Object.getOwnPropertyDescriptor`方法，读取`o`对象的`p`属性的attributes对象。
 
-attributes对象包含如下元信息：
+`attributes`对象包含如下元信息。
 
-- **value**：表示该属性的值，默认为`undefined`。
-
-- **writable**：表示该属性的值（value）是否可以改变，默认为`true`。
-
-- **enumerable**： 表示该属性是否可枚举，默认为true。如果设为false，会使得某些操作（比如`for...in`循环、`Object.keys()`）跳过该属性。
-
-- **configurable**：表示“可配置性”，默认为true。如果设为false，将阻止某些操作改写该属性，比如，无法删除该属性，也不得改变该属性的attributes对象（value属性除外），也就是说，configurable属性控制了attributes对象的可写性。
-
-- **get**：表示该属性的取值函数（getter），默认为`undefined`。
-
-- **set**：表示该属性的存值函数（setter），默认为`undefined`。
+- `value`：表示该属性的值，默认为`undefined`。
+- `writable`：表示该属性的值（value）是否可以改变，默认为`true`。
+- `enumerable`： 表示该属性是否可枚举，默认为`true`。如果设为`false`，会使得某些操作（比如`for...in`循环、`Object.keys()`）跳过该属性。
+- `configurable`：表示“可配置性”，默认为true。如果设为false，将阻止某些操作改写该属性，比如，无法删除该属性，也不得改变该属性的attributes对象（value属性除外），也就是说，configurable属性控制了attributes对象的可写性。
+- `get`：表示该属性的取值函数（getter），默认为`undefined`。
+- `set`：表示该属性的存值函数（setter），默认为`undefined`。
 
 ### Object.defineProperty()，Object.defineProperties()
 
@@ -395,10 +390,10 @@ Object.defineProperty(object, propertyName, attributesObject)
 
 ```javascript
 var o = Object.defineProperty({}, "p", {
-        value: 123,
-        writable: false,
-        enumerable: true,
-        configurable: false
+  value: 123,
+  writable: false,
+  enumerable: true,
+  configurable: false
 });
 
 o.p

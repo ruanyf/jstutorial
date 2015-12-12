@@ -10,24 +10,33 @@ modifiedOn: 2014-10-20
 
 ### 基本用法
 
-Events模块是node.js对“发布/订阅”模式（publish/subscribe）的部署。一个对象通过这个模块，向另一个对象传递消息。该模块通过EventEmitter属性，提供了一个构造函数。该构造函数的实例具有on方法，可以用来监听指定事件，并触发回调函数。任意对象都可以发布指定事件，被EventEmitter实例的on方法监听到。
+`Events`模块是Node对“发布/订阅”模式（publish/subscribe）的实现。一个对象通过这个模块，向另一个对象传递消息。该模块通过EventEmitter属性，提供了一个构造函数。该构造函数的实例具有on方法，可以用来监听指定事件，并触发回调函数。任意对象都可以发布指定事件，被EventEmitter实例的on方法监听到。
 
 下面是一个实例，先建立一个消息中心，然后通过on方法，为各种事件指定回调函数，从而将程序转为事件驱动型，各个模块之间通过事件联系。
 
-{% highlight javascript %}
-
-var EventEmitter = require("events").EventEmitter;
-
+```javascript
+var EventEmitter = require('events').EventEmitter;
 var ee = new EventEmitter();
-ee.on("someEvent", function () {
-  console.log("event has occured");
+
+ee.on('someEvent', function () {
+  console.log('event has occured');
 });
 
-ee.emit("someEvent");
+function f() {
+  console.log('start');
+  ee.emit('someEvent');
+  console.log('end');
+}
 
-{% endhighlight %}
+f()
+// start
+// event has occured
+// end
+```
 
-上面代码在加载events模块后，通过EventEmitter属性建立了一个EventEmitter对象实例，这个实例就是消息中心。然后，通过on方法为someEvent事件指定回调函数。最后，通过emit方法触发someEvent事件。
+上面代码在加载`events`模块后，通过`EventEmitter`属性建立了一个`EventEmitter`对象实例，这个实例就是消息中心。然后，通过`on`方法为`someEvent`事件指定回调函数。最后，通过`emit`方法触发`someEvent`事件。
+
+上面代码也表明，`EventEmitter`对象的事件触发和监听是同步的。
 
 ### on方法
 
@@ -100,7 +109,6 @@ setInterval(function(){
 Node内置模块util的inherits方法，提供了另一种继承EventEmitter的写法。
 
 ```javascript
-
 var util = require('util');
 var EventEmitter = require('events').EventEmitter;
 
@@ -125,7 +133,6 @@ var Radio = function(station) {
 util.inherits(Radio, EventEmitter);
 
 module.exports = Radio;
-
 ```
 
 上面代码中，Radio是一个构造函数，它的实例继承了EventEmitter接口。下面是使用这个模块的例子。
