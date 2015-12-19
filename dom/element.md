@@ -357,7 +357,7 @@ document.querySelector('div').scrollTop = 150;
 
 **（1）hasAttribute()**
 
-hasAttribute方法返回一个布尔值，表示当前元素节点是否包含指定的HTML属性。
+`hasAttribute`方法返回一个布尔值，表示当前元素节点是否包含指定的HTML属性。
 
 ```javascript
 var d = document.getElementById("div1");
@@ -367,15 +367,15 @@ if (d.hasAttribute("align")) {
 }
 ```
 
-上面代码检查div节点是否含有align属性。如果有，则设置为“居中对齐”。
+上面代码检查`div`节点是否含有`align`属性。如果有，则设置为“居中对齐”。
 
 **（2）getAttribute()**
 
-getAttribute方法返回当前元素节点的指定属性。如果指定属性不存在，则返回null。
+`getAttribute`方法返回当前元素节点的指定属性。如果指定属性不存在，则返回`null`。
 
 ```javascript
-var div = document.getElementById("div1");
-div.getAttribute("align") // "left"
+var div = document.getElementById('div1');
+div.getAttribute('align') // "left"
 ```
 
 **（3）removeAttribute()**
@@ -392,14 +392,21 @@ document.getElementById("div1").removeAttribute("align");
 
 **（4）setAttribute()**
 
-setAttribute方法用于为当前元素节点新增属性，或编辑已存在的属性。
+`setAttribute`方法用于为当前元素节点新增属性，或编辑已存在的属性。
 
 ```javascript
-var d = document.getElementById("d1");
-d.setAttribute("align", "center");
+var d = document.getElementById('d1');
+d.setAttribute('align', 'center');
 ```
 
 该方法会将所有属性名，都当作小写处理。对于那些已存在的属性，该方法是编辑操作，否则就会新建属性。
+
+下面是一个对`img`元素的`src`属性赋值的例子。
+
+```javascript
+var myImage = document.querySelector('img');
+myImage.setAttribute ('src', 'path/to/example.png');
+```
 
 大多数情况下，直接对属性赋值比使用该方法更好。
 

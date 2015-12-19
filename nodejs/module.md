@@ -49,7 +49,7 @@ module.exports.addX = addX;
 var example = require('./example.js');
 
 console.log(example.x); // 5
-console.log(addX(1)); // 6
+console.log(example.addX(1)); // 6
 ```
 
 CommonJS模块的特点如下。

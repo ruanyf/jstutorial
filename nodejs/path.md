@@ -79,3 +79,15 @@ function exists(pth, mode) {
 }
 ```
 
+## path.relative
+
+`path.relative`方法接受两个参数，这两个参数都应该是绝对路径。该方法返回第二个路径想对于地一个路径的系那个相对路径。
+
+```javascript
+path.relative('/data/orandea/test/aaa', '/data/orandea/impl/bbb')
+// '../../impl/bbb'
+```
+
+上面代码中，如果当前目录是`/data/orandea/test/aaa`，进入`path.relative`返回的相对路径，就会到达`/data/orandea/impl/bbb`。
+
+如果`path.relative`方法的两个参数相同，则返回一个空字符串。

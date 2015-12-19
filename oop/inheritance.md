@@ -8,19 +8,25 @@ category: oop
 
 ## 概述
 
-JavaScript的所有对象，都有自己的继承链。也就是说，每个对象都继承另一个对象，该对象称为`prototype`对象。只有`null`除外，它没有自己的`prototype`对象。`prototype`对象的属性和方法，都可以从下级对象上获取。
+JavaScript的所有对象，都有自己的继承链。也就是说，每个对象都继承另一个对象，该对象称为“原型”（prototype）对象。只有`null`除外，它没有自己的原型对象。
 
-`Object.getPrototypof`方法，用来获取当前对象的`prototype`对象。
+A对象是B对象的原型，那么B对象可以拿到A对象的所有属性和方法，这就是原型对象的重要性。
+
+`Object.getPrototypof`方法用于获取当前对象的原型对象。
 
 ```javascript
 var p = Object.getPrototypeOf(obj);
 ```
 
-`Object.create`方法生成一个新的对象，继承原型对象。
+上面代码中，对象`p`就是对象`obj`的原型对象。
+
+`Object.create`方法用于生成一个新的对象，继承原型对象。
 
 ```javascript
 var obj = Object.create(p);
 ```
+
+上面代码中，从原型对象`p`生成一个新的对象`obj`。
 
 `__proto__`属性（前后各两个下划线），可以改写某个对象的原型对象。
 
@@ -42,14 +48,14 @@ var b = {__proto__: a};
 b.x // 1
 ```
 
-上面代码中，`b`对象本身并没有`x`属性，但是JavaScript引擎通过`__proto__`属性，找到它的原型对象`a`，然后读取`a`的`x`属性。
+上面代码中，`b`对象通过`__proto__`属性，将自己的原型对象设为`a`对象，因此`b`对象可以拿到`a`对象的所有属性和方法。`b`对象本身并没有`x`属性，但是JavaScript引擎通过`__proto__`属性，找到它的原型对象`a`，然后读取`a`的`x`属性。
 
 原型对象自己的`__proto__`属性，也可以指向其他对象，从而一级一级地形成“原型链”（prototype chain）。
 
 ```javascript
-var a = {x: 1};
-var b = { __proto__: a};
-var c = { __proto__: b};
+var a = { x: 1 };
+var b = { __proto__: a };
+var c = { __proto__: b };
 
 c.x // 1
 ```

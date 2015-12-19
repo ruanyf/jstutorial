@@ -8,16 +8,16 @@ modifiedOn: 2014-05-18
 
 ## document节点概述
 
-document节点是文档的根节点，每张网页都有自己的document节点。window.document属性就指向这个节点。也就是说，只要浏览器开始载入HTML文档，这个节点对象就开始存在了，可以直接调用。
+`document`节点是文档的根节点，每张网页都有自己的`document`节点。`window.document`属性就指向这个节点。也就是说，只要浏览器开始载入HTML文档，这个节点对象就存在了，可以直接调用。
 
 document节点有不同的办法可以获取。
 
-- 对于正常的网页，直接使用document或window.document。
-- 对于iframe载入的网页，使用iframe节点的contentDocument属性。
-- 对Ajax操作返回的文档，使用XMLHttpRequest对象的responseXML属性。
-- 对于某个节点包含的文档，使用该节点的ownerDocument属性。
+- 对于正常的网页，直接使用`document`或`window.document`。
+- 对于`iframe`载入的网页，使用`iframe`节点的`contentDocument`属性。
+- 对Ajax操作返回的文档，使用XMLHttpRequest对象的`responseXML`属性。
+- 对于某个节点包含的文档，使用该节点的`ownerDocument`属性。
 
-上面这四种document节点，都部署了[Document接口](http://dom.spec.whatwg.org/#interface-document)，因此有共同的属性和方法。当然，各自也有一些自己独特的属性和方法，比如HTML和XML文档的document节点就不一样。
+上面这四种`document`节点，都部署了[Document接口](http://dom.spec.whatwg.org/#interface-document)，因此有共同的属性和方法。当然，各自也有一些自己独特的属性和方法，比如HTML和XML文档的`document`节点就不一样。
 
 ## document节点的属性
 
@@ -67,9 +67,7 @@ body属性返回当前文档的body或frameset节点，如果不存在这样的�
 head属性返回当前文档的head节点。如果当前文档有多个head，则返回第一个。
 
 ```javascript
-
-document.head === document.querySelector("head") 
-
+document.head === document.querySelector('head')
 ```
 
 **（5）activeElement**
@@ -550,26 +548,26 @@ focused = document.hasFocus();
 
 **（1）querySelector()**
 
-querySelector方法返回匹配指定的CSS选择器的元素节点。如果有多个节点满足匹配条件，则返回第一个匹配的节点。如果没有发现匹配的节点，则返回null。
+`querySelector`方法返回匹配指定的CSS选择器的元素节点。如果有多个节点满足匹配条件，则返回第一个匹配的节点。如果没有发现匹配的节点，则返回`null`。
 
 ```javascript
-var el1 = document.querySelector(".myclass");
+var el1 = document.querySelector('.myclass');
 var el2 = document.querySelector('#myParent > [ng-click]');
 ```
 
-querySelector方法无法选中CSS伪元素。
+`querySelector`方法无法选中CSS伪元素。
 
 **（2）getElementById()**
 
-getElementById方法返回匹配指定ID属性的元素节点。如果没有发现匹配的节点，则返回null。
+`getElementById`方法返回匹配指定ID属性的元素节点。如果没有发现匹配的节点，则返回null。
 
 ```javascript
 var elem = document.getElementById("para1");
 ```
 
-注意，在搜索匹配节点时，ID属性是大小写敏感的。比如，如果某个节点的ID属性是main，那么`document.getElementById("Main")`将返回null，而不是指定节点。
+注意，在搜索匹配节点时，`id`属性是大小写敏感的。比如，如果某个节点的`id`属性是`main`，那么`document.getElementById("Main")`将返回`null`，而不是指定节点。
 
-getElementById方法与querySelector方法都能获取元素节点，不同之处是querySelector方法的参数使用CSS选择器语法，getElementById方法的参数是HTML标签元素的id属性。
+`getElementById`方法与`querySelector`方法都能获取元素节点，不同之处是`querySelector`方法的参数使用CSS选择器语法，`getElementById`方法的参数是HTML标签元素的id属性。
 
 ```javascript
 document.getElementById('myElement')
@@ -580,7 +578,7 @@ document.querySelector('#myElement')
 
 **（3）querySelectorAll()**
 
-querySelectorAll方法返回匹配指定的CSS选择器的所有节点，返回的是NodeList类型的对象。NodeList对象不是动态集合，所以元素节点的变化无法实时反映在返回结果中。
+`querySelectorAll`方法返回匹配指定的CSS选择器的所有节点，返回的是NodeList类型的对象。NodeList对象不是动态集合，所以元素节点的变化无法实时反映在返回结果中。
 
 ```javascript
 elementList = document.querySelectorAll(selectors);
@@ -588,8 +586,8 @@ elementList = document.querySelectorAll(selectors);
 
 querySelectorAll方法的参数，可以是逗号分隔的多个CSS选择器，返回所有匹配其中一个选择器的元素。
 
-```
-var matches = document.querySelectorAll("div.note, div.alert");
+```javascript
+var matches = document.querySelectorAll('div.note, div.alert');
 ```
 
 上面代码返回class属性是note或alert的div元素。

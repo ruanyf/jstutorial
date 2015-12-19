@@ -6,9 +6,7 @@ date: 2012-12-28
 modifiedOn: 2014-02-04
 ---
 
-## 简介
-
-### 对象和面向对象编程
+## 对象和面向对象编程
 
 “面向对象编程”（Object Oriented Programming，缩写为OOP）是目前主流的编程范式。它的核心思想是将真实世界中各种复杂的关系，抽象为一个个对象，然后由对象之间的分工与合作，完成对真实世界的模拟。
 
@@ -28,33 +26,34 @@ modifiedOn: 2014-02-04
 
 虽然不同于传统的面向对象编程语言，但是JavaScript具有很强的面向对象编程能力。本章介绍JavaScript如何进行“面向对象编程”。
 
-### 构造函数
+## 构造函数
 
-“面向对象编程”的第一步，就是要生成对象。
+“面向对象编程”的第一步，就是要生成“对象”。前面说过，“对象”是单个实物的抽象。通常需要一个模板，表示某一类实物的共同特征，然后“对象”根据这个模板生成。典型的面向对象编程语言（比如C++和Java），存在“类”（class）这个概念。所谓“类”就是对象的模板，对象就是“类”的实例。
 
-前面说过，“对象”是单个实物的抽象。所以，通常需要一个模板，表示某一类实物的共同特征，然后“对象”根据这个模板生成。
+但是，JavaScript语言的对象体系，不是基于“类”的，而是基于构造函数（constructor）和原型链（prototype）。
 
-典型的面向对象编程语言（比如C++和Java），存在“类”（class）这样一个概念。所谓“类”就是对象的模板，对象就是“类”的实例。JavaScript语言没有“类”，而改用构造函数（constructor）作为对象的模板。
+JavaScript语言使用构造函数（constructor）作为对象的模板。所谓“构造函数”，就是专门用来生成“对象”的函数。它提供模板，描述对象的基本结构。一个构造函数，可以生成多个对象，这些对象都有相同的结构。
 
-所谓“构造函数”，就是专门用来生成“对象”的函数。它提供模板，作为对象的基本结构。一个构造函数，可以生成多个对象，这些对象都有相同的结构。
-
-构造函数是一个正常的函数，但是它的特征和用法与普通函数不一样。下面就是一个构造函数：
+构造函数是一个正常的函数，但是它的特征和用法与普通函数不一样。下面就是一个构造函数。
 
 ```javascript
-
-var Vehicle = function() {
+var Vehicle = function () {
   this.price = 1000;
 };
-
 ```
 
-上面代码中，Vehicle就是构造函数，它提供模板，用来生成车辆对象。
+上面代码中，`Vehicle`就是构造函数，它提供模板，用来生成车辆对象。为了与普通函数区别，通常将构造函数的名字的第一个字母大写。
 
-构造函数的最大特点就是，函数体内部使用了this关键字，代表了所要生成的对象实例。生成对象的时候，必需用new命令，调用Vehicle函数。
+构造函数的特点有两个。
 
-### new命令
+- 函数体内部使用了`this`关键字，代表了所要生成的对象实例。
+- 生成对象的时候，必需用`new`命令，调用`Vehicle`函数。
 
-new命令的作用，就是执行构造函数，返回一个实例对象。
+## new命令
+
+### 基本用法
+
+`new`命令的作用，就是执行构造函数，返回一个实例对象。
 
 ```javascript
 var Vehicle = function (){
@@ -65,19 +64,19 @@ var v = new Vehicle();
 v.price // 1000
 ```
 
-上面代码通过new命令，让构造函数Vehicle生成一个实例对象，保存在变量v中。这个新生成的实例对象，从构造函数Vehicle继承了price属性。在new命令执行时，构造函数内部的this，就代表了新生成的实例对象，this.price表示实例对象有一个price属性，它的值是1000。
+上面代码通过`new`命令，让构造函数`Vehicle`生成一个实例对象，保存在变量`v`中。这个新生成的实例对象，从构造函数`Vehicle`继承了`price`属性。在`new`命令执行时，构造函数内部的`this`，就代表了新生成的实例对象，`this.price`表示实例对象有一个`price`属性，它的值是1000。
 
-使用new命令时，根据需要，构造函数也可以接受参数。
+使用`new`命令时，根据需要，构造函数也可以接受参数。
 
 ```javascript
-var Vehicle = function (p){
+var Vehicle = function (p) {
   this.price = p;
 };
 
 var v = new Vehicle(500);
 ```
 
-new命令本身就可以执行构造函数，所以后面的构造函数可以带括号，也可以不带括号。下面两行代码是等价的。
+`new`命令本身就可以执行构造函数，所以后面的构造函数可以带括号，也可以不带括号。下面两行代码是等价的。
 
 ```javascript
 var v = new Vehicle();
@@ -183,7 +182,7 @@ function _new(/* constructor, param, ... */) {
 var actor = _new(Person, "张三", 28);
 ```
 
-### instanceof运算符
+## instanceof运算符
 
 instanceof运算符用来确定一个对象是否为某个构造函数的实例。
 
@@ -224,7 +223,7 @@ a instanceof Object // true
 
 上面代码表示，a是一个数组，所以它是Array的实例；同时，a也是一个对象，所以它也是Object的实例。
 
-利用instanceof运算符，还可以巧妙地解决，调用构造函数时，忘了加new命令的问题。
+利用`instanceo`f运算符，还可以巧妙地解决，调用构造函数时，忘了加`new`命令的问题。
 
 ```javascript
 function Fubar (foo, bar) {
@@ -236,7 +235,7 @@ function Fubar (foo, bar) {
 }
 ```
 
-上面代码使用instanceof运算符，在函数体内部判断this关键字是否为构造函数Fubar的实例。如果不是，就表明忘了加new命令。
+上面代码使用`instanceof`运算符，在函数体内部判断`this`关键字是否为构造函数`Fubar`的实例。如果不是，就表明忘了加`new`命令。
 
 ## this关键字
 
@@ -464,8 +463,7 @@ o.f1()
 
 数组的map和foreach方法，允许提供一个函数作为参数。这个函数内部不应该使用this。
 
-{% highlight javascript %}
-
+```javascript
 var o = {
 	v: 'hello',
     p: [ 'a1', 'a2' ],
@@ -479,15 +477,13 @@ var o = {
 o.f()
 // undefined a1
 // undefined a2
-
-{% endhighlight %}
+```
 
 上面代码中，foreach方法的参数函数中的this，其实是指向window对象，因此取不到o.v的值。
 
 解决这个问题的一种方法，是使用中间变量。
 
-{% highlight javascript %}
-
+```javascript
 var o = {
 	v: 'hello',
     p: [ 'a1', 'a2' ],
@@ -502,13 +498,11 @@ var o = {
 o.f()
 // hello a1
 // hello a2
-
-{% endhighlight %}
+```
 
 另一种方法是将this当作foreach方法的第二个参数，固定它的运行环境。
 
-{% highlight javascript %}
-
+```javascript
 var o = {
   v: 'hello',
     p: [ 'a1', 'a2' ],
@@ -522,15 +516,13 @@ var o = {
 o.f()
 // hello a1
 // hello a2
-
-{% endhighlight %}
+```
 
 **（3）避免回调函数中的this**
 
 回调函数中的this往往会改变指向，最好避免使用。
 
-{% highlight javascript %}
-
+```javascript
 var o = new Object();
 
 o.f = function (){
@@ -538,18 +530,15 @@ o.f = function (){
 }
 
 o.f() // true
-
-{% endhighlight %}
+```
 
 上面代码表示，如果调用o对象的f方法，其中的this就是指向o对象。
 
 但是，如果将f方法指定给某个按钮的click事件，this的指向就变了。
 
-{% highlight javascript %}
-
-$("#button").on("click", o.f);
-
-{% endhighlight %}
+```javascript
+$('#button').on('click', o.f);
+```
 
 点击按钮以后，控制台会显示false。原因是此时this不再指向o对象，而是指向按钮的DOM对象，因为f方法是在按钮对象的环境中被调用的。这种细微的差别，很容易在编程中忽视，导致难以察觉的错误。
 
@@ -557,7 +546,7 @@ $("#button").on("click", o.f);
 
 ## 固定this的方法
 
-this的动态切换，固然为JavaScript创造了巨大的灵活性，但也使得编程变得困难和模糊。有时，需要把this固定下来，避免出现意想不到的情况。JavaScript提供了call、apply、bind这三个方法，来切换/固定this的指向。
+`this`的动态切换，固然为JavaScript创造了巨大的灵活性，但也使得编程变得困难和模糊。有时，需要把`this`固定下来，避免出现意想不到的情况。JavaScript提供了`call`、`apply`、`bind`这三个方法，来切换/固定`this`的指向。
 
 ### call方法
 

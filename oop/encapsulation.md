@@ -12,23 +12,37 @@ modifiedOn: 2013-11-23
 
 JavaScript通过构造函数生成新对象，因此构造函数可以视为对象的模板。实例对象的属性和方法，可以定义在构造函数内部。
 
-{% highlight javascript %}
-
-function Animal (name) {
+```javascript
+function Cat (name, color) {
   this.name = name;
-  this.color = 'white';
+  this.color = color;
 }
 
-var cat1 = new Animal('大毛');
+var cat1 = new Cat('大毛', '白色');
 
 cat1.name // '大毛'
-cat1.color // 'white'
+cat1.color // '白色'
+```
 
-{% endhighlight %}
+上面代码的`Cat`函数是一个构造函数，函数内部定义了`name`属性和`color`属性，所有实例对象都会生成这两个属性。但是，这样做是对系统资源的浪费，因为同一个构造函数的对象实例之间，无法共享属性。
 
-上面代码的Animal函数是一个构造函数，函数内部定义了name属性和color属性，所有实例对象都会生成这两个属性。
+```javascript
+function Cat(name, color) {
+  this.name = name;
+  this.color = color;
+  this.meow = function () {
+    console.log('mew, mew, mew...');
+  };
+}
 
-但是，这样做是对系统资源的浪费，因为同一个构造函数的对象实例之间，无法共享属性。
+var cat1 = new Cat('大毛', '白色');
+var cat2 = new Cat('二毛', '黑色');
+
+cat1.meow === cat2.meow
+// false
+```
+
+上面代码中，`cat1`和`cat2`是同一个构造函数的实例。但是，它们的`meow`方法是不一样的，就是说每新建一个实例，就会新建一个`meow`方法。这既没有必要，又浪费系统资源，因为所有`meow`方法都是同样的行为，完全应该共享。
 
 ### prototype属性的作用
 
@@ -210,23 +224,20 @@ Object.getPrototypeOf(f) === F.prototype
 
 ## Object.create方法
 
-Object.create方法用于生成新的对象，可以替代new命令。它接受一个原型对象作为参数，返回一个新对象，后者完全继承前者的属性。
+`Object.create`方法用于生成新的对象，可以替代`new`命令。它接受一个对象作为参数，返回一个新对象，后者完全继承前者的属性，即前者成为后者的原型。
 
-{% highlight javascript %}
-
+```javascript
 var o1 = { p: 1 };
 var o2 = Object.create(o1);
 
 o2.p // 1
+```
 
-{% endhighlight %}
+上面代码中，`Object.create`方法在`o1`的基础上生成了`o2`。此时，`o1`成了`o2`的原型，也就是说，`o2`继承了`o1`所有的属性的方法。
 
-上面代码中，o1是o2的原型对象，o2继承了o1的属性。
+`Object.create`方法基本等同于下面的代码，如果老式浏览器不支持`Object.create`方法，可以用下面代码自己部署。
 
-Object.create方法基本等同于下面的代码，如果老式浏览器不支持Object.create方法，可以用下面代码自己部署。
-
-{% highlight javascript %}
-
+```javascript
 if (typeof Object.create !== "function") {
   Object.create = function (o) {
     function F() {}
@@ -234,20 +245,17 @@ if (typeof Object.create !== "function") {
     return new F();
   };
 }
+```
 
-{% endhighlight %}
-
-上面代码表示，Object.create方法实质是新建一个构造函数F，然后让F的prototype属性指向作为原型的对象o，最后返回一个F的实例，从而实现让实例继承o的属性。
+上面代码表示，`Object.create`方法实质是新建一个构造函数`F`，然后让`F`的`prototype`属性指向作为原型的对象`o`，最后返回一个`F`的实例，从而实现让实例继承`o`的属性。
 
 下面三种方式生成的新对象是等价的。
 
-{% highlight javascript %}
-
-var o1 = Object.create({})
-var o2 = Object.create(Object.prototype)
+```javascript
+var o1 = Object.create({});
+var o2 = Object.create(Object.prototype);
 var o3 = new Object();
-
-{% endhighlight %}
+```
 
 如果想要生成一个不继承任何属性（比如toString和valueOf方法）的对象，可以将Object.create的参数设为null。
 

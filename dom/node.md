@@ -46,25 +46,21 @@ TEXT_NODE | #text | 3
 DOCUMENT_FRAGMENT_NODE | #document-fragment | 11
 DOCUMENT_TYPE_NODE | 等同于DocumentType.name |10
 
-以document节点为例，它的nodeName属性等于#document，nodeType属性等于9。
+以`document`节点为例，它的`nodeName`属性等于`#document`，`nodeType`属性等于9。
 
 ```javascript
-
 document.nodeName // "#document"
 document.nodeType // 9
-
 ```
 
-通常来说，使用nodeType属性确定一个节点的类型，比较方便。
+通常来说，使用`nodeType`属性确定一个节点的类型，比较方便。
 
 ```javascript
-
 document.querySelector('a').nodeType === 1
 // true
 
 document.querySelector('a').nodeType === Node.ELEMENT_NODE
 // true
-
 ```
 
 上面两种写法是等价的。
@@ -99,7 +95,7 @@ while (el) {
 }
 ```
 
-上面代码遍历div-01节点的所有子节点。
+上面代码遍历`div-01`节点的所有子节点。
 
 **（3）previousSibling**
 
