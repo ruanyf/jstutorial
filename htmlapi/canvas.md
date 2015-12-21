@@ -12,29 +12,25 @@ Canvas API（画布）用于在网页实时生成图像，并且可以操作图�
 
 使用前，首先需要新建一个canvas网页元素。
 
-{% highlight html %}
-
+```html
 <canvas id="myCanvas" width="400" height="200">
-	您的浏览器不支持canvas！
+  您的浏览器不支持canvas！
 </canvas>
-
-{% endhighlight %}
+```
 
 上面代码中，如果浏览器不支持这个API，则就会显示canvas标签中间的文字——“您的浏览器不支持canvas！”。
 
 每个canvas元素都有一个对应的context对象（上下文对象），Canvas API定义在这个context对象上面，所以需要获取这个对象，方法是使用getContext方法。
 
-{% highlight javascript %}
-
+```javascript
 var canvas = document.getElementById('myCanvas');
 
 if (canvas.getContext) {
-	var ctx = canvas.getContext('2d');
+  var ctx = canvas.getContext('2d');
 }
+```
 
-{% endhighlight %}
-
-上面代码中，getContext方法指定参数2d，表示该canvas对象用于生成2D图案（即平面图案）。如果参数是3d，就表示用于生成3D图像（即立体图案），这部分实际上单独叫做WebGL API（本书不涉及）。
+上面代码中，getContext方法指定参数2d，表示该canvas对象用于生成2D图案（即平面图案）。如果参数是`webgl`，就表示用于生成3D图像（即立体图案），这部分实际上单独叫做WebGL API（本书不涉及）。
 
 ## 绘图方法
 

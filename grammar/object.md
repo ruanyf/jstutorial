@@ -8,21 +8,19 @@ modifiedOn: 2014-01-17
 
 ## 概述
 
-### 定义
+### 定义方法
 
 对象（object）是JavaScript的核心概念，也是最重要的数据类型。JavaScript的所有数据都可以被视为对象。
 
 简单说，所谓对象，就是一种无序的数据集合，由若干个“键值对”（key-value）构成。
 
-{% highlight javascript %}
-
+```javascript
 var o = {
-  p: "Hello World"
+  p: 'Hello World'
 };
+```
 
-{% endhighlight %}
-
-上面代码中，大括号就定义了一个对象，它被赋值给变量o。这个对象内部包含一个键值对（又称为“成员”），p是“键名”（成员的名称），字符串“Hello World”是“键值”（成员的值）。键名与键值之间用冒号分隔。如果对象内部包含多个键值对，每个键值对之间用逗号分隔。
+上面代码中，大括号就定义了一个对象，它被赋值给变量`o`。这个对象内部包含一个键值对（又称为“成员”），`p`是“键名”（成员的名称），字符串“Hello World”是“键值”（成员的值）。键名与键值之间用冒号分隔。如果对象内部包含多个键值对，每个键值对之间用逗号分隔。
 
 ### 键名
 
@@ -30,7 +28,7 @@ var o = {
 
 ```javascript
 var o = {
-  "p": "Hello World"
+  'p': 'Hello World'
 };
 ```
 
@@ -38,13 +36,22 @@ var o = {
 
 ```javascript
 var o = {
-  "1p": "Hello World",
-  "h w": "Hello World",
-  "p+q": "Hello World"
+  '1p': "Hello World",
+  'h w': "Hello World",
+  'p+q': "Hello World"
 };
 ```
 
 上面对象的三个键名，都不符合标识名的条件，所以必须加上引号。
+
+注意，JavaScript的保留字可以不加引号当作键名。
+
+```javascript
+var obj = {
+  for: 1,
+  class: 2
+};
+```
 
 如果键名是数字，则会默认转为对应的字符串。
 
@@ -56,8 +63,13 @@ var obj = {
   0xFF: true,
 };
 
-Object.keys(obj)
-// [ '100', '255', '0.01', '0.234' ]
+Obj
+// {
+//   100: true,
+//   255: true,
+//   0.01: true,
+//   0.234: true
+// }
 ```
 
 上面代码表示，如果键名为数值，则会先转为标准形式的数值，然后再转为字符串。

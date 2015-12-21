@@ -17,7 +17,7 @@ modifiedOn: 2014-01-05
 "abc"
 ```
 
-单引号字符串的内部，可以使用双引号；双引号字符串的内部，可以使用单引号。
+单引号字符串的内部，可以使用双引号。双引号字符串的内部，可以使用单引号。
 
 ```javascript
 'key="value"'
@@ -61,7 +61,7 @@ longString
 
 上面代码表示，加了反斜杠以后，原来写在一行的字符串，可以分成多行，效果与写在同一行完全一样。注意，反斜杠的后面必须是换行符，而不能有其他字符（比如空格），否则会报错。
 
-连接运算符（+）可以连接多个单行字符串，用来模拟多行字符串。
+连接运算符（`+`）可以连接多个单行字符串，用来模拟多行字符串。
 
 ```javascript
 var longString = 'Long '
@@ -120,7 +120,7 @@ line 3
 // "a"
 ```
 
-上面代码表示a是一个正常字符，前面加反斜杠没有特殊含义，则反斜杠会被自动省略。
+上面代码表示`a`是一个正常字符，前面加反斜杠没有特殊含义，则反斜杠会被自动省略。
 
 如果字符串的正常内容之中，需要包含反斜杠，则反斜杠前需要再加一个反斜杠，用来对自身转义。
 
@@ -149,10 +149,10 @@ s[4] // "o"
 ```javascript
 'abc'[3] // undefined
 'abc'[-1] // undefined
-'abc'["x"] // undefined
+'abc'['x'] // undefined
 ```
 
-但是，字符串与数组的相似性仅此而已。实际上，字符串是类似数组的对象，且无法改变字符串之中的单个字符。
+但是，字符串与数组的相似性仅此而已。实际上，无法改变字符串之中的单个字符。
 
 ```javascript
 var s = 'hello';
@@ -169,6 +169,20 @@ s // "hello"
 
 上面代码表示，字符串内部的单个字符无法改变和增删，这些操作会默默地失败。
 
+字符串也无法添加新属性。
+
+```javascript
+var s = 'Hello World';
+s.x = 123;
+s.x // undefined
+```
+
+上面代码为字符串`s`添加了一个`x`属性，结果无效，总是返回`undefined`。
+
+上面这些行为的原因是，在JavaScript内部，变量`s`其实指向字符串`Hello World`的地址，而`Hello World`本身是一个常量，所以无法改变它，既不能新增，也不能删除。另一方面，当一个字符串被调用属性时，它会自动转为String对象的实例（参见《标准库》一章），调用结束后，该对象自动销毁。这意味着，下一次调用字符串的属性时，实际是调用一个临时生成的新对象，而不是上一次调用时生成的那个对象，所以取不到赋值在上一个对象的属性。如果想要为字符串添加属性，只有在它的原型对象`String.prototype`上定义（参见《面向对象编程》一章）。
+
+### length属性
+
 `length`属性返回字符串的长度，该属性也是无法改变的。
 
 ```javascript
@@ -184,38 +198,23 @@ s.length // 5
 
 上面代码表示字符串的`length`属性无法改变，但是不会报错。
 
-字符串也无法添加新属性。
-
-```javascript
-var s = "Hello World";
-s.x = 123;
-s.x // undefined
-```
-
-上面代码为字符串`s`添加了一个`x`属性，结果无效，总是返回`undefined`。
-
-上面这些行为的原因是，在JavaScript内部，变量s其实指向字符串“Hello World”的地址，而“Hello World”本身是一个常量，所以无法改变它，既不能新增，也不能删除。另一方面，当一个字符串被调用属性时，它会自动转为String对象的实例（参见《标准库》一章），调用结束后，该对象自动销毁。这意味着，下一次调用字符串的属性时，实际是调用一个临时生成的新对象，而不是上一次调用时生成的那个对象，所以取不到赋值在上一个对象的属性。如果想要为字符串添加属性，只有在它的原型对象String.prototype上定义（参见《面向对象编程》一章）。
-
 ## 字符集
 
-JavaScript使用Unicode字符集，也就是说在JavaScript内部，所有字符都用Unicode表示。ECMAScript 3要求使用Unicode 2.1或以上版本，ECMAScript 5则要求使用Unicode 3及以上版本。
+JavaScript使用Unicode字符集，也就是说在JavaScript内部，所有字符都用Unicode表示。
 
-不仅JavaScript内部使用Unicode储存字符，而且还可以直接在程序中使用Unicode，所有字符都可以写成"\uxxxx"的形式，其中xxxx代表该字符的Unicode编码。比如，\u00A9代表版权符号。
+不仅JavaScript内部使用Unicode储存字符，而且还可以直接在程序中使用Unicode，所有字符都可以写成"\uxxxx"的形式，其中xxxx代表该字符的Unicode编码。比如，`\u00A9`代表版权符号。
 
-{% highlight javascript %}
-
+```javascript
 var s = '\u00A9';
 s // "©"
+```
 
-{% endhighlight %}
+每个字符在JavaScript内部都是以16位（即2个字节）的UTF-16格式储存。也就是说，JavaScript的单位字符长度固定为16位长度，即2个字节。
 
-每个字符在JavaScript内部都是以16位（即2个字节）的UTF-16格式储存。也就是说，JavaScript的单位字符长度固定为2个字节。
+但是，UTF-16有两种长度：对于`U+0000`到`U+FFFF`之间的字符，长度为16位（即2个字节）；对于`U+10000`到`U+10FFFF`之间的字符，长度为32位（即4个字节），而且前两个字节在`0xD800`到`0xDBFF`之间，后两个字节在`0xDC00`到`0xDFFF`之间。举例来说，`U+1D306`对应的字符为𝌆，它写成UTF-16就是`0xD834 0xDF06`。浏览器会正确将这四个字节识别为一个字符，但是JavaScript内部的字符长度总是固定为16位，会把这四个字节视为两个字符。
 
-但是需要注意的是，UTF-16有两种长度：对于U+0000到U+FFFF之间的字符，长度为16位（即2个字节）；对于U+10000到U+10FFFF之间的字符，长度为32位（即4个字节），而且前两个字节在0xD800到0xDBFF之间，后两个字节在0xDC00到0xDFFF之间。举例来说，U+1D306对应的字符为𝌆，它写成UTF-16就是0xD834和0xDF06。浏览器会正确将这四个字节识别为一个字符，但是JavaScript内部的字符长度总是固定为16位，会把这四个字节视为两个字符。
-
-{% highlight javascript %}
-
-var s = "\uD834\uDF06"
+```javascript
+var s = '\uD834\uDF06';
 
 s // "𝌆"
 s.length // 2
@@ -224,38 +223,32 @@ s.charAt(0) // ""
 s.charAt(1) // ""
 s.charCodeAt(0) // 55348
 s.charCodeAt(1) // 57094
+```
 
-{% endhighlight %}
+上面代码说明，对于于`U+10000`到`U+10FFFF`之间的字符，JavaScript总是视为两个字符（字符的`length`属性为2），用来匹配单个字符的正则表达式会失败（JavaScript认为这里不止一个字符），`charAt`方法无法返回单个字符，`charCodeAt`方法返回每个字节对应的十进制值。
 
-上面代码说明，对于于U+10000到U+10FFFF之间的字符，JavaScript总是视为两个字符（字符的length属性为2），用来匹配单个字符的正则表达式会失败（JavaScript认为这里不止一个字符），charAt方法无法返回单个字符，charCodeAt方法返回每个字节对应的十进制值。
+所以处理的时候，必须把这一点考虑在内。对于4个字节的Unicode字符，假定`C`是字符的Unicode编号，`H`是前两个字节，`L`是后两个字节，则它们之间的换算关系如下。
 
-所以处理的时候，必须把这一点考虑在内。对于4个字节的Unicode字符，假定C是字符的Unicode编号，H是前两个字节，L是后两个字节，则它们之间的换算关系如下：
-
-{% highlight javascript %}
-
+```javascript
 // 将大于U+FFFF的字符，从Unicode转为UTF-16
 H = Math.floor((C - 0x10000) / 0x400) + 0xD800
 L = (C - 0x10000) % 0x400 + 0xDC00
 
 // 将大于U+FFFF的字符，从UTF-16转为Unicode
 C = (H - 0xD800) * 0x400 + L - 0xDC00 + 0x10000
-
-{% endhighlight %}
+```
 
 下面的正则表达式可以识别所有UTF-16字符。
 
-{% highlight javascript %}
-
+```javascript
 ([\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF])
+```
 
-{% endhighlight %}
-
-由于JavaScript引擎（严格说是ES5规格）不能自动识别辅助平面（编号大于0xFFFF）的Unicode字符，导致所有字符串处理函数遇到这类字符，都会产生错误的结果（详见《标准库》一章的String对象章节）。如果要完成字符串相关操作，就必须判断字符是否落在0xD800到0xDFFF这个区间。
+由于JavaScript引擎（严格说是ES5规格）不能自动识别辅助平面（编号大于0xFFFF）的Unicode字符，导致所有字符串处理函数遇到这类字符，都会产生错误的结果（详见《标准库》一章的`String`对象章节）。如果要完成字符串相关操作，就必须判断字符是否落在`0xD800`到`0xDFFF`这个区间。
 
 下面是能够正确处理字符串遍历的函数。
 
 ```javascript
-
 function getSymbols(string) {
   var length = string.length;
   var index = -1;
@@ -279,10 +272,9 @@ var symbols = getSymbols('𝌆');
 symbols.forEach(function(symbol) {
   // ...
 });
-
 ```
 
-替换（String.prototype.replace）、截取子字符串（String.prototype.substring, String.prototype.slice）等其他字符串操作，都必须做类似的处理。
+替换（`String.prototype.replace`）、截取子字符串（`String.prototype.substring`, `String.prototype.slice`）等其他字符串操作，都必须做类似的处理。
 
 ## Base64转码
 
