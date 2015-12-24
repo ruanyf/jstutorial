@@ -26,7 +26,7 @@ modifiedOn: 2014-05-18
 <h2 id="stdlib">标准库</h2>
 
 - [Object对象](stdlib/object.html)
-- [Array 对象](stdlib/array.html)
+- [Array对象](stdlib/array.html)
 - [包装对象和Boolean对象](stdlib/wrapper.html)
 - [Number对象](stdlib/number.html)
 - [String对象](stdlib/string.html)
