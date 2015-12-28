@@ -304,24 +304,6 @@ console.timeEnd("Array initialize");
 
 time方法表示计时开始，timeEnd方法表示计时结束。它们的参数是计时器的名称。调用timeEnd方法之后，console窗口会显示“计时器名称: 所耗费的时间”。
 
-### timeline()，timelineEnd()，timeStamp()
-
-console.timeline和console.timelineEnd这两个方法用于定义一个新的时间线，可以在Timeline面板查看。这两个方法只有Chrome开发者工具支持。
-
-```javascript
-
-console.timeline('Google Search');
-
-// Do some work
-
-console.timelineEnd('Google Search');
-
-```
-
-上面代码定义了一个名称叫做“Google Search”的时间线，在这个时间线里的所有事件的耗时，可以在Timeline面板中查看。
-
-console.timeStamp方法用在上面两个方法的中间，用于为时间线添加一个时间戳。时间戳的名字就是timeStamp方法的参数。
-
 ### profile()，profileEnd()
 
 console.profile方法用来新建一个性能测试器（profile），它的参数是性能测试器的名字。

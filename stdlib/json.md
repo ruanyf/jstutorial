@@ -28,8 +28,7 @@ JSON格式（JavaScript Object Notation的缩写）是一种用于数据交换�
 
 以下是合格的JSON值。
 
-{% highlight javascript %}
-
+```javascript
 ["one", "two", "three"]
 
 { "one": 1, "two": 2, "three": 3 }
@@ -37,13 +36,11 @@ JSON格式（JavaScript Object Notation的缩写）是一种用于数据交换�
 {"names": ["张三", "李四"] }
 
 [ { "name": "张三"}, {"name": "李四"} ]
-
-{% endhighlight %}
+```
 
 以下是不合格的JSON值。
 
-{% highlight javascript %}
-
+```javascript
 { name: "张三", 'age': 32 }  // 属性名必须使用双引号
 
 [32, 64, 128, 0xFFF] // 不能使用十六进制值
@@ -56,8 +53,7 @@ JSON格式（JavaScript Object Notation的缩写）是一种用于数据交换�
       return this.name;
   }
 } // 不能使用函数和日期对象
-
-{% endhighlight %}
+```
 
 > 需要注意的是，空数组和空对象都是合格的JSON值，null本身也是一个合格的JSON值。
 
