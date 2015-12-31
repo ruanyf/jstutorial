@@ -95,14 +95,14 @@ Math.ceil(-3.2) // -3
 
 ### pow方法，sqrt方法
 
-power方法返回以第一个参数为底数、第二个参数为幂的指数值。
+`Math.pow`方法返回以第一个参数为底数、第二个参数为幂的指数值。
 
 ```javascript
 Math.pow(2, 2) // 4
 Math.pow(2, 3) // 8
 ```
 
-sqrt方法法返回参数值的平方根。如果参数是一个负值，则返回NaN。
+`Math.sqrt`方法返回参数值的平方根。如果参数是一个负值，则返回NaN。
 
 ```javascript
 Math.sqrt(4) // 2

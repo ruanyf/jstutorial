@@ -10,9 +10,7 @@ category: oop
 
 JavaScript的所有对象，都有自己的继承链。也就是说，每个对象都继承另一个对象，该对象称为“原型”（prototype）对象。只有`null`除外，它没有自己的原型对象。
 
-A对象是B对象的原型，那么B对象可以拿到A对象的所有属性和方法，这就是原型对象的重要性。
-
-`Object.getPrototypof`方法用于获取当前对象的原型对象。
+原型对象的重要性在于，如果`A`对象是`B`对象的原型，那么`B`对象可以拿到`A`对象的所有属性和方法。`Object.getPrototypof`方法用于获取当前对象的原型对象。
 
 ```javascript
 var p = Object.getPrototypeOf(obj);
@@ -20,15 +18,15 @@ var p = Object.getPrototypeOf(obj);
 
 上面代码中，对象`p`就是对象`obj`的原型对象。
 
-`Object.create`方法用于生成一个新的对象，继承原型对象。
+`Object.create`方法用于生成一个新的对象，继承指定对象。
 
 ```javascript
 var obj = Object.create(p);
 ```
 
-上面代码中，从原型对象`p`生成一个新的对象`obj`。
+上面代码中，新生成的`obj`对象的原型就是对象`p`。
 
-`__proto__`属性（前后各两个下划线），可以改写某个对象的原型对象。
+非标准的`__proto__`属性（前后各两个下划线），可以改写某个对象的原型对象。但是，应该尽量少用这个属性，而是用`Object.getPrototypeof()`和`Object.setPrototypeOf()`，进行原型对象的读写操作。
 
 ```javascript
 var obj = {};
@@ -50,6 +48,17 @@ b.x // 1
 
 上面代码中，`b`对象通过`__proto__`属性，将自己的原型对象设为`a`对象，因此`b`对象可以拿到`a`对象的所有属性和方法。`b`对象本身并没有`x`属性，但是JavaScript引擎通过`__proto__`属性，找到它的原型对象`a`，然后读取`a`的`x`属性。
 
+`new`命令通过构造函数新建实例对象，实质就是将实例对象的原型绑定构造函数的`prototype`属性，然后在实例对象上执行构造函数。
+
+```javascript
+var o = new Foo();
+
+// 等同于
+var o = new Object();
+o.__proto__ = Foo.prototype;
+Foo.call(o);
+```
+
 原型对象自己的`__proto__`属性，也可以指向其他对象，从而一级一级地形成“原型链”（prototype chain）。
 
 ```javascript
@@ -59,6 +68,28 @@ var c = { __proto__: b };
 
 c.x // 1
 ```
+
+需要注意的是，一级级向上，在原型链寻找某个属性，对性能是有影响的。所寻找的属性在越上层的原型对象，对性能的影响越大。如果寻找某个不存在的属性，将会遍历整个原型链。
+
+### this的动作指向
+
+不管`this`在哪里定义，使用的时候，它总是指向当前对象，而不是原型对象。
+
+```javascript
+var o = {
+  a: 2,
+  m: function(b) {
+    return this.a + 1;
+  }
+};
+
+var p = Object.create(o);
+p.a = 12;
+
+p.m() // 13
+```
+
+上面代码中，`p`对象的`m`方法来自它的原型对象`o`。这时，`m`方法内部的`this`对象，不指向`o`，而是指向`p`。
 
 ## 构造函数的继承
 
@@ -206,7 +237,9 @@ Object.getOwnPropertyNames(Date)
 Object.keys(Date) // []
 ```
 
-判断对象是否具有某个属性，使用hasOwnProperty方法。
+### hasOwnProperty()
+
+`hasOwnProperty`方法返回一个布尔值，用于判断某个属性定义在对象自身，还是定义在原型链上。
 
 ```javascript
 Date.hasOwnProperty('length')
@@ -215,6 +248,8 @@ Date.hasOwnProperty('length')
 Date.hasOwnProperty('toString')
 // false
 ```
+
+`hasOwnProperty`方法是JavaScript之中唯一一个处理对象属性时，不会遍历原型链的方法。
 
 ### 对象的继承属性
 
