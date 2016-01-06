@@ -65,33 +65,31 @@ modifiedOn: 2014-10-24
 
 ## scripts字段
 
-scripts指定了运行脚本命令的npm命令行缩写，比如start指定了运行npm run start时，所要执行的命令。
+`scripts`指定了运行脚本命令的npm命令行缩写，比如start指定了运行`npm run start`时，所要执行的命令。
 
-下面的设置指定了npm run preinstall、npm run postinstall、npm run start、npm run test时，所要执行的命令。
+下面的设置指定了`npm run preinstall`、`npm run postinstall`、`npm run start`、`npm run test`时，所要执行的命令。
 
-{% highlight javascript %}
-
+```javascript
 "scripts": {
     "preinstall": "echo here it comes!",
     "postinstall": "echo there it goes!",
     "start": "node index.js",
     "test": "tap test/*.js"
 }
-
-{% endhighlight %}
+```
 
 ## dependencies字段，devDependencies字段，peerDependencies字段
 
-dependencies和devDependencies两项，分别指定了项目运行所依赖的模块、项目开发所需要的模块。
+`dependencies`和`devDependencies`两项，分别指定了项目运行所依赖的模块、项目开发所需要的模块。
 
-dependencies和devDependencies这两项，都指向一个对象。该对象的各个成员，分别由模块名和对应的版本要求组成。对应的版本可以加上各种限定，主要有以下几种：
+`dependencies`和`devDependencies`这两项，都指向一个对象。该对象的各个成员，分别由模块名和对应的版本要求组成。对应的版本可以加上各种限定，主要有以下几种：
 
 - **指定版本**：比如1.2.2，遵循“大版本.次要版本.小版本”的格式规定，安装时只安装指定版本。
-- **波浪号（tilde）+指定版本**：比如~1.2.2，表示安装1.2.x的最新版本（不低于1.2.2），但是不安装1.3.x，也就是说安装时不改变大版本号和次要版本号。
+- **波浪号（tilde）+指定版本**：比如`~1.2.2`，表示安装1.2.x的最新版本（不低于1.2.2），但是不安装1.3.x，也就是说安装时不改变大版本号和次要版本号。
 - **插入号（caret）+指定版本**：比如&#710;1.2.2，表示安装1.x.x的最新版本（不低于1.2.2），但是不安装2.x.x，也就是说安装时不改变大版本号。需要注意的是，如果大版本号为0，则插入号的行为与波浪号相同，这是因为此时处于开发阶段，即使是次要版本号变动，也可能带来程序的不兼容。
 - **latest**：安装最新版本。
 
-package.json文件可以手工编写，也可以使用npm init命令自动生成。
+package.json文件可以手工编写，也可以使用`npm init`命令自动生成。
 
 ```bash
 $ npm init
@@ -101,24 +99,20 @@ $ npm init
 
 有了package.json文件，直接使用npm install命令，就会在当前目录中安装所需要的模块。
 
-{% highlight bash %}
+```bash
+$ npm install
+```
 
-npm install
+如果一个模块不在`package.json`文件之中，可以单独安装这个模块，并使用相应的参数，将其写入`package.json`文件之中。
 
-{% endhighlight %}
+```bash
+$ npm install express --save
+$ npm install express --save-dev
+```
 
-如果一个模块不在package.json文件之中，可以单独安装这个模块，并使用相应的参数，将其写入package.json文件之中。
+上面代码表示单独安装express模块，`--save`参数表示将该模块写入`dependencies`属性，`--save-dev`表示将该模块写入`devDependencies`属性。
 
-{% highlight bash %}
-
-npm install express --save
-npm install express --save-dev
-
-{% endhighlight %}
-
-上面代码表示单独安装express模块，--save参数表示将该模块写入dependencies属性，--save-dev表示将该模块写入devDependencies属性。
-
-`peerDependencies`字段主要用来，供插件指定其所需要的主软件的版本。
+`peerDependencies`字段，主要用来供插件指定其所需要的主软件的版本。
 
 ```javascript
 {
@@ -129,7 +123,7 @@ npm install express --save-dev
 }
 ```
 
-上面代码指定，安装`chai-as-promised`模块时，主程序`chai`必须一起安装，而且`chai`的版本必须是`1.x`。
+上面代码指定，安装`chai-as-promised`模块时，主程序`chai`必须一起安装，而且`chai`的版本必须是`1.x`。如果安装的是`chai`的2.0版本就会报错。
 
 注意，从npm 3.0版开始，`peerDependencies`不再会默认安装了。
 
