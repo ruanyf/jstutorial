@@ -608,7 +608,7 @@ var elem = document.forms["myForm"];
 
 ## ParentNode接口，ChildNode接口
 
-不同的节点除了继承Node接口以外，还会继承其他接口。ParentNode接口用于获取当前节点的Element子节点，ChildNode接口用于处理当前节点的子节点（包含但不限于Element子节点）。
+不同的节点除了继承Node接口以外，还会继承其他接口。ParentNode接口用于获取当前节点的Element父节点，ChildNode接口用于处理当前节点的子节点（包含但不限于Element子节点）。
 
 ### ParentNode接口
 
