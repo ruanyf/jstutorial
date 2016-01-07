@@ -181,7 +181,7 @@ document.title = '新标题';
 
 characterSet属性返回渲染当前文档的字符集，比如UTF-8、ISO-8859-1。
 
-### readyState，designModed
+### readyState，designMode
 
 以下属性与文档行为有关。
 
@@ -206,7 +206,7 @@ var interval = setInterval(function() {
 }, 100);
 ```
 
-**（2）designModed**
+**（2）designMode**
 
 designMode属性控制当前document是否可编辑。通常会打开iframe的designMode属性，将其变为一个所见即所得的编辑器。
 
