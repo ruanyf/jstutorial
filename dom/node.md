@@ -630,7 +630,7 @@ if (el.children.length) {
 
 **（2）firstElementChild**
 
-firstChild属性返回当前节点的第一个Element子节点，如果不存在任何Element子节点，则返回null。
+firstElementChild属性返回当前节点的第一个Element子节点，如果不存在任何Element子节点，则返回null。
 
 ```javascript
 document.firstElementChild.nodeName
