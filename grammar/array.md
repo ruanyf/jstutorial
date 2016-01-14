@@ -26,6 +26,8 @@ arr[1] = 'b';
 arr[2] = 'c';
 ```
 
+除了通过方括号生成数组，还可以通过`Array`方法生成数组，详见《标准库》一章的《Array对象》部分。
+
 任意一种类型的数据，都可以放入数组。
 
 ```javascript
@@ -50,45 +52,19 @@ a[0][1] // 2
 a[1][1] // 4
 ```
 
-除了使用字面量，数组还可以通过`Array`构造函数生成。
+## 数组的本质
 
-```javascript
-var arr = new Array(element0, element1, ..., elementN);
-var arr = Array(element0, element1, ..., elementN);
-var arr = [element0, element1, ..., elementN];
-```
-
-上面三种数组的生成方式，都是等价的。但是，通常不用前两种方法生成数组，因为它们的行为会因为参数个数的不同，而发生变化。
-
-```javascript
-var arr = new Array(1);
-arr // [ ,]
-arr.length // 1
-
-var a = new Array(2);
-arr // [ , ,]
-arr.length // 2
-
-var arr = new Array(1, 2);
-arr // [1, 2]
-arr.length // 2
-```
-
-上面代码说明，如果Array构造函数只有一个参数，且该参数是一个整数，那么会返回一个指定长度的空数组。这与多个参数时的行为不一致，详见《标准库》一章的`Array`对象部分。
-
-## 数组与对象的关系
-
-本质上，数组也属于对象，是字典结构（dictionary）的一个变种，每一个成员就是一个键值对。
+本质上，数组属于一种特殊的对象，是字典结构（dictionary）的一个变种。`typeof`运算符会返回数组的类型是`object`。
 
 ```javascript
 typeof [1, 2, 3] // "object"
 ```
 
-上面代码表明，数组只是一种特殊的对象，`typeof`运算符返回数组的类型是`object`。
+上面代码表明，`typeof`运算符认为数组的类型就是对象。
 
 数组的特殊性体现在，它的键名是按次序排列的一组整数（0，1，2...），所以数组不用为每个元素指定键名，而对象的每个成员都必须指定键名。
 
-对象的键名，一律为字符串，非字符串的键名会被转为字符串。数组的键名其实也是字符串，所有的整数键名默认都会转为字符串。
+因为对象的键名一律为字符串，所以，数组的键名其实也是字符串。之所以可以用数值读取，是因为非字符串的键名会被转为字符串。
 
 ```javascript
 var arr = ['a', 'b', 'c'];
@@ -113,7 +89,14 @@ a[1] // 6
 
 上面代码表明，由于字符串“1000”和浮点数1.00都可以转换为整数，所以视同为整数键赋值。
 
-上一节说过，对象有两种读取成员的方法：“点”结构（`object.key`）和方括号结构（`object[key]`）。但是，对于数值的键名，不能使用点结构，`arr.0`的写法不合法，因为单独的数值不能作为标识符（identifier）。所以，数组成员只能用方括号`arr[0]`表示（方括号是运算符，可以接受数值）。
+上一节说过，对象有两种读取成员的方法：“点”结构（`object.key`）和方括号结构（`object[key]`）。但是，对于数值的键名，不能使用点结构。
+
+```javascript
+var arr = [1, 2, 3];
+arr.0 // SyntaxError
+```
+
+上面代码中，`arr.0`的写法不合法，因为单独的数值不能作为标识符（identifier）。所以，数组成员只能用方括号`arr[0]`表示（方括号是运算符，可以接受数值）。
 
 ## length属性
 
@@ -238,8 +221,7 @@ obj.length // 0
 
 典型的类似数组的对象是函数的arguments对象，以及大多数DOM元素集，还有字符串。
 
-{% highlight javascript %}
-
+```javascript
 // arguments对象
 function args() { return arguments }
 var arrayLike = args('a', 'b');
@@ -257,16 +239,13 @@ elts instanceof Array // false
 'abc'[1] // 'b'
 'abc'.length // 3
 'abc' instanceof Array // false
-
-{% endhighlight %}
+```
 
 通过函数的call方法，可以用slice方法将类似数组的对象，变成真正的数组。
 
-{% highlight javascript %}
-
+```javascript
 var arr = Array.prototype.slice.call(arguments);
-
-{% endhighlight %}
+```
 
 遍历类似数组的对象，可以采用for循环，也可以采用数组的forEach方法。
 

@@ -10,13 +10,13 @@ JavaScript提供定时执行代码的功能，叫做定时器（timer），主�
 
 ## setTimeout()
 
-setTimeout函数用来指定某个函数或某段代码，在多少毫秒之后执行。它返回一个整数，表示定时器的编号，以后可以用来取消这个定时器。
+`setTimeout`函数用来指定某个函数或某段代码，在多少毫秒之后执行。它返回一个整数，表示定时器的编号，以后可以用来取消这个定时器。
 
 ```javascript
 var timerId = setTimeout(func|code, delay)
 ```
 
-上面代码中，setTimeout函数接受两个参数，第一个参数`func|code`是将要推迟执行的函数名或者一段代码，第二个参数`delay`是推迟执行的毫秒数。
+上面代码中，`setTimeout`函数接受两个参数，第一个参数`func|code`是将要推迟执行的函数名或者一段代码，第二个参数`delay`是推迟执行的毫秒数。
 
 ```javascript
 console.log(1);
@@ -24,7 +24,7 @@ setTimeout('console.log(2)',1000);
 console.log(3);
 ```
 
-上面代码的输出结果就是1，3，2，因为setTimeout指定第二行语句推迟1000毫秒再执行。
+上面代码的输出结果就是1，3，2，因为`setTimeout`指定第二行语句推迟1000毫秒再执行。
 
 需要注意的是，推迟执行的代码必须以字符串的形式，放入setTimeout，因为引擎内部使用eval函数，将字符串转为代码。如果推迟执行的是函数，则可以直接将函数名，放入setTimeout。一方面eval函数有安全顾虑，另一方面为了便于JavaScript引擎优化代码，setTimeout方法一般总是采用函数名的形式，就像下面这样。
 
@@ -39,6 +39,8 @@ setTimeout(f,1000);
 
 setTimeout(function (){console.log(2)},1000);
 ```
+
+如果省略`setTimeout`的第二个参数，则该参数默认为0。
 
 除了前两个参数，setTimeout还允许添加更多的参数。它们将被传入推迟执行的函数（回调函数）。
 
@@ -346,23 +348,21 @@ function timerTask(){
 
 ### 含义
 
-setTimeout的作用是将代码推迟到指定时间执行，如果指定时间为0，即setTimeout(f,0)，那么会立刻执行吗？
+`setTimeout`的作用是将代码推迟到指定时间执行，如果指定时间为`0`，即`setTimeout(f, 0)`，那么会立刻执行吗？
 
-答案是不会。因为上一段说过，必须要等到当前脚本的同步任务和“任务队列”中已有的事件，全部处理完以后，才会执行setTimeout指定的任务。也就是说，setTimeout的真正作用是，在“任务队列”的现有事件的后面再添加一个事件，规定在指定时间执行某段代码。setTimeout添加的事件，会在下一次Event Loop执行。
+答案是不会。因为上一段说过，必须要等到当前脚本的同步任务和“任务队列”中已有的事件，全部处理完以后，才会执行`setTimeout`指定的任务。也就是说，setTimeout的真正作用是，在“消息队列”的现有消息的后面再添加一个消息，规定在指定时间执行某段代码。`setTimeout`添加的事件，会在下一次`Event Loop`执行。
 
-setTimeout(f,0)将第二个参数设为0，作用是让f在现有的任务（脚本的同步任务和“任务队列”中已有的事件）一结束就立刻执行。也就是说，setTimeout(f,0)的作用是，尽可能早地执行指定的任务。
+`setTimeout(f, 0)`将第二个参数设为`0`，作用是让`f`在现有的任务（脚本的同步任务和“消息队列”指定的任务）一结束就立刻执行。也就是说，`setTimeout(f, 0)`的作用是，尽可能早地执行指定的任务。而并不是会立刻就执行这个任务。
 
-{% highlight javascript %}
-
-setTimeout(function (){
-  console.log("你好！");
+```javascript
+setTimeout(function () {
+  console.log('你好！');
 }, 0);
-
-{% endhighlight %}
+```
 
 上面代码的含义是，尽可能早地显示“你好！”。
 
-setTimeout(f,0)指定的任务，最早也要到下一次Event Loop才会执行。请看下面的例子。
+`setTimeout(f, 0)`指定的任务，最早也要到下一次Event Loop才会执行。请看下面的例子。
 
 ```javascript
 setTimeout(function() {
@@ -395,11 +395,11 @@ console.log("当前任务结束");
 // Timeout
 ```
 
-上面代码说明，setTimeout(f,0)必须要等到当前脚本的所有同步任务结束后才会执行。
+上面代码说明，`setTimeout(f, 0)`必须要等到当前脚本的所有同步任务结束后才会执行。
 
-0毫秒实际上达不到的。根据[HTML 5标准](http://www.whatwg.org/specs/web-apps/current-work/multipage/timers.html#timers)，setTimeOut推迟执行的时间，最少是4毫秒。如果小于这个值，会被自动增加到4。这是为了防止多个`setTimeout(f,0)`语句连续执行，造成性能问题。
+即使消息队列是空的，0毫秒实际上也是达不到的。根据[HTML 5标准](http://www.whatwg.org/specs/web-apps/current-work/multipage/timers.html#timers)，`setTimeOut`推迟执行的时间，最少是4毫秒。如果小于这个值，会被自动增加到4。这是为了防止多个`setTimeout(f, 0)`语句连续执行，造成性能问题。
 
-另一方面，浏览器内部使用32位带符号的整数，来储存推迟执行的时间。这意味着setTimeout最多只能推迟执行2147483647毫秒（24.8天），超过这个时间会发生溢出，导致回调函数将在当前任务队列结束后立即执行，即等同于setTimeout(f,0)的效果。
+另一方面，浏览器内部使用32位带符号的整数，来储存推迟执行的时间。这意味着`setTimeout`最多只能推迟执行2147483647毫秒（24.8天），超过这个时间会发生溢出，导致回调函数将在当前任务队列结束后立即执行，即等同于`setTimeout(f, 0)`的效果。
 
 ### 应用
 
