@@ -63,13 +63,13 @@ var iframe_title = iframe.contentWindow.title;
 
 在iframe框架内部，使用window.parent指向父页面。
 
-### Navigator对象
+### navigator对象
 
-Window对象的Navigator属性，指向一个包含浏览器相关信息的对象。
+Window对象的navigator属性，指向一个包含浏览器相关信息的对象。
 
-**（1）Navigator.userAgent属性**
+**（1）navigator.userAgent属性**
 
-Navigator.userAgent属性返回浏览器的User-Agent字符串，用来标示浏览器的种类。下面是Chrome浏览器的User-Agent。
+navigator.userAgent属性返回浏览器的User-Agent字符串，用来标示浏览器的种类。下面是Chrome浏览器的User-Agent。
 
 {% highlight javascript %}
 
