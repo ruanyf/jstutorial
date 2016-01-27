@@ -366,6 +366,16 @@ for (i in o){
 // 3
 ```
 
+下面是一个使用`for...in`循环，进行数组赋值的例子。
+
+```javascript
+var props = [], i = 0;
+
+for (props[i++] in {x: 1, y: 2});
+
+props // ['x', 'y']
+```
+
 注意，`for...in`循环遍历的是对象所有可enumberable的属性，其中不仅包括定义在对象本身的属性，还包括对象继承的属性。
 
 ```javascript
@@ -394,18 +404,16 @@ for (var key in person) {
 
 如果只想遍历对象本身的属性，可以使用hasOwnProperty方法，在循环内部做一个判断。
 
-{% highlight javascript %}
-
+```javascript
 for (var key in person) {
-    if (person.hasOwnProperty(key)) {
-        console.log(key);
-    }
+  if (person.hasOwnProperty(key)) {
+    console.log(key);
+  }
 }
 // name
+```
 
-{% endhighlight %}
-
-为了避免这一点，可以新建一个继承null的对象。由于null没有任何属性，所以新对象也就不会有继承的属性了。
+为了避免这一点，可以新建一个继承`null`的对象。由于`null`没有任何属性，所以新对象也就不会有继承的属性了。
 
 ## with语句
 

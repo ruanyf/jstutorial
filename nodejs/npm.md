@@ -144,31 +144,44 @@ $ npm list underscore
 
 ## npm install
 
-Node模块采用`npm install`命令安装。每个模块可以“全局安装”，也可以“本地安装”。两者的差异是模块的安装位置，以及调用方法。
+### 基本用法
 
-“全局安装”指的是将一个模块直接下载到Node的安装目录中，各个项目都可以调用。“本地安装”指的是将一个模块下载到当前目录的node_modules子目录，然后只有在当前目录和它的子目录之中，才能调用这个模块。一般来说，全局安装只适用于工具模块，比如npm和grunt。
+Node模块采用`npm install`命令安装。
 
-默认情况下，`npm install`命令是“本地安装”某个模块。
+每个模块可以“全局安装”，也可以“本地安装”。“全局安装”指的是将一个模块安装到系统目录中，各个项目都可以调用。一般来说，全局安装只适用于工具模块，比如npm和grunt。“本地安装”指的是将一个模块下载到当前项目的`node_modules`子目录，然后只有在项目目录之中，才能调用这个模块。
 
 ```bash
+# 本地安装
 $ npm install <package name>
+
+# 全局安装
+$ sudo npm install -global <package name>
+$ sudo npm install -g <package name>
 ```
 
-npm也支持直接输入github地址。
+`npm install`也支持直接输入Github代码库地址。
 
 ```bash
 $ npm install git://github.com/package/path.git
 $ npm install git://github.com/package/path.git#0.1.0
 ```
 
-运行上面命令后，模块文件将下载到当前目录的`node_modules`子目录。
+安装之前，`npm install`会先检查，`node_modules`目录之中是否已经存在指定模块。如果存在，就不再重新安装了，即使远程仓库已经有了一个新版本，也是如此。
 
-使用global参数，可以“全局安装”某个模块。global参数可以被简化成g参数。
+如果你希望，一个模块不管是否安装过，npm 都要强制重新安装，可以使用`-f`或`--force`参数。
 
 ```bash
-$ sudo npm install -global [package name]
-$ sudo npm install -g [package name]
+$ npm install <packageName> --force
 ```
+
+如果你希望，所有模块都要强制重新安装，那就删除`node_modules`目录，重新执行`npm install`。
+
+```bash
+$ rm -rf node_modules
+$ npm install
+```
+
+### 安装不同版本
 
 install命令总是安装模块的最新版本，如果要安装模块的特定版本，可以在模块名后面加上@和版本号。
 
@@ -219,7 +232,6 @@ $ NODE_ENV=production npm install
 
 ```javascript
 var backbone = require('backbone')
-
 console.log(backbone.VERSION)
 ```
 
@@ -312,28 +324,45 @@ npm允许使用特殊符号，指定所要使用的版本范围，假定当前�
 
 ## npm update，npm uninstall
 
-npm update 命令可以升级本地安装的模块。
+`npm update`命令可以更新本地安装的模块。
 
 ```bash
+# 升级当前项目的指定模块
 $ npm update [package name]
-```
 
-加上global参数，可以升级全局安装的模块。
-
-```bash
+# 升级全局安装的模块
 $ npm update -global [package name]
 ```
 
-npm uninstall 命令，删除本地安装的模块。
+它会先到远程仓库查询最新版本，然后查询本地版本。如果本地版本不存在，或者远程版本较新，就会安装。
+
+使用`-S`或`--save`参数，可以在安装的时候更新`package.json`里面模块的版本号。
+
+```javascript
+// 更新之前的package.json
+dependencies: {
+  dep1: "^1.1.1"
+}
+
+// 更新之后的package.json
+dependencies: {
+  dep1: "^1.2.2"
+}
+```
+
+注意，从npm v2.6.1 开始，`npm update`只更新顶层模块，而不更新依赖的依赖，以前版本是递归更新的。如果想取到老版本的效果，要使用下面的命令。
+
+```bash
+$ npm --depth 9999 update
+```
+
+`npm uninstall`命令，卸载已安装的模块。
 
 ```bash
 $ npm uninstall [package name]
-```
 
-加上global参数，可以删除全局安装的模块。
-
-```bash
-$ sudo npm uninstall [package name] -global
+# 卸载全局模块
+$ npm uninstall [package name] -global
 ```
 
 ## npm shrinkwrap

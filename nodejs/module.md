@@ -101,6 +101,20 @@ console.log(module);
 }
 ```
 
+如果在命令行下调用某个模块，比如`node something.js`，那么`module.parent`就是`undefined`。如果是在脚本之中调用，比如`require('./something.js')`，那么`module.parent`就是调用它的模块。利用这一点，可以判断当前模块是否为入口脚本。
+
+```javascript
+if (!module.parent) {
+    // ran with `node something.js`
+    app.listen(8088, function() {
+        console.log('app listening on port 8088');
+    })
+} else {
+    // used with `require('/.something.js')`
+    module.exports = app;
+}
+```
+
 ### module.exports属性
 
 `module.exports`属性表示当前模块对外输出的接口，其他文件加载该模块，实际上就是读取`module.exports`变量。

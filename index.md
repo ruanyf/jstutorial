@@ -86,14 +86,9 @@ modifiedOn: 2014-05-18
 <h2 id="tool">开发工具</h2>
 
 - [console对象](tool/console.html)
-- [PhantomJS](tool/phantomjs.html)
-- [Bower：客户端库管理工具](tool/bower.html)
-- [Grunt：任务自动管理工具](tool/grunt.html)
 - [Gulp：任务自动管理工具](tool/gulp.html)
 - [Browserify：浏览器加载Node.js模块](tool/browserify.html)
-- [RequireJS和AMD规范](tool/requirejs.html)
 - [Source map](tool/sourcemap.html)
-- [Lint工具](tool/lint.html)
 - [JavaScript 测试](tool/testing.html)
 
 <h2 id="advanced">JavaScript高级语法</h2>
@@ -105,11 +100,7 @@ modifiedOn: 2014-05-18
 
 <hr></hr>
 
-<h2 id="appendix">附录</h2>
-
-- [JavaScript API列表](appendix/api.html)
-
-<h2 id="library">草稿一：函数库</h2>
+<h2 id="library">废稿</h2>
 
 - [Underscore.js](library/underscore.html)
 - [Modernizr](library/modernizr.html)
@@ -117,8 +108,13 @@ modifiedOn: 2014-05-18
 - [D3.js](library/d3.html)
 - [设计模式](library/designpattern.html)
 - [排序算法](library/sorting.html)
+- [PhantomJS](tool/phantomjs.html)
+- [Bower：客户端库管理工具](tool/bower.html)
+- [Grunt：任务自动管理工具](tool/grunt.html)
+- [RequireJS和AMD规范](tool/requirejs.html)
+- [Lint工具](tool/lint.html)
 
-<h2 id="jquery">草稿二：jQuery</h2>
+<h2 id="jquery">草稿：jQuery</h2>
 
 - [概述](jquery/basic.html)
 - [工具方法](jquery/utility.html)
@@ -126,7 +122,7 @@ modifiedOn: 2014-05-18
 - [deferred对象](jquery/deferred.html)
 - [如何做到jQuery-free？](jquery/jquery-free.html)
 
-<h2 id="nodejs">草稿三：Node.js</h2>
+<h2 id="nodejs">草稿：Node.js</h2>
 
 - [概述](nodejs/basic.html)
 - [Module](nodejs/module.html)

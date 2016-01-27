@@ -21,15 +21,15 @@ Buffer对象与字符串的互相转换，需要指定编码格式。目前，Bu
 - base64
 - hex：将每个字节转为两个十六进制字符。
 
-V8引擎将Buffer对象占用的内存，解释为一个整数数组，而不是二进制数组。所以，`new Uint32Array(new Buffer([1,2,3,4]))`，生成的Uint32Array数组是一个4个成员的Uint32Array数组，而不是只有单个成员（[0x1020304]或者[0x4030201]）的。
+V8引擎将Buffer对象占用的内存，解释为一个整数数组，而不是二进制数组。所以，`new Uint32Array(new Buffer([1, 2, 3, 4]))`，生成的`Uint32Array`数组是一个4个成员的`Uint32Array`数组，而不是只有单个成员（`[0x1020304]`或者`[0x4030201]`）。
 
-注意，这时类型化数组所对应的内存是从Buffer对象拷贝的，而不是共享的。类型化数组的buffer属性，保留指向原Buffer对象的指针。
+注意，这时二进制数组所对应的内存是从Buffer对象拷贝的，而不是共享的。二进制数组的`buffer`属性，保留指向原Buffer对象的指针。
 
-类型化数组的操作，与Buffer对象的操作基本上是兼容的，只有轻微的差异。比如，类型化数组的slice方法返回原内存的拷贝，而Buffer对象的slice方法创造原内存的一个视图（view）。
+二进制数组的操作，与Buffer对象的操作基本上是兼容的，只有轻微的差异。比如，二进制数组的`slice`方法返回原内存的拷贝，而Buffer对象的`slice`方法创造原内存的一个视图（view）。
 
 ## Buffer构造函数
 
-Buffer作为构造函数，可以用new命令生成一个实例，它可以接受多种形式的参数。
+Buffer作为构造函数，可以用`new`命令生成一个实例，它可以接受多种形式的参数。
 
 ```javascript
 // 参数是整数，指定分配多少个字节内存
@@ -48,6 +48,26 @@ var hello = new Buffer('Hello', 'utf8');
 // 参数是另一个Buffer实例，等同于拷贝后者
 var hello1 = new Buffer('Hello');
 var hello2 = new Buffer(hello1);
+```
+
+下面是读取用户命令行输入的例子。
+
+```javascript
+var fs = require('fs');
+var buffer = new Buffer(1024);
+
+var readSize = fs.readSync(fs.openSync('/dev/tty', 'r'), buffer, 0, bufferSize);
+var chunk = buffer.toString('utf8', 0, readSize);
+
+console.log('INPUT: ' + chunk);
+```
+
+运行上面的程序结果如下。
+
+```bash
+# 输入任意内容，然后按回车键
+foo
+INPUT: foo
 ```
 
 ## 类的方法
@@ -157,7 +177,7 @@ hello // <Buffer 48 65 6c 6c 6f>
 hello.toString() // "Hello"
 ```
 
-toString方法可以只返回指定位置内存的内容，它的第二个参数表示起始位置，第三个参数表示终止位置，两者都是从0开始计算。
+`toString`方法可以只返回指定位置内存的内容，它的第二个参数表示起始位置，第三个参数表示终止位置，两者都是从0开始计算。
 
 ```javascript
 var buf = new Buffer('just some data');

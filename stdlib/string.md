@@ -96,11 +96,9 @@ s.charAt(s.length-1) // "c"
 
 这个方法完全可以用数组下标替代。
 
-{% highlight javascript %}
-
-"abc"[1] // "b"
-
-{% endhighlight %}
+```javascript
+'abc'[1] // "b"
+```
 
 charCodeAt方法返回给定位置字符的Unicode编码（十进制表示）。
 
@@ -119,30 +117,36 @@ s.charCodeAt(1)
 
 ### concat方法
 
-concat方法用于连接两个字符串。
+字符串的`concat`方法用于连接两个字符串。
 
-{% highlight javascript %}
-
-var s1 = "abc";
-var s2 = "def";
+```javascript
+var s1 = 'abc';
+var s2 = 'def';
 
 s1.concat(s2) // "abcdef"
 s1 // "abc"
-
-{% endhighlight %}
+```
 
 使用该方法后，原字符串不受影响，返回一个新字符串。
 
-该方法可以接受多个字符串。
+该方法可以接受多个参数。
 
-{% highlight javascript %}
+```javascript
+'a'.concat('b', 'c') // "abc"
+```
 
-"a".concat("b","c")
-// "abc"
+如果参数不是字符串，`concat`方法会将其先转为字符串，然后再连接。
 
-{% endhighlight %}
+```javascript
+var one = 1;
+var two = 2;
+var three = '3';
 
-但是，一般来说，字符串连接运算还是应该使用加号（+）运算符。
+''.concat(one, two, three) // "123"
+one + two + three // "33"
+```
+
+上面代码中，`concat`方法将参数先转成字符串再连接，所以返回的是一个三个字符的字符串。而加号运算符在两个运算数都是数值时，不会转换类型，所以返回的是一个两个字符的字符串。
 
 ### substring方法，substr方法和slice方法
 
