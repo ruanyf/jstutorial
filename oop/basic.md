@@ -223,7 +223,7 @@ a instanceof Object // true
 
 上面代码表示，a是一个数组，所以它是Array的实例；同时，a也是一个对象，所以它也是Object的实例。
 
-利用`instanceo`f运算符，还可以巧妙地解决，调用构造函数时，忘了加`new`命令的问题。
+利用`instanceof`运算符，还可以巧妙地解决，调用构造函数时，忘了加`new`命令的问题。
 
 ```javascript
 function Fubar (foo, bar) {
