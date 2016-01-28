@@ -138,7 +138,7 @@ HTML 5标准规定，setTimeout的最短时间间隔是4毫秒。为了节电，
 
 ## setInterval()
 
-setInterval函数的用法与setTimeout完全一致，区别仅仅在于setInterval指定某个任务每隔一段时间就执行一次，也就是无限次的定时执行。
+`setInterval`函数的用法与`setTimeout`完全一致，区别仅仅在于`setInterval`指定某个任务每隔一段时间就执行一次，也就是无限次的定时执行。
 
 ```html
 <input type="button" onclick="clearInterval(timer)" value="stop">
@@ -153,7 +153,7 @@ setInterval函数的用法与setTimeout完全一致，区别仅仅在于setInter
 
 上面代码表示每隔1000毫秒就输出一个2，直到用户点击了停止按钮。
 
-与setTimeout一样，除了前两个参数，setInterval 方法还可以接受更多的参数，它们会传入回调函数，下面是一个例子。
+与`setTimeout`一样，除了前两个参数，`setInterval`方法还可以接受更多的参数，它们会传入回调函数，下面是一个例子。
 
 ```javascript
 function f(){
@@ -173,16 +173,7 @@ setInterval(f, 1000, "Hello World");
 
 setInterval指定的是“开始执行”之间的间隔，并不考虑每次任务执行本身所消耗的时间。因此实际上，两次执行之间的间隔会小于指定的时间。比如，setInterval指定每100ms执行一次，每次执行需要5ms，那么第一次执行结束后95毫秒，第二次执行就会开始。如果某次执行耗时特别长，比如需要105毫秒，那么它结束后，下一次执行就会立即开始。
 
-```javascript
-var i = 1;
-var timer = setInterval(function() {
-  alert(i++);
-}, 2000);
-```
-
-上面代码每隔2000毫秒，就跳出一个alert对话框。如果用户一直不点击“确定”，整个浏览器就处于“堵塞”状态，后面的执行就一直无法触发，将会累积起来。举例来说，第一次跳出alert对话框后，用户过了6000毫秒才点击“确定”，那么第二次、第三次、第四次执行将累积起来，它们之间不会再有等待间隔。
-
-为了确保两次执行之间有固定的间隔，可以不用setInterval，而是每次执行结束后，使用setTimeout指定下一次执行的具体时间。上面代码用setTimeout，可以改写如下。
+为了确保两次执行之间有固定的间隔，可以不用setInterval，而是每次执行结束后，使用setTimeout指定下一次执行的具体时间。
 
 ```javascript
 var i = 1;
@@ -192,7 +183,7 @@ var timer = setTimeout(function() {
 }, 2000);
 ```
 
-上面代码可以确保两次执行的间隔是2000毫秒。
+上面代码可以确保，下一个对话框总是在关闭上一个对话框之后2000毫秒弹出。
 
 根据这种思路，可以自己部署一个函数，实现间隔时间确定的setInterval的效果。
 
