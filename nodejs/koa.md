@@ -543,7 +543,7 @@ this.cookie的配置对象的属性如下。
 
 ## session
 
-```
+```javascript
 var session = require('koa-session');
 var koa = require('koa');
 var app = koa();
