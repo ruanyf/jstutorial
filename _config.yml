@@ -1,7 +1,7 @@
 markdown: redcarpet
 redcarpet:
   extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "tables", "with_toc_data"]   
-highlighter: pygments
+highlighter: rouge
 permalink: none
 sitename: JavaScript 标准参考教程（alpha）
 
@@ -10,7 +10,7 @@ chapters:
 - grammar
 - stdlib
 - oop
-- dom 
+- dom
 - bom
 - htmlapi
 - jquery
