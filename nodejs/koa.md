@@ -685,7 +685,7 @@ this.request.is('html'); // 'html'
 this.request.is('text/html'); // 'text/html'
 this.request.is('text/*', 'text/html'); // 'text/html'
 
-// Content-Type为s application/json
+// Content-Type为 application/json
 this.request.is('json', 'urlencoded'); // 'json'
 this.request.is('application/json'); // 'application/json'
 this.request.is('html', 'application/*'); // 'application/json'
