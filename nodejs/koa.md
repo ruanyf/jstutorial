@@ -379,7 +379,7 @@ context对象的全局属性。
 - request：指向Request对象
 - response：指向Response对象
 - req：指向Node的request对象
-- req：指向Node的response对象
+- res：指向Node的response对象
 - app：指向App对象
 - state：用于在中间件传递信息。
 
@@ -543,7 +543,7 @@ this.cookie的配置对象的属性如下。
 
 ## session
 
-```
+```javascript
 var session = require('koa-session');
 var koa = require('koa');
 var app = koa();
@@ -685,7 +685,7 @@ this.request.is('html'); // 'html'
 this.request.is('text/html'); // 'text/html'
 this.request.is('text/*', 'text/html'); // 'text/html'
 
-// Content-Type为s application/json
+// Content-Type为 application/json
 this.request.is('json', 'urlencoded'); // 'json'
 this.request.is('application/json'); // 'application/json'
 this.request.is('html', 'application/*'); // 'application/json'
