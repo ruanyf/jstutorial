@@ -228,7 +228,7 @@ obj.length // 0
 
 上面代码为对象`obj`添加了一个数字键，但是`length`属性没变。这就说明了`obj`不是数组。
 
-典型的类似数组的对象是函数的arguments对象，以及大多数DOM元素集，还有字符串。
+典型的类似数组的对象是函数的`arguments`对象，以及大多数DOM元素集，还有字符串。
 
 ```javascript
 // arguments对象
@@ -250,20 +250,20 @@ elts instanceof Array // false
 'abc' instanceof Array // false
 ```
 
-通过函数的call方法，可以用slice方法将类似数组的对象，变成真正的数组。
+数组的`slice`方法将类似数组的对象，变成真正的数组。
 
 ```javascript
-var arr = Array.prototype.slice.call(arguments);
+var arr = Array.prototype.slice.call(arrayLike);
 ```
 
-遍历类似数组的对象，可以采用for循环，也可以采用数组的forEach方法。
+遍历类似数组的对象，可以采用`for`循环，也可以采用数组的`forEach`方法。
 
 ```javascript
 // for循环
 function logArgs() {
-    for (var i=0; i<arguments.length; i++) {
-        console.log(i+'. '+arguments[i]);
-    }
+  for (var i = 0; i < arguments.length; i++) {
+    console.log(i + '. ' + arguments[i]);
+  }
 }
 
 // forEach方法
