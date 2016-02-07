@@ -517,10 +517,37 @@ el.onclick = giveDetails;
 
 **（3）timeStamp**
 
-timeStamp属性返回一个毫秒时间戳，表示事件发生的时间。
+`timeStamp`属性返回一个毫秒时间戳，表示事件发生的时间。
 
 ```javascript
 var number = event.timeStamp;
+```
+
+Chrome在49版以前，这个属性返回的是一个整数，单位是毫秒（millisecond），表示从Unix纪元开始的时间戳。从49版开始，该属性返回的是一个高精度时间戳，也就是说，毫秒之后还带三位小数，精确到微秒。并且，这个值不再从Unix纪元开始计算，而是从`PerformanceTiming.navigationStart`开始计算，即表示距离用户导航至该网页的时间。如果想将这个值转为Unix纪元时间戳，就要计算`event.timeStamp + performance.timing.navigationStart`。
+
+下面是一个计算鼠标移动速度的例子，显示每秒移动的像素数量。
+
+```javascript
+var previousX;
+var previousY;
+var previousT;
+
+window.addEventListener('mousemove', function(event) {
+  if (!(previousX === undefined ||
+        previousY === undefined ||
+        previousT === undefined)) {
+    var deltaX = event.screenX - previousX;
+    var deltaY = event.screenY - previousY;
+    var deltaD = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+
+    var deltaT = event.timeStamp - previousT;
+    console.log(deltaD / deltaT * 1000);
+  }
+
+  previousX = event.screenX;
+  previousY = event.screenY;
+  previousT = event.timeStamp;
+});
 ```
 
 **（4）isTrusted**

@@ -8,36 +8,30 @@ modifiedOn: 2014-05-06
 
 ## 概述
 
-浏览器窗口有一个history对象，用来保存浏览历史。比如，该窗口先后访问了三个地址，那么history对象就包括三项，length属性等于3。
+浏览器窗口有一个`history`对象，用来保存浏览历史。比如，该窗口先后访问了三个地址，那么`history`对象就包括三项，`history.length`属性等于3。
 
-{% highlight javascript %}
-
+```javascript
 history.length // 3
+```
 
-{% endhighlight %}
+`history`对象提供了一系列方法，允许在浏览历史之间移动。
 
-history对象提供了一系列方法，允许在浏览历史之间移动。
+- `back()`：移动到上一个访问页面，等同于浏览器的后退键。
+- `forward()`：移动到下一个访问页面，等同于浏览器的前进键。
+- `go()`：接受一个整数作为参数，移动到该整数指定的页面，比如`go(1)`相当于`forward()`，`go(-1)`相当于`back()`。
 
-- back()：移动到上一个访问页面，等同于浏览器的后退键。
-- forward()：移动到下一个访问页面，等同于浏览器的前进键。
-- go()：接受一个整数作为参数，移动到该整数指定的页面，比如go(1)相当于forward()，go(-1)相当于back()。
-
-{% highlight javascript %}
-
+```javascript
 history.back();
 history.forward();
 history.go(-2);
-
-{% endhighlight %}
+```
 
 如果移动的位置超出了访问历史的边界，以上三个方法并不报错，而是默默的失败。
 
 以下命令相当于刷新当前页面。
 
 ```javascript
-
 history.go(0);
-
 ```
 
 ## history.pushState()，history.replaceState()
@@ -46,13 +40,11 @@ HTML5为history对象添加了两个新方法，history.pushState() 和 history.
 
 
 ```javascript
-
 if (!!(window.history && history.pushState)){
   // 支持History API
 } else {
   // 不支持
 }
-
 ```
 
 上面代码可以用来检查，当前浏览器是否支持History API。如果不支持的话，可以考虑使用Polyfill库[History.js]( https://github.com/browserstate/history.js/)。
@@ -80,38 +72,32 @@ history.pushState(stateObj, "page 2", "2.html");
 如果 pushState 的url参数，设置了一个当前网页的#号值（即hash），并不会触发hashchange事件。如果设置了一个非同域的网址，则会报错。
 
 ```javascript
-
 // 报错
 history.pushState(null, null, 'https://twitter.com/hello');
-
 ```
 
 上面代码中，pushState想要插入一个非同域的网址，导致报错。这样设计的目的是，防止恶意代码让用户以为他们是在另一个网站上。
 
-history.replaceState方法的参数与pushState方法一模一样，区别是它修改浏览历史中当前页面的值。假定当前网页是example.com/example.html。
+`history.replaceState`方法的参数与`pushState`方法一模一样，区别是它修改浏览历史中当前页面的值。下面的例子假定当前网页是example.com/example.html。
 
-{% highlight javascript %}
-
+```javascript
 history.pushState({page: 1}, "title 1", "?page=1");
 history.pushState({page: 2}, "title 2", "?page=2");
 history.replaceState({page: 3}, "title 3", "?page=3");
 history.back(); // url显示为http://example.com/example.html?page=1
 history.back(); // url显示为http://example.com/example.html
 history.go(2);  // url显示为http://example.com/example.html?page=3
-
-{% endhighlight %}
+```
 
 ## history.state属性
 
 history.state属性保存当前页面的state对象。
 
 ```javascript
-
 history.pushState({page: 1}, "title 1", "?page=1");
 
 history.state
 // { page: 1 }
-
 ```
 
 ## popstate事件
@@ -132,7 +118,7 @@ window.onpopstate = function(event) {
 window.addEventListener('popstate', function(event) {  
   console.log("location: " + document.location);
   console.log("state: " + JSON.stringify(event.state));  
-}); 
+});
 
 {% endhighlight %}
 
@@ -146,7 +132,124 @@ var currentState = history.state;
 
 {% endhighlight %}
 
-另外，需要注意的是，当页面第一次加载的时候，在onload事件发生后，Chrome和Safari浏览器（Webkit核心）会触发popstate事件，而Firefox和IE浏览器不会。 
+另外，需要注意的是，当页面第一次加载的时候，在onload事件发生后，Chrome和Safari浏览器（Webkit核心）会触发popstate事件，而Firefox和IE浏览器不会。
+
+## URLSearchParams API
+
+URLSearchParams API用于处理URL之中的查询字符串，即问号之后的部分。没有部署这个API的浏览器，可以用[url-search-params](url-search-params)这个垫片库。
+
+```javascript
+var paramsString = 'q=URLUtils.searchParams&topic=api'
+var searchParams = new URLSearchParams(paramsString);
+```
+
+URLSearchParams有以下方法，用来操作某个参数。
+
+- `has()`：返回一个布尔值，表示是否具有某个参数
+- `get（）`：返回指定参数的第一个值
+- `getAll()`：返回一个数组，成员是指定参数的所有值
+- `set()`：设置指定参数
+- `delete()`：删除指定参数
+- `append()`：在查询字符串之中，追加一个键值对
+- `toString()`：返回整个查询字符串
+
+```javascript
+var paramsString = "q=URLUtils.searchParams&topic=api"
+var searchParams = new URLSearchParams(paramsString);
+
+searchParams.has('topic') // true
+searchParams.get('topic') // "api"
+searchParams.getAll('topic') // ["api"]
+
+searchParams.get('foo') // null，注意Firefox返回空字符串
+searchParams.set('foo', 2);
+searchParams.get('foo') // 2
+
+searchParams.append('topic', 'webdev');
+searchParams.toString() // "q=URLUtils.searchParams&topic=api&foo=2&topic=webdev"
+
+searchParams.append('foo', 3);
+searchParams.getAll('foo') // [2, 3]
+
+searchParams.delete('topic');
+searchParams.toString() // "q=URLUtils.searchParams&foo=2&foo=3"
+```
+
+URLSearchParams还有三个方法，用来遍历所有参数。
+
+- `key()`：遍历所有参数名
+- `values()`：遍历所有参数值
+- `entries()`：遍历所有参数的键值对
+
+上面三个方法返回的都是Iterator对象。
+
+```javascript
+var searchParams = new URLSearchParams('key1=value1&key2=value2');
+
+for(var key of searchParams.keys()) {
+  console.log(key);
+}
+// key1
+// key2
+
+for(var value of searchParams.values()) {
+  console.log(value);
+}
+// value1
+// value2
+
+for(var pair of searchParams.entries()) {
+  console.log(pair[0]+ ', '+ pair[1]);
+}
+// key1, value1
+// key2, value2
+```
+
+在Chrome浏览器之中，`URLSearchParams`实例本身就是Iterator对象，与`entries`方法返回值相同。所以，可以写成下面的样子。
+
+```javascript
+for (var p of searchParams) {
+  console.log(p);
+}
+```
+
+下面是一个替换当前URL的例子。
+
+```javascript
+// URL: https://example.com?version=1.0
+var params = new URLSearchParams(location.search.slice(1));
+params.set('version', 2.0);
+
+window.history.replaceState({}, '', `${location.pathname}?${params}`);
+// URL: https://example.com?version=2.0
+```
+
+`URLSearchParams`实例可以当作POST数据发送，所有数据都会URL编码。
+
+```javascript
+let params = new URLSearchParams();
+params.append('api_key', '1234567890');
+
+fetch('https://example.com/api', {
+  method: 'POST',
+  body: params
+}).then(...)
+```
+
+DOM的`a`元素节点的`searchParams`属性，就是一个`URLSearchParams`实例。
+
+```javascript
+var a = document.createElement('a');
+a.href = 'https://example.com?filter=api';
+a.searchParams.get('filter') // "api"
+```
+
+`URLSearchParams`还可以与`URL`接口结合使用。
+
+```javascript
+var url = new URL(location);
+var foo = url.searchParams.get('foo') || 'somedefault';
+```
 
 ## 参考链接
 
@@ -154,3 +257,4 @@ var currentState = history.state;
 - MOZILLA DEVELOPER NETWORK，[window.onpopstate](https://developer.mozilla.org/en-US/docs/DOM/window.onpopstate)
 - Johnny Simpson, [Controlling History: The HTML5 History API And ‘Selective’ Loading](http://www.inserthtml.com/2013/06/history-api/)
 - Louis Lazaris, [HTML5 History API: A Syntax Primer](http://www.impressivewebs.com/html5-history-api-syntax/)
+- Eric Bidelman, [Easy URL manipulation with URLSearchParams](https://developers.google.com/web/updates/2016/01/urlsearchparams?hl=en)
