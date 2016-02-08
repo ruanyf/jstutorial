@@ -22,7 +22,7 @@ var addX = function(value) {
 
 上面代码中，变量`x`和函数`addX`，是当前文件`example.js`私有的，其他文件不可见。
 
-如果想在多个文件分享变量，必须定义为global对象的属性。
+如果想在多个文件分享变量，必须定义为`global`对象的属性。
 
 ```javascript
 global.warning = true;
@@ -60,13 +60,24 @@ CommonJS模块的特点如下。
 
 ## module对象
 
+Node内部提供一个`Module`构建函数。所有模块都是`Module`的实例。
+
+```javascript
+function Module(id, parent) {
+  this.id = id;
+  this.exports = {};
+  this.parent = parent;
+  // ...
+```
+
 每个模块内部，都有一个`module`对象，代表当前模块。它有以下属性。
 
-- module.id 模块的识别符，通常是带有绝对路径的模块文件名。
-- module.filename 模块的文件名，带有绝对路径。
-- module.loaded 返回一个布尔值，表示模块是否已经完成加载。
-- module.parent 返回一个对象，表示调用该模块的模块。
-- module.children 返回一个数组，表示该模块要用到的其他模块。
+- `module.id` 模块的识别符，通常是带有绝对路径的模块文件名。
+- `module.filename` 模块的文件名，带有绝对路径。
+- `module.loaded` 返回一个布尔值，表示模块是否已经完成加载。
+- `module.parent` 返回一个对象，表示调用该模块的模块。
+- `module.children` 返回一个数组，表示该模块要用到的其他模块。
+- `module.exports` 表示模块对外输出的值。
 
 下面是一个示例文件，最后一行输出module变量。
 
@@ -224,7 +235,7 @@ define(function (require, exports, module){
 
 ### 基本用法
 
-Node.js使用CommonJS模块规范，内置的require命令用于加载模块文件。
+Node使用CommonJS模块规范，内置的`require`命令用于加载模块文件。
 
 `require`命令的基本功能是，读入并执行一个JavaScript文件，然后返回该模块的exports对象。如果没有发现指定模块，会报错。
 
@@ -314,7 +325,7 @@ var foo = require('foo.js');
 
 ### 模块的缓存
 
-第一次加载某个模块时，Node会缓存该模块。以后再加载该模块，就直接从缓存取出该模块的exports属性。
+第一次加载某个模块时，Node会缓存该模块。以后再加载该模块，就直接从缓存取出该模块的`module.exports`属性。
 
 ```javascript
 require('./example.js');
@@ -323,11 +334,23 @@ require('./example.js').message
 // "hello"
 ```
 
-上面代码中，连续三次使用require命令，加载同一个模块。第二次加载的时候，为输出的对象添加了一个message属性。但是第三次加载的时候，这个message属性依然存在，这就证明require命令并没有重新加载模块文件，而是输出了缓存。
+上面代码中，连续三次使用`require`命令，加载同一个模块。第二次加载的时候，为输出的对象添加了一个`message`属性。但是第三次加载的时候，这个message属性依然存在，这就证明`require`命令并没有重新加载模块文件，而是输出了缓存。
 
 如果想要多次执行某个模块，可以让该模块输出一个函数，然后每次`require`这个模块的时候，重新执行一下输出的函数。
 
-注意，缓存是根据绝对路径识别模块的，如果同样的模块名，但是保存在不同的路径，require命令还是会重新加载该模块。
+所有缓存的模块保存在`require.cache`之中，如果想删除模块的缓存，可以像下面这样写。
+
+```javascript
+// 删除指定模块的缓存
+delete require.cache[moduleName];
+
+// 删除所有模块的缓存
+Object.keys(require.cache).forEach(function(key) {
+  delete require.cache[key];
+})
+```
+
+注意，缓存是根据绝对路径识别模块的，如果同样的模块名，但是保存在不同的路径，`require`命令还是会重新加载该模块。
 
 ### 环境变量NODE_PATH
 
@@ -464,8 +487,54 @@ console.log(counter); // 3
 
 上面代码说明，`counter`输出以后，`lib.js`模块内部的变化就影响不到`counter`了。
 
+### require的内部处理流程
+
+`require`命令是CommonJS规范之中，用来加载其他模块的命令。它其实不是一个全局命令，而是指向当前模块的`module.require`命令，而后者又调用Node的内部命令`Module._load`。
+
+```javascript
+Module._load = function(request, parent, isMain) {
+  // 1. 检查 Module._cache，是否缓存之中有指定模块
+  // 2. 如果缓存之中没有，就创建一个新的Module实例
+  // 3. 将它保存到缓存
+  // 4. 使用 module.load() 加载指定的模块文件，
+  //    读取文件内容之后，使用 module.compile() 执行文件代码
+  // 5. 如果加载/解析过程报错，就从缓存删除该模块
+  // 6. 返回该模块的 module.exports
+};
+```
+
+上面的第4步，采用`module.compile()`执行指定模块的脚本，逻辑如下。
+
+```javascript
+Module.prototype._compile = function(content, filename) {
+  // 1. 生成一个require函数，指向module.require
+  // 2. 加载其他辅助方法到require
+  // 3. 将文件内容放到一个函数之中，该函数可调用 require
+  // 4. 执行该函数
+};
+```
+
+上面的第1步和第2步，`require`函数及其辅助方法主要如下。
+
+- `require()`: 加载外部模块
+- `require.resolve()`：将模块名解析到一个绝对路径
+- `require.main`：指向主模块
+- `require.cache`：指向所有缓存的模块
+- `require.extensions`：根据文件的后缀名，调用不同的执行函数
+
+一旦`require`函数准备完毕，整个所要加载的脚本内容，就被放到一个新的函数之中，这样可以避免污染全局环境。该函数的参数包括`require`、`module`、`exports`，以及其他一些参数。
+
+```javascript
+(function (exports, require, module, __filename, __dirname) {
+  // YOUR CODE INJECTED HERE!
+});
+```
+
+`Module._compile`方法是同步执行的，所以`Module._load`要等它执行完成，才会向用户返回`module.exports`的值。
+
 ## 参考链接
 
 - Addy Osmani, [Writing Modular JavaScript With AMD, CommonJS & ES Harmony](http://addyosmani.com/writing-modular-js/)
 - Pony Foo, [A Gentle Browserify Walkthrough](http://blog.ponyfoo.com/2014/08/25/a-gentle-browserify-walkthrough)
-- Nico Reed, [What is require?]（https://docs.nodejitsu.com/articles/getting-started/what-is-require）
+- Nico Reed, [What is require?](https://docs.nodejitsu.com/articles/getting-started/what-is-require)
+- Fred K. Schott, [The Node.js Way - How require() Actually Works](http://fredkschott.com/post/2014/06/require-and-the-module-system/)

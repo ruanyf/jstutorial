@@ -424,18 +424,37 @@ switch (x) {
 `switch`结构不利于代码重用，往往可以用对象形式重写。
 
 ```javascript
-var o = {
-  banana: function () {},
-  apple: function () {},
-  default: function () {}
-};
-
-if (o[fruit]){
-  o[fruit]();
-} else {
-  o['default']();
+function getItemPricing(customer, item) {
+  switch(customer.type) {
+    case 'VIP':
+      return item.price * item.quantity * 0.50;
+    case 'Preferred':
+      return item.price * item.quantity * 0.75;
+    case 'Regular':
+    case default:
+      return item.price * item.quantity;
+  }
 }
 ```
+
+上面代码根据不同用户，返回不同的价格。你可以发现，`switch`语句包含的三种情况，内部逻辑都是相同的，不同只是折扣率。这启发我们可以用对象属性，重写这个判断。
+
+```javascript
+var pricing = {
+  'VIP': 0.50,
+  'Preferred': 0.75,
+  'Regular': 1.0
+};
+
+function getItemPricing(customer, item) {
+  if (pricing[customer.type])
+    return item.price * item.quantity * pricing[customer.type];
+  else
+    return item.price * item.quantity * pricing.Regular;
+}
+```
+
+如果价格档次再多一些，对象属性写法的简洁优势就更明显了。
 
 ## 循环语句
 
