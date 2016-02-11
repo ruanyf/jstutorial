@@ -556,10 +556,10 @@ var owner = {
 Object.defineProperty(car, 'ownerInfo', {value: owner, enumerable: false});
 car.ownerInfo // {id: 12, name: "Jack"}
 
-JSON.stringify(car) //  '{id: 123, color: "red", owner: 12}'
+JSON.stringify(car) //  "{"id": 123,"color": "red","ownerId": 12}"
 ```
 
-上面代码中，`owner`对象作为注释，加入`car`对象。由于`ownerInfo`属性的`enumerable`为`false`，所以`JSON.stringify`最后正式输出`car`对象时，会忽略`ownerInfo`属性。
+上面代码中，`owner`对象作为注释，加入`car`对象。由于`ownerInfo`属性不可枚举，所以`JSON.stringify`方法最后输出`car`对象时，会忽略`ownerInfo`属性。
 
 这提示我们，如果你不愿意某些属性出现在JSON输出之中，可以把它的`enumerable`属性设为`false`。
 
@@ -567,8 +567,7 @@ JSON.stringify(car) //  '{id: 123, color: "red", owner: 12}'
 
 Object.getOwnPropertyNames方法返回直接定义在某个对象上面的全部属性的名称，而不管该属性是否可枚举。
 
-{% highlight javascript %}
-
+```javascript
 var o = Object.defineProperties({}, {
         p1: { value: 1, enumerable: true },
         p2: { value: 2, enumerable: false }
@@ -576,13 +575,11 @@ var o = Object.defineProperties({}, {
 
 Object.getOwnPropertyNames(o)
 // ["p1", "p2"]
-
-{% endhighlight %}
+```
 
 一般来说，系统原生的属性（即非用户自定义的属性）都是不可枚举的。
 
-{% highlight javascript %}
-
+```javascript
 // 比如，数组实例自带length属性是不可枚举的
 Object.keys([]) // []
 Object.getOwnPropertyNames([]) // [ 'length' ]
@@ -597,10 +594,9 @@ Object.getOwnPropertyNames(Object.prototype)
 //  'isPrototypeOf',
 //  'propertyIsEnumerable',
 //  'toString']
+```
 
-{% endhighlight %}
-
-上面代码可以看到，数组的实例对象（[]）没有可枚举属性，不可枚举属性有length；Object.prototype对象也没有可枚举属性，但是有不少不可枚举属性。
+上面代码可以看到，数组的实例对象（`[]`）没有可枚举属性，不可枚举属性有length；Object.prototype对象也没有可枚举属性，但是有不少不可枚举属性。
 
 ### Object.prototype.propertyIsEnumerable()
 

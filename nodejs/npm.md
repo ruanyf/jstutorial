@@ -237,31 +237,29 @@ console.log(backbone.VERSION)
 
 ## 模块标签
 
-Npm允许为模块的某个版本，新建一个标签。
+npm允许为模块的某个版本，新建一个标签。
 
 ```bash
 $ npm dist-tag add <pkg>@<version> [<tag>]
 ```
 
-同一种方法是发布的时候，加上标签。
+另一种方法是发布的时候，加上标签。
 
 ```bash
 $ npm publish --tag=beta
 ```
 
-有了标签以后，就可以指定安装该标签的版本，或者该标签的依赖。
+有了标签以后，就可以指定安装该标签的版本。
 
 ```bash
-# 安装模块
 $ npm install <name>@<tag>
-
-# 安装依赖
+# 或者
 $ npm install --tag <tag>
 ```
 
 常见的标签有`latest`、`stable`、`next`等。
 
-Npm默认会为最新一次发布的版本，新建`latest`标签。然后，下载的时候，默认是下载带有`latest`标签的版本。但是，这可能并不是我们想要的行为。比如，当前最新版本是4.2版，然后发布了一个3.6版，`latest`的标签就会打在3.6版上面，用户`npm install`安装的就是这个版本。
+npm默认会为最新一次发布的版本，新建`latest`标签。然后，下载的时候，默认是下载带有`latest`标签的版本。但是，这可能并不是我们想要的行为。比如，当前最新版本是4.2版，然后发布了一个3.6版，`latest`的标签就会打在3.6版上面，用户`npm install`安装的就是这个版本。
 
 为了避免这个问题，可以为3.6版加上`previous`标签。
 
@@ -908,7 +906,7 @@ Password: YOUR_PASSWORD
 Email: YOUR_EMAIL@domain.com
 ```
 
-## npm publish
+## npublish
 
 `npm publish`用于将当前模块发布到`npmjs.com`。执行之前，需要向`npmjs.com`申请用户名。
 
@@ -922,7 +920,7 @@ $ npm adduser
 $ npm login
 ```
 
-最后，使用npm publish命令发布。
+登录以后，就可以使用`npm publish`命令发布。
 
 ```bash
 $ npm publish
@@ -938,6 +936,32 @@ $ npm publish --tag beta
 
 ```bash
 $ npm init --scope=<yourscope>
+```
+
+如果你的模块是用ES6写的，那么发布的时候，最好转成ES5。首先，需要安装Babel。
+
+```javascript
+$ npm install --save-dev babel-cli@6 babel-preset-es2015@6
+```
+
+然后，在`package.json`里面写入`build`脚本。
+
+```javascript
+"scripts": {
+  "build": "babel source --presets babel-preset-es2015 --out-dir distribution",
+  "prepublish": "npm run build"
+}
+```
+
+运行上面的脚本，会将`source`目录里面的ES6源码文件，转为`distribution`目录里面的ES5源码文件。然后，在项目根目录下面创建两个文件`.npmignore`和`.gitignore`，分别写入以下内容。
+
+```javascrip
+// .npmignore
+source
+
+// .gitignore
+node_modules
+distribution
 ```
 
 ## npm version
@@ -989,3 +1013,4 @@ $ npm deprecate my-thing@"< 0.2.3" "critical bug fixed in v0.2.3"
 - justjs, [npm link: developing your own npm modules without tears](http://justjs.com/posts/npm-link-developing-your-own-npm-modules-without-tears)
 - hoodie-css, [Development Environment Help](https://github.com/hoodiehq/hoodie-css/blob/feature/build-automation/DEVELOPMENT.md)
 - Stephan Bönnemann, [How to make use of npm’s package distribution tags to create release channels](https://medium.com/greenkeeper-blog/one-simple-trick-for-javascript-package-maintainers-to-avoid-breaking-their-user-s-software-and-to-6edf06dc5617#.5omqgsg45)
+- Alex Booker, [How to Build and Publish ES6 npm Modules Today, with Babel](https://booker.codes/how-to-build-and-publish-es6-npm-modules-today-with-babel/)
