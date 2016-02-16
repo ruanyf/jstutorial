@@ -8,6 +8,16 @@ modifiedOn: 2014-10-23
 
 ## Stream是什么？
 
+”流“（stream）这个概念，最简单的理解，就是在数据还没有接收完成时，就开始处理它。
+
+```javascript
+var fs = require('fs');
+
+fs.createReadStream('./data/customers.csv').pipe(process.stdout);
+```
+
+上面代码中，`fs.createReadStream`方法以”流“的方式读取文件，这可以在文件还没有读取完的情况下，就输出到标准输出。这显然对大文件的读取非常有利。
+
 Unix操作系统从很早以前，就有Stream（流）这个概念，它是不同进程之间传递数据的一种方式。管道命令Pipe就起到在不同命令之间，连接Stream的作用。
 
 Stream把较大的数据，拆成很小的部分。只要命令部署了Stream接口，就可以把一个流的输出接到另一个流的输入。Node引入了这个概念，通过Stream为异步读写数据提供的统一接口。无论是硬盘数据、网络数据，还是内存数据，都可以采用这个接口读写。

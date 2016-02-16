@@ -8,7 +8,9 @@ modifiedOn: 2013-12-04
 
 ## 简介
 
-Node是JavaScript语言的服务器运行环境。所谓“运行环境”有两层意思：首先，JavaScript语言通过Node在服务器运行，在这个意义上，Node有点像JavaScript虚拟机；其次，Node提供大量工具库，使得JavaScript语言与操作系统互动（比如读写文件、新建子进程），在这个意义上，Node又是JavaScript的工具库。
+Node是JavaScript语言的服务器运行环境。
+
+所谓“运行环境”有两层意思：首先，JavaScript语言通过Node在服务器运行，在这个意义上，Node有点像JavaScript虚拟机；其次，Node提供大量工具库，使得JavaScript语言与操作系统互动（比如读写文件、新建子进程），在这个意义上，Node又是JavaScript的工具库。
 
 Node内部采用Google公司的V8引擎，作为JavaScript语言解释器；通过自行开发的libuv库，调用操作系统资源。
 
@@ -98,51 +100,48 @@ $ nvm deactivate
 
 安装完成后，运行node.js程序，就是使用node命令读取JavaScript脚本。
 
-假定当前目录有一个demo.js的脚本文件，运行时这样写。
+当前目录的`demo.js`脚本文件，可以这样执行。
 
-{% highlight bash %}
+```bash
+$ node demo
+# 或者
+$ node demo.js
+```
 
-node demo
+使用`-e`参数，可以执行代码字符串。
 
-// 或者
-
-node demo.js
-
-{% endhighlight %}
+```bash
+$ node -e 'console.log("Hello World")'
+Hello World
+```
 
 ### REPL环境
 
 在命令行键入node命令，后面没有文件名，就进入一个Node.js的REPL环境（Read–eval–print loop，"读取-求值-输出"循环），可以直接运行各种JavaScript命令。
 
-{% highlight bash %}
-
+```bash
 $ node
 > 1+1
 2
 >
-
-{% endhighlight %}
+```
 
 如果使用参数 --use_strict，则REPL将在严格模式下运行。
 
-{% highlight bash %}
-
+```bash
 $ node --use_strict
-
-{% endhighlight %}
+```
 
 REPL是Node.js与用户互动的shell，各种基本的shell功能都可以在里面使用，比如使用上下方向键遍历曾经使用过的命令。
 
 特殊变量下划线（_）表示上一个命令的返回结果。
 
-{% highlight bash %}
-
-> 1+1
+```bash
+> 1 + 1
 2
-> _+1
+> _ + 1
 3
-
-{% endhighlight %}
+```
 
 在REPL中，如果运行一个表达式，会直接在命令行返回结果。如果运行一条语句，就不会有任何输出，因为语句没有返回值。
 
@@ -239,8 +238,8 @@ Node还提供一些全局函数。
 
 Node提供两个全局变量，都以两个下划线开头。
 
-- **_filename**：指向当前运行的脚本文件名。
-- **_dirname**：指向当前运行的脚本所在的目录。
+- `__filename`：指向当前运行的脚本文件名。
+- `__dirname`：指向当前运行的脚本所在的目录。
 
 除此之外，还有一些对象实际上是模块内部的局部变量，指向的对象根据模块不同而不同，但是所有模块都适用，可以看作是伪全局变量，主要为module, module.exports, exports等。
 

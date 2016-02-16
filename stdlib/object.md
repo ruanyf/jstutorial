@@ -389,7 +389,7 @@ Object.defineProperty(object, propertyName, attributesObject)
 `Object.defineProperty`方法接受三个参数，第一个是属性所在的对象，第二个是属性名（它应该是一个字符串），第三个是属性的描述对象。比如，新建一个`o`对象，并定义它的`p`属性，写法如下。
 
 ```javascript
-var o = Object.defineProperty({}, "p", {
+var o = Object.defineProperty({}, 'p', {
   value: 123,
   writable: false,
   enumerable: true,
@@ -406,6 +406,12 @@ o.p
 ```
 
 需要注意的是，`Object.defineProperty`方法和后面的`Object.defineProperties`方法，都有性能损耗，会拖慢执行速度，不宜大量使用。
+
+`Object.defineProperty`的一个用途，是设置动态属性名。
+
+```javascript
+Object.defineProperty(obj, someFunction(), {value: true});
+```
 
 如果一次性定义或修改多个属性，可以使用`Object.defineProperties`方法。
 
@@ -431,7 +437,7 @@ var o = {};
 
 Object.defineProperty(o, 'p', {
   value: 123,
-    get: function() { return 456; }
+  get: function() { return 456; }
 });
 // TypeError: Invalid property.
 // A property cannot both have accessors and be writable or have a value,
@@ -439,58 +445,54 @@ Object.defineProperty(o, 'p', {
 
 上面代码同时定义了`get`属性和`value`属性，结果就报错。
 
-Object.defineProperty() 和Object.defineProperties() 的第三个参数，是一个属性对象。它的writable、configurable、enumerable这三个属性的默认值都为false。
+`Object.defineProperty()`和`Object.defineProperties()`的第三个参数，是一个属性对象。它的`writable`、`configurable`、`enumerable`这三个属性的默认值都为`false`。
 
-writable属性为false，表示对应的属性的值将不得改写。
+`writable`属性为`false`，表示对应的属性的值将不得改写。
 
 ```javascript
-
 var o = {};
 
-Object.defineProperty(o, "p", {
-    value: "bar"
+Object.defineProperty(o, 'p', {
+  value: "bar"
 });
 
 o.p // bar
 
-o.p = "foobar";
+o.p = 'foobar';
 o.p // bar
 
-Object.defineProperty(o, "p", {
-    value: "foobar",
+Object.defineProperty(o, 'p', {
+  value: 'foobar',
 });
 // TypeError: Cannot redefine property: p
-
 ```
 
-上面代码由于writable属性默认为false，导致无法对p属性重新赋值，但是不会报错（严格模式下会报错）。不过，如果再一次使用Object.defineProperty方法对value属性赋值，就会报错。
+上面代码由于`writable`属性默认为`false`，导致无法对`p`属性重新赋值，但是不会报错（严格模式下会报错）。不过，如果再一次使用`Object.defineProperty`方法对`value`属性赋值，就会报错。
 
-configurable属性为false，将无法删除该属性，也无法修改attributes对象（value属性除外）。
+`configurable`属性为`false`，将无法删除该属性，也无法修改`attributes`对象（`value`属性除外）。
 
 ```javascript
-
 var o = {};
 
-Object.defineProperty(o, "p", {
-    value: "bar",
+Object.defineProperty(o, 'p', {
+  value: 'bar',
 });
 
 delete o.p
-o.p // bar
-
+o.p // "bar"
 ```
 
-上面代码中，由于configurable属性默认为false，导致无法删除某个属性。
+上面代码中，由于`configurable`属性默认为`false`，导致无法删除某个属性。
 
-enumerable属性为false，表示对应的属性不会出现在for...in循环和Object.keys方法中。
+`enumerable`属性为`false`，表示对应的属性不会出现在`for...in`循环和`Object.keys`方法中。
 
 ```javascript
 var o = {
-    p1: 10,
-    p2: 13,
+  p1: 10,
+  p2: 13,
 };
 
-Object.defineProperty(o, "p3", {
+Object.defineProperty(o, 'p3', {
   value: 3,
 });
 
@@ -501,7 +503,7 @@ for (var i in o) {
 // p2 13
 ```
 
-上面代码中，p3属性是用Object.defineProperty方法定义的，由于enumerable属性默认为false，所以不出现在for...in循环中。
+上面代码中，`p3`属性是用`Object.defineProperty`方法定义的，由于`enumerable`属性默认为`false`，所以不出现在`for...in`循环中。
 
 ### 可枚举性（enumerable）
 

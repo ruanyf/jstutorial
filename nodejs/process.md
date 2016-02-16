@@ -173,7 +173,7 @@ process对象提供以下方法：
 
 ### process.cwd()，process.chdir()
 
-`cwd`方法返回进程的当前目录，`chdir`方法用来切换目录。
+`cwd`方法返回进程的当前目录（绝对路径），`chdir`方法用来切换目录。
 
 ```bash
 > process.cwd()
@@ -183,6 +183,8 @@ process对象提供以下方法：
 > process.cwd()
 '/home/bbb'
 ```
+
+注意，`process.cwd()`与`__dirname`的区别。前者进程发起时的位置，后者是脚本的位置，两者可能是不一致的。比如，`node ./code/program.js`，对于`process.cwd()`来说，返回的是当前目录（`.`）；对于`__dirname`来说，返回是脚本所在目录，即`./code/program.js`。
 
 ## process.nextTick()
 
