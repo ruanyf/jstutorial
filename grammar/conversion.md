@@ -10,11 +10,11 @@ JavaScript是一种动态类型语言，变量是没有类型的，可以随时�
 
 ## 强制转换
 
-强制转换主要指使用Number、String和Boolean三个构造函数，手动将各种类型的值，转换成数字、字符串或者布尔值。
+强制转换主要指使用`Number`、`String`和`Boolean`三个构造函数，手动将各种类型的值，转换成数字、字符串或者布尔值。
 
 ### Number函数：强制转换成数值
 
-使用Number函数，可以将任意类型的值转化成数字。
+使用`Number`函数，可以将任意类型的值转化成数字。
 
 **（1）原始类型值的转换规则**
 
@@ -44,29 +44,20 @@ Number(null) // 0
 
 {% endhighlight %}
 
-Number函数将字符串转为数值，要比parseInt函数严格很多。基本上，只要有一个字符无法转成数值，整个字符串就会被转为NaN。
+`Number`函数将字符串转为数值，要比`parseInt`函数严格很多。基本上，只要有一个字符无法转成数值，整个字符串就会被转为`NaN`。
 
 ```javascript
-
-parseInt('011') // 9
 parseInt('42 cats') // 42
-parseInt('0xcafebabe') // 3405691582
-
-Number('011') // 11
 Number('42 cats') // NaN
-Number('0xcafebabe') // 3405691582
-
 ```
 
-上面代码比较了Number函数和parseInt函数，区别主要在于parseInt逐个解析字符，而Number函数整体转换字符串的类型。另外，Number会忽略八进制的前导0，而parseInt不会。
+上面代码中，`parseInt`逐个解析字符，而`Number`函数整体转换字符串的类型。
 
-Number函数会自动过滤一个字符串前导和后缀的空格。
+`Number`函数会自动过滤一个字符串前导和后缀的空格。
 
-{% highlight javascript %}
-
-Number('\t\v\r12.34\n ') 
-
-{% endhighlight %}
+```javascript
+Number('\t\v\r12.34\n')
+```
 
 **（2）对象的转换规则**
 
