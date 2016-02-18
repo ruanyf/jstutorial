@@ -6,26 +6,40 @@ date: 2013-03-10
 modifiedOn: 2013-12-22
 ---
 
+## 浏览器的组成
+
 浏览器的核心是两部分：渲染引擎和JavaScript解释器（又称JavaScript引擎）。
 
-不同的浏览器有不同的渲染引擎，Firefox浏览器为Gecko引擎，Safari为WebKit引擎，Chrome为Blink引擎。它的主要作用是生成网页，通常分成四个阶段。
+（1）渲染引擎
 
-1. 解析HTML为DOM，解析CSS为CSSOM（CSS Object Model）
-1. 将DOM和CSSOM合成一棵渲染树（render tree）
-1. 完成渲染树的布局（layout）
-1. 将渲染树绘制到屏幕
+渲染引擎的主要作用是，将网页从代码”渲染“为用户视觉上可以感知的平面文档。不同的浏览器有不同的渲染引擎。
 
-以上四步并非严格按顺序执行，往往第一步还没完成，第二步和第三步就已经开始了。所以，我们会看到这种情况：网页的HTML代码还没下载完，但浏览器可以显示内容了。
+- Firefox：Gecko引擎
+- Safari：WebKit引擎
+- Chrome：Blink引擎
 
-JavaScript引擎的主要作用是，读取网页中的代码，对其处理后运行。
+渲染引擎处理网页，通常分成四个阶段。
+
+1. 解析代码：HTML代码解析为DOM，CSS代码解析为CSSOM（CSS Object Model）
+1. 对象合成：将DOM和CSSOM合成一棵渲染树（render tree）
+1. 布局：计算出渲染树的布局（layout）
+1. 绘制：将渲染树绘制到屏幕
+
+以上四步并非严格按顺序执行，往往第一步还没完成，第二步和第三步就已经开始了。所以，会看到这种情况：网页的HTML代码还没下载完，但浏览器已经显示出内容了。
+
+（2）JavaScript引擎
+
+JavaScript引擎的主要作用是，读取网页中的JavaScript代码，对其处理后运行。
+
+本节主要介绍JavaScript引擎的工作方式。
 
 ## JavaScript代码嵌入网页的方法
 
-在网页中嵌入JavaScript代码有多种方法。
+JavaScript代码只有嵌入网页，才能运行。网页中嵌入JavaScript代码有多种方法。
 
 ### 直接添加代码块
 
-通过script标签，可以直接将JavaScript代码嵌入网页。
+通过`<script>`标签，可以直接将JavaScript代码嵌入网页。
 
 ```html
 <script>
@@ -33,16 +47,16 @@ JavaScript引擎的主要作用是，读取网页中的代码，对其处理后�
 </script>
 ```
 
-`script`标签有一个`type`属性，用来指定服务器发来的JavaScript脚本的类型。注意，HTML5的推荐做法是，如果`script`标签包含的是JavaScript脚本，建议省略script标签的type属性。
+`<script>`标签有一个`type`属性，用来指定脚本类型。不过，如果嵌入的是JavaScript脚本，HTML5推荐`type`属性。
 
-对JavaScript脚本来说，type属性可以设为两种值。
+对JavaScript脚本来说，`type`属性可以设为两种值。
 
-- text/javascript：这是默认值，也是历史上一贯设定的值。如果你省略`script`标签的`type`属性，得到的就是这个值。对于老式浏览器，设为这个值比较好。
-- application/javascript：对于较新的浏览器，建议设为这个值。
+- `text/javascript`：这是默认值，也是历史上一贯设定的值。如果你省略`type`属性，默认就是这个值。对于老式浏览器，设为这个值比较好。
+- `application/javascript`：对于较新的浏览器，建议设为这个值。
 
 ### 加载外部脚本
 
-script标签也可以指定加载外部的脚本文件。
+`script`标签也可以指定加载外部的脚本文件。
 
 ```html
 <script src="example.js"></script>
@@ -54,7 +68,7 @@ script标签也可以指定加载外部的脚本文件。
 <script charset="utf-8" src="example.js"></script>
 ```
 
-加载外部脚本和直接添加代码块，这两种方法不能混用。下面代码的console.log语句直接被忽略。
+加载外部脚本和直接添加代码块，这两种方法不能混用。下面代码的`console.log`语句直接被忽略。
 
 ```html
 <script charset="utf-8" src="example.js">
@@ -64,7 +78,7 @@ script标签也可以指定加载外部的脚本文件。
 
 ### 行内代码
 
-除了上面两种方法，HTML语言允许在某些元素的事件属性和a元素的href属性中，直接写入JavaScript。
+除了上面两种方法，HTML语言允许在某些元素的事件属性和`a`元素的`href`属性中，直接写入JavaScript。
 
 ```html
 <div onclick="alert('Hello')"></div>
@@ -102,9 +116,9 @@ script标签也可以指定加载外部的脚本文件。
 </head>
 ```
 
-上面代码执行时会报错，因为此时body元素还未生成。
+上面代码执行时会报错，因为此时`body`元素还未生成。
 
-一种解决方法是设定DOMContentLoaded事件的回调函数。
+一种解决方法是设定`DOMContentLoaded`事件的回调函数。
 
 ```html
 <head>
@@ -119,7 +133,7 @@ script标签也可以指定加载外部的脚本文件。
 </head>
 ```
 
-另一种解决方法是，使用script标签的onload属性。当script标签指定的外部脚本文件下载和解析完成，会触发一个load事件，可以把所需执行的代码，放在这个事件的回调函数里面。
+另一种解决方法是，使用`script`标签的`onload`属性。当script标签指定的外部脚本文件下载和解析完成，会触发一个load事件，可以把所需执行的代码，放在这个事件的回调函数里面。
 
 ```html
 <script src="jquery.min.js" onload="console.log(document.body.innerHTML)">
@@ -186,16 +200,16 @@ Gecko和Webkit引擎在网页被阻塞后，会生成第二个线程解析文档
 `async`属性的作用是，使用另一个进程下载脚本，下载时不会阻塞渲染。
 
 1. 浏览器开始解析HTML网页
-2. 解析过程中，发现带有`async`属性的script标签
-3. 浏览器继续往下解析HTML网页，同时并行下载script标签中的外部脚本
+2. 解析过程中，发现带有`async`属性的`script`标签
+3. 浏览器继续往下解析HTML网页，同时并行下载`script`标签中的外部脚本
 4. 脚本下载完成，浏览器暂停解析HTML网页，开始执行下载的脚本
 5. 脚本执行完毕，浏览器恢复解析HTML网页
 
-async属性可以保证脚本下载的同时，浏览器继续渲染。需要注意的是，一旦采用这个属性，就无法保证脚本的执行顺序。哪个脚本先下载结束，就先执行那个脚本。使用`async`属性的脚本文件中，不应该使用`document.write`方法。
+`async`属性可以保证脚本下载的同时，浏览器继续渲染。需要注意的是，一旦采用这个属性，就无法保证脚本的执行顺序。哪个脚本先下载结束，就先执行那个脚本。另外，使用`async`属性的脚本文件中，不应该使用`document.write`方法。
 
 `defer`属性和`async`属性到底应该使用哪一个？
 
-一般来说，如果脚本之间没有依赖关系，就使用`async`属性，如果脚本之间有依赖关系，就使用`defer`属性。如果同时使用`async`和`defer`属性，后者不起作用，浏览器行为由async属性决定。
+一般来说，如果脚本之间没有依赖关系，就使用`async`属性，如果脚本之间有依赖关系，就使用`defer`属性。如果同时使用`async`和`defer`属性，后者不起作用，浏览器行为由`async`属性决定。
 
 ## 重流和重绘
 
@@ -264,7 +278,7 @@ all_my_elements.forEach(doubleHeight);
 
 ## 脚本的动态嵌入
 
-除了用静态的script标签，还可以动态嵌入script标签。
+除了用静态的`script`标签，还可以动态嵌入`script`标签。
 
 ```javascript
 ['1.js', '2.js'].forEach(function(src) {
@@ -274,9 +288,9 @@ all_my_elements.forEach(doubleHeight);
 });
 ```
 
-这种方法的好处是，动态生成的script标签不会阻塞页面渲染，也就不会造成浏览器假死。但是问题在于，这种方法无法保证脚本的执行顺序，哪个脚本文件先下载完成，就先执行哪个。
+这种方法的好处是，动态生成的`script`标签不会阻塞页面渲染，也就不会造成浏览器假死。但是问题在于，这种方法无法保证脚本的执行顺序，哪个脚本文件先下载完成，就先执行哪个。
 
-如果想避免这个问题，可以设置async属性为false。
+如果想避免这个问题，可以设置async属性为`false`。
 
 ```javascript
 ['1.js', '2.js'].forEach(function(src) {
@@ -293,10 +307,9 @@ all_my_elements.forEach(doubleHeight);
 
 ```javascript
 (function() {
-  var script,
-  scripts = document.getElementsByTagName('script')[0];
+  var scripts = document.getElementsByTagName('script')[0];
   function load(url) {
-    script = document.createElement('script');
+    var script = document.createElement('script');
     script.async = true;
     script.src = url;
     scripts.parentNode.insertBefore(script, scripts);
@@ -307,7 +320,9 @@ all_my_elements.forEach(doubleHeight);
 }());
 ```
 
-此外，动态嵌入还有一个地方需要注意。动态嵌入必须等待CSS文件加载完成后，才会去下载外部脚本文件。静态加载就不存在这个问题，script标签指定的外部脚本文件，都是与CSS文件同时并发下载的。
+上面代码中，`async`属性设为`true`，是因为加载的脚本没有互相依赖关系。而且，这样就不会造成堵塞。
+
+此外，动态嵌入还有一个地方需要注意。动态嵌入必须等待CSS文件加载完成后，才会去下载外部脚本文件。静态加载就不存在这个问题，`script`标签指定的外部脚本文件，都是与CSS文件同时并发下载的。
 
 ## 加载使用的协议
 
