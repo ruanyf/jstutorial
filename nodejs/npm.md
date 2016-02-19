@@ -906,7 +906,7 @@ Password: YOUR_PASSWORD
 Email: YOUR_EMAIL@domain.com
 ```
 
-## npublish
+## npm publish
 
 `npm publish`用于将当前模块发布到`npmjs.com`。执行之前，需要向`npmjs.com`申请用户名。
 
