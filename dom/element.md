@@ -6,7 +6,9 @@ date: 2015-04-15
 modifiedOn: 2015-04-15
 ---
 
-Element对象对应网页的HTML标签元素。每一个HTML标签元素，在DOM树上都会转化成一个Element节点对象（以下简称元素节点）。元素节点的nodeType属性都是1，但是不同HTML标签生成的元素节点是不一样的。JavaScript内部使用不同的构造函数，生成不同的Element节点，比如a标签的节点对象由HTMLAnchorElement()构造函数生成，button标签的节点对象由HTMLButtonElement()构造函数生成。因此，元素节点不是一种对象，而是一组对象。
+Element对象对应网页的HTML标签元素。每一个HTML标签元素，在DOM树上都会转化成一个Element节点对象（以下简称元素节点）。
+
+元素节点的`nodeType`属性都是1，但是不同HTML标签生成的元素节点是不一样的。JavaScript内部使用不同的构造函数，生成不同的Element节点，比如`<a>`标签的节点对象由`HTMLAnchorElement()`构造函数生成，`<button>`标签的节点对象由`HTMLButtonElement()`构造函数生成。因此，元素节点不是一种对象，而是一组对象。
 
 ## 属性
 
@@ -263,19 +265,18 @@ document.getElementById('foo').className =
 
 ```
 
-toggle方法可以接受一个布尔值，作为第二个参数。如果为true，则添加该属性；如果为false，则去除该属性。
+toggle方法可以接受一个布尔值，作为第二个参数。如果为`true`，则添加该属性；如果为`false`，则去除该属性。
 
 ```javascript
-el.classList.toggleClass("abc", someBool);
+el.classList.toggle('abc', boolValue);
 
 // 等同于
 
-if (someBool){
-  el.classList.add("abc");
+if (boolValue){
+  el.classList.add('abc');
 } else {
-  el.classList.remove("abc");
+  el.classList.remove('abc');
 }
-
 ```
 
 ### clientHeight，clientLeft，clientTop，clientWidth

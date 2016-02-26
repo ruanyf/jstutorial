@@ -10,13 +10,13 @@ modifiedOn: 2013-12-19
 
 ## EventTarget接口
 
-DOM的事件操作（监听和触发），都定义在EventTarget接口。Element节点、document节点和window对象，都部署了这个接口。此外，XMLHttpRequest、AudioNode、AudioContext等浏览器内置对象，也部署了这个接口。
+DOM的事件操作（监听和触发），都定义在`EventTarget`接口。`Element`节点、`document`节点和`window`对象，都部署了这个接口。此外，XMLHttpRequest、AudioNode、AudioContext等浏览器内置对象，也部署了这个接口。
 
-该接口就是三个方法，addEventListener和removeEventListener用于绑定和移除监听函数，dispatchEvent用于触发事件。
+该接口就是三个方法，`addEventListener`和`removeEventListener`用于绑定和移除监听函数，`dispatchEvent`用于触发事件。
 
 ### addEventListener()
 
-addEventListener方法用于在当前节点或对象上，定义一个特定事件的监听函数。
+`addEventListener`方法用于在当前节点或对象上，定义一个特定事件的监听函数。
 
 ```javascript
 target.addEventListener(type, listener[, useCapture]);
@@ -84,13 +84,13 @@ removeEventListener方法的参数，与addEventListener方法完全一致。它
 
 ### dispatchEvent()
 
-dispatchEvent方法在当前节点上触发指定事件，从而触发监听函数的执行。该方法返回一个布尔值，只要有一个监听函数调用了`Event.preventDefault()`，则返回值为false，否则为true。
+`dispatchEvent`方法在当前节点上触发指定事件，从而触发监听函数的执行。该方法返回一个布尔值，只要有一个监听函数调用了`Event.preventDefault()`，则返回值为`false`，否则为`true`。
 
 ```javascript
 target.dispatchEvent(event)
 ```
 
-dispatchEvent方法的参数是一个Event对象的实例。
+`dispatchEvent`方法的参数是一个`Event`对象的实例。
 
 ```javascript
 para.addEventListener('click', hello, false);
@@ -98,11 +98,11 @@ var event = new Event('click');
 para.dispatchEvent(event);
 ```
 
-上面代码在当前节点触发了click事件。
+上面代码在当前节点触发了`click`事件。
 
-如果dispatchEvent方法的参数为空，或者不是一个有效的事件对象，将报错。
+如果`dispatchEvent`方法的参数为空，或者不是一个有效的事件对象，将报错。
 
-下面代码根据dispatchEvent方法的返回值，判断事件是否被取消了。
+下面代码根据`dispatchEvent`方法的返回值，判断事件是否被取消了。
 
 ```javascript
 var canceled = !cb.dispatchEvent(event);

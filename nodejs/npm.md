@@ -895,6 +895,16 @@ root权限了。
 export PATH=~/npm/bin:$PATH
 ```
 
+## npm bin
+
+`npm bin`命令显示相对于当前目录的，Node模块的可执行脚本所在的目录（即`.bin`目录）。
+
+```bash
+# 项目根目录下执行
+$ npm bin
+./node_modules/.bin
+```
+
 ## npm adduser
 
 `npm adduser`用于在npmjs.com注册一个用户。
@@ -906,7 +916,7 @@ Password: YOUR_PASSWORD
 Email: YOUR_EMAIL@domain.com
 ```
 
-## npublish
+## npm publish
 
 `npm publish`用于将当前模块发布到`npmjs.com`。执行之前，需要向`npmjs.com`申请用户名。
 

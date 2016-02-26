@@ -261,21 +261,28 @@ req.end();
 
 自制SSL证书需要OpenSSL，具体命令如下。
 
-{% highlight bash %}
-
-openssl genrsa -out key.pem
-openssl req -new -key key.pem -out csr.pem
-openssl x509 -req -days 9999 -in csr.pem -signkey key.pem -out cert.pem
-rm csr.pem
-
-{% endhighlight %}
+```bash
+$ openssl genrsa -out key.pem
+$ openssl req -new -key key.pem -out csr.pem
+$ openssl x509 -req -days 9999 -in csr.pem -signkey key.pem -out cert.pem
+$ rm csr.pem
+```
 
 上面的命令生成两个文件：ert.pem（证书文件）和 key.pem（私钥文件）。有了这两个文件，就可以运行HTTPs服务器了。
 
+Node内置Https支持。
+
+```javascript
+var server = https.createServer({
+  key: privateKey,
+  cert: certificate,
+  ca: certificateAuthorityCertificate
+}, app);
+```
+
 Node.js提供一个https模块，专门用于处理加密访问。
 
-{% highlight javascript %}
-
+```javascript
 var https = require('https');
 var fs = require('fs');
 
@@ -288,8 +295,7 @@ var a = https.createServer(options, function (req, res) {
   res.writeHead(200);
   res.end("hello world\n");
 }).listen(8000);
-
-{% endhighlight %}
+```
 
 上面代码显示，HTTPs服务器与HTTP服务器的最大区别，就是createServer方法多了一个options参数。运行以后，就可以测试是否能够正常访问。
 

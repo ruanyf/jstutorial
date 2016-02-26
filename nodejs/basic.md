@@ -18,7 +18,20 @@ Node内部采用Google公司的V8引擎，作为JavaScript语言解释器；通�
 
 访问官方网站[nodejs.org](http://nodejs.org)或者[github.com/nodesource/distributions](https://github.com/nodesource/distributions)，查看Node的最新版本和安装方法。
 
-下面是Ubuntu和Debian的安装方法。
+官方网站提供编译好的二进制包，可以把它们解压到`/usr/local`目录下面。
+
+```bash
+$ tar -xf node-someversion.tgz
+```
+
+然后，建立符号链接，把它们加到$PATH变量里面的路径。
+
+```bash
+$ ln -s /usr/local/node/bin/node /usr/local/bin/node
+$ ln -s /usr/local/node/bin/npm /usr/local/bin/npm
+```
+
+下面是Ubuntu和Debian下面安装Deb软件包的安装方法。
 
 ```bash
 $ curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
