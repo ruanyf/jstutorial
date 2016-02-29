@@ -240,7 +240,7 @@ while (item = list.shift()) {
 }
 
 list // []
-```javascript
+```
 
 unshift方法用于在数组的第一个位置添加元素，并返回添加新元素后的数组长度。
 
