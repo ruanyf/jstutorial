@@ -76,7 +76,7 @@ block {
 ```javascript
 return
 {
-  key: value;
+  key: value
 };
 ```
 
@@ -84,7 +84,7 @@ return
 
 ```javascript
 return {
-  key : value;
+  key : value
 };
 ```
 
