@@ -618,7 +618,7 @@ o.propertyIsEnumerable("toString") // false
 
 ### 可配置性（configurable）
 
-可配置性（configurable）决定了是否可以修改属性的描述对象。也就是说，当configure为false的时候，value、writable、enumerable和configurable都不能被修改了。
+可配置性（configurable）决定了是否可以修改属性的描述对象。也就是说，当configurable为false的时候，value、writable、enumerable和configurable都不能被修改了。
 
 ```javascript
 
