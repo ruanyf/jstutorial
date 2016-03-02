@@ -953,16 +953,18 @@ extend(document.body.style, {
 
 ```javascript
 var extend = function (to, from) {
-  var descriptor = Object.getOwnPropertyDescriptor(from, property);
-
-  if (descriptor && ( !descriptor.writable
-    || !descriptor.configurable
-    || !descriptor.enumerable
-    || descriptor.get
-    || descriptor.set)) {
-    Object.defineProperty(to, property, descriptor);
-  } else {
-    to[property] = from[property];
+  for (var property in from) {  
+    var descriptor = Object.getOwnPropertyDescriptor(from, property);
+  
+    if (descriptor && ( !descriptor.writable
+      || !descriptor.configurable
+      || !descriptor.enumerable
+      || descriptor.get
+      || descriptor.set)) {
+      Object.defineProperty(to, property, descriptor);
+    } else {
+      to[property] = from[property];
+    }
   }
 }
 ```
