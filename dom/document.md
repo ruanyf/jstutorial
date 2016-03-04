@@ -610,7 +610,7 @@ document.querySelectorAll('DIV, A, SCRIPT');
 
 ```
 
-如果querySelectorAll方法和getElementsByTagName方法的参数是字符串“*”，则会返回文档中的所有HTML元素节点。
+如果`querySelectorAll`方法和`getElementsByTagName`方法的参数是字符串`*`，则会返回文档中的所有HTML元素节点。
 
 与querySelector方法一样，querySelectorAll方法无法选中CSS伪元素。
 
@@ -650,11 +650,9 @@ var paras = document.getElementsByTagName("p");
 getElementsByName方法用于选择拥有name属性的HTML元素，比如form、img、frame、embed和object，返回一个NodeList格式的对象，不会实时反映元素的变化。
 
 ```javascript
-
-// 假定有一个表单是<form name="x"></form>
+// 表单为 <form name="x"></form>
 var forms = document.getElementsByName("x");
 forms[0].tagName // "FORM"
-
 ```
 
 注意，在IE浏览器使用这个方法，会将没有name属性、但有同名id属性的元素也返回，所以name和id属性最好设为不一样的值。
@@ -687,19 +685,48 @@ createElement方法的参数为元素的标签名，即元素节点的tagName属
 
 **（2）createTextNode()**
 
-createTextNode方法用来生成文本节点，参数为所要生成的文本节点的内容。
+`document.createTextNode`方法用来生成文本节点，参数为所要生成的文本节点的内容。
 
 ```javascript
-var newDiv = document.createElement("div");
-var newContent = document.createTextNode("Hello");
+var newDiv = document.createElement('div');
+var newContent = document.createTextNode('Hello');
 newDiv.appendChild(newContent);
 ```
 
-上面代码新建一个div节点和一个文本节点，然后将文本节点插入div节点。
+上面代码新建一个`div`节点和一个文本节点，然后将文本节点插入`div`节点。
+
+这个方法可以确保返回的节点，被浏览器当作txt文本渲染，而不是当作HTML代码渲染。因此，可以用来展示用户的输入，避免XSS攻击。
+
+```javascript
+var div = document.createElement('div');
+div.appendChild(document.createTextNode('<span>Foo & bar</span>'));
+console.log(div.innerHTML)
+// &lt;span&gt;Foo &amp; bar&lt;/span&gt;
+```
+
+上面代码中，`createTextNode`方法对大于号和小于号进行转义，从而保证即使用户输入的内容包含恶意代码，也能正确显示。
+
+需要注意的是，该方法不对单引号和双引号转义，所以不能用来对HTML属性赋值。
+
+```html
+function escapeHtml(str) {
+  var div = document.createElement('div');
+  div.appendChild(document.createTextNode(str));
+  return div.innerHTML;
+};
+
+var userWebsite = '" onmouseover="alert(\'derp\')" "';
+var profileLink = '<a href="' + escapeHtml(userWebsite) + '">Bob</a>';
+var div = document.getElemenetById('target');
+div.innerHtml = profileLink;
+// <a href="" onmouseover="alert('derp')" "">Bob</a>
+```
+
+上面代码中，由于`createTextNode`方法不转义双引号，导致`onmouseover`方法被注入了代码。
 
 **（3）createAttribute()**
 
-createAttribute方法生成一个新的属性对象节点，并返回它。
+`document.createAttribute`方法生成一个新的属性对象节点，并返回它。
 
 ```javascript
 attribute = document.createAttribute(name);
