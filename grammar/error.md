@@ -326,7 +326,7 @@ cleansUp()
 // Error: Sorry...
 ```
 
-上面代码说明，`throw`语句抛出错误以后，`finanlly`继续得到执行。
+上面代码说明，`throw`语句抛出错误以后，`finally`继续得到执行。
 
 ```javascript
 function idle(x) {
@@ -346,7 +346,7 @@ idle('hello')
 
 上面代码说明，即使有`return`语句在前，`finally`代码块依然会得到执行，且在其执行完毕后，才会显示`return`语句的值。
 
-下面的例子说明，`return`语句的执行是排在`finanlly`代码之前，只是等`finnally`代码执行完毕后才返回。
+下面的例子说明，`return`语句的执行是排在`finally`代码之前，只是等`finally`代码执行完毕后才返回。
 
 ```javascript
 var count = 0;

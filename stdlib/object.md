@@ -618,7 +618,7 @@ o.propertyIsEnumerable("toString") // false
 
 ### 可配置性（configurable）
 
-可配置性（configurable）决定了是否可以修改属性的描述对象。也就是说，当configure为false的时候，value、writable、enumerable和configurable都不能被修改了。
+可配置性（configurable）决定了是否可以修改属性的描述对象。也就是说，当configurable为false的时候，value、writable、enumerable和configurable都不能被修改了。
 
 ```javascript
 
@@ -822,7 +822,7 @@ var o = {
   set p(value) {
     console.log("setter: "+value);
   }
-}
+};
 ```
 
 上面代码中，o对象内部的get和set命令，分别定义了p属性的取值函数和存值函数。定义了这两个函数之后，对p属性取值时，取值函数会自动调用；对p属性赋值时，存值函数会自动调用。
@@ -953,16 +953,18 @@ extend(document.body.style, {
 
 ```javascript
 var extend = function (to, from) {
-  var descriptor = Object.getOwnPropertyDescriptor(from, property);
-
-  if (descriptor && ( !descriptor.writable
-    || !descriptor.configurable
-    || !descriptor.enumerable
-    || descriptor.get
-    || descriptor.set)) {
-    Object.defineProperty(to, property, descriptor);
-  } else {
-    to[property] = from[property];
+  for (var property in from) {  
+    var descriptor = Object.getOwnPropertyDescriptor(from, property);
+  
+    if (descriptor && ( !descriptor.writable
+      || !descriptor.configurable
+      || !descriptor.enumerable
+      || descriptor.get
+      || descriptor.set)) {
+      Object.defineProperty(to, property, descriptor);
+    } else {
+      to[property] = from[property];
+    }
   }
 }
 ```
@@ -1210,8 +1212,8 @@ o.t
 {% highlight javascript %}
 
 var o = Object.seal(
-			Object.create(Object.freeze({x:1}),
-				{y: {value: 2, writable: true}})
+  Object.create(Object.freeze({x:1}),
+    {y: {value: 2, writable: true}})
 );
 
 Object.getPrototypeOf(o).t = "hello";

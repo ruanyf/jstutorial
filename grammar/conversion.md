@@ -96,11 +96,11 @@ if (typeof {a:1}.valueOf() === 'object'){
 
 var obj = {
 	valueOf: function () {
-			console.log("valueOf");
+            console.log("valueOf");
             return {};
 	},
 	toString: function () {
-			console.log("toString");
+            console.log("toString");
             return {}; 
 	}
 };
