@@ -275,15 +275,15 @@ Boolean(a) // true
 {% highlight javascript %}
 
 if (Boolean(false)) 
-		console.log('true'); // 无输出
+  console.log('true'); // 无输出
 
 if (new Boolean(false))
-		console.log('true'); // true
+	console.log('true'); // true
 
 if (Boolean(null)) 
-		console.log('true'); // 无输出
+	console.log('true'); // 无输出
 
 if (new Boolean(null))
-		console.log('true'); // true
+	console.log('true'); // true
 
 {% endhighlight %}
