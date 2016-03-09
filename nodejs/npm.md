@@ -421,9 +421,33 @@ npm不仅可以用于模块管理，还可以用于执行脚本。`package.json`
 
 npm内置了两个命令简写，`npm test`等同于执行`npm run test`，`npm start`等同于执行`npm run start`。
 
-`npm run`会创建一个shell，执行指定的命令，并将`node_modules/.bin`加入PATH变量，这意味着本地模块可以直接运行。也就是说，`npm run lint`直接运行`jshint **.js`即可，而不用`./node_modules/.bin/jshint **.js`。
+`npm run`会创建一个Shell，执行指定的命令，并临时将`node_modules/.bin`加入PATH变量，这意味着本地模块可以直接运行。
 
-如果直接运行`npm run`不给出任何参数，就会列出scripts属性下所有命令。
+举例来说，你执行ESLint的安装命令。
+
+```bash
+$ npm i eslint --save-dev
+```
+
+运行上面的命令以后，会产生两个结果。首先，ESLint被安装到当前目录的`node_modules`子目录；其次，`node_modules/.bin`目录会生成一个符号链接`node_modules/.bin/eslint`，指向ESLint模块的可执行脚本。
+
+然后，你就可以在`package.json`的`script`属性里面，不带路径的引用`eslint`这个脚本。
+
+```javascript
+{
+  "name": "Test Project",
+  "devDependencies": {
+    "eslint": "^1.10.3"
+  },
+  "scripts": {
+    "lint": "eslint ."
+  }
+}
+```
+
+等到运行`npm run lint`的时候，它会自动执行`./node_modules/.bin/eslint .`。
+
+如果直接运行`npm run`不给出任何参数，就会列出`scripts`属性下所有命令。
 
 ```bash
 $ npm run

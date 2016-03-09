@@ -10,7 +10,7 @@ child_process模块用于新建子进程。子进程的运行结果储存在系�
 
 ## exec()
 
-exec方法用于执行bash命令，它的参数是一个命令字符串。
+`exec`方法用于执行bash命令，它的参数是一个命令字符串。
 
 ```javascript
 var exec = require('child_process').exec;
@@ -24,9 +24,9 @@ var ls = exec('ls -l', function (error, stdout, stderr) {
 });
 ```
 
-上面代码的exec方法用于新建一个子进程，然后缓存它的运行结果，运行结束后调用回调函数。
+上面代码的`exec`方法用于新建一个子进程，然后缓存它的运行结果，运行结束后调用回调函数。
 
-exec方法最多可以接受两个参数，第一个参数是所要执行的shell命令，第二个参数是回调函数，该函数接受三个参数，分别是发生的错误、标准输出的显示结果、标准错误的显示结果。
+`exec`方法最多可以接受两个参数，第一个参数是所要执行的shell命令，第二个参数是回调函数，该函数接受三个参数，分别是发生的错误、标准输出的显示结果、标准错误的显示结果。
 
 由于标准输出和标准错误都是流对象（stream），可以监听data事件，因此上面的代码也可以写成下面这样。
 
@@ -84,6 +84,34 @@ child_process.exec('ls -l ' + path, function (err, data) {
 ```
 
 上面代码表示，在bash环境下，`ls -l; user input`会直接运行。如果用户输入恶意代码，将会带来安全风险。因此，在有用户输入的情况下，最好不使用`exec`方法，而是使用`execFile`方法。
+
+## execSync()
+
+`execSync`是`exec`的同步执行版本。
+
+它可以接受两个参数，第一个参数是所要执行的命令，第二个参数用来配置执行环境。
+
+```javascript
+var execSync = require("child_process").execSync;
+
+var SEPARATOR = process.platform === 'win32' ? ';' : ':';
+var env = Object.assign({}, process.env);
+
+env.PATH = path.resolve('./node_modules/.bin') + SEPARATOR + env.PATH;
+
+function myExecSync(cmd) {
+  var output = execSync(cmd, {
+    cwd: process.cwd(),
+    env: env
+  });
+
+  console.log(output);
+}
+
+myExecSync('eslint .');
+```
+
+上面代码中，`execSync`方法的第二个参数是一个对象。该对象的`cwd`属性指定脚本的当前目录，`env`属性指定环境变量。上面代码将`./node_modules/.bin`目录，存入`$PATH`变量。这样就可以不加路径，引用项目内部的模块命令了，比如`eslint`命令实际执行的是`./node_modules/.bin/eslint`。
 
 ## execFile()
 

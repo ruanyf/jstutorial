@@ -203,11 +203,11 @@ document.queryselector('ul').appendChild(docFrag);
 
 一旦DocumentFragment节点被添加进原文档，它自身就变成了空节点（textContent属性为空字符串）。如果想要保存DocumentFragment节点的内容，可以使用cloneNode方法。
 
-{% highlight javascript %}
-
-document.queryselector('ul').(docFrag.cloneNode(true));
-
-{% endhighlight %}
+```javascript
+document
+  .queryselector('ul')
+  .appendChild(docFrag.cloneNode(true));
+```
 
 DocumentFragment节点对象没有自己的属性和方法，全部继承自Node节点和ParentNode接口。也就是说，DocumentFragment节点比Node节点多出以下四个属性。
 
