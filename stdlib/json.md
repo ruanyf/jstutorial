@@ -295,7 +295,7 @@ JSON.parse方法可以接受一个处理函数，用法与JSON.stringify方法�
 
 function f(key, value) {
   if ( key === ""){
-	  return value;
+    return value;
   }
   if ( key === "a" ) {
     return value + 10;
