@@ -417,27 +417,22 @@ for (var key in person) {
 
 ## with语句
 
-with语句的格式如下：
+`with`语句的格式如下：
 
-{% highlight javascript %}
-
+```javascript
 with (object)
   statement
-
-{% endhighlight %}
+```
 
 它的作用是操作同一个对象的多个属性时，提供一些书写的方便。
 
-{% highlight javascript %}
-
+```javascript
 // 例一
 with (o) {
   p1 = 1;
   p2 = 2;
 }
-
 // 等同于
-
 o.p1 = 1;
 o.p2 = 2;
 
@@ -447,22 +442,18 @@ with (document.links[0]){
   console.log(title);
   console.log(style);
 }
-
 // 等同于
-
 console.log(document.links[0].href);
 console.log(document.links[0].title);
 console.log(document.links[0].style);
+```
 
-{% endhighlight %}
+注意，`with`区块内部的变量，必须是当前对象已经存在的属性，否则会创造一个当前作用域的全局变量。这是因为`with`区块没有改变作用域，它的内部依然是当前作用域。
 
-注意，with区块内部的变量，必须是当前对象已经存在的属性，否则会创造一个当前作用域的全局变量。这是因为with区块没有改变作用域，它的内部依然是当前作用域。
-
-{% highlight javascript %}
-
+```javascript
 var o = {};
 
-with (o){
+with (o)c{
   x = "abc";
 }
 
@@ -471,40 +462,32 @@ o.x
 
 x
 // "abc"
+```
 
-{% endhighlight %}
+上面代码中，对象`o`没有属性`x`，所以`with`区块内部对`x`的操作，等于创造了一个全局变量`x`。正确的写法应该是，先定义对象`o`的属性`x`，然后在`with`区块内操作它。
 
-上面代码中，对象o没有属性x，所以with区块内部对x的操作，等于创造了一个全局变量x。正确的写法应该是，先定义对象o的属性x，然后在with区块内操作它。
-
-{% highlight javascript %}
-
+```javascript
 var o = {};
-
 o.x = 1;
 
-with (o){
+with (o) {
   x = 2;
 }
 
-o.x
-// 2
+o.x // 2
+```
 
-{% endhighlight %}
+这是`with`语句的一个很大的弊病，就是绑定对象不明确。
 
-这是with语句的一个很大的弊病，就是绑定对象不明确。
-
-{% highlight javascript %}
-
+```javascript
 with (o) {
   console.log(x);
 }
+```
 
-{% endhighlight %}
+单纯从上面的代码块，根本无法判断`x`到底是全局变量，还是`o`对象的一个属性。这非常不利于代码的除错和模块化，编译器也无法对这段代码进行优化，只能留到运行时判断，这就拖慢了运行速度。因此，建议不要使用`with`语句，可以考虑用一个临时变量代替`with`。
 
-单纯从上面的代码块，根本无法判断x到底是全局变量，还是o对象的一个属性。这非常不利于代码的除错和模块化，编译器也无法对这段代码进行优化，只能留到运行时判断，这就拖慢了运行速度。因此，建议不要使用with语句，可以考虑用一个临时变量代替with。
-
-{% highlight javascript %}
-
+```javascript
 with(o1.o2.o3) {
   console.log(p1 + p2);
 }
@@ -513,34 +496,59 @@ with(o1.o2.o3) {
 
 var temp = o1.o2.o3;
 console.log(temp.p1 + temp.p2);
+```
 
-{% endhighlight %}
-
-with语句少数有用场合之一，就是替换模板变量。
+`with`语句少数有用场合之一，就是替换模板变量。
 
 ```javascript
 var str = 'Hello <%= name %>!';
 ```
 
-上面代码是一个模板字符串，为了替换其中的变量name，可以先将其分解成三部分`'Hello ', name, '!'`，然后进行模板变量替换。
+上面代码是一个模板字符串。假定有一个`parser`函数，可以将这个字符串解析成下面的样子。
 
 ```javascript
+parser(str)
+// '"Hello ", name, "!"'
+```
+
+那么，就可以利用`with`语句，进行模板变量替换。
+
+```javascript
+var str = 'Hello <%= name %>!';
 
 var o = {
   name: 'Alice'
 };
 
-var p = [];
-var tmpl = '';
+function tmpl(str, obj) {
+  str = 'var p = [];' +
+    'with (obj) {p.push(' + parser(str) + ')};' +
+    'return p;'
+  var r = (new Function('obj', str))(obj);
+  return r.join('');
+}
 
-with(o){
+tmpl(str, o)
+// "Hello Alice!"
+```
+
+上面代码的核心逻辑是下面的部分。
+
+```javascript
+var o = {
+  name: 'Alice'
+};
+
+var p = [];
+
+with (o) {
   p.push('Hello ', name, '!');
 };
 
 p.join('') // "Hello Alice!"
 ```
 
-上面代码中，with区块内部，模板变量name可以被对象o的属性替换，而p依然是全局变量。事实上，这就是很多模板引擎的实现原理。
+上面代码中，`with`区块内部，模板变量`name`可以被对象`o`的属性替换，而`p`依然是全局变量。这就是很多模板引擎的实现原理。
 
 ## 参考链接
 
