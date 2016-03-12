@@ -209,16 +209,20 @@ JSON.stringify({ a:"abc", b:123 }, f)
 
 ```javascript
 JSON.stringify({ p1: 1, p2: 2 }, null, 2);
-// "{
+/* 
+"{
   "p1": 1,
   "p2": 2
 }"
+*/
 
 JSON.stringify({ p1:1, p2:2 }, null, "|-");
-// "{
+/*
+"{
 |-"p1": 1,
 |-"p2": 2
 }"
+*/
 ```
 
 如果`JSON.stringify`方法处理的对象，包含一个`toJSON`方法，则它会使用这个方法得到一个值，然后再将这个值转成字符串，而忽略其他成员。
@@ -295,7 +299,7 @@ JSON.parse方法可以接受一个处理函数，用法与JSON.stringify方法�
 
 function f(key, value) {
   if ( key === ""){
-	  return value;
+    return value;
   }
   if ( key === "a" ) {
     return value + 10;

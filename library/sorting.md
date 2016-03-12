@@ -58,7 +58,7 @@ function bubbleSort(myArray){
         i, j, stop;
 
     for (i=0; i < len; i++){
-        for (j=0, stop=len-i; j < stop; j++){
+        for (j=0, stop=len-1-i; j < stop; j++){
             if (myArray[j] > myArray[j+1]){
                 swap(myArray, j, j+1);
             }
