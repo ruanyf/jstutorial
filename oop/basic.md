@@ -309,7 +309,7 @@ this的使用可以分成以下几个场合。
 this === window // true 
 
 function f() {
-	console.log(this === window); // true
+  console.log(this === window); // true
 }
 
 {% endhighlight %}
@@ -323,7 +323,7 @@ function f() {
 {% highlight javascript %}
 
 var O = function(p) {
-	this.p = p;
+  this.p = p;
 };
 
 O.prototype.m = function() {
@@ -382,12 +382,12 @@ o2.f() // 1
 {% highlight javascript %}
 
 var a = {
-		b : {
-			m : function() {
-				console.log(this.p);
-			},
-			p : 'Hello'
-		}
+  b : {
+    m : function() {
+      console.log(this.p);
+    },
+    p : 'Hello'
+  }
 };
 
 var hello = a.b.m;
@@ -427,12 +427,12 @@ this === module.exports // true
 {% highlight javascript %}
 
 var o = {
-	f1: function() {
-		console.log(this); 
-		var f2 = function() {
-			console.log(this);
-		}();
-	}
+  f1: function() {
+    console.log(this); 
+    var f2 = function() {
+      console.log(this);
+    }();
+  }
 }
 
 o.f1()
@@ -446,13 +446,13 @@ o.f1()
 {% highlight javascript %}
 
 var o = {
-	f1: function() {
-		console.log(this); 
-		var that = this;
-		var f2 = function() {
-			console.log(that);
-		}();
-	}
+  f1: function() {
+    console.log(this); 
+    var that = this;
+    var f2 = function() {
+      console.log(that);
+    }();
+  }
 }
 
 o.f1()
@@ -469,13 +469,13 @@ o.f1()
 
 ```javascript
 var o = {
-	v: 'hello',
-    p: [ 'a1', 'a2' ],
-    f: function f() {
-        this.p.forEach(function (item) {
-            console.log(this.v+' '+item);
-        });
-    }
+  v: 'hello',
+  p: [ 'a1', 'a2' ],
+  f: function f() {
+    this.p.forEach(function (item) {
+      console.log(this.v+' '+item);
+    });
+  }
 }
 
 o.f()
@@ -489,14 +489,14 @@ o.f()
 
 ```javascript
 var o = {
-	v: 'hello',
-    p: [ 'a1', 'a2' ],
-    f: function f() {
-		var that = this;
-        this.p.forEach(function (item) {
-            console.log(that.v+' '+item);
-        });
-    }
+  v: 'hello',
+  p: [ 'a1', 'a2' ],
+  f: function f() {
+    var that = this;
+    this.p.forEach(function (item) {
+      console.log(that.v+' '+item);
+    });
+  }
 }
 
 o.f()
@@ -509,12 +509,12 @@ o.f()
 ```javascript
 var o = {
   v: 'hello',
-    p: [ 'a1', 'a2' ],
-    f: function f() {
-        this.p.forEach(function (item) {
-            console.log(this.v+' '+item);
-        }, this);
-    }
+  p: [ 'a1', 'a2' ],
+  f: function f() {
+    this.p.forEach(function (item) {
+      console.log(this.v+' '+item);
+    }, this);
+  }
 }
 
 o.f()
@@ -530,7 +530,7 @@ o.f()
 var o = new Object();
 
 o.f = function (){
-    console.log(this === o);
+  console.log(this === o);
 }
 
 o.f() // true
@@ -723,7 +723,7 @@ Array.prototype.slice.apply({length:1})
 var o = new Object();
 
 o.f = function (){
-    console.log(this === o);
+  console.log(this === o);
 }
 
 var f = function (){
@@ -754,7 +754,7 @@ func.bind(thisValue, arg1, arg2,...)
 var o1 = new Object();
 o1.p = 123;
 o1.m = function (){
-	console.log(this.p);
+  console.log(this.p);
 };
 
 o1.m() // 123 
@@ -846,14 +846,14 @@ element.removeEventListener('click', listener);
 {% highlight javascript %}
 
 if(!('bind' in Function.prototype)){
-    Function.prototype.bind = function(){
-        var fn = this;
-		var context = arguments[0];
-		var args = Array.prototype.slice.call(arguments, 1);
-        return function(){
-            return fn.apply(context, args);
-        }
+  Function.prototype.bind = function(){
+    var fn = this;
+    var context = arguments[0];
+    var args = Array.prototype.slice.call(arguments, 1);
+    return function(){
+      return fn.apply(context, args);
     }
+  }
 }
 
 {% endhighlight %}
@@ -919,7 +919,7 @@ a // [1, 2, 3]
 {% highlight javascript %}
 
 function f(){
-	console.log(this.v);
+  console.log(this.v);
 }
 
 var o = { v: 123 };
