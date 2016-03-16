@@ -147,7 +147,7 @@ document.location.reload(true)
 document.location.reload(false)
 // 跳转到另一个网址，但当前文档不保留在history对象中，
 // 即无法用后退按钮，回到当前文档
-document.location.assign('http://www.google.com')
+document.location.replace('http://www.google.com')
 // 将location对象转为字符串，等价于document.location.href
 document.location.toString()
 
