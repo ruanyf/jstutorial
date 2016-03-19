@@ -226,7 +226,7 @@ implementation属性返回一个对象，用来甄别当前环境部署了哪些
 
 ```javascript
 
-document.implementation.hasFeature( 'HTML, 2.0 )
+document.implementation.hasFeature( 'HTML', '2.0')
 // true
 
 document.implementation.hasFeature('MutationEvents','2.0')

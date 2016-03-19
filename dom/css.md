@@ -327,7 +327,7 @@ document.head.appendChild(style);
 
 ```javascript
 var linkElm = document.createElement('link');
-linkElm.setAttribute('rel', 'sty规则lesheet');
+linkElm.setAttribute('rel', 'stylesheet');
 linkElm.setAttribute('type', 'text/css');
 linkElm.setAttribute('href', 'reset-min.css');
 
