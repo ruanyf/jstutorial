@@ -397,14 +397,12 @@ $_
 
 $(selector)返回一个数组，包括特定的CSS选择器匹配的所有DOM元素。该方法实际上是document.querySelectorAll方法的别名。
 
-{% highlight javascript %}
-
+```javascript
 var images = $('img');
 for (each in images) {
     console.log(images[each].src);
 }
-
-{% endhighlight %}
+```
 
 上面代码打印出网页中所有img元素的src属性。
 
@@ -416,11 +414,9 @@ $$(selector)返回一个选中的DOM对象，等同于document.querySelectorAll�
 
 $x(path)方法返回一个数组，包含匹配特定XPath表达式的所有DOM元素。
 
-{% highlight javascript %}
-
+```javascript
 $x("//p[a]")
-
-{% endhighlight %}
+```
 
 上面代码返回所有包含a元素的p元素。
 
@@ -438,28 +434,24 @@ keys(object)方法返回一个数组，包含特定对象的所有键名。
 
 values(object)方法返回一个数组，包含特定对象的所有键值。
 
-{% highlight javascript %}
-
-var o = {'p1':'a', 'p2':'b'};
+```javascript
+var o = {'p1': 'a', 'p2': 'b'};
 
 keys(o)
 // ["p1", "p2"]
 values(o)
 // ["a", "b"]
+```
 
-{% endhighlight %}
+（9）`monitorEvents(object[, events]) ，unmonitorEvents(object[, events])`
 
-（9）monitorEvents(object[, events]) ，unmonitorEvents(object[, events])
+`monitorEvents(object[, events])`方法监听特定对象上发生的特定事件。当这种情况发生时，会返回一个Event对象，包含该事件的相关信息。unmonitorEvents方法用于停止监听。
 
-monitorEvents(object[, events])方法监听特定对象上发生的特定事件。当这种情况发生时，会返回一个Event对象，包含该事件的相关信息。unmonitorEvents方法用于停止监听。
-
-{% highlight javascript %}
-
+```javascript
 monitorEvents(window, "resize");
 
 monitorEvents(window, ["resize", "scroll"])
-
-{% endhighlight %}
+```
 
 上面代码分别表示单个事件和多个事件的监听方法。
 
@@ -487,7 +479,7 @@ monitorEvents($("#msg"), "key");
 
 上面代码表示监听所有key大类的事件。
 
-（10）profile([name])，profileEnd()
+（10）`profile([name])`，profileEnd()
 
 profile方法用于启动一个特定名称的CPU性能测试，profileEnd方法用于结束该性能测试。
 
@@ -510,18 +502,16 @@ profileEnd("My profile")
 
 ## debugger语句
 
-debugger语句必须与除错工具配合使用，如果没有除错工具，debugger语句不会产生任何结果。
+`debugger`语句必须与除错工具配合使用，如果没有除错工具，debugger语句不会产生任何结果。
 
-在chrome浏览器中，当代码运行到debugger指定的行时，就会暂停运行，自动打开console界面。它的作用类似于设置断点。
+在Chrome浏览器中，当代码运行到debugger指定的行时，就会暂停运行，自动打开控制台界面。它的作用类似于设置断点。
 
-{% highlight javascript %}
-
-for(var i = 0;i<5;i++){
-	console.log(i);
-	if (i===2) debugger;
+```javascript
+for(var i = 0;i < 5;i++){
+  console.log(i);
+  if (i === 2) debugger;
 }
-
-{% endhighlight %}
+```
 
 上面代码打印出0，1，2以后，就会暂停，自动打开console窗口，等待进一步处理。
 
