@@ -56,7 +56,7 @@ Number('42 cats') // NaN
 `Number`函数会自动过滤一个字符串前导和后缀的空格。
 
 ```javascript
-Number('\t\v\r12.34\n')
+Number('\t\v\r12.34\n') // 12.34
 ```
 
 **（2）对象的转换规则**

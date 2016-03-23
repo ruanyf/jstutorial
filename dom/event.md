@@ -786,7 +786,7 @@ function showKey(e){
   console.log("ALT key pressed: " + e.altKey);
   console.log("CTRL key pressed: " + e.ctrlKey);
   console.log("META key pressed: " + e.metaKey);
-  console.log("META key pressed: " + e.shiftKey);
+  console.log("SHIFT key pressed: " + e.shiftKey);
 }
 ```
 
@@ -1059,7 +1059,7 @@ image.addEventListener('error', function(event) {
 
 有时候，图片加载会在脚本运行之前就完成，尤其是当脚本放置在网页底部的时候，因此有可能使得load和error事件的监听函数根本不会被执行。所以，比较可靠的方式，是用complete属性先判断一下是否加载完成。
 
-```
+```javascript
 function loaded() {
   // code after image loaded
 }
@@ -1308,7 +1308,7 @@ target.addEventListener('dragover', function(e) {
 });
 ```
 
-dropEffect属性一般在dragenter和dragove事件的监听函数中设置，对于dragstart、drag、dragleave这三个事件，该属性不起作用。进入目标节点后，拖拉行为会初始化成用户设定的效果，用户可以通过按下Shift键和Control键，改变初始设置，在copy、move、link三种效果中切换。
+dropEffect属性一般在dragenter和dragover事件的监听函数中设置，对于dragstart、drag、dragleave这三个事件，该属性不起作用。进入目标节点后，拖拉行为会初始化成用户设定的效果，用户可以通过按下Shift键和Control键，改变初始设置，在copy、move、link三种效果中切换。
 
 鼠标箭头会根据dropEffect属性改变形状，提示目前正处于哪一种效果。这意味着，通过鼠标就能判断是否可以在当前节点drop被拖拉的节点。
 
@@ -1428,7 +1428,7 @@ event.dataTransfer.setData("text/plain", "Text to drag");
 
 如果拖拉文本框或者拖拉选中的文本，会默认将文本数据添加到dataTransfer属性，不用手动指定。
 
-```javascript
+```html
 <div draggable="true" ondragstart="
   event.dataTransfer.setData('text/plain', 'bbb')">
   aaa

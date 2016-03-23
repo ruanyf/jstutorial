@@ -147,7 +147,7 @@ document.location.reload(true)
 document.location.reload(false)
 // 跳转到另一个网址，但当前文档不保留在history对象中，
 // 即无法用后退按钮，回到当前文档
-document.location.assign('http://www.google.com')
+document.location.replace('http://www.google.com')
 // 将location对象转为字符串，等价于document.location.href
 document.location.toString()
 
@@ -167,7 +167,7 @@ document.location属性与window.location属性等价，历史上，IE曾经不�
 
 **（5）referrer**
 
-referrer属性返回一个字符串，表示前文档的访问来源，如果是无法获取来源或是用户直接键入网址，而不是从其他网页点击，则返回一个空字符串。
+referrer属性返回一个字符串，表示当前文档的访问来源，如果是无法获取来源或是用户直接键入网址，而不是从其他网页点击，则返回一个空字符串。
 
 **（6）title**
 
@@ -226,7 +226,7 @@ implementation属性返回一个对象，用来甄别当前环境部署了哪些
 
 ```javascript
 
-document.implementation.hasFeature( 'HTML, 2.0 )
+document.implementation.hasFeature( 'HTML', '2.0')
 // true
 
 document.implementation.hasFeature('MutationEvents','2.0')
