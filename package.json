@@ -4,6 +4,7 @@
   "description": "JavaScript 标准参考教程",
   "main": "index.md",
   "scripts": {
+    "build": "grunt",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
