@@ -228,10 +228,9 @@ if (err) {
 
 ### process.on()
 
-process.on方法用来监听各种事件，并指定回调函数。
+`process.on`方法用来监听各种事件，并指定回调函数。
 
 ```javascript
-
 process.on('uncaughtException', function(err){
   console.log('got an error: %s', err.message);
   process.exit(1);
@@ -240,10 +239,9 @@ process.on('uncaughtException', function(err){
 setTimeout(function(){
   throw new Error('fail');
 }, 100);
-
 ```
 
-上面代码是process监听Node的一个全局性事件uncaughtException，只要有错误没有捕获，就会触发这个事件。
+上面代码是`process`监听Node的一个全局性事件`uncaughtException`，只要有错误没有捕获，就会触发这个事件。
 
 process支持的事件有以下一些。
 
