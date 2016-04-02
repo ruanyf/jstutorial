@@ -147,7 +147,7 @@ $ node --harmony script.js --version
 
 ### process.env
 
-`process.env`属性返回一个对象，包含了当前Shell的所有环境变量。
+`process.env`属性返回一个对象，包含了当前Shell的所有环境变量。比如，`process.env.HOME`返回用户的主目录。
 
 通常的做法是，新建一个环境变量`NODE_ENV`，用它确定当前所处的开发阶段，生产阶段设为`production`，开发阶段设为`develop`或`staging`，然后在脚本中读取`process.env.NODE_ENV`即可。
 
@@ -155,6 +155,8 @@ $ node --harmony script.js --version
 
 ```bash
 $ export NODE_ENV=production && node app.js
+# 或者
+$ NODE_ENV=production node app.js
 ```
 
 ## 方法
