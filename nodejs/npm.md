@@ -235,103 +235,29 @@ var backbone = require('backbone')
 console.log(backbone.VERSION)
 ```
 
-## 模块标签
+## 避免系统权限
 
-npm允许为模块的某个版本，新建一个标签。
+默认情况下，Npm全局模块都安装在系统目录（比如`/usr/local/lib/`），普通用户没有写入权限，需要用到`sudo`命令。这不是很方便，我们可以在没有root权限的情况下，安装全局模块。
 
-```bash
-$ npm dist-tag add <pkg>@<version> [<tag>]
-```
-
-另一种方法是发布的时候，加上标签。
+首先，在主目录下新建配置文件`.npmrc`，然后在该文件中将`prefix`变量定义到主目录下面。
 
 ```bash
-$ npm publish --tag=beta
+prefix = /home/yourUsername/npm
 ```
 
-有了标签以后，就可以指定安装该标签的版本。
+然后在主目录下新建`npm`子目录。
 
 ```bash
-$ npm install <name>@<tag>
-# 或者
-$ npm install --tag <tag>
+$ mkdir ~/npm
 ```
 
-常见的标签有`latest`、`stable`、`next`等。
+此后，全局安装的模块都会安装在这个子目录中，npm也会到`~/npm/bin`目录去寻找命令。
 
-npm默认会为最新一次发布的版本，新建`latest`标签。然后，下载的时候，默认是下载带有`latest`标签的版本。但是，这可能并不是我们想要的行为。比如，当前最新版本是4.2版，然后发布了一个3.6版，`latest`的标签就会打在3.6版上面，用户`npm install`安装的就是这个版本。
-
-为了避免这个问题，可以为3.6版加上`previous`标签。
+最后，将这个路径在`.bash_profile`文件（或`.bashrc`文件）中加入PATH变量。
 
 ```bash
-# 发布
-$ npm publish --tag=previous
-
-# 安装
-$ npm install <package>@previous
+export PATH=~/npm/bin:$PATH
 ```
-
-`package.json`文件可以设置默认标签。
-
-```javascript
-{
-  "publishConfig": {
-    "tag": "next"
-  }
-}
-```
-
-上面的`publishConfig`设置了最新发布的默认标签是`next`。`publishConfig`属性设置的值，可以在publish过程中使用。
-
-## 语义版本（SemVer）
-
-npm采用”语义版本“管理软件包。所谓语义版本，就是指版本号为`a.b.c`的形式，其中a是大版本号，b是小版本号，c是补丁号。
-
-一个软件发布的时候，默认就是 1.0.0 版。如果以后发布补丁，就增加最后一位数字，比如1.0.1；如果增加新功能，且不影响原有的功能，就增加中间的数字（即小版本号），比如1.1.0；如果引入的变化，破坏了向后兼容性，就增加第一位数字（即大版本号），比如2.0.0。
-
-npm允许使用特殊符号，指定所要使用的版本范围，假定当前版本是1.0.4。
-
-- 只接受补丁包：1.0 或者 1.0.x 或者 ~1.0.4
-- 只接受小版本和补丁包：1 或者 1.x 或者 &#94;1.0.4
-- 接受所有更新：* or x
-
-对于~和&#94;，要注意区分。前者表示接受当前小版本（如果省略小版本号，则是当前大版本）的最新补丁包，后者表示接受当前大版本的最新小版本和最新补丁包。
-
-```javascript
-~2.2.1 // 接受2.2.1，不接受2.3.0
-^2.2.1 // 接受2.2.1和2.3.0
-
-~2.2 // 接受2.2.0和2.2.1，不接受2.3.0
-^2.2 // 接受2.2.0、2.2.1和2.3.0
-
-~2 // 接受2.0.0、2.1.0、2.2.0、2.2.1和2.3.0
-^2 // 接受2.0.0、2.1.0、2.2.0、2.2.1和2.3.0
-```
-
-还可以使用数学运算符（比如&gt;, &lt;, =, &gt;= or &lt;=等），指定版本范围。
-
-```javascript
->2.1
-1.0.0 - 1.2.0
->1.0.0-alpha
->=1.0.0-rc.0 <1.0.1
-^2 <2.2 || > 2.3
-```
-
-注意，如果使用连字号，它的两端必须有空格。如果不带空格，会被npm理解成预发布的tag，比如1.0.0-rc.1。
-
-## npm outdated
-
-`npm outdated`命令列出项目所有依赖的当前版本号与最新版本号，提示你是否需要更新。
-
-```bash
-$ npm outdated
-Package      Current   Wanted   Latest  Location
-glob          5.0.15   5.0.15    6.0.1  test-outdated-output
-npm            3.5.1    3.5.2    3.5.1  test-outdated-output
-```
-
-每个项目依赖的模块，都会输出三个版本号。`Current`表示当前使用的版本，`Wanted`表示符合预置条件的最新版本，`Latest`表示最新发布的版本。
 
 ## npm update，npm uninstall
 
@@ -374,39 +300,6 @@ $ npm uninstall [package name]
 
 # 卸载全局模块
 $ npm uninstall [package name] -global
-```
-
-## npm shrinkwrap
-
-对于一个项目来说，通常不会写死依赖的npm模块的版本。比如，开发时使用某个模块的版本是1.0，那么等到用户安装时，如果该模块升级到1.1，往往就会安装1.1。
-
-但是，对于开发者来说，有时最好锁定所有依赖的版本，防止模块升级带来意想不到的问题。但是，由于模块自己还依赖别的模块，这一点往往很难做到。举例来说，项目依赖A模块，A模块依赖B模块。即使写死A模块的版本，但是B模块升级依然可能导致不兼容。
-
-`npm shrinkwrap`命令就是用来彻底锁定所有模块的版本。
-
-```javascript
-$ npm shrinkwrap
-```
-
-运行上面这个命令以后，会在项目目录下生成一个npm-shrinkwrap.json文件，里面包含当前项目用到的所有依赖（包括依赖的依赖，以此类推），以及它们的准确版本，也就是当前正在使用的版本。
-
-只要存在`npm-shrinkwrap.json`文件，下一次用户使用`npm install`命令安装依赖的时候，就会安装所有版本完全相同的模块。
-
-如果执行`npm shrinkwrap`的时候，加上参数dev，还可以记录devDependencies字段中模块的准确版本。
-
-```javascript
-$ npm shrinkwrap --dev
-```
-
-## npm prune
-
-`npm prune`命令与`npm shrinkwrap`配套使用。使用`npm shrinkwrap`的时候，有时可能存在某个已经安装的模块不在`dependencies`字段内的情况，这时`npm shrinkwrap`就会报错。
-
-`npm prune`命令可以移除所有不在`dependencies`字段内的模块。如果指定模块名，则移除指定的模块。
-
-```bash
-$ npm prune
-$ npm prune <package name>
 ```
 
 ## npm run
@@ -615,6 +508,12 @@ $ npm-run-all --parallel watch:*
 $ npm run dev & npm run serve
 ```
 
+如果start脚本没有配置，`npm start`命令默认执行下面的脚本，前提是模块的根目录存在一个server.js文件。
+
+```bash
+$ node server.js
+```
+
 （2）dev脚本命令
 
 `dev`脚本命令，规定开发阶段所要做的处理，比如构建网页资源。
@@ -726,52 +625,76 @@ $ npm run dev & npm run serve
 
 上面代码是一个`package.json`文件的例子。如果执行`npm test`，会按下面的顺序执行相应的命令。
 
-1. pretest
-1. test
-1. posttest
+1. `pretest`
+1. `test`
+1. `posttest`
 
 如果执行过程出错，就不会执行排在后面的脚本，即如果prelint脚本执行出错，就不会接着执行lint和postlint脚本。
-
-下面是一些常见的`pre-`和`post-`脚本。
-
-- prepublish：发布一个模块前执行。
-- postpublish：发布一个模块后执行。
-- preinstall：安装一个模块前执行。
-- postinstall：安装一个模块后执行。
-- preuninstall：卸载一个模块前执行。
-- postuninstall：卸载一个模块后执行。
-- preversion：更改模块版本前执行。
-- postversion：更改模块版本后执行。
-- pretest：运行`npm test`命令前执行。
-- posttest：运行`npm test`命令后执行。
-- prestop：运行`npm stop`命令前执行。
-- poststop：运行`npm stop`命令后执行。
-- prestart：运行`npm start`命令前执行。
-- poststart：运行`npm start`命令后执行。
-- prerestart：运行`npm restart`命令前执行。
-- postrestart：运行`npm restart`命令后执行。
-
-对于最后一个`npm restart`命令，如果没有设置restart脚本，prerestart和postrestart会依次执行stop和start脚本。
-
-如果start脚本没有配置，`npm start`命令默认执行下面的脚本，前提是模块的根目录存在一个server.js文件。
-
-```bash
-$ node server.js
-```
-
-另外，不能在pre脚本之前再加pre，即preprelint脚本不起作用。
 
 下面是一个例子。
 
 ```javascript
-"scripts": {
-  "lint": "standard",
-  "test": "node test/my-tests.js",
-  "posttest": "npm run lint",
-  "predeploy": "npm test",
-  "deploy": "surge ./path/to/dist"
+{
+  "test": "karma start",
+  "test:lint": "eslint . --ext .js --ext .jsx",
+  "pretest": "npm run test:lint"
 }
 ```
+
+上面代码中，在运行`npm run test`之前，会自动检查代码，即运行`npm run test:lint`命令。
+
+下面是一些常见的`pre-`和`post-`脚本。
+
+- `prepublish`：发布一个模块前执行。
+- `postpublish`：发布一个模块后执行。
+- `preinstall`：安装一个模块前执行。
+- `postinstall`：安装一个模块后执行。
+- `preuninstall`：卸载一个模块前执行。
+- `postuninstall`：卸载一个模块后执行。
+- `preversion`：更改模块版本前执行。
+- `postversion`：更改模块版本后执行。
+- `pretest`：运行`npm test`命令前执行。
+- `posttest`：运行`npm test`命令后执行。
+- `prestop`：运行`npm stop`命令前执行。
+- `poststop`：运行`npm stop`命令后执行。
+- `prestart`：运行`npm start`命令前执行。
+- `poststart`：运行`npm start`命令后执行。
+- `prerestart`：运行`npm restart`命令前执行。
+- `postrestart`：运行`npm restart`命令后执行。
+
+对于最后一个`npm restart`命令，如果没有设置`restart`脚本，`prerestart`和`postrestart`会依次执行stop和start脚本。
+
+另外，不能在`pre`脚本之前再加`pre`，即`prepretest`脚本不起作用。
+
+注意，即使Npm可以自动运行`pre`和`post`脚本，也可以手动执行它们。
+
+```bash
+$ npm run prepublish
+```
+
+下面是`post install`的例子。
+
+```javascript
+{
+  "postinstall": "node lib/post_install.js"
+}
+```
+
+上面的这个命令，主要用于处理从Git仓库拉下来的源码。比如，有些源码是用TypeScript写的，可能需要转换一下。
+
+下面是`publish`钩子的一个例子。
+
+```javascript
+{
+  "dist:modules": "babel ./src --out-dir ./dist-modules",
+  "gh-pages": "webpack",
+  "gh-pages:deploy": "gh-pages -d gh-pages",
+  "prepublish": "npm run dist:modules",
+  "postpublish": "npm run gh-pages && npm run gh-pages:deploy"
+}
+```
+
+上面命令在运行`npm run publish`时，会先执行Babel编译，然后调用Webpack构建，最后发到Github Pages上面。
 
 以上都是npm相关操作的钩子，如果安装某些模块，还能支持Git相关的钩子。下面以[husky](https://github.com/typicode/husky)模块为例。
 
@@ -840,96 +763,48 @@ npm的通配符的规则如下。
 
 ## npm link
 
-一般来说，每个项目都会在项目目录内，安装所需的模块文件。也就是说，各个模块是局部安装。但是有时候，我们希望模块是一个符号链接，连到外部文件，这时候就需要用到npm link命令。
+开发Npm模块的时候，有时我们会希望，边开发边试用。但是，常规情况下，使用一个模块，需要将其安装到`node_modules`目录之中，这对于开发中的模块，显然非常不方便。`npm link`就能起到这个作用，建立一个符号链接，在全局的`node_modules`目录之中，生成一个符号链接，指向模块的本地目录。
 
-为了理解npm link，请设想这样一个场景。你开发了一个模块myModule，目录为src/myModule，你自己的项目myProject要用到这个模块，项目目录为src/myProject。每一次，你更新myModule，就要用`npm publish`命令发布，然后切换到项目目录，使用`npm update`更新模块。这样显然很不方便，如果我们可以从项目目录建立一个符号链接，直接连到模块目录，就省去了中间步骤，项目可以直接使用最新版的模块。
+为了理解`npm link`，请设想这样一个场景。你开发了一个模块`myModule`，目录为`src/myModule`，你自己的项目`myProject`要用到这个模块，项目目录为`src/myProject`。每一次，你更新`myModul`e，就要用`npm publish`命令发布，然后切换到项目目录，使用`npm update`更新模块。这样显然很不方便，如果我们可以从项目目录建立一个符号链接，直接连到模块目录，就省去了中间步骤，项目可以直接使用最新版的模块。
 
-先在模块目录（src/myModule）下运行npm link命令。
+首先，在模块目录（`src/myModule`）下运行`npm link`命令。
 
-{% highlight bash %}
-
+```bash
 src/myModule$ npm link
+```
 
-{% endhighlight %}
+上面的命令会在Npm的全局模块目录内，生成一个符号链接文件，该文件的名字就是`package.json`文件中指定的文件名。
 
-上面的命令会在npm的全局模块目录内（比如/usr/local/lib/node_modules/），生成一个符号链接文件，该文件的名字就是package.json文件中指定的文件名。
+```bash
+/path/to/global/node_modules/myModule -> src/myModule
+```
 
-{% highlight bash %}
+这个时候，已经可以全局调用`myModule`模块了。但是，如果我们要让这个模块安装在项目内，还要进行下面的步骤。
 
-/usr/local/lib/node_modules/myModule -> src/myModule
+切换到项目目录，再次运行`npm link`命令，并指定模块名。
 
-{% endhighlight %}
-
-然后，切换到你需要放置该模块的项目目录，再次运行npm link命令，并指定模块名。
-
-{% highlight bash %}
-
+```bash
 src/myProject$ npm link myModule
-
-{% endhighlight %}
+```
 
 上面命令等同于生成了本地模块的符号链接。
 
-{% highlight bash %}
-
-src/myProject/node_modules/myModule -> /usr/local/lib/node_modules/myModule
-
-{% endhighlight %}
+```bash
+src/myProject/node_modules/myModule -> /path/to/global/node_modules/myModule
+```
 
 然后，就可以在你的项目中，加载该模块了。
 
-{% highlight javascript %}
-
+```javascript
 var myModule = require('myModule');
-
-{% endhighlight %}
-
-这样一来，myModule的任何变化，都可以直接在myProject中调用。但是，同时也出现了风险，任何在myProject目录中对myModule的修改，都会反映到模块的源码中。
-
-npm link命令有一个简写形式，显示连接模块的本地目录。
-
-```javascript
-$ src/myProject$ npm link ../myModule
 ```
 
-上面的命令等同于下面几条命令。
+这样一来，`myModule`的任何变化，都可以直接反映在`myProject`项目之中。但是，这样也出现了风险，任何在`myProject`目录中对`myModule`的修改，都会反映到模块的源码中。
 
-```javascript
-$ src/myProject$ cd ../myModule
-$ src/myModule$ npm link
-$ src/myModule$ cd ../myProject
-$ src/myProject$ npm link myModule
-```
+如果你的项目不再需要该模块，可以在项目目录内使用`npm unlink`命令，删除符号链接。
 
-如果你的项目不再需要该模块，可以在项目目录内使用npm unlink命令，删除符号链接。
-
-{% highlight bash %}
-
+```bash
 src/myProject$ npm unlink myModule
-
-{% endhighlight %}
-
-一般来说，npm公共模块都安装在系统目录（比如/usr/local/lib/），普通用户没有写入权限，需要用到sudo命令。这不是很方便，我们可以在没有root的情况下，用好npm。
-
-首先在主目录下新建配置文件.npmrc，然后在该文件中将prefix变量定义到主目录下面。
-
-```bash
-prefix = /home/yourUsername/npm
-```
-
-然后在主目录下新建npm子目录。
-
-```bash
-$ mkdir ~/npm
-```
-
-此后，全局安装的模块都会安装在这个子目录中，npm也会到`~/npm/bin`目录去寻找命令。因此，`npm link`就不再需要
-root权限了。
-
-最后，将这个路径在.bash_profile文件（或.bashrc文件）中加入PATH变量。
-
-```bash
-export PATH=~/npm/bin:$PATH
 ```
 
 ## npm bin
@@ -1011,38 +886,6 @@ node_modules
 distribution
 ```
 
-## npm version
-
-`npm version`命令用来修改项目的版本号。当你完成代码修改，要发布新版本的时候，就用这个命令更新一下软件的版本。
-
-```bash
-$ npm version <update_type> -m "<message>"
-```
-
-`npm version`命令的update_type参数有三个选项：patch、minor、major。
-
-- `npm version patch`增加一位补丁号（比如 1.1.1 -> 1.1.2）
-- `npm version minor`增加一位小版本号（比如 1.1.1 -> 1.2.0）
-- `npm version major`增加一位大版本号（比如 1.1.1 -> 2.0.0）。
-
-下面是一个例子。
-
-```bash
-$ npm version patch -m "Version %s - xxxxxx"
-```
-
-上面命令的%s表示新的版本号。
-
-除了增加版本号，`npm version`命令还会为这次修改，新增一个git commit记录，以及一个新的git tag。
-
-由于更新npm网站的唯一方法，就是发布一个新的版本。因此，除了第一次发布，这个命令与`npm publish`几乎是配套的，先使用它，再使用`npm publish`。
-
-```bash
-$ npm version patch -m "Version %s - add sweet badges"$
-$ git push && git push --tags (or git push origin master --tags)
-$ npm publish
-```
-
 ## npm deprecate
 
 如果想废弃某个版本的模块，可以使用`npm deprecate`命令。
@@ -1051,7 +894,22 @@ $ npm publish
 $ npm deprecate my-thing@"< 0.2.3" "critical bug fixed in v0.2.3"
 ```
 
-运行上面的命令以后，小于0.2.3版本的模块的`package.json`都会写入一行警告，用户安装这些版本时，这行警告就会在命令行显示。
+运行上面的命令以后，小于`0.2.3`版本的模块的`package.json`都会写入一行警告，用户安装这些版本时，这行警告就会在命令行显示。
+
+## npm owner
+
+模块的维护者可以发布新版本。`npm owner`命令用于管理模块的维护者。
+
+```bash
+# 列出指定模块的维护者
+$ npm owner ls <package name>
+
+# 新增维护者
+$ npm owner add <user> <package name>
+
+# 删除维护者
+$ npm owner rm <user> <package name>
+```
 
 ## 参考链接
 

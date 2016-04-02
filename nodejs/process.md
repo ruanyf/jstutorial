@@ -147,7 +147,7 @@ $ node --harmony script.js --version
 
 ### process.env
 
-`process.env`属性返回一个对象，包含了当前Shell的所有环境变量。
+`process.env`属性返回一个对象，包含了当前Shell的所有环境变量。比如，`process.env.HOME`返回用户的主目录。
 
 通常的做法是，新建一个环境变量`NODE_ENV`，用它确定当前所处的开发阶段，生产阶段设为`production`，开发阶段设为`develop`或`staging`，然后在脚本中读取`process.env.NODE_ENV`即可。
 
@@ -155,6 +155,8 @@ $ node --harmony script.js --version
 
 ```bash
 $ export NODE_ENV=production && node app.js
+# 或者
+$ NODE_ENV=production node app.js
 ```
 
 ## 方法
@@ -228,10 +230,9 @@ if (err) {
 
 ### process.on()
 
-process.on方法用来监听各种事件，并指定回调函数。
+`process.on`方法用来监听各种事件，并指定回调函数。
 
 ```javascript
-
 process.on('uncaughtException', function(err){
   console.log('got an error: %s', err.message);
   process.exit(1);
@@ -240,10 +241,9 @@ process.on('uncaughtException', function(err){
 setTimeout(function(){
   throw new Error('fail');
 }, 100);
-
 ```
 
-上面代码是process监听Node的一个全局性事件uncaughtException，只要有错误没有捕获，就会触发这个事件。
+上面代码是`process`监听Node的一个全局性事件`uncaughtException`，只要有错误没有捕获，就会触发这个事件。
 
 process支持的事件有以下一些。
 
