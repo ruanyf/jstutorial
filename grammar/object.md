@@ -420,8 +420,9 @@ for (var key in person) {
 `with`语句的格式如下：
 
 ```javascript
-with (object)
-  statement
+with (object) {
+  statements;
+}
 ```
 
 它的作用是操作同一个对象的多个属性时，提供一些书写的方便。
@@ -453,15 +454,12 @@ console.log(document.links[0].style);
 ```javascript
 var o = {};
 
-with (o)c{
+with (o) {
   x = "abc";
 }
 
-o.x
-// undefined
-
-x
-// "abc"
+o.x // undefined
+x // "abc"
 ```
 
 上面代码中，对象`o`没有属性`x`，所以`with`区块内部对`x`的操作，等于创造了一个全局变量`x`。正确的写法应该是，先定义对象`o`的属性`x`，然后在`with`区块内操作它。

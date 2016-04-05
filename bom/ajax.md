@@ -192,13 +192,49 @@ XHR2支持Ajax的返回类型为文档，即xhr.responseType="document" 。这�
 }
 ```
 
-### ontimeout
+### 事件监听接口
 
-`ontimeout`属性指向一个回调函数，发生timeout事件时，该函数会被调用。
+XMLHttpRequest第一版，只能对`onreadystatechange`这一个事件指定回调函数。该事件对所有情况作出响应。 XMLHttpRequest第二版允许对更多的事件指定回调函数。
+
+- onloadstart 请求发出
+- onprogress 正在发送和加载数据
+- onabort 请求被中止，比如用户调用了`abort()`方法
+- onerror 请求失败
+- onload 请求成功完成
+- ontimeout 用户指定的时限到期，请求还未完成
+- onloadend 请求完成，不管成果或失败
+
+```javascript
+xhr.onload = function() {
+ var responseText = xhr.responseText;
+ console.log(responseText);
+ // process the response.
+};
+
+xhr.onerror = function() {
+  console.log('There was an error!');
+};
+```
+
+注意，如果发生网络错误（比如服务器无法连通），`onerror`事件无法获取报错信息，所以只能显示报错。
 
 ### withCredentials
 
-`withCredentials`属性是一个布尔值，表示跨域请求时，用户信息（比如cookie和认证的HTTP头信息）是否会包含在请求之中，默认为false。
+`withCredentials`属性是一个布尔值，表示跨域请求时，用户信息（比如Cookie和认证的HTTP头信息）是否会包含在请求之中，默认为`false`。即向`example.com`发出跨域请求时，不会发送`example.com`设置在本机上的Cookie（如果有的话）。
+
+如果你需要通过跨域AJAX发送Cookie，需要打开`withCredentials`。
+
+```javascript
+xhr.withCredentials = true;
+```
+
+为了让这个属性生效，服务器必须显式返回`Access-Control-Allow-Credentials`这个头信息。
+
+```javascript
+Access-Control-Allow-Credentials: true
+```
+
+`.withCredentials`属性打开的话，不仅会发送Cookie，还会设置远程主机指定的Cookie。注意，此时你的脚本还是遵守同源政策，无法 从`document.cookie`或者HTTP回应的头信息之中，读取这些Cookie。
 
 ## XMLHttpRequest实例的方法
 
@@ -295,16 +331,15 @@ void send(FormData data);
 
 发送二进制数据，最好使用`ArrayBufferView`或`Blob`对象，这使得通过Ajax上传文件成为可能。
 
-下面是一个上传ArrayBuffer对象的例子。
+下面是一个上传`ArrayBuffer`对象的例子。
 
 ```javascript
 function sendArrayBuffer() {
   var xhr = new XMLHttpRequest();
-  xhr.open('POST', '/server', true);
-  xhr.onload = function(e) { ... };
-
   var uInt8Array = new Uint8Array([1, 2, 3]);
 
+  xhr.open('POST', '/server', true);
+  xhr.onload = function(e) { ... };
   xhr.send(uInt8Array.buffer);
 }
 ```
@@ -392,7 +427,7 @@ FormData也可以加入JavaScript生成的文件。
 // 添加JavaScript生成的文件
 var content = '<a id="a"><b id="b">hey!</b></a>';
 var blob = new Blob([content], { type: "text/xml"});
-formData.append("webmasterfile", blob);        
+formData.append("webmasterfile", blob);
 ```
 
 ### setRequestHeader()
@@ -633,8 +668,7 @@ var files = fileSelect.files;
 
 然后，新建一个FormData对象的实例，用来模拟发送到服务器的表单数据，把选中的文件添加到这个对象上面。
 
-{% highlight javascript %}
-
+```javascript
 var formData = new FormData();
 
 for (var i = 0; i < files.length; i++) {
@@ -646,8 +680,7 @@ for (var i = 0; i < files.length; i++) {
 
   formData.append('photos[]', file, file.name);
 }
-
-{% endhighlight %}
+```
 
 上面代码中的FormData对象的append方法，除了可以添加文件，还可以添加二进制对象（Blob）或者字符串。
 
@@ -703,192 +736,229 @@ xhr.send(file);
 
 ## JSONP
 
-JSONP是一种常见做法，用于服务器与客户端之间的数据传输，主要为了规避浏览器的同域限制。因为Ajax只能向当前网页所在的域名发出HTTP请求（除非使用下文要提到的CORS，但并不是所有服务器都支持CORS），所以JSONP就采用在网页中动态插入script元素的做法，向服务器请求脚本文件。
+JSONP是非同域的服务器与客户端之间通信的常用方法，主要用于规避浏览器的同源政策，因为Ajax请求的前提是，浏览器与服务器处于同一个域名（除非使用下面介绍的CORS）。如果不满足该条件，就可以考虑使用JSONP。
 
-{% highlight javascript %}
-
-function addScriptTag(src){
-	var script = document.createElement('script');
-	script.setAttribute("type","text/javascript");
-	script.src = src;
-	document.body.appendChild(script);
-}
-
-window.onload = function(){
-	addScriptTag("http://example.com/ip?callback=foo");
-}
-
-function foo(data) {
-    console.log('Your public IP address is: ' + data.ip);
-};
-
-{% endhighlight %}
-
-上面代码使用了JSONP，运行以后当前网页就可以直接处理example.com返回的数据了。
-
-由于script元素返回的脚本文件，是直接作为代码运行的，不像Ajax请求返回的是JSON字符串，需要用JSON.parse方法将字符串转为JSON对象。于是，为了方便起见，许多服务器支持JSONP指定回调函数的名称，直接将JSON数据放入回调函数的参数，如此一来就省略了将字符串解析为JSON对象的步骤。
-
-请看下面的例子，假定访问 http://example.com/ip ，返回如下JSON数据：
-
-{% highlight javascript %}
-
-{"ip":"8.8.8.8"}
-
-{% endhighlight %}
-
-现在服务器允许客户端请求时使用callback参数指定回调函数。访问 http://example.com/ip?callback=foo ，返回的数据变成：
-
-{% highlight javascript %}
-
-foo({"ip":"8.8.8.8"})
-
-{% endhighlight %}
-
-这时，如果客户端定义了foo函数，该函数就会被立即调用，而作为参数的JSON数据被视为JavaScript对象，而不是字符串，因此避免了使用JSON.parse的步骤。
-
-{% highlight javascript %}
-
-function foo(data) {
-    console.log('Your public IP address is: ' + data.ip);
-};
-
-{% endhighlight %}
-
-jQuery的getJSON方法就是JSONP的一个应用。
+首先，通过在网页中动态插入`script`元素的做法，浏览器向另一个域名的服务器发出请求。
 
 ```javascript
+function addScriptTag(src) {
+  var script = document.createElement('script');
+  script.setAttribute("type","text/javascript");
+  script.src = src;
+  document.body.appendChild(script);
+}
 
-$.getJSON( "http://example.com/api", function (data){ .... })
+window.onload = function () {
+  addScriptTag('http://example.com/ip?callback=foo');
+}
 
+function foo(data) {
+  console.log('Your public IP address is: ' + data.ip);
+};
 ```
 
-$.getJSON方法的第一个参数是服务器网址，第二个参数是回调函数，该回调函数的参数就是服务器返回的JSON数据。
+上面代码通过动态添加`script`元素，向不在同一个域名的`example.com`发出请求。注意，请求网址的查询字符串有一个`callback`，用来指定回调函数的名字，这是JSONP的标准做法。
+
+服务器收到这个请求以后，会将数据放在回调函数的参数位置返回。
+
+```javascript
+foo({
+  "ip": "8.8.8.8"
+});
+```
+
+由于`script`标签返回的内容，直接作为代码运行。这时，如果客户端定义了`foo`函数，该函数就会被立即调用。作为参数的JSON数据被视为JavaScript对象，而不是字符串，因此避免了使用`JSON.parse`的步骤。
 
 ## CORS
 
-CORS的全称是“跨域资源共享”（Cross-origin resource sharing），它提出一种方法，允许JavaScript代码向另一个域名发出XMLHttpRequests请求，从而克服了传统上Ajax只能在同一个域名下使用的限制（same origin security policy）。
+CORS是一个W3C标准，全称是“跨域资源共享”（Cross-origin resource sharing）。它允许客户端向另一个域名的服务器发出XMLHttpRequest请求，从而克服了Ajax只能在同一个域名下使用的限制。
 
-所有主流浏览器都支持该方法，不过IE8和IE9的该方法不是部署在XMLHttpRequest对象，而是部署在XDomainRequest对象。检查浏览器是否支持的代码如下：
+整个过程都是浏览器自动完成，不需要用户参与。所以，对于开发者来说，使用CORS机制的Ajax跨域请求与同域请求没有区别，代码完全一样。但是，这需要服务器的支持，所以在使用CORS之前，要查看一下所请求的网站是否支持。
 
-{% highlight javascript %}
+浏览器一旦发现Ajax请求是跨域的，就会自动添加一些附加的头信息，有时还会多出一次附加的请求。整个过程都不需要开发者参与，甚至代码也不用变，跟同域请求是一致的。
 
-var request = new XMLHttpRequest();
+### HTTP请求的类型
 
-if("withCredentials" in request) {
-  // 发出跨域请求
-}
+浏览器发出CORS请求时，分成两种情况。
 
-{% endhighlight %}
+第一种情况是，只要同时满足以下两大条件，就属于简单请求（simple request）。
 
-CORS的原理其实很简单，就是增加一条HTTP头信息的查询，询问服务器端，当前请求的域名是否在许可名单之中，以及可以使用哪些HTTP动词。如果得到肯定的答复，就发出XMLHttpRequest请求。这种机制叫做“预检”（preflight）。
+条件一，请求方法是以下三种方法之一。
 
-“预检”的专用HTTP头信息是Origin。假定用户正在浏览来自www.example.com的网页，该网页需要向Google请求数据，这时浏览器会向该域名询问是否同意跨域请求，发出的HTTP头信息如下：
+- HEAD
+- GET
+- POST
 
-{% highlight http %}
+条件二，HTTP的头信息只超出以下几种。
 
-OPTIONS /resources/post-here/ HTTP/1.1
-Host: www.google.com
-User-Agent: Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.5; en-US; rv:1.9.1b3pre) Gecko/20081130 Minefield/3.1b3pre
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-Accept-Language: en-us,en;q=0.5
-Accept-Encoding: gzip,deflate
-Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
+- Accept
+- Accept-Language
+- Content-Language
+- Last-Event-ID
+- Content-Type：它的值只限于下面三种情况
+  - application/x-www-form-urlencoded
+  - multipart/form-data
+  - text/plain
+
+凡是不满足上面两个条件，就属于非简单请求（not-so-simple request）。
+
+浏览器对这两种情况的处理，是不一样的。简单来说，对于简单请求，浏览器会支持发出CORS请求；对于非简单请求，则会单独会出一次”预检“（preflight）请求。
+
+### 简单请求
+
+对于简单请求，浏览器直接发出CORS请求。具体来说，就是在头信息之中，增加一个`Origin`字段。
+
+```http
+GET /cors HTTP/1.1
+Origin: http://api.bob.com
+Host: api.alice.com
+Accept-Language: en-US
 Connection: keep-alive
-Origin: http://www.example.com
-Access-Control-Request-Method: POST
-Access-Control-Request-Headers: X-PINGOTHER
-
-{% endhighlight %}
-
-上面的HTTP请求，它的动词是OPTIONS，表示这是一个“预检”请求。除了提供浏览器信息，里面关键的一行是Origin头信息。
-
-```http
-
-Origin: http://www.example.com
-
+User-Agent: Mozilla/5.0...
 ```
 
-这行HTTP头信息表示，请求来自www.example.com。服务端如果同意，就返回一个Access-Control-Allow-Origin头信息。
+上面代码中，`Origin`字段用来说明，这个请求来自哪个域名（包括协议、域名、端口三个部分）。服务器可以根据这个域名，决定是否同意这次跨域请求。
 
-预检请求中，浏览器还告诉服务器，实际发出请求，将使用HTTP动词POST，以及一个自定义的头信息X-PINGOTHER。
+如果`Origin`指定的域名，不在许可范围内，服务器会报错。注意，这个错误是底层通讯协议的错误，不是HTTP协议层的错误，无法通过HTTP状态码捕获。
+
+如果`Origin`指定的域名在许可范围内，服务器返回的响应，会多出几个HTTP头信息的字段。
 
 ```http
-
-Access-Control-Request-Method: POST
-Access-Control-Request-Headers: X-PINGOTHER
-
+Access-Control-Allow-Origin: http://api.bob.com
+Access-Control-Allow-Credentials: true
+Access-Control-Expose-Headers: FooBar
+Content-Type: text/html; charset=utf-8
 ```
 
-服务器收到预检请求之后，做出了回应。
+所有与CORS请求相关的字段，都以`Access-Control-`开头。
+
+- Access-Control-Allow-Origin（必须）：该字段要么是`Origin`字段的值，要么是一个`*`，表示接受任意域名的请求。
+- Access-Control-Allow-Credentials（可选）：默认情况下，Cookie不包括在CORS请求之中。这个字段用来指定Cookie是否包括在HTTP请求之中，只能设为`true`。如果不想发送Cookie，删除该字段即可。
+- Access-Control-Expose-Headers（可选）：CORS请求时，`XMLHttpRequest`对象的`getResponseHeader()`方法只能拿到6个基本字段：Cache-Control、Content-Language、Content-Type、Expires、Last-Modified、Pragma。如果想拿到其他字段，就必须在Access-Control-Expose-Headers里面指定。
+
+CORS机制默认不发送Cookie和HTTP认证信息，除非在Ajax请求中打开`withCredentials`属性。
+
+```javascript
+var xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+```
+
+同时，服务器返回HTTP头信息时，也必须打开`Access-Control-Allow-Credentials`选项。否则，浏览器会忽略服务器返回的回应。
 
 ```http
+Access-Control-Allow-Credentials: true
+```
 
+需要注意的是，此时`Access-Control-Allow-Origin`不能指定为星号，必须指定明确的、与请求网页一致的域名。同时，Cookie依然遵循同源政策，只有用服务器域名（前例是`www.google.com`）设置的Cookie才会上传，其他域名下的Cookie并不会上传，且网页代码中的`document.cookie`也无法读取`www.google.com`域名下的cookie。
+
+### 非简单请求
+
+如果HTTP请求的方法是`PUT`或`DELETE`，或者`Content-Type`字段的类型是`application/json`，就属于非简单请求。
+
+非简单请求的CORS请求，会在正式通信之前，增加一次HTTP查询，称为”预检“请求（preflight）。浏览器先询问服务器，当前网页所在的域名是否在服务器的许可名单之中，以及可以使用哪些HTTP动词。如果得到肯定的答复，就发出XMLHttpRequest请求。如果得到肯定答复，浏览器才会发出正式的XMLHttpRequest请求。
+
+下面是一段JavaScript脚本。
+
+```javascript
+var url = 'http://api.alice.com/cors';
+var xhr = new XMLHttpRequest();
+xhr.open('PUT', url, true);
+xhr.setRequestHeader(
+  'X-Custom-Header', 'value');
+xhr.send();
+```
+
+上面代码中，HTTP请求的方法是`PUT`，并且发送一个自定义头信息`X-Custom-Header`。
+
+这时，浏览器会自动发出一个”预检“请求。
+
+```javascript
+OPTIONS /cors HTTP/1.1
+Origin: http://api.bob.com
+Access-Control-Request-Method: PUT
+Access-Control-Request-Headers: X-Custom-Header
+Host: api.alice.com
+Accept-Language: en-US
+Connection: keep-alive
+User-Agent: Mozilla/5.0...
+```
+
+“预检”用的HTTP方法是OPTIONS，表示这个请求是用来询问的。头信息里面，关键的字段是`Origin`，表示网页所在的域名。
+
+它的HTTP头信息包括这样几个特殊字段。
+
+- Access-Control-Request-Method ：浏览器CORS请求用到的HTTP方法，这个字段是必需的。
+- Access-Control-Request-Headers ：一个逗号分隔的字符串，指定CORS请求会用到的非简单字段`X-Custom-Header`。
+
+服务器检查上面三个字段以后，确认允许跨域请求，然后做出回应。
+
+```http
 HTTP/1.1 200 OK
 Date: Mon, 01 Dec 2008 01:15:39 GMT
 Server: Apache/2.0.61 (Unix)
-Access-Control-Allow-Origin: http://www.example.com
-Access-Control-Allow-Methods: POST, GET, OPTIONS
-Access-Control-Allow-Headers: X-PINGOTHER
-Access-Control-Max-Age: 1728000
-Vary: Accept-Encoding, Origin
+Access-Control-Allow-Origin: http://api.bob.com
+Access-Control-Allow-Methods: GET, POST, PUT
+Access-Control-Allow-Headers: X-Custom-Header
+Content-Type: text/html; charset=utf-8
 Content-Encoding: gzip
 Content-Length: 0
 Keep-Alive: timeout=2, max=100
 Connection: Keep-Alive
 Content-Type: text/plain
-
 ```
 
-上面的HTTP回应里面，关键的是Access-Control-Allow-Origin头信息。这表示服务器同意www.example.com的跨域请求。
+上面的HTTP回应中，关键的是`Access-Control-Allow-Origin`头信息，表示`http://api.bob.com`可以请求数据。
 
-{% highlight http %}
+如果浏览器否定了”预检“请求，会返回一个正常的HTTP回应，但是没有任何CORS相关的头信息字段。这时，浏览器就会认定，服务器不同意预检请求，因此触发一个错误，被`xhr`的`onerror`回调函数捕获。控制台会打印出如下的报错信息。
 
-Access-Control-Allow-Origin: http://www.example.com
+```bash
+XMLHttpRequest cannot load http://api.alice.com.
+Origin http://api.bob.com is not allowed by Access-Control-Allow-Origin.
+```
 
-{% endhighlight %}
-
-如果不同意，服务器端会返回一个错误。
-
-如果服务器端对所有网站都开放，可以返回一个星号（*）通配符。
-
-{% highlight http %}
-
-Access-Control-Allow-Origin: *
-
-{% endhighlight %}
-
-服务器还告诉浏览器，允许的HTTP动词是POST、GET、OPTIONS，也允许自定义的头信息X-PINGOTHER，
+一种特殊情况是，如果服务器允许所有域名的跨域请求，可以返回一个星号（`*`）通配符。
 
 ```http
-
-Access-Control-Allow-Methods: POST, GET, OPTIONS
-Access-Control-Allow-Headers: X-PINGOTHER
-Access-Control-Max-Age: 1728000
-
+Access-Control-Allow-Origin: *
 ```
 
-如果服务器通过了预检请求，则以后每次浏览器正常的HTTP请求，都会有一个origin头信息；服务器的回应，也都会有一个Access-Control-Allow-Origin头信息。Access-Control-Max-Age头信息表示，允许缓存该条回应1728000秒（即20天），在此期间，不用发出另一条预检请求。
+服务器回应的其他字段如下。
 
-由于整个过程都是浏览器自动后台完成，不用用户参与，所以对于开发者来说，使用Ajax跨域请求与同域请求没有区别，代码完全一样。但是，这需要服务器的支持，所以在使用CORS之前，要查看一下所请求的网站是否支持。
+- Access-Control-Allow-Methods（必需）：逗号分隔的一个字符串，表明服务器支持的所有跨域请求的方法。
+- Access-Control-Allow-Headers：如果浏览器请求包括`Access-Control-Request-Headers`字段，则`Access-Control-Allow-Headers`字段是必需的。它也是一个逗号分隔的字符串，表明服务器支持的所有头信息字段，不限于浏览器在”预检“中请求的字段。
+- Access-Control-Allow-Credentials：与简单请求时的含义相同。
+- Access-Control-Max-Age（可选）：指定本次预检请求的有效期，单位为秒。上面结果中，有效期是20天（1728000秒），即允许缓存该条回应1728000秒（即20天），在此期间，不用发出另一条预检请求。
 
-CORS机制默认不发送cookie和HTTP认证信息，除非在Ajax请求中打开withCredentials属性。
+```http
+Access-Control-Allow-Methods: GET, POST, PUT
+Access-Control-Allow-Headers: X-Custom-Header
+Access-Control-Max-Age: 1728000
+```
 
-{% highlight javascript %}
+如果服务器通过了预检请求，则以后每次浏览器正常的HTTP请求，都会有一个`Origin`头信息；服务器的回应，也都会有一个`Access-Control-Allow-Origin`头信息。
 
-var request = new XMLHttpRequest();
-request.withCredentials = true;
+下面是浏览器的正常CORS请求。
 
-{% endhighlight %}
+```http
+PUT /cors HTTP/1.1
+Origin: http://api.bob.com
+Host: api.alice.com
+X-Custom-Header: value
+Accept-Language: en-US
+Connection: keep-alive
+User-Agent: Mozilla/5.0...
+```
 
-同时，服务器返回HTTP头信息时，也必须打开Access-Control-Allow-Credentials选项。否则，浏览器会忽略服务器返回的回应。
+上面代码的`Origin`字段是浏览器自动添加的。
 
-{% highlight http %}
+下面是服务器正常的回应。
 
-Access-Control-Allow-Credentials: true
+```http
+Access-Control-Allow-Origin: http://api.bob.com
+Content-Type: text/html; charset=utf-8
+```
 
-{% endhighlight %}
-
-需要注意的是，此时Access-Control-Allow-Origin不能指定为星号，必须指定明确的、与请求网页一致的域名。同时，cookie依然遵循同源政策，只有用服务器域名（前例是www.google.com）设置的cookie才会上传，其他域名下的cookie并不会上传，且网页代码中的document.cookie也无法读取www.google.com域名下的cookie。
+### 与JSONP的比较
 
 CORS机制与JSONP模式的使用目的相同，而且更强大。JSONP只支持GET请求，CORS可以支持所有类型的HTTP请求。在发生错误的情况下，CORS可以得到更详细的错误信息，部署更有针对性的错误处理代码。JSONP的优势在于可以用于老式浏览器，以及可以向不支持CORS的网站请求数据。
 

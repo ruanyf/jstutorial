@@ -10,9 +10,9 @@ modifiedOn: 2014-10-20
 
 ### 基本用法
 
-`Events`模块是Node对“发布/订阅”模式（publish/subscribe）的实现。一个对象通过这个模块，向另一个对象传递消息。该模块通过EventEmitter属性，提供了一个构造函数。该构造函数的实例具有on方法，可以用来监听指定事件，并触发回调函数。任意对象都可以发布指定事件，被EventEmitter实例的on方法监听到。
+`Events`模块是Node对“发布/订阅”模式（publish/subscribe）的实现。一个对象通过这个模块，向另一个对象传递消息。
 
-下面是一个实例，先建立一个消息中心，然后通过on方法，为各种事件指定回调函数，从而将程序转为事件驱动型，各个模块之间通过事件联系。
+该模块通过`EventEmitter`属性，提供了一个构造函数。该构造函数的实例具有on方法，可以用来监听指定事件，并触发回调函数。任意对象都可以发布指定事件，被`EventEmitter`实例的`on`方法监听到。
 
 ```javascript
 var EventEmitter = require('events').EventEmitter;
@@ -36,19 +36,17 @@ f()
 
 上面代码在加载`events`模块后，通过`EventEmitter`属性建立了一个`EventEmitter`对象实例，这个实例就是消息中心。然后，通过`on`方法为`someEvent`事件指定回调函数。最后，通过`emit`方法触发`someEvent`事件。
 
-上面代码也表明，`EventEmitter`对象的事件触发和监听是同步的。
+上面代码也表明，`EventEmitter`对象的事件触发和监听是同步的，即只有事件的回调函数执行以后，函数`f`才会继续执行。
 
 ### on方法
 
 默认情况下，Node.js允许同一个事件最多可以指定10个回调函数。
 
-{% highlight javascript %}
-
+```javascript
 ee.on("someEvent", function () { console.log("event 1"); });
 ee.on("someEvent", function () { console.log("event 2"); });
 ee.on("someEvent", function () { console.log("event 3"); });
-
-{% endhighlight %}
+```
 
 超过10个回调函数，会发出一个警告。这个门槛值可以通过setMaxListeners方法改变。
 
