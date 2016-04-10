@@ -78,7 +78,13 @@ var allCookie = document.cookie;
 
 注意，这种方法只适用于 Cookie 和 iframe 窗口，LocalStorage 和 IndexDB 无法通过这种方法，规避同源政策，而要使用下文介绍的PostMessage API。
 
-另外，服务器也可以在设置Cookie的时候，指定Cookie的所属域名为一级域名，这样二级域名和三级域名不用做任何设置，都可以读取这个Cookie。
+另外，服务器也可以在设置Cookie的时候，指定Cookie的所属域名为一级域名，比如`.example.com`。
+
+```http
+Set-Cookie: key=value; domain=.example.com; path=/
+```
+
+这样的话，二级域名和三级域名不用做任何设置，都可以读取这个Cookie。
 
 ## iframe
 
@@ -296,7 +302,7 @@ window.onmessage = function(e) {
 
 ### JSONP
 
-JSONP是服务器与客户端跨源通信的常用方法。最大特点就是简单适用，老式浏览器全部支持，服务器不用做任何改造。
+JSONP是服务器与客户端跨源通信的常用方法。最大特点就是简单适用，老式浏览器全部支持，服务器改造非常小。
 
 它的基本思想是，网页通过添加一个`<script>`元素，向服务器请求JSON数据，这种做法不受同源政策限制；服务器收到请求后，将数据放在一个指定名字的回调函数里传回来。
 
