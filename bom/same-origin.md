@@ -172,11 +172,11 @@ var data = document.getElementById('myFrame').contentWindow.name;
 
 这个API为`window`对象新增了一个`window.postMessage`方法，允许跨窗口通信，不论这两个窗口是否同源。
 
-举例来说，父窗口`http://aaa.com`向子窗口`http://bbb.com`发消息，调用`postMessage`方法就可以了。
+举例来说，父窗口`aaa.com`向子窗口`bbb.com`发消息，调用`postMessage`方法就可以了。
 
 ```javascript
-var popup = window.open('http://aaa.com', 'title');
-popup.postMessage('Hello World!', 'http://aaa.com');
+var popup = window.open('http://bbb.com', 'title');
+popup.postMessage('Hello World!', 'http://bbb.com');
 ```
 
 `postMessage`方法的第一个参数是具体的信息内容，第二个参数是接收消息的窗口的源（origin），即“协议 + 域名 + 端口”。也可以设为`*`，表示不限制域名，向所有窗口发送。
@@ -184,7 +184,7 @@ popup.postMessage('Hello World!', 'http://aaa.com');
 子窗口向父窗口发送消息的写法类似。
 
 ```javascript
-window.opener.postMessage('Nice to see you', 'http://bbb.com');
+window.opener.postMessage('Nice to see you', 'http://aaa.com');
 ```
 
 父窗口和子窗口都可以通过`message`事件，监听对方的消息。
@@ -217,7 +217,7 @@ function receiveMessage(event) {
 ```javascript
 window.addEventListener('message', receiveMessage);
 function receiveMessage(event) {
-  if (event.origin !== 'http://bbb.com') return;
+  if (event.origin !== 'http://aaa.com') return;
   if (event.data === 'Hello World') {
       event.source.postMessage('Hello', event.origin);
   } else {
