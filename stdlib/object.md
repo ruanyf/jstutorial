@@ -191,7 +191,7 @@ Object实例对象的方法，主要有以下六个。
 
 - valueOf()：返回当前对象对应的值。
 - toString()：返回当前对象对应的字符串形式。
-- toLocalString()：返回当前对象对应的本地字符串形式。
+- toLocaleString()：返回当前对象对应的本地字符串形式。
 - hasOwnProperty()：判断某个属性是否为当前对象自身的属性，还是继承自原型对象的属性。
 - isPrototypeOf()：判断当前对象是否为另一个对象的原型。
 - propertyIsEnumerable()：判断某个属性是否可枚举。

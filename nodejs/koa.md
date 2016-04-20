@@ -199,6 +199,8 @@ function *noop(){}
 app.use(function* (next) {
   if (this.path === '/') {
     this.body = 'we are at home!';
+  } else {
+    yield next;
   }
 })
 

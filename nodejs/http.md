@@ -10,39 +10,34 @@ modifiedOn: 2015-05-30
 
 ### 处理GET请求
 
-Http模块主要用于搭建HTTP服务。使用Node.js搭建HTTP服务器非常简单。
+`http`模块主要用于搭建HTTP服务。使用Node搭建HTTP服务器非常简单。
 
-{% highlight javascript %}
-
+```javascript
 var http = require('http');
 
 http.createServer(function (request, response){
   response.writeHead(200, {'Content-Type': 'text/plain'});
   response.end('Hello World\n');
-}).listen(8080, "127.0.0.1");
+}).listen(8080, '127.0.0.1');
 
 console.log('Server running on port 8080.');
+```
 
-{% endhighlight %}
+上面代码第一行`var http = require("http")`，表示加载`http`模块。然后，调用`http`模块的`createServer`方法，创造一个服务器实例。
 
-上面代码第一行`var http = require("http")`，表示加载http模块。然后，调用http模块的createServer方法，创造一个服务器实例，将它赋给变量http。
+`ceateServer`方法接受一个函数作为参数，该函数的`request`参数是一个对象，表示客户端的HTTP请求；`response`参数也是一个对象，表示服务器端的HTTP回应。`response.writeHead`方法用来写入HTTP回应的头信息；`response.end`方法用来写入HTTP回应的具体内容，以及回应完成后关闭本次对话。最后的`listen(8080)`表示启动服务器实例，监听本机的8080端口。
 
-ceateServer方法接受一个函数作为参数，该函数的request参数是一个对象，表示客户端的HTTP请求；response参数也是一个对象，表示服务器端的HTTP回应。response.writeHead方法表示，服务器端回应一个HTTP头信息；response.end方法表示，服务器端回应的具体内容，以及回应完成后关闭本次对话。最后的listen(8080)表示启动服务器实例，监听本机的8080端口。
+将上面这几行代码保存成文件`app.js`，然后执行该脚本，服务器就开始运行了。
 
-将上面这几行代码保存成文件app.js，然后用node调用这个文件，服务器就开始运行了。
-
-{% highlight bash %}
-
+```bash
 $ node app.js
-
-{% endhighlight %}
+```
 
 这时命令行窗口将显示一行提示“Server running at port 8080.”。打开浏览器，访问http://localhost:8080，网页显示“Hello world!”。
 
-上面的例子是当场生成网页，也可以事前写好网页，存在文件中，然后利用fs模块读取网页文件，将其返回。
+上面的例子是收到请求后生成网页，也可以事前写好网页，存在文件中，然后利用`fs`模块读取网页文件，将其返回。
 
-{% highlight javascript %}
-
+```javascript
 var http = require('http');
 var fs = require('fs');
 
@@ -51,11 +46,14 @@ http.createServer(function (request, response){
     response.writeHead(200, {'Content-Type': 'text/plain'});
     response.end(data);
   });
-}).listen(8080, "127.0.0.1");
+
+  // 或者
+
+  fs.createReadStream(`${__dirname}/index.html`}.pipe(response);
+}).listen(8080, '127.0.0.1');
 
 console.log('Server running on port 8080.');
-
-{% endhighlight %}
+```
 
 下面的修改则是根据不同网址的请求，显示不同的内容，已经相当于做出一个网站的雏形了。
 

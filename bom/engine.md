@@ -76,6 +76,18 @@ JavaScript代码只有嵌入网页，才能运行。网页中嵌入JavaScript代
 </script>
 ```
 
+为了防止攻击者篡改外部脚本，`script`标签允许设置一个`integrity`属性，写入该外部脚本的Hash签名，用来验证脚本的一致性。
+
+```html
+<script src="/assets/application.js"
+  integrity="sha256-TvVUHzSfftWg1rcfL6TIJ0XKEGrgLyEq6lEpcmrG9qs=">
+</script>
+```
+
+上面代码中，`script`标签有一个`integrity`属性，指定了外部脚本`/assets/application.js`的SHA265签名。一旦有人改了这个脚本，导致SHA265签名不匹配，浏览器就会拒绝加载。
+
+除了JavaScript脚本，外部的CSS样式表也可以设置这个属性。
+
 ### 行内代码
 
 除了上面两种方法，HTML语言允许在某些元素的事件属性和`a`元素的`href`属性中，直接写入JavaScript。
