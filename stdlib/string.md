@@ -10,16 +10,14 @@ modifiedOn: 2014-01-01
 
 String对象是JavaScript原生提供的三个包装对象之一，用来生成字符串的包装对象实例。
 
-{% highlight javascript %}
-
-var s = new String("abc");
+```javascript
+var s = new String('abc');
 
 typeof s // "object"
 s.valueOf() // "abc"
+```
 
-{% endhighlight %}
-
-上面代码生成的变量s，就是String对象的实例，类型为对象，值为原来的字符串。实际上，String对象的实例是一个类似数组的对象。
+上面代码生成的变量`s`，就是String对象的实例，类型为对象，值为原来的字符串。实际上，String对象的实例是一个类似数组的对象。
 
 {% highlight javascript %}
 
@@ -81,18 +79,16 @@ String.fromCharCode(0xD842, 0xDFB7)
 
 {% endhighlight %}
 
-### charAt 和 charCodeAt 方法
+### charAt()，charCodeAt()
 
-charAt方法返回一个字符串的给定位置的字符，位置从0开始编号。
+`charAt`方法返回给定位置的字符，参数是从0开始编号的位置。
 
-{% highlight javascript %}
-
-var s = new String("abc");
+```javascript
+var s = new String('abc');
 
 s.charAt(1) // "b"
 s.charAt(s.length-1) // "c"
-
-{% endhighlight %}
+```
 
 这个方法完全可以用数组下标替代。
 
@@ -148,7 +144,7 @@ one + two + three // "33"
 
 上面代码中，`concat`方法将参数先转成字符串再连接，所以返回的是一个三个字符的字符串。而加号运算符在两个运算数都是数值时，不会转换类型，所以返回的是一个两个字符的字符串。
 
-### substring方法，substr方法和slice方法
+### substring()，substr()，slice()
 
 这三个方法都用来返回一个字符串的子串，而不会改变原字符串。它们都可以接受一个或两个参数，区别只是参数含义的不同。
 
@@ -166,29 +162,39 @@ a.substring(9, 4) // 'Three'
 
 上面代码中，调换substring方法的两个参数，都得到同样的结果。
 
-**（2）substr方法**
+**（2）substr()**
 
-substr方法的第一个参数是子字符串的开始位置，第二个参数是子字符串的长度。
+`substr`方法的第一个参数是子字符串的开始位置，第二个参数是子字符串的长度。
 
-{% highlight javascript %}
-
+```javascript
 var b = 'The Three Musketeers';
 b.substr(4, 9) // 'Three Mus'
 b.substr(9, 4) // ' Mus'
+```
 
-{% endhighlight %}
+**（3）slice()**
 
-**（3）slice方法**
+`slice`方法用于取出子字符串。它的第一个参数是子字符串的开始位置，第二个参数是子字符串的结束位置。如果省略第二个参数，则表示一直到字符串结束。
 
-slice方法的第一个参数是子字符串的开始位置，第二个参数是子字符串的结束位置。与substring方法不同的是，如果第一个参数大于第二个参数，slice方法并不会自动调换参数位置，而是返回一个空字符串。
+```javascript
+'JavaScript'.slice(4) // "Script"
+'JavaScript'.slice(0, 4) // "Java"
+```
 
-{% highlight javascript %}
+如果参数是负值，表示从结尾开始，倒数计算的位置。
 
-var c = 'The Three Musketeers';
-c.slice(4, 9) // 'Three'
-c.slice(9, 4) // ''
+```javascript
+'JavaScript'.slice(-6) // "Script"
+'JavaScript'.slice(0, -6) // "Java"
+```
 
-{% endhighlight %}
+与`substring`方法不同的是，如果第一个参数大于第二个参数，slice方法并不会自动调换参数位置，而是返回一个空字符串。这种处理比较符合直觉，推荐使用`slice`替代`substring`。
+
+```javascript
+var s = 'The Three Musketeers';
+s.slice(4, 9) // 'Three'
+s.slice(9, 4) // ''
+```
 
 **（4）总结：第一个参数的含义**
 
@@ -262,58 +268,46 @@ c.slice(9, 4) // ''
 
 {% endhighlight %}
 
-### indexOf 和 lastIndexOf 方法
+### indexOf()，lastIndexOf()
 
-这两个方法用于确定一个字符串在另一个字符串中的位置，如果返回-1，就表示不匹配。两者的区别在于，indexOf从字符串头部开始匹配，lastIndexOf从尾部开始匹配。
+这两个方法用于确定一个字符串在另一个字符串中的位置，如果返回-1，就表示不匹配。两者的区别在于，`indexOf`从字符串头部开始匹配，`lastIndexOf`从尾部开始匹配。
 
-{% highlight javascript %}
+```javascript
+'hello world'.indexOf('o') // 4
+'JavaScript'.indexOf('script') // -1
 
-"hello world".indexOf("o")
-// 4
+'hello world'.lastIndexOf('o') // 7
+```
 
-"hello world".lastIndexOf("o")
-// 7
+它们还可以接受第二个参数，对于`indexOf`方法，第二个位置表示从该位置开始向后匹配；对于`lastIndexOf`，第二个表示从该位置起向前匹配。
 
-{% endhighlight %}
+```javascript
+'hello world'.indexOf('o', 6) // 7
+'hello world'.lastIndexOf('o', 6) // 4
+```
 
-它们还可以接受第二个参数，对于indexOf，表示从该位置开始向后匹配；对于lastIndexOf，表示从该位置起向前匹配。
+### trim()
 
-{% highlight javascript %}
+`trim`方法用于去除字符串两端的空格。
 
-"hello world".indexOf("o", 6)
-// 7
-
-"hello world".lastIndexOf("o", 6)
-// 4
-
-{% endhighlight %}
-
-### trim 方法
-
-该方法用于去除字符串两端的空格。
-
-{% highlight javascript %}
-
-"  hello world  ".trim()
+```javascript
+'  hello world  '.trim()
 // "hello world"
-
-{% endhighlight %}
+```
 
 该方法返回一个新字符串，不改变原字符串。
 
-### toLowerCase 和 toUpperCase 方法
+### toLowerCase()，toUpperCase()
 
-toLowerCase用于将一个字符串转为小写，toUpperCase则是转为大写。
+`toLowerCase`用于将一个字符串转为小写，`toUpperCase`则是转为大写。
 
-{% highlight javascript %}
-
-"Hello World".toLowerCase()
+```javascript
+'Hello World'.toLowerCase()
 // "hello world"
 
-"Hello World".toUpperCase()
+'Hello World'.toUpperCase()
 // "HELLO WORLD"
-
-{% endhighlight %}
+```
 
 ### localeCompare方法
 

@@ -14,27 +14,23 @@ modifiedOn: 2014-01-01
 
 所谓“包装对象”，就是分别与数值、字符串、布尔值相对应的Number、String、Boolean三个原生对象。这三个原生对象可以把原始类型的值变成（包装成）对象。
 
-{% highlight javascript %}
-
+```javascript
 var v1 = new Number(123);
-var v2 = new String("abc");
+var v2 = new String('abc');
 var v3 = new Boolean(true);
+```
 
-{% endhighlight %}
+上面代码根据原始类型的值，生成了三个对象，与原始值的类型不同。这用`typeof`运算符就可以看出来。
 
-上面代码根据原始类型的值，生成了三个对象，与原始值的类型不同。这用typeof运算符就可以看出来。
-
-{% highlight javascript %}
-
+```javascript
 typeof v1 // "object"
 typeof v2 // "object"
 typeof v3 // "object"
 
 v1 === 123 // false
-v2 === "abc" // false
+v2 === 'abc' // false
 v3 === true // false
-
-{% endhighlight %}
+```
 
 JavaScript设计包装对象的最大目的，首先是使得JavaScript的“对象”涵盖所有的值。其次，使得原始类型的值可以方便地调用特定方法。
 
@@ -94,26 +90,41 @@ new Boolean("true").toString()
 
 ### 原始类型的自动转换
 
-原始类型可以自动调用定义在包装对象上的方法和属性。比如String对象的实例有一个length属性，返回字符串的长度。
+原始类型的值，可以自动当作对象调用，即调用各种对象的方法和参数。这时，JavaScript引擎会自动将原始类型的值转为包装对象，在使用后立刻销毁。
 
-{% highlight javascript %}
+比如，字符串可以调用`length`属性，返回字符串的长度。
 
-var v = new String("abc");
-v.length // 3
+```javascript
+'abc'.length // 3
+```
 
-{% endhighlight %}
+上面代码中，`abc`是一个字符串，本身不是对象，不能调用`length`属性。JavaScript引擎自动将其转为包装对象，在这个对象上调用`length`属性。调用结束后，这个临时对象就会被销毁。这就叫原始类型的自动转换。
 
-所有原始类型的字符串，都可以直接使用这个length属性。
+```javascript
+var str = 'abc';
+str.length // "a"
 
-{% highlight javascript %}
+// 等同于
+var strObj = new String(str)
+// String {
+//   0: "a", 1: "b", 2: "c", length: 3, [[PrimitiveValue]]: "abc"
+// }
+strObj.length // 3
+```
 
-"abc".length // 3
+上面代码中，字符串`abc`的包装对象有每个位置的值、有`length`属性、还有一个内部属性`[[PrimitiveValue]]`保存字符串的原始值。这个`[[PrimitiveValue]]`内部属性，外部是无法调用，仅供`ValueOf`或`toString`这样的方法内部调用。
 
-{% endhighlight %}
+这个临时对象是只读的，无法修改。所以，字符串无法添加新属性。
 
-上面代码对字符串abc调用length属性，实际上是将“字符串”自动转为String对象的实例，再在其上调用length属性。这就叫原始类型的自动转换。
+```javascript
+var s = 'Hello World';
+s.x = 123;
+s.x // undefined
+```
 
-abc是一个字符串，属于原始类型，本身不能调用任何方法和属性。但当对abc调用length属性时，JavaScript引擎自动将abc转化为一个包装对象实例，然后再对这个实例调用length属性，在得到返回值后，再自动销毁这个临时生成的包装对象实例。
+上面代码为字符串`s`添加了一个`x`属性，结果无效，总是返回`undefined`。
+
+另一方面，调用结束后，临时对象会自动销毁。这意味着，下一次调用字符串的属性时，实际是调用一个新生成的对象，而不是上一次调用时生成的那个对象，所以取不到赋值在上一个对象的属性。如果想要为字符串添加属性，只有在它的原型对象`String.prototype`上定义（参见《面向对象编程》一章）。
 
 这种原始类型值可以直接调用的方法还有很多（详见后文对各包装对象的介绍），除了前面介绍过的valueOf和toString方法，还包括三个包装对象各自定义在实例上的方法。。
 

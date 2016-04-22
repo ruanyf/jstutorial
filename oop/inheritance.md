@@ -145,23 +145,22 @@ ClassB.prototype.print = function() {
 }
 ```
 
-上面代码中，子类B的`print`方法先调用父类A的`print`方法，再部署自己的代码。这就等于继承了父类A的`print`方法。
+上面代码中，子类`B`的`print`方法先调用父类`A`的`print`方法，再部署自己的代码。这就等于继承了父类`A`的`print`方法。
 
-## `__proto__`属性
+## \_\_proto\_\_属性
 
-`__proto__`属性指向当前对象的原型对象，即构造函数的prototype属性。
+`__proto__`属性指向当前对象的原型对象，即构造函数的`prototype`属性。
 
 ```javascript
 var obj = new Object();
 
 obj.__proto__ === Object.prototype
 // true
-
 obj.__proto__ === obj.constructor.prototype
 // true
 ```
 
-上面代码首先新建了一个对象`obj`，它的`__proto__`属性，指向构造函数（`Object`或`obj.constructor`）的prototype属性。所以，两者比较以后，返回`true`。
+上面代码首先新建了一个对象`obj`，它的`__proto__`属性，指向构造函数（`Object`或`obj.constructor`）的`prototype`属性。所以，两者比较以后，返回`true`。
 
 因此，获取实例对象`obj`的原型对象，有三种方法。
 
@@ -169,16 +168,38 @@ obj.__proto__ === obj.constructor.prototype
 - `obj.constructor.prototype`
 - `Object.getPrototypeOf(obj)`
 
-第三种方法的用法如下。
+上面三种方法之中，前两种都不是很可靠。最新的ES6标准规定，`__proto__`属性只有浏览器才需要部署，其他环境可以不部署。而`obj.constructor.prototype`在手动改变原型对象时，可能会失效。
+
+```javascript
+var P = function () {};
+var p = new P();
+
+var C = function () {};
+C.prototype = p;
+var c = new C();
+
+c.constructor.prototype === p // false
+```
+
+上面代码中，`C`构造函数的原型对象被改成了`p`，结果`c.constructor.prototype`就失真了。所以，在改变原型对象时，一般要同时设置`constructor`属性。
+
+```javascript
+C.prototype = p;
+C.prototype.constructor = C;
+
+c.constructor.prototype === p // true
+```
+
+所以，推荐使用第三种`Object.getPrototypeOf`方法，获取原型对象。该方法的用法如下。
 
 ```javascript
 var o = new Object();
 
-o.__proto__ === Object.getPrototypeOf(o)
+Object.getPrototypeOf(o) === Object.prototype
 // true
 ```
 
-可以使用Object.getPrototypeOf方法，检查浏览器是否支持`__proto__`属性，老式浏览器不支持这个属性。
+可以使用`Object.getPrototypeOf`方法，检查浏览器是否支持`__proto__`属性，老式浏览器不支持这个属性。
 
 ```javascript
 Object.getPrototypeOf({ __proto__: null }) === null
