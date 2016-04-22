@@ -96,16 +96,21 @@ s.charAt(s.length-1) // "c"
 'abc'[1] // "b"
 ```
 
-charCodeAt方法返回给定位置字符的Unicode编码（十进制表示）。
+`charCodeAt`方法返回给定位置字符的Unicode编号（十进制表示）。
 
-{% highlight javascript %}
+```javascript
+'abc'.charCodeAt(1) // 98
+```
 
-var s = new String("abc");
+上面代码返回第二个位置的字符`b`的Unicode编号“98”。
 
-s.charCodeAt(1)
-// 98
+如果没有任何参数，`charCodeAt`返回首字符的Unicode编号。
 
-{% endhighlight %}
+```javascript
+'abc'.charCodeAt() // 97
+```
+
+上面代码中，首字符`a`的Unicode编号是97。
 
 需要注意的是，charCodeAt方法返回的Unicode编码不大于65536（0xFFFF），也就是说，只返回两个字节。因此如果遇到Unicode大于65536的字符（根据UTF-16的编码规则，第一个字节在U+D800到U+DBFF之间），就必需连续使用两次charCodeAt，不仅读入charCodeAt(i)，还要读入charCodeAt(i+1)，将两个16字节放在一起，才能得到准确的字符。
 

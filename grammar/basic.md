@@ -249,14 +249,14 @@ a // 1
 
 ### if 结构
 
-if结构先判断一个表达式的布尔值，然后根据布尔值的真伪，执行不同的语句。
+`if`结构先判断一个表达式的布尔值，然后根据布尔值的真伪，执行不同的语句。
 
 ```javascript
 if (expression)
   statement
 ```
 
-上面是if结构的基本形式。需要注意的是，expression（表达式）必须放在圆括号中，表示对表达式求值。如果结果为`true`，就执行紧跟在后面的语句（statement）；如果结果为`false`，则跳过statement的部分。
+上面是`if`结构的基本形式。需要注意的是，expression（表达式）必须放在圆括号中，表示对表达式求值。如果结果为`true`，就执行紧跟在后面的语句（statement）；如果结果为`false`，则跳过statement的部分。
 
 ```javascript
 if (m === 3)
@@ -286,9 +286,16 @@ if (x = y) {
 // "2"
 ```
 
-上面代码的原意是，当`x`等于`y`的时候，才执行相关语句。但是，不小心将“严格相等运算符”写成“赋值表达式”，结果变成了将`y`赋值给`x`，然后条件就变成了，判断变量`x`的值（等于2）是否为`true`。
+上面代码的原意是，当`x`等于`y`的时候，才执行相关语句。但是，不小心将“严格相等运算符”写成“赋值表达式”，结果变成了将`y`赋值给`x`，然后条件就变成了，变量`x`的值（等于2）自动转为布尔值以后，判断其是否为`true`。
 
-至于为什么优先采用“严格相等运算符”，而不是“相等运算符”（`==`），请参考《运算符》一节。
+这种错误可以正常生成一个布尔值，因而不会报错。为了避免这种情况，有些开发者习惯将常量写在运算符的左边，这样的话，一旦不小心将相等运算符写成赋值运算符，就会报错，因为常量不能被赋值。
+
+```javascript
+if (x = 2) { // 不报错
+if (2 = x) { // 报错
+```
+
+至于为什么优先采用“严格相等运算符”（`===`），而不是“相等运算符”（`==`），请参考《运算符》一节。
 
 ### if...else结构
 
@@ -378,11 +385,11 @@ var x = 1;
 
 switch (x) {
   case 1:
-    console.log('x等于1');
+    console.log('x 于1');
   case 2:
-    console.log('x等于2');
+    console.log('x 等于2');
   default:
-    console.log('x等于其他值');
+    console.log('x 等于其他值');
 }
 // x等于1
 // x等于2
@@ -455,6 +462,53 @@ function getItemPricing(customer, item) {
 ```
 
 如果价格档次再多一些，对象属性写法的简洁优势就更明显了。
+
+### 三元运算符`?:`
+
+JavaScript还有一个三元运算符（即该运算符需要三个运算子）`?:`，也可以用于逻辑判断。
+
+```javascript
+(contidion) ? expression1 : expression2
+```
+
+上面代码中，如果`contidion`为`true`，则返回`expression1`的值，否则返回`expression2`的值。
+
+```javascript
+var even = (n % 2 === 0) ? true : false;
+```
+
+上面代码中，如果`n`可以被2整除，则`even`等于`true`，否则等于`false`。它等同于下面的形式。
+
+```javascript
+var even;
+if (n % 2 === 0) {
+  even = true;
+} else {
+  even = false;
+}
+```
+
+这个三元运算符可以被视为`if...else...`的简写形式，因此可以用于多种场合。
+
+```javascript
+var myVar;
+console.log( myVar
+  ? 'myVar has a value'
+  : 'myVar do not has a value'
+)
+// myVar do not has a value
+```
+
+上面代码利用三元运算符，输出相应的提示。
+
+```javascript
+var msg = 'The number '
+  + n
+  + ' is '
+  + ((n % 2 === 0) ? 'even' : 'odd');
+```
+
+上面代码利用三元运算符，在字符串之中插入不同的值。
 
 ## 循环语句
 
@@ -908,7 +962,7 @@ x // undefined
 - `false`
 - `0`
 - `NaN`
-- `""`（空字符串）
+- `""`或`''`（空字符串）
 
 布尔值往往用于程序流程的控制，请看一个例子。
 
