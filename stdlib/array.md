@@ -95,9 +95,9 @@ var a = [1, 2, 3, [4, 5, 6]];
 a.toString() // "1,2,3,4,5,6"
 ```
 
-### push方法，pop方法
+### push()，pop()
 
-`push`方法用于在数组的末端添加一个或多个元素，并返回添加后的数组的长度。
+`push`方法用于在数组的末端添加一个或多个元素，并返回添加新元素后的数组长度。注意，该方法会改变原数组。
 
 ```javascript
 var a = [];
@@ -118,29 +118,27 @@ var b = [4, 5, 6];
 
 Array.prototype.push.apply(a, b)
 // 或者
-a.push.apply(a,b)
+a.push.apply(a, b)
 
 // 上面两种写法等同于
-a.push(4,5,6)
+a.push(4, 5, 6)
 
 a // [1, 2, 3, 4, 5, 6]
 ```
 
-`push`方法还可以用于向对象添加元素，添加后的对象变成“类似数组的”对象，即新加入元素的键对应数组的索引，并且对象有一个length属性。
+`push`方法还可以用于向对象添加元素，添加后的对象变成类似数组的对象，即新加入元素的键对应数组的索引，并且对象有一个`length`属性。
 
 ```javascript
 var a = {a: 1};
 
 [].push.call(a, 2);
-a
-// {a:1, 0:2, length: 1}
+a // {a:1, 0:2, length: 1}
 
 [].push.call(a, [3]);
-a
-// {a:1, 0:2, 1:[3], length: 2}
+a // {a:1, 0:2, 1:[3], length: 2}
 ```
 
-pop方法用于删除数组的最后一个元素，并返回该元素。
+`pop`方法用于删除数组的最后一个元素，并返回该元素。注意，该方法会改变原数组。
 
 ```javascript
 var a = ['a', 'b', 'c'];
@@ -149,32 +147,34 @@ a.pop() // 'c'
 a // ['a', 'b']
 ```
 
-对空数组使用pop方法，不会报错，而是返回undefined。
+对空数组使用`pop`方法，不会报错，而是返回`undefined`。
 
 ```javascript
 [].pop() // undefined
 ```
 
-### join方法，concat方法
+`push`和`pop`结合使用，就构成了“后进先出”的栈结构（stack）。
+
+### join()，concat()
 
 `join`方法以参数作为分隔符，将所有数组成员组成一个字符串返回。如果不提供参数，默认用逗号分隔。
 
 ```javascript
 var a = [1, 2, 3, 4];
 
+a.join(' ') // '1 2 3 4'
+a.join(' | ') // "1 | 2 | 3 | 4"
 a.join() // "1,2,3,4"
-a.join('') // '1234'
-a.join("|") // "1|2|3|4"
 ```
 
-通过函数的call方法，`join`方法（即Array.prototype.join）也可以用于字符串。
+通过`call`方法，`join`方法（即Array.prototype.join）也可以用于字符串。
 
 ```javascript
 Array.prototype.join.call('hello', '-')
 // "h-e-l-l-o"
 ```
 
-concat方法用于多个数组的合并。它将新数组的成员，添加到原数组的尾部，然后返回一个新数组。
+`concat`方法用于多个数组的合并。它将新数组的成员，添加到原数组的尾部，然后返回一个新数组，原数组不变。
 
 ```javascript
 ['hello'].concat(['world'])
@@ -182,14 +182,18 @@ concat方法用于多个数组的合并。它将新数组的成员，添加到�
 
 ['hello'].concat(['world'], ['!'])
 // ["hello", "world", "!"]
-
-[1, 2, 3].concat(4, 5, 6)
-// [1, 2, 3, 4, 5, 6]
 ```
 
-上面代码表明，concat方法的参数可以是一个或多个数组，以及原始类型的值。
+除了接受数组作为参数，`concat`也可以接受其他类型的值作为参数。它们会作为新的元素，添加数组尾部。
 
-如果不提供参数，concat方法返回当前数组的一个浅拷贝。所谓“浅拷贝”，指的是如果数组成员包括复合类型的值（比如对象），则新数组拷贝的是该值的引用。
+```javascript
+[1, 2, 3].concat(4, 5, 6)
+// [1, 2, 3, 4, 5, 6]
+
+[1, 2, 3].concat(4, [5, 6])
+```
+
+如果不提供参数，`concat`方法返回当前数组的一个浅拷贝。所谓“浅拷贝”，指的是如果数组成员包括复合类型的值（比如对象），则新数组拷贝的是该值的引用。
 
 ```javascript
 var obj = { a:1 };
@@ -217,9 +221,9 @@ concat方法也可以用于将对象合并为数组，但是必须借助call方�
 [2].concat({a:1})
 ```
 
-### shift方法，unshift方法
+### shift()，unshift()
 
-shift方法用于删除数组的第一个元素，并返回该元素。
+`shift`方法用于删除数组的第一个元素，并返回该元素。注意，该方法会改变原数组。
 
 ```javascript
 var a = ['a', 'b', 'c'];
@@ -228,21 +232,22 @@ a.shift() // 'a'
 a // ['b', 'c']
 ```
 
-shift方法可以遍历并清空一个数组。
+`shift`方法可以遍历并清空一个数组。
 
 ```javascript
-var list = [1,2,3,4,5,6,7,8,9,10];
-
+var list = [1, 2, 3, 4, 5, 6];
 var item;
 
 while (item = list.shift()) {
-    console.log(item);
+  console.log(item);
 }
 
 list // []
 ```
 
-unshift方法用于在数组的第一个位置添加元素，并返回添加新元素后的数组长度。
+`push`和`shift`结合使用，就构成了“先进先出”的队列结构（queue）。
+
+`unshift`方法用于在数组的第一个位置添加元素，并返回添加新元素后的数组长度。注意，该方法会改变原数组。
 
 ```javascript
 var a = ['a', 'b', 'c'];
@@ -251,9 +256,9 @@ a.unshift('x'); // 4
 a // ['x', 'a', 'b', 'c']
 ```
 
-### reverse方法
+### reverse()
 
-reverse方法用于颠倒数组中元素的顺序，使用这个方法以后，返回改变后的原数组。
+`reverse`方法用于颠倒数组中元素的顺序，使用这个方法以后，返回改变后的原数组。
 
 ```javascript
 var a = ['a', 'b', 'c'];
@@ -262,7 +267,7 @@ a.reverse() // ["c", "b", "a"]
 a // ["c", "b", "a"] 
 ```
 
-### slice方法
+### slice()
 
 `slice`方法用于提取原数组的一部分，返回一个新数组，原数组不变。
 
@@ -275,65 +280,67 @@ arr.slice(start_index, upto_index);
 // 用法
 var a = ['a', 'b', 'c'];
 
-a.slice(1,2) // ["b"]
+a.slice(0) // ["a", "b", "c"]
 a.slice(1) // ["b", "c"]
-a.slice(0) // ["a","b","c"]
-a.slice(-2) // ["b", "c"]
-a.slice(4) // []
+a.slice(1, 2) // ["b"]
 a.slice(2, 6) // ["c"]
+```
+
+如果`slice`方法的参数是负数，则表示倒数计算的字符串位置。
+
+```javascript
+var a = ['a', 'b', 'c'];
+a.slice(-2) // ["b", "c"]
+a.slice(-2, -1) // ["b"]
+```
+
+如果参数值大于数组成员的个数，或者第二个参数小于第一个参数，则返回空数组。
+
+```javascript
+var a = ['a', 'b', 'c'];
+a.slice(4) // []
 a.slice(2, 1) // []
 ```
 
-上面代码表示，如果slice方法的参数是负数，则从尾部开始选择的成员个数；如果参数值大于数组成员的个数，或者第二个参数小于第一个参数，则返回空数组。
-
-slice方法的一个重要应用，是将类似数组的对象转为真正的数组。
+`slice`方法的一个重要应用，是将类似数组的对象转为真正的数组。
 
 ```javascript
 Array.prototype.slice.call({ 0: 'a', 1: 'b', length: 2 })
 // ['a', 'b']
 
 Array.prototype.slice.call(document.querySelectorAll("div"));
-
 Array.prototype.slice.call(arguments);
 ```
 
-上面代码的参数都不是数组，但是通过call方法，在它们上面调用slice方法，就可以把它们转为真正的数组。
+上面代码的参数都不是数组，但是通过`call`方法，在它们上面调用`slice`方法，就可以把它们转为真正的数组。
 
 ### splice()
 
-splice方法用于删除原数组的一部分成员，并可以在被删除的位置添加入新的数组成员。它的返回值是被删除的元素。该方法会改变原数组。
+`splice`方法用于删除原数组的一部分成员，并可以在被删除的位置添加入新的数组成员，返回值是被删除的元素。注意，该方法会改变原数组。
 
-splice的第一个参数是删除的起始位置，第二个参数是被删除的元素个数。如果后面还有更多的参数，则表示这些就是要被插入数组的新元素。
+`splice`的第一个参数是删除的起始位置，第二个参数是被删除的元素个数。如果后面还有更多的参数，则表示这些就是要被插入数组的新元素。
 
 ```javascript
 // 格式
 arr.splice(index, count_to_remove, addElement1, addElement2, ...);
 
 // 用法
-var a = ["a","b","c","d","e","f"];
-
-a.splice(4,2)
-// ["e", "f"]
-
-a
-// ["a", "b", "c", "d"]
+var a = ['a', 'b', 'c', 'd', 'e', 'f'];
+a.splice(4, 2) // ["e", "f"]
+a // ["a", "b", "c", "d"]
 ```
 
 上面代码从原数组位置4开始，删除了两个数组成员。
 
 ```javascript
-var a = ["a","b","c","d","e","f"];
-
-a.splice(4,2,1,2)
-// ["e", "f"]
-
-a
-// ["a", "b", "c", "d", 1, 2]
+var a = ['a', 'b', 'c', 'd', 'e', 'f'];
+a.splice(4, 2, 1, 2) // ["e", "f"]
+a // ["a", "b", "c", "d", 1, 2]
 ```
 
 上面代码除了删除成员，还插入了两个新成员。
 
-如果只是单纯地插入元素，splice方法的第二个参数可以设为0。
+如果只是单纯地插入元素，`splice`方法的第二个参数可以设为0。
 
 ```javascript
 var a = [1, 1, 1];
