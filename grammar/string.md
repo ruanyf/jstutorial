@@ -290,16 +290,16 @@ btoa('你好')
 要将非ASCII码字符转为Base64编码，必须中间插入一个转码环节，再使用这两个方法。
 
 ```javascript
-function b64Encode( str ) {
-  return btoa(unescape(encodeURIComponent( str )));
+function b64Encode(str) {
+  return btoa(encodeURIComponent(str));
 }
 
-function b64Decode( str ) {
-  return decodeURIComponent(escape(atob( str )));
+function b64Decode(str) {
+  return decodeURIComponent(atob(str));
 }
 
-b64Encode('你好') // "5L2g5aW9"
-b64Decode('5L2g5aW9') // "你好"
+b64Encode('你好') // "JUU0JUJEJUEwJUU1JUE1JUJE"
+b64Decode('JUU0JUJEJUEwJUU1JUE1JUJE') // "你好"
 ```
 
 ## 参考链接

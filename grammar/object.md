@@ -358,7 +358,7 @@ o.hasOwnProperty('toString') // false
 ```javascript
 var o = {a: 1, b: 2, c: 3};
 
-for (i in o){
+for (var i in o) {
   console.log(o[i]);
 }
 // 1

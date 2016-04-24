@@ -183,7 +183,7 @@ nodeValue属性返回或设置当前节点的值，格式为字符串。但是�
 
 因此，nodeValue属性一般只用于Text节点。对于那些返回null的节点，设置nodeValue属性是无效的。
 
-### childNodes，firstNode，lastChild
+### childNodes，firstChild，lastChild
 
 以下属性返回当前节点的子节点。
 
@@ -197,9 +197,37 @@ var ulElementChildNodes = document.querySelector('ul').childNodes;
 
 {% endhighlight %}
 
-**（2）firstNode**
+**（2）firstChild**
 
-firstNode属性返回当前节点的第一个子节点，如果当前节点没有子节点，则返回null。注意，除了HTML元素子节点，该属性还包括文本节点和评论节点。
+`firstChild`属性返回当前节点的第一个子节点，如果当前节点没有子节点，则返回`null`。
+
+```html
+<p id="para-01"><span>First span</span></p>
+
+<script type="text/javascript">
+  console.log(
+    document.getElementById('para-01').firstChild.nodeName
+  ) // "span"
+</script>
+```
+
+上面代码中，`p`元素的第一个子节点是`span`元素。
+
+注意，`firstNode`返回的除了HTML元素子节点，还可能是文本节点或评论节点。
+
+```html
+<p id="para-01">
+  <span>First span</span>
+</p>
+
+<script type="text/javascript">
+  console.log(
+    document.getElementById('para-01').firstChild.nodeName
+  ) // "#text"
+</script>
+```
+
+上面代码中，`p`元素与`span`元素之间有空白字符，这导致`firstChild`返回的是文本节点。
 
 **（3）lastChild**
 

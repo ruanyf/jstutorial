@@ -416,7 +416,7 @@ ECMAScript 5新增了9个数组实例的方法，分别是map、forEach、filter
 ```javascript
 var numbers = [1, 2, 3];
 
-numbers.map(function(n) { return n+1 });
+numbers.map(function (n) { return n + 1 });
 // [2, 3, 4]
 
 numbers
@@ -425,7 +425,7 @@ numbers
 
 上面代码中，`numbers`数组的所有成员都加上1，组成一个新数组返回，原数组没有变化。
 
-`map`方法的回调函数依次接受三个参数，分别是当前的数组成员、当前成员的位置和数组本身。
+`map`方法接受一个函数作为参数。该函数调用时，`map`方法会将其传入三个参数，分别是当前成员、当前位置和数组本身。
 
 ```javascript
 [1, 2, 3].map(function(elem, index, arr) {
@@ -434,9 +434,9 @@ numbers
 // [1, 4, 9]
 ```
 
-上面代码中，map方法的回调函数的三个参数之中，`elem`为当前元素的键值，`index`为当前元素的位置（格式为数值），`arr`为原数组（`[1, 2, 3]`）。
+上面代码中，map方法的回调函数的三个参数之中，`elem`为当前成员的值，`index`为当前成员的位置，`arr`为原数组（`[1, 2, 3]`）。
 
-`map`方法不仅可以用于数组，还可以用于字符串，用来遍历字符串的每个字符。但是，不能直接用，而要通过函数的`call`方法间接使用，或者先将字符串转为数组，然后使用。
+`map`方法不仅可以用于数组，还可以用于字符串，用来遍历字符串的每个字符。但是，不能直接使用，而要通过函数的`call`方法间接使用，或者先将字符串转为数组，然后使用。
 
 ```javascript
 var upper = function (x) { return x.toUpperCase() };
@@ -601,7 +601,7 @@ arr.filter(myFilter, new Obj())
 
 上面代码中，测试函数myFilter内部有this对象，它可以被filter方法的第二个参数绑定。
 
-### some方法，every方法
+### some()，every()
 
 这两个方法类似“断言”（assert），用来判断数组成员是否符合某种条件。
 
@@ -629,7 +629,7 @@ arr.every(function (elem, index, arr) {
 
 上面代码表示，只有所有数组成员大于等于3，才返回true。
 
-从上面的代码可以看到，some和every的使用方法与map和forEach是一致的，参数完全一模一样。也就是说，它们也可以使用第二个参数，用来绑定函数中的this关键字。
+从上面的代码可以看到，`some`和`every`的使用方法与`map`和`forEach`一致，参数完全一模一样。也就是说，它们也可以使用第二个参数，用来绑定函数中的this关键字。
 
 ### reduce方法，reduceRight方法
 
