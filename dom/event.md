@@ -6,7 +6,7 @@ date: 2013-11-15
 modifiedOn: 2013-12-19
 ---
 
-事件是一种异步编程的实现方式，本质上是程序各个组成部分之间传递的特定消息。DOM支持大量的事件，本节介绍DOM的事件编程。
+事件是一种异步编程的实现方式，本质上是程序各个组成部分之间的通信。DOM支持大量的事件，本节介绍DOM的事件编程。
 
 ## EventTarget接口
 
@@ -126,17 +126,26 @@ HTML语言允许在元素标签的属性中，直接定义某些事件的监听�
 
 ```html
 <body onload="doSomething()">
-
 <div onclick="console.log('触发事件')">
 ```
 
-上面代码为body节点的load事件、div节点的click事件，指定了监听函数。
+上面代码为`body`节点的`load`事件、`div`节点的`click`事件，指定了监听函数。
 
 使用这个方法指定的监听函数，只会在冒泡阶段触发。
 
-注意，使用这种方法时，on-属性的值是“监听代码”，而不是“监听函数”。也就是说，一旦指定事件发生，这些代码是原样传入JavaScript引擎执行。因此如果要执行函数，必须在函数名后面加上一对圆括号。
+注意，使用这种方法时，`on-`属性的值是将会执行的代码，而不是“监听函数”。
 
-另外，Element节点的setAttribue方法，其实设置的也是这种效果。
+```html
+<!-- 正确 -->
+<body onload="doSomething()">
+
+<!-- 错误 -->
+<body onload="doSomething">
+```
+
+一旦指定的事件发生，`on-`属性的值是原样传入JavaScript引擎执行。因此如果要执行函数，不要忘记加上一对圆括号。
+
+另外，Element节点的`setAttribute`方法，其实设置的也是这种效果。
 
 ```javascript
 el.setAttribute('onclick', 'doSomething()');
@@ -158,7 +167,7 @@ div.onclick = function(event){
 
 ### addEventListener方法
 
-通过Element节点、document节点、window对象的addEventListener方法，也可以定义事件的监听函数。
+通过`Element`节点、`document`节点、`window`对象的`addEventListener`方法，也可以定义事件的监听函数。
 
 ```javascript
 window.addEventListener('load', doSomething, false);
@@ -638,7 +647,9 @@ el.addEventListener('click', l2, false);
 
 **（1）click事件**
 
-click事件当用户在Element节点、document节点、window对象上，单击鼠标（或者按下回车键）时触发。“鼠标单击”定义为，用户在同一个位置完成一次mousedown动作和mouseup动作。它们的触发顺序是：mousedown首先触发，mouseup接着触发，click最后触发。
+`click`事件当用户在Element节点、document节点、window对象上，单击鼠标（或者按下回车键）时触发。
+
+“鼠标单击”定义为，用户在同一个位置完成一次`mousedown`动作和`mouseup`动作。它们的触发顺序是：`mousedown`首先触发，`mouseup`接着触发，`click`最后触发。
 
 下面是一个设置click事件监听函数的例子。
 
@@ -664,7 +675,7 @@ div.addEventListener("click", function( event ) {
 
 **（2）dblclick事件**
 
-dblclick事件当用户在element、document、window对象上，双击鼠标时触发。该事件会在mousedown、mouseup、click之后触发。
+`dblclick`事件当用户在`element`、`document`、`window`对象上，双击鼠标时触发。该事件会在`mousedown`、`mouseup`、`click`之后触发。
 
 **（3）mouseup事件，mousedown事件**
 
@@ -721,7 +732,7 @@ mouseout事件和mouseleave事件，都是鼠标离开一个节点时触发。
 
 **（7）contextmenu**
 
-contextmenu事件在一个节点上点击鼠标右键时触发，或者按下“上下文菜单”键时触发。
+`contextmenu`事件在一个节点上点击鼠标右键时触发，或者按下“上下文菜单”键时触发。
 
 ### MouseEvent对象
 
