@@ -23,7 +23,7 @@ grammar: 基本语法
 stdlib: 标准库
 oop: 面向对象编程
 dom: DOM
-bom: 浏览器对象
+bom: 浏览器环境
 htmlapi: HTML网页的API
 jquery: jQuery
 library: 草稿一：函数库

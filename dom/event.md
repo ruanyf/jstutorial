@@ -1252,40 +1252,42 @@ document.addEventListener("dragstart", function( event ) {
   // 保存被拖拉节点
   dragged = event.target;
   // 被拖拉节点的背景色变透明
-  event.target.style.opacity = .5;
+  event.target.style.opacity = 0.5;
+  // 兼容Firefox
+  event.dataTransfer.setData('text/plain', 'anything');
 }, false);
 
-document.addEventListener("dragend", function( event ) {
+document.addEventListener('dragend', function( event ) {
   // 被拖拉节点的背景色恢复正常
-  event.target.style.opacity = "";
+  event.target.style.opacity = '';
 }, false);
 
-document.addEventListener("dragover", function( event ) {
+document.addEventListener('dragover', function( event ) {
   // 防止拖拉效果被重置，允许被拖拉的节点放入目标节点
   event.preventDefault();
 }, false);
 
-document.addEventListener("dragenter", function( event ) {
+document.addEventListener('dragenter', function( event ) {
   // 目标节点的背景色变紫色
   // 由于该事件会冒泡，所以要过滤节点
-  if ( event.target.className == "dropzone" ) {
-    event.target.style.background = "purple";
+  if ( event.target.className == 'dropzone' ) {
+    event.target.style.background = 'purple';
   }
 }, false);
 
-document.addEventListener("dragleave", function( event ) {
+document.addEventListener('dragleave', function( event ) {
   // 目标节点的背景色恢复原样
-  if ( event.target.className == "dropzone" ) {
+  if ( event.target.className == 'dropzone' ) {
     event.target.style.background = "";
   }
 }, false);
 
-document.addEventListener("drop", function( event ) {
+document.addEventListener('drop', function( event ) {
   // 防止事件默认行为（比如某些Elment节点上可以打开链接）
   event.preventDefault();
-  if ( event.target.className == "dropzone" ) {
+  if ( event.target.className === 'dropzone' ) {
     // 恢复目标节点背景色
-    event.target.style.background = "";
+    event.target.style.background = '';
     // 将被拖拉节点插入目标节点
     dragged.parentNode.removeChild( dragged );
     event.target.appendChild( dragged );

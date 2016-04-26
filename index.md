@@ -52,7 +52,7 @@ modifiedOn: 2014-05-18
 - [CSS操作](dom/css.html)
 - [Mutation Observer](dom/mutationobserver.html)
 
-<h2 id="bom">浏览器对象</h2>
+<h2 id="bom">浏览器环境</h2>
 
 - [浏览器的JavaScript引擎](bom/engine.html)
 - [定时器](bom/timer.html)
