@@ -100,7 +100,7 @@ modifiedOn: 2014-05-18
 - [MVC模式和Backbone.js](advanced/backbonejs.html)
 - [严格模式](advanced/strict.html)
 
-<hr></hr>
+---
 
 <h2 id="library">废稿</h2>
 

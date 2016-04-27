@@ -14,15 +14,15 @@ CSS与JavaScript是两个有着明确分工的领域，前者负责页面的视�
 
 ```javascript
 div.setAttribute('style',
-  'background-color:red;'
-  + 'border:1px solid black;');
+  'background-color:red;' + 'border:1px solid black;'
+);
 ```
 
 ## Element节点的style属性
 
 ### 基本用法
 
-Element节点本身还提供style属性，用来操作CSS样式。
+Element节点本身还提供`style`属性，用来操作CSS样式。
 
 style属性指向一个对象，用来读写页面元素的行内CSS样式。
 
@@ -33,6 +33,7 @@ divStyle.backgroundColor = 'red';
 divStyle.border = '1px solid black';
 divStyle.width = '100px';
 divStyle.height = '100px';
+divStyle.fontSize = '10em';
 
 divStyle.backgroundColor // red
 divStyle.border // 1px solid black
@@ -40,9 +41,9 @@ divStyle.height // 100px
 divStyle.width // 100px
 ```
 
-从上面代码可以看到，style对象的属性与CSS规则名一一对应，但是需要改写。具体规则是将横杠从CSS属性名中去除，然后将横杠后的第一个字母大写，比如background-color写成backgroundColor。如果CSS属性名是JavaScript保留字，则规则名之前需要加上字符串“css”，比如float写成cssFloat。
+从上面代码可以看到，`style`对象的属性与CSS规则名一一对应，但是需要改写。具体规则是将横杠从CSS属性名中去除，然后将横杠后的第一个字母大写，比如`background-color`写成`backgroundColor`。如果CSS属性名是JavaScript保留字，则规则名之前需要加上字符串“css”，比如`float`写成`cssFloat`。
 
-注意，style对象的属性值都是字符串，而且包括单位。所以，divStyle.width不能设置为100，而要设置为'100px'。
+注意，`style`对象的属性值都是字符串，而且包括单位。所以，`divStyle.width`不能设置为`100`，而要设置为`100px`。
 
 ### cssText属性
 
@@ -150,7 +151,7 @@ CSS添加伪元素的写法如下。
 }
 ```
 
-DOM节点的style对象无法读写伪元素的样式，这时就要用到window对象的getComputedStyle方法（详见下面介绍）。JavaScript获取伪元素，可以使用下面的方法。
+DOM节点的style对象无法读写伪元素的样式，这时就要用到`window`对象的`getComputedStyle`方法（详见下面介绍）。JavaScript获取伪元素，可以使用下面的方法。
 
 ```javascript
 var test = document.querySelector('#test');
@@ -212,13 +213,17 @@ document.styleSheets[0].media.mediaText
 
 **（2）disabled属性**
 
-disabled属性用于打开或关闭一张样式表。
+`disabled`属性用于打开或关闭一张样式表。
 
 ```javascript
 document.querySelector('#linkElement').disabled = true;
+// 或者
+document.querySelector('#linkElement').disabled = 'disabled';
 ```
 
-disabled属性只能在JavaScript中设置，不能在html语句中设置。
+一旦样式表设置了`disabled`属性，这张样式表就将失效。
+
+注意，`disabled`属性只能在JavaScript中设置，不能在HTML语句中设置。
 
 **（3）href属性**
 
@@ -286,24 +291,16 @@ styleSheet.cssRules[1].style.color = 'purple';
 
 ### insertRule()，deleteRule()
 
-insertRule方法用于在当前样式表的cssRules对象插入CSS规则，deleteRule方法用于删除cssRules对象的CSS规则。
+`insertRule`方法用于在当前样式表的`cssRules`对象插入CSS规则，`deleteRule`方法用于删除`cssRules`对象的CSS规则。
 
 ```javascript
 var sheet = document.querySelector('#styleElement').sheet;
-sheet.insertRule('#blanc { color:white }', 0);
+sheet.insertRule('#block { color:white }', 0);
 sheet.insertRule('p { color:red }',1);
 sheet.deleteRule(1);
 ```
 
-insertRule方法的第一个参数是表示CSS规则的字符串，第二个参数是该规则在cssRules对象的插入位置。deleteRule方法的参数是该条规则在cssRules对象中的位置。
-
-IE 9开始支持insertRule方法，在此之前都使用addRule方法。addRule的写法与insertRule略有不同，接受三个参数。
-
-```javascript
-sheet.addRule('p','color:red',1);
-```
-
-上面代码将一条CSS语句插入p选择器所有语句的第二位。最后一个参数默认为-1，即新增语句插在所有语句的最后。
+`insertRule`方法的第一个参数是表示CSS规则的字符串，第二个参数是该规则在`cssRules`对象的插入位置。`deleteRule`方法的参数是该条规则在`cssRules`对象中的位置。
 
 ### 添加样式表
 
@@ -509,7 +506,7 @@ styleObj.cssText = '';
 
 ## window.getComputedStyle()
 
-getComputedStyle方法接受一个DOM节点对象作为参数，返回一个包含该节点最终样式信息的对象。所谓“最终样式信息”，指的是各种CSS规则叠加后的结果。
+`getComputedStyle`方法接受一个DOM节点对象作为参数，返回一个包含该节点最终样式信息的对象。所谓“最终样式信息”，指的是各种CSS规则叠加后的结果。
 
 ```javascript
 var div = document.querySelector('div');

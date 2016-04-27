@@ -35,7 +35,7 @@ DocumentFragment | 文档碎片节点 | 文档的片段
 
 ### nodeName，nodeType
 
-nodeName属性返回节点的名称，nodeType属性返回节点的常数值。具体的返回值，可查阅下方的表格。
+`nodeName`属性返回节点的名称，`nodeType`属性返回节点类型的常数值。具体的返回值，可查阅下方的表格。
 
 类型 | nodeName | nodeType
 -----|----------|---------
@@ -109,11 +109,11 @@ document.getElementById("b1").previousSibling // null
 document.getElementById("b2").previousSibling.id // "b1"
 ```
 
-对于当前节点前面有空格，则previoussibling属性会返回一个内容为空格的文本节点。
+对于当前节点前面有空格，则`previousSibling`属性会返回一个内容为空格的文本节点。
 
 **（4）parentNode**
 
-parentNode属性返回当前节点的父节点。对于一个节点来说，它的父节点只可能是三种类型：element节点、document节点和documentfragment节点。
+`parentNode`属性返回当前节点的父节点。对于一个节点来说，它的父节点只可能是三种类型：`element`节点、`document`节点和`documentfragment`节点。
 
 下面代码是如何从父节点移除指定节点。
 
@@ -710,13 +710,13 @@ replaceWith方法使用参数指定的节点，替换当前节点。如果参数
 
 ## html元素
 
-html元素是网页的根元素，document.documentElement就指向这个元素。
+`html`元素是网页的根元素，`document.documentElement`就指向这个元素。
 
 **（1）clientWidth属性，clientHeight属性**
 
 这两个属性返回视口（viewport）的大小，单位为像素。所谓“视口”，是指用户当前能够看见的那部分网页的大小
 
-document.documentElement.clientWidth和document.documentElement.clientHeight，基本上与window.innerWidth和window.innerHeight同义。只有一个区别，前者不将滚动条计算在内（很显然，滚动条和工具栏会减小视口大小），而后者包括了滚动条的高度和宽度。
+`document.documentElement.clientWidth`和`document.documentElement.clientHeight`，基本上与`window.innerWidth`和`window.innerHeight`同义。只有一个区别，前者不将滚动条计算在内（很显然，滚动条和工具栏会减小视口大小），而后者包括了滚动条的高度和宽度。
 
 **（2）offsetWidth属性，offsetHeight属性**
 

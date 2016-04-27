@@ -80,19 +80,21 @@ activeElement属性返回当前文档中获得焦点的那个元素。用户通�
 
 **（1）documentURI，URL**
 
-documentURI属性和URL属性都返回当前文档的网址。不同之处是documentURI属性是所有文档都具备的，URL属性则是HTML文档独有的。
+`documentURI`属性和`URL`属性都返回当前文档的网址。不同之处是`documentURI`属性是所有文档都具备的，`URL`属性则是HTML文档独有的。
+
+```javascript
+document.documentURI === document.URL
+// true
+```
 
 **（2）domain**
 
-domain属性返回当前文档的域名。比如，某张网页的网址是 http://www.example.com/hello.html ，domain属性就等于 www.example.com 。如果无法获取域名，该属性返回null。
+`domain`属性返回当前文档的域名。比如，某张网页的网址是 http://www.example.com/hello.html ，`domain`属性就等于`www.example.com`。如果无法获取域名，该属性返回`null`。
 
 ```javascript
-
-var badDomain = "www.example.xxx";
-
+var badDomain = 'www.example.xxx';
 if (document.domain === badDomain)
   window.close();
-
 ```
 
 上面代码判断，如果当前域名等于指定域名，则关闭窗口。
@@ -104,30 +106,24 @@ if (document.domain === badDomain)
 lastModified属性返回当前文档最后修改的时间戳，格式为字符串。
 
 ```javascript
-
 document.lastModified
 // Tuesday, July 10, 2001 10:19:42
-
 ```
 
-注意，lastModified属性的值是字符串，所以不能用来直接比较，两个文档谁的日期更新，需要用Date.parse方法转成时间戳格式，才能进行比较。
+注意，`lastModified`属性的值是字符串，所以不能用来直接比较，两个文档谁的日期更新，需要用`Date.parse`方法转成时间戳格式，才能进行比较。
 
 ```javascript
-
 if (Date.parse(doc1.lastModified) > Date.parse(doc2.lastModified)) {
   // ...
 }
-
 ```
 
 **（4）location**
 
-location属性返回一个只读对象，提供了当前文档的URL信息。
+`document.location`属性返回一个只读的`location`对象，提供了当前文档的URL信息。
 
 ```javascript
-
-// 假定当前网址为http://user:passwd@www.example.com:4097/path/a.html?x=111#part1
-
+// 当前网址为 http://user:passwd@www.example.com:4097/path/a.html?x=111#part1
 document.location.href // "http://user:passwd@www.example.com:4097/path/a.html?x=111#part1"
 document.location.protocol // "http:"
 document.location.host // "www.example.com:4097"
@@ -145,25 +141,40 @@ document.location.assign('http://www.google.com')
 document.location.reload(true)
 // 优先从本地缓存重新加载（默认值）
 document.location.reload(false)
-// 跳转到另一个网址，但当前文档不保留在history对象中，
-// 即无法用后退按钮，回到当前文档
-document.location.replace('http://www.google.com')
 // 将location对象转为字符串，等价于document.location.href
 document.location.toString()
-
 ```
 
-虽然location属性返回的对象是只读的，但是可以将URL赋值给这个属性，网页就会自动跳转到指定网址。
+虽然`location`属性返回的对象是只读的，但是可以将`URL`赋值给这个属性，网页就会自动跳转到指定网址。
 
 ```javascript
-
 document.location = 'http://www.example.com';
-// 等价于
+// 等同于
 document.location.href = 'http://www.example.com';
-
 ```
 
-document.location属性与window.location属性等价，历史上，IE曾经不允许对document.location赋值，为了保险起见，建议优先使用window.location。如果只是单纯地获取当前网址，建议使用document.URL。
+注意，采用上面的方法重置URL，跟用户点击链接跳转的效果是一样的。上一个网页依然将保存在浏览器历史之中，点击“后退”按钮就可以回到前一个网页。如果不希望用户看到前一个网页，可以使用`location.replace`方法，浏览器`history`对象就会用新的网址，取代当前网址，这样的话，“后退”按钮就不会回到当前网页了。
+
+```javascript
+window.location.replace('http://www.example.com/otherpage.html');
+```
+
+`location`对象的`search`属性代表URL的查询字符串（包括`?`）。
+
+```javascript
+// 查询字符串为 ?id=x&sort=name
+var search = window.location.search;
+search = search.slice(1); // 得到 'id=x&sort=name'
+search = search.split('&'); // 得到数组 ['id=x', 'sort=name']
+```
+
+`document.location`属性与`window.location`属性等价。
+
+```javascript
+document.location === window.location //true
+```
+
+历史上，IE曾经不允许对document.location赋值，为了保险起见，建议优先使用`window.location`。如果只是单纯地获取当前网址，建议使用`document.URL`，语义性更好。
 
 **（5）referrer**
 
@@ -171,7 +182,7 @@ referrer属性返回一个字符串，表示当前文档的访问来源，如果
 
 **（6）title**
 
-title属性返回当前文档的标题，该属性是可写的。
+`title`属性返回当前文档的标题，该属性是可写的。
 
 ```javascript
 document.title = '新标题';
@@ -324,20 +335,19 @@ document.open方法用于新建一个文档，供write方法写入内容。它�
 
 document.close方法用于关闭open方法所新建的文档。一旦关闭，write方法就无法写入内容了。如果再调用write方法，就等同于又调用open方法，新建一个文档，再写入内容。
 
-document.write方法用于向当前文档写入内容。只要当前文档还没有用close方法关闭，它所写入的内容就会追加在已有内容的后面。
+`document.write`方法用于向当前文档写入内容。只要当前文档还没有用`close`方法关闭，它所写入的内容就会追加在已有内容的后面。
 
-```js
+```javascript
 // 页面显示“helloworld”
 document.open();
-document.write("hello");
-document.write("world");
+document.write('hello');
+document.write('world');
 document.close();
 ```
 
 如果页面已经渲染完成（DOMContentLoaded事件发生之后），再调用write方法，它会先调用open方法，擦除当前文档所有内容，然后再写入。
 
 ```javascript
-
 document.addEventListener("DOMContentLoaded", function(event) {
   document.write('<p>Hello World!</p>');
 });
@@ -349,10 +359,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
   document.write('<p>Hello World!</p>');
   document.close();
 });
-
 ```
 
-如果在页面渲染过程中调用write方法，并不会调用open方法。（可以理解成，open方法已调用，但close方法还未调用。）
+如果在页面渲染过程中调用`write`方法，并不会调用`open`方法。（可以理解成，open方法已调用，但close方法还未调用。）
 
 ```html
 <html>
@@ -387,9 +396,9 @@ world
 
 在浏览器打开上面网页，将会显示“hello world”。
 
-总之，除了某些特殊情况，应该尽量避免使用document.write这个方法。
+总之，除了某些特殊情况，应该尽量避免使用`document.write`这个方法。
 
-document.writeln方法与write方法完全一致，除了会在输出内容的尾部添加换行符。
+`document.writeln`方法与`write`方法完全一致，除了会在输出内容的尾部添加换行符。
 
 ```js
 document.write(1);
@@ -403,7 +412,7 @@ document.writeln(2);
 //
 ```
 
-注意，writeln方法添加的是ASCII码的换行符，渲染成HTML网页时不起作用。
+注意，`writeln`方法添加的是ASCII码的换行符，渲染成HTML网页时不起作用。
 
 ### hasFocus()
 

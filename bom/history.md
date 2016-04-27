@@ -8,7 +8,9 @@ modifiedOn: 2014-05-06
 
 ## 概述
 
-浏览器窗口有一个`history`对象，用来保存浏览历史。比如，该窗口先后访问了三个地址，那么`history`对象就包括三项，`history.length`属性等于3。
+浏览器窗口有一个`history`对象，用来保存浏览历史。
+
+比如，当前窗口先后访问了三个地址，那么`history`对象就包括三项，`history.length`属性等于3。
 
 ```javascript
 history.length // 3
@@ -33,6 +35,16 @@ history.go(-2);
 ```javascript
 history.go(0);
 ```
+
+常见的“返回上一页”链接，代码如下。
+
+```javascript
+document.getElementById('backLink').onclick = function () {
+  window.history.back();
+}
+```
+
+注意，返回上一页时，页面通常是从浏览器缓存之中加载，而不是重新要求服务器发送新的网页。
 
 ## history.pushState()，history.replaceState()
 

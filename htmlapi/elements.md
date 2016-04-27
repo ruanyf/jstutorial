@@ -84,13 +84,3 @@ timeupdate|网页元素的currentTime属性改变时触发。
 volumechange|音量改变时触发（包括静音）。
 waiting|由于另一个操作（比如搜索）还没有结束，导致当前操作（比如播放）不得不等待。
 
-## iframe
-
-iframe元素用于在网页之中，插入另一张网页。对于JavaScript来说，每一个iframe，构成一个单独的域，不同的域之间的变量是隔离的。
-
-```javascript
-var iframe = frames[0];
-Array === iframe.Array; // false
-```
-
-上面代码中，`frames[0]`表示第一个`iframe`框架，它的`Array`和父页面的`Array`是不一样的。

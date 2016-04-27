@@ -47,7 +47,29 @@ window.a // 1
 
 ## window对象的属性
 
-### window.name属性
+### window.closed
+
+`window.closed`属性返回一个布尔值，表示指定窗口是否关闭，通常用来检查通过脚本新建的窗口。
+
+```javascript
+popup.closed // false
+```
+
+上面代码检查跳出窗口是否关闭。
+
+### window.opener
+
+`window.opener`属性返回打开当前窗口的父窗口。如果当前窗口没有父窗口，则返回`null`。
+
+```javascript
+var windowA = window.opener;
+```
+
+通过`opener`属性，可以获得父窗口的的全局变量和方法，比如`windowA.window.propertyName`和`windowA.window.functionName()`。
+
+该属性只适用于两个窗口属于同源的情况（参见《同源政策》一节），且其中一个窗口由另一个打开。
+
+### window.name
 
 `window.name`属性用于设置当前浏览器窗口的名字。
 
@@ -63,22 +85,59 @@ console.log(window.name)
 
 该属性只能保存字符串，且当浏览器窗口关闭后，所保存的值就会消失。因此局限性比较大，但是与iframe窗口通信时，非常有用。
 
-### iframe元素
+### window.location
 
-window.frames返回一个类似数组的对象，成员为页面内的所有框架，包括`frame`元素和`iframe`元素。需要注意的是，`window.frames`的每个成员对应的是框架内的窗口（即框架的window对象），获取每个框架的DOM树，需要使用`window.frames[0].document`。
+`window.location`返回一个`location`对象，用于获取窗口当前的URL信息。它等同于`document.location`对象。
 
 ```javascript
-var iframe = window.getElementsByTagName("iframe")[0];
+window.location === document.location // true
+```
+
+## 框架窗口
+
+`window.frames`属性返回一个类似数组的对象，成员为页面内所有框架窗口，包括`frame`元素和`iframe`元素。`window.frames[0]`表示页面中第一个框架窗口，`window.frames['someName']`则是根据框架窗口的`name`属性的值（不是`id`属性），返回该窗口。另外，通过`document.getElementById()`方法也可以引用指定的框架窗口。
+
+```javascript
+var frame = document.getElementById('theFrame');
+var frameWindow = frame.contentWindow;
+
+// 等同于 frame.contentWindow.document
+var frameDoc = frame.contentDocument;
+
+// 获取子窗口的变量和属性
+frameWindow.function()
+```
+
+`window.length`属性返回当前页面中所有框架窗口总数。
+
+```javascript
+window.frames.length === window.length // true
+```
+
+`window.frames.length`与`window.length`应该是相等的。
+
+由于传统的`frame`窗口已经不建议使用了，这里主要介绍`iframe`窗口。
+
+需要注意的是，`window.frames`的每个成员对应的是框架内的窗口（即框架的`window`对象）。如果要获取每个框架内部的DOM树，需要使用`window.frames[0].document`的写法。
+
+```javascript
+var iframe = window.getElementsByTagName('iframe')[0];
 var iframe_title = iframe.contentWindow.title;
 ```
 
-上面代码用于获取框架页面的标题。
+上面代码用于获取`iframe`页面的标题。
 
 `iframe`元素遵守同源政策，只有当父页面与框架页面来自同一个域名，两者之间才可以用脚本通信，否则只有使用window.postMessage方法。
 
-在iframe框架内部，使用window.parent指向父页面。
+`iframe`窗口内部，使用`window.parent`引用父窗口。如果当前页面没有父窗口，则`window.parent`属性返回自身。因此，可以通过`window.parent`是否等于`window.self`，判断当前窗口是否为`iframe`窗口。
 
-### navigator对象
+```javascript
+if (window.parent != window.self) {
+  // 当前窗口是子窗口
+}
+```
+
+## navigator对象
 
 Window对象的navigator属性，指向一个包含浏览器相关信息的对象。
 
@@ -121,7 +180,7 @@ if (/mobi/i.test(ua)) {
 
 navigator.plugins属性返回一个类似数组的对象，成员是浏览器安装的插件，比如Flash、ActiveX等。
 
-### window.screen
+## window.screen对象
 
 `window.screen`对象包含了显示设备的信息。
 
@@ -195,7 +254,14 @@ var popup = window.open(
 
 注意，如果在第三个参数中设置了一部分参数，其他没有被设置的`yes/no`参数都会被设成No，只有`titlebar`和关闭按钮除外（它们的值默认为yes）。
 
-由于这个方法很容易被滥用，许多浏览器默认都不允许脚本新建窗口。因此，有必要检查一下打开新窗口是否成功。
+`open`方法返回新窗口的引用。
+
+```javascript
+var windowB = window.open('windowB.html', 'WindowB');
+windowB.window.name // "WindowB"
+```
+
+由于`open`这个方法很容易被滥用，许多浏览器默认都不允许脚本新建窗口。因此，有必要检查一下打开新窗口是否成功。
 
 ```javascript
 if (popup === null) {
@@ -217,6 +283,26 @@ if ((popup !== null) && !popup.closed) {
 }
 ```
 
+### window.print()
+
+`print`方法会跳出打印对话框，同用户点击菜单里面的“打印”命令效果相同。
+
+页面上的打印按钮代码如下。
+
+```javascript
+document.getElementById('printLink').onclick = function() {
+  window.print();
+}
+```
+
+非桌面设备（比如手机）可能没有打印功能，这时可以这样判断。
+
+```javascript
+if (typeof window.print === 'function') {
+  // 支持打印功能
+}
+```
+
 ### URL的编码/解码方法
 
 JavaScript提供四个URL的编码/解码方法。
@@ -233,6 +319,20 @@ getComputedStyle方法接受一个HTML元素作为参数，返回一个包含该
 ### window.matchMedia方法
 
 window.matchMedia方法用来检查CSS的mediaQuery语句。详见《DOM》一章的CSS章节。
+
+### window.focus()
+
+`focus`方法会激活指定当前窗口，使其获得焦点。
+
+```javascript
+if ((popup !== null) && !popup.closed) {
+  popup.focus();
+}
+```
+
+上面代码先检查`popup`窗口是否依然存在，确认后激活该窗口。
+
+当前窗口获得焦点时，会触发`focus`事件；当前窗口失去焦点时，会触发`blur`事件。
 
 ## window对象的事件
 
