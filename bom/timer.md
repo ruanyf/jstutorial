@@ -171,6 +171,34 @@ setInterval(f, 1000, "Hello World");
 
 如果网页不在浏览器的当前窗口（或tab），许多浏览器限制setInteral指定的反复运行的任务最多每秒执行一次。
 
+下面是一个通过`setInterval`方法实现网页动画的例子。
+
+```javascript
+var div = document.getElementById('someDiv');
+var opacity = 1;
+var fader = setInterval(function() {
+  opacity -= 0.1;
+  if (opacity >= 0) {
+    div.style.opacity = opacity;
+  } else {
+    clearInterval(fader);
+  }
+}, 100);
+```
+
+上面代码每隔100毫秒，设置一次`div`元素的透明度，直至其完全透明为止。
+
+`setInterval`的一个常见用途是实现轮询。下面是一个轮询URL的Hash值是否发生变化的例子。
+
+```javascript
+var hash = window.location.hash;
+var hashWatcher = setInterval(function() {
+  if (window.location.hash != hash) {
+    updatePage();
+  }
+}, 1000);
+```
+
 setInterval指定的是“开始执行”之间的间隔，并不考虑每次任务执行本身所消耗的时间。因此实际上，两次执行之间的间隔会小于指定的时间。比如，setInterval指定每100ms执行一次，每次执行需要5ms，那么第一次执行结束后95毫秒，第二次执行就会开始。如果某次执行耗时特别长，比如需要105毫秒，那么它结束后，下一次执行就会立即开始。
 
 为了确保两次执行之间有固定的间隔，可以不用setInterval，而是每次执行结束后，使用setTimeout指定下一次执行的具体时间。

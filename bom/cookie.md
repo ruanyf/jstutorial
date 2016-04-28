@@ -8,7 +8,19 @@ modifiedOn: 2016-04-10
 
 ## 概述
 
-Cookie是服务器保存在览器的一小段文本信息。浏览器每次向服务器发出请求，就会自动附上这段信息。
+Cookie是服务器保存在览器的一小段文本信息，每个Cookie的大小一般不能超过4KB。浏览器每次向服务器发出请求，就会自动附上这段信息。
+
+Cookie保存以下几方面的信息。
+
+- Cookie的名字
+- Cookie的值
+- 到期时间
+- 所属域名（默认是当前域名）
+- 生效的路径（默认是当前网址）
+
+举例来说，如果当前URL是`www.example.com`，那么Cookie的路径就是根目录`/`。这意味着，这个Cookie对该域名的根路径和它的所有子路径都有效。如果路径设为`/forums`，那么这个Cookie只有在访问`www.example.com/forums`及其子路径时才有效。
+
+浏览器可以设置不接受Cookie，也可以设置不向服务器发送Cookie。`window.navigator.cookieEnabled`属性返回一个布尔值，表示浏览器是否打开Cookie功能。
 
 `document.cookie`属性返回当前网页的Cookie。
 
@@ -17,7 +29,25 @@ Cookie是服务器保存在览器的一小段文本信息。浏览器每次向�
 var allCookies = document.cookie;
 ```
 
-该属性是可写的，但是一次只能写入一个Cookie，也就是说写入并不是覆盖，而是添加。
+由于`document.cookie`返回的是分号分隔的所有Cookie，所以必须手动还原，才能取出每一个Cookie的值。
+
+```javascript
+var cookies = document.cookie.split(';');
+
+for (var i = 0; i < cookies.length; i++) {
+  // cookies[i] name=value形式的单个Cookie
+}
+```
+
+`document.cookie`属性是可写的，可以通过它为当前网站添加Cookie。
+
+```javascript
+document.cookie = 'fontSize=14';
+```
+
+Cookie的值必须写成`key=value`的形式。注意，等号两边不能有空格。另外，写入Cookie的时候，必须对分号、逗号和空格进行转义（它们都不允许作为Cookie的值），这可以用`encodeURIComponent`方法达到。
+
+但是，`document.cookie`一次只能写入一个Cookie，而且写入并不是覆盖，而是添加。
 
 ```javascript
 document.cookie = 'test1=hello';
@@ -26,9 +56,7 @@ document.cookie
 // test1=hello;test2=world
 ```
 
-注意，等号两边不能有空格。另外，写入Cookie的时候，必须对分号、逗号和空格进行转义（它们都不允许作为Cookie的值），这可以用`encodeURIComponent`方法进行处理。
-
-`document.cookie`属性读写行为的差异，与服务器与浏览器之间的Cookie通信格式有关。浏览器向服务器发送Cookie的时候，是一行将所有Cookie全部发送。
+`document.cookie`属性读写行为的差异（一次可以读出全部Cookie，但是只能写入一个Cookie），与服务器与浏览器之间的Cookie通信格式有关。浏览器向服务器发送Cookie的时候，是一行将所有Cookie全部发送。
 
 ```http
 GET /sample_page.html HTTP/1.1
@@ -132,16 +160,21 @@ Cookie: key1=value1; key1=value2
 浏览器设置这些属性的写法如下。
 
 ```javascript
-var str = 'someCookieName=true';
-str += '; expires=Fri, 31 Dec 9999 23:59:59 GMT';
-str += '; path=/';
-
-document.cookie = str;
+document.cookie = 'fontSize=14; '
+  + 'expires=' + someDate.toGMTString() + '; '
+  + 'path=/subdirectory; '
+  + 'domain=*.example.com';
 ```
 
 另外，这些属性只能用来设置Cookie。一旦设置完成，就没有办法读取这些属性的值。
 
 删除一个Cookie的简便方法，就是设置`expires`属性等于0，或者等于一个过去的日期。
+
+```javascript
+document.cookie = 'fontSize=;expires=Thu, 01-Jan-1970 00:00:01 GMT';
+```
+
+上面代码中，名为`fontSize`的Cookie的值为空，过期时间设为1970年1月1月零点，就等同于删除了这个Cookie。
 
 ## Cookie的限制
 

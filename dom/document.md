@@ -323,7 +323,7 @@ var allSheets = [].slice.call(document.styleSheets);
 
 ### document.cookie
 
-`document.cookie`属性用来操作浏览器Cookie，详见《浏览器模型》一章的《Cookie》部分。
+`document.cookie`属性用来操作浏览器Cookie，详见《浏览器环境》一章的《Cookie》部分。
 
 ## document对象的方法
 
