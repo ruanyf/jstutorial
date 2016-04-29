@@ -1,25 +1,52 @@
 ---
-title: Ajax
+title: AJAX
 layout: page
 category: bom
 date: 2013-02-16
 modifiedOn: 2014-02-27
 ---
 
-Ajax指的是一种JavaScript在浏览器中的使用方法。它通过原生的`XMLHttpRequest`对象发出HTTP请求，得到服务器返回的数据后，再进行处理。
+浏览器与服务器之间，采用HTTP协议通信。用户在浏览器地址栏键入一个网址，或者通过网页表单向服务器提交内容，这时浏览器就会向服务器发出HTTP请求。
 
-Ajax可以是同步请求，也可以是异步请求。但是，大多数情况下，特指异步请求。因为同步的Ajax请求，对浏览器有”堵塞效应“。
+1999年，微软公司发布IE浏览器5.0版，第一次引入新功能：允许JavaScript脚本向服务器发起HTTP请求。这个功能当时并没有引起注意，直到2004年Gmail发布和2005年Google Map发布，才引起广泛重视。2005年2月，AJAX这个词第一次正式提出，指围绕这个功能进行开发的一整套做法。从此，AJAX成为脚本发起HTTP通信的代名词，W3C也在2006年发布了它的国际标准。
+
+具体来说，AJAX包括以下几个步骤。
+
+1. 创建AJAX对象
+1. 发出HTTP请求
+1. 接收服务器传回的数据
+1. 更新网页数据
+
+概括起来，就是一句话，AJAX通过原生的`XMLHttpRequest`对象发出HTTP请求，得到服务器返回的数据后，再进行处理。
+
+AJAX可以是同步请求，也可以是异步请求。但是，大多数情况下，特指异步请求。因为同步的Ajax请求，对浏览器有”堵塞效应“。
 
 ## XMLHttpRequest对象
 
-XMLHttpRequest对象用来在浏览器与服务器之间传送数据。它提供了一种方法，使得页面不用全部刷新，就可以从浏览器端获取新的数据。这意味着，通过XMLHttpRequest对象，可以每次只更新网页的一个部分，从而不打断用户正在做的事情。Ajax操作就是基于XMLHttpRequest对象的。
+`XMLHttpRequest`对象用来在浏览器与服务器之间传送数据。
+
+```javascript
+var ajax = new XMLHttpRequest();
+ajax.open('GET', 'http://www.example.com/page.php', true);
+```
+
+上面代码向指定的服务器网址，发出GET请求。
+
+然后，AJAX指定回调函数，监听通信状态（`readyState`属性）的变化。
+
+```javascript
+ajax.onreadystatechange = handleStateChange;
+```
+
+一旦拿到服务器返回的数据，AJAX不会刷新整个网页，而是只更新相关部分，从而不打断用户正在做的事情。
+
+注意，AJAX只能向同源网址（协议、域名、端口都相同）发出HTTP请求，如果发出跨源请求，就会报错（详见《同源政策》和《CORS机制》两节）。
 
 虽然名字里面有`XML`，但是实际上，XMLHttpRequest可以报送各种数据，包括字符串和二进制，而且除了HTTP，它还支持通过其他协议传送（比如File和FTP）。
 
 下面是`XMLHttpRequest`对象的典型用法。
 
 ```javascript
-// 新建一个XMLHttpRequest实例对象
 var xhr = new XMLHttpRequest();
 
 // 指定通信过程中状态改变时的回调函数
@@ -45,7 +72,7 @@ xhr.open('GET', '/endpoint', true);
 xhr.send(null);
 ```
 
-下面是发出同步请求的一个例子。
+`open`方法的第三个参数是一个布尔值，表示是否为异步请求。如果设为`false`，就表示这个请求是同步的，下面是一个例子。
 
 ```javascript
 var request = new XMLHttpRequest();
@@ -69,7 +96,17 @@ if (request.status === 200) {
 - 3，对应常量`LOADING`，表示正在接收服务器传来的body部分的数据，如果`responseType`属性是`text`或者空字符串，`responseText`就会包含已经收到的部分信息。
 - 4，对应常量`DONE`，表示服务器数据已经完全接收，或者本次接收已经失败了。
 
-在通信过程中，每当发生状态变化的时候，readyState属性的值就会发生改变。这个值每一次变化，都会触发readyStateChange事件。
+在通信过程中，每当发生状态变化的时候，`readyState`属性的值就会发生改变。这个值每一次变化，都会触发`readyStateChange`事件。
+
+```javascript
+if (ajax.readyState == 4) {
+  // Handle the response.
+} else {
+ // Show the 'Loading...' message or do nothing.
+}
+```
+
+上面代码表示，只有`readyState`变为4时，才算确认请求已经成功，其他值都表示请求还在进行中。
 
 ### onreadystatechange
 
@@ -150,19 +187,61 @@ XHR2支持Ajax的返回类型为文档，即xhr.responseType="document" 。这�
 
 ### responseText
 
-`responseText`属性为只读，返回接收到的字符串。如果本次请求没有成功或者数据不完整，该属性就会等于`null`。
+`responseText`属性返回从服务器接收到的字符串，该属性为只读。如果本次请求没有成功或者数据不完整，该属性就会等于`null`。
+
+如果服务器返回的数据格式是JSON，就可以使用`responseText`属性。
+
+```javascript
+var data = ajax.responseText;
+data = JSON.parse(data);
+```
 
 ### responseXML
 
-`responseXML`属性为只读，返回接收到的Document对象。如果本次请求没有成功或者数据不完整ontaining，或者不能被解析为XML或HTML，该属性等于null。
+`responseXML`属性返回从服务器接收到的Document对象，该属性为只读。如果本次请求没有成功，或者数据不完整，或者不能被解析为XML或HTML，该属性等于null。
 
-返回的数据会被解析为`text/xml`类型的数据流。如果`responseType`设为`document`，且这个请求是异步的，则返回的数据会被解析为`text/html`数据流。
+返回的数据会被直接解析为DOM对象。
+
+```javascript
+/* 返回的XML文件如下
+  <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+  <book>
+      <chapter id="1">(Re-)Introducing JavaScript</chapter>
+      <chapter id="2">JavaScript in Action</chapter>
+  </book>
+*/
+
+var data = ajax.responseXML;
+var chapters = data.getElementsByTagName('chapter');
+```
 
 如果服务器返回的数据，没有明示`Content-Type`头信息等于`text/xml`，可以使用`overrideMimeType()`方法，指定XMLHttpRequest对象将返回的数据解析为XML。
 
 ### status
 
 `status`属性为只读属性，表示本次请求所得到的HTTP状态码，它是一个整数。一般来说，如果通信成功的话，这个状态码是200。
+
+- 200, OK，访问正常
+- 301, Moved Permanently，永久移动
+- 304, Not Modified，未修改
+- 307, Temporary Redirect，暂时重定向
+- 401, Unauthorized，未授权
+- 403, Forbidden，禁止访问
+- 404, Not Found，未发现指定网址
+- 500, Internal Server Error，服务器发生错误
+
+基本上，只有2xx和304的状态码，表示服务器返回是正常状态。
+
+```javascript
+if (ajax.readyState == 4) {
+  if ( (ajax.status >= 200 && ajax.status < 300)
+    || (ajax.status == 304) ) {
+    // Handle the response.
+  } else {
+    // Status error!
+  }
+}
+```
 
 ### statusText
 
@@ -242,6 +321,18 @@ Access-Control-Allow-Credentials: true
 
 `abort`方法用来终止已经发出的HTTP请求。
 
+```javascript
+ajax.open('GET', 'http://www.example.com/page.php', true);
+var ajaxAbortTimer = setTimeout(function() {
+  if (ajax) {
+    ajax.abort();
+    ajax = null;
+  }
+}, 5000);
+```
+
+上面代码在发出5秒之后，终止一个AJAX请求。
+
 ### getAllResponseHeaders()
 
 `getAllResponseHeaders`方法返回服务器发来的所有HTTP头信息。格式为字符串，每个头信息之间使用`CRLF`分隔，如果没有受到服务器回应，该属性返回`null`。
@@ -277,11 +368,11 @@ void open(
 );
 ```
 
-- method：表示HTTP动词，比如“GET”、“POST”、“PUT”和“DELETE”。
-- url: 表示请求发送的网址。
-- async: 格式为布尔值，默认为`true`，表示请求是否为异步。如果设为`false`，则`send()`方法只有等到收到服务器返回的结果，才会有返回值。
-- user：表示用于认证的用户名，默认为空字符串。
-- password：表示用于认证的密码，默认为空字符串。
+- `method`：表示HTTP动词，比如“GET”、“POST”、“PUT”和“DELETE”。
+- `url`: 表示请求发送的网址。
+- `async`: 格式为布尔值，默认为`true`，表示请求是否为异步。如果设为`false`，则`send()`方法只有等到收到服务器返回的结果，才会有返回值。
+- `user`：表示用于认证的用户名，默认为空字符串。
+- `password`：表示用于认证的密码，默认为空字符串。
 
 如果对使用过`open()`方法的请求，再次使用这个方法，等同于调用`abort()`。
 
@@ -312,11 +403,37 @@ if (request.status === 200) {
 
 `send`方法用于实际发出HTTP请求。如果不带参数，就表示HTTP请求只包含头信息，也就是只有一个URL，典型例子就是GET请求；如果带有参数，就表示除了头信息，还带有包含具体数据的信息体，典型例子就是POST请求。
 
+```javascript
+ajax.open('GET'
+  , 'http://www.example.com/somepage.php?id=' + encodeURIComponent(id)
+  , true
+);
+
+// 等同于
+var data = 'id=' + encodeURIComponent(id));
+ajax.open('GET', 'http://www.example.com/somepage.php', true);
+ajax.send(data);
+```
+
+上面代码中，`GET`请求的参数，可以作为查询字符串附加在URL后面，也可以作为`send`方法的参数。
+
+下面是发送POST请求的例子。
+
+```javascript
+var data = 'email='
+  + encodeURIComponent(email)
+  + '&password='
+  + encodeURIComponent(password);
+ajax.open('POST', 'http://www.example.com/somepage.php', true);
+ajax.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+ajax.send(data);
+```
+
 如果请求是异步的（默认为异步），该方法在发出请求后会立即返回。如果请求为同步，该方法只有等到收到服务器回应后，才会返回。
 
 注意，所有XMLHttpRequest的监听事件，都必须在`send()`方法调用之前设定。
 
-该方法的参数就是发送的数据。多种格式的数据，都可以作为它的参数。
+`send`方法的参数就是发送的数据。多种格式的数据，都可以作为它的参数。
 
 ```javascript
 void send();

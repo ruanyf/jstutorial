@@ -219,6 +219,27 @@ UserError.prototype.toString = function (){
 throw new UserError("出错了！");
 ```
 
+可以通过自定义一个`assert`函数，规范化`throw`抛出的信息。
+
+```javascript
+function assert(expression, message) {
+  if (!expression)
+    throw {name: 'Assertion Exception', message: message};
+}
+```
+
+上面代码定义了一个`assert`函数，它接受一个表达式和一个字符串作为参数。一旦表达式不为真，就抛出指定的字符串。它的用法如下。
+
+```javascript
+assert(typeof myVar != 'undefined', 'myVar is undefined!');
+```
+
+`console`对象的`assert`方法，与上面函数的工作机制一模一样，所以可以直接使用。
+
+```javascript
+console.assert(typeof myVar != 'undefined', 'myVar is undefined!');
+```
+
 ## try...catch结构
 
 为了对错误进行处理，需要使用`try...catch`结构。

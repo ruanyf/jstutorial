@@ -184,35 +184,37 @@ var actor = _new(Person, "张三", 28);
 
 ## instanceof运算符
 
-instanceof运算符用来确定一个对象是否为某个构造函数的实例。
+`instanceof`运算符返回一个布尔值，表示一个对象是否为某个构造函数的实例。
 
 ```javascript
 var v = new Vehicle();
-
-v instanceof Vehicle
-// true
+v instanceof Vehicle // true
 ```
 
-`instanceof`运算符的左边放置对象，右边放置构造函数。在JavaScript之中，只要是对象，就有对应的构造函数。因此，instanceof运算符可以用来判断值的类型。
+`instanceof`运算符的左边是对象，右边是构造函数。
+
+在JavaScript之中，只要是对象，就有对应的构造函数。因此，`instanceof`运算符可以用来判断值的类型。
 
 ```javascript
 [1, 2, 3] instanceof Array // true
-
 ({}) instanceof Object // true
 ```
 
-上面代码表示数组和对象则分别是Array对象和Object对象的实例。最后那一行的空对象外面，之所以要加括号，是因为如果不加，JavaScript引擎会把一对大括号解释为一个代码块，而不是一个对象，从而导致这一行代码被解释为“{}; instanceof Object”，引擎就会报错。
+上面代码表示数组和对象则分别是`Array`对象和`Object`对象的实例。最后那一行的空对象外面，之所以要加括号，是因为如果不加，JavaScript引擎会把一对大括号解释为一个代码块，而不是一个对象，从而导致这一行代码被解释为`{}; instanceof Object`，引擎就会报错。
 
-需要注意的是，由于原始类型的值不是对象，所以不能使用instanceof运算符判断类型。
+注意，这个运算符只能用于对象，不能用于原始类型的值。
 
 ```javascript
-"" instanceof String // false
-1 instanceof Number // false
+var s = 'hello';
+s instanceof String // false
+
+var s = new String('hello');
+s instanceof String // true
 ```
 
-上面代码中，字符串不是String对象的实例（因为字符串不是对象），数值1也不是Number对象的实例（因为数值1不是对象）。
+上面代码中，字符串不是`String`对象的实例（因为字符串不是对象），所以返回`false`，而字符串对象是`String`对象的实例，所以返回`true`。
 
-如果存在继承关系，也就是某个对象可能是多个构造函数的实例，那么instanceof运算符对这些构造函数都返回true。
+如果存在继承关系，也就是说，`a`是`A`的实例，而`A`继承了`B`，那么`instanceof`运算符对`A`和`B`都返回`true`。
 
 ```javascript
 var a = [];
@@ -221,7 +223,19 @@ a instanceof Array // true
 a instanceof Object // true
 ```
 
-上面代码表示，a是一个数组，所以它是Array的实例；同时，a也是一个对象，所以它也是Object的实例。
+上面代码表示，`a`是一个数组，所以它是`Array`的实例；同时，`Array`继承了`Object`，所以`a`也是`Object`的实例。
+
+`instanceof`背后用的是`constructor`属性，但是又不完全一样。
+
+```javascript
+var s = 'hello';
+s.constructor === String // true
+
+var s = new String('hello');
+s.constructor === String // true
+```
+
+上面代码中，原始类型的字符串后面如果是点运算符，就会自动转为一个临时生成的字符串对象，因此会有`constructor`属性。
 
 利用`instanceof`运算符，还可以巧妙地解决，调用构造函数时，忘了加`new`命令的问题。
 
@@ -231,7 +245,9 @@ function Fubar (foo, bar) {
     this._foo = foo;
     this._bar = bar;
   }
-  else return new Fubar(foo, bar);
+  else {
+    return new Fubar(foo, bar);
+  }
 }
 ```
 
