@@ -184,14 +184,14 @@ var actor = _new(Person, "张三", 28);
 
 ## instanceof运算符
 
-`instanceof`运算符返回一个布尔值，表示一个对象是否为某个构造函数的实例。
+`instanceof`运算符返回一个布尔值，表示一个对象是否由某个构造函数创建。
 
 ```javascript
 var v = new Vehicle();
 v instanceof Vehicle // true
 ```
 
-`instanceof`运算符的左边是对象，右边是构造函数。
+`instanceof`运算符的左边是实例对象，右边是构造函数。
 
 在JavaScript之中，只要是对象，就有对应的构造函数。因此，`instanceof`运算符可以用来判断值的类型。
 
@@ -213,6 +213,13 @@ s instanceof String // true
 ```
 
 上面代码中，字符串不是`String`对象的实例（因为字符串不是对象），所以返回`false`，而字符串对象是`String`对象的实例，所以返回`true`。
+
+此外，`undefined`和`null`不是对象，所以`instanceOf`运算符总是返回`false`。
+
+```javascript
+undefined instanceof Object // false
+null instanceof Object // false
+```
 
 如果存在继承关系，也就是说，`a`是`A`的实例，而`A`继承了`B`，那么`instanceof`运算符对`A`和`B`都返回`true`。
 
