@@ -88,12 +88,14 @@ function notStrict() {
 
 ### 字符串的length属性不可写
 
-严格模式下，设置字符串的length属性，会报错。
+严格模式下，设置字符串的`length`属性，会报错。
 
 ```javascript
 'use strict';
 'abc'.length = 5;
 ```
+
+实际上，严格模式下，对只读属性赋值，或者删除不可配置（nonconfigurable）属性都会报错。
 
 ### eval、arguments不可用作函数名
 
@@ -201,30 +203,35 @@ v = 1; // 报错，v未声明
 for (i = 0; i < 2; i++) { // 报错，i未声明
   // ...
 }
+
+function f() {
+  x = 123;
+}
+f() // 报错，未声明就创建一个全局变量
 ```
 
 因此，严格模式下，变量都必须先用`var`命令声明，然后再使用。
 
 ### 禁止this关键字指向全局对象
 
+正常模式下，函数内部的`this`可能会指向全局对象，严格模式禁止这种用法，避免无意间创造全局变量。
+
 ```javascript
 // 正常模式
 function f() {
-  return !this;
+  console.log(this === window);
 }
-// 返回false
-// 因为“this”指向全局对象，“!this”就是false
+f() // true
 
 // 严格模式
-function f(){
+function f() {
   'use strict';
-  return !this;
+  console.log(this === undefined);
 }
-// 返回true
-// 因为严格模式下，this的值为undefined，所以"!this"为true。
+f() // true
 ```
 
-因此，使用构造函数时，如果忘了加`new`，`this`不再指向全局对象，而是报错。
+这种限制对于构造函数尤其有用。使用构造函数时，有时忘了加`new`，这时`this`不再指向全局对象，而是报错。
 
 ```javascript
 function f() {
@@ -235,7 +242,7 @@ function f() {
 f();// 报错，this未定义
 ```
 
-由于严格模式下，函数直接调用时（不使用`new`调用），函数内部的`this`表示`undefined`，因此可以用`call`、`apply`和`bind`方法，将任意值绑定在`this`上面。
+严格模式下，函数直接调用时（不使用`new`调用），函数内部的`this`表示`undefined`，因此可以用`call`、`apply`和`bind`方法，将任意值绑定在`this`上面。
 
 ```javascript
 'use strict';
@@ -381,7 +388,7 @@ JavaScript语言的下一个版本是ECMAScript 6，为了平稳过渡，严格�
 
 ### 函数必须声明在顶层
 
-将来JavaScript的新版本会引入“块级作用域”。为了与新版本接轨，严格模式只允许在全局作用域或函数作用域的顶层声明函数。也就是说，不允许在非函数的代码块内声明函数。
+JavaScript的新版本ES6会引入“块级作用域”。为了与新版本接轨，严格模式只允许在全局作用域或函数作用域的顶层声明函数。也就是说，不允许在非函数的代码块内声明函数。
 
 ```javascript
 "use strict";

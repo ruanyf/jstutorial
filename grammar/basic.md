@@ -253,7 +253,11 @@ a // 1
 
 ```javascript
 if (expression)
-  statement
+  statement;
+
+// 或者
+
+if (expression) statement;
 ```
 
 上面是`if`结构的基本形式。需要注意的是，expression（表达式）必须放在圆括号中，表示对表达式求值。如果结果为`true`，就执行紧跟在后面的语句（statement）；如果结果为`false`，则跳过statement的部分。
@@ -265,7 +269,7 @@ if (m === 3)
 
 上面代码表示，只有在`m`等于3时，才会将其值加上1。
 
-这种写法要求条件表达式后面只能有一个语句。如果想执行多个语句，必须在`if`的条件判断之后，加上大括号。
+这种写法要求条件表达式后面只能有一个语句。如果想执行多个语句，必须在`if`的条件判断之后，加上大括号，表示代码块。
 
 ```javascript
 if (m === 3) {
@@ -463,7 +467,7 @@ function getItemPricing(customer, item) {
 
 如果价格档次再多一些，对象属性写法的简洁优势就更明显了。
 
-### 三元运算符`?:`
+### 三元运算符 ?:
 
 JavaScript还有一个三元运算符（即该运算符需要三个运算子）`?:`，也可以用于逻辑判断。
 
@@ -520,14 +524,18 @@ var msg = 'The number '
 
 ```javascript
 while (expression)
-  statement
+  statement;
+
+// 或者
+
+while (expression) statement;
 ```
 
 `while`语句的循环条件是一个表达式（express），必须放在圆括号中。代码块部分，如果只有一条语句（statement），可以省略大括号，否则就必须加上大括号。
 
 ```javascript
 while (expression) {
-  statement
+  statement;
 }
 ```
 
@@ -538,7 +546,7 @@ var i = 0;
 
 while (i < 100) {
   console.log('i当前为：' + i);
-  i++;
+  i += 1;
 }
 ```
 
