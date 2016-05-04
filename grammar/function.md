@@ -845,64 +845,67 @@ function(){ /* code */ }();
 // SyntaxError: Unexpected token (
 ```
 
-产生这个错误的原因是，JavaScript引擎看到`function`关键字之后，认为后面跟的是函数定义语句，不应该以圆括号结尾。
+产生这个错误的原因是，`function`这个关键字即可以当作语句，也可以当作表达式。
 
-解决方法就是让引擎知道，圆括号前面的部分不是函数定义语句，而是一个表达式，可以对此进行运算。你可以这样写：
+```javascript
+// 语句
+function f() {}
 
-{% highlight javascript %}
+// 表达式
+var f = function f() {}
+```
 
-(function(){ /* code */ }()); 
+为了避免解析上的歧义，JavaScript引擎规定，如果`function`关键字出现在行首，一律解释成语句。因此，JavaScript引擎看到行首是`function`关键字之后，认为这一段都是函数的定义，不应该以圆括号结尾，所以就报错了。
 
+解决方法就是不要让`function`出现在行首，让引擎将其理解成一个表达式。最简单的处理，就是将其放在一个圆括号里面。
+
+```javascript
+(function(){ /* code */ }());
 // 或者
+(function(){ /* code */ })();
+```
 
-(function(){ /* code */ })(); 
+上面两种写法都是以圆括号开头，引擎就会认为后面跟的是一个表示式，而不是函数定义语句，所以就避免了错误。这就叫做“立即调用的函数表达式”（Immediately-Invoked Function Expression），简称IIFE。
 
-{% endhighlight %}
+注意，上面两种写法最后的分号都是必须的。如果省略分号，遇到连着两个IIFE，可能就会报错。
 
-这两种写法都是以圆括号开头，引擎就会认为后面跟的是一个表示式，而不是函数定义，所以就避免了错误。这就叫做“立即调用的函数表达式”（Immediately-Invoked Function Expression），简称IIFE。
+```javascript
+// 报错
+(function(){ /* code */ }())
+(function(){ /* code */ }())
+```
 
-> 注意，上面的两种写法的结尾，都必须加上分号。
+上面代码的两行之间没有分号，JavaScript会将它们连在一起解释，将第二行解释为第一行的参数。
 
 推而广之，任何让解释器以表达式来处理函数定义的方法，都能产生同样的效果，比如下面三种写法。
 
-{% highlight javascript %}
-
+```javascript
 var i = function(){ return 10; }();
-
 true && function(){ /* code */ }();
-
 0, function(){ /* code */ }();
+```
 
-{% endhighlight %}
+甚至像下面这样写，也是可以的。
 
-甚至像这样写
-
-{% highlight javascript %}
-
+```javascript
 !function(){ /* code */ }();
-
 ~function(){ /* code */ }();
-
 -function(){ /* code */ }();
-
 +function(){ /* code */ }();
+```
 
-{% endhighlight %}
+`new`关键字也能达到这个效果。
 
-new关键字也能达到这个效果。
-
-{% highlight javascript %}
-
+```javascript
 new function(){ /* code */ }
 
-new function(){ /* code */ }() // 只有传递参数时，才需要最后那个圆括号。
-
-{% endhighlight %}
+new function(){ /* code */ }()
+// 只有传递参数时，才需要最后那个圆括号
+```
 
 通常情况下，只对匿名函数使用这种“立即执行的函数表达式”。它的目的有两个：一是不必为函数命名，避免了污染全局变量；二是IIFE内部形成了一个单独的作用域，可以封装一些外部无法读取的私有变量。
 
-{% highlight javascript %}
-
+```javascript
 // 写法一
 var tmp = newData;
 processData(tmp);
@@ -913,69 +916,58 @@ storeData(tmp);
   var tmp = newData;
   processData(tmp);
   storeData(tmp);
-}()); 
-
-{% endhighlight %}
+}());
+```
 
 上面代码中，写法二比写法一更好，因为完全避免了污染全局变量。
 
 ## eval命令
 
-eval命令的作用是，将字符串当作语句执行。
+`eval`命令的作用是，将字符串当作语句执行。
 
-{% highlight javascript %}
-
+```javascript
 eval('var a = 1;');
-
 a // 1
+```
 
-{% endhighlight %}
+上面代码将字符串当作语句运行，生成了变量`a`。
 
-上面代码将字符串当作语句运行，生成了变量a。
+放在`eval`中的字符串，应该有独自存在的意义，不能用来与`eval`以外的命令配合使用。举例来说，下面的代码将会报错。
 
-放在eval中的字符串，应该有独自存在的意义，不能用来与eval以外的命令配合使用。举例来说，下面的代码将会报错。
-
-{% highlight javascript %}
-
+```javascript
 eval('return;');
+```
 
-{% endhighlight %}
+由于`eval`没有自己的作用域，都在当前作用域内执行，因此可能会修改其他外部变量的值，造成安全问题。
 
-由于eval没有自己的作用域，都在当前作用域内执行，因此可能会修改其他外部变量的值，造成安全问题。
-
-{% highlight javascript %}
-
+```javascript
 var a = 1;
 eval('a = 2');
 
 a // 2
+```
 
-{% endhighlight %}
+上面代码中，`eval`命令修改了外部变量a的值。由于这个原因，所以`eval`有安全风险，如果无法做到作用域隔离，最好不要使用。此外，`eval`的命令字符串不会得到JavaScript引擎的优化，运行速度较慢，也是另一个不应该使用它的理由。通常情况下，`eval`最常见的场合是解析JSON数据字符串，正确的做法是这时应该使用浏览器提供的`JSON.parse`方法。
 
-上面代码中，eval命令修改了外部变量a的值。由于这个原因，所以eval有安全风险，无法做到作用域隔离，最好不要使用。此外，eval的命令字符串不会得到JavaScript引擎的优化，运行速度较慢，也是另一个不应该使用它的理由。通常情况下，eval最常见的场合是解析JSON数据字符串，正确的做法是这时应该使用浏览器提供的JSON.parse方法。
+ECMAScript 5将`eval`的使用分成两种情况，像上面这样的调用，就叫做“直接使用”，这种情况下`eval`的作用域就是当前作用域（即全局作用域或函数作用域）。另一种情况是，`eval`不是直接调用，而是“间接调用”，此时eval的作用域总是全局作用域。
 
-ECMAScript 5将eval的使用分成两种情况，像上面这样的调用，就叫做“直接使用”，这种情况下eval的作用域就是当前作用域（即全局作用域或函数作用域）。另一种情况是，eval不是直接调用，而是“间接调用”，此时eval的作用域总是全局作用域。
-
-{% highlight javascript %}
-
+```javascript
 var a = 1;
 
 function f(){
-	var a = 2;
-	var e = eval;
-	e('console.log(a)');
+  var a = 2;
+  var e = eval;
+  e('console.log(a)');
 }
 
 f() // 1
+```
 
-{% endhighlight %}
-
-上面代码中，eval是间接调用，所以即使它是在函数中，它的作用域还是全局作用域，因此输出的a为全局变量。
+上面代码中，`eval`是间接调用，所以即使它是在函数中，它的作用域还是全局作用域，因此输出的`a`为全局变量。
 
 eval的间接调用的形式五花八门，只要不是直接调用，几乎都属于间接调用。
 
-{% highlight javascript %}
-
+```javascript
 eval.call(null, '...')
 window.eval('...')
 (1, eval)('...')
@@ -991,15 +983,13 @@ this['eval']('...')
 [eval][0]('...')
 eval.call(this, '...')
 eval('eval')('...')
+```
 
-{% endhighlight %}
+上面这些形式都是`eval`的间接调用，因此它们的作用域都是全局作用域。
 
-上面这些形式都是eval的间接调用，因此它们的作用域都是全局作用域。
+与`eval`作用类似的还有`Function`构造函数。利用它生成一个函数，然后调用该函数，也能将字符串当作命令执行。
 
-与eval作用类似的还有Function构造函数。利用它生成一个函数，然后调用该函数，也能将字符串当作命令执行。
-
-{% highlight javascript %}
-
+```javascript
 var jsonp = 'foo({"id":42})';
 
 var f = new Function( "foo", jsonp );
@@ -1011,10 +1001,9 @@ var f = new Function( "foo", jsonp );
 f(function(json){
   console.log( json.id ); // 42
 })
+```
 
-{% endhighlight %}
-
-上面代码中，jsonp是一个字符串，Function构造函数将这个字符串，变成了函数体。调用该函数的时候，jsonp就会执行。这种写法的实质是将代码放到函数作用域执行，避免对全局作用域造成影响。
+上面代码中，`jsonp`是一个字符串，`Function`构造函数将这个字符串，变成了函数体。调用该函数的时候，`jsonp`就会执行。这种写法的实质是将代码放到函数作用域执行，避免对全局作用域造成影响。
 
 ## 参考链接
 
