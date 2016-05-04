@@ -153,7 +153,7 @@ exec方法的返回数组还包含以下两个属性：
 
 ```javascript
 var r = /a(b+)a/;
-var arr = regex.exec("_abbba_aba_");
+var arr = r.exec("_abbba_aba_");
 
 arr // ["abbba", "bbb"]
 
