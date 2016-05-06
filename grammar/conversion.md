@@ -6,43 +6,57 @@ date: 2013-04-13
 modifiedOn: 2013-12-05
 ---
 
-JavaScript是一种动态类型语言，变量是没有类型的，可以随时赋予任意值。但是，数据本身和各种运算是有类型的，因此运算时变量需要转换类型。大多数情况下，这种数据类型转换是自动的，但是有时也需要手动强制转换。
+JavaScript是一种动态类型语言，变量没有类型限制，可以随时赋予任意值。
+
+```javascript
+var x = y ? 1 : 'a';
+```
+
+上面代码中，变量`x`到底是数值还是字符串，取决于另一个变量`y`的值。只有在代码运行时，才可能知道`x`的类型。
+
+虽然变量没有类型，但是数据本身和各种运算符是有类型的。如果运算符发现，数据的类型与预期不符，就会自动转换类型。比如，减法运算符预期两侧的运算子应该是数值，如果不是，就会自动将它们转为数值。
+
+```javascript
+'4' - '3' // 1
+```
+
+上面代码中，虽然是两个字符串相减，但是依然会得到结果`1`，原因就在于JavaScript将它们自动转为了数值。
+
+本节讲解数据类型自动转换的规则，在此之前，先讲解如何手动强制转换数据类型。
 
 ## 强制转换
 
 强制转换主要指使用`Number`、`String`和`Boolean`三个构造函数，手动将各种类型的值，转换成数字、字符串或者布尔值。
 
-### Number函数：强制转换成数值
+### Number()：强制转换成数值
 
 使用`Number`函数，可以将任意类型的值转化成数字。
 
 **（1）原始类型值的转换规则**
 
-- **数值**：转换后还是原来的值。
+```javascript
+// 数值转换后还是原来的值
+Number(324) // 324
 
-- **字符串**：如果可以被解析为数值，则转换为相应的数值，否则得到NaN。空字符串转为0。
+// 字符串如果可以被解析为数值，则转换为相应的数值
+Number('324') // 324
 
-- **布尔值**：true转成1，false转成0。
+// 字符串如果不可以被解析为数值，返回NaN
+Number('324abc') // NaN
 
-- **undefined**：转成NaN。
+// 空字符串转为0
+Number('') // 0
 
-- **null**：转成0。
-
-{% highlight javascript %}
-
-Number("324") // 324
-
-Number("324abc") // NaN
-
-Number("") // 0
-
+// 布尔值true转成1，false转成0
+Number(true) // 1
 Number(false) // 0
 
+// undefined转成NaN
 Number(undefined) // NaN
 
+// null转成0
 Number(null) // 0
-
-{% endhighlight %}
+```
 
 `Number`函数将字符串转为数值，要比`parseInt`函数严格很多。基本上，只要有一个字符无法转成数值，整个字符串就会被转为`NaN`。
 
@@ -61,77 +75,80 @@ Number('\t\v\r12.34\n') // 12.34
 
 **（2）对象的转换规则**
 
-对象的转换规则比较复杂。
+对象的转换规则比较复杂，JavaScript的内部处理步骤如下。
 
-1. 先调用对象自身的valueOf方法，如果该方法返回原始类型的值（数值、字符串和布尔值），则直接对该值使用Number方法，不再进行后续步骤。
+1. 调用对象自身的`valueOf`方法，如果返回原始类型的值（数值、字符串和布尔值），则直接对该值使用`Number`函数，不再进行后续步骤。
 
-2. 如果valueOf方法返回复合类型的值，再调用对象自身的toString方法，如果toString方法返回原始类型的值，则对该值使用Number方法，不再进行后续步骤。
+2. 如果`valueOf`方法返回的是复合类型的值，调用对象自身的`toString`方法，如果返回原始类型的值，则对该值使用`Number`函数，不再进行后续步骤。
 
-3. 如果toString方法返回的是复合类型的值，则报错。
+3. 如果`toString`方法返回的是复合类型的值，则报错。
 
-{% highlight javascript %}
-
-Number({a:1})
+```javascript
+Number({ a: 1 })
 // NaN
 
-{% endhighlight %}
+// 等同于
 
-上面代码等同于
-
-{% highlight javascript %}
-
-if (typeof {a:1}.valueOf() === 'object'){
-	Number({a:1}.toString());
+if (typeof {a: 1}.valueOf() === 'object') {
+  Number({a: 1}.toString());
 } else {
-	Number({a:1}.valueOf());
+  Number({a: 1}.valueOf());
 }
+```
 
-{% endhighlight %}
+上面代码的`valueOf`方法返回对象本身（`{a: 1}`），所以对`toString`方法的返回值`[object Object]`使用`Number`函数，得到`NaN`。
 
-上面代码的valueOf方法返回对象本身（{a:1}），所以对toString方法的返回值“[object Object]”使用Number方法，得到NaN。
+如果`toString`方法返回的不是原始类型的值，结果就会报错。
 
-如果toString方法返回的不是原始类型的值，结果就会报错。
-
-{% highlight javascript %}
-
+```javascript
 var obj = {
-	valueOf: function () {
-            console.log("valueOf");
-            return {};
-	},
-	toString: function () {
-            console.log("toString");
-            return {}; 
-	}
+  valueOf: function () {
+    return {};
+  },
+  toString: function () {
+    return {};
+  }
 };
 
 Number(obj)
 // TypeError: Cannot convert object to primitive value
+```
 
-{% endhighlight %}
+上面代码的`valueOf`和`toString`方法，返回的都是对象，所以转成数值时会报错。
 
-上面代码的valueOf和toString方法，返回的都是对象，所以转成数值时会报错。
+从上面的例子可以看出，`valueOf`和`toString`方法，都是可以自定义的。
 
-从上面的例子可以看出，valueOf和toString方法，都是可以自定义的。
-
-{% highlight javascript %}
-
-Number({valueOf:function (){return 2;}})
+```javascript
+Number({
+  valueOf: function () {
+    return 2;
+  }
+})
 // 2
 
-Number({toString:function(){return 3;}})
+Number({
+  toString: function () {
+    return 3;
+  }
+})
 // 3
 
-Number({valueOf:function (){return 2;},toString:function(){return 3;}})
+Number({
+  valueOf: function () {
+    return 2;
+  },
+  toString: function () {
+    return 3;
+  }
+})
 // 2
+```
 
-{% endhighlight %}
-
-上面代码对三个对象使用Number方法。第一个对象返回valueOf方法的值，第二个对象返回toString方法的值，第三个对象表示valueOf方法先于toString方法执行。
+上面代码对三个对象使用`Number`函数。第一个对象返回`valueOf`方法的值，第二个对象返回`toString`方法的值，第三个对象表示`valueOf`方法先于`toString`方法执行。
 
 ### String函数：强制转换成字符串
 
-使用String函数，可以将任意类型的值转化成字符串。规则如下：
+使用`String`函数，可以将任意类型的值转化成字符串。规则如下：
 
 **（1）原始类型值的转换规则**
 
@@ -171,21 +188,17 @@ String(null) // "null"
 
 String方法的这种过程正好与Number方法相反。
 
-{% highlight javascript %}
-
-String({a:1})
+```javascript
+String({a: 1})
 // "[object Object]"
-
-{% endhighlight %}
+```
 
 上面代码相当于下面这样。
 
-{% highlight javascript %}
-
-String({a:1}.toString())
+```javascript
+String({a: 1}.toString())
 // "[object Object]"
-
-{% endhighlight %}
+```
 
 如果toString方法和valueOf方法，返回的都不是原始类型的值，则String方法报错。
 
@@ -209,8 +222,7 @@ String(obj)
 
 下面是一个自定义toString方法的例子。
 
-{% highlight javascript %}
-
+```javascript
 String({toString:function(){return 3;}})
 // "3"
 
@@ -219,10 +231,9 @@ String({valueOf:function (){return 2;}})
 
 String({valueOf:function (){return 2;},toString:function(){return 3;}})
 // "3"
+```
 
-{% endhighlight %}
-
-上面代码对三个对象使用String方法。第一个对象返回toString方法的值（数值3），然后对其使用String方法，得到字符串“3”；第二个对象返回的还是toString方法的值（"[object Object]"），这次直接就是字符串；第三个对象表示toString方法先于valueOf方法执行。
+上面代码对三个对象使用String方法。第一个对象返回toString方法的值（数值3），然后对其使用String方法，得到字符串“3”；第二个对象返回的还是toString方法的值（`[object Object]`），这次直接就是字符串；第三个对象表示toString方法先于valueOf方法执行。
 
 ### Boolean函数：强制转换成布尔值
 
@@ -264,24 +275,19 @@ Boolean(new Boolean(false))
 
 {% endhighlight %}
 
-请注意，空对象{}和空数组[]也会被转成true。
+请注意，空对象`{}`和空数组`[]`也会被转成`true`。
 
-{% highlight javascript %}
-
+```javascript
 Boolean([]) // true
-
 Boolean({}) // true
-
-{% endhighlight %}
+```
 
 ## 自动转换
 
-当遇到以下几种情况，JavaScript会自动转换数据类型：
+当遇到以下几种情况，JavaScript会自动转换数据类型。
 
 - 不同类型的数据进行互相运算；
-
 - 对非布尔值类型的数据求布尔值;
-
 - 对非数值类型的数据使用一元运算符（即“+”和“-”）。
 
 ### 自动转换为布尔值
@@ -312,8 +318,7 @@ if (!undefined && !null && !0 && !NaN && !''){
 
 字符串的自动转换，主要发生在加法运算时。当一个值为字符串，另一个值为非字符串，则后者转为字符串。
 
-{% highlight javascript %}
-
+```javascript
 '5' + 1 // '51'
 '5' + true // "5true"
 '5' + false // "5false"
@@ -322,8 +327,19 @@ if (!undefined && !null && !0 && !NaN && !''){
 '5' + function (){} // "5function (){}"
 '5' + undefined // "5undefined"
 '5' + null // "5null"
+```
 
-{% endhighlight %}
+这种自动转换很容易出错。
+
+```javascript
+var obj = {
+  width: '100'
+};
+
+obj.width + 20 // "10020"
+```
+
+上面代码中，开发者可能期望的是返回`120`，但是由于自动转换，实际上返回了一个字符`10020`。
 
 ### 自动转换为数值
 

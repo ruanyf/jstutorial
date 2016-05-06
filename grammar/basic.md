@@ -904,20 +904,16 @@ undefined == null
 
 既然含义与用法都差不多，为什么要同时设置两个这样的值，这不是无端增加复杂度，令初学者困扰吗？这与历史原因有关。
 
-1995年JavaScript诞生时，最初像Java一样，只设置了`null`作为表示"无"的值。根据C语言的传统，`null`被设计成可以自动转为0。
+1995年JavaScript诞生时，最初像Java一样，只设置了`null`作为表示"无"的值。根据C语言的传统，`null`被设计成可以自动转为`0`。
 
 ```javascript
 Number(null) // 0
 5 + null // 5
 ```
 
-但是，JavaScript的设计者Brendan Eich，觉得这样做还不够，有两个原因。
+但是，JavaScript的设计者Brendan Eich，觉得这样做还不够，有两个原因。首先，`null`像在Java里一样，被当成一个对象。但是，JavaScript的值分成原始类型和合成类型两大类，Brendan Eich觉得表示"无"的值最好不是对象。其次，JavaScript的最初版本没有包括错误处理机制，发生数据类型不匹配时，往往是自动转换类型或者默默地失败。Brendan Eich觉得，如果`null`自动转为0，很不容易发现错误。
 
-首先，null像在Java里一样，被当成一个对象。但是，JavaScript的数据类型分成原始类型和合成类型两大类，Brendan Eich觉得表示"无"的值最好不是对象。
-
-其次，JavaScript的最初版本没有包括错误处理机制，发生数据类型不匹配时，往往是自动转换类型或者默默地失败。Brendan Eich觉得，如果`null`自动转为0，很不容易发现错误。
-
-因此，Brendan Eich又设计了一个`undefined`。他是这样区分的：`null`是一个表示"无"的对象，转为数值时为0；`undefined`是一个表示"无"的原始值，转为数值时为`NaN`。
+因此，Brendan Eich又设计了一个`undefined`。他是这样区分的：`null`是一个表示"无"的对象，转为数值时为`0`；`undefined`是一个表示"无"的原始值，转为数值时为`NaN`。
 
 ```javascript
 Number(undefined) // NaN
@@ -942,30 +938,28 @@ typeof null // "object"
 
 对于`null`和`undefined`，可以大致可以像下面这样理解。
 
-`null`表示空值，即该处的值现在为空。典型用法是：
+`null`表示空值，即该处的值现在为空。比如，调用函数时，不需要传入某个参数，这时就可以传入`null`。
 
-- 作为函数的参数，表示该函数的参数是一个没有任何内容的对象。
-- 作为对象原型链的终点。
-
-`undefined`表示不存在值，就是此处目前不存在任何值。典型用法是：
-
-- 变量被声明了，但没有赋值时，就等于undefined。
-- 调用函数时，应该提供的参数没有提供，该参数等于undefined。
-- 对象没有赋值的属性，该属性的值为undefined。
-- 函数没有返回值时，默认返回undefined。
+`undefined`表示“未定义”，下面是返回`undefined`的典型场景。
 
 ```javascript
+// 变量声明了，但没有赋值
 var i;
 i // undefined
 
-function f(x){console.log(x)}
+// 调用函数时，应该提供的参数没有提供，该参数等于undefined
+function f(x) {
+  return x;
+}
 f() // undefined
 
+// 对象没有赋值的属性
 var  o = new Object();
 o.p // undefined
 
-var x = f();
-x // undefined
+// 函数没有返回值时，默认返回undefined
+function f() {}
+f() // undefined
 ```
 
 ## 布尔值

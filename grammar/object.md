@@ -230,10 +230,10 @@ o['p'] // "Hello World"
 
 ```javascript
 var o = {
-  0.7: "Hello World"
+  0.7: 'Hello World'
 };
 
-o.['0.7'] // "Hello World"
+o['0.7'] // "Hello World"
 o[0.7] // "Hello World"
 ```
 
@@ -253,7 +253,7 @@ obj[0xFF]
 // true
 ```
 
-上面代码的第一个表达式，对数值键名0xFF使用点运算符，结果报错。第二个表达式使用方括号运算符，结果就是正确的。
+上面代码的第一个表达式，对数值键名`0xFF`使用点运算符，结果报错。第二个表达式使用方括号运算符，结果就是正确的。
 
 ### 检查变量是否声明
 
@@ -261,7 +261,6 @@ obj[0xFF]
 
 ```javascript
 // 检查a变量是否被声明
-
 if (a) {...} // 报错
 
 if (window.a) {...} // 不报错
