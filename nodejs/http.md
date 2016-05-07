@@ -49,7 +49,7 @@ http.createServer(function (request, response){
 
   // 或者
 
-  fs.createReadStream(`${__dirname}/index.html`}.pipe(response);
+  fs.createReadStream(`${__dirname}/index.html`).pipe(response);
 }).listen(8080, '127.0.0.1');
 
 console.log('Server running on port 8080.');

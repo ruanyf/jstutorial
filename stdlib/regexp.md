@@ -351,7 +351,7 @@ str.replace(/^\s+|\s+$/g, '')
 replace方法的第二个参数可以使用美元符号$，用来指代所替换的内容。
 
 - `$&` 指代匹配的子字符串。
-- `$\`` 指代匹配结果前面的文本。
+- ``$` `` 指代匹配结果前面的文本。
 - `$'` 指代匹配结果后面的文本。
 - `$n` 指代匹配成功的第`n`组内容，`n`是从1开始的自然数。
 - `$$` 指代美元符号`$`。
@@ -360,7 +360,7 @@ replace方法的第二个参数可以使用美元符号$，用来指代所替换
 'hello world'.replace(/(\w+)\s(\w+)/, '$2 $1')
 // "world hello"
 
-'abc'.replace('b', '[$`-$&-$']')
+'abc'.replace('b', '[$`-$&-$\']')
 // "a[a-b-c]c"
 ```
 
@@ -520,8 +520,8 @@ str.split(separator, [limit])
 模式的精确匹配次数，使用大括号（`{}`）表示。`{n}`表示恰好重复n次，`{n,}`表示至少重复n次，`{n,m}`表示重复不少于n次，不多于m次。
 
 ```javascript
-/lo{2}k/.test(‘look") // true
-/lo{2, 5}k/.test("looook") // true
+/lo{2}k/.test('look') // true
+/lo{2, 5}k/.test('looook') // true
 ```
 
 上面代码中，第一个模式指定`o`连续出现2次，第二个模式指定`o`连续出现2次到5次之间。
@@ -541,7 +541,6 @@ str.split(separator, [limit])
 
 // t出现1次或多次
 /t+est/.test('test") // true
-/t+est/.test('ttest') // true
 /t+est/.test('ttest') // true
 /t+est/.test('est') // false
 
