@@ -419,7 +419,7 @@ Object.defineProperty(obj, someFunction(), {value: true});
 var o = Object.defineProperties({}, {
   p1: { value: 123, enumerable: true },
   p2: { value: 'abc', enumerable: true },
-  p3: { get: function() { return this.p1+this.p2 },
+  p3: { get: function () { return this.p1 + this.p2 },
     enumerable:true,
     configurable:true
   }
@@ -812,35 +812,37 @@ o.foo // 'b'
 
 ### 存取器（accessor）
 
-除了直接定义以外，属性还可以用存取器（accessor）定义。其中，存值函数称为setter，使用set命令；取值函数称为getter，使用get命令。
+除了直接定义以外，属性还可以用存取器（accessor）定义。其中，存值函数称为setter，使用`set`命令；取值函数称为getter，使用`get`命令。
 
 ```javascript
 var o = {
   get p() {
-    return "getter";
+    return 'getter';
   },
   set p(value) {
-    console.log("setter: "+value);
+    console.log('setter: ' + value);
   }
 };
 ```
 
-上面代码中，o对象内部的get和set命令，分别定义了p属性的取值函数和存值函数。定义了这两个函数之后，对p属性取值时，取值函数会自动调用；对p属性赋值时，存值函数会自动调用。
+上面代码中，`o`对象内部的`get`和`set`命令，分别定义了`p`属性的取值函数和存值函数。定义了这两个函数之后，对`p`属性取值时，取值函数会自动调用；对`p`属性赋值时，存值函数会自动调用。
 
 ```javascript
 o.p // "getter"
 o.p = 123 // "setter: 123"
 ```
 
+注意，取值函数Getter不能接受参数，存值函数Setter只能接受一个参数（即属性的值）。另外，对象也不能与取值函数同名的属性。比如，上面的对象`o`设置了取值函数`p`以后，就不能再另外定义一个`p`属性。
+
 存取器往往用于，某个属性的值需要依赖对象内部数据的场合。
 
 ```javascript
 var o ={
   $n : 5,
-  get next(){return this.$n++ },
+  get next() { return this.$n++ },
   set next(n) {
     if (n >= this.$n) this.$n = n;
-    else throw "新的值必须大于当前值";
+    else throw '新的值必须大于当前值';
   }
 };
 
@@ -850,26 +852,26 @@ o.next = 10;
 o.next // 10
 ```
 
-上面代码中，next属性的存值函数和取值函数，都依赖于对内部属性$n的操作。
+上面代码中，`next`属性的存值函数和取值函数，都依赖于对内部属性`$n`的操作。
 
-下面是另一个存取器的例子。
+存取器也可以通过`Object.defineProperty`定义。
 
 ```javascript
 var d = new Date();
 
 Object.defineProperty(d, 'month', {
-  get: function() {
+  get: function () {
     return d.getMonth();
   },
-  set: function(v) {
+  set: function (v) {
     d.setMonth(v);
   }
 });
 ```
 
-上面代码为Date的实例对象d，定义了一个可读写的month属性。
+上面代码为`Date`的实例对象`d`，定义了一个可读写的`month`属性。
 
-存取器也可以使用Object.create方法定义。
+存取器也可以使用`Object.create`方法定义。
 
 ```javascript
 var o = Object.create(Object.prototype, {
@@ -884,23 +886,23 @@ var o = Object.create(Object.prototype, {
 });
 ```
 
-如果使用上面这种写法，属性foo必须定义一个属性描述对象。该对象的get和set属性，分别是foo的取值函数和存值函数。
+如果使用上面这种写法，属性`foo`必须定义一个属性描述对象。该对象的`get`和`set`属性，分别是`foo`的取值函数和存值函数。
 
 利用存取器，可以实现数据对象与DOM对象的双向绑定。
 
 ```javascript
 Object.defineProperty(user, 'name', {
-  get: function() {
-    return document.getElementById("foo").value;
+  get: function () {
+    return document.getElementById('foo').value;
   },
-  set: function(newValue) {
-    document.getElementById("foo").value = newValue;
+  set: function (newValue) {
+    document.getElementById('foo').value = newValue;
   },
   configurable: true
 });
 ```
 
-上面代码使用存取函数，将DOM对象foo与数据对象user的name属性，实现了绑定。两者之中只要有一个对象发生变化，就能在另一个对象上实时反映出来。
+上面代码使用存取函数，将DOM对象`foo`与数据对象`user`的`name`属性，实现了绑定。两者之中只要有一个对象发生变化，就能在另一个对象上实时反映出来。
 
 ### 对象的拷贝
 
