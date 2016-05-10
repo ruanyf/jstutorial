@@ -202,7 +202,7 @@ v instanceof Vehicle // true
 
 上面代码表示数组和对象则分别是`Array`对象和`Object`对象的实例。最后那一行的空对象外面，之所以要加括号，是因为如果不加，JavaScript引擎会把一对大括号解释为一个代码块，而不是一个对象，从而导致这一行代码被解释为`{}; instanceof Object`，引擎就会报错。
 
-注意，这个运算符只能用于对象，不能用于原始类型的值。
+注意，`instanceof`运算符只能用于对象，不适合用于原始类型的值。
 
 ```javascript
 var s = 'hello';
@@ -231,18 +231,6 @@ a instanceof Object // true
 ```
 
 上面代码表示，`a`是一个数组，所以它是`Array`的实例；同时，`Array`继承了`Object`，所以`a`也是`Object`的实例。
-
-`instanceof`背后用的是`constructor`属性，但是又不完全一样。
-
-```javascript
-var s = 'hello';
-s.constructor === String // true
-
-var s = new String('hello');
-s.constructor === String // true
-```
-
-上面代码中，原始类型的字符串后面如果是点运算符，就会自动转为一个临时生成的字符串对象，因此会有`constructor`属性。
 
 利用`instanceof`运算符，还可以巧妙地解决，调用构造函数时，忘了加`new`命令的问题。
 

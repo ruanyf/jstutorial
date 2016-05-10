@@ -28,33 +28,37 @@ var x = y ? 1 : 'a';
 
 强制转换主要指使用`Number`、`String`和`Boolean`三个构造函数，手动将各种类型的值，转换成数字、字符串或者布尔值。
 
-### Number()：强制转换成数值
+### Number()
 
-使用`Number`函数，可以将任意类型的值转化成数字。
+使用`Number`函数，可以将任意类型的值转化成数值。
+
+下面分成两种情况讨论，一种是参数是原始类型的值，另一种是参数是对象。
 
 **（1）原始类型值的转换规则**
 
+原始类型的值主要是字符串、布尔值、`undefined`和`null`，它们都能被`Number`转成数值或`NaN`。
+
 ```javascript
-// 数值转换后还是原来的值
+// 数值：转换后还是原来的值
 Number(324) // 324
 
-// 字符串如果可以被解析为数值，则转换为相应的数值
+// 字符串：如果可以被解析为数值，则转换为相应的数值
 Number('324') // 324
 
-// 字符串如果不可以被解析为数值，返回NaN
+// 字符串：如果不可以被解析为数值，返回NaN
 Number('324abc') // NaN
 
 // 空字符串转为0
 Number('') // 0
 
-// 布尔值true转成1，false转成0
+// 布尔值：true 转成1，false 转成0
 Number(true) // 1
 Number(false) // 0
 
-// undefined转成NaN
+// undefined：转成 NaN
 Number(undefined) // NaN
 
-// null转成0
+// null：转成0
 Number(null) // 0
 ```
 
@@ -67,7 +71,7 @@ Number('42 cats') // NaN
 
 上面代码中，`parseInt`逐个解析字符，而`Number`函数整体转换字符串的类型。
 
-`Number`函数会自动过滤一个字符串前导和后缀的空格。
+另外，`Number`函数会自动过滤一个字符串前导和后缀的空格。
 
 ```javascript
 Number('\t\v\r12.34\n') // 12.34
@@ -75,28 +79,36 @@ Number('\t\v\r12.34\n') // 12.34
 
 **（2）对象的转换规则**
 
-对象的转换规则比较复杂，JavaScript的内部处理步骤如下。
+如果参数是对象，`Number`将其转为数值的规则比较复杂。JavaScript的内部处理步骤如下。
 
-1. 调用对象自身的`valueOf`方法，如果返回原始类型的值（数值、字符串和布尔值），则直接对该值使用`Number`函数，不再进行后续步骤。
+1. 调用对象自身的`valueOf`方法。如果返回原始类型的值，则直接对该值使用`Number`函数，不再进行后续步骤。
 
-2. 如果`valueOf`方法返回的是复合类型的值，调用对象自身的`toString`方法，如果返回原始类型的值，则对该值使用`Number`函数，不再进行后续步骤。
+2. 如果`valueOf`方法返回的还是对象，则改为调用对象自身的`toString`方法。如果返回原始类型的值，则对该值使用`Number`函数，不再进行后续步骤。
 
-3. 如果`toString`方法返回的是复合类型的值，则报错。
+3. 如果`toString`方法返回的是对象，就报错。
+
+请看下面的例子。
 
 ```javascript
-Number({ a: 1 })
-// NaN
+var obj = {a: 1};
+Number(obj) // NaN
 
 // 等同于
 
-if (typeof {a: 1}.valueOf() === 'object') {
-  Number({a: 1}.toString());
+if (typeof obj.valueOf() === 'object') {
+  Number(obj.toString());
 } else {
-  Number({a: 1}.valueOf());
+  Number(obj.valueOf());
 }
 ```
 
-上面代码的`valueOf`方法返回对象本身（`{a: 1}`），所以对`toString`方法的返回值`[object Object]`使用`Number`函数，得到`NaN`。
+上面代码中，`Number`函数将`obj`对象转为数值。首先，调用`obj.valueOf`方法, 结果返回对象本身；于是，继续调用`obj.toString`方法，这时返回字符串`[object Object]`，对这个字符串使用`Number`函数，得到`NaN`。
+
+默认情况下，对象的`valueOf`方法返回对象本身，所以一般总是会调用`toString`方法，而`toString`方法返回对象的类型字符串（比如`[object Object]`）。所以，会有下面的结果。
+
+```javascript
+Number({}) // NaN
+```
 
 如果`toString`方法返回的不是原始类型的值，结果就会报错。
 
@@ -146,175 +158,176 @@ Number({
 
 上面代码对三个对象使用`Number`函数。第一个对象返回`valueOf`方法的值，第二个对象返回`toString`方法的值，第三个对象表示`valueOf`方法先于`toString`方法执行。
 
-### String函数：强制转换成字符串
+### String()
 
-使用`String`函数，可以将任意类型的值转化成字符串。规则如下：
+使用`String`函数，可以将任意类型的值转化成字符串。转换规则如下。
 
 **（1）原始类型值的转换规则**
 
 - **数值**：转为相应的字符串。
-
 - **字符串**：转换后还是原来的值。
+- **布尔值**：`true`转为`"true"`，`false`转为`"false"`。
+- **undefined**：转为`"undefined"`。
+- **null**：转为`"null"`。
 
-- **布尔值**：true转为“true”，false转为“false”。
-
-- **undefined**：转为“undefined”。
-
-- **null**：转为“null”。
-
-{% highlight javascript %}
-
+```javascript
 String(123) // "123"
-
-String("abc") // "abc"
-
+String('abc') // "abc"
 String(true) // "true"
-
 String(undefined) // "undefined"
-
 String(null) // "null"
-
-{% endhighlight %}
+```
 
 **（2）对象的转换规则**
 
-如果要将对象转为字符串，则是采用以下步骤。
+`String`函数将对象转为字符串的步骤，与`Number`函数的处理步骤基本相同，只是互换了`valueOf`方法和`toString`方法的执行顺序。
 
-1. 先调用toString方法，如果toString方法返回的是原始类型的值，则对该值使用String方法，不再进行以下步骤。
+1. 先调用对象自身的`toString`方法。如果返回原始类型的值，则对该值使用`String`函数，不再进行以下步骤。
 
-2. 如果toString方法返回的是复合类型的值，再调用valueOf方法，如果valueOf方法返回的是原始类型的值，则对该值使用String方法，不再进行以下步骤。
+2. 如果`toString`方法返回的是对象，再调用`valueOf`方法。如果返回原始类型的值，则对该值使用`String`函数，不再进行以下步骤。
 
-3. 如果valueOf方法返回的是复合类型的值，则报错。
+3. 如果`valueOf`方法返回的是对象，就报错。
 
-String方法的这种过程正好与Number方法相反。
+下面是一个例子。
 
 ```javascript
 String({a: 1})
 // "[object Object]"
-```
 
-上面代码相当于下面这样。
+// 等同于
 
-```javascript
 String({a: 1}.toString())
 // "[object Object]"
 ```
 
-如果toString方法和valueOf方法，返回的都不是原始类型的值，则String方法报错。
+上面代码先调用对象的`toString`方法，发现返回的是字符串`[object Object]`，就不再调用`valueOf`方法了。
 
-{% highlight javascript %}
+如果`toString`法和`valueOf`方法，返回的都是对象，就会报错。
 
+```javascript
 var obj = {
-	valueOf: function () {
-            console.log("valueOf");
-            return {}; 
-	},
-	toString: function () {
-            console.log("toString");
-            return {}; 
-	}
+  valueOf: function () {
+    console.log('valueOf');
+    return {};
+  },
+  toString: function () {
+    console.log('toString');
+    return {};
+  }
 };
 
 String(obj)
 // TypeError: Cannot convert object to primitive value
+```
 
-{% endhighlight %}
-
-下面是一个自定义toString方法的例子。
+下面是通过自定义`toString`方法，改变转换成字符串时的返回值的例子。
 
 ```javascript
-String({toString:function(){return 3;}})
+String({toString: function () {
+    return 3;
+  }
+})
 // "3"
 
-String({valueOf:function (){return 2;}})
+String({valueOf: function () {
+    return 2;
+  }
+})
 // "[object Object]"
 
-String({valueOf:function (){return 2;},toString:function(){return 3;}})
+String({
+  valueOf: function () {
+    return 2;
+  },
+  toString: function () {
+    return 3;
+  }
+})
 // "3"
 ```
 
-上面代码对三个对象使用String方法。第一个对象返回toString方法的值（数值3），然后对其使用String方法，得到字符串“3”；第二个对象返回的还是toString方法的值（`[object Object]`），这次直接就是字符串；第三个对象表示toString方法先于valueOf方法执行。
+上面代码对三个对象使用`String`函数。第一个对象返回`toString`方法的值（数值3），第二个对象返回的还是`toString`方法的值（`[object Object]`），第三个对象表示`toString`方法先于`valueOf`方法执行。
 
-### Boolean函数：强制转换成布尔值
+### Boolean()
 
-使用Boolean函数，可以将任意类型的变量转为布尔值。
+使用`Boolean`函数，可以将任意类型的变量转为布尔值。
 
-**（1）原始类型值的转换方法**
+它的转换规则相对简单：除了以下六个值的转换结果为`false`，其他的值全部为`true`。
 
-以下六个值的转化结果为false，其他的值全部为true。
-
-- undefined
-- null
-- -0
-- +0
-- NaN
-- ''（空字符串）
-
-{% highlight javascript %}
-
-Boolean(undefined) // false
-
-Boolean(null) // false
-
-Boolean(0) // false
-
-Boolean(NaN) // false
-
-Boolean('') // false
-
-{% endhighlight %}
-
-**（2）对象的转换规则**
-
-所有对象的布尔值都是true，甚至连false对应的布尔对象也是true。
-
-{% highlight javascript %}
-
-Boolean(new Boolean(false))
-// true
-
-{% endhighlight %}
-
-请注意，空对象`{}`和空数组`[]`也会被转成`true`。
+- `undefined`
+- `null`
+- `-0`
+- `0`或`+0`
+- `NaN`
+- `''`（空字符串）
 
 ```javascript
-Boolean([]) // true
+Boolean(undefined) // false
+Boolean(null) // false
+Boolean(0) // false
+Boolean(NaN) // false
+Boolean('') // false
+```
+
+注意，所有对象（包括空对象）的转换结果都是`true`，甚至连`false`对应的布尔对象`new Boolean(false)`也是`true`。
+
+```javascript
 Boolean({}) // true
+Boolean([]) // true
+Boolean(new Boolean(false)) // true
 ```
 
 ## 自动转换
 
-当遇到以下几种情况，JavaScript会自动转换数据类型。
+下面介绍自动转换，它是以强制转换为基础的。
 
-- 不同类型的数据进行互相运算；
-- 对非布尔值类型的数据求布尔值;
-- 对非数值类型的数据使用一元运算符（即“+”和“-”）。
+遇到以下三种情况时，JavaScript会自动转换数据类型，即转换是自动完成的，对用户不可见。
+
+```javascript
+// 1. 不同类型的数据互相运算
+123 + 'abc' // "123abc"
+
+// 2. 对非布尔值类型的数据求布尔值
+if ('abc') {
+  console.log('hello')
+}  // "hello"
+
+// 3. 对非数值类型的数据使用一元运算符（即“+”和“-”）
++ {foo: 'bar'} // NaN
+- [1, 2, 3] // NaN
+```
+
+自动转换的规则是这样的：预期什么类型的值，就调用该类型的转换函数。比如，某个位置预期为字符串，就调用`String`函数进行转换。如果该位置即可以是字符串，也可能是数值，那么默认转为数值。
+
+由于自动转换具有不确定性，而且不易除错，建议在预期为布尔值、数值、字符串的地方，全部使用`Boolean`、`Number`和`String`函数进行显式转换。
 
 ### 自动转换为布尔值
 
-当JavaScript遇到预期为布尔值的地方（比如if语句的条件部分），就会将非布尔值的参数自动转换为布尔值。它的转换规则与上面的“强制转换成布尔值”的规则相同，也就是说，在预期为布尔值的地方，系统内部会自动调用Boolean方法。
+当JavaScript遇到预期为布尔值的地方（比如`if`语句的条件部分），就会将非布尔值的参数自动转换为布尔值。系统内部会自动调用`Boolean`函数。
 
-因此除了以下六个值，其他都是自动转为true：
+因此除了以下六个值，其他都是自动转为`true`。
 
-- undefined
-- null
-- -0
-- +0
-- NaN
-- ''（空字符串）
+- `undefined`
+- `null`
+- `-0`
+- `0`或`+0`
+- `NaN`
+- `''`（空字符串）
 
-{% highlight javascript %}
-
-if (!undefined && !null && !0 && !NaN && !''){
-	console.log('true');
-}
-// true
-
-{% endhighlight %}
+```javascript
+if ( !undefined
+  && !null
+  && !0
+  && !NaN
+  && !''
+) {
+  console.log('true');
+} // true
+```
 
 ### 自动转换为字符串
 
-当JavaScript遇到预期为字符串的地方，就会将非字符串的数据自动转为字符串，转换规则与“强制转换为字符串”相同。
+当JavaScript遇到预期为字符串的地方，就会将非字符串的数据自动转为字符串。系统内部会自动调用`String`函数。
 
 字符串的自动转换，主要发生在加法运算时。当一个值为字符串，另一个值为非字符串，则后者转为字符串。
 
@@ -339,260 +352,35 @@ var obj = {
 obj.width + 20 // "10020"
 ```
 
-上面代码中，开发者可能期望的是返回`120`，但是由于自动转换，实际上返回了一个字符`10020`。
+上面代码中，开发者可能期望返回`120`，但是由于自动转换，实际上返回了一个字符`10020`。
 
 ### 自动转换为数值
 
-当JavaScript遇到预期为数值的地方，就会将参数值自动转换为数值，转换规则与“强制转换为数值”相同。
+当JavaScript遇到预期为数值的地方，就会将参数值自动转换为数值。系统内部会自动调用`Number`函数。
 
-除了加法运算符有可能把运算子转为字符串，其他运算符都会把两侧的运算子自动转成数值。
+除了加法运算符有可能把运算子转为字符串，其他运算符都会把运算子自动转成数值。
 
-{% highlight javascript %}
-
+```javascript
 '5' - '2' // 3
 '5' * '2' // 10
 true - 1  // 0
 false - 1 // -1
 '1' - 1   // 0
-'5'*[]    // 0
-false/'5' // 0
-'abc'-1   // NaN
+'5' * []    // 0
+false / '5' // 0
+'abc' - 1   // NaN
+```
 
-{% endhighlight %}
+上面代码中，运算符两侧的运算子，都被转成了数值。
 
-上面都是二元算术运算符的例子，JavaScript的两个一元算术运算符——正号和负号——也会把运算子自动转为数值。
+一元运算符也会把运算子转成数值。
 
-{% highlight javascript %}
-
+```javascript
 +'abc' // NaN
 -'abc' // NaN
 +true // 1
 -false // 0
-
-{% endhighlight %}
-
-### 小结
-
-由于自动转换有很大的不确定性，而且不易除错，建议在预期为布尔值、数值、字符串的地方，全部使用Boolean、Number和String方法进行显式转换。
-
-## 加法运算符的类型转化
-
-加法运算符（+）需要特别讨论，因为它可以完成两种运算（加法和字符连接），所以不仅涉及到数据类型的转换，还涉及到确定运算类型。
-
-### 三种情况
-
-加法运算符的类型转换，可以分成三种情况讨论。
-
-**（1）运算子之中存在字符串**
-
-两个运算子之中，只要有一个是字符串，则另一个不管是什么类型，都会被自动转为字符串，然后执行字符串连接运算。前面的《自动转换为字符串》一节，已经举了很多例子。
-
-**（2）两个运算子都为数值或布尔值**
-
-这种情况下，执行加法运算，布尔值转为数值（true为1，false为0）。
-
-{% highlight javascript %}
-
-true + 5 // 6
-
-true + true // 2
-
-{% endhighlight %}
-
-**（3）运算子之中存在对象**
-
-运算子之中存在对象（或者准确地说，存在非原始类型的值），则先调用该对象的valueOf方法。如果返回结果为原始类型的值，则运用上面两条规则；否则继续调用该对象的toString方法，对其返回值运用上面两条规则。
-
-{% highlight javascript %}
-
-1 + [1,2]
-// "11,2"
-
-{% endhighlight %}
-
-上面代码的运行顺序是，先调用[1,2].valueOf()，结果还是数组[1,2]本身，则继续调用[1,2].toString()，结果字符串“1,2”，所以最终结果为字符串“11,2”。
-
-{% highlight javascript %}
-
-1 + {a:1}
-// "1[object Object]"
-
-{% endhighlight %}
-
-对象{a:1}的valueOf方法，返回的就是这个对象的本身，因此接着对它调用toString方法。({a:1}).toString()默认返回字符串"[object Object]"，所以最终结果就是字符串“1[object Object]”
-
-有趣的是，如果更换上面代码的运算次序，就会得到不同的值。
-
-{% highlight javascript %}
-
-{a:1} + 1
-// 1
-
-{% endhighlight %}
-
-原来此时，JavaScript引擎不将{a:1}视为对象，而是视为一个代码块，这个代码块没有返回值，所以被忽略。因此上面的代码，实际上等同于 {a:1};+1 ，所以最终结果就是1。为了避免这种情况，需要对{a:1}加上括号。
-
-{% highlight javascript %}
-
-({a:1})+1
-"[object Object]1"
-
-{% endhighlight %}
-
-将{a:1}放置在括号之中，由于JavaScript引擎预期括号之中是一个值，所以不把它当作代码块处理，而是当作对象处理，所以最终结果为“[object Object]1”。
-
-{% highlight javascript %}
-
-1 + {valueOf:function(){return 2;}}
-// 3
-
-{% endhighlight %}
-
-上面代码的valueOf方法返回数值2，所以最终结果为3。
-
-{% highlight javascript %}
-
-1 + {valueOf:function(){return {};}}
-// "1[object Object]"
-
-{% endhighlight %}
-
-上面代码的valueOf方法返回一个空对象，则继续调用toString方法，所以最终结果是“1[object Object]”。
-
-{% highlight javascript %}
-
-1 + {valueOf:function(){return {};}, toString:function(){return 2;}}
-// 3
-
-{% endhighlight %}
-
-上面代码的toString方法返回数值2（不是字符串），则最终结果就是数值3。
-
-{% highlight javascript %}
-
-1 + {valueOf:function(){return {};}, toString:function(){return {};}}
-// TypeError: Cannot convert object to primitive value
-
-{% endhighlight %}
-
-上面代码的toString方法返回一个空对象，JavaScript就会报错，表示无法获得原始类型的值。
-
-### 四个特殊表达式
-
-有了上面这些例子，我们再进一步来看四个特殊表达式。
-
-**（1）空数组 + 空数组**
-
-{% highlight javascript %}
-
-[] + []
-// ""
-
-{% endhighlight %}
-
-首先，对空数组调用valueOf方法，返回的是数组本身；因此再对空数组调用toString方法，生成空字符串；所以，最终结果就是空字符串。
-
-**（2）空数组 + 空对象**
-
-{% highlight javascript %}
-
-[] + {}
-// "[object Object]"
-
-{% endhighlight %}
-
-这等同于空字符串与字符串“[object Object]”相加。因此，结果就是“[object Object]”。
-
-**（3）空对象 + 空数组**
-
-{% highlight javascript %}
-
-{} + []
-// 0
-
-{% endhighlight %}
-
-JavaScript引擎将空对象视为一个空的代码块，加以忽略。因此，整个表达式就变成“+ []”，等于对空数组求正值，因此结果就是0。转化过程如下：
-
-{% highlight javascript %}
-
-+ []
-// Number([])
-// Number([].toString())
-// Number("")
-// 0
-
-{% endhighlight %}
-
-如果JavaScript不把前面的空对象视为代码块，则结果为字符串“[object Object]”。
-
-{% highlight javascript %}
-
-({}) + []
-// "[object Object]"
-
-{% endhighlight %}
-
-**（4）空对象 + 空对象**
-
-{% highlight javascript %}
-
-{} + {}
-// NaN
-
-{% endhighlight %}
-
-JavaScript同样将第一个空对象视为一个空代码块，整个表达式就变成“+ {}”。这时，后一个空对象的ValueOf方法得到本身，再调用toSting方法，得到字符串“[object Object]”，然后再将这个字符串转成数值，得到NaN。所以，最后的结果就是NaN。转化过程如下：
-
-{% highlight javascript %}
-
-+ {}
-// Number({})
-// Number({}.toString())
-// Number("[object Object]")
-
-{% endhighlight %}
-
-如果，第一个空对象不被JavaScript视为空代码块，就会得到“[object Object][object Object]”的结果。
-
-{% highlight javascript %}
-
-({}) + {}
-// "[object Object][object Object]"
-
-({} + {})
-// "[object Object][object Object]"	
-
-console.log({} + {})
-// "[object Object][object Object]"
-
-var a = {} + {};
-a
-// "[object Object][object Object]"	
-
-{% endhighlight %}
-
-需要指出的是，对于第三和第四种情况，Node.js的运行结果不同于浏览器环境。
-
-{% highlight javascript %}
-
-{} + {}
-// "[object Object][object Object]"
-
-{} + []
-// "[object Object]"
-
-{% endhighlight %}
-
-可以看到，Node.js没有把第一个空对象视为代码块。原因是Node.js的命令行环境，内部执行机制大概是下面的样子：
-
-{% highlight javascript %}
-
-eval.call(this,"(function(){return {} + {}}).call(this)")
-
-{% endhighlight %}
-
-Node.js把命令行输入都放在eval中执行，所以不会把起首的大括号理解为空代码块加以忽略。
+```
 
 ## 参考链接
 

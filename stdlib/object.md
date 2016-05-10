@@ -8,16 +8,16 @@ modifiedOn: 2013-12-15
 
 ## 概述
 
-JavaScript原生提供一个Object对象（注意起首的O是大写），所有其他对象都继承自这个对象。Object本身也是一个构造函数，可以直接通过它来生成新对象。
+JavaScript原生提供一个`Object`对象（注意起首的`O`是大写），所有其他对象都继承自这个对象。`Object`本身也是一个构造函数，可以直接通过它来生成新对象。
 
 ```javascript
 var o = new Object();
 ```
 
-Object作为构造函数使用时，可以接受一个参数。如果该参数是一个对象，则直接返回这个对象；如果是一个原始类型的值，则返回该值对应的包装对象。
+`Object`作为构造函数使用时，可以接受一个参数。如果该参数是一个对象，则直接返回这个对象；如果是一个原始类型的值，则返回该值对应的包装对象。
 
 ```javascript
-var o1 = {a:1};
+var o1 = {a: 1};
 var o2 = new Object(o1);
 o1 === o2 // true
 
@@ -25,9 +25,9 @@ new Object(123) instanceof Number
 // true
 ```
 
-> 注意，通过new Object() 的写法生成新对象，与字面量的写法 o = {} 是等价的。
+> 注意，通过`new Object()`的写法生成新对象，与字面量的写法`o = {}`是等价的。
 
-与其他构造函数一样，如果要在Object对象上面部署一个方法，有两种做法。
+与其他构造函数一样，如果要在`Object`对象上面部署一个方法，有两种做法。
 
 **（1）部署在Object对象本身**
 
@@ -185,57 +185,53 @@ delete o.foo; // delete, 'foo', 2
 
 ## Object实例对象的方法
 
-除了Object对象本身的方法，还有不少方法是部署在Object.prototype对象上的，所有Object的实例对象都继承了这些方法。
+除了`Object`对象本身的方法，还有不少方法是部署在`Object.prototype`对象上的，所有`Object`的实例对象都继承了这些方法。
 
-Object实例对象的方法，主要有以下六个。
+`Object`实例对象的方法，主要有以下六个。
 
-- valueOf()：返回当前对象对应的值。
-- toString()：返回当前对象对应的字符串形式。
-- toLocaleString()：返回当前对象对应的本地字符串形式。
-- hasOwnProperty()：判断某个属性是否为当前对象自身的属性，还是继承自原型对象的属性。
-- isPrototypeOf()：判断当前对象是否为另一个对象的原型。
-- propertyIsEnumerable()：判断某个属性是否可枚举。
+- `valueOf()`：返回当前对象对应的值。
+- `toString()`：返回当前对象对应的字符串形式。
+- `toLocaleString()`：返回当前对象对应的本地字符串形式。
+- `hasOwnProperty()`：判断某个属性是否为当前对象自身的属性，还是继承自原型对象的属性。
+- `isPrototypeOf()`：判断当前对象是否为另一个对象的原型。
+- `propertyIsEnumerable()`：判断某个属性是否可枚举。
 
 本节介绍前两个方法，其他方法将在后文相关章节介绍。
 
 ### Object.prototype.valueOf()
 
-valueOf方法的作用是返回一个对象的值，默认情况下返回对象本身。
-
-{% highlight javascript %}
-
-var o = new Object();
-
-o.valueOf() === o // true
-
-{% endhighlight %}
-
-上面代码比较o的valueOf方法返回值与o本身，两者是一样的。
-
-valueOf方法的主要用途是，JavaScript自动类型转换时会默认调用这个方法（详见上一章《数据类型转换》一节）。
+`valueOf`方法的作用是返回一个对象的“值”，默认情况下返回对象本身。
 
 ```javascript
 var o = new Object();
+o.valueOf() === o // true
+```
 
+上面代码比较`o.valueOf()`与`o`本身，两者是一样的。
+
+`valueOf`方法的主要用途是，JavaScript自动类型转换时会默认调用这个方法（详见《数据类型转换》一节）。
+
+```javascript
+var o = new Object();
 1 + o // "1[object Object]"
 ```
 
-上面代码将对象o与数字1相加，这时JavaScript就会默认调用valueOf()方法。所以，如果自定义valueOf方法，就可以得到想要的结果。
+上面代码将对象`o`与数字`1`相加，这时JavaScript就会默认调用`valueOf()`方法。所以，如果自定义`valueOf`方法，就可以得到想要的结果。
 
-{% highlight javascript %}
-
+```javascript
 var o = new Object();
-o.valueOf = function (){return 2;};
+o.valueOf = function (){
+  return 2;
+};
 
 1 + o // 3
+```
 
-{% endhighlight %}
-
-上面代码自定义了o对象的valueOf方法，于是1 + o就得到了3。这种方法就相当于用o.valueOf覆盖Object.prototype.valueOf。
+上面代码自定义了`o`对象的`valueOf`方法，于是`1 + o`就得到了`3`。这种方法就相当于用`o.valueOf`覆盖`Object.prototype.valueOf`。
 
 ### Object.prototype.toString()
 
-toString方法的作用是返回一个对象的字符串形式。
+`toString`方法的作用是返回一个对象的字符串形式，默认情况下返回类型字符串。
 
 ```javascript
 var o1 = new Object();
@@ -245,42 +241,58 @@ var o2 = {a:1};
 o2.toString() // "[object Object]"
 ```
 
-上面代码表示，对于一个对象调用toString方法，会返回字符串`[object Object]`。
+上面代码表示，对于一个对象调用`toString`方法，会返回字符串`[object Object]`，该字符串说明对象的类型。
 
-字符串`[object Object]`本身没有太大的用处，但是通过自定义toString方法，可以让对象在自动类型转换时，得到想要的字符串形式。
+字符串`[object Object]`本身没有太大的用处，但是通过自定义`toString`方法，可以让对象在自动类型转换时，得到想要的字符串形式。
 
 ```javascript
 var o = new Object();
 
-o.toString = function (){ return 'hello' };
+o.toString = function () {
+  return 'hello';
+};
 
 o + ' ' + 'world' // "hello world"
 ```
 
-上面代码表示，当对象用于字符串加法时，会自动调用toString方法。由于自定义了toString方法，所以返回字符串hello world。
+上面代码表示，当对象用于字符串加法时，会自动调用`toString`方法。由于自定义了`toString`方法，所以返回字符串`hello world`。
 
-数组、字符串和函数都分别部署了自己版本的toString方法。
+数组、字符串、函数、Date对象都分别部署了自己版本的`toString`方法，覆盖了`Object.prototype.toString`方法。
 
 ```javascript
-[1,2,3].toString() // "1,2,3"
+[1, 2, 3].toString() // "1,2,3"
 
 '123'.toString() // "123"
 
-(function (){return 123}).toString() // "function (){return 123}"
+(function () {
+  return 123;
+}).toString()
+// "function () {
+//   return 123;
+// }"
+
+(new Date()).toString()
+// "Tue May 10 2016 09:11:31 GMT+0800 (CST)"
 ```
 
 ### toString()的应用：判断数据类型
 
-`toString`方法的主要用途是返回对象的字符串形式，除此之外，还有一个重要的作用，就是判断一个值的类型。
+`Object.prototype.toString`方法返回对象的类型字符串，因此可以用来判断一个值的类型。
 
 ```javascript
 var o = {};
 o.toString() // "[object Object]"
 ```
 
-上面代码调用空对象的`toString`方法，结果返回一个字符串`object Object`，其中第二个`Object`表示该值的准确类型。这是一个十分有用的判断数据类型的方法。
+上面代码调用空对象的`toString`方法，结果返回一个字符串`object Object`，其中第二个`Object`表示该值的构造函数。这是一个十分有用的判断数据类型的方法。
 
-实例对象的`toString`方法，实际上是调用`Object.prototype.toString`方法。使用`call`方法，可以在任意值上调用`Object.prototype.toString`方法，从而帮助我们判断这个值的类型。不同数据类型的`toString`方法返回值如下：
+实例对象可能会自定义`toString`方法，覆盖掉`Object.prototype.toString`方法。通过函数的`call`方法，可以在任意值上调用`Object.prototype.toString`方法，帮助我们判断这个值的类型。
+
+```javascript
+Object.prototype.toString.call(value)
+```
+
+不同数据类型的`Object.prototype.toString`方法返回值如下。
 
 - 数值：返回`[object Number]`。
 - 字符串：返回`[object String]`。
@@ -295,6 +307,8 @@ o.toString() // "[object Object]"
 - RegExp对象：返回`[object RegExp]`。
 - 其他对象：返回`[object " + 构造函数的名称 + "]`。
 
+也就是说，`Object.prototype.toString`可以得到一个实例对象的构造函数。
+
 ```javascript
 Object.prototype.toString.call(2) // "[object Number]"
 Object.prototype.toString.call('') // "[object String]"
@@ -306,7 +320,7 @@ Object.prototype.toString.call({}) // "[object Object]"
 Object.prototype.toString.call([]) // "[object Array]"
 ```
 
-可以利用这个特性，写出一个比`typeof`运算符更准确的类型判断函数。
+利用这个特性，可以写出一个比`typeof`运算符更准确的类型判断函数。
 
 ```javascript
 var type = function (o){
@@ -338,9 +352,9 @@ type(new Date()); // "date"
  'NaN',
  'Infinite'
 ].forEach(function (t) {
-    type['is' + t] = function (o) {
-        return type(o) === t.toLowerCase();
-    };
+  type['is' + t] = function (o) {
+    return type(o) === t.toLowerCase();
+  };
 });
 
 type.isObject({}) // true
