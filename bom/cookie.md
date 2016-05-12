@@ -1,5 +1,5 @@
 ---
-title: Coookie
+title: Cookie
 layout: page
 category: bom
 date: 2016-04-10

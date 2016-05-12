@@ -250,6 +250,10 @@ article ul.reference-list li:before{
 
 /* highlight */
 
+p code.highlight-rouge {
+  background-color: rgba(0, 0, 0, 0);
+}
+
 .highlight .hll { background-color: #333333 }
 .highlight  { 
 
@@ -287,7 +291,7 @@ font-family: "Consolas", "Courier New", "Courier", "FreeMono", monospace;
 .highlight .hll { background-color: #49483e }
 .highlight  { /*background: #272822;*/ color: #f8f8f2 }
 .highlight .c { color: #75715e } /* Comment */
-.highlight .err { color: #960050; background-color: #1e0010 } /* Error */
+.highlight .err { color: pink; background-color: #1e0010 } /* Error */
 .highlight .k { color: #66d9ef } /* Keyword */
 .highlight .l { color: #ae81ff } /* Literal */
 .highlight .n { color: #f8f8f2 } /* Name */
