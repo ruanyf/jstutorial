@@ -250,7 +250,7 @@ article ul.reference-list li:before{
 
 /* highlight */
 
-p code.highlight-rouge {
+p code.highlighter-rouge {
   background-color: rgba(0, 0, 0, 0);
 }
 
