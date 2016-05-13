@@ -162,7 +162,7 @@ slice方法返回一个按照指定位置、从原对象切割出来的Buffer实
 
 ```javascript
 var buf = new Buffer('just some data');
-var chunk = buf.slice(4, 9);
+var chunk = buf.slice(5, 9);
 chunk.toString()
 // "some"
 ```
@@ -181,7 +181,7 @@ hello.toString() // "Hello"
 
 ```javascript
 var buf = new Buffer('just some data');
-console.log(buf.toString('ascii', 4, 9));
+console.log(buf.toString('ascii', 5, 9));
 // "some"
 ```
 
