@@ -624,7 +624,7 @@ foo.js文件的第一行，如果加入了解释器的位置，就可以将其�
 调用前，需更改文件的执行权限。
 
 ```bash
-$ chmod u+x myscript.js
+$ chmod u+x foo.js
 $ ./foo.js arg1 arg2 ...
 ```
 
