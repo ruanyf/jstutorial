@@ -277,6 +277,8 @@ Boolean([]) // true
 Boolean(new Boolean(false)) // true
 ```
 
+所有对象的布尔值都是`true`，这是因为JavaScript语言设计的时候，出于性能的考虑，如果对象需要计算才能得到布尔值，对于`obj1 && obj2`这样的场景，可能会需要较多的计算。为了保证性能，就统一规定，对象的布尔值为`true`。
+
 ## 自动转换
 
 下面介绍自动转换，它是以强制转换为基础的。
@@ -314,6 +316,8 @@ if ('abc') {
 - `NaN`
 - `''`（空字符串）
 
+下面这个例子中，条件部分的每个值都相当于`false`，使用否定运算符后，就变成了`true`。
+
 ```javascript
 if ( !undefined
   && !null
@@ -323,6 +327,16 @@ if ( !undefined
 ) {
   console.log('true');
 } // true
+```
+
+下面两种写法，有时也用于将一个表达式转为布尔值。它们内部调用的也是`Boolean`函数。
+
+```javascript
+// 写法一
+expression ? true : false
+
+// 写法二
+!! expression
 ```
 
 ### 自动转换为字符串

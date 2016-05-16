@@ -647,8 +647,8 @@ $ node server.js
 
 - `prepublish`：发布一个模块前执行。
 - `postpublish`：发布一个模块后执行。
-- `preinstall`：安装一个模块前执行。
-- `postinstall`：安装一个模块后执行。
+- `preinstall`：用户执行`npm install`命令时，先执行该脚本。
+- `postinstall`：用户执行`npm install`命令时，安装结束后执行该脚本，通常用于将下载的源码编译成用户需要的格式，比如有些模块需要在用户机器上跟本地的C++模块一起编译。
 - `preuninstall`：卸载一个模块前执行。
 - `postuninstall`：卸载一个模块后执行。
 - `preversion`：更改模块版本前执行。

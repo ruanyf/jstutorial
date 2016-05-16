@@ -129,7 +129,6 @@ Browserify的主要作用是将CommonJS模块转为浏览器可以调用的格�
 接着，新建index.html。
 
 ```html
-
 <!doctype html>
 <html>
 <head>
@@ -139,10 +138,9 @@ Browserify的主要作用是将CommonJS模块转为浏览器可以调用的格�
   <span class="title-tipso tipso_style" title="This is a loaded TIPSO!">
     Roll over to see the tip
   </span>
-  <script src="./bundle.js">
+  <script src="./bundle.js"/>
 </body>
 </html>
-
 ```
 
 上面代码中的bundle.js，就是Browserify打包后将生成的文件。
@@ -169,7 +167,7 @@ jQuery(function(){
 最后，Browserify打包。
 
 ```bash
-$ browserify entry.js --debug > bundle.jsOA
+$ browserify entry.js --debug > bundle.js
 ```
 
 上面代码中，--debug参数表示在打包后的文件中加入source map以便除错。

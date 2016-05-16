@@ -62,55 +62,49 @@ Number.MIN_SAFE_INTEGER // -9007199254740991
 
 ### Number.prototype.toString()
 
-Number对象部署了单独的toString方法，可以接受一个参数，表示将一个数字转化成某个进制的字符串。
+`Number`对象部署了自己的`toString`方法，用来将一个数值转为字符串形式。`toString`方法如果省略参数，默认将数值先转为十进制，再输出字符串；否则，就根据参数指定的进制，将一个数字转化成某个进制的字符串。
 
-{% highlight javascript %}
-
+```javascript
 (10).toString() // "10"
 (10).toString(2) // "1010"
 (10).toString(8) // "12"
 (10).toString(16) // "a"
-
-{% endhighlight %}
+```
 
 之所以要把10放在括号里，是为了表明10是一个单独的数值，后面的点表示调用对象属性。如果不加括号，这个点会被JavaScript引擎解释成小数点，从而报错。
 
-{% highlight javascript %}
-
-10.toString(2) 
+```javascript
+10.toString(2)
 // SyntaxError: Unexpected token ILLEGAL
+```
 
-{% endhighlight %}
+只要能够让JavaScript引擎不混淆小数点和对象的点运算符，各种写法都能用。除了为`10`加上括号，还可以在`10`后面加两个点，JavaScript会把第一个点理解成小数点（即`10.0`），把第二个点理解成调用对象属性，从而得到正确结果。
 
-但是，在10后面加两个点，JavaScript会把第一个点理解成小数点（即10.0），把第二个点理解成调用对象属性，从而得到正确结果。
-
-{% highlight javascript %}
-
-10..toString(2) 
+```javascript
+10..toString(2)
 // "1010"
 
-{% endhighlight %}
+// 其他方法还包括
+10 .toString(2) // "1010"
+10.0.toString(2) // "1010"
+```
 
-这实际上意味着，可以直接对一个小数使用toString方法。
+这实际上意味着，可以直接对一个小数使用`toString`方法。
 
-{% highlight javascript %}
-
+```javascript
 10.5.toString() // "10.5"
 10.5.toString(2) // "1010.1"
 10.5.toString(8) // "12.4"
 10.5.toString(16) // "a.8"
+```
 
-{% endhighlight %}
+通过方括号运算符也可以调用`toString`方法。
 
-通过方括号运算符也可以调用toString方法。
-
-{% highlight javascript %}
-
+```javascript
 10['toString'](2) // "1010"
+```
 
-{% endhighlight %}
-
-将其他进制的数，转回十进制，需要使用parseInt方法。
+将其他进制的数，转回十进制，需要使用`parseInt`方法。
 
 ### Number.prototype.toFixed()
 

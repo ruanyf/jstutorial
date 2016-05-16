@@ -530,9 +530,9 @@ var hValue = window.getComputedStyle(elem,null).getPropertyValue("height");
 
 ### 基本用法
 
-window.matchMedia方法用来检查CSS的[mediaQuery](https://developer.mozilla.org/en-US/docs/DOM/Using_media_queries_from_code)语句。各种浏览器的最新版本（包括IE 10+）都支持该方法，对于不支持该方法的老式浏览器，可以使用第三方函数库[matchMedia.js](https://github.com/paulirish/matchMedia.js/)。
+`window.matchMedia`方法用来检查CSS的[`mediaQuery`](https://developer.mozilla.org/en-US/docs/DOM/Using_media_queries_from_code)语句。各种浏览器的最新版本（包括IE 10+）都支持该方法，对于不支持该方法的老式浏览器，可以使用第三方函数库[matchMedia.js](https://github.com/paulirish/matchMedia.js/)。
 
-CSS的mediaQuery语句有点像if语句，只要显示媒介（包括浏览器和屏幕等）满足mediaQuery语句设定的条件，就会执行区块内部的语句。下面是mediaQuery语句的一个例子。
+CSS的`mediaQuery`语句有点像`if`语句，只要显示媒介（包括浏览器和屏幕等）满足`mediaQuery`语句设定的条件，就会执行区块内部的语句。下面是`mediaQuery`语句的一个例子。
 
 ```css
 @media all and (max-width: 700px) {
@@ -542,9 +542,9 @@ CSS的mediaQuery语句有点像if语句，只要显示媒介（包括浏览器�
 }
 ```
 
-上面的CSS代码表示，该区块对所有媒介（media）有效，且视口的最大宽度不得超过700像素。如果条件满足，则body元素的背景设为#FF0。
+上面的CSS代码表示，该区块对所有媒介（media）有效，且视口的最大宽度不得超过`700`像素。如果条件满足，则`body`元素的背景设为#FF0。
 
-需要注意的是，mediaQuery接受两种宽度/高度的度量，一种是上例的“视口”的宽度/高度，还有一种是“设备”的宽度/高度，下面就是一个例子。
+需要注意的是，`mediaQuery`接受两种宽度/高度的度量，一种是上例的“视口”的宽度/高度，还有一种是“设备”的宽度/高度，下面就是一个例子。
 
 ```css
 @media all and (max-device-width: 700px) {
@@ -554,16 +554,15 @@ CSS的mediaQuery语句有点像if语句，只要显示媒介（包括浏览器�
 }
 ```
 
-视口的宽度/高度（width/height）使用documentElement.clientWidth/clientHeight来衡量，单位是CSS像素；设备的宽度/高度（device-width/device-height）使用screen.width/height来衡量，单位是设备硬件的像素。
+视口的宽度/高度（width/height）使用`documentElement.clientWidth/clientHeight`来衡量，单位是CSS像素；设备的宽度/高度（device-width/device-height）使用`screen.width/height`来衡量，单位是设备硬件的像素。
 
-window.matchMedia方法接受一个mediaQuery语句的字符串作为参数，返回一个[MediaQueryList](https://developer.mozilla.org/en-US/docs/DOM/MediaQueryList)对象。该对象有以下两个属性。
+`window.matchMedia`方法接受一个`mediaQuery`语句的字符串作为参数，返回一个[`MediaQueryList`](https://developer.mozilla.org/en-US/docs/DOM/MediaQueryList)对象。该对象有以下两个属性。
 
-- media：返回所查询的mediaQuery语句字符串。
-
-- matches：返回一个布尔值，表示当前环境是否匹配查询语句。
+- `media`：返回所查询的`mediaQuery`语句字符串。
+- `matches`：返回一个布尔值，表示当前环境是否匹配查询语句。
 
 ```javascript
-var result = window.matchMedia("(min-width: 600px)");
+var result = window.matchMedia('(min-width: 600px)');
 result.media // (min-width: 600px)
 result.matches // true
 ```
@@ -571,7 +570,7 @@ result.matches // true
 下面是另外一个例子，根据mediaQuery是否匹配当前环境，执行不同的JavaScript代码。
 
 ```javascript
-var result = window.matchMedia('@media all and (max-width: 700px)');
+var result = window.matchMedia('(max-width: 700px)');
 
 if (result.matches) {
   console.log('页面宽度小于等于700px');
@@ -580,7 +579,7 @@ if (result.matches) {
 }
 ```
 
-下面的例子根据mediaQuery是否匹配当前环境，加载相应的CSS样式表。
+下面的例子根据`mediaQuery`是否匹配当前环境，加载相应的CSS样式表。
 
 ```javascript
 var result = window.matchMedia("(max-width: 700px)");
@@ -593,6 +592,13 @@ if (result.matches){
 
   document.head.appendChild(linkElm);
 }
+```
+
+注意，如果`window.matchMedia`无法解析`mediaQuery`参数，返回的总是`false`，而不是报错。
+
+```javascript
+window.matchMedia('bad string').matches
+// false
 ```
 
 ### 监听事件
@@ -623,32 +629,27 @@ function mqCallback(mql) {
 
 ### transitionEnd事件
 
-CSS的过渡效果（transition）结束后，触发transitionEnd事件。
+CSS的过渡效果（transition）结束后，触发`transitionEnd`事件。
 
 ```javascript
-el.addEventListener("transitionend", onTransitionEnd, false);
+el.addEventListener('transitionend', onTransitionEnd, false);
 
 function onTransitionEnd() {
   console.log('Transition end');
 }
 ```
 
-transitionEnd的事件对象具有以下属性。
+`transitionEnd`的事件对象具有以下属性。
 
-- propertyName：发生transition效果的CSS属性名。
+- `propertyName`：发生`transition`效果的CSS属性名。
+- `elapsedTime`：`transition`效果持续的秒数，不含`transition-delay`的时间。
+- `pseudoElement`：如果`transition`效果发生在伪元素，会返回该伪元素的名称，以“::”开头。如果不发生在伪元素上，则返回一个空字符串。
 
-- elapsedTime：transition效果持续的秒数，不含transition-delay的时间。
-
-- pseudoElement：如果transition效果发生在伪元素，会返回该伪元素的名称，以“::”开头。如果不发生在伪元素上，则返回一个空字符串。
-
-实际使用transitionend事件时，需要添加浏览器前缀。
+实际使用`transitionend`事件时，可能需要添加浏览器前缀。
 
 ```javascript
-el.addEventListener('webkitTransitionEnd '
-  + 'transitionend '
-  + 'msTransitionEnd '
-  + 'oTransitionEnd ', function(){
-  el.style.transition = 'none';
+el.addEventListener('webkitTransitionEnd', function () {
+    el.style.transition = 'none';
 });
 ```
 
