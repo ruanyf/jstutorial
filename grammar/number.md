@@ -69,7 +69,7 @@ Math.pow(2, 53)
 
 ### 数值范围
 
-另一方面，64位浮点数的指数部分的长度是11个二进制位，意味着指数部分的最大值是2047（2的11次方减1）。也就是说，64位浮点数的指数部分的值最大为2047，分出一半表示负数，则JavaScript能够表示的数值范围为2<sup>1024</sup>到2<sup>-1023</sup>（开区间），超出这个范围的数无法表示。
+根据标准，64位浮点数的指数部分的长度是11个二进制位，意味着指数部分的最大值是2047（2的11次方减1）。也就是说，64位浮点数的指数部分的值最大为2047，分出一半表示负数，则JavaScript能够表示的数值范围为2<sup>1024</sup>到2<sup>-1023</sup>（开区间），超出这个范围的数无法表示。
 
 如果指数部分等于或超过最大正值1024，JavaScript会返回`Infinity`（关于Infinity的介绍参见下文），这称为“正向溢出”；如果等于或超过最小负值-1023（即非常接近0），JavaScript会直接把这个数转为0，这称为“负向溢出”。事实上，JavaScript对指数部分的两个极端值（`11111111111`和`00000000000`）做了定义，`11111111111`表示`NaN`和`Infinity`，`00000000000`表示0。
 
@@ -83,7 +83,7 @@ for(var i = 0; i < 25; i++) {
 x // 0
 ```
 
-上面代码对0.5连续做25次平方，由于最后结果太接近0，超出了可表示的范围，JavaScript就直接将其转为0。
+上面代码对`0.5`连续做25次平方，由于最后结果太接近0，超出了可表示的范围，JavaScript就直接将其转为0。
 
 至于具体的最大值和最小值，JavaScript提供Number对象的`MAX_VALUE`和`MIN_VALUE`属性表示（参见《Number对象》一节）。
 
@@ -172,99 +172,91 @@ JavaScript提供几个特殊的数值。
 
 ### 正零和负零
 
-严格来说，JavaScript提供零的三种写法：0、+0、-0。它们是等价的。
+严格来说，JavaScript提供零的三种写法：`0`、`+0`、`-0`。它们是等价的。
 
-{% highlight javascript %}
-
+```javascript
 -0 === +0 // true
 0 === -0 // true
 0 === +0 // true
+```
 
-{% endhighlight %}
+几乎所有场合，正零和负零都会被当作正常的`0`。
 
-但是，如果正零和负零分别当作分母，它们返回的值是不相等的。
+```javascript
++0 // 0
+-0 // 0
+(-0).toString() // '0'
+(+0).toString() // '0'
+```
 
-{% highlight javascript %}
+唯一有区别的场合是，`+0`或`-0`当作分母，返回的值是不相等的。
 
-(1/+0) === (1/-0) // false
+```javascript
+(1 / +0) === (1 / -0) // false
+```
 
-{% endhighlight %}
-
-上面代码之所以出现这样结果，是因为除以正零得到+Infinity，除以负零得到-Infinity，这两者是不相等的（关于Infinity详见后文）。
+上面代码之所以出现这样结果，是因为除以正零得到`+Infinity`，除以负零得到`-Infinity`，这两者是不相等的（关于`Infinity`详见后文）。
 
 ### NaN
 
 **（1）含义**
 
-NaN是JavaScript的特殊值，表示“非数字”（Not a Number），主要出现在将字符串解析成数字出错的场合。
+`NaN`是JavaScript的特殊值，表示“非数字”（Not a Number），主要出现在将字符串解析成数字出错的场合。
 
-{% highlight javascript %}
+```javascript
+5 - 'x' // NaN
+```
 
-5 - 'x'
-// NaN
+上面代码运行时，会自动将字符串`x`转为数值，但是由于`x`不是数值，所以最后得到结果为`NaN`，表示它是“非数字”（`NaN`）。
 
-{% endhighlight %}
+另外，一些数学函数的运算结果会出现`NaN`。
 
-上面代码运行时，会自动将字符串“x”转为数值，但是由于x不是数字，所以最后得到结果为NaN，表示它是“非数字”（NaN）。
-
-另外，一些数学函数的运算结果会出现NaN。
-
-{% highlight javascript %}
-
+```javascript
 Math.acos(2) // NaN
 Math.log(-1) // NaN
 Math.sqrt(-1) // NaN
+```
 
-{% endhighlight %}
+`0`除以`0`也会得到`NaN`。
 
-0除以0也会得到NaN。
-
-{% highlight javascript %}
-
+```javascript
 0 / 0 // NaN
+```
 
-{% endhighlight %}
+需要注意的是，`NaN`不是一种独立的数据类型，而是一种特殊数值，它的数据类型依然属于`Number`，使用`typeof`运算符可以看得很清楚。
 
-需要注意的是，NaN不是一种独立的数据类型，而是一种特殊数值，它的数据类型依然属于Number，使用typeof运算符可以看得很清楚。
-
-{% highlight javascript %}
-
+```javascript
 typeof NaN // 'number'
-
-{% endhighlight %}
+```
 
 **（2）运算规则**
 
-NaN不等于任何值，包括它本身。
+`NaN`不等于任何值，包括它本身。
 
-{% highlight javascript %}
-
+```javascript
 NaN === NaN // false
+```
 
-{% endhighlight %}
-
-由于数组的indexOf方法，内部使用的是严格相等运算符，所以该方法对NaN不成立。
+由于数组的`indexOf`方法，内部使用的是严格相等运算符，所以该方法对`NaN`不成立。
 
 ```javascript
 [NaN].indexOf(NaN) // -1
 ```
 
-NaN在布尔运算时被当作false。
+`NaN`在布尔运算时被当作`false`。
 
 ```javascript
 Boolean(NaN) // false
 ```
 
-NaN与任何数（包括它自己）的运算，得到的都是NaN。
+`NaN`与任何数（包括它自己）的运算，得到的都是`NaN`。
 
-{% highlight javascript %}
-
+```javascript
 NaN + 32 // NaN
 NaN - 32 // NaN
 NaN * 32 // NaN
 NaN / 32 // NaN
-
-{% endhighlight %}
+```
 
 **（3）判断NaN的方法**
 
@@ -313,7 +305,7 @@ function myIsNaN(value) {
 }
 ```
 
-判断NaN更可靠的方法是，利用`NaN`是JavaScript之中唯一不等于自身的值这个特点，进行判断。
+判断`NaN`更可靠的方法是，利用`NaN`是JavaScript之中唯一不等于自身的值这个特点，进行判断。
 
 ```javascript
 function myIsNaN(value) {
@@ -325,84 +317,84 @@ function myIsNaN(value) {
 
 **（1）定义**
 
-Infinity表示“无穷”。除了0除以0得到NaN，其他任意数除以0，得到Infinity。
+`Infinity`表示“无穷”，用来表示两种场景。一种是一个正的数值太大，或一个负的数值太小，无法表示；另一种是非0数值除以0，得到`Infinity`。
 
-{% highlight javascript %}
+```javascript
+// 场景一
+Math.pow(2, Math.pow(2, 100))
+// Infinity
+
+// 场景二
+0 / 0 // NaN
+1 / 0 // Infinity
+```
+
+上面代码中，第一个场景是一个表达式的计算结果太大，超出了JavaScript能够表示的范围，因此返回`Infinity`。第二个场景是`0`除以`0`会得到`NaN`，而非0数值除以`0`，会返回`Infinity`。
+
+`Infinity`有正负之分，`Infinity`表示正的无穷，`-Infinity`表示负的无穷。
+
+```javascript
+Infinity === -Infinity // false
 
 1 / -0 // -Infinity
-1 / +0 // Infinity
+-1 / -0 // Infinity
+```
 
-{% endhighlight %}
+上面代码中，非零正数除以`-0`，会得到`-Infinity`，负数除以`-0`，会得到`Infinity`。
 
-上面代码表示，非0值除以0，JavaScript不报错，而是返回Infinity。这是需要特别注意的地方。
+由于数值正向溢出（overflow）、负向溢出（underflow）和被`0`除，JavaScript都不报错，而是返回`Infinity`，所以单纯的数学运算几乎没有可能抛出错误。
 
-Infinity有正负之分。
+`Infinity`大于一切数值（除了`NaN`），`-Infinity`小于一切数值（除了`NaN`）。
 
-{% highlight javascript %}
+```javascript
+Infinity > 1000 // true
+-Infinity < -1000 // true
+```
 
-Infinity === -Infinity // false
-Math.pow(+0, -1) // Infinity
-Math.pow(-0, -1) // -Infinity
+`Infinity`与`NaN`比较，总是返回`false`。
 
-{% endhighlight %}
-
-运算结果超出JavaScript可接受范围，也会返回无穷。
-
-{% highlight javascript %}
-
-Math.pow(2, 2048) // Infinity
--Math.pow(2, 2048) // -Infinity
-
-{% endhighlight %}
-
-由于数值正向溢出（overflow）、负向溢出（underflow）和被0除，JavaScript都不报错，所以单纯的数学运算几乎没有可能抛出错误。
+```javascript
+Infinity > NaN // false
+Infinity < NaN // false
+```
 
 **（2）运算规则**
 
-Infinity的四则运算，符合无穷的数学计算规则。
+`Infinity`的四则运算，符合无穷的数学计算规则。
 
-{% highlight javascript %}
-
-Infinity + Infinity // Infinity
+```javascript
 5 * Infinity // Infinity
 5 - Infinity // -Infinity
 Infinity / 5 // Infinity
 5 / Infinity // 0
+```
 
-{% endhighlight %}
+`Infinity`加上或乘以`Infinity`，返回的还是`Infinity`。
 
-Infinity减去或除以Infinity，得到NaN。
+```javascript
+Infinity + Infinity // Infinity
+Infinity * Infinity // Infinity
+```
 
-{% highlight javascript %}
+`Infinity`减去或除以`Infinity`，得到`NaN`。
 
+```javascript
 Infinity - Infinity // NaN
 Infinity / Infinity // NaN
-
-{% endhighlight %}
-
-Infinity可以用于布尔运算。可以记住，Infinity是JavaScript中最大的值（NaN除外），-Infinity是最小的值（NaN除外）。
-
-{% highlight javascript %}
-
-5 > -Infinity // true
-5 > Infinity // false
-
-{% endhighlight %}
+```
 
 **（3）isFinite函数**
 
-isFinite函数返回一个布尔值，检查某个值是否为正常值，而不是Infinity。
+`isFinite`函数返回一个布尔值，检查某个值是不是正常数值，而不是`Infinity`。
 
-{% highlight javascript %}
-
+```javascript
 isFinite(Infinity) // false
 isFinite(-1) // true
 isFinite(true) // true
 isFinite(NaN) // false
+```
 
-{% endhighlight %}
-
-上面代码表示，如果对NaN使用isFinite函数，也返回false，表示NaN不是一个正常值。
+上面代码表示，如果对`NaN`使用`isFinite`函数，也返回`false`，表示`NaN`不是一个正常值。
 
 ## 与数值相关的全局方法
 
@@ -564,7 +556,7 @@ parseFloat('FF2') // NaN
 parseFloat('') // NaN
 ```
 
-上面代码说明，`parseFloat`会将空字符串转为`NaN`。
+上面代码中，尤其值得注意，`parseFloat`会将空字符串转为`NaN`。
 
 这些特点使得`parseFloat`的转换结果不同于`Number`函数。
 
