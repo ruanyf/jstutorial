@@ -254,6 +254,11 @@ p code.highlighter-rouge {
   background-color: rgba(0, 0, 0, 0);
 }
 
+pre.highlight {
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+
 .highlight .hll { background-color: #333333 }
 .highlight  { 
 
