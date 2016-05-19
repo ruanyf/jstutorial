@@ -102,7 +102,7 @@ new Boolean("true").toString()
 
 ```javascript
 var str = 'abc';
-str.length // "a"
+str.length // 3
 
 // 等同于
 var strObj = new String(str)

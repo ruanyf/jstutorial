@@ -467,8 +467,8 @@ document.getElementById('my-ok').onkeypress = function() {
 var div = document.getElementsByTagName('div')[0];
 
 // 写法一
-for(var i=0xA00000;i<0xFFFFFF;i++) {
-  div.style.backgroundColor = '#'+i.toString(16);
+for (var i = 0xA00000; i < 0xFFFFFF; i++) {
+  div.style.backgroundColor = '#' + i.toString(16);
 }
 
 // 写法二
@@ -477,16 +477,16 @@ var i=0x100000;
 
 function func() {
   timer = setTimeout(func, 0);
-  div.style.backgroundColor = '#'+i.toString(16);
-  if (i++ == 0xFFFFFF) clearInterval(timer);
+  div.style.backgroundColor = '#' + i.toString(16);
+  if (i++ == 0xFFFFFF) clearTimeout(timer);
 }
 
 timer = setTimeout(func, 0);
 ```
 
-上面代码有两种写法，都是改变一个网页元素的背景色。写法一会造成浏览器“堵塞”，而写法二就能就不会，这就是`setTimeout(f,0)`的好处。
+上面代码有两种写法，都是改变一个网页元素的背景色。写法一会造成浏览器“堵塞”，因为JavaScript执行速度远高于DOM，会造成大量DOM操作“堆积”，而写法二就不会，这就是`setTimeout(f, 0)`的好处。
 
-另一个使用这种技巧的例子是，代码高亮的处理。如果代码块很大，就会分成一个个小块，写成诸如`setTimeout(highlightNext, 50)`的样子，进行分块处理。
+另一个使用这种技巧的例子是代码高亮的处理。如果代码块很大，一次性处理，可能会对性能造成很大的压力，那么将其分成一个个小块，一次处理一块，比如写成`setTimeout(highlightNext, 50)`的样子，性能压力就会减轻。
 
 ## 正常任务与微任务
 
