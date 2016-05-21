@@ -20,7 +20,7 @@ modifiedOn: 2014-01-05
 单引号字符串的内部，可以使用双引号。双引号字符串的内部，可以使用单引号。
 
 ```javascript
-'key="value"'
+'key = "value"'
 "It's a long journey"
 ```
 

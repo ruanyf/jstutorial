@@ -71,22 +71,6 @@ Math.max(2, -1, 5) // 5
 Math.min(2, -1, 5) // -1
 ```
 
-`Math.round`方法用于四舍五入。
-
-```javascript
-Math.round(0.1) // 0
-Math.round(0.5) // 1
-Math.round(0.6) // 1
-```
-
-注意，它对负数的处理，主要是对`0.5`的处理。
-
-```javascript
-Math.round(-1.1) // -1
-Math.round(-1.5) // -1
-Math.round(-1.6) // -2
-```
-
 `Math.floor`方法接受一个参数，返回小于该参数的最大整数。
 
 ```javascript
@@ -99,6 +83,43 @@ Math.floor(-3.2) // -4
 ```javascript
 Math.ceil(3.2) // 4
 Math.ceil(-3.2) // -3
+```
+
+如果需要一个总是返回某个数值整数部分的函数，可以自己实现。
+
+```javascript
+function ToInteger(x) {
+  x = Number(x);
+  return x < 0 ? Math.ceil(x) : Math.floor(x);
+}
+
+ToInteger(3.2) // 3
+ToInteger(3.5) // 3
+ToInteger(3.8) // 3
+ToInteger(-3.2) // -3
+ToInteger(-3.5) // -3
+ToInteger(-3.8) // -3
+```
+
+上面代码中，不管正数或负数，`ToInteger`函数总是返回一个数值的整数部分。
+
+`Math.round`方法用于四舍五入。
+
+```javascript
+Math.round(0.1) // 0
+Math.round(0.5) // 1
+Math.round(0.6) // 1
+
+// 等同于
+Math.ceil(x + 0.5)
+```
+
+注意，它对负数的处理，主要是对`0.5`的处理。
+
+```javascript
+Math.round(-1.1) // -1
+Math.round(-1.5) // -1
+Math.round(-1.6) // -2
 ```
 
 `Math.pow`方法返回以第一个参数为底数、第二个参数为幂的指数值。

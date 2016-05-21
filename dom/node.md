@@ -213,7 +213,7 @@ var ulElementChildNodes = document.querySelector('ul').childNodes;
 
 上面代码中，`p`元素的第一个子节点是`span`元素。
 
-注意，`firstNode`返回的除了HTML元素子节点，还可能是文本节点或评论节点。
+注意，`firstChild`返回的除了HTML元素子节点，还可能是文本节点或评论节点。
 
 ```html
 <p id="para-01">

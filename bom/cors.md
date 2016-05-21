@@ -185,7 +185,7 @@ Content-Type: text/plain
 Access-Control-Allow-Origin: *
 ```
 
-如果浏览器否定了”预检“请求，会返回一个正常的HTTP回应，但是没有任何CORS相关的头信息字段。这时，浏览器就会认定，服务器不同意预检请求，因此触发一个错误，被`XMLHttpRequest`对象的`onerror`回调函数捕获。控制台会打印出如下的报错信息。
+如果服务器否定了”预检“请求，会返回一个正常的HTTP回应，但是没有任何CORS相关的头信息字段。这时，浏览器就会认定，服务器不同意预检请求，因此触发一个错误，被`XMLHttpRequest`对象的`onerror`回调函数捕获。控制台会打印出如下的报错信息。
 
 ```bash
 XMLHttpRequest cannot load http://api.alice.com.
