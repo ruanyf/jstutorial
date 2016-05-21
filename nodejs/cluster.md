@@ -67,7 +67,7 @@ worker对象是`cluster.fork()`的返回值，代表一个worker进程。
 
 （1）worker.id
 
-work.id返回当前worker的独一无二的进程编号。这个编号也是cluster.workers中指向当前进程的索引值。
+worker.id返回当前worker的独一无二的进程编号。这个编号也是cluster.workers中指向当前进程的索引值。
 
 （2）worker.process
 
