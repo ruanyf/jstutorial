@@ -189,7 +189,7 @@ process.on('message', function(message) {
     process.exit(0);
   }
 });
-``
+```
 
 下面是一个关闭所有worker进程的函数。
 
