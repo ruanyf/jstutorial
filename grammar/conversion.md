@@ -79,7 +79,14 @@ Number('\t\v\r12.34\n') // 12.34
 
 **（2）对象的转换规则**
 
-如果参数是对象，`Number`将其转为数值的规则比较复杂。JavaScript的内部处理步骤如下。
+简单的规则是，`Number`方法的参数是对象时，将返回`NaN`。
+
+```javascript
+Number({a: 1}) // NaN
+Number([1, 2, 3]) // NaN
+```
+
+实际上，`Number`背后的真正规则复杂得多，内部处理步骤如下。
 
 1. 调用对象自身的`valueOf`方法。如果返回原始类型的值，则直接对该值使用`Number`函数，不再进行后续步骤。
 
@@ -90,8 +97,7 @@ Number('\t\v\r12.34\n') // 12.34
 请看下面的例子。
 
 ```javascript
-var obj = {a: 1};
-Number(obj) // NaN
+Number(obj)
 
 // 等同于
 
@@ -180,7 +186,14 @@ String(null) // "null"
 
 **（2）对象的转换规则**
 
-`String`函数将对象转为字符串的步骤，与`Number`函数的处理步骤基本相同，只是互换了`valueOf`方法和`toString`方法的执行顺序。
+`String`方法的参数如果是对象，返回一个类型字符串；如果是数组，返回该数组的字符串形式。
+
+```javascript
+String({a: 1}) // "[object Object]"
+String([1, 2, 3]) // "1,2,3"
+```
+
+`String`方法背后的转换规则，与`Number`方法基本相同，只是互换了`valueOf`方法和`toString`方法的执行顺序。
 
 1. 先调用对象自身的`toString`方法。如果返回原始类型的值，则对该值使用`String`函数，不再进行以下步骤。
 
