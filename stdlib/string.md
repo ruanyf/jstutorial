@@ -69,14 +69,11 @@ String.fromCharCode(0xD842, 0xDFB7)
 
 ### length属性
 
-该属性返回字符串的长度。
+`length`属性返回字符串的长度。
 
-{% highlight javascript %}
-
-"abc".length
-// 3
-
-{% endhighlight %}
+```javascript
+'abc'.length // 3
+```
 
 ### charAt()
 
@@ -119,9 +116,9 @@ s.charAt(s.length - 1) // "c"
 
 如果参数为负数，或大于等于字符串的长度，`charCodeAt`返回`NaN`。
 
-### concat方法
+### concat()
 
-`concat`方法用于连接两个字符串。
+`concat`方法用于连接两个字符串，返回一个新字符串，不改变原字符串。
 
 ```javascript
 var s1 = 'abc';
@@ -130,8 +127,6 @@ var s2 = 'def';
 s1.concat(s2) // "abcdef"
 s1 // "abc"
 ```
-
-`concat`方法返回一个新字符串，不改变原字符串。
 
 该方法可以接受多个参数。
 
@@ -150,7 +145,7 @@ var three = '3';
 one + two + three // "33"
 ```
 
-上面代码中，`concat`方法将参数先转成字符串再连接，所以返回的是一个三个字符的字符串。而加号运算符在两个运算数都是数值时，不会转换类型，所以返回的是一个两个字符的字符串。
+上面代码中，`concat`方法将参数先转成字符串再连接，所以返回的是一个三个字符的字符串。作为对比，加号运算符在两个运算数都是数值时，不会转换类型，所以返回的是一个两个字符的字符串。
 
 ### slice()
 
@@ -244,7 +239,7 @@ one + two + three // "33"
 
 ### indexOf()，lastIndexOf()
 
-这两个方法用于确定一个字符串在另一个字符串中的位置，如果返回-1，就表示不匹配。两者的区别在于，`indexOf`从字符串头部开始匹配，`lastIndexOf`从尾部开始匹配。
+这两个方法用于确定一个字符串在另一个字符串中的位置，都返回一个整数，表示匹配开始的位置。如果返回`-1`，就表示不匹配。两者的区别在于，`indexOf`从字符串头部开始匹配，`lastIndexOf`从尾部开始匹配。
 
 ```javascript
 'hello world'.indexOf('o') // 4
@@ -253,7 +248,7 @@ one + two + three // "33"
 'hello world'.lastIndexOf('o') // 7
 ```
 
-它们还可以接受第二个参数，对于`indexOf`方法，第二个位置表示从该位置开始向后匹配；对于`lastIndexOf`，第二个表示从该位置起向前匹配。
+它们还可以接受第二个参数，对于`indexOf`方法，第二个参数表示从该位置开始向后匹配；对于`lastIndexOf`，第二个参数表示从该位置起向前匹配。
 
 ```javascript
 'hello world'.indexOf('o', 6) // 7
@@ -262,18 +257,22 @@ one + two + three // "33"
 
 ### trim()
 
-`trim`方法用于去除字符串两端的空格。
+`trim`方法用于去除字符串两端的空格，返回一个新字符串，不改变原字符串。
 
 ```javascript
 '  hello world  '.trim()
 // "hello world"
 ```
 
-该方法返回一个新字符串，不改变原字符串。
+该方法去除的不仅是空格，还包括制表符（`\t`）、换行符（`\n`）和回车符（`\r`）。
+
+```javascript
+'\r\nabc \t'.trim() // 'abc'
+```
 
 ### toLowerCase()，toUpperCase()
 
-`toLowerCase`用于将一个字符串转为小写，`toUpperCase`则是转为大写。
+`toLowerCase`方法用于将一个字符串全部转为小写，`toUpperCase`则是全部转为大写。
 
 ```javascript
 'Hello World'.toLowerCase()
@@ -311,50 +310,44 @@ one + two + three // "33"
 
 上面代码中，`localeCompare`方法返回整数1（也有可能返回其他正整数），表示`B`较大。
 
-### 搜索和替换
+### match()
 
-与搜索和替换相关的有4个方法，它们都允许使用正则表达式。
-
-- **match**：用于确定原字符串是否匹配某个子字符串，返回匹配的子字符串数组。
-- **search**：等同于match，但是返回值不一样。
-- **replace**：用于替换匹配的字符串。
-- **split**：将字符串按照给定规则分割，返回一个由分割出来的各部分组成的新数组。
-
-下面是这4个方法的简单介绍。它们都可以使用正则对象，涉及正则对象的部分见《Regex对象》一节。
-
-**（1）match方法**
-
-match方法返回一个数组，成员为匹配的第一个字符串。如果没有找到匹配，则返回null。返回数组还有index属性和input属性，分别表示匹配字符串开始的位置（从0开始）和原始字符串。
+`match`方法用于确定原字符串是否匹配某个子字符串，返回一个数组，成员为匹配的第一个字符串。如果没有找到匹配，则返回`null`。
 
 ```javascript
-var matches = "cat, bat, sat, fat".match("at");
+'cat, bat, sat, fat'.match('at') // ["at"]
+'cat, bat, sat, fat'.match('xt') // null
+```
 
-matches // ["at"]
+返回数组还有`index`属性和`input`属性，分别表示匹配字符串开始的位置和原始字符串。
+
+```javascript
+var matches = 'cat, bat, sat, fat'.match('at');
 matches.index // 1
 matches.input // "cat, bat, sat, fat"
 ```
 
-**（2）search方法**
+`match`方法还可以使用正则表达式作为参数，详见《正则表达式》一节。
 
-search方法的用法等同于match，但是返回值为匹配的第一个位置。如果没有找到匹配，则返回-1。
+### search()
 
-{% highlight javascript %}
+`search`方法的用法等同于`match`，但是返回值为匹配的第一个位置。如果没有找到匹配，则返回`-1`。
 
-"cat, bat, sat, fat".search("at")
-// 1
+```javascript
+'cat, bat, sat, fat'.search('at') // 1
+```
 
-{% endhighlight %}
+`search`方法还可以使用正则表达式作为参数，详见《正则表达式》一节。
 
-**（3）replace方法**
+### replace()
 
-replace方法用于替换匹配的子字符串，一般情况下只替换第一个匹配（除非使用带有g修饰符的正则表达式）。
+`replace`方法用于替换匹配的子字符串，一般情况下只替换第一个匹配（除非使用带有`g`修饰符的正则表达式）。
 
-{% highlight javascript %}
+```javascript
+'aaa'.replace('a', 'b') // "baa"
+```
 
-"aaa".replace("a", "b")
-// "baa"
-
-{% endhighlight %}
+`replace`方法还可以使用正则表达式作为参数，详见《正则表达式》一节。
 
 ### split()
 
@@ -400,6 +393,8 @@ replace方法用于替换匹配的子字符串，一般情况下只替换第一�
 ```
 
 上面代码中，`split`方法的第二个参数，决定了返回数组的成员数。
+
+`split`方法还可以使用正则表达式作为参数，详见《正则表达式》一节。
 
 ## 参考链接
 
