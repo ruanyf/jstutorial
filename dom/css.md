@@ -10,7 +10,7 @@ CSS与JavaScript是两个有着明确分工的领域，前者负责页面的视�
 
 ## HTML元素的style属性
 
-操作Element节点的CSS样式，最简单的方法之一就是使用节点对象的getAttribute方法、setAttribute方法和removeAttribute方法，读写或删除HTML元素的style属性。
+操作Element节点的CSS样式，最简单的方法之一就是使用节点对象的`getAttribute`方法、`setAttribute`方法和`removeAttribute`方法，读写或删除HTML元素的`style`属性。
 
 ```javascript
 div.setAttribute('style',
@@ -18,13 +18,13 @@ div.setAttribute('style',
 );
 ```
 
+这三个方法的详细用法，详见《Node节点》一节。
+
 ## Element节点的style属性
 
 ### 基本用法
 
-Element节点本身还提供`style`属性，用来操作CSS样式。
-
-style属性指向一个对象，用来读写页面元素的行内CSS样式。
+Element节点本身还提供`style`属性，用来操作CSS样式。`style`属性指向一个对象，用来读写页面元素的行内CSS样式。
 
 ```javascript
 var divStyle = document.querySelector('div').style;
@@ -47,36 +47,38 @@ divStyle.width // 100px
 
 ### cssText属性
 
-style对象的cssText可以用来读写或删除整个style属性。
+style对象的`cssText`可以用来读写或删除整个style属性。
 
 ```javascript
-divStyle.cssText = 'background-color:red;'
-  + 'border:1px solid black;'
-  + 'height:100px;'
-  + 'width:100px;';
+var divStyle = document.querySelector('div').style;
+
+divStyle.cssText = 'background-color: red;'
+  + 'border: 1px solid black;'
+  + 'height: 100px;'
+  + 'width: 100px;';
 ```
 
-注意，cssText对应的是HTML元素的style属性，所以不用改写CSS属性名。
+注意，`cssText`的属性值不用改写CSS属性名。
 
 ### CSS模块的侦测
 
 CSS的规格发展太快，新的模块层出不穷。不同浏览器的不同版本，对CSS模块的支持情况都不一样。有时候，需要知道当前浏览器是否支持某个模块，这就叫做“CSS模块的侦测”。
 
-一个比较普遍适用的方法是，判断某个DOM元素的style对象的某个属性值是否为字符串。
+一个比较普遍适用的方法是，判断某个DOM元素的`style`对象的某个属性值是否为字符串。
 
 ```javascript
 typeof element.style.animationName === 'string';
 typeof element.style.transform === 'string';
 ```
 
-如果该CSS属性确实存在，会返回一个字符串。即使该属性实际上并未设置，也会返回一个空字符串。如果该属性不存在，则会返回undefined。
+如果该CSS属性确实存在，会返回一个字符串。即使该属性实际上并未设置，也会返回一个空字符串。如果该属性不存在，则会返回`undefined`。
 
 ```javascript
 document.body.style['maxWidth'] // ""
 document.body.style['maximumWidth'] // undefined
 ```
 
-需要注意的是，不管CSS属性名带不带连词线，style对象都会显示该属性存在。
+需要注意的是，不管CSS属性名带不带连词线，`style`对象都会显示该属性存在。
 
 ```javascript
 document.body.style['backgroundColor'] // ""
@@ -98,7 +100,7 @@ function isPropertySupported(property){
   var prefixes = ['Moz', 'Webkit', 'O', 'ms', 'Khtml'];
   var prefProperty = property.charAt(0).toUpperCase() + property.substr(1);
 
-  for(var i=0; i<prefixes.length; i++){
+  for(var i = 0; i < prefixes.length; i++){
     if((prefixes[i] + prefProperty) in document.body.style) return true;
   }
 
@@ -116,17 +118,19 @@ CSS.supports('transform-origin', '5px');
 CSS.supports('(display: table-cell) and (display: list-item)');
 ```
 
-### setPropertyValue()，getPropertyValue()，removeProperty()
+### setProperty()，getPropertyValue()，removeProperty()
 
-style对象的以下三个方法，用来读写行内CSS规则。
+`style`对象的以下三个方法，用来读写行内CSS规则。
 
-- setPropertyValue(propertyName,value)：设置某个CSS属性。
-- getPropertyValue(propertyName)：读取某个CSS属性。
-- removeProperty(propertyName)：删除某个CSS属性。
+- `setProperty(propertyName,value)`：设置某个CSS属性。
+- `getPropertyValue(propertyName)`：读取某个CSS属性。
+- `removeProperty(propertyName)`：删除某个CSS属性。
 
 这三个方法的第一个参数，都是CSS属性名，且不用改写连词线。
 
 ```javascript
+var divStyle = document.querySelector('div').style;
+
 divStyle.setProperty('background-color','red');
 divStyle.getPropertyValue('background-color');
 divStyle.removeProperty('background-color');
@@ -134,7 +138,7 @@ divStyle.removeProperty('background-color');
 
 ## CSS伪元素
 
-CSS伪元素是通过CSS向DOM添加的元素，主要方法是通过“:before”和“:after”选择器生成伪元素，然后用content属性指定伪元素的内容。
+CSS伪元素是通过CSS向DOM添加的元素，主要方法是通过`:before`和`:after`选择器生成伪元素，然后用`content`属性指定伪元素的内容。
 
 以如下HTML代码为例。
 
@@ -151,7 +155,7 @@ CSS添加伪元素的写法如下。
 }
 ```
 
-DOM节点的style对象无法读写伪元素的样式，这时就要用到`window`对象的`getComputedStyle`方法（详见下面介绍）。JavaScript获取伪元素，可以使用下面的方法。
+DOM节点的`style`对象无法读写伪元素的样式，这时就要用到`window`对象的`getComputedStyle`方法（详见下面介绍）。JavaScript获取伪元素，可以使用下面的方法。
 
 ```javascript
 var test = document.querySelector('#test');

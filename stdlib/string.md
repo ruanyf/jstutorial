@@ -282,7 +282,7 @@ one + two + three // "33"
 // "HELLO WORLD"
 ```
 
-### localeCompare方法
+### localeCompare()
 
 `localeCompare`方法用于比较两个字符串。它返回一个整数，如果小于0，表示第一个字符串小于第二个字符串；如果等于0，表示两者相等；如果大于0，表示第一个字符串大于第二个字符串。
 

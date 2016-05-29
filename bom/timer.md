@@ -490,7 +490,7 @@ timer = setTimeout(func, 0);
 
 ## 正常任务与微任务
 
-正常情况下，JavaScript的任务是同步执行的，即执行完前一个任务，然后执行后一个任务。只有遇到异步任务的情况下，才会执行顺序才会改变。
+正常情况下，JavaScript的任务是同步执行的，即执行完前一个任务，然后执行后一个任务。只有遇到异步任务的情况下，执行顺序才会改变。
 
 这时，需要区分两种任务：正常任务（task）与微任务（microtask）。它们的区别在于，“正常任务”在下一轮Event Loop执行，“微任务”在本轮Event Loop的所有任务结束后执行。
 
@@ -518,9 +518,9 @@ console.log(5);
 
 上面代码的执行结果说明，`setTimeout(fn, 0)`在`Promise.resolve`之后执行。
 
-这是因为setTimeout语句指定的是“正常任务”，即不会在当前的Event Loop执行。而Promise会将它的回调函数，在状态改变后的那一轮Event Loop指定为微任务。所以，3和4输出在5之后、2之前。
+这是因为`setTimeout`语句指定的是“正常任务”，即不会在当前的Event Loop执行。而Promise会将它的回调函数，在状态改变后的那一轮Event Loop指定为微任务。所以，3和4输出在5之后、2之前。
 
-除了setTimeout，正常任务还包括各种事件（比如鼠标单击事件）的回调函数。除了Promise，微任务还包括mutation observer的回调函数。
+除了`setTimeout`，正常任务还包括各种事件（比如鼠标单击事件）的回调函数。微任务目前主要就是Promise。
 
 ## 参考链接
 
