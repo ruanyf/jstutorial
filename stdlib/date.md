@@ -341,9 +341,9 @@ var d = new Date(2013, 0, 1);
 d.toTimeString() // "00:00:00 GMT+0800 (CST)"
 ```
 
-**（7）Date.prototype.toLocalDateString()**
+**（7）Date.prototype.toLocaleDateString()**
 
-`toLocalDateString`方法返回一个字符串，代表日期的当地写法。
+`toLocaleDateString`方法返回一个字符串，代表日期的当地写法。
 
 ```javascript
 var d = new Date(2013, 0, 1);

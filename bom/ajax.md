@@ -855,9 +855,9 @@ xhr.send(file);
 
 ### 基本用法
 
-Ajax操作所用的XMLHttpRequest对象，已经有十多年的历史，它的API设计并不是很好，输入、输出、状态都在同一个接口管理，容易写出非常混乱的代码。Fetch API是一种新规范，用来取代XMLHttpRequest对象。它主要有两个特点，一是简化接口，将API分散在几个不同的对象上，二是返回Promise对象，避免了嵌套的回调函数。
+Ajax操作所用的`XMLHttpRequest`对象，已经有十多年的历史，它的API设计并不是很好，输入、输出、状态都在同一个接口管理，容易写出非常混乱的代码。Fetch API是一种新规范，用来取代`XMLHttpRequest`对象。它主要有两个特点，一是简化接口，将API分散在几个不同的对象上，二是返回`Promise`对象，避免了嵌套的回调函数。
 
-检查浏览器是否部署了这个API的代码如下。
+下面的代码检查浏览器是否部署了Fetch API。
 
 ```javascript
 if (fetch in window){
@@ -870,76 +870,111 @@ if (fetch in window){
 下面是一个Fetch API的简单例子。
 
 ```javascript
-var URL = 'http://some/path';
-
-fetch(URL).then(function(response) {
+fetch(url).then(function (response) {
   return response.json();
-}).then(function(json) {
-  someOperator(json);
+}).then(function (jsonData) {
+  console.log(jsonData);
+}).catch(function () {
+  console.log('出错了');
 });
 ```
 
-上面代码向服务器请求JSON文件，获取后再做进一步处理。
+上面代码向指定的URL发出请求，得到回应后，将其转为JSON格式，输出到控制台。如果出错，则输出一条提示信息。
 
-下面比较XMLHttpRequest写法与Fetch写法的不同。
+作为比较，`XMLHttpRequest`的写法如下。
 
 ```javascript
-function reqListener() {
-  var data = JSON.parse(this.responseText);
-  console.log(data);
-}
-
-function reqError(err) {
-  console.log('Fetch Error :-S', err);
-}
-
-var oReq = new XMLHttpRequest();
-oReq.onload = reqListener;
-oReq.onerror = reqError;
-oReq.open('get', './api/some.json', true);
-oReq.send();
+var xhr = new XMLHttpRequest();
+xhr.open('GET', url);
+xhr.responseType = 'json';
+xhr.onload = function() {
+  console.log(xhr.response);
+};
+xhr.onerror = function() {
+  console.log('出错了');
+};
+xhr.send();
 ```
 
-同样的操作用Fetch实现如下。
+### stream数据流
+
+Fetch API最大的特点是，数据传送是以数据流（stream）的形式进行的。对于大文件，数据是一段一段得到的。
 
 ```javascript
-fetch('./api/some.json')
-  .then(function(response) {
-    if (response.status !== 200) {
-      console.log('请求失败，状态码：' + response.status);
+var url = 'LargeFile.txt';
+var progress = 0;
+var contentLength = 0;
+
+fetch(url).then(function (response) {
+  // 本次请求总的数据长度
+  contentLength = response.headers.get('Content-Length');
+  var getStream = function (reader) {};
+  return getStream(response.body.getReader());
+})
+.catch(function (error) {
+  console.log(error);
+});
+```
+
+上面代码中，`response.body.getReader()`返回的就是数据流之中的一段。处理数据流的`getStream`函数代码如下。
+
+```javascript
+var progress = 0;
+var contentLength = 0;
+
+var getStream = function (reader) {
+  return reader.read().then(function (result) {
+    // 如果数据已经读取完毕，直接返回
+    if (result.done) {
       return;
     }
-    response.json().then(function(data) {
-      console.log(data);
-    });
-  }).catch(function(err) {
-    console.log('出错：', err);
-  });
+
+    // 取出本段数据（二进制格式）
+    var chunk = result.value;
+
+    var text = '';
+    // 假定数据是UTF-8编码，前三字节是数据头，
+    // 而且每个字符占据一个字节（即都为英文字符）
+    for (var i = 3; i < chunk.byteLength; i++) {
+      text += String.fromCharCode(chunk[i]);
+    }
+
+    // 将本段数据追加到网页之中
+    document.getElementById('content').innerHTML += text;
+
+    // 计算当前进度
+    progress += chunk.byteLength;
+    console.log(((progress / contentLength) * 100) + '%');
+
+    // 递归处理下一段数据
+    return getStream(reader);
+  };
+};
 ```
 
-上面代码中，因为HTTP请求返回的response对象是一个Stream对象，所以需要使用`response.json`方法转为JSON格式，不过这个方法返回的是一个Promise对象。
+上面这样的数据流处理，可以提高网站性能表现，减少内存占用，对于请求大文件或者网速慢的场景相当有用。传统的`XMLHTTPRequest`对象不支持数据流，所有的数据必须放在缓存里，等到全部拿到后，再一次性吐出来。
 
 ### fetch()
 
-fetch方法的第一个参数可以是URL字符串，也可以是后文要讲到的Request对象实例。Fetch方法返回一个Promise对象，并将一个response对象传给回调函数。
+`fetch`方法的第一个参数可以是URL字符串，也可以是后文要讲到的`Request`对象实例。`Fetch`方法返回一个`Promise`对象，并将一个`response`对象传给回调函数。
 
-response对象还有一个ok属性，如果返回的状态码在200到299之间（即请求成功），这个属性为true，否则为false。因此，上面的代码可以写成下面这样。
+`response`对象有一个`ok`属性，如果返回的状态码在200到299之间（即请求成功），这个属性为`true`，否则为`false`。因此，判断请求是否成功的代码可以写成下面这样。
 
 ```javascript
-fetch("./api/some.json").then(function(response) {
+fetch('./api/some.json').then(function (response) {
   if (response.ok) {
-    response.json().then(function(data) {
+    response.json().then(function (data) {
       console.log(data);
     });
   } else {
-    console.log("请求失败，状态码为", response.status);
+    console.log('请求失败，状态码为', response.status);
   }
 }, function(err) {
-  console.log("出错：", err);
+  console.log('出错：', err);
 });
 ```
 
-response对象除了json方法，还包含了HTTP回应的元数据。
+`response`对象除了`json`方法，还包含了服务器HTTP回应的元数据。
 
 ```javascript
 fetch('users.json').then(function(response) {
@@ -952,7 +987,7 @@ fetch('users.json').then(function(response) {
 });
 ```
 
-上面代码中，response对象有很多属性，其中的`response.type`属性比较特别，表示HTTP回应的类型，它有以下三个值。
+上面代码中，`response`对象有很多属性，其中的`response.type`属性比较特别，表示HTTP回应的类型，它有以下三个值。
 
 - basic：正常的同域请求
 - cors：CORS机制下的跨域请求
@@ -1001,7 +1036,7 @@ fetch("http://www.example.org/submit.php", {
 });
 ```
 
-目前，还有一些XMLHttpRequest对象可以做到，但是Fetch API还没做到的地方，比如中途中断HTTP请求，以及获取HTTP请求的进度。这些不足与Fetch返回的是Promise对象有关。
+目前，还有一些`XMLHttpRequest`对象可以做到，但是Fetch API还没做到的地方，比如中途中断HTTP请求，以及获取HTTP请求的进度。这些不足与Fetch返回的是Promise对象有关。
 
 ### Headers
 

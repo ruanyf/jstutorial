@@ -8,6 +8,27 @@ modifiedOn: 2013-12-20
 
 为了更好地为移动设备服务，HTML 5推出了一系列针对移动设备的API。
 
+## Permission API
+
+很多操作需要用户许可，比如脚本想要知道用户的位置，或者操作用户机器上的摄像头。
+
+Permissions API就是用来查询某个接口的许可情况。
+
+```javascript
+// 查询地理位置接口的许可情况
+navigator.permissions.query({ name: 'geolocation' })
+.then(function(result) {
+  // 状态为 prompt，表示查询地理位置时，
+  // 用户会得到提示，是否许可本次查询
+  /* result.status = "prompt" */
+
+  // 状态为 granted，表示用户已经给予了许可
+  /* result.status = "granted" */
+});
+```
+
+有了这个API，就可以自动查询用户的态度。当用户已经明确拒绝的时候，就可以不必再次询问用户许可了。
+
 ## Viewport
 
 Viewport指的是网页的显示区域，也就是不借助滚动条的情况下，用户可以看到的部分网页大小，中文译为“视口”。正常情况下，viewport和浏览器的显示窗口是一样大小的。但是，在移动设备上，两者可能不是一样大小。

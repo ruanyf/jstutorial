@@ -183,36 +183,33 @@ ctx.fillRect(10,10,200,100);
 
 canvas允许将图像文件插入画布，做法是读取图片后，使用drawImage方法在画布内进行重绘。
 
-{% highlight javascript %}
-
+```javascript
 var img = new Image();
 img.src = "image.png";
 ctx.drawImage(img, 0, 0); // 设置对应的图像对象，以及它在画布上的位置
-
-{% endhighlight %}
+```
 
 上面代码将一个PNG图像载入canvas。
 
-由于图像的载入需要时间，drawImage方法只能在图像完全载入后才能调用，因此上面的代码需要改写。
+由于图像的载入需要时间，`drawImage`方法只能在图像完全载入后才能调用，因此上面的代码需要改写。
 
-{% highlight javascript %}
+```javascript
+var image = new Image();
 
-var image = new Image(); 
+image.onload = function() {
+  var canvas = document.createElement('canvas');
+  canvas.width = image.width;
+  canvas.height = image.height;
+  canvas.getContext('2d').drawImage(image, 0, 0);
+  // 插入页面底部
+  document.body.appendChild(image);
+  return canvas;
+}
 
-image.onload = function() { 
-  var canvas = document.createElement("canvas");
-	canvas.width = image.width;
-	canvas.height = image.height;
-	canvas.getContext("2d").drawImage(image, 0, 0);
+image.src = 'image.png';
+```
 
-	return canvas;
-} 
-
-image.src = "image.png";
-
-{% endhighlight %}
-
-drawImage()方法接受三个参数，第一个参数是图像文件的DOM元素（即img标签），第二个和第三个参数是图像左上角在Canvas元素中的坐标，上例中的（0, 0）就表示将图像左上角放置在Canvas元素的左上角。
+`drawImage()`方法接受三个参数，第一个参数是图像文件的DOM元素（即img标签），第二个和第三个参数是图像左上角在Canvas元素中的坐标，上例中的（0, 0）就表示将图像左上角放置在Canvas元素的左上角。
 
 ### getImageData方法，putImageData方法
 

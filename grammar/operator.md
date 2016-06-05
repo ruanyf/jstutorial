@@ -947,7 +947,7 @@ var FLAG_D = 8; // 1000
 然后，就可以用“与运算”检验，当前设置是否打开了指定开关。
 
 ```javascript
-var flags = 3; // 二进制的0101
+var flags = 5; // 二进制的0101
 
 if (flags & FLAG_C) {
   // ...
