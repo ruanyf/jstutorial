@@ -231,17 +231,15 @@ context.putImageData(imageData, 0, 0);
 
 ### toDataURL方法
 
-对图像数据做出修改以后，可以使用toDataURL方法，将Canvas数据重新转化成一般的图像文件形式。
+对图像数据做出修改以后，可以使用`toDataURL`方法，将Canvas数据重新转化成一般的图像文件形式。
 
-{% highlight javascript %}
-
+```javascript
 function convertCanvasToImage(canvas) {
   var image = new Image();
-  image.src = canvas.toDataURL("image/png");
+  image.src = canvas.toDataURL('image/png');
   return image;
 }
-
-{% endhighlight %}
+```
 
 上面的代码将Canvas数据，转化成PNG data URI。
 
@@ -249,26 +247,24 @@ function convertCanvasToImage(canvas) {
 
 save方法用于保存上下文环境，restore方法用于恢复到上一次保存的上下文环境。
 
-{% highlight javascript %}
-
-ctx.save(); 
+```javascript
+ctx.save();
 
 ctx.shadowOffsetX = 10;
 ctx.shadowOffsetY = 10;
 ctx.shadowBlur = 5;
-ctx.shadowColor = "rgba(0,0,0,0.5)";
+ctx.shadowColor = 'rgba(0,0,0,0.5)';
 
-ctx.fillStyle = "#CC0000";
+ctx.fillStyle = '#CC0000';
 ctx.fillRect(10,10,150,100);
 
-ctx.restore(); 
+ctx.restore();
 
-ctx.fillStyle = "#000000";
-ctx.fillRect(180,10,150,100); 
+ctx.fillStyle = '#000000';
+ctx.fillRect(180,10,150,100);
+```
 
-{% endhighlight %}
-
-上面代码先用save方法，保存了当前设置，然后绘制了一个有阴影的矩形。接着，使用restore方法，恢复了保存前的设置，绘制了一个没有阴影的矩形。
+上面代码先用`save`方法，保存了当前设置，然后绘制了一个有阴影的矩形。接着，使用restore方法，恢复了保存前的设置，绘制了一个没有阴影的矩形。
 
 ## 动画
 

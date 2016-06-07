@@ -966,7 +966,7 @@ var mask = FLAG_A | FLAG_B | FLAG_D;
 
 上面代码对ABD三个变量进行“或运算”，得到掩码值为二进制的1011。
 
-有了掩码，“或运算”可以将当前设置改成指定设置。
+有了掩码，“或运算”可以确保打开指定的开关。
 
 ```javascript
 flags = flags | mask;

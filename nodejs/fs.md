@@ -6,21 +6,19 @@ date: 2015-02-08
 modifiedOn: 2015-02-08
 ---
 
-fs是filesystem的缩写，该模块提供本地文件的读写能力，基本上是POSIX文件操作命令的简单包装。但是，这个模块几乎对所有操作提供异步和同步两种操作方式，供开发者选择。
+`fs`是`filesystem`的缩写，该模块提供本地文件的读写能力，基本上是POSIX文件操作命令的简单包装。但是，这个模块几乎对所有操作提供异步和同步两种操作方式，供开发者选择。
 
 ## readFileSync()
 
 readFileSync方法用于同步读取文件，返回一个字符串。
 
 ```javascript
-
 var text = fs.readFileSync(fileName, "utf8");
 
 // 将文件按行拆成数组
 text.split(/\r?\n/).forEach(function (line) {
   // ...
 });
-
 ```
 
 该方法的第一个参数是文件路径，第二个参数是文本文件编码，默认为utf8。
@@ -41,10 +39,8 @@ var EOL = (process.platform === 'win32' ? '\r\n' : '\n')
 
 writeFileSync方法用于同步写入文件。
 
-```
-
+```javascript
 fs.writeFileSync(fileName, str, 'utf8');
-
 ```
 
 它的第一个参数是文件路径，第二个参数是写入文件的字符串，第三个参数是文件编码，默认为utf8。
@@ -53,28 +49,24 @@ fs.writeFileSync(fileName, str, 'utf8');
 
 exists方法用来判断给定路径是否存在，然后不管结果如何，都会调用回调函数。
 
-{% highlight javascript %}
-
+```javascript
 fs.exists('/path/to/file', function (exists) {
   util.debug(exists ? "it's there" : "no file!");
 });
-
-{% endhighlight %}
+```
 
 上面代码表明，回调函数的参数是一个表示文件是否存在的布尔值。
 
-需要注意的是，不要在open方法之前调用exists方法，open方法本身就能检查文件是否存在。
+需要注意的是，不要在`open`方法之前调用`exists`方法，open方法本身就能检查文件是否存在。
 
 下面的例子是如果给定目录存在，就删除它。
 
-{% highlight javascript %}
-
-if(fs.exists(outputFolder)) {
-  console.log("Removing "+outputFolder);
-  fs.rmdir(outputFolder);
+```javascript
+if (fs.existsSync(outputFolder)) {
+  console.log('Removing ' + outputFolder);
+  fs.rmdirSync(outputFolder);
 }
-
-{% endhighlight %}
+```
 
 ## mkdir()，writeFile()，readfile()
 
