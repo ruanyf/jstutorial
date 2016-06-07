@@ -12,18 +12,20 @@ modifiedOn: 2013-12-22
 
 （1）渲染引擎
 
-渲染引擎的主要作用是，将网页从代码”渲染“为用户视觉上可以感知的平面文档。不同的浏览器有不同的渲染引擎。
+渲染引擎的主要作用是，将网页从代码“渲染”为用户视觉上可以感知的平面文档。不同的浏览器有不同的渲染引擎。
 
 - Firefox：Gecko引擎
 - Safari：WebKit引擎
 - Chrome：Blink引擎
+- IE: Trident引擎
+- Edge: EdgeHTML引擎
 
 渲染引擎处理网页，通常分成四个阶段。
 
 1. 解析代码：HTML代码解析为DOM，CSS代码解析为CSSOM（CSS Object Model）
-1. 对象合成：将DOM和CSSOM合成一棵渲染树（render tree）
-1. 布局：计算出渲染树的布局（layout）
-1. 绘制：将渲染树绘制到屏幕
+2. 对象合成：将DOM和CSSOM合成一棵渲染树（render tree）
+3. 布局：计算出渲染树的布局（layout）
+4. 绘制：将渲染树绘制到屏幕
 
 以上四步并非严格按顺序执行，往往第一步还没完成，第二步和第三步就已经开始了。所以，会看到这种情况：网页的HTML代码还没下载完，但浏览器已经显示出内容了。
 
@@ -105,10 +107,10 @@ JavaScript代码只有嵌入网页，才能运行。网页中嵌入JavaScript代
 正常的网页加载流程是这样的。
 
 1. 浏览器一边下载HTML网页，一边开始解析
-1. 解析过程中，发现script标签
-1. 暂停解析，网页渲染的控制权转交给JavaScript引擎
-1. 如果script标签引用了外部脚本，就下载该脚本，否则就直接执行
-1. 执行完毕，控制权交还渲染引擎，恢复往下解析HTML网页
+2. 解析过程中，发现script标签
+3. 暂停解析，网页渲染的控制权转交给JavaScript引擎
+4. 如果script标签引用了外部脚本，就下载该脚本，否则就直接执行
+5. 执行完毕，控制权交还渲染引擎，恢复往下解析HTML网页
 
 也就是说，加载外部脚本时，浏览器会暂停页面渲染，等待脚本下载并执行完成后，再继续渲染。原因是JavaScript可以修改DOM（比如使用`document.write`方法），所以必须把控制权让给它，否则会导致复杂的线程竞赛的问题。
 
@@ -236,10 +238,10 @@ Gecko和Webkit引擎在网页被阻塞后，会生成第二个线程解析文档
 作为开发者，应该尽量设法降低重绘的次数和成本。比如，尽量不要变动高层的DOM元素，而以底层DOM元素的变动代替；再比如，重绘table布局和flex布局，开销都会比较大。
 
 ```javascript
-var foo = document.getElementById(‘foobar’);
+var foo = document.getElementById('foobar');
 
-foo.style.color = ‘blue’;
-foo.style.marginTop = ‘30px’;
+foo.style.color = 'blue';
+foo.style.marginTop = '30px';
 ```
 
 上面的代码只会导致一次重绘，因为浏览器会累积DOM变动，然后一次性执行。
@@ -247,11 +249,11 @@ foo.style.marginTop = ‘30px’;
 下面的代码则会导致两次重绘。
 
 ```javascript
-var foo = document.getElementById(‘foobar’);
+var foo = document.getElementById('foobar');
 
-foo.style.color = ‘blue’;
+foo.style.color = 'blue';
 var margin = parseInt(foo.style.marginTop);
-foo.style.marginTop = (margin + 10) + ‘px’;
+foo.style.marginTop = (margin + 10) + 'px';
 ```
 
 下面是一些优化技巧。
@@ -271,7 +273,7 @@ foo.style.marginTop = (margin + 10) + ‘px’;
 // 重绘代价高
 function doubleHeight(element) {
   var currentHeight = element.clientHeight;
-  element.style.height = (currentHeight * 2) + ‘px’;
+  element.style.height = (currentHeight * 2) + 'px';
 }
 
 all_my_elements.forEach(doubleHeight);
@@ -281,7 +283,7 @@ function doubleHeight(element) {
   var currentHeight = element.clientHeight;
 
   window.requestAnimationFrame(function () {
-    element.style.height = (currentHeight * 2) + ‘px’;
+    element.style.height = (currentHeight * 2) + 'px';
   });
 }
 
@@ -421,7 +423,7 @@ JavaScript运行时，除了一根运行线程，系统还提供一个消息队�
 
 也就是说，虽然JavaScript只有一根进程用来执行，但是并行的还有其他进程（比如，处理定时器的进程、处理用户输入的进程、处理网络通信的进程等等）。这些进程通过向任务队列添加任务，实现与JavaScript进程通信。
 
-想要理解Event Loop，就要从程序的运行模式讲起。运行以后的程序叫做"进程"（process），一般情况下，一个进程一次只能执行一个任务。如果有很多任务需要执行，不外乎三种解决方法。
+想要理解Event Loop，就要从程序的运行模式讲起。运行以后的程序叫做“进程"（process），一般情况下，一个进程一次只能执行一个任务。如果有很多任务需要执行，不外乎三种解决方法。
 
 1. **排队。**因为一个进程一次只能执行一个任务，只好等前面的任务执行完了，再执行后面的任务。
 
