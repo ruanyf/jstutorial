@@ -287,7 +287,7 @@ emitter.removeAllListeners();
 
 {% endhighlight %}
 
-**（4）listener方法**
+**（4）listeners方法**
 
 该方法接受一个事件名称作为参数，返回该事件所有回调函数组成的数组。
 
