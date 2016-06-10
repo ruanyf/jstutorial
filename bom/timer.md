@@ -26,7 +26,7 @@ console.log(3);
 
 上面代码的输出结果就是1，3，2，因为`setTimeout`指定第二行语句推迟1000毫秒再执行。
 
-需要注意的是，推迟执行的代码必须以字符串的形式，放入setTimeout，因为引擎内部使用eval函数，将字符串转为代码。如果推迟执行的是函数，则可以直接将函数名，放入setTimeout。一方面eval函数有安全顾虑，另一方面为了便于JavaScript引擎优化代码，setTimeout方法一般总是采用函数名的形式，就像下面这样。
+需要注意的是，推迟执行的代码必须以字符串的形式，放入`setTimeout`，因为引擎内部使用`eval`函数，将字符串转为代码。如果推迟执行的是函数，则可以直接将函数名，放入`setTimeout`。一方面`eval`函数有安全顾虑，另一方面为了便于JavaScript引擎优化代码，`setTimeout`方法一般总是采用函数名的形式，就像下面这样。
 
 ```javascript
 function f(){
@@ -42,7 +42,7 @@ setTimeout(function (){console.log(2)},1000);
 
 如果省略`setTimeout`的第二个参数，则该参数默认为0。
 
-除了前两个参数，setTimeout还允许添加更多的参数。它们将被传入推迟执行的函数（回调函数）。
+除了前两个参数，`setTimeout`还允许添加更多的参数。它们将被传入推迟执行的函数（回调函数）。
 
 ```javascript
 setTimeout(function(a,b){
@@ -50,9 +50,9 @@ setTimeout(function(a,b){
 },1000,1,1);
 ```
 
-上面代码中，setTimeout共有4个参数。最后那两个参数，将在1000毫秒之后回调函数执行时，作为回调函数的参数。
+上面代码中，`setTimeout`共有4个参数。最后那两个参数，将在1000毫秒之后回调函数执行时，作为回调函数的参数。
 
-IE 9.0及以下版本，只允许setTimeout有两个参数，不支持更多的参数。这时有三种解决方法。第一种是在一个匿名函数里面，让回调函数带参数运行，再把匿名函数输入setTimeout。
+IE 9.0及以下版本，只允许`setTimeout`有两个参数，不支持更多的参数。这时有三种解决方法。第一种是在一个匿名函数里面，让回调函数带参数运行，再把匿名函数输入`setTimeout`。
 
 ```javascript
 setTimeout(function() {
@@ -60,17 +60,17 @@ setTimeout(function() {
 }, 1000);
 ```
 
-上面代码中，myFunc是真正要推迟执行的函数，有三个参数。如果直接放入setTimeout，低版本的IE不能带参数，所以可以放在一个匿名函数。
+上面代码中，myFunc是真正要推迟执行的函数，有三个参数。如果直接放入`setTimeout`，低版本的IE不能带参数，所以可以放在一个匿名函数。
 
-第二种解决方法是使用bind方法，把多余的参数绑定在回调函数上面，生成一个新的函数输入setTimeout。
+第二种解决方法是使用`bind`方法，把多余的参数绑定在回调函数上面，生成一个新的函数输入`setTimeout`。
 
 ```javascript
 setTimeout(function(arg1){}.bind(undefined, 10), 1000);
 ```
 
-上面代码中，bind方法第一个参数是undefined，表示将原函数的this绑定全局作用域，第二个参数是要传入原函数的参数。它运行后会返回一个新函数，该函数不带参数。
+上面代码中，`bind`方法第一个参数是`undefined`，表示将原函数的`this`绑定全局作用域，第二个参数是要传入原函数的参数。它运行后会返回一个新函数，该函数不带参数。
 
-第三种解决方法是自定义setTimeout，使用apply方法将参数输入回调函数。
+第三种解决方法是自定义`setTimeout`，使用`apply`方法将参数输入回调函数。
 
 ```html
 <!--[if lte IE 9]><script>
@@ -83,7 +83,7 @@ var a=[].slice.call(arguments,2);return f(function(){c.apply(this,a)},t)}
 </script><![endif]-->
 ```
 
-除了参数问题，setTimeout还有一个需要注意的地方：如果被setTimeout推迟执行的回调函数是某个对象的方法，那么该方法中的this关键字将指向全局环境，而不是定义时所在的那个对象。
+除了参数问题，`setTimeout`还有一个需要注意的地方：如果被`setTimeout`推迟执行的回调函数是某个对象的方法，那么该方法中的`this`关键字将指向全局环境，而不是定义时所在的那个对象。
 
 ```javascript
 var x = 1;
@@ -116,7 +116,7 @@ var user = new User('John');
 setTimeout(user.sayHi, 1000);
 ```
 
-上面代码只会显示undefined，因为等到user.sayHi执行时，它是在全局对象中执行，所以this.login取不到值。
+上面代码只会显示`undefined`，因为等到user.sayHi执行时，它是在全局对象中执行，所以this.login取不到值。
 
 为了防止出现这个问题，一种解决方法是将user.sayHi放在函数中执行。
 
@@ -134,7 +134,7 @@ setTimeout(function() {
 setTimeout(user.sayHi.bind(user), 1000);
 ```
 
-HTML 5标准规定，setTimeout的最短时间间隔是4毫秒。为了节电，对于那些不处于当前窗口的页面，浏览器会将时间间隔扩大到1000毫秒。另外，如果笔记本电脑处于电池供电状态，Chrome和IE 9以上的版本，会将时间间隔切换到系统定时器，大约是15.6毫秒。
+HTML 5标准规定，`setTimeout`的最短时间间隔是4毫秒。为了节电，对于那些不处于当前窗口的页面，浏览器会将时间间隔扩大到1000毫秒。另外，如果笔记本电脑处于电池供电状态，Chrome和IE 9以上的版本，会将时间间隔切换到系统定时器，大约是15.6毫秒。
 
 ## setInterval()
 
@@ -280,7 +280,7 @@ $('textarea').on('keydown', ajaxAction);
 $('textarea').on('keydown', debounce(ajaxAction, 2500))
 ```
 
-利用setTimeout和clearTimeout，可以实现debounce方法。该方法用于防止某个函数在短时间内被密集调用，具体来说，debounce方法返回一个新版的该函数，这个新版函数调用后，只有在指定时间内没有新的调用，才会执行，否则就重新计时。
+利用setTimeout和clearTimeout，可以实现debounce方法，该方法用于防止某个函数在短时间内被密集调用。具体来说，debounce方法返回一个新版的该函数，这个新版函数调用后，只有在指定时间内没有新的调用，才会执行，否则就重新计时。
 
 ```javascript
 function debounce(fn, delay){
@@ -416,13 +416,13 @@ console.log("当前任务结束");
 
 上面代码说明，`setTimeout(f, 0)`必须要等到当前脚本的所有同步任务结束后才会执行。
 
-即使消息队列是空的，0毫秒实际上也是达不到的。根据[HTML 5标准](http://www.whatwg.org/specs/web-apps/current-work/multipage/timers.html#timers)，`setTimeOut`推迟执行的时间，最少是4毫秒。如果小于这个值，会被自动增加到4。这是为了防止多个`setTimeout(f, 0)`语句连续执行，造成性能问题。
+即使消息队列是空的，0毫秒实际上也是达不到的。根据[HTML 5标准](http://www.whatwg.org/specs/web-apps/current-work/multipage/timers.html#timers)，`setTimeout`推迟执行的时间，最少是4毫秒。如果小于这个值，会被自动增加到4。这是为了防止多个`setTimeout(f, 0)`语句连续执行，造成性能问题。
 
 另一方面，浏览器内部使用32位带符号的整数，来储存推迟执行的时间。这意味着`setTimeout`最多只能推迟执行2147483647毫秒（24.8天），超过这个时间会发生溢出，导致回调函数将在当前任务队列结束后立即执行，即等同于`setTimeout(f, 0)`的效果。
 
 ### 应用
 
-setTimeout(f,0)有几个非常重要的用途。它的一大应用是，可以调整事件的发生顺序。比如，网页开发中，某个事件先发生在子元素，然后冒泡到父元素，即子元素的事件回调函数，会早于父元素的事件回调函数触发。如果，我们先让父元素的事件回调函数先发生，就要用到setTimeout(f, 0)。
+`setTimeout(f, 0)`有几个非常重要的用途。它的一大应用是，可以调整事件的发生顺序。比如，网页开发中，某个事件先发生在子元素，然后冒泡到父元素，即子元素的事件回调函数，会早于父元素的事件回调函数触发。如果，我们先让父元素的事件回调函数先发生，就要用到setTimeout(f, 0)。
 
 ```javascript
 var input = document.getElementsByTagName('input[type=button]')[0];

@@ -1,7 +1,7 @@
 ---
 title: history对象
 layout: page
-category: bom 
+category: bom
 date: 2012-12-22
 modifiedOn: 2014-05-06
 ---
@@ -148,7 +148,7 @@ var currentState = history.state;
 
 ## URLSearchParams API
 
-URLSearchParams API用于处理URL之中的查询字符串，即问号之后的部分。没有部署这个API的浏览器，可以用[url-search-params](url-search-params)这个垫片库。
+URLSearchParams API用于处理URL之中的查询字符串，即问号之后的部分。没有部署这个API的浏览器，可以用[url-search-params](https://github.com/WebReflection/url-search-params)这个垫片库。
 
 ```javascript
 var paramsString = 'q=URLUtils.searchParams&topic=api'
@@ -189,7 +189,7 @@ searchParams.toString() // "q=URLUtils.searchParams&foo=2&foo=3"
 
 URLSearchParams还有三个方法，用来遍历所有参数。
 
-- `key()`：遍历所有参数名
+- `keys()`：遍历所有参数名
 - `values()`：遍历所有参数值
 - `entries()`：遍历所有参数的键值对
 

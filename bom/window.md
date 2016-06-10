@@ -69,7 +69,7 @@ var windowA = window.opener;
 
 通过`opener`属性，可以获得父窗口的的全局变量和方法，比如`windowA.window.propertyName`和`windowA.window.functionName()`。
 
-该属性只适用于两个窗口属于同源的情况（参见《同源政策》一节），且其中一个窗口由另一个打开。
+该属性只适用于两个窗口属于同源的情况（参见《[同源政策](/bom/same-origin.html)》一节），且其中一个窗口由另一个打开。
 
 ### window.name
 
@@ -83,7 +83,7 @@ console.log(window.name)
 
 各个浏览器对这个值的储存容量有所不同，但是一般来说，可以高达几MB。
 
-它有一个重要特点，就是只要是本窗口打开的网页，都能读写该属性，不管这些网页是否属于同一个网站。所以，可以把值存放在该属性内，然后让另一个网页读取，从而实现跨域通信（详见《同源政策》一节）。
+它有一个重要特点，就是只要是本窗口打开的网页，都能读写该属性，不管这些网页是否属于同一个网站。所以，可以把值存放在该属性内，然后让另一个网页读取，从而实现跨域通信（详见《[同源政策](/bom/same-origin.html)》一节）。
 
 该属性只能保存字符串，且当浏览器窗口关闭后，所保存的值就会消失。因此局限性比较大，但是与iframe窗口通信时，非常有用。
 
@@ -309,10 +309,69 @@ if (typeof window.print === 'function') {
 
 JavaScript提供四个URL的编码/解码方法。
 
-- decodeURI()
-- decodeURIComponent()
 - encodeURI()
 - encodeURIComponent()
+- decodeURI()
+- decodeURIComponent()
+
+#### encodeURI
+
+`encodeURI` 方法的参数为完整的统一资源标识符（URI）的字符串，它使用 1 到 4 个转义字符串来替换 UTF-8 编码字符串中的每个字符（只有由 2 个代理字符区组成的字符才用 4 个转义字符编码）。例如：
+
+```javascript
+encodeURI('http://www.example.com?foo=bar&code=<p>')'</p>')
+// http://www.example.com?foo=bar&code=%3Cp%3E
+```
+
+需要注意的是，`encodeURI` 方法不会替换下列字符：
+
+类型 | 包含
+--- | ---
+保留字符 | ; , / ? : @ & = + $
+非转义的字符 | 字母 数字 - _ . ! ~ * ' (  )
+数字符号 | #
+
+另外，如果试图编码一个非高（lead surrogates）-低（trail surrogates）代理位完整的代理对（surrogate pair），将会抛出一个 URIError 错误，例如：
+
+```javascript
+// 编码完整代理对 ok
+console.log(encodeURI('\uD800\uDFFF'));
+
+// 编码单独的高代理位抛出 "Uncaught URIError: URI malformed"
+console.log(encodeURI('\uD800'));
+
+// 编码单独的低代理位抛出 "Uncaught URIError: URI malformed"
+console.log(encodeURI('\uDFFF'));
+```
+
+#### encodeURIComponent
+
+`encodeURIComponent` 方法的参数为统一资源标识符（URI）的一部分的字符串，它使用 1 到 4 个转义字符串来替换 UTF-8 编码字符串中的每个字符（只有由 2 个代理字符区组成的字符才用 4 个转义字符编码）。
+
+与 `encodeURI` 方法的区别在于，`encodeURIComponent` 方法会转义除了字母、数字、-、\_、.、!、~、\*、'、( 和 ) 之外的所有字符。例如：
+
+```javascript
+encodeURIComponent('http://www.example.com?foo=bar&code=<p>')'</p>')
+// http%3A%2F%2Fwww.example.com%3Ffoo%3Dbar%26code%3D%3Cp%3E""
+```
+
+#### decodeURI
+
+`decodeURI` 方法的参数为一个字符串，用于解码由 `encodeURI` 方法或者其它类似方法编码的统一资源标识符（URI）。例如：
+
+```javascript
+decodeURI('http://www.example.com?foo=bar&code=%3Cp%3E')
+// http://www.example.com?foo=bar&code=<p>
+```
+
+#### decodeURIComponent
+
+`decodeURIComponent` 方法的参数为一个字符串，用于解码由 `encodeURIComponent` 方法或者其它类似方法编码的部分统一资源标识符（URI）。例如：
+
+```javascript
+decodeURIComponent('http%3A%2F%2Fwww.example.com%3Ffoo%3Dbar%26code%3D%3Cp%3E')
+// http://www.example.com?foo=bar&code=<p>
+```
 
 ### window.getComputedStyle方法
 
@@ -406,6 +465,12 @@ alert('Hello World');
 
 用户只有点击“确定”按钮，对话框才会消失。在对话框弹出期间，浏览器窗口处于冻结状态，如果不点“确定”按钮，用户什么也干不了。
 
+`alert`方法的参数只能是字符串，没法使用CSS样式，但是可以用`\n`指定换行。
+
+```javascript
+alert('本条提示\n分成两行');
+```
+
 `prompt`方法弹出的对话框，在提示文字的下方，还有一个输入框，要求用户输入信息，并有“确定”和“取消”两个按钮。它往往用来获取用户输入的数据。
 
 ```javascript
@@ -417,12 +482,6 @@ var result = prompt('您的年龄？', 25)
 ```
 
 上面代码会跳出一个对话框，文字提示为“您的年龄？”，要求用户在对话框中输入自己的年龄（默认显示25）。
-
-`alert`方法的参数只能是字符串，没法使用CSS样式，但是可以用`\n`指定换行。
-
-```javascript
-alert('本条提示\n分成两行');
-```
 
 `prompt`方法的返回值是一个字符串（有可能为空）或者`null`，具体分成三种情况。
 

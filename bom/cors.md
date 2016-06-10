@@ -119,7 +119,7 @@ xhr.withCredentials = false;
 
 非简单请求是那种对服务器有特殊要求的请求，比如请求方法是`PUT`或`DELETE`，或者`Content-Type`字段的类型是`application/json`。
 
-非简单请求的CORS请求，会在正式通信之前，增加一次HTTP查询请求，称为”预检“请求（preflight）。
+非简单请求的CORS请求，会在正式通信之前，增加一次HTTP查询请求，称为“预检”请求（preflight）。
 
 浏览器先询问服务器，当前网页所在的域名是否在服务器的许可名单之中，以及可以使用哪些HTTP动词和头信息字段。只有得到肯定答复，浏览器才会发出正式的`XMLHttpRequest`请求，否则就报错。
 
@@ -135,7 +135,7 @@ xhr.send();
 
 上面代码中，HTTP请求的方法是`PUT`，并且发送一个自定义头信息`X-Custom-Header`。
 
-浏览器发现，这是一个非简单请求，就自动发出一个”预检“请求，要求服务器确认可以这样请求。下面是这个“预检”请求的HTTP头信息。
+浏览器发现，这是一个非简单请求，就自动发出一个“预检”请求，要求服务器确认可以这样请求。下面是这个“预检”请求的HTTP头信息。
 
 ```http
 OPTIONS /cors HTTP/1.1
@@ -185,7 +185,7 @@ Content-Type: text/plain
 Access-Control-Allow-Origin: *
 ```
 
-如果服务器否定了”预检“请求，会返回一个正常的HTTP回应，但是没有任何CORS相关的头信息字段。这时，浏览器就会认定，服务器不同意预检请求，因此触发一个错误，被`XMLHttpRequest`对象的`onerror`回调函数捕获。控制台会打印出如下的报错信息。
+如果服务器否定了“预检”请求，会返回一个正常的HTTP回应，但是没有任何CORS相关的头信息字段。这时，浏览器就会认定，服务器不同意预检请求，因此触发一个错误，被`XMLHttpRequest`对象的`onerror`回调函数捕获。控制台会打印出如下的报错信息。
 
 ```bash
 XMLHttpRequest cannot load http://api.alice.com.
@@ -197,7 +197,7 @@ Origin http://api.bob.com is not allowed by Access-Control-Allow-Origin.
 ```http
 Access-Control-Allow-Methods: GET, POST, PUT
 Access-Control-Allow-Headers: X-Custom-Header
-Access-Control-Allow-Headers: true
+Access-Control-Allow-Credentials: true
 Access-Control-Max-Age: 1728000
 ```
 
@@ -207,7 +207,7 @@ Access-Control-Max-Age: 1728000
 
 **（2）`Access-Control-Allow-Headers`**
 
-如果浏览器请求包括`Access-Control-Request-Headers`字段，则`Access-Control-Allow-Headers`字段是必需的。它也是一个逗号分隔的字符串，表明服务器支持的所有头信息字段，不限于浏览器在”预检“中请求的字段。
+如果浏览器请求包括`Access-Control-Request-Headers`字段，则`Access-Control-Allow-Headers`字段是必需的。它也是一个逗号分隔的字符串，表明服务器支持的所有头信息字段，不限于浏览器在“预检”中请求的字段。
 
 **（3）`Access-Control-Allow-Credentials`**
 
