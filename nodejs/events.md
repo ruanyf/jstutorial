@@ -48,13 +48,11 @@ ee.on("someEvent", function () { console.log("event 2"); });
 ee.on("someEvent", function () { console.log("event 3"); });
 ```
 
-超过10个回调函数，会发出一个警告。这个门槛值可以通过setMaxListeners方法改变。
+超过10个回调函数，会发出一个警告。这个门槛值可以通过`setMaxListeners`方法改变。
 
-{% highlight javascript %}
-
+```javascript
 ee.setMaxListeners(20);
-
-{% endhighlight %}
+```
 
 ### emit方法
 
@@ -287,20 +285,19 @@ emitter.removeAllListeners();
 
 {% endhighlight %}
 
-**（4）listener方法**
+**（4）listeners方法**
 
-该方法接受一个事件名称作为参数，返回该事件所有回调函数组成的数组。
+`listeners`方法接受一个事件名称作为参数，返回该事件所有回调函数组成的数组。
 
-{% highlight javascript %}
-
+```javascript
 var EventEmitter = require('events').EventEmitter;
 
 var ee = new EventEmitter;
 
 function onlyOnce () {
-	console.log(ee.listeners("firstConnection"));
-	ee.removeListener("firstConnection", onlyOnce);
-	console.log(ee.listeners("firstConnection"));
+  console.log(ee.listeners("firstConnection"));
+  ee.removeListener("firstConnection", onlyOnce);
+  console.log(ee.listeners("firstConnection"));
 }
 
 ee.on("firstConnection", onlyOnce)
@@ -309,8 +306,7 @@ ee.emit("firstConnection");
 
 // [ [Function: onlyOnce] ]
 // []
-
-{% endhighlight %}
+```
 
 上面代码显示两次回调函数组成的数组，第一次只有一个回调函数onlyOnce，第二次是一个空数组，因为removeListener方法取消了回调函数。
 

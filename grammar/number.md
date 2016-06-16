@@ -371,7 +371,10 @@ Infinity > 1000 // true
 
 ```javascript
 Infinity > NaN // false
+-Infinity > NaN // false
+
 Infinity < NaN // false
+-Infinity < NaN // false
 ```
 
 **（2）运算规则**
@@ -383,6 +386,32 @@ Infinity < NaN // false
 5 - Infinity // -Infinity
 Infinity / 5 // Infinity
 5 / Infinity // 0
+```
+
+0乘以`Infinity`，返回`NaN`；0除以`Infinity`，返回`0`；`Infinity`除以0，返回`Infinity`。
+
+```javascript
+0 * Infinity // NaN
+0 / Infinity // 0
+Infinity / 0 // Infinity
+```
+
+`Infinity`与`null`计算时，`null`会转成0，等同于与`0`的计算。
+
+```javascript
+null * Infinity // NaN
+null / Infinity // 0
+Infinity / null // Infinity
+```
+
+`Infinity`与`undefined`计算，返回的都是`NaN`。
+
+```javascript
+undefined + Infinity // NaN
+undefined - Infinity // NaN
+undefined * Infinity // NaN
+undefined / Infinity // NaN
+Infinity / undefined // NaN
 ```
 
 `Infinity`加上或乘以`Infinity`，返回的还是`Infinity`。

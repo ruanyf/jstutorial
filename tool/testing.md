@@ -200,7 +200,7 @@ describe("A suite", function() {
 
 断言是判断实际值与预期值是否相等的工具。
 
-断言有assert、expext、should三种风格，或者称为三种写法。
+断言有assert、expect、should三种风格，或者称为三种写法。
 
 ```javascript
 // assert风格
