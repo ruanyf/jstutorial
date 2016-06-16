@@ -115,7 +115,7 @@ Set-Cookie: value[; expires=date][; domain=domain][; path=path][; secure]
 
 `path`属性用来指定路径，必须是绝对路径（比如`/`、`/mydir`），如果未指定，默认为请求该Cookie的网页路径。
 
-只有`path`属性匹配向服务器发送的路径，Cokie才会发送。这里的匹配不是绝对匹配，而是从根路径开始，只要`path`属性匹配发送路径的一部分，就可以发送。比如，`path`属性等于`/blog`，则发送路径是`/blog`或者`/blogroll`，Cookie都会发送。`path`属性生效的前提是`domain`属性匹配。
+只有`path`属性匹配向服务器发送的路径，Cookie才会发送。这里的匹配不是绝对匹配，而是从根路径开始，只要`path`属性匹配发送路径的一部分，就可以发送。比如，`path`属性等于`/blog`，则发送路径是`/blog`或者`/blogroll`，Cookie都会发送。`path`属性生效的前提是`domain`属性匹配。
 
 （5）secure
 
@@ -196,9 +196,9 @@ name=a=b&c=d&e=f&g=h
 
 注意，这里不要求协议相同。也就是说，`http://example.com`设置的Cookie，可以被`https://example.com`读取。
 
-## HTTP-Only Cookie
+## Http-Only Cookie
 
-设置cookie的时候，如果服务器加上了`HTTPOnly`属性，则这个Cookie无法被JavaScript读取（即`document.cookie`不会返回这个Cookie的值），只用于向服务器发送。
+设置Cookie的时候，如果服务器加上了`HttpOnly`属性，则这个Cookie无法被JavaScript读取（即`document.cookie`不会返回这个Cookie的值），只用于向服务器发送。
 
 ```http
 Set-Cookie: key=value; HttpOnly

@@ -6,9 +6,9 @@ date: 2016-04-09
 modifiedOn: 2016-04-09
 ---
 
-浏览器安全的基石是”同源政策“（[same-origin policy](https://en.wikipedia.org/wiki/Same-origin_policy)）。很多开发者都知道这一点，但了解得不全面。
+浏览器安全的基石是“同源政策”（[same-origin policy](https://en.wikipedia.org/wiki/Same-origin_policy)）。很多开发者都知道这一点，但了解得不全面。
 
-本节详细介绍”同源政策“的各个方面，以及如何规避它。
+本节详细介绍“同源政策”的各个方面，以及如何规避它。
 
 ![](http://www.ruanyifeng.com/blogimg/asset/2016/bg2016040801.jpg)
 
@@ -40,13 +40,13 @@ modifiedOn: 2016-04-09
 
 很显然，如果 Cookie 包含隐私（比如存款总额），这些信息就会泄漏。更可怕的是，Cookie 往往用来保存用户的登录状态，如果用户没有退出登录，其他网站就可以冒充用户，为所欲为。因为浏览器同时还规定，提交表单不受同源政策的限制。
 
-由此可见，”同源政策“是必需的，否则 Cookie 可以共享，互联网就毫无安全可言了。
+由此可见，“同源政策”是必需的，否则 Cookie 可以共享，互联网就毫无安全可言了。
 
 ### 限制范围
 
 随着互联网的发展，“同源政策”越来越严格。目前，如果非同源，共有三种行为受到限制。
 
-> （1） Cookie、LocalStorage 和 IndexDB 无法读取。
+> （1） Cookie、LocalStorage 和 IndexedDB 无法读取。
 >
 > （2） DOM 无法获得。
 >
@@ -76,7 +76,7 @@ B网页就可以读到这个 Cookie。
 var allCookie = document.cookie;
 ```
 
-注意，这种方法只适用于 Cookie 和 iframe 窗口，LocalStorage 和 IndexDB 无法通过这种方法，规避同源政策，而要使用下文介绍的PostMessage API。
+注意，这种方法只适用于 Cookie 和 iframe 窗口，LocalStorage 和 IndexedDB 无法通过这种方法，规避同源政策，而要使用下文介绍的PostMessage API。
 
 另外，服务器也可以在设置Cookie的时候，指定Cookie的所属域名为一级域名，比如`.example.com`。
 

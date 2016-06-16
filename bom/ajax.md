@@ -19,7 +19,7 @@ modifiedOn: 2014-02-27
 
 概括起来，就是一句话，AJAX通过原生的`XMLHttpRequest`对象发出HTTP请求，得到服务器返回的数据后，再进行处理。
 
-AJAX可以是同步请求，也可以是异步请求。但是，大多数情况下，特指异步请求。因为同步的Ajax请求，对浏览器有”堵塞效应“。
+AJAX可以是同步请求，也可以是异步请求。但是，大多数情况下，特指异步请求。因为同步的Ajax请求，对浏览器有“堵塞效应”。
 
 ## XMLHttpRequest对象
 
@@ -181,7 +181,7 @@ xhr.onload = function(e) {
 xhr.send();
 ```
 
-如果将这个属性设为“json”，支持JSON的浏览器（Firefox>9，chrome>30），就会自动对返回数据调用JSON.parse() 方法。也就是说，你从xhr.response属性（注意，不是xhr.responseText属性）得到的不是文本，而是一个JSON对象。
+如果将这个属性设为“json”，支持JSON的浏览器（Firefox>9，chrome>30），就会自动对返回数据调用`JSON.parse()`方法。也就是说，你从xhr.response属性（注意，不是xhr.responseText属性）得到的不是文本，而是一个JSON对象。
 
 XHR2支持Ajax的返回类型为文档，即xhr.responseType="document" 。这意味着，对于那些打开CORS的网站，我们可以直接用Ajax抓取网页，然后不用解析HTML字符串，直接对XHR回应进行DOM操作。
 
@@ -198,7 +198,7 @@ data = JSON.parse(data);
 
 ### responseXML
 
-`responseXML`属性返回从服务器接收到的Document对象，该属性为只读。如果本次请求没有成功，或者数据不完整，或者不能被解析为XML或HTML，该属性等于null。
+`responseXML`属性返回从服务器接收到的Document对象，该属性为只读。如果本次请求没有成功，或者数据不完整，或者不能被解析为XML或HTML，该属性等于`null`。
 
 返回的数据会被直接解析为DOM对象。
 
@@ -223,6 +223,7 @@ var chapters = data.getElementsByTagName('chapter');
 
 - 200, OK，访问正常
 - 301, Moved Permanently，永久移动
+- 302, Move temporarily，暂时移动
 - 304, Not Modified，未修改
 - 307, Temporary Redirect，暂时重定向
 - 401, Unauthorized，未授权
@@ -352,7 +353,7 @@ oReq.onload = getHeaderTime;
 oReq.send();
 ```
 
-如果有多个字段同名，则它们的值会被连接为一个字符串，每个字段之间使用”逗号+空格“分隔。
+如果有多个字段同名，则它们的值会被连接为一个字符串，每个字段之间使用“逗号+空格”分隔。
 
 ### open()
 
@@ -1254,7 +1255,7 @@ res.text().catch(function(e) {
 
 这是因为body属性是一个stream对象，数据只能单向传送一次。这样的设计是为了允许JavaScript处理视频、音频这样的大型文件。
 
-如果希望多次使用body属性，可以使用Response对象和Request对象的clone方法。它必须在body还没有读取前调用，返回一个前的body，也就是说，需要使用几次body，就要调用几次clone方法。
+如果希望多次使用body属性，可以使用Response对象和Request对象的clone方法。它必须在body还没有读取前调用，返回一个新的body，也就是说，需要使用几次body，就要调用几次clone方法。
 
 ```javascript
 addEventListener('fetch', function(evt) {

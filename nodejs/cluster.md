@@ -159,12 +159,12 @@ kill方法用于终止worker进程。它可以接受一个参数，表示系统�
 
 ### listening事件
 
-worker进程调用`listen`方法以后，“listening”就传向该进程的服务器，然后传向主进程。
+worker进程调用listening方法以后，“listening”事件就传向该进程的服务器，然后传向主进程。
 
 该事件的回调函数接受两个参数，一个是当前worker对象，另一个是地址对象，包含网址、端口、地址类型（IPv4、IPv6、Unix socket、UDP）等信息。这对于那些服务多个网址的Node应用程序非常有用。
 
 ```javascript
-cluster.on('listening', function(worker, address) {
+cluster.on('listening', function (worker, address) {
   console.log("A worker is now connected to " + address.address + ":" + address.port);
 });
 ```
