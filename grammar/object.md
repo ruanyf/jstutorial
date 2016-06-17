@@ -411,17 +411,27 @@ for (var i in o) {
 // 3
 ```
 
-下面是一个使用`for...in`循环，进行数组赋值的例子。
+下面是一个使用`for...in`循环，提取对象属性的例子。
 
 ```javascript
-var props = [], i = 0;
+var obj = {
+  x: 1,
+  y: 2
+};
+var props = [];
+var i = 0;
 
-for (props[i++] in {x: 1, y: 2});
+for (props[i++] in obj);
 
 props // ['x', 'y']
 ```
 
-注意，`for...in`循环遍历的是对象所有可enumberable的属性，其中不仅包括定义在对象本身的属性，还包括对象继承的属性。
+`for...in`循环有两个使用注意点。
+
+- 它遍历的是对象所有可遍历（enumberable）的属性，会跳过不可遍历的属性
+- 它不仅遍历对象自身的属性，还遍历继承的属性。
+
+请看下面的例子。
 
 ```javascript
 // name 是 Person 本身的属性
@@ -447,7 +457,7 @@ for (var key in person) {
 
 上面代码中，`name`是对象本身的属性，`describe`是对象继承的属性，`for...in`循环的遍历会包括这两者。
 
-如果只想遍历对象本身的属性，可以使用hasOwnProperty方法，在循环内部做一个判断。
+如果只想遍历对象本身的属性，可以使用`hasOwnProperty`方法，在循环内部判断一下是不是自身的属性。
 
 ```javascript
 for (var key in person) {
@@ -458,7 +468,14 @@ for (var key in person) {
 // name
 ```
 
-为了避免这一点，可以新建一个继承`null`的对象。由于`null`没有任何属性，所以新对象也就不会有继承的属性了。
+另外，对象`person`还有其他继承的属性，比如`toString`。
+
+```javascript
+person.toString()
+// "[object Object]"
+```
+
+这个`toString`属性不会被`for...in`循环遍历到，因为它默认设置为“不可遍历”，详见《标准库》一章的`Object`对象部分。
 
 ## with语句
 

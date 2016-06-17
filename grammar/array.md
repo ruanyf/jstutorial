@@ -298,7 +298,7 @@ Array.prototype.forEach.call('abc', function(chr) {
 
 ## for...in循环和数组的遍历
 
-使用`for...in`循环，可以遍历数组的所有元素。
+`for...in`循环不仅可以遍历对象，也可以遍历数组，毕竟数组只是一种特殊对象。
 
 ```javascript
 var a = [1, 2, 3];
@@ -311,7 +311,7 @@ for (var i in a) {
 // 3
 ```
 
-需要注意的是，`for...in`会遍历数组所有的键，即使是非数字键。
+但是，`for...in`不仅会遍历数组所有的数字键，还会遍历非数字键。
 
 ```javascript
 var a = [1, 2, 3];
@@ -326,13 +326,14 @@ for (var key in a) {
 // foo
 ```
 
-上面代码在遍历数组时，也遍历到了非整数键`foo`。所以，使用`for...in`遍历数组的时候，一定要小心。
+上面代码在遍历数组时，也遍历到了非整数键`foo`。所以，不推荐使用`for...in`遍历数组。
 
-其他的数组遍历方法，就是使用`length`属性，结合`for`循环或者`while`循环。
+数组的遍历可以考虑使用`for`循环或`while`循环。
 
 ```javascript
-// for循环
 var a = [1, 2, 3];
+
+// for循环
 for(var i = 0; i < a.length; i++) {
   console.log(a[i]);
 }
@@ -356,7 +357,7 @@ while (l--) {
 
 ```javascript
 var colors = ['red', 'green', 'blue'];
-colors.forEach(function(color) {
+colors.forEach(function (color) {
   console.log(color);
 });
 ```

@@ -10,7 +10,7 @@ modifiedOn: 2013-12-22
 
 浏览器的核心是两部分：渲染引擎和JavaScript解释器（又称JavaScript引擎）。
 
-（1）渲染引擎
+**（1）渲染引擎**
 
 渲染引擎的主要作用是，将网页从代码“渲染”为用户视觉上可以感知的平面文档。不同的浏览器有不同的渲染引擎。
 
@@ -29,7 +29,7 @@ modifiedOn: 2013-12-22
 
 以上四步并非严格按顺序执行，往往第一步还没完成，第二步和第三步就已经开始了。所以，会看到这种情况：网页的HTML代码还没下载完，但浏览器已经显示出内容了。
 
-（2）JavaScript引擎
+**（2）JavaScript引擎**
 
 JavaScript引擎的主要作用是，读取网页中的JavaScript代码，对其处理后运行。
 
@@ -45,11 +45,11 @@ JavaScript代码只有嵌入网页，才能运行。网页中嵌入JavaScript代
 
 ```html
 <script>
-// some JavaScript code
+  console.log('Hello World');
 </script>
 ```
 
-`<script>`标签有一个`type`属性，用来指定脚本类型。不过，如果嵌入的是JavaScript脚本，HTML5推荐`type`属性。
+`<script>`标签有一个`type`属性，用来指定脚本类型。不过，如果嵌入的是JavaScript脚本，`type`属性可以省略。
 
 对JavaScript脚本来说，`type`属性可以设为两种值。
 
@@ -102,21 +102,21 @@ JavaScript代码只有嵌入网页，才能运行。网页中嵌入JavaScript代
 
 这种写法将HTML代码与JavaScript代码混写在一起，非常不利于代码管理，不建议使用。
 
-## script标签的工作原理
+## `<script>`标签的工作原理
 
 正常的网页加载流程是这样的。
 
 1. 浏览器一边下载HTML网页，一边开始解析
-2. 解析过程中，发现script标签
+2. 解析过程中，发现`<script>`标签
 3. 暂停解析，网页渲染的控制权转交给JavaScript引擎
-4. 如果script标签引用了外部脚本，就下载该脚本，否则就直接执行
+4. 如果`<script>`标签引用了外部脚本，就下载该脚本，否则就直接执行
 5. 执行完毕，控制权交还渲染引擎，恢复往下解析HTML网页
 
 也就是说，加载外部脚本时，浏览器会暂停页面渲染，等待脚本下载并执行完成后，再继续渲染。原因是JavaScript可以修改DOM（比如使用`document.write`方法），所以必须把控制权让给它，否则会导致复杂的线程竞赛的问题。
 
 如果外部脚本加载时间很长（比如一直无法完成下载），就会造成网页长时间失去响应，浏览器就会呈现“假死”状态，这被称为“阻塞效应”。
 
-为了避免这种情况，较好的做法是将script标签都放在页面底部，而不是头部。这样即使遇到脚本失去响应，网页主体的渲染也已经完成了，用户至少可以看到内容，而不是面对一张空白的页面。
+为了避免这种情况，较好的做法是将`<script>`标签都放在页面底部，而不是头部。这样即使遇到脚本失去响应，网页主体的渲染也已经完成了，用户至少可以看到内容，而不是面对一张空白的页面。
 
 如果某些脚本代码非常重要，一定要放在页面头部的话，最好直接将代码嵌入页面，而不是连接外部脚本文件，这样能缩短加载时间。
 
@@ -128,9 +128,11 @@ JavaScript代码只有嵌入网页，才能运行。网页中嵌入JavaScript代
     console.log(document.body.innerHTML);
   </script>
 </head>
+<body>
+</body>
 ```
 
-上面代码执行时会报错，因为此时`body`元素还未生成。
+上面代码执行时会报错，因为此时`document.body`元素还未生成。
 
 一种解决方法是设定`DOMContentLoaded`事件的回调函数。
 
@@ -139,7 +141,7 @@ JavaScript代码只有嵌入网页，才能运行。网页中嵌入JavaScript代
   <script>
     document.addEventListener(
       'DOMContentLoaded',
-      function(event) {
+      function (event) {
         console.log(document.body.innerHTML);
       }
     );
@@ -147,7 +149,7 @@ JavaScript代码只有嵌入网页，才能运行。网页中嵌入JavaScript代
 </head>
 ```
 
-另一种解决方法是，使用`script`标签的`onload`属性。当script标签指定的外部脚本文件下载和解析完成，会触发一个load事件，可以把所需执行的代码，放在这个事件的回调函数里面。
+另一种解决方法是，使用`<script>`标签的`onload`属性。当`<script>`标签指定的外部脚本文件下载和解析完成，会触发一个load事件，可以把所需执行的代码，放在这个事件的回调函数里面。
 
 ```html
 <script src="jquery.min.js" onload="console.log(document.body.innerHTML)">
@@ -168,11 +170,11 @@ JavaScript代码只有嵌入网页，才能运行。网页中嵌入JavaScript代
 如果有多个script标签，比如下面这样。
 
 ```html
-<script src="1.js"></script>
-<script src="2.js"></script>
+<script src="a.js"></script>
+<script src="b.js"></script>
 ```
 
-浏览器会同时平行下载`1.js`和`2.js`，但是，执行时会保证先执行`1.js`，然后再执行`2.js`，即使后者先下载完成，也是如此。也就是说，脚本的执行顺序由它们在页面中的出现顺序决定，这是为了保证脚本之间的依赖关系不受到破坏。
+浏览器会同时并行下载`a.js`和`b.js`，但是，执行时会保证先执行`a.js`，然后再执行`b.js`，即使后者先下载完成，也是如此。也就是说，脚本的执行顺序由它们在页面中的出现顺序决定，这是为了保证脚本之间的依赖关系不受到破坏。
 
 当然，加载这两个脚本都会产生“阻塞效应”，必须等到它们都加载完成，浏览器才会继续页面渲染。
 
@@ -233,9 +235,9 @@ Gecko和Webkit引擎在网页被阻塞后，会生成第二个线程解析文档
 
 重流和重绘并不一定一起发生，重流必然导致重绘，重绘不一定需要重流。比如改变元素颜色，只会导致重绘，而不会导致重流；改变元素的布局，则会导致重绘和重流。
 
-大多数情况下，浏览器会智能判断，将“重流”和“重绘”只限制到相关的子树上面，最小化所耗费的代价，而不会全局重新生成网页。
+大多数情况下，浏览器会智能判断，将重流和重绘只限制到相关的子树上面，最小化所耗费的代价，而不会全局重新生成网页。
 
-作为开发者，应该尽量设法降低重绘的次数和成本。比如，尽量不要变动高层的DOM元素，而以底层DOM元素的变动代替；再比如，重绘table布局和flex布局，开销都会比较大。
+作为开发者，应该尽量设法降低重绘的次数和成本。比如，尽量不要变动高层的DOM元素，而以底层DOM元素的变动代替；再比如，重绘`table`布局和`flex`布局，开销都会比较大。
 
 ```javascript
 var foo = document.getElementById('foobar');
@@ -245,16 +247,6 @@ foo.style.marginTop = '30px';
 ```
 
 上面的代码只会导致一次重绘，因为浏览器会累积DOM变动，然后一次性执行。
-
-下面的代码则会导致两次重绘。
-
-```javascript
-var foo = document.getElementById('foobar');
-
-foo.style.color = 'blue';
-var margin = parseInt(foo.style.marginTop);
-foo.style.marginTop = (margin + 10) + 'px';
-```
 
 下面是一些优化技巧。
 
@@ -346,7 +338,7 @@ all_my_elements.forEach(doubleHeight);
 <script src="example.js"></script>
 ```
 
-上面的`example.js`默认就是采用HTTP协议下载，如果要采用HTTPs协议下载，必需写明（假定服务器支持）。
+上面的`example.js`默认就是采用HTTP协议下载，如果要采用HTTPS协议下载，必需写明（假定服务器支持）。
 
 ```html
 <script src="https://example.js"></script>
