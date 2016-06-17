@@ -8,15 +8,21 @@ modifiedOn: 2013-12-07
 
 ## Error对象
 
-一旦代码解析或运行时发生错误，JavaScript引擎就会自动产生并抛出一个Error对象的实例，然后整个程序就中断在发生错误的地方。
+JavaScript 原生提供`Error`对象，所有抛出的错误都是这个对象的实例。
 
-Error对象的实例有三个最基本的属性：
+```javascript
+var err = new Error('出错了');
+```
 
-- **name**：错误名称
+当代码解析或运行时发生错误，JavaScript引擎就会自动产生并抛出一个Error对象的实例，然后整个程序就中断在发生错误的地方。
+
+根据语言标准，`Error`对象的实例必须有`message`属性，表示出错时的提示信息，其他属性则没有提及。大多数JavaScript引擎，对`Error`实例还提供`name`和`stack`属性，分别表示错误的名称和错误的堆栈，但它们是非标准的，不是每种实现都有。
+
 - **message**：错误提示信息
-- **stack**：错误的堆栈（非标准属性，但是大多数平台支持）
+- **name**：错误名称（非标准属性）
+- **stack**：错误的堆栈（非标准属性）
 
-利用name和message这两个属性，可以对发生什么错误有一个大概的了解。
+利用`name`和`message`这两个属性，可以对发生什么错误有一个大概的了解。
 
 ```javascript
 if (error.name){
@@ -26,7 +32,7 @@ if (error.name){
 
 上面代码表示，显示错误的名称以及出错提示信息。
 
-stack属性用来查看错误发生时的堆栈。
+`stack`属性用来查看错误发生时的堆栈。
 
 ```javascript
 function throwit() {
@@ -48,7 +54,7 @@ catchit()
 //    at repl:1:5
 ```
 
-上面代码显示，抛出错误首先是在throwit函数，然后是在catchit函数，最后是在函数的运行环境中。
+上面代码显示，抛出错误首先是在`throwit`函数，然后是在`catchit`函数，最后是在函数的运行环境中。
 
 ## JavaScript的原生错误类型
 
@@ -56,101 +62,86 @@ Error对象是最一般的错误类型，在它的基础上，JavaScript还定�
 
 **（1）SyntaxError**
 
-SyntaxError是解析代码时发生的语法错误。
+`SyntaxError`是解析代码时发生的语法错误。
 
-{% highlight javascript %}
-
+```javascript
 // 变量名错误
 var 1a;
 
 // 缺少括号
 console.log 'hello');
-
-{% endhighlight %}
+```
 
 **（2）ReferenceError**
 
-ReferenceError是引用一个不存在的变量时发生的错误。
+`ReferenceError`是引用一个不存在的变量时发生的错误。
 
-{% highlight javascript %}
-
+```javascript
 unknownVariable
 // ReferenceError: unknownVariable is not defined
-
-{% endhighlight %}
-
+```
 
 另一种触发场景是，将一个值分配给无法分配的对象，比如对函数的运行结果或者this赋值。
 
 ```javascript
-
 console.log() = 1
 // ReferenceError: Invalid left-hand side in assignment
 
 this = 1
 // ReferenceError: Invalid left-hand side in assignment
-
 ```
 
 上面代码对函数console.log的运行结果和this赋值，结果都引发了ReferenceError错误。
 
 **（3）RangeError**
 
-RangeError是当一个值超出有效范围时发生的错误。主要有几种情况，一是数组长度为负数，二是Number对象的方法参数超出范围，以及函数堆栈超过最大值。
+`RangeError`是当一个值超出有效范围时发生的错误。主要有几种情况，一是数组长度为负数，二是Number对象的方法参数超出范围，以及函数堆栈超过最大值。
 
-{% highlight javascript %}
-
+```javascript
 new Array(-1)
 // RangeError: Invalid array length
 
 (1234).toExponential(21)
 // RangeError: toExponential() argument must be between 0 and 20 
-
-{% endhighlight %}
+```
 
 **（4）TypeError**
 
-TypeError是变量或参数不是预期类型时发生的错误。比如，对字符串、布尔值、数值等原始类型的值使用new命令，就会抛出这种错误，因为new命令的参数应该是一个构造函数。
+`TypeError`是变量或参数不是预期类型时发生的错误。比如，对字符串、布尔值、数值等原始类型的值使用`new`命令，就会抛出这种错误，因为`new`命令的参数应该是一个构造函数。
 
-{% highlight javascript %}
-
+```javascript
 new 123
 //TypeError: number is not a func
 
 var obj = {};
 obj.unknownMethod()
 // TypeError: undefined is not a function 
-
-{% endhighlight %}
+```
 
 上面代码的第二种情况，调用对象不存在的方法，会抛出TypeError错误。
 
 **（5）URIError**
 
-URIError是URI相关函数的参数不正确时抛出的错误，主要涉及encodeURI()、decodeURI()、encodeURIComponent()、decodeURIComponent()、escape()和unescape()这六个函数。
+`URIError`是URI相关函数的参数不正确时抛出的错误，主要涉及`encodeURI()`、`decodeURI()`、`encodeURIComponent()`、`decodeURIComponent()`、`escape()`和`unescape()`这六个函数。
 
-{% highlight javascript %}
-
+```javascript
 decodeURI('%2')
 // URIError: URI malformed
-
-{% endhighlight %}
+```
 
 **（6）EvalError**
 
-eval函数没有被正确执行时，会抛出EvalError错误。该错误类型已经不再在ES5中出现了，只是为了保证与以前代码兼容，才继续保留。
+`eval`函数没有被正确执行时，会抛出`EvalError`误。该错误类型已经不再在ES5中出现了，只是为了保证与以前代码兼容，才继续保留。
 
 以上这6种派生错误，连同原始的Error对象，都是构造函数。开发者可以使用它们，人为生成错误对象的实例。
 
-{% highlight javascript %}
+```javascript
+new Error('出错了！');
+new RangeError('出错了，变量超出有效范围！');
+new TypeError('出错了，变量类型无效！');
+```
 
-new Error("出错了！");
-new RangeError("出错了，变量超出有效范围！");
-new TypeError("出错了，变量类型无效！");
-
-{% endhighlight %}
-
-上面代码表示新建错误对象的实例，实质就是手动抛出错误。可以看到，错误对象的构造函数接受一个参数，代表错误提示信息（message）。
+上面代码新建错误对象的实例，实质就是手动抛出错误。可以看到，错误对象的构造函数接受一个参数，代表错误提示信息（message）。
 
 ## 自定义错误
 
@@ -336,18 +327,19 @@ try {
 ```javascript
 function cleansUp() {
   try {
-    throw new Error('Sorry...');
+    throw new Error('出错了……');
+    console.log('此行不会执行');
   } finally {
-    console.log('Performing clean-up');
+    console.log('完成清理工作');
   }
 }
 
 cleansUp()
-// Performing clean-up
-// Error: Sorry...
+// 完成清理工作
+// Error: 出错了……
 ```
 
-上面代码说明，`throw`语句抛出错误以后，`finally`继续得到执行。
+上面代码中，由于没有`catch`语句块，所以错误没有捕获。执行`finally`代码块以后，程序就中断在错误抛出的地方。
 
 ```javascript
 function idle(x) {
@@ -457,18 +449,6 @@ try {
 ```
 
 上面代码中，进入`catch`代码块之后，一遇到`throw`语句，就会去执行`finally`代码块，其中有`return false`语句，因此就直接返回了，不再会回去执行`catch`代码块剩下的部分了。
-
-某些情况下，甚至可以省略`catch`代码块，只使用`finally`代码块。
-
-```javascript
-openFile();
-
-try {
-  writeFile(Data);
-} finally {
-  closeFile();
-}
-```
 
 ## 参考连接
 
