@@ -8,30 +8,29 @@ modifiedOn: 2014-10-24
 
 ## 简介
 
-npm有两层含义。一层含义是Node.js的开放式模块登记和管理系统，网址为[http://npmjs.org](http://npmjs.org)。另一层含义是Node.js默认的模块管理器，是一个命令行下的软件，用来安装和管理node模块。
+`npm`有两层含义。一层含义是Node的开放式模块登记和管理系统，网址为[npmjs.org](http://npmjs.org)。另一层含义是Node默认的模块管理器，是一个命令行下的软件，用来安装和管理Node模块。
 
-npm不需要单独安装。在安装node的时候，会连带一起安装npm。但是，node附带的npm可能不是最新版本，最好用下面的命令，更新到最新版本。
+`npm`不需要单独安装。在安装Node的时候，会连带一起安装`npm`。但是，Node附带的`npm`可能不是最新版本，最好用下面的命令，更新到最新版本。
 
 ```bash
 $ npm install npm@latest -g
 ```
 
-上面的命令之所以最后一个参数是npm，是因为npm本身也是Node.js的一个模块。
+上面的命令中，`@latest`表示最新版本，`-g`表示全局安装。所以，命令的主干是`npm install npm`，也就是使用`npm`安装自己。之所以可以这样，是因为`npm`本身与Node的其他模块没有区别。
 
-Node安装完成后，可以用下面的命令，查看一下npm的帮助文件。
+然后，运行下面的命令，查看各种信息。
 
 ```bash
-# npm命令列表
+# 查看 npm 命令列表
 $ npm help
 
-# 各个命令的简单用法
+# 查看各个命令的简单用法
 $ npm -l
-```
 
-下面的命令分别查看npm的版本和配置。
-
-```bash
+# 查看 npm 的版本
 $ npm -v
+
+# 查看 npm 的配置
 $ npm config list -l
 ```
 
