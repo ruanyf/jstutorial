@@ -252,9 +252,9 @@ function Fubar (foo, bar) {
 
 ### 涵义
 
-构造函数内部需要用到`this`关键字。那么，`this`关键字到底是什么意思呢？
+理解`this`关键字的含义，对于JavaScript开发的重要性怎么强调都不过分。
 
-`this`就是指当前对象，或者说，指函数当前的运行环境。
+简单说，`this`就是指属性或方法“当前”所在的对象。
 
 ```javascript
 this['property']
@@ -263,7 +263,84 @@ this.property
 
 上面代码中，`this`就代表`property`属性当前所在的对象。
 
-再看一个例子。
+下面是一个实际的例子。
+
+```javascript
+var person = {
+  name: '张三',
+  describe: function () {
+    return '姓名：'+ this.name;
+  }
+};
+
+person.describe()
+// "姓名：张三"
+```
+
+上面代码中，`this.name`表示`describe`方法所在的当前对象的`name`属性。调用`person.describe`方法时，`describe`方法所在的当前对象是`person`，所以就是调用`person.name`。
+
+由于对象的属性可以赋给另一个对象，所以属性所在的当前对象是可变的，即`this`的指向是可变的。
+
+```javascript
+var A = {
+  name: '张三',
+  describe: function () {
+    return '姓名：'+ this.name;
+  }
+};
+
+var B = {
+  name: '李四'
+};
+
+B.describe = A.describe;
+B.describe()
+// "姓名：李四"
+```
+
+上面代码中，`A.describe`属性被赋给`B`，于是`B.describe`就表示`describe`方法所在的当前对象是`B`，所以`this.name`就指向`B.name`。
+
+稍稍重构这个例子，`this`的动态指向就能看得更清楚。
+
+```javascript
+function f() {
+  return '姓名：'+ this.name;
+}
+
+var A = {
+  name: '张三',
+  describe: f
+};
+
+var B = {
+  name: '李四',
+  describe: f
+};
+
+A.describe() // "姓名：张三"
+B.describe() // "姓名：李四"
+```
+
+上面代码中，函数`f`内部使用了`this`关键字，随着`f`所在的对象不同，`this`的指向也不同。
+
+只要函数被赋给另一个变量，`this`的指向就会变。
+
+```javascript
+var A = {
+  name: '张三',
+  describe: function () {
+    return '姓名：'+ this.name;
+  }
+};
+
+var name = '李四';
+var f = A.describe;
+f() // "姓名：李四"
+```
+
+上面代码中，`A.describe`被赋值给变量`f`，内部的`this`就会指向`f`运行时所在的对象（本例是顶层对象）。
+
+再看一个网页编程的例子。
 
 ```html
 <input type="text" name="age" size=3 onChange="validate(this, 18, 99);">
@@ -278,169 +355,113 @@ function validate(obj, lowval, hival){
 
 上面代码是一个文本输入框，每当用户输入一个值，就会调用`onChange`回调函数，验证这个值是否在指定范围。回调函数传入`this`，就代表传入当前对象（即文本框），然后就可以从`this.value`上面读到用户的输入值。
 
-在JavaScript语言之中，所有函数都是在某个运行环境之中运行，`this`就是这个环境。对于JavaScipt语言来说，一切皆对象，运行环境也是对象，所以可以理解成，所有函数总是在某个对象之中运行，`this`就指向这个对象。这本来并不会让用户糊涂，但是JavaScript支持运行环境动态切换，也就是说，this的指向是动态的，没有办法事先确定到底指向哪个对象，这才是最让初学者感到困惑的地方。
+总结一下，JavaScript语言之中，一切皆对象，运行环境也是对象，所以函数都是在某个对象之中运行，`this`就是这个对象（环境）。这本来并不会让用户糊涂，但是JavaScript支持运行环境动态切换，也就是说，`this`的指向是动态的，没有办法事先确定到底指向哪个对象，这才是最让初学者感到困惑的地方。
 
-举例来说，有一个函数`f`，它同时充当`a`对象和`b`对象的方法。JavaScript允许函数f的运行环境动态切换，即一会属于`a`对象，一会属于`b`对象，这就要靠`this`关键字来办到。
+如果一个函数在全局环境中运行，那么`this`就是指顶层对象（浏览器中为`window`对象）。
 
 ```javascript
 function f() {
-  console.log(this.x);
-};
+  return this;
+}
 
-var a = {
- x: 'a'
-};
-a.m = f;
-
-var b = {
-  x:'b'
-};
-b.m = f;
-
-a.m() // a
-b.m() // b
+f() === window // true
 ```
 
-上面代码中，函数`f`可以打印出当前运行环境中`x`变量的值。当`f`属于`a`对象时，`this`指向`a`；当`f`属于`b`对象时，`this`指向`b`，因此打印出了不同的值。由于`this`的指向可变，所以可以手动切换运行环境，以达到某种特定的目的。
+上面代码中，函数`f`在全局环境运行，它内部的`this`就指向顶层对象`window`。
 
-前面说过，所谓“运行环境”就是对象，this指函数运行时所在的那个对象。如果一个函数在全局环境中运行，this就是指顶层对象（浏览器中为window对象）；如果一个函数作为某个对象的方法运行，this就是指那个对象。
-
-可以近似地认为，this是所有函数运行时的一个隐藏参数，决定了函数的运行环境。
+可以近似地认为，`this`是所有函数运行时的一个隐藏参数，决定了函数的运行环境。
 
 ### 使用场合
 
-this的使用可以分成以下几个场合。
+`this`的使用可以分成以下几个场合。
 
 **（1）全局环境**
 
-在全局环境使用this，它指的就是顶层对象window。
+在全局环境使用`this`，它指的就是顶层对象`window`。
 
-{% highlight javascript %}
-
-this === window // true 
+```javascript
+this === window // true
 
 function f() {
   console.log(this === window); // true
 }
+```
 
-{% endhighlight %}
-
-上面代码说明，不管是不是在函数内部，只要是在全局环境下运行，this就是指全局对象window。
+上面代码说明，不管是不是在函数内部，只要是在全局环境下运行，`this`就是指顶层对象`window`。
 
 **（2）构造函数**
 
-构造函数中的this，指的是实例对象。
+构造函数中的`this`，指的是实例对象。
 
-{% highlight javascript %}
-
-var O = function(p) {
+```javascript
+var Obj = function (p) {
   this.p = p;
 };
 
-O.prototype.m = function() {
-    return this.p;
+Obj.prototype.m = function() {
+  return this.p;
 };
+```
 
-{% endhighlight %}
+上面代码定义了一个构造函数`Obj`。由于`this`指向实例对象，所以在构造函数内部定义`this.p`，就相当于定义实例对象有一个`p`属性；然后`m`方法可以返回这个p属性。
 
-上面代码定义了一个构造函数O。由于this指向实例对象，所以在构造函数内部定义this.p，就相当于定义实例对象有一个p属性；然后m方法可以返回这个p属性。
-
-{% highlight javascript %}
-
-var o = new O("Hello World!");
+```javascript
+var o = new Obj('Hello World!');
 
 o.p // "Hello World!"
 o.m() // "Hello World!"
-
-{% endhighlight %}
+```
 
 **（3）对象的方法**
 
-当a对象的方法被赋予b对象，该方法就变成了普通函数，其中的this就从指向a对象变成了指向b对象。这就是this取决于运行时所在的对象的含义，所以要特别小心。如果将某个对象的方法赋值给另一个对象，会改变this的指向。
+当`a`对象的方法被赋予`b`对象，该方法中的this就从指向`a`对象变成了指向`b`对象。所以要特别小心，将某个对象的方法赋值给另一个对象，会改变`this`的指向，具体例子请看前面一节。
 
-{% highlight javascript %}
+有时，某个方法位于多层对象的内部，这时如果为了简化书写，把该方法赋值给一个变量，往往会得到意料之外的结果。
 
-var o1 = new Object();
-o1.m = 1;
-o1.f = function (){ console.log(this.m);};
-
-o1.f() // 1
-
-var o2 = new Object();
-o2.m = 2;
-o2.f = o1.f
-
-o2.f() // 2
-
-{% endhighlight %}
-
-从上面代码可以看到，f是o1的方法，但是如果在o2上面调用这个方法，f方法中的this就会指向o2。这就说明JavaScript函数的运行环境完全是动态绑定的，可以在运行时切换。
-
-如果不想改变this的指向，可以将o2.f改写成下面这样。
-
-{% highlight javascript %}
-
-o2.f = function (){ o1.f() };
-
-o2.f() // 1
-
-{% endhighlight %}
-
-上面代码表示，由于f方法这时是在o1下面运行，所以this就指向o1。
-
-有时，某个方法位于多层对象的内部，这时如果为了简化书写，把该方法赋值给一个变量，往往会得到意想不到的结果。
-
-{% highlight javascript %}
-
+```javascript
 var a = {
-  b : {
-    m : function() {
+  b: {
+    m: function() {
       console.log(this.p);
     },
-    p : 'Hello'
+    p: 'Hello'
   }
 };
 
 var hello = a.b.m;
 hello() // undefined
+```
 
-{% endhighlight %}
-
-上面代码表示，m属于多层对象内部的一个方法。为求简写，将其赋值给hello变量，结果调用时，this指向了全局对象。为了避免这个问题，可以只将m所在的对象赋值给hello，这样调用时，this的指向就不会变。
-
-{% highlight javascript %}
-
-var hello = a.b;
-hello.m() // Hello
-
-{% endhighlight %}
-
-**（4）Node.js**
-
-在Node.js中，this的指向又分成两种情况。全局环境中，this指向全局对象global；模块环境中，this指向module.exports。
+上面代码中，`m`是多层对象内部的一个方法。为求简便，将其赋值给`hello`变量，结果调用时，`this`指向了顶层对象。为了避免这个问题，可以只将`m`所在的对象赋值给`hello`，这样调用时，`this`的指向就不会变。
 
 ```javascript
+var hello = a.b;
+hello.m() // Hello
+```
 
+**（4）Node**
+
+在Node中，`this`的指向又分成两种情况。全局环境中，`this`指向全局对象`global`；模块环境中，`this`指向module.exports。
+
+```javascript
 // 全局环境
 this === global // true
 
 // 模块环境
 this === module.exports // true
-
 ```
 
 ### 使用注意点
 
 **（1）避免多层this**
 
-由于this的指向是不确定的，所以切勿在函数中包含多层的this。
+由于`this`的指向是不确定的，所以切勿在函数中包含多层的`this`。
 
-{% highlight javascript %}
-
+```javascript
 var o = {
-  f1: function() {
-    console.log(this); 
-    var f2 = function() {
+  f1: function () {
+    console.log(this);
+    var f2 = function () {
       console.log(this);
     }();
   }
@@ -449,16 +470,29 @@ var o = {
 o.f1()
 // Object
 // Window
+```
 
-{% endhighlight %}
+上面代码包含两层`this`，结果运行后，第一层指向该对象，第二层指向全局对象。实际执行的是下面的代码。
 
-上面代码包含两层this，结果运行后，第一层指向该对象，第二层指向全局对象。一个解决方法是在第二层改用一个指向外层this的变量。
-
-{% highlight javascript %}
+```javascript
+var temp = function () {
+  console.log(this);
+};
 
 var o = {
+  f1: function () {
+    console.log(this);
+    var f2 = temp();
+  }
+}
+```
+
+一个解决方法是在第二层改用一个指向外层`this`的变量。
+
+```javascript
+var o = {
   f1: function() {
-    console.log(this); 
+    console.log(this);
     var that = this;
     var f2 = function() {
       console.log(that);
@@ -469,14 +503,30 @@ var o = {
 o.f1()
 // Object
 // Object
+```
 
-{% endhighlight %}
+上面代码定义了变量`that`，固定指向外层的`this`，然后在内层使用`that`，就不会发生`this`指向的改变。
 
-上面代码定义了变量that，固定指向外层的this，然后在内层使用that，就不会发生this指向的改变。
+JavaScript 提供了严格模式，也可以硬性避免这种问题。在严格模式下，如果函数内部的`this`指向顶层对象，就会报错。
+
+```javascript
+var counter = {
+  count: 0
+};
+counter.inc = function () {
+  'use strict';
+  this.count++
+};
+var f = counter.inc;
+f()
+// TypeError: Cannot read property 'count' of undefined
+```
+
+上面代码中，`inc`方法通过`'use strict'`声明采用严格模式，这时内部的`this`一旦指向顶层对象，就会报错。
 
 **（2）避免数组处理方法中的this**
 
-数组的map和foreach方法，允许提供一个函数作为参数。这个函数内部不应该使用this。
+数组的`map`和`foreach`方法，允许提供一个函数作为参数。这个函数内部不应该使用this。
 
 ```javascript
 var o = {
@@ -484,7 +534,7 @@ var o = {
   p: [ 'a1', 'a2' ],
   f: function f() {
     this.p.forEach(function (item) {
-      console.log(this.v+' '+item);
+      console.log(this.v + ' ' + item);
     });
   }
 }
@@ -494,7 +544,7 @@ o.f()
 // undefined a2
 ```
 
-上面代码中，foreach方法的参数函数中的this，其实是指向window对象，因此取不到o.v的值。
+上面代码中，`foreach`方法的参数函数中的`this`，其实是指向`window`对象，因此取不到`o.v`的值。
 
 解决这个问题的一种方法，是使用中间变量。
 
@@ -515,7 +565,7 @@ o.f()
 // hello a2
 ```
 
-另一种方法是将this当作foreach方法的第二个参数，固定它的运行环境。
+另一种方法是将`this`当作`foreach`方法的第二个参数，固定它的运行环境。
 
 ```javascript
 var o = {
@@ -535,7 +585,7 @@ o.f()
 
 **（3）避免回调函数中的this**
 
-回调函数中的this往往会改变指向，最好避免使用。
+回调函数中的`this`往往会改变指向，最好避免使用。
 
 ```javascript
 var o = new Object();
@@ -547,17 +597,17 @@ o.f = function (){
 o.f() // true
 ```
 
-上面代码表示，如果调用o对象的f方法，其中的this就是指向o对象。
+上面代码表示，如果调用`o`对象的f方法，其中的`this`就是指向`o`对象。
 
-但是，如果将f方法指定给某个按钮的click事件，this的指向就变了。
+但是，如果将`f`方法指定给某个按钮的`click`事件，this的指向就变了。
 
 ```javascript
 $('#button').on('click', o.f);
 ```
 
-点击按钮以后，控制台会显示false。原因是此时this不再指向o对象，而是指向按钮的DOM对象，因为f方法是在按钮对象的环境中被调用的。这种细微的差别，很容易在编程中忽视，导致难以察觉的错误。
+点击按钮以后，控制台会显示`false`。原因是此时this不再指向o对象，而是指向按钮的DOM对象，因为f方法是在按钮对象的环境中被调用的。这种细微的差别，很容易在编程中忽视，导致难以察觉的错误。
 
-为了解决这个问题，可以采用下面的一些方法对this进行绑定，也就是使得this固定指向某个对象，减少不确定性。
+为了解决这个问题，可以采用下面的一些方法对`this`进行绑定，也就是使得`this`固定指向某个对象，减少不确定性。
 
 ## 固定this的方法
 

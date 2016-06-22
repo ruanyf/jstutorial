@@ -29,22 +29,20 @@ new Object(123) instanceof Number
 
 与其他构造函数一样，如果要在`Object`对象上面部署一个方法，有两种做法。
 
-**（1）部署在Object对象本身**
+**（1）部署在`Object`对象本身**
 
-比如，在Object对象上面定义一个print方法，显示其他对象的内容。
+比如，在`Object`对象上面定义一个`print`方法，显示其他对象的内容。
 
-{% highlight javascript %}
-
+```javascript
 Object.print = function(o){ console.log(o) };
 
 var o = new Object();
 
 Object.print(o)
 // Object
+```
 
-{% endhighlight %}
-
-**（2）部署在Object.prototype对象**
+**（2）部署在`Object.prototype`对象**
 
 所有构造函数都有一个prototype属性，指向一个原型对象。凡是定义在Object.prototype对象上面的属性和方法，将被所有实例对象共享。（关于prototype属性的详细解释，参见《面向对象编程》一章。）
 
@@ -60,43 +58,71 @@ o.print() // Object
 
 上面代码在Object.prototype定义了一个print方法，然后生成一个Object的实例o。o直接继承了Object.prototype的属性和方法，可以在自身调用它们，也就是说，o对象的print方法实质上是调用Object.prototype.print方法。。
 
-可以看到，尽管上面两种写法的print方法功能相同，但是用法是不一样的，因此必须区分“构造函数的方法”和“实例对象的方法”。
+可以看到，尽管上面两种写法的`print`方法功能相同，但是用法是不一样的，因此必须区分“构造函数的方法”和“实例对象的方法”。
 
 ## Object对象的方法
 
 ### Object()
 
-Object本身当作工具方法使用时，可以将任意值转为对象。其中，原始类型的值转为对应的包装对象（参见《原始类型的包装对象》一节）。
+`Object`本身当作工具方法使用时，可以将任意值转为对象。这个方法常用于保证某个值一定是对象。
+
+如果参数是原始类型的值，`Object`方法返回对应的包装对象的实例（参见《原始类型的包装对象》一节）。
 
 ```javascript
 Object() // 返回一个空对象
+Object() instanceof Object // true
+
 Object(undefined) // 返回一个空对象
+Object(undefined) instanceof Object // true
+
 Object(null) // 返回一个空对象
+Object(null) instanceof Object // true
 
 Object(1) // 等同于 new Number(1)
-Object('foo') // 等同于 new String('foo')
-Object(true) // 等同于 new Boolean(true)
+Object(1) instanceof Object // true
+Object(1) instanceof Number // true
 
-Object([]) // 返回原数组
-Object({}) // 返回原对象
-Object(function(){}) // 返回原函数
+Object('foo') // 等同于 new String('foo')
+Object('foo') instanceof Object // true
+Object('foo') instanceof String // true
+
+Object(true) // 等同于 new Boolean(true)
+Object(true) instanceof Object // true
+Object(true) instanceof Boolean // true
 ```
 
-上面代码表示Object函数将各种值，转为对应的对象。
+上面代码表示`Object`函数可以将各种值转为对应的构造函数生成的对象。
 
-如果Object函数的参数是一个对象，它总是返回原对象。利用这一点，可以写一个判断变量是否为对象的函数。
+如果`Object`方法的参数是一个对象，它总是返回原对象。
 
-{% highlight javascript %}
+```javascript
+var arr = [];
+Object(arr) // 返回原数组
+Object(arr) === arr // true
 
+var obj = {};
+Object(obj) // 返回原对象
+Object(obj) === obj // true
+
+var fn = function () {};
+Object(fn) // 返回原函数
+Object(fn) === fn // true
+```
+
+利用这一点，可以写一个判断变量是否为对象的函数。
+
+```javascript
 function isObject(value) {
-    return value === Object(value);
+  return value === Object(value);
 }
 
-{% endhighlight %}
+isObject([]) // true
+isObject(true) // false
+```
 
 ### Object.keys()，Object.getOwnPropertyNames()
 
-Object.keys方法和Object.getOwnPropertyNames方法很相似，一般用来遍历对象的属性。它们的参数都是一个对象，都返回一个数组，该数组的成员都是对象自身的（而不是继承的）所有属性名。它们的区别在于，Object.keys方法只返回可枚举的属性（关于可枚举性的详细解释见后文），Object.getOwnPropertyNames方法还返回不可枚举的属性名。
+`Object.keys`方法和`Object.getOwnPropertyNames`方法很相似，一般用来遍历对象的属性。它们的参数都是一个对象，都返回一个数组，该数组的成员都是对象自身的（而不是继承的）所有属性名。它们的区别在于，Object.keys方法只返回可枚举的属性（关于可枚举性的详细解释见后文），Object.getOwnPropertyNames方法还返回不可枚举的属性名。
 
 ```javascript
 var o = {

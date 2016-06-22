@@ -319,9 +319,9 @@ Object.keys(o);
 // ['key1', 'key2']
 ```
 
-### 属性的删除
+### delete命令
 
-删除一个属性，需要使用`delete`命令。
+`delete`命令用于删除对象的属性，删除成功后返回`true`。
 
 ```javascript
 var o = {p: 1};
@@ -332,21 +332,21 @@ o.p // undefined
 Object.keys(o) // []
 ```
 
-上面代码表示，一旦使用`delete`命令删除某个属性，再读取该属性就会返回`undefined`，而且`Object.keys`方法返回的该对象的所有属性中，也将不再包括该属性。
+上面代码中，`delete`命令删除`o`对象的`p`属性。删除后，再读取`p`属性就会返回`undefined`，而且`Object.keys`方法的返回值中，`o`对象也不再包括该属性。
 
-麻烦的是，如果删除一个不存在的属性，delete不报错，而且返回true。
+注意，删除一个不存在的属性，`delete`不报错，而且返回`true`。
 
 ```javascript
 var o = {};
 delete o.p // true
 ```
 
-上面代码表示，delete命令只能用来保证某个属性的值为undefined，而无法保证该属性是否真的存在。
+上面代码中，`o`对象并没有`p`属性，但是`delete`命令照样返回`true`。因此，不能根据`delete`命令的结果，认定某个属性是存在的，只能保证读取这个属性肯定得到`undefined`。
 
 只有一种情况，`delete`命令会返回`false`，那就是该属性存在，且不得删除。
 
 ```javascript
-var o = Object.defineProperty({}, "p", {
+var o = Object.defineProperty({}, 'p', {
   value: 123,
   configurable: false
 });
@@ -355,13 +355,31 @@ o.p // 123
 delete o.p // false
 ```
 
-上面代码之中，`o`对象的`p`属性是不能删除的，所以`delete`命令返回`false`（关于`Object.defineProperty`方法的介绍，请看《标准库》一章的Object对象章节）。
+上面代码之中，`o`对象的`p`属性是不能删除的，所以`delete`命令返回`false`（关于`Object.defineProperty`方法的介绍，请看《标准库》一章的`Object`对象章节）。
 
-另外，需要注意的是，`delete`命令只能删除对象本身的属性，不能删除继承的属性（关于继承参见《面向对象编程》一节）。delete命令也不能删除var命令声明的变量，只能用来删除属性。
+另外，需要注意的是，`delete`命令只能删除对象本身的属性，无法删除继承的属性（关于继承参见《面向对象编程》一节）。
+
+```javascript
+var o = {};
+delete o.toString // true
+o.toString // function toString() { [native code] }
+```
+
+上面代码中，`toString`是对象`o`继承的属性，虽然`delete`命令返回`true`，但该属性并没有被删除，依然存在。
+
+最后，`delete`命令不能删除`var`命令声明的变量，只能用来删除属性。
+
+```javascript
+var p = 1;
+delete p // false
+delete window.p // false
+```
+
+上面命令中，`p`是`var`命令声明的变量，`delete`命令无法删除它，返回`false`。因为`var`声明的全局变量都是顶层对象的属性，而且默认不得删除。
 
 ### in运算符
 
-in运算符用于检查对象是否包含某个属性（注意，检查的是键名，不是键值），如果包含就返回`true`，否则返回`false`。
+`in`运算符用于检查对象是否包含某个属性（注意，检查的是键名，不是键值），如果包含就返回`true`，否则返回`false`。
 
 ```javascript
 var o = { p: 1 };
