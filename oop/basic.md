@@ -10,7 +10,7 @@ modifiedOn: 2014-02-04
 
 “面向对象编程”（Object Oriented Programming，缩写为OOP）是目前主流的编程范式。它的核心思想是将真实世界中各种复杂的关系，抽象为一个个对象，然后由对象之间的分工与合作，完成对真实世界的模拟。
 
-传统的计算机程序由一系列函数或一系列指令组成，而面向对象编程的程序由一系列对象组成。每一个对象都是功能中心，具有明确分工，可以完成接受信息、处理数据、发出信息等任务。因此，面向对象编程具有灵活性、代码的可重用性、模块性等特点，容易维护和开发，非常适合多人合作的大型软件项目。
+传统的过程式编程（procedural programming）由一系列函数或一系列指令组成，而面向对象编程的程序由一系列对象组成。每一个对象都是功能中心，具有明确分工，可以完成接受信息、处理数据、发出信息等任务。因此，面向对象编程具有灵活性、代码的可重用性、模块性等特点，容易维护和开发，非常适合多人合作的大型软件项目。
 
 那么，“对象”（object）到底是什么？
 
@@ -507,6 +507,8 @@ o.f1()
 
 上面代码定义了变量`that`，固定指向外层的`this`，然后在内层使用`that`，就不会发生`this`指向的改变。
 
+事实上，使用一个变量固定`this`的值，然后内层函数调用这个变量，是非常常见的做法，有大量应用，请务必掌握。
+
 JavaScript 提供了严格模式，也可以硬性避免这种问题。在严格模式下，如果函数内部的`this`指向顶层对象，就会报错。
 
 ```javascript
@@ -526,7 +528,7 @@ f()
 
 **（2）避免数组处理方法中的this**
 
-数组的`map`和`foreach`方法，允许提供一个函数作为参数。这个函数内部不应该使用this。
+数组的`map`和`foreach`方法，允许提供一个函数作为参数。这个函数内部不应该使用`this`。
 
 ```javascript
 var o = {
@@ -544,7 +546,7 @@ o.f()
 // undefined a2
 ```
 
-上面代码中，`foreach`方法的参数函数中的`this`，其实是指向`window`对象，因此取不到`o.v`的值。
+上面代码中，`foreach`方法的回调函数中的`this`，其实是指向`window`对象，因此取不到`o.v`的值。原因跟上一段的多层`this`是一样的，就是内层的`this`不指向外部，而指向顶层对象。
 
 解决这个问题的一种方法，是使用中间变量。
 
@@ -573,7 +575,7 @@ var o = {
   p: [ 'a1', 'a2' ],
   f: function f() {
     this.p.forEach(function (item) {
-      console.log(this.v+' '+item);
+      console.log(this.v + ' ' + item);
     }, this);
   }
 }
@@ -590,7 +592,7 @@ o.f()
 ```javascript
 var o = new Object();
 
-o.f = function (){
+o.f = function () {
   console.log(this === o);
 }
 
@@ -605,7 +607,7 @@ o.f() // true
 $('#button').on('click', o.f);
 ```
 
-点击按钮以后，控制台会显示`false`。原因是此时this不再指向o对象，而是指向按钮的DOM对象，因为f方法是在按钮对象的环境中被调用的。这种细微的差别，很容易在编程中忽视，导致难以察觉的错误。
+点击按钮以后，控制台会显示`false`。原因是此时`this`不再指向`o`对象，而是指向按钮的DOM对象，因为`f`方法是在按钮对象的环境中被调用的。这种细微的差别，很容易在编程中忽视，导致难以察觉的错误。
 
 为了解决这个问题，可以采用下面的一些方法对`this`进行绑定，也就是使得`this`固定指向某个对象，减少不确定性。
 
@@ -712,31 +714,26 @@ f.apply(null,[1,1]) // 2
 
 JavaScript不提供找出数组最大元素的函数。结合使用apply方法和Math.max方法，就可以返回数组的最大元素。
 
-{% highlight javascript %}
-
+```javascript
 var a = [10, 2, 4, 15, 9];
 
 Math.max.apply(null, a)
 // 15
+```
 
-{% endhighlight %}
+**（2）将数组的空元素变为`undefined`**
 
-**（2）将数组的空元素变为undefined**
+通过`apply`方法，利用Array构造函数将数组的空元素变成undefined。
 
-通过apply方法，利用Array构造函数将数组的空元素变成undefined。
-
-{% highlight javascript %}
-
+```javascript
 Array.apply(null, ["a",,"b"])
 // [ 'a', undefined, 'b' ]
+```
 
-{% endhighlight %}
+空元素与`undefined`的差别在于，数组的`forEach`方法会跳过空元素，但是不会跳过`undefined`。因此，遍历内部元素的时候，会得到不同的结果。
 
-空元素与undefined的差别在于，数组的foreach方法会跳过空元素，但是不会跳过undefined。因此，遍历内部元素的时候，会得到不同的结果。
-
-{% highlight javascript %}
-
-var a = ["a",,"b"];
+```javascript
+var a = ['a', , 'b'];
 
 function print(i) {
   console.log(i);
@@ -746,19 +743,17 @@ a.forEach(print)
 // a
 // b
 
-Array.apply(null,a).forEach(print)
+Array.apply(null, a).forEach(print)
 // a
 // undefined
 // b
-
-{% endhighlight %}
+```
 
 **（3）转换类似数组的对象**
 
-另外，利用数组对象的slice方法，可以将一个类似数组的对象（比如arguments对象）转为真正的数组。
+另外，利用数组对象的`slice`方法，可以将一个类似数组的对象（比如`arguments`对象）转为真正的数组。
 
-{% highlight javascript %}
-
+```javascript
 Array.prototype.slice.apply({0:1,length:1})
 // [1]
 
@@ -770,20 +765,18 @@ Array.prototype.slice.apply({0:1,length:2})
 
 Array.prototype.slice.apply({length:1})
 // [undefined]
+```
 
-{% endhighlight %}
-
-上面代码的apply方法的参数都是对象，但是返回结果都是数组，这就起到了将对象转成数组的目的。从上面代码可以看到，这个方法起作用的前提是，被处理的对象必须有length属性，以及相对应的数字键。
+上面代码的`apply`方法的参数都是对象，但是返回结果都是数组，这就起到了将对象转成数组的目的。从上面代码可以看到，这个方法起作用的前提是，被处理的对象必须有length属性，以及相对应的数字键。
 
 **（4）绑定回调函数的对象**
 
 上一节按钮点击事件的例子，可以改写成
 
-{% highlight javascript %}
-
+```javascript
 var o = new Object();
 
-o.f = function (){
+o.f = function ()v {
   console.log(this === o);
 }
 
@@ -792,53 +785,94 @@ var f = function (){
   // 或者 o.f.call(o);
 };
 
-$("#button").on("click", f);
+$('#button').on('click', f);
+```
 
-{% endhighlight %}
-
-点击按钮以后，控制台将会显示true。由于apply方法（或者call方法）不仅绑定函数执行时所在的对象，还会立即执行函数，因此不得不把绑定语句写在一个函数体内。更简洁的写法是采用下面介绍的bind方法。
+点击按钮以后，控制台将会显示`true`。由于`apply`方法（或者`call`方法）不仅绑定函数执行时所在的对象，还会立即执行函数，因此不得不把绑定语句写在一个函数体内。更简洁的写法是采用下面介绍的`bind`方法。
 
 ### bind方法
 
-bind方法用于将函数体内的this绑定到某个对象，然后返回一个新函数。它的使用格式如下。
-
-{% highlight javascript %}
-
-func.bind(thisValue, arg1, arg2,...)
-
-{% endhighlight %}
-
-下面是一个例子。
-
-{% highlight javascript %}
-
-var o1 = new Object();
-o1.p = 123;
-o1.m = function (){
-  console.log(this.p);
-};
-
-o1.m() // 123 
-
-var o2 = new Object();
-o2.p = 456;
-o2.m = o1.m;
-
-o2.m() // 456
-
-o2.m = o1.m.bind(o1);
-o2.m() // 123
-
-{% endhighlight %}
-
-上面代码使用bind方法将o1.m方法绑定到o1以后，在o2对象上调用o1.m的时候，o1.m函数体内部的this.p就不再到o2对象去寻找p属性的值了。
-
-bind比call方法和apply方法更进一步的是，除了绑定this以外，还可以绑定原函数的参数。
+`bind`方法用于将函数体内的`this`绑定到某个对象，然后返回一个新函数。
 
 ```javascript
+var print = console.log;
+print(2)
+// TypeError: Illegal invocation
+```
 
-var add = function (x,y) {
-  return x*this.m + y*this.n;
+上面代码中，我们将`console`对象的`log`赋给变量`print`，然后调用`print`就报错了，因为这时`log`方法内部的`this`已经不指向`console`对象了。
+
+`bind`方法可以解决这个问题，让`log`方法绑定`console`对象。
+
+```javascript
+var print = console.log.bind(console);
+print(2)
+// 2
+```
+
+上面代码中，`bind`方法将`log`方法内部的`this`绑定到`console`对象，这时就可以安全地将这个方法赋值给其他变量了。
+
+下面是一个更清晰的例子。
+
+```javascript
+var counter = {
+  count: 0,
+  inc: function () {
+    this.count++;
+  }
+};
+
+counter.count // 0
+counter.inc()
+counter.count // 1
+```
+
+上面代码中，`counter.inc`内部的`this`，默认指向`counter`对象。如果将这个方法赋值给另一个变量，就会出错。
+
+```javascript
+var counter = {
+  count: 0,
+  inc: function () {
+    this.count++;
+  }
+};
+
+var func = counter.inc;
+func();
+counter.count // 0
+count // NaN
+```
+
+上面代码中，函数`func`是在全局环境中运行的，这时`inc`内部的`this`指向顶层对象`window`，所以`counter.count`是不会变的，反而创建了一个全局变量`count`。因为`window.count`原来等于`undefined`，进行递增运算后`undefined++`就等于`NaN`。
+
+为了解决这个问题，可以使用`this`方法，将`inc`内部的`this`绑定到`counter`对象。
+
+```javascript
+var func = counter.inc.bind(counter);
+func();
+counter.count // 1
+```
+
+上面代码中，`bind`方法将`inc`方法绑定到`counter`以后，再运行`func`就会得到正确结果。
+
+`this`绑定到其他对象也是可以的。
+
+```javascript
+var obj = {
+  count: 100
+};
+var func = counter.inc.bind(obj);
+func();
+obj.count // 101
+```
+
+上面代码中，`bind`方法将`inc`方法内部的`this`，绑定到`obj`对象。结果调用`func`函数以后，递增的就是`obj`内部的`count`属性。
+
+`bind`比`call`方法和`apply`方法更进一步的是，除了绑定`this`以外，还可以绑定原函数的参数。
+
+```javascript
+var add = function (x, y) {
+  return x * this.m + y * this.n;
 }
 
 var obj = {
@@ -850,62 +884,26 @@ var newAdd = add.bind(obj, 5);
 
 newAdd(5)
 // 20
-
 ```
 
-上面代码中，bind方法除了绑定this对象，还绑定了add函数的第一个参数，结果newAdd函数只要一个参数就能运行了。
+上面代码中，`bind`方法除了绑定`this`对象，还将`add`函数的第一个参数`x`绑定成`5`，然后返回一个新函数`newAdd`，这个函数只要再接受一个参数`y`就能运行了。
 
-如果bind方法的第一个参数是null或undefined，等于将this绑定到全局对象，函数运行时this指向全局对象（在浏览器中为window）。
+如果`bind`方法的第一个参数是`null`或`undefined`，等于将`this`绑定到全局对象，函数运行时`this`指向顶层对象（在浏览器中为`window`）。
 
-{% highlight javascript %}
-
-function add(x,y) { return x+y; }
+```javascript
+function add(x, y) {
+  return x + y;
+}
 
 var plus5 = add.bind(null, 5);
-
 plus5(10) // 15
+```
 
-{% endhighlight %}
+上面代码中，函数`add`内部并没有`this`，使用`bind`方法的主要目的是绑定参数`x`，以后每次运行新函数`plus5`，就只需要提供另一个参数`y`就够了。而且因为`add`内部没有`this`，所以`bind`的第一个参数是`null`，不过这里如果是其他对象，也没有影响。
 
-上面代码除了将add函数的运行环境绑定为全局对象，还将add函数的第一个参数绑定为5，然后返回一个新函数。以后，每次运行这个新函数，就只需要提供另一个参数就够了。
+对于那些不支持`bind`方法的老式浏览器，可以自行定义`bind`方法。
 
-bind方法有一些使用注意点。
-
-**（1）每一次返回一个新函数**
-
-bind方法每运行一次，就返回一个新函数，这会产生一些问题。比如，监听事件的时候，不能写成下面这样。
-
-{% highlight javascript %}
-
-element.addEventListener('click', o.m.bind(o));
-
-{% endhighlight %}
-
-上面代码表示，click事件绑定bind方法生成的一个匿名函数。这样会导致无法取消绑定，所以，下面的代码是无效的。
-
-{% highlight javascript %}
-
-element.removeEventListener('click', o.m.bind(o));
-
-{% endhighlight %}
-
-正确的方法是写成下面这样：
-
-{% highlight javascript %}
-
-var listener = o.m.bind(o);
-element.addEventListener('click', listener);
-//  ...
-element.removeEventListener('click', listener);
-
-{% endhighlight %}
-
-**（2）bind方法的自定义代码**
-
-对于那些不支持bind方法的老式浏览器，可以自行定义bind方法。
-
-{% highlight javascript %}
-
+```javascript
 if(!('bind' in Function.prototype)){
   Function.prototype.bind = function(){
     var fn = this;
@@ -916,53 +914,137 @@ if(!('bind' in Function.prototype)){
     }
   }
 }
+```
 
-{% endhighlight %}
+`bind`方法有一些使用注意点。
 
-**（3）jQuery的proxy方法**
+**（1）每一次返回一个新函数**
 
-除了用bind方法绑定函数运行时所在的对象，还可以使用jQuery的$.proxy方法，它与bind方法的作用基本相同。
+`bind`方法每运行一次，就返回一个新函数，这会产生一些问题。比如，监听事件的时候，不能写成下面这样。
 
-{% highlight javascript %}
+```javascript
+element.addEventListener('click', o.m.bind(o));
+```
 
-$("#button").on("click", $.proxy(o.f, o));
+上面代码中，`click`事件绑定`bind`方法生成的一个匿名函数。这样会导致无法取消绑定，所以，下面的代码是无效的。
 
-{% endhighlight %}
+```javascript
+element.removeEventListener('click', o.m.bind(o));
+```
 
-上面代码表示，$.proxy方法将o.f方法绑定到o对象。
+正确的方法是写成下面这样：
 
-**（4）结合call方法使用**
+```javascript
+var listener = o.m.bind(o);
+element.addEventListener('click', listener);
+//  ...
+element.removeEventListener('click', listener);
+```
 
-利用bind方法，可以改写一些JavaScript原生方法的使用形式，以数组的slice方法为例。
+**（2）结合回调函数使用**
 
-{% highlight javascript %}
+回调函数是JavaScript最常用的模式之一，但是一个常见的错误是，将包含`this`的方法直接当作回调函数。
 
-[1,2,3].slice(0,1) 
+```javascript
+var counter = {
+  count: 0,
+  inc: function () {
+    'use strict';
+    this.count++;
+  }
+};
+
+function callIt(callback) {
+  callback();
+}
+
+callIt(counter.inc)
+// TypeError: Cannot read property 'count' of undefined
+```
+
+上面代码中，`counter.inc`方法被当作回调函数，传入了`callIt`，调用时其内部的`this`指向`callIt`运行时所在的对象，即顶层对象`window`，所以得不到预想结果。注意，上面的`counter.inc`方法内部使用了严格模式，在该模式下，`this`指向顶层对象时会报错，一般模式不会。
+
+解决方法就是使用`bind`方法，将`counter.inc`绑定`counter`。
+
+```javascript
+callIt(counter.inc.bind(counter));
+counter.count // 1
+```
+
+还有一种情况比较隐蔽，就是某些数组方法可以接受一个函数当作参数。这些函数内部的`this`指向，很可能也会出错。
+
+```javascript
+var obj = {
+  name: '张三',
+  times: [1, 2, 3],
+  print: function () {
+    this.times.forEach(function (n) {
+      console.log(this.name);
+    });
+  }
+};
+
+obj.print()
+// 没有任何输出
+```
+
+上面代码中，`obj.print`内部`this.times`的`this`是指向`obj`的，这个没有问题。但是，`forEach`方法的回调函数内部的`this.name`却是指向全局对象，导致没有办法取到值。稍微改动一下，就可以看得更清楚。
+
+```javascript
+obj.print = function () {
+  this.times.forEach(function (n) {
+    console.log(this === window);
+  });
+};
+
+obj.print()
+// true
+// true
+// true
+```
+
+解决这个问题，也是通过`bind`方法绑定`this`。
+
+```javascript
+obj.print = function () {
+  this.times.forEach(function (n) {
+    console.log(this.name);
+  }.bind(this));
+};
+
+obj.print()
+// 张三
+// 张三
+// 张三
+```
+
+**（3）结合`call`方法使用**
+
+利用`bind`方法，可以改写一些JavaScript原生方法的使用形式，以数组的`slice`方法为例。
+
+```javascript
+[1, 2, 3].slice(0, 1)
 // [1]
 
 // 等同于
 
-Array.prototype.slice.call([1,2,3], 0, 1)
+Array.prototype.slice.call([1, 2, 3], 0, 1)
 // [1]
+```
 
-{% endhighlight %}
+上面的代码中，数组的slice方法从`[1, 2, 3]`里面，按照指定位置和长度切分出另一个数组。这样做的本质是在`[1, 2, 3]`上面调用`Array.prototype.slice`方法，因此可以用`call`方法表达这个过程，得到同样的结果。
 
-上面的代码中，数组的slice方法从[1, 2, 3]里面，按照指定位置和长度切分出另一个数组。这样做的本质是在[1, 2, 3]上面调用Array.prototype.slice方法，因此可以用call方法表达这个过程，得到同样的结果。
+`call`方法实质上是调用`Function.prototype.call`方法，因此上面的表达式可以用`bind`方法改写。
 
-call方法实质上是调用Function.prototype.call方法，因此上面的表达式可以用bind方法改写。
-
-{% highlight javascript %}
-
+```javascript
 var slice = Function.prototype.call.bind(Array.prototype.slice);
 
 slice([1, 2, 3], 0, 1) // [1]
+```
 
-{% endhighlight %}
+可以看到，利用bind方法，将`[1, 2, 3].slice(0, 1)`变成了`slice([1, 2, 3], 0, 1)`的形式。这种形式的改变还可以用于其他数组方法。
 
-可以看到，利用bind方法，将[1, 2, 3].slice(0, 1)变成了slice([1, 2, 3], 0, 1)的形式。这种形式的改变还可以用于其他数组方法。
-
-{% highlight javascript %}
-
+```javascript
 var push = Function.prototype.call.bind(Array.prototype.push);
 var pop = Function.prototype.call.bind(Array.prototype.pop);
 
@@ -972,14 +1054,12 @@ a // [1, 2, 3, 4]
 
 pop(a)
 a // [1, 2, 3]
+```
 
-{% endhighlight %}
+如果再进一步，将`Function.prototype.call`方法绑定到`Function.prototype.bind`对象，就意味着`bind`的调用形式也可以被改写。
 
-如果再进一步，将Function.prototype.call方法绑定到Function.prototype.bind对象，就意味着bind的调用形式也可以被改写。
-
-{% highlight javascript %}
-
-function f(){
+```javascript
+function f() {
   console.log(this.v);
 }
 
@@ -987,11 +1067,10 @@ var o = { v: 123 };
 
 var bind = Function.prototype.call.bind(Function.prototype.bind);
 
-bind(f,o)() // 123
+bind(f, o)() // 123
+```
 
-{% endhighlight %}
-
-上面代码表示，将Function.prototype.call方法绑定Function.prototype.bind以后，bind方法的使用形式从f.bind(o)，变成了bind(f, o)。
+上面代码表示，将`Function.prototype.call`方法绑定`Function.prototype.bind`以后，`bind`方法的使用形式从`f.bind(o)`，变成了`bind(f, o)`。
 
 ## 参考链接
 

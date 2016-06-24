@@ -85,7 +85,7 @@ var a = [1, 2, 3];
 a.valueOf() // [1, 2, 3]
 ```
 
-toString 方法返回数组的字符串形式。
+`toString`方法返回数组的字符串形式。
 
 ```javascript
 var a = [1, 2, 3];
@@ -517,12 +517,62 @@ function log(element, index, array) {
 // [2] = 9
 ```
 
-从上面代码可以看到，`forEach`方法和`map`方法的参数格式是一样的，第一个参数都是一个函数。该函数接受三个参数，分别是当前元素、当前元素的位置（从0开始）、整个数组。
+上面代码遍历数组，不是为了返回值，而是为了在屏幕输出内容，所以应该使用`forEach`方法，而不是`map`方法，虽然后者也可以实现同样目的。
+
+从上面代码可以看到，`forEach`方法和`map`方法的参数格式是一模一样的。第一个参数都是一个函数。该函数接受三个参数，分别是当前元素`element`、当前元素的位置`index`（从0开始）、整个数组`array`。
+
+`forEach`方法也可以接受第二个参数，用来绑定回调函数的`this`关键字。
+
+```javascript
+var out = [];
+
+[1, 2, 3].forEach(function(elem) {
+  this.push(elem * elem);
+}, out);
+
+out // [1, 4, 9]
+```
+
+上面代码中，空数组`out`是`forEach`方法的第二个参数，结果，回调函数内部的`this`关键字就指向`out`。这个参数对于多层`this`非常有用，因为多层`this`通常指向是不一致的。
+
+```javascript
+var obj = {
+  name: '张三',
+  times: [1, 2, 3],
+  print: function () {
+    this.times.forEach(function (n) {
+      console.log(this.name);
+    });
+  }
+};
+
+obj.print()
+// 没有任何输出
+```
+
+上面代码中，`obj.print`方法有两层`this`，它们的指向是不一致的。外层的`this.times`指向`obj`对象，内层的`this.name`指向顶层对象`window`（详细解释参见《面向对象编程》一章）。这显然是违背原意的，解决方法就是使用`forEach`方法的第二个参数固定`this`。
+
+```javascript
+var obj = {
+  name: '张三',
+  times: [1, 2, 3],
+  print: function () {
+    this.times.forEach(function (n) {
+      console.log(this.name);
+    }, this);
+  }
+};
+
+obj.print()
+// 张三
+// 张三
+// 张三
+```
 
 `forEach`方法会跳过数组的空位。
 
 ```javascript
-var log = function(n) {
+var log = function (n) {
  console.log(n + 1);
 };
 
@@ -542,20 +592,6 @@ var log = function(n) {
 ```
 
 上面代码中，`forEach`方法不会跳过`undefined`和`null`，但会跳过空位。
-
-`forEach`方法也可以接受第二个参数，用来绑定回调函数的this关键字。
-
-```javascript
-var out = [];
-
-[1, 2, 3].forEach(function(elem) {
-  this.push(elem * elem);
-}, out);
-
-out // [1, 4, 9]
-```
-
-上面代码中，空数组`out`是`forEach`方法的第二个参数，结果，回调函数内部的`this`关键字就指向`out`。
 
 ### filter方法
 
