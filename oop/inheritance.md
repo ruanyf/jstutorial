@@ -8,146 +8,6 @@ category: oop
 
 大部分面向对象的编程语言，是在“类”（class）的基础上实现继承的。JavaScript语言不是如此，它的继承机制基于“原型对象”。
 
-## 原型（Prototype）
-
-### 含义
-
-JavaScript的所有对象，都有自己的继承链。也就是说，每个对象都继承另一个对象，该对象称为“原型”（prototype）对象。只有`null`除外，它没有自己的原型对象。
-
-`Object.getPrototypof`方法用于获取当前对象的原型对象。
-
-```javascript
-var p = Object.getPrototypeOf(obj);
-```
-
-上面代码中，对象`p`就是对象`obj`的原型对象。
-
-原型对象的重要性在于，如果`p`对象是`obj`对象的原型，那么`obj`可以拿到`p`的所有属性和方法。
-
-```javascript
-p.foo = 'bar';
-obj.foo // "bar"
-```
-
-上面代码中，在`p`对象上设置一个`foo`属性，结果`obj`对象可以读到这个属性。
-
-### 设置原型对象的方法
-
-好几种方法可以设置原型对象。
-
-**（1）`Object.create()`**
-
-`Object.create`方法用于生成一个新的对象，继承指定对象。
-
-```javascript
-var obj = Object.create(p);
-```
-
-上面代码中，新生成的`obj`对象的原型就是对象`p`。
-
-**（2）`__proto__`属性**
-
-`__proto__`属性（前后各两个下划线）可以改写某个对象的原型对象。
-
-```javascript
-var obj = {};
-var p = {};
-
-obj.__proto__ = p;
-Object.getPrototypeOf(obj) === p // true
-```
-
-上面代码通过`__proto__`属性，将`p`对象设为`obj`对象的原型。
-
-根据语言标准，`__proto__`属性只有浏览器才需要部署，其他环境可以没有这个属性，而且前后的两根下划线，表示它本质是一个内部属性，不应该对使用者暴露。因此，应该尽量少用这个属性，而是用`Object.getPrototypeof()`（读取）和`Object.setPrototypeOf()`（设置），进行原型对象的读写操作。
-
-**（3）`Object.setPrototypeOf()`**
-
-`Object.setPrototypeOf`方法可以为现有对象设置原型，返回一个新对象。
-
-```javascript
-var a = {x: 1};
-var b = Object.setPrototypeOf({}, a);
-// 等同于
-// var b = {__proto__: a};
-
-b.x // 1
-```
-
-上面代码中，`b`对象是`Object.setPrototypeOf`方法返回的一个新对象。该对象本身为空、原型为`a`对象，所以`b`对象可以拿到`a`对象的所有属性和方法。`b`对象本身并没有`x`属性，但是JavaScript引擎找到它的原型对象`a`，然后读取`a`的`x`属性。
-
-**（4）`new`命令**
-
-`new`命令通过构造函数新建实例对象，实质就是将实例对象的原型，指向构造函数的`prototype`属性，然后在实例对象上执行构造函数。
-
-```javascript
-var F = function () {
-  this.foo = 'bar';
-};
-
-var f = new Foo();
-
-// 等同于
-var f = new Object();
-f.__proto__ = F.prototype;
-F.call(o);
-```
-
-### 原型对象的意义
-
-原型对象的属性和方法，可以被所有继承它的子对象分享。这有很重要的实际意义。
-
-```javascript
-var A = {
-  name: '张三'
-};
-var B = {
-  name: '李四'
-};
-
-var proto = {
-  print: function () {
-    console.log(this.name);
-  }
-};
-
-A.__proto__ = proto;
-B.__proto__ = proto;
-
-A.print() // 张三
-B.print() // 李四
-```
-
-上面代码中，`A`对象和`B`对象的原型都是`proto`对象，它们都共享`proto`对象的`print`方法。也就是说，`A`和`B`的`print`方法，都是在调用`proto`对象的`print`方法。
-
-```javascript
-A.print === B.print // true
-A.print === proto.print // true
-B.print === proto.print // true
-```
-
-如果原型对象不能提供方法的共享，那么`A`对象和`B`对象就必须将`print`复制到自身，这样不仅效率低，而且浪费内存。
-
-另外，通过共享机制，同一个原型对象的所有实例彼此之间就建立了关联，可以互相联系。
-
-### 原型链
-
-读取对象的属性时，JavaScript引擎首先查找对象自身是否具有这个属性，如果没有的话，再查找对象的原型是否具有这个属性。如果还是没有，再查找原型的原型，以此类推。这种一级级的向上查找机制，就称为“原型链”（prototype chain）。
-
-下面是使用`__proto__`属性，定义一条“原型链”。
-
-```javascript
-var a = { x: 1 };
-var b = { __proto__: a };
-var c = { __proto__: b };
-
-c.x // 1
-```
-
-如果对象自身和它的原型，都定义了一个同名属性，那么优先读取对象自身的属性，这叫做“覆盖”（overiding）。
-
-需要注意的是，一级级向上，在原型链寻找某个属性，对性能是有影响的。所寻找的属性在越上层的原型对象，对性能的影响越大。如果寻找某个不存在的属性，将会遍历整个原型链。
-
 ## 构造函数的继承
 
 本节介绍如何让一个构造函数，继承另一个构造函数。
@@ -204,112 +64,20 @@ ClassB.prototype.print = function() {
 
 上面代码中，子类`B`的`print`方法先调用父类`A`的`print`方法，再部署自己的代码。这就等于继承了父类`A`的`print`方法。
 
-## \_\_proto\_\_属性
-
-`__proto__`属性指向当前对象的原型对象，即构造函数的`prototype`属性。
-
-```javascript
-var obj = new Object();
-
-obj.__proto__ === Object.prototype
-// true
-obj.__proto__ === obj.constructor.prototype
-// true
-```
-
-上面代码首先新建了一个对象`obj`，它的`__proto__`属性，指向构造函数（`Object`或`obj.constructor`）的`prototype`属性。所以，两者比较以后，返回`true`。
-
-因此，获取实例对象`obj`的原型对象，有三种方法。
-
-- `obj.__proto__`
-- `obj.constructor.prototype`
-- `Object.getPrototypeOf(obj)`
-
-上面三种方法之中，前两种都不是很可靠。最新的ES6标准规定，`__proto__`属性只有浏览器才需要部署，其他环境可以不部署。而`obj.constructor.prototype`在手动改变原型对象时，可能会失效。
-
-```javascript
-var P = function () {};
-var p = new P();
-
-var C = function () {};
-C.prototype = p;
-var c = new C();
-
-c.constructor.prototype === p // false
-```
-
-上面代码中，`C`构造函数的原型对象被改成了`p`，结果`c.constructor.prototype`就失真了。所以，在改变原型对象时，一般要同时设置`constructor`属性。
-
-```javascript
-C.prototype = p;
-C.prototype.constructor = C;
-
-c.constructor.prototype === p // true
-```
-
-所以，推荐使用第三种`Object.getPrototypeOf`方法，获取原型对象。该方法的用法如下。
-
-```javascript
-var o = new Object();
-
-Object.getPrototypeOf(o) === Object.prototype
-// true
-```
-
-可以使用`Object.getPrototypeOf`方法，检查浏览器是否支持`__proto__`属性，老式浏览器不支持这个属性。
-
-```javascript
-Object.getPrototypeOf({ __proto__: null }) === null
-```
-
-上面代码将一个对象的`__proto__`属性设为`null`，然后使用`Object.getPrototypeOf`方法获取这个对象的原型，判断是否等于`null`。如果当前环境支持`__proto__`属性，两者的比较结果应该是`true`。
-
-有了`__proto__`属性，就可以很方便得设置实例对象的原型了。假定有三个对象`machine`、`vehicle`和`car`，其中`machine`是`vehicle`的原型，`vehicle`又是`car`的原型，只要两行代码就可以设置。
-
-```javascript
-vehicle.__proto__ = machine;
-car.__proto__ = vehicle;
-```
-
-下面是一个实例，通过`__proto__`属性与`constructor.prototype`属性两种方法，分别读取定义在原型对象上的属性。
-
-```javascript
-Array.prototype.p = 'abc';
-var a = new Array();
-
-a.__proto__.p // abc
-a.constructor.prototype.p // abc
-```
-
-显然，`__proto__`看上去更简洁一些。
-
-通过构造函数生成实例对象时，实例对象的`__proto__`属性自动指向构造函数的prototype对象。
-
-```javascript
-var f = function (){};
-var a = {};
-
-f.prototype = a;
-var o = new f();
-
-o.__proto__ === a
-// true
-```
-
 ## 属性的继承
 
 属性分成两种。一种是对象自身的原生属性，另一种是继承自原型的继承属性。
 
 ### 对象的原生属性
 
-对象本身的所有属性，可以用Object.getOwnPropertyNames方法获得。
+对象本身的所有属性，可以用`Object.getOwnPropertyNames`方法获得。
 
 ```javascript
 Object.getOwnPropertyNames(Date)
 // ["parse", "arguments", "UTC", "caller", "name", "prototype", "now", "length"]
 ```
 
-对象本身的属性之中，有的是可以枚举的（enumerable），有的是不可以枚举的。只获取那些可以枚举的属性，使用Object.keys方法。
+对象本身的属性之中，有的是可以枚举的（enumerable），有的是不可以枚举的。只获取那些可以枚举的属性，使用`Object.keys`方法。
 
 ```javascript
 Object.keys(Date) // []

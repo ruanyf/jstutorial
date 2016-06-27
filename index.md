@@ -38,7 +38,7 @@ modifiedOn: 2014-05-18
 <h2 id="oop">面向对象编程</h2>
 
 - [概述](oop/basic.html)
-- [封装](oop/encapsulation.html)
+- [prototype 对象](oop/prototype.html)
 - [继承](oop/inheritance.html)
 - [模块化编程](oop/module.html)
 

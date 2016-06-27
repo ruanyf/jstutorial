@@ -106,7 +106,7 @@ Animal.prototype.walk = function () {
 
 ### 原型链
 
-对象的属性和方法，有可能是定义在自身，也有可能是定义在它的原型对象。由于原型本身也是对象，又有自己的原型，所以形成了一条原型链（prototype chain）。比如，`a`对象是`b`对象的原型，`b`对象是c对象的原型，以此类推。
+对象的属性和方法，有可能是定义在自身，也有可能是定义在它的原型对象。由于原型本身也是对象，又有自己的原型，所以形成了一条原型链（prototype chain）。比如，`a`对象是`b`对象的原型，`b`对象是`c`对象的原型，以此类推。
 
 如果一层层地上溯，所有对象的原型最终都可以上溯到`Object.prototype`，即`Object`构造函数的`prototype`属性指向的那个对象。那么，`Object.prototype`对象有没有它的原型呢？回答可以是有的，就是没有任何属性和方法的`null`对象，而`null`对象没有自己的原型。
 
@@ -118,6 +118,10 @@ Object.getPrototypeOf(Object.prototype)
 上面代码表示，`Object.prototype`对象的原型是`null`，由于`null`没有任何属性，所以原型链到此为止。
 
 “原型链”的作用是，读取对象的某个属性时，JavaScript引擎先寻找对象本身的属性，如果找不到，就到它的原型去找，如果还是找不到，就到原型的原型去找。如果直到最顶层的`Object.prototype`还是找不到，则返回`undefined`。
+
+如果对象自身和它的原型，都定义了一个同名属性，那么优先读取对象自身的属性，这叫做“覆盖”（overiding）。
+
+需要注意的是，一级级向上，在原型链寻找某个属性，对性能是有影响的。所寻找的属性在越上层的原型对象，对性能的影响越大。如果寻找某个不存在的属性，将会遍历整个原型链。
 
 举例来说，如果让某个函数的`prototype`属性指向一个数组，就意味着该函数可以当作数组的构造函数，因为它生成的实例对象都可以通过`prototype`属性调用数组方法。
 
@@ -147,6 +151,17 @@ mine instanceof Array
 ```
 
 上面代码说明了`instanceof`运算符的实质，它依次与实例对象的所有原型对象的`constructor`属性（关于该属性的介绍，请看下一节）进行比较，只要有一个符合就返回`true`，否则返回`false`。
+
+下面的代码可以找出，某个属性到底是原型链上哪个对象自身的属性。
+
+```javascript
+function getDefiningObject(obj, propKey) {
+  while (obj && !{}.hasOwnProperty.call(obj, propKey)) {
+    obj = Object.getPrototypeOf(obj);
+  }
+  return obj;
+}
+```
 
 ### constructor属性
 
@@ -189,12 +204,11 @@ f.constructor === RegExp // false
 
 上面代码表示，使用`constructor`属性，确定实例对象`f`的构造函数是`F`，而不是`RegExp`。
 
-## Object.getPrototypeOf方法
+## Object.getPrototypeOf()
 
-Object.getPrototypeOf方法返回一个对象的原型。
+`Object.getPrototypeOf`方法返回一个对象的原型。这是获取原型对象的标准方法。
 
-{% highlight javascript %}
-
+```javascript
 // 空对象的原型是Object.prototype
 Object.getPrototypeOf({}) === Object.prototype
 // true
@@ -204,30 +218,78 @@ function f() {}
 Object.getPrototypeOf(f) === Function.prototype
 // true
 
-// 假定F为构造函数，f为F的实例对象
-// 那么，f的原型是F.prototype
+// f 为 F 的实例对象，则 f 的原型是 F.prototype
 var f = new F();
 Object.getPrototypeOf(f) === F.prototype
 // true
+```
 
-{% endhighlight %}
+## Object.setPrototypeOf()
 
-## `Object.create`方法
+`Object.setPrototypeOf`方法可以为现有对象设置原型，返回一个新对象。
+
+`Object.setPrototypeOf`方法接受两个参数，第一个是现有对象，第二个是原型对象。
+
+```javascript
+var a = {x: 1};
+var b = Object.setPrototypeOf({}, a);
+// 等同于
+// var b = {__proto__: a};
+
+b.x // 1
+```
+
+上面代码中，`b`对象是`Object.setPrototypeOf`方法返回的一个新对象。该对象本身为空、原型为`a`对象，所以`b`对象可以拿到`a`对象的所有属性和方法。`b`对象本身并没有`x`属性，但是JavaScript引擎找到它的原型对象`a`，然后读取`a`的`x`属性。
+
+`new`命令通过构造函数新建实例对象，实质就是将实例对象的原型，指向构造函数的`prototype`属性，然后在实例对象上执行构造函数。
+
+```javascript
+var F = function () {
+  this.foo = 'bar';
+};
+
+var f = new Foo();
+
+// 等同于
+var f = Object.setPrototypeOf({}, F.prototype);
+F.call(f);
+```
+
+## Object.create()
 
 `Object.create`方法用于从原型对象生成新的实例对象，可以替代`new`命令。
 
 它接受一个对象作为参数，返回一个新对象，后者完全继承前者的属性，即原有对象成为新对象的原型。
 
 ```javascript
-var o1 = { p: 1 };
-var o2 = Object.create(o1);
+var A = {
+ print: function () {
+   console.log('hello');
+ }
+};
 
-o2.p // 1
+var B = Object.create(A);
+
+B.print // hello
+B.print === A.print // true
 ```
 
-上面代码中，`Object.create`方法在`o1`的基础上生成了`o2`。此时，`o1`成了`o2`的原型，也就是说，`o2`继承了`o1`所有的属性的方法。
+上面代码中，`Object.create`方法在`A`的基础上生成了`B`。此时，`A`就成了`B`的原型，`B`就继承了`A`的所有属性和方法。这段代码等同于下面的代码。
 
-`Object.create`方法基本等同于下面的代码，如果老式浏览器不支持`Object.create`方法，可以用下面代码自己部署。
+```javascript
+var A = function () {};
+A.prototype = {
+ print: function () {
+   console.log('hello');
+ }
+};
+
+var B = new A();
+
+B.print === A.prototype.print // true
+```
+
+实际上，`Object.create`方法可以用下面的代码代替。如果老式浏览器不支持`Object.create`方法，可以就用这段代码自己部署。
 
 ```javascript
 if (typeof Object.create !== "function") {
@@ -249,72 +311,182 @@ var o2 = Object.create(Object.prototype);
 var o3 = new Object();
 ```
 
-如果想要生成一个不继承任何属性（比如toString和valueOf方法）的对象，可以将Object.create的参数设为null。
+如果想要生成一个不继承任何属性（比如没有`toString`和`valueOf`方法）的对象，可以将`Object.create`的参数设为`null`。
 
-{% highlight javascript %}
-
+```javascript
 var o = Object.create(null);
 
 o.valueOf()
 // TypeError: Object [object Object] has no method 'valueOf'
+```
 
-{% endhighlight %}
+上面代码表示，如果对象`o`的原型是`null`，它就不具备一些定义在`Object.prototype`对象上面的属性，比如`valueOf`方法。
 
-上面代码表示，如果对象o的原型是null，它就不具备一些定义在Object.prototype对象上面的属性，比如valueOf方法。
+使用`Object.create`方法的时候，必须提供对象原型，否则会报错。
 
-使用Object.create方法的时候，必须提供对象原型，否则会报错。
-
-{% highlight javascript %}
-
+```javascript
 Object.create()
 // TypeError: Object prototype may only be an Object or null
+```
 
-{% endhighlight %}
+`bject.create`方法生成的新对象，动态继承了原型。在原型上添加或修改任何方法，会立刻反映在新对象之上。
 
-Object.create方法生成的新对象，动态继承了原型。在原型上添加或修改任何方法，会立刻反映在新对象之上。
-
-{% highlight javascript %}
-
+```javascript
 var o1 = { p: 1 };
 var o2 = Object.create(o1);
 
 o1.p = 2;
 o2.p
 // 2
-
-{% endhighlight %}
+```
 
 上面代码表示，修改对象原型会影响到新生成的对象。
 
-除了对象的原型，Object.create方法还可以接受第二个参数，表示描述属性的attributes对象，跟用在Object.defineProperties方法的格式是一样的。它所描述的对象属性，会添加到新对象。
+除了对象的原型，`Object.create`方法还可以接受第二个参数。该参数是一个属性描述对象，它所描述的对象属性，会添加到新对象。
 
-{% highlight javascript %}
-
-var o = Object.create(Object.prototype, {
+```javascript
+var o = Object.create({}, {
   p1: { value: 123, enumerable: true },
-  p2: { value: "abc", enumerable: true }
+  p2: { value: 'abc', enumerable: true }
 });
 
-o.p1 // 123
-o.p2 // "abc"
+// 等同于
+var o = Object.create({});
+o.p1 = 123;
+o.p2 = 'abc';
+```
 
-{% endhighlight %}
+由于`Object.create`方法不使用构造函数，所以不能用`instanceof`运算符判断，返回的对象是哪一个构造函数的实例。
 
-由于Object.create方法不使用构造函数，所以不能用instanceof运算符判断，对象是哪一个构造函数的实例。这时，可以使用下面的isPrototypeOf方法，判读原型是哪一个对象。
+```javascript
+var o1 = {};
+var o2 = Object.create(o1);
 
-## isPrototypeOf方法
+o2 instanceof o1
+// TypeError: Right-hand side of 'instanceof' is not callable
+```
 
-isPrototypeOf方法用来判断一个对象是否是另一个对象的原型。
+上面代码中，由于`o1`不是一个函数，所以用于`instanceof`运算符会报错。
 
-{% highlight javascript %}
+这时，可以使用下面的`isPrototypeOf`方法，判读原型是哪一个对象。
 
+## Object.prototype.isPrototypeOf()
+
+对象实例的`isPrototypeOf`方法，用来判断一个对象是否是另一个对象的原型。
+
+```javascript
 var o1 = {};
 var o2 = Object.create(o1);
 var o3 = Object.create(o2);
 
 o2.isPrototypeOf(o3) // true
 o1.isPrototypeOf(o3) // true
+```
 
-{% endhighlight %}
+上面代码表明，只要某个对象处在原型链上，`isProtypeOf`都返回`true`。
 
-上面代码表明，只要某个对象处在原型链上，isProtypeOf都返回true。
+## Object.prototype.\_\_proto\_\_
+
+`__proto__`属性（前后各两个下划线）可以改写某个对象的原型对象。
+
+```javascript
+var obj = {};
+var p = {};
+
+obj.__proto__ = p;
+Object.getPrototypeOf(obj) === p // true
+```
+
+上面代码通过`__proto__`属性，将`p`对象设为`obj`对象的原型。
+
+根据语言标准，`__proto__`属性只有浏览器才需要部署，其他环境可以没有这个属性，而且前后的两根下划线，表示它本质是一个内部属性，不应该对使用者暴露。因此，应该尽量少用这个属性，而是用`Object.getPrototypeof()`（读取）和`Object.setPrototypeOf()`（设置），进行原型对象的读写操作。
+
+原型链可以用`__proto__`很直观地表示。
+
+```javascript
+var A = {
+  name: '张三'
+};
+var B = {
+  name: '李四'
+};
+
+var proto = {
+  print: function () {
+    console.log(this.name);
+  }
+};
+
+A.__proto__ = proto;
+B.__proto__ = proto;
+
+A.print() // 张三
+B.print() // 李四
+```
+
+上面代码中，`A`对象和`B`对象的原型都是`proto`对象，它们都共享`proto`对象的`print`方法。也就是说，`A`和`B`的`print`方法，都是在调用`proto`对象的`print`方法。
+
+```javascript
+A.print === B.print // true
+A.print === proto.print // true
+B.print === proto.print // true
+```
+
+可以使用`Object.getPrototypeOf`方法，检查浏览器是否支持`__proto__`属性，老式浏览器不支持这个属性。
+
+```javascript
+Object.getPrototypeOf({ __proto__: null }) === null
+```
+
+上面代码将一个对象的`__proto__`属性设为`null`，然后使用`Object.getPrototypeOf`方法获取这个对象的原型，判断是否等于`null`。如果当前环境支持`__proto__`属性，两者的比较结果应该是`true`。
+
+## 获取原型对象方法的比较
+
+如前所述，`__proto__`属性指向当前对象的原型对象，即构造函数的`prototype`属性。
+
+```javascript
+var obj = new Object();
+
+obj.__proto__ === Object.prototype
+// true
+obj.__proto__ === obj.constructor.prototype
+// true
+```
+
+上面代码首先新建了一个对象`obj`，它的`__proto__`属性，指向构造函数（`Object`或`obj.constructor`）的`prototype`属性。所以，两者比较以后，返回`true`。
+
+因此，获取实例对象`obj`的原型对象，有三种方法。
+
+- `obj.__proto__`
+- `obj.constructor.prototype`
+- `Object.getPrototypeOf(obj)`
+
+上面三种方法之中，前两种都不是很可靠。最新的ES6标准规定，`__proto__`属性只有浏览器才需要部署，其他环境可以不部署。而`obj.constructor.prototype`在手动改变原型对象时，可能会失效。
+
+```javascript
+var P = function () {};
+var p = new P();
+
+var C = function () {};
+C.prototype = p;
+var c = new C();
+
+c.constructor.prototype === p // false
+```
+
+上面代码中，`C`构造函数的原型对象被改成了`p`，结果`c.constructor.prototype`就失真了。所以，在改变原型对象时，一般要同时设置`constructor`属性。
+
+```javascript
+C.prototype = p;
+C.prototype.constructor = C;
+
+c.constructor.prototype === p // true
+```
+
+所以，推荐使用第三种`Object.getPrototypeOf`方法，获取原型对象。
+
+```javascript
+var o = new Object();
+Object.getPrototypeOf(o) === Object.prototype
+// true
+```
