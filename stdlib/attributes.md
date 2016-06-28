@@ -6,13 +6,50 @@ date: 2016-06-29
 modifiedOn: 2016-06-29
 ---
 
-JavaScript提供了很多内部开关，控制一个对象的属性，描述它的行为。这被称为“属性描述对象”（attributes object）。
+## 概述
 
-在JavaScript内部，每个属性都有一个对应的attributes对象，保存该属性的一些元信息。
+JavaScript提供了一个内部数据结构，用来描述一个对象的属性的行为，控制它的行为。这被称为“属性描述对象”（attributes object）。每个属性都有自己对应的属性描述对象，保存该属性的一些元信息。
+
+下面是属性描述对象的一个实例。
+
+```javascript
+{
+  value: 123,
+  writable: false,
+  enumerable: true,
+  configurable: false
+}
+```
+
+属性描述对象提供6个元属性。
+
+（1）`value`
+
+`value`存放该属性的属性值，默认为`undefined`。
+
+（2）`writable`
+
+`writable`存放一个布尔值，表示属性值（value）是否可改变，默认为`true`。
+
+（3）`enumerable`
+
+`enumerable`存放一个布尔值，表示该属性是否可枚举，默认为`true`。如果设为`false`，会使得某些操作（比如`for...in`循环、`Object.keys()`）跳过该属性。
+
+（4）`configurable`
+
+`configurable`存放一个布尔值，表示“可配置性”，默认为`true`。如果设为`false`，将阻止某些操作改写该属性，比如，无法删除该属性，也不得改变该属性的属性描述对象（`value`属性除外）。也就是说，`configurable`属性控制了属性描述对象的可写性。
+
+（5）`get`
+
+`get`存放一个函数，表示该属性的取值函数（getter），默认为`undefined`。
+
+（6）`set`
+
+`set`存放一个函数，表示该属性的存值函数（setter），默认为`undefined`。
 
 ## Object.getOwnPropertyDescriptor()
 
-`Object.getOwnPropertyDescriptor`方法可以读出属性描述对象。
+`Object.getOwnPropertyDescriptor`方法可以读出对象自身属性的属性描述对象。
 
 ```javascript
 var o = { p: 'a' };
@@ -27,24 +64,15 @@ Object.getOwnPropertyDescriptor(o, 'p')
 
 上面代码表示，使用`Object.getOwnPropertyDescriptor`方法，读取`o`对象的`p`属性的属性描述对象。
 
-属性描述对象包含如下元信息。
-
-- `value`：表示该属性的值，默认为`undefined`。
-- `writable`：表示该属性的值（value）是否可以改变，默认为`true`。
-- `enumerable`： 表示该属性是否可枚举，默认为`true`。如果设为`false`，会使得某些操作（比如`for...in`循环、`Object.keys()`）跳过该属性。
-- `configurable`：表示“可配置性”，默认为true。如果设为false，将阻止某些操作改写该属性，比如，无法删除该属性，也不得改变该属性的attributes对象（value属性除外），也就是说，configurable属性控制了attributes对象的可写性。
-- `get`：表示该属性的取值函数（getter），默认为`undefined`。
-- `set`：表示该属性的存值函数（setter），默认为`undefined`。
-
 ## Object.defineProperty()，Object.defineProperties()
 
-`Object.defineProperty`方法允许通过定义`attributes`对象，来定义或修改一个属性，然后返回修改后的对象。它的格式如下：
+`Object.defineProperty`方法允许通过定义属性描述对象，来定义或修改一个属性，然后返回修改后的对象。它的格式如下。
 
 ```javascript
 Object.defineProperty(object, propertyName, attributesObject)
 ```
 
-`Object.defineProperty`方法接受三个参数，第一个是属性所在的对象，第二个是属性名（它应该是一个字符串），第三个是属性的描述对象。比如，新建一个`o`对象，并定义它的`p`属性，写法如下。
+上面代码中，`Object.defineProperty`方法接受三个参数，第一个是属性所在的对象，第二个是属性名（它应该是一个字符串），第三个是属性的描述对象。比如，新建一个`o`对象，并定义它的`p`属性，写法如下。
 
 ```javascript
 var o = Object.defineProperty({}, 'p', {
@@ -63,13 +91,9 @@ o.p
 // 因为writable为false，所以无法改变该属性的值
 ```
 
+如果属性已经存在，`Object.defineProperty`方法相当于更新该属性的属性描述对象。
+
 需要注意的是，`Object.defineProperty`方法和后面的`Object.defineProperties`方法，都有性能损耗，会拖慢执行速度，不宜大量使用。
-
-`Object.defineProperty`的一个用途，是设置动态属性名。
-
-```javascript
-Object.defineProperty(obj, someFunction(), {value: true});
-```
 
 如果一次性定义或修改多个属性，可以使用`Object.defineProperties`方法。
 
@@ -88,7 +112,7 @@ o.p2 // "abc"
 o.p3 // "123abc"
 ```
 
-上面代码中的`p3`属性，定义了取值函数`get`。这时需要注意的是，一旦定义了取值函数`get`（或存值函数`set`），就不能将`writable`设为`true`，或者同时定义`value`属性，否则会报错。
+上面代码中的`p3`属性，定义了取值函数`get`。这时需要注意的是，一旦定义了取值函数`get`（或存值函数`set`），就不能将`writable`设为`true`，或者同时定义`value`属性，会报错。
 
 ```javascript
 var o = {};
@@ -104,6 +128,20 @@ Object.defineProperty(o, 'p', {
 上面代码同时定义了`get`属性和`value`属性，结果就报错。
 
 `Object.defineProperty()`和`Object.defineProperties()`的第三个参数，是一个属性对象。它的`writable`、`configurable`、`enumerable`这三个属性的默认值都为`false`。
+
+```javascript
+var obj = {};
+Object.defineProperty(obj, 'foo', { configurable: true });
+Object.getOwnPropertyDescriptor(obj, 'foo')
+// {
+//   value: undefined,
+//   writable: false,
+//   enumerable: false,
+//   configurable: true
+// }
+```
+
+上面代码中，定义`obj`对象的`foo`属性时，只定义了可配置性`configurable`为`true`。结果，其他元属性都是默认值。
 
 `writable`属性为`false`，表示对应的属性的值将不得改写。
 
@@ -196,12 +234,12 @@ for( var key in o ) console.log( o[key] );
 
 Object.keys(o)  // ["a", "b", "c"]
 
-JSON.stringify(o // => "{a:1,b:2,c:3}"
+JSON.stringify(o // => "{a:1, b:2, c:3}"
 ```
 
-上面代码中，`d`属性的`enumerable`为`false`，所以一般的遍历操作都无法获取该属性，使得它有点像“秘密”属性，但还是可以直接获取它的值。
+上面代码中，`d`属性的`enumerable`为`false`，所以一般的遍历操作都无法获取该属性，使得它有点像“秘密”属性，但不是私有属性，还是可以直接获取它的值。
 
-至于`for...in`循环和`Object.keys`方法的区别，在于前者包括对象继承自原型对象的属性，而后者只包括对象本身的属性。如果需要获取对象自身的所有属性，不管enumerable的值，可以使用`Object.getOwnPropertyNames`方法，详见下文。
+至于`for...in`循环和`Object.keys`方法的区别，在于前者包括对象继承自原型对象的属性，而后者只包括对象本身的属性。如果需要获取对象自身的所有属性，不管是否可枚举，可以使用`Object.getOwnPropertyNames`方法，详见下文。
 
 考虑到`JSON.stringify`方法会排除`enumerable`为`false`的值，有时可以利用这一点，为对象添加注释信息。
 
@@ -223,21 +261,20 @@ car.ownerInfo // {id: 12, name: "Jack"}
 JSON.stringify(car) //  "{"id": 123,"color": "red","ownerId": 12}"
 ```
 
-上面代码中，`owner`对象作为注释，加入`car`对象。由于`ownerInfo`属性不可枚举，所以`JSON.stringify`方法最后输出`car`对象时，会忽略`ownerInfo`属性。
+上面代码中，`owner`对象作为注释部分，加入`car`对象。由于`ownerInfo`属性不可枚举，所以`JSON.stringify`方法最后输出`car`对象时，会忽略`ownerInfo`属性。
 
 这提示我们，如果你不愿意某些属性出现在JSON输出之中，可以把它的`enumerable`属性设为`false`。
 
 ### 可配置性（configurable）
 
-可配置性（configurable）决定了是否可以修改属性的描述对象。也就是说，当configurable为false的时候，value、writable、enumerable和configurable都不能被修改了。
+可配置性（configurable）决定了是否可以修改属性描述对象。也就是说，当`configurable`为`false`的时候，value、writable、enumerable和configurable都不能被修改了。
 
 ```javascript
-
 var o = Object.defineProperty({}, 'p', {
-        value: 1,
-        writable: false, 
-        enumerable: false, 
-        configurable: false
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: false
 });
 
 Object.defineProperty(o,'p', {value: 2})
@@ -251,55 +288,64 @@ Object.defineProperty(o,'p', {enumerable: true})
 
 Object.defineProperties(o,'p',{configurable: true})
 // TypeError: Cannot redefine property: p
-
 ```
 
-上面代码首先生成对象o，并且定义属性p的configurable为false。然后，逐一改动value、writable、enumerable、configurable，结果都报错。
+上面代码首先定义对象`o`，并且定义`o`的属性`p`的`configurable`为`false`。然后，逐一改动`value`、`writable`、`enumerable`、`configurable`，结果都报错。
 
-需要注意的是，writable只有在从false改为true会报错，从true改为false则是允许的。
+需要注意的是，`writable`只有在从`false`改为`true`会报错，从`true`改为`false`则是允许的。
 
 ```javascript
-
 var o = Object.defineProperty({}, 'p', {
-        writable: true
+  writable: true,
+  configurable: false
 });
 
 Object.defineProperty(o,'p', {writable: false})
 // 修改成功
-
 ```
 
-至于value，只要writable和configurable有一个为true，就可以改动。
+至于`value`，只要`writable`和`configurable`有一个为`true`，就允许改动。
 
 ```javascript
-
 var o1 = Object.defineProperty({}, 'p', {
-        value: 1,
-        writable: true,
-        configurable: false
+  value: 1,
+  writable: true,
+  configurable: false
 });
 
 Object.defineProperty(o1,'p', {value: 2})
 // 修改成功
 
 var o2 = Object.defineProperty({}, 'p', {
-        value: 1,
-        writable: false,
-        configurable: true
+  value: 1,
+  writable: false,
+  configurable: true
 });
 
-Object.defineProperty(o2,'p', {value: 2}) 
+Object.defineProperty(o2,'p', {value: 2})
 // 修改成功
-
 ```
+
+另外，`configurable`为`false`时，直接对该属性赋值，不报错，但不会成功。
+
+```javascript
+var o = Object.defineProperty({}, 'p', {
+  value: 1,
+  configurable: false
+});
+
+o.p = 2;
+o.p // 1
+```
+
+上面代码中，`o`对象的`p`属性是不可配置的，对它赋值是不会生效的。
 
 可配置性决定了一个变量是否可以被删除（delete）。
 
-{% highlight javascript %}
-
+```javascript
 var o = Object.defineProperties({}, {
-        p1: { value: 1, configurable: true },
-        p2: { value: 2, configurable: false }
+  p1: { value: 1, configurable: true },
+  p2: { value: 2, configurable: false }
 });
 
 delete o.p1 // true
@@ -307,61 +353,55 @@ delete o.p2 // false
 
 o.p1 // undefined
 o.p2 // 2
+```
 
-{% endhighlight %}
+上面代码中的对象`o`有两个属性，`p1`是可配置的，`p2`是不可配置的。结果，`p2`就无法删除。
 
-上面代码中的对象o有两个属性，p1是可配置的，p2是不可配置的。结果，p2就无法删除。
+需要注意的是，当使用`var`命令声明变量时，变量的`configurable`为`false`。
 
-需要注意的是，当使用var命令声明变量时，变量的configurable为false。
-
-{% highlight javascript %}
-
+```javascript
 var a1 = 1;
 
 Object.getOwnPropertyDescriptor(this,'a1')
 // Object {
-//	value: 1, 
-//	writable: true, 
-//	enumerable: true, 
-//	configurable: false
+//  value: 1,
+//  writable: true,
+//  enumerable: true,
+//  configurable: false
 // }
+```
 
-{% endhighlight %}
+而不使用`var`命令声明变量时（或者使用属性赋值的方式声明变量），变量的可配置性为`true`。
 
-而不使用var命令声明变量时（或者使用属性赋值的方式声明变量），变量的可配置性为true。
-
-{% highlight javascript %}
-
+```javascript
 a2 = 1;
 
 Object.getOwnPropertyDescriptor(this,'a2')
 // Object {
-//	value: 1, 
-//	writable: true, 
-//	enumerable: true, 
-//	configurable: true
+//  value: 1,
+//  writable: true,
+//  enumerable: true,
+//  configurable: true
 // }
 
 // 或者写成
 
-this.a3 = 1;
+window.a3 = 1;
 
-Object.getOwnPropertyDescriptor(this,'a3')
+Object.getOwnPropertyDescriptor(window, 'a3')
 // Object {
-//	value: 1, 
-//	writable: true, 
-//	enumerable: true, 
-//	configurable: true
+//  value: 1,
+//  writable: true,
+//  enumerable: true,
+//  configurable: true
 // }
+```
 
-{% endhighlight %}
+上面代码中的`this.a3 = 1`与`a3 = 1`是等价的写法。`window`指的是浏览器的顶层对象。
 
-上面代码中的`this.a3 = 1`与`a3 = 1`是等价的写法。this指的是当前的作用域，更多关于this的解释，参见《面向对象编程》一章。
+这种差异意味着，如果一个变量是使用`var`命令生成的，就无法用`delete`命令删除。也就是说，`delete`只能删除对象的属性。
 
-这种差异意味着，如果一个变量是使用var命令生成的，就无法用delete命令删除。也就是说，delete只能删除对象的属性。
-
-{% highlight javascript %}
-
+```javascript
 var a1 = 1;
 a2 = 1;
 
@@ -370,8 +410,7 @@ delete a2 // true
 
 a1 // 1
 a2 // ReferenceError: a2 is not defined
-
-{% endhighlight %}
+```
 
 ### 可写性（writable）
 
@@ -472,7 +511,9 @@ o.propertyIsEnumerable('toString') // false
 
 ## 存取器（accessor）
 
-除了直接定义以外，属性还可以用存取器（accessor）定义。其中，存值函数称为setter，使用`set`命令；取值函数称为getter，使用`get`命令。
+除了直接定义以外，属性还可以用存取器（accessor）定义。其中，存值函数称为`setter`，使用`set`命令；取值函数称为`getter`，使用`get`命令。
+
+存取器提供的是虚拟属性，即该属性的值不是实际存在的，而是每次读取时计算生成的。利用这个功能，可以实现许多高级特性，比如每个属性禁止赋值。
 
 ```javascript
 var o = {
@@ -492,9 +533,9 @@ o.p // "getter"
 o.p = 123 // "setter: 123"
 ```
 
-注意，取值函数Getter不能接受参数，存值函数Setter只能接受一个参数（即属性的值）。另外，对象也不能与取值函数同名的属性。比如，上面的对象`o`设置了取值函数`p`以后，就不能再另外定义一个`p`属性。
+注意，取值函数Getter不能接受参数，存值函数Setter只能接受一个参数（即属性的值）。另外，对象也不能有与取值函数同名的属性。比如，上面的对象`o`设置了取值函数`p`以后，就不能再另外定义一个`p`属性。
 
-存取器往往用于，某个属性的值需要依赖对象内部数据的场合。
+存取器往往用于，属性的值需要依赖对象内部数据的场合。
 
 ```javascript
 var o ={
