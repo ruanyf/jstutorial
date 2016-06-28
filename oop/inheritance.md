@@ -53,7 +53,7 @@ rect.move(1, 1) // 'Shape moved.'
 
 上面代码表示，构造函数的继承分成两部分，一部分是子类调用父类的构造方法，另一部分是子类的原型指向父类的原型。
 
-上面代码中，子类是整体继承父类。有时，只需要单个方法的继承，这时可以采用下面的写法。
+上面代码中，子类是整体继承父类。有时只需要单个方法的继承，这时可以采用下面的写法。
 
 ```javascript
 ClassB.prototype.print = function() {
@@ -70,22 +70,24 @@ ClassB.prototype.print = function() {
 
 ### 对象的原生属性
 
-对象本身的所有属性，可以用`Object.getOwnPropertyNames`方法获得。
+`Object.getOwnPropertyNames`方法返回一个数组，成员是对象本身的所有属性的键名，不包含继承的属性键名。
 
 ```javascript
 Object.getOwnPropertyNames(Date)
 // ["parse", "arguments", "UTC", "caller", "name", "prototype", "now", "length"]
 ```
 
-对象本身的属性之中，有的是可以枚举的（enumerable），有的是不可以枚举的。只获取那些可以枚举的属性，使用`Object.keys`方法。
+上面代码中，`Object.getOwnPropertyNames`方法返回`Date`所有自身的属性名。
+
+对象本身的属性之中，有的是可以枚举的（enumerable），有的是不可以枚举的，`Object.getOwnPropertyNames`方法返回所有键名。只获取那些可以枚举的属性，使用`Object.keys`方法。
 
 ```javascript
 Object.keys(Date) // []
 ```
 
-### hasOwnProperty()
+### Object.prototype.hasOwnProperty()
 
-`hasOwnProperty`方法返回一个布尔值，用于判断某个属性定义在对象自身，还是定义在原型链上。
+对象实例的`hasOwnProperty`方法返回一个布尔值，用于判断某个属性定义在对象自身，还是定义在原型链上。
 
 ```javascript
 Date.hasOwnProperty('length')
@@ -97,28 +99,16 @@ Date.hasOwnProperty('toString')
 
 `hasOwnProperty`方法是JavaScript之中唯一一个处理对象属性时，不会遍历原型链的方法。
 
-### 对象的继承属性
-
-用Object.create方法创造的对象，会继承所有原型对象的属性。
-
-```javascript
-var proto = { p1: 123 };
-var o = Object.create(proto);
-
-o.p1 // 123
-o.hasOwnProperty("p1") // false
-```
-
 ### 获取所有属性
 
-判断一个对象是否具有某个属性（不管是自身的还是继承的），使用in运算符。
+判断一个对象是否具有某个属性（不管是自身的还是继承的），使用`in`运算符。
 
 ```javascript
 "length" in Date // true
 "toString" in Date // true
 ```
 
-获得对象的所有可枚举属性（不管是自身的还是继承的），可以使用for-in循环。
+获得对象的所有可枚举属性（不管是自身的还是继承的），可以使用`for...in`循环。
 
 ```javascript
 var o1 = {p1: 123};
@@ -132,7 +122,7 @@ for (p in o2) {console.info(p);}
 // p1
 ```
 
-为了在`for...in`循环中获得对象自身的属性，可以采用hasOwnProperty方法判断一下。
+为了在`for...in`循环中获得对象自身的属性，可以采用`hasOwnProperty`方法判断一下。
 
 ```javascript
 for ( var name in object ) {
@@ -196,25 +186,23 @@ function copyOwnPropertiesFrom(target, source) {
 JavaScript不提供多重继承功能，即不允许一个对象同时继承多个对象。但是，可以通过变通方法，实现这个功能。
 
 ```javascript
-function M1(prop) {
-  this.hello = prop;
+function M1() {
+  this.hello = 'hello';
 }
 
-function M2(prop) {
-  this.world = prop;
+function M2() {
+  this.world = 'world';
 }
 
-function S(p1, p2) {
-  this.base1 = M1;
-  this.base1(p1);
-  this.base2 = M2;
-  this.base2(p2);
+function S() {
+  M1();
+  M2();
 }
 S.prototype = new M1();
 
-var s = new S(111, 222);
-s.hello // 111
-s.world // 222
+var s = new S();
+s.hello // 'hello'
+s.world // 'world'
 ```
 
 上面代码中，子类`S`同时继承了父类`M1`和`M2`。当然，从继承链来看，`S`只有一个父类`M1`，但是由于在`S`的实例上，同时执行`M1`和`M2`的构造函数，所以它同时继承了这两个类的方法。
