@@ -41,12 +41,14 @@ Date.hasOwnProperty('toString')
 
 ## in 运算符和 for...in 循环
 
-判断一个对象是否具有某个属性（不管是自身的还是继承的），使用`in`运算符。
+`in`运算符返回一个布尔值，表示一个对象是否具有某个属性。它不区分该属性是对象自身的属性，还是继承的属性。
 
 ```javascript
-"length" in Date // true
-"toString" in Date // true
+'length' in Date // true
+'toString' in Date // true
 ```
+
+`in`运算符常用于检查一个属性是否存在。
 
 获得对象的所有可枚举属性（不管是自身的还是继承的），可以使用`for...in`循环。
 
@@ -87,11 +89,36 @@ function inheritedPropertyNames(obj) {
 }
 ```
 
-用法如下：
+上面代码依次获取`obj`对象的每一级原型对象“自身”的属性，从而获取`Obj`对象的“所有”属性，不管是否可遍历。
+
+下面是一个例子，列出`Date`对象的所有属性。
 
 ```javascript
 inheritedPropertyNames(Date)
-// ["caller", "constructor", "toString", "UTC", "call", "parse", "prototype", "__defineSetter__", "__lookupSetter__", "length", "arguments", "bind", "__lookupGetter__", "isPrototypeOf", "toLocaleString", "propertyIsEnumerable", "valueOf", "apply", "__defineGetter__", "name", "now", "hasOwnProperty"]
+// [
+//  "caller",
+//  "constructor",
+//  "toString",
+//  "UTC",
+//  "call",
+//  "parse",
+//  "prototype",
+//  "__defineSetter__",
+//  "__lookupSetter__",
+//  "length",
+//  "arguments",
+//  "bind",
+//  "__lookupGetter__",
+//  "isPrototypeOf",
+//  "toLocaleString",
+//  "propertyIsEnumerable",
+//  "valueOf",
+//  "apply",
+//  "__defineGetter__",
+//  "name",
+//  "now",
+//  "hasOwnProperty"
+// ]
 ```
 
 ## 对象的拷贝
