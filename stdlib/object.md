@@ -120,7 +120,7 @@ isObject(true) // false
 
 所谓“静态方法”，是指部署在`Object`对象自身的方法。
 
-## Object.keys()，Object.getOwnPropertyNames()
+### Object.keys()，Object.getOwnPropertyNames()
 
 `Object.keys`方法和`Object.getOwnPropertyNames`方法很相似，一般用来遍历对象的属性。它们的参数都是一个对象，都返回一个数组，该数组的成员都是对象自身的（而不是继承的）所有属性名。它们的区别在于，Object.keys方法只返回可枚举的属性（关于可枚举性的详细解释见后文），Object.getOwnPropertyNames方法还返回不可枚举的属性名。
 

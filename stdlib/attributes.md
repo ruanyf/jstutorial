@@ -637,12 +637,11 @@ var extend = function (to, from) {
 
 JavaScript提供了三种方法，精确控制一个对象的读写状态，防止对象被改变。最弱一层的保护是preventExtensions，其次是seal，最强的freeze。
 
-###  Object.preventExtensions方法
+###  Object.preventExtensions()
 
-Object.preventExtensions方法可以使得一个对象无法再添加新的属性。
+`Object.preventExtensions`方法可以使得一个对象无法再添加新的属性。
 
-{% highlight javascript %}
-
+```javascript
 var o = new Object();
 
 Object.preventExtensions(o);
@@ -652,25 +651,21 @@ Object.defineProperty(o, "p", { value: "hello" });
 
 o.p = 1;
 o.p // undefined
-
-{% endhighlight %}
+```
 
 如果是在严格模式下，则会抛出一个错误。
 
-{% highlight javascript %}
-
+```javascript
 (function () {
   'use strict';
   o.p = '1'
 }());
 // TypeError: Can't add property bar, object is not extensible
+```
 
-{% endhighlight %}
+不过，对于使用了`preventExtensions`方法的对象，可以用`delete`命令删除它的现有属性。
 
-不过，对于使用了preventExtensions方法的对象，可以用delete命令删除它的现有属性。
-
-{% highlight javascript %}
-
+```javascript
 var o = new Object();
 o.p = 1;
 
@@ -678,10 +673,9 @@ Object.preventExtensions(o);
 
 delete o.p;
 o.p // undefined
+```
 
-{% endhighlight %}
-
-### Object.isExtensible方法
+### Object.isExtensible()
 
 Object.isExtensible方法用于检查一个对象是否使用了preventExtensions方法。也就是说，该方法可以用来检查是否可以为一个对象添加属性。
 
@@ -700,7 +694,7 @@ Object.isExtensible(o)
 
 上面代码新生成了一个o对象，对该对象使用Object.isExtensible方法，返回true，表示可以添加新属性。对该对象使用Object.preventExtensions方法以后，再使用Object.isExtensible方法，返回false，表示已经不能添加新属性了。
 
-###  Object.seal方法
+###  Object.seal()
 
 Object.seal方法使得一个对象既无法添加新属性，也无法删除旧属性。
 
@@ -777,7 +771,7 @@ o.p // 'b'
 
 上面代码中，Object.seal方法对p属性的value无效，是因为此时p属性的writable为true。
 
-### Object.isSealed方法
+### Object.isSealed()
 
 Object.isSealed方法用于检查一个对象是否使用了Object.seal方法。
 
@@ -801,7 +795,7 @@ Object.isExtensible(o) // false
 
 {% endhighlight %}		
 
-### Object.freeze方法
+### Object.freeze()
 
 Object.freeze方法可以使得一个对象无法添加新属性、无法删除旧属性、也无法改变属性的值，使得这个对象实际上变成了常量。
 
@@ -837,9 +831,9 @@ Object.freeze(o);
 
 {% endhighlight %}
 
-### Object.isFrozen方法
+### Object.isFrozen()
 
-Object.isFrozen方法用于检查一个对象是否使用了Object.freeze()方法。
+`Object.isFrozen`方法用于检查一个对象是否使用了`Object.freeze()`方法。
 
 {% highlight javascript %}
 
