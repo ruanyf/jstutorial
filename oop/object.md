@@ -1,16 +1,14 @@
 ---
-title: 继承
+title: Object 对象与继承
 layout: page
 date: 2012-12-12
 modifiedOn: 2013-05-04
 category: oop
 ---
 
-## 属性的继承
+通过原型链，对象的属性分成两种：自身的属性和继承的属性。JavaScript 语言在`Object`对象上面，提供了很多相关方法，来处理这两种不同的属性。
 
-属性分成两种。一种是对象自身的原生属性，另一种是继承自原型的继承属性。
-
-### 对象的原生属性
+## Object.getOwnPropertyNames()
 
 `Object.getOwnPropertyNames`方法返回一个数组，成员是对象本身的所有属性的键名，不包含继承的属性键名。
 
@@ -27,7 +25,7 @@ Object.getOwnPropertyNames(Date)
 Object.keys(Date) // []
 ```
 
-### Object.prototype.hasOwnProperty()
+## Object.prototype.hasOwnProperty()
 
 对象实例的`hasOwnProperty`方法返回一个布尔值，用于判断某个属性定义在对象自身，还是定义在原型链上。
 
@@ -41,7 +39,7 @@ Date.hasOwnProperty('toString')
 
 `hasOwnProperty`方法是JavaScript之中唯一一个处理对象属性时，不会遍历原型链的方法。
 
-### 获取所有属性
+## in 运算符和 for...in 循环
 
 判断一个对象是否具有某个属性（不管是自身的还是继承的），使用`in`运算符。
 
@@ -55,7 +53,7 @@ Date.hasOwnProperty('toString')
 ```javascript
 var o1 = {p1: 123};
 
-var o2 = Object.create(o1,{
+var o2 = Object.create(o1, {
   p2: { value: "abc", enumerable: true }
 });
 

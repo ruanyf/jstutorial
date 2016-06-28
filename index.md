@@ -40,7 +40,7 @@ modifiedOn: 2014-05-18
 - [概述](oop/basic.html)
 - [this 关键字](oop/this.html)
 - [prototype 对象](oop/prototype.html)
-- [继承](oop/inheritance.html)
+- [Object 对象与继承](oop/object.html)
 - [面向对象编程的模式](oop/pattern.html)
 
 <h2 id="dom">DOM</h2>
