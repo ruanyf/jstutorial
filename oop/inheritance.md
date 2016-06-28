@@ -6,64 +6,6 @@ modifiedOn: 2013-05-04
 category: oop
 ---
 
-大部分面向对象的编程语言，是在“类”（class）的基础上实现继承的。JavaScript语言不是如此，它的继承机制基于“原型对象”。
-
-## 构造函数的继承
-
-本节介绍如何让一个构造函数，继承另一个构造函数。
-
-下面是一个`Shape`构造函数。
-
-```javascript
-function Shape() {
-  this.x = 0;
-  this.y = 0;
-}
-
-Shape.prototype.move = function (x, y) {
-  this.x += x;
-  this.y += y;
-  console.info('Shape moved.');
-};
-```
-
-`Rectangle`构造函数继承`Shape`。
-
-```javascript
-function Rectangle() {
-  Shape.call(this); // 调用父类构造函数
-}
-// 另一种写法
-function Rectangle() {
-  this.base = Shape;
-  this.base();
-}
-
-// 子类继承父类的方法
-Rectangle.prototype = Object.create(Shape.prototype);
-Rectangle.prototype.constructor = Rectangle;
-
-var rect = new Rectangle();
-
-rect instanceof Rectangle  // true
-rect instanceof Shape  // true
-
-rect.move(1, 1) // 'Shape moved.'
-```
-
-上面代码表示，构造函数的继承分成两部分，一部分是子类调用父类的构造方法，另一部分是子类的原型指向父类的原型。
-
-上面代码中，子类是整体继承父类。有时只需要单个方法的继承，这时可以采用下面的写法。
-
-```javascript
-ClassB.prototype.print = function() {
-  ClassA.prototype.print.call(this);
-  // some code
-}
-```
-
-上面代码中，子类`B`的`print`方法先调用父类`A`的`print`方法，再部署自己的代码。这就等于继承了父类`A`的`print`方法。
-
 ## 属性的继承
 
 属性分成两种。一种是对象自身的原生属性，另一种是继承自原型的继承属性。
@@ -180,32 +122,6 @@ function copyOwnPropertiesFrom(target, source) {
   return target;
 }
 ```
-
-## 多重继承
-
-JavaScript不提供多重继承功能，即不允许一个对象同时继承多个对象。但是，可以通过变通方法，实现这个功能。
-
-```javascript
-function M1() {
-  this.hello = 'hello';
-}
-
-function M2() {
-  this.world = 'world';
-}
-
-function S() {
-  M1();
-  M2();
-}
-S.prototype = new M1();
-
-var s = new S();
-s.hello // 'hello'
-s.world // 'world'
-```
-
-上面代码中，子类`S`同时继承了父类`M1`和`M2`。当然，从继承链来看，`S`只有一个父类`M1`，但是由于在`S`的实例上，同时执行`M1`和`M2`的构造函数，所以它同时继承了这两个类的方法。
 
 ## 参考链接
 
