@@ -26,7 +26,6 @@ modifiedOn: 2014-05-18
 <h2 id="stdlib">标准库</h2>
 
 - [Object对象](stdlib/object.html)
-- [属性描述对象](stdlib/attributes.html)
 - [Array对象](stdlib/array.html)
 - [包装对象和Boolean对象](stdlib/wrapper.html)
 - [Number对象](stdlib/number.html)
@@ -35,6 +34,7 @@ modifiedOn: 2014-05-18
 - [Date对象](stdlib/date.html)
 - [RegExp对象](stdlib/regexp.html)
 - [JSON对象](stdlib/json.html)
+- [属性描述对象](stdlib/attributes.html)
 
 <h2 id="oop">面向对象编程</h2>
 
