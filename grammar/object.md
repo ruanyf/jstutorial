@@ -486,7 +486,7 @@ for (var key in person) {
 // name
 ```
 
-另外，对象`person`还有其他继承的属性，比如`toString`。
+对象`person`其实还有其他继承的属性，比如`toString`。
 
 ```javascript
 person.toString()
@@ -494,6 +494,8 @@ person.toString()
 ```
 
 这个`toString`属性不会被`for...in`循环遍历到，因为它默认设置为“不可遍历”，详见《标准库》一章的`Object`对象部分。
+
+一般情况下，都是只想遍历对象自身的属性，所以不推荐使用`for...in`循环。
 
 ## with语句
 

@@ -17,7 +17,9 @@ JavaScript提供了一个内部数据结构，用来描述一个对象的属性�
   value: 123,
   writable: false,
   enumerable: true,
-  configurable: false
+  configurable: false,
+  get: undefined,
+  set: undefined
 }
 ```
 
@@ -224,22 +226,25 @@ Object.defineProperty(o, 'd', {
   enumerable: false
 });
 
-o.d
-// 4
+o.d // 4
 
-for( var key in o ) console.log( o[key] );
+for (var key in o) {
+  console.log(o[key]);
+}
 // 1
 // 2
 // 3
 
 Object.keys(o)  // ["a", "b", "c"]
 
-JSON.stringify(o // => "{a:1, b:2, c:3}"
+JSON.stringify(o) // "{a:1, b:2, c:3}"
 ```
 
-上面代码中，`d`属性的`enumerable`为`false`，所以一般的遍历操作都无法获取该属性，使得它有点像“秘密”属性，但不是私有属性，还是可以直接获取它的值。
+上面代码中，`d`属性的`enumerable`为`false`，所以一般的遍历操作都无法获取该属性，使得它有点像“秘密”属性，但不是真正的私有属性，还是可以直接获取它的值。
 
-至于`for...in`循环和`Object.keys`方法的区别，在于前者包括对象继承自原型对象的属性，而后者只包括对象本身的属性。如果需要获取对象自身的所有属性，不管是否可枚举，可以使用`Object.getOwnPropertyNames`方法，详见下文。
+基本上，JavaScript原生提供的属性都是不可枚举的，用户自定义的属性都是可枚举的。
+
+与枚举性相关的几个操作的区别的是，`for...in`循环包括继承自原型对象的属性，`Object.keys`方法只返回对象本身的属性。如果需要获取对象自身的所有属性，不管是否可枚举，可以使用`Object.getOwnPropertyNames`方法，详见下文。
 
 考虑到`JSON.stringify`方法会排除`enumerable`为`false`的值，有时可以利用这一点，为对象添加注释信息。
 
@@ -255,10 +260,16 @@ var owner = {
   name: 'Jack'
 };
 
-Object.defineProperty(car, 'ownerInfo', {value: owner, enumerable: false});
-car.ownerInfo // {id: 12, name: "Jack"}
+Object.defineProperty(car, 'ownerInfo', {
+  value: owner,
+  enumerable: false
+});
 
-JSON.stringify(car) //  "{"id": 123,"color": "red","ownerId": 12}"
+car.ownerInfo
+// {id: 12, name: "Jack"}
+
+JSON.stringify(car)
+//  "{"id": 123,"color": "red","ownerId": 12}"
 ```
 
 上面代码中，`owner`对象作为注释部分，加入`car`对象。由于`ownerInfo`属性不可枚举，所以`JSON.stringify`方法最后输出`car`对象时，会忽略`ownerInfo`属性。
@@ -416,58 +427,55 @@ a2 // ReferenceError: a2 is not defined
 
 可写性（writable）决定了属性的值（value）是否可以被改变。
 
-{% highlight javascript %}
+```javascript
+var o = {};
 
-var o = {}; 
-
-Object.defineProperty(o, "a", { value : 37, writable : false });
+Object.defineProperty(o, 'a', {
+  value: 37,
+  writable: false
+});
 
 o.a // 37
 o.a = 25;
 o.a // 37
+```
 
-{% endhighlight %}
+上面代码将`o`对象的`a`属性可写性设为`false`，然后改变这个属性的值，就不会有任何效果。
 
-上面代码将o对象的a属性可写性设为false，然后改变这个属性的值，就不会有任何效果。
+注意，正常模式下，对可写性为`false`的属性赋值不会报错，只会默默失败。但是，严格模式下会报错，即使是对`a`属性重新赋予一个同样的值。
 
-这实际上将某个属性的值变成了常量。在ES6中，constant命令可以起到这个作用，但在ES5中，只有通过writable达到同样目的。
+关于可写性，还有一种特殊情况。就是如果原型对象的某个属性的可写性为`false`，那么派生对象将无法自定义这个属性。
 
-这里需要注意的是，当对a属性重新赋值的时候，并不会抛出错误，只是静静地失败。但是，如果在严格模式下，这里就会抛出一个错误，即使是对a属性重新赋予一个同样的值。
-
-关于可写性，还有一种特殊情况。就是如果原型对象的某个属性的可写性为false，那么派生对象将无法自定义这个属性。
-
-{% highlight javascript %}
-
+```javascript
 var proto = Object.defineProperty({}, 'foo', {
-    value: 'a',
-    writable: false
+  value: 'a',
+  writable: false
 });
 
 var o = Object.create(proto);
 
 o.foo = 'b';
 o.foo // 'a'
+```
 
-{% endhighlight %}
+上面代码中，对象`proto`的`foo`属性不可写，结果`proto`的派生对象`o`，也不可以再自定义这个属性了。在严格模式下，这样做还会抛出一个错误。但是，有一个规避方法，就是通过覆盖属性描述对象，绕过这个限制，原因是这种情况下，原型链会被完全忽视。
 
-上面代码中，对象proto的foo属性不可写，结果proto的派生对象o，也不可以再自定义这个属性了。在严格模式下，这样做还会抛出一个错误。但是，有一个规避方法，就是通过覆盖attributes对象，绕过这个限制，原因是这种情况下，原型链会被完全忽视。
-
-{% highlight javascript %}
-
-Object.defineProperty(o, 'foo', { value: 'b' });
+```javascript
+Object.defineProperty(o, 'foo', {
+  value: 'b'
+});
 
 o.foo // 'b'
-
-{% endhighlight %}
+```
 
 ## Object.getOwnPropertyNames()
 
-Object.getOwnPropertyNames方法返回直接定义在某个对象上面的全部属性的名称，而不管该属性是否可枚举。
+`Object.getOwnPropertyNames`方法返回直接定义在某个对象上面的全部属性的名称，而不管该属性是否可枚举。
 
 ```javascript
 var o = Object.defineProperties({}, {
-        p1: { value: 1, enumerable: true },
-        p2: { value: 2, enumerable: false }
+  p1: { value: 1, enumerable: true },
+  p2: { value: 2, enumerable: false }
 });
 
 Object.getOwnPropertyNames(o)
@@ -618,14 +626,18 @@ var extend = function (to, from) {
   return to;
 }
 
-extend({}, {a: 1})
+extend({}, {
+  a: 1
+})
 // {a: 1}
 ```
 
 上面这个方法的问题在于，如果遇到存取器定义的属性，会只拷贝值。
 
 ```javascript
-extend({}, { get a(){ return 1 } })
+extend({}, {
+  get a() { return 1 }
+})
 // {a: 1}
 ```
 
@@ -634,7 +646,11 @@ extend({}, { get a(){ return 1 } })
 ```javascript
 var extend = function (to, from) {
   for (var property in from) {
-    Object.defineProperty(to, property, Object.getOwnPropertyDescriptor(from, property));
+    Object.defineProperty(
+      to,
+      property,
+      Object.getOwnPropertyDescriptor(from, property)
+    );
   }
 
   return to;
@@ -652,7 +668,7 @@ extend(document.body.style, {
 });
 ```
 
-上面代码的目的是，设置`document.body.style.backgroundColor`属性为`red`，但是实际上网页的背景色并不会变红。但是，如果用第一种简单拷贝的方法，反而能够达到目的。这提示我们，可以把两种方法结合起来，对于简单属性，就直接拷贝，对于那些通过描述对象设置的属性，则使用`Object.defineProperty`方法拷贝。
+上面代码的目的是，设置`document.body.style.backgroundColor`属性为`red`，但是实际上网页的背景色并不会变红。但是，如果用第一种简单拷贝的方法，反而能够达到目的。这提示我们，可以把两种方法结合起来，对于简单属性，就直接拷贝，对于那些通过属性描述对象设置的属性，则使用`Object.defineProperty`方法拷贝。
 
 ```javascript
 var extend = function (to, from) {
@@ -676,7 +692,7 @@ var extend = function (to, from) {
 
 ## 控制对象状态
 
-JavaScript提供了三种方法，精确控制一个对象的读写状态，防止对象被改变。最弱一层的保护是preventExtensions，其次是seal，最强的freeze。
+JavaScript提供了三种方法，精确控制一个对象的读写状态，防止对象被改变。最弱一层的保护是`Object.preventExtensions`，其次是`Object.seal`，最强的`Object.freeze`。
 
 ###  Object.preventExtensions()
 
@@ -687,7 +703,9 @@ var o = new Object();
 
 Object.preventExtensions(o);
 
-Object.defineProperty(o, "p", { value: "hello" });
+Object.defineProperty(o, 'p', {
+  value: 'hello'
+});
 // TypeError: Cannot define property:p, object is not extensible.
 
 o.p = 1;
@@ -718,30 +736,26 @@ o.p // undefined
 
 ### Object.isExtensible()
 
-Object.isExtensible方法用于检查一个对象是否使用了preventExtensions方法。也就是说，该方法可以用来检查是否可以为一个对象添加属性。
+`Object.isExtensible`方法用于检查一个对象是否使用了`Object.preventExtensions`方法。也就是说，检查是否可以为一个对象添加属性。
 
-{% highlight javascript %}
-
+```javascript
 var o = new Object();
 
-Object.isExtensible(o)
-// true
-
+Object.isExtensible(o) // true
 Object.preventExtensions(o);
-Object.isExtensible(o)
-// false
+Object.isExtensible(o) // false
+```
 
-{% endhighlight %}
+上面代码新生成了一个o对象，对该对象使用`Object.isExtensible`方法，返回`true`，表示可以添加新属性。对该对象使用`Object.preventExtensions`方法以后，再使用`Object.isExtensible`方法，返回`false`，表示已经不能添加新属性了。
 
-上面代码新生成了一个o对象，对该对象使用Object.isExtensible方法，返回true，表示可以添加新属性。对该对象使用Object.preventExtensions方法以后，再使用Object.isExtensible方法，返回false，表示已经不能添加新属性了。
+### Object.seal()
 
-###  Object.seal()
+`Object.seal`方法使得一个对象既无法添加新属性，也无法删除旧属性。
 
-Object.seal方法使得一个对象既无法添加新属性，也无法删除旧属性。
-
-{% highlight javascript %}
-
-var o = { p:"hello" };
+```javascript
+var o = {
+  p: 'hello'
+};
 
 Object.seal(o);
 
@@ -750,170 +764,206 @@ o.p // "hello"
 
 o.x = 'world';
 o.x // undefined
+```
 
-{% endhighlight %}
+上面代码中，一个对象执行`Object.seal`方法以后，就无法添加新属性和删除旧属性了。
 
-Object.seal还把现有属性的attributes对象的configurable属性设为false，使得attributes对象不再能改变。
+`Object.seal`实质是把属性描述对象的`configurable`属性设为`false`，因此属性描述对象不再能改变了。
 
-{% highlight javascript %}
-
-var o = { p: 'a' };
+```javascript
+var o = {
+  p: 'a'
+};
 
 // seal方法之前
 Object.getOwnPropertyDescriptor(o, 'p')
-// Object {value: "a", writable: true, enumerable: true, configurable: true}
+// Object {
+//   value: "a",
+//   writable: true,
+//   enumerable: true,
+//   configurable: true
+// }
 
 Object.seal(o);
 
 // seal方法之后
-Object.getOwnPropertyDescriptor(o, 'p') 
-// Object {value: "a", writable: true, enumerable: true, configurable: false}
+Object.getOwnPropertyDescriptor(o, 'p')
+// Object {
+//   value: "a",
+//   writable: true,
+//   enumerable: true,
+//   configurable: false
+// }
 
-Object.defineProperty(o, 'p', { enumerable: false })
+Object.defineProperty(o, 'p', {
+  enumerable: false
+})
 // TypeError: Cannot redefine property: p
+```
 
-{% endhighlight %}
+上面代码中，使用`Object.seal`方法之后，属性描述对象的`configurable`属性就变成了`false`，然后改变`enumerable`属性就会报错。
 
-从上面代码可以看到，使用seal方法之后，attributes对象的configurable就变成了false，然后如果想改变enumerable就会报错。
-
-可写性（writable）有点特别。如果writable为false，使用Object.seal方法以后，将无法将其变成true；但是，如果writable为true，依然可以将其变成false。
-
-{% highlight javascript %}
-
-var o1 = Object.defineProperty({}, 'p', {writable: false});
-Object.seal(o1);
-Object.defineProperty(o1,'p',{writable:true}) 
-// Uncaught TypeError: Cannot redefine property: p 
-
-var o2 = Object.defineProperty({}, 'p', {writable: true});
-Object.seal(o2);
-Object.defineProperty(o2,'p',{writable:false}) 
-
-Object.getOwnPropertyDescriptor(o2, 'p')
-/* { value: '',
-  writable: false,
-  enumerable: true,
-  configurable: false } */
-
-{% endhighlight %}
-
-上面代码中，同样是使用了Object.seal方法，如果writable原为false，改变这个设置将报错；如果原为true，则不会有问题。
-
-至于属性对象的value是否可改变，是由writable决定的。
+可写性（writable）有点特别。如果`writable`为`false`，使用`Object.seal`方法以后，将无法将其变成`true`；但是，如果`writable`为`true`，依然可以将其变成`false`。
 
 ```javascript
+var o1 = Object.defineProperty({}, 'p', {
+  writable: false
+});
+Object.seal(o1);
+Object.defineProperty(o1, 'p', {
+  writable:true
+})
+// Uncaught TypeError: Cannot redefine property: p
 
+var o2 = Object.defineProperty({}, 'p', {
+  writable: true
+});
+Object.seal(o2);
+Object.defineProperty(o2, 'p', {
+  writable:false
+});
+
+Object.getOwnPropertyDescriptor(o2, 'p')
+// {
+//   value: '',
+//   writable: false,
+//   enumerable: true,
+//   configurable: false
+// }
+```
+
+上面代码中，同样是使用了`Object.seal`方法，如果`writable`原为`false`，改变这个设置将报错；如果原为`true`，则不会有问题。
+
+至于属性对象的`value`是否可改变，是由`writable`决定的。
+
+```javascript
 var o = { p: 'a' };
 Object.seal(o);
 o.p = 'b';
 o.p // 'b'
-
 ```
 
-上面代码中，Object.seal方法对p属性的value无效，是因为此时p属性的writable为true。
+上面代码中，`Object.seal`方法对`p`属性的`value`无效，是因为此时`p`属性的`writable`为`true`。
 
 ### Object.isSealed()
 
-Object.isSealed方法用于检查一个对象是否使用了Object.seal方法。
+`Object.isSealed`方法用于检查一个对象是否使用了`Object.seal`方法。
 
-{% highlight javascript %}
-
+```javascript
 var o = { p: 'a' };
 
 Object.seal(o);
 Object.isSealed(o) // true
+```
 
-{% endhighlight %}
+这时，`Object.isExtensible`方法也返回`false`。
 
-另外，这时isExtensible方法也返回false。
-
-{% highlight javascript %}
-
+```javascript
 var o = { p: 'a' };
 
 Object.seal(o);
 Object.isExtensible(o) // false
-
-{% endhighlight %}		
+```
 
 ### Object.freeze()
 
-Object.freeze方法可以使得一个对象无法添加新属性、无法删除旧属性、也无法改变属性的值，使得这个对象实际上变成了常量。
+`Object.freeze`方法可以使得一个对象无法添加新属性、无法删除旧属性、也无法改变属性的值，使得这个对象实际上变成了常量。
 
-{% highlight javascript %}
-
-var o = {p:"hello"};
+```javascript
+var o = {
+  p: 'hello'
+};
 
 Object.freeze(o);
 
-o.p = "world";
+o.p = 'world';
 o.p // hello
 
-o.t = "hello";
+o.t = 'hello';
 o.t // undefined
+```
 
-{% endhighlight %}
+上面代码中，对现有属性重新赋值（`o.p = 'world'`）或者添加一个新属性，并不会报错，只是默默地失败。但是，如果是在严格模式下，就会报错。
 
-上面代码中，对现有属性重新赋值（o.p = "world"）或者添加一个新属性，并不会报错，只是默默地失败。但是，如果是在严格模式下，就会报错。
-
-{% highlight javascript %}
-
-var o = {p:"hello"};
+```javascript
+var o = {
+  p: 'hello'
+};
 
 Object.freeze(o);
 
 // 对现有属性重新赋值
-(function () { 'use strict'; o.p = "world";}())
+(function () {
+  'use strict';
+  o.p = 'world';
+}())
 // TypeError: Cannot assign to read only property 'p' of #<Object>
 
 // 添加不存在的属性
-(function () { 'use strict'; o.t = 123;}())
+(function () {
+  'use strict';
+  o.t = 123;
+}())
 // TypeError: Can't add property t, object is not extensible
-
-{% endhighlight %}
+```
 
 ### Object.isFrozen()
 
 `Object.isFrozen`方法用于检查一个对象是否使用了`Object.freeze()`方法。
 
-{% highlight javascript %}
-
-var o = {p:"hello"};
+```javascript
+var o = {
+  p: 'hello'
+};
 
 Object.freeze(o);
 Object.isFrozen(o) // true
-
-{% endhighlight %}
+```
 
 ### 局限性
 
 需要注意的是，使用上面这些方法锁定对象的可写性，但是依然可以通过改变该对象的原型对象，来为它增加属性。
 
-{% highlight javascript %}
-
+```javascript
 var o = new Object();
-
 Object.preventExtensions(o);
 
 var proto = Object.getPrototypeOf(o);
-
 proto.t = "hello";
-
 o.t
 // hello
-
-{% endhighlight %}
+```
 
 一种解决方案是，把原型也冻结住。
 
-{% highlight javascript %}
-
+```javascript
 var o = Object.seal(
-  Object.create(Object.freeze({x:1}),
-    {y: {value: 2, writable: true}})
+  Object.create(
+    Object.freeze({x: 1}),
+    {
+      y: {
+        value: 2,
+        writable: true
+      }
+    }
+  )
 );
 
 Object.getPrototypeOf(o).t = "hello";
 o.hello // undefined
+```
 
-{% endhighlight %}
+另外一个局限是，如果属性值是对象，上面这些方法只能冻结属性指向的对象，而不能冻结对象本身的内容。
+
+```javascript
+var obj = {
+  foo: 1,
+  bar: ['a', 'b']
+};
+Object.freeze(obj);
+
+obj.bar.push('c');
+obj.bar // ["a", "b", "c"]
+```
+
+上面代码中，`obj.bar`属性指向一个数组，`obj`对象被冻结以后，这个指向无法改变，即无法指向其他值，但是所指向的数组是可以改变的。
