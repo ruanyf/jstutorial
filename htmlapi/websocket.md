@@ -299,7 +299,7 @@ app.get('/', function (req, res) {
 然后，在客户端脚本中，建立WebSocket连接。
 
 ```javascript
-var socket = io.connect('http://localhost');
+var socket = io.connect('http://localhost:80');
 ```
 
 由于本例假定WebSocket主机与客户端是同一台机器，所以connect方法的参数是`http://localhost`。接着，指定news事件（即服务器端发送news）的回调函数。

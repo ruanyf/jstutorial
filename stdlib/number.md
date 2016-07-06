@@ -137,7 +137,7 @@ Number.MIN_SAFE_INTEGER // -9007199254740991
 
 (1234).toExponential()  // "1.234e+3"
 (1234).toExponential(1) // "1.2e+3"
-(1234).toExponential(1) // "1.23e+3"
+(1234).toExponential(2) // "1.23e+3"
 ```
 
 `toExponential`方法的参数表示小数点后有效数字的位数，范围为0到20，超出这个范围，会抛出一个RangeError。
