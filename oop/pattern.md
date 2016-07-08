@@ -78,10 +78,10 @@ function M2() {
 }
 
 function S() {
-  M1();
-  M2();
+  M1.call(this);
+  M2.call(this);
 }
-S.prototype = new M1();
+S.prototype = M1.prototype;
 
 var s = new S();
 s.hello // 'hello'

@@ -795,9 +795,7 @@ myAlbum.remove(1);
 get方法用于从Collection中获取指定id的Model实例。
 
 ```javascript
-
-myAlbum.get(2))
-
+myAlbum.get(2)
 ```
 
 ### fetch方法
