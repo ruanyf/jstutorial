@@ -204,6 +204,48 @@ f.constructor === RegExp // false
 
 上面代码表示，使用`constructor`属性，确定实例对象`f`的构造函数是`F`，而不是`RegExp`。
 
+有了`constructor`属性，就可以从实例新建另一个实例。
+
+```javascript
+function Constr() {}
+var x = new Constr();
+
+var y = new x.constructor();
+y instanceof Constr // true
+```
+
+上面代码中，`x`是构造函数`Constr`的实例，可以从`x.constructor`间接调用构造函数。
+
+这使得在实例方法中，调用自身的构造函数成为可能。
+
+```javascript
+Constr.prototype.createCopy = function () {
+  return new this.constructor();
+};
+```
+
+这也提供了继承模式的一种实现。
+
+```javascript
+function Super() {}
+
+function Sub() {
+  Sub.superclass.constructor.call(this);
+}
+
+Sub.superclass = new Super();
+```
+
+上面代码中，`Super`和`Sub`都是构造函数，在`Sub`内部的`this`上调用`Super`，就会形成`Sub`继承`Super`的效果。
+
+此外，通过`name`属性，可以从实例得到构造函数的名称。
+
+```javascript
+function Foo() {}
+var f = new Foo();
+f.constructor.name // "Foo"
+```
+
 ## Object.getPrototypeOf()
 
 `Object.getPrototypeOf`方法返回一个对象的原型。这是获取原型对象的标准方法。

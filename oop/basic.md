@@ -44,14 +44,14 @@ var Vehicle = function () {
 };
 ```
 
-上面代码中，`Vehicle`就是构造函数，它提供模板，用来生成车辆对象。为了与普通函数区别，通常将构造函数的名字的第一个字母大写。
+上面代码中，`Vehicle`就是构造函数，它提供模板，用来生成对象实例。为了与普通函数区别，构造函数名字的第一个字母通常大写。
 
 构造函数的特点有两个。
 
 - 函数体内部使用了`this`关键字，代表了所要生成的对象实例。
 - 生成对象的时候，必需用`new`命令，调用`Vehicle`函数。
 
-## new命令
+## new 命令
 
 ### 基本用法
 
@@ -85,9 +85,9 @@ var v = new Vehicle();
 var v = new Vehicle;
 ```
 
-一个很自然的问题是，如果忘了使用new命令，直接调用构造函数会发生什么事？
+一个很自然的问题是，如果忘了使用`new`命令，直接调用构造函数会发生什么事？
 
-这种情况下，构造函数就变成了普通函数，并不会生成实例对象。而且由于下面会说到的原因，this这时代表全局对象，将造成一些意想不到的结果。
+这种情况下，构造函数就变成了普通函数，并不会生成实例对象。而且由于后面会说到的原因，`this`这时代表全局对象，将造成一些意想不到的结果。
 
 ```javascript
 var Vehicle = function (){
@@ -102,14 +102,13 @@ price
 // 1000
 ```
 
-上面代码中，调用Vehicle构造函数时，忘了加上new命令。结果，price属性变成了全局变量，而变量v变成了undefined。
+上面代码中，调用`Vehicle`构造函数时，忘了加上`new`命令。结果，`price`属性变成了全局变量，而变量`v`变成了`undefined`。
 
-因此，应该非常小心，避免出现不使用new命令、直接调用构造函数的情况。为了保证构造函数必须与new命令一起使用，一个解决办法是，在构造函数内部使用严格模式，即第一行加上`use strict`。
+因此，应该非常小心，避免出现不使用`new`命令、直接调用构造函数的情况。为了保证构造函数必须与`new`命令一起使用，一个解决办法是，在构造函数内部使用严格模式，即第一行加上`use strict`。
 
 ```javascript
 function Fubar(foo, bar){
-  "use strict";
-
+  'use strict';
   this._foo = foo;
   this._bar = bar;
 }
@@ -136,16 +135,23 @@ Fubar(1, 2)._foo // 1
 (new Fubar(1, 2))._foo // 1
 ```
 
-上面代码中的构造函数，不管加不加new命令，都会得到同样的结果。
+上面代码中的构造函数，不管加不加`new`命令，都会得到同样的结果。
 
 ### new命令的原理
 
-使用new命令时，它后面的函数调用就不是正常的调用，而是被new命令控制了。内部的流程是，先创造一个空对象，作为上下文对象，赋值给函数内部的this关键字。也就是说，this指的是一个新生成的空对象，所有针对this的操作，都会发生在这个空对象上。
+使用`new`命令时，它后面的函数调用就不是正常的调用，而是依次执行下面的步骤。
 
-构造函数之所以叫“构造函数”，就是说这个函数的目的，就是操作上下文对象（即this对象），将其“构造”为需要的样子。如果构造函数的return语句返回的是对象，new命令会返回return语句指定的对象；否则，就会不管return语句，返回构造后的上下文对象。
+1. 创建一个空对象，作为将要返回的对象实例
+1. 将这个空对象的原型，指向构造函数的`prototype`属性
+1. 将这个空对象赋值给函数内部的`this`关键字
+1. 开始执行构造函数内部的代码
+
+也就是说，构造函数内部，`this`指的是一个新生成的空对象，所有针对`this`的操作，都会发生在这个空对象上。构造函数之所以叫“构造函数”，就是说这个函数的目的，就是操作一个空对象（即`this`对象），将其“构造”为需要的样子。
+
+如果构造函数内部有`return`语句，而且`return`后面跟着一个对象，`new`命令会返回`return`语句指定的对象；否则，就会不管`return`语句，返回`this`对象。
 
 ```javascript
-var Vehicle = function (){
+var Vehicle = function () {
   this.price = 1000;
   return 1000;
 };
@@ -154,9 +160,9 @@ var Vehicle = function (){
 // false
 ```
 
-上面代码中，Vehicle是一个构造函数，它的return语句返回一个数值。这时，new命令就会忽略这个return语句，返回“构造”后的this对象。
+上面代码中，构造函数`Vehicle`的`return`语句返回一个数值。这时，`new`命令就会忽略这个`return`语句，返回“构造”后的`this`对象。
 
-但是，如果return语句返回的是一个跟this无关的新对象，new命令会返回这个新对象，而不是this对象。这一点需要特别引起注意。
+但是，如果`return`语句返回的是一个跟`this`无关的新对象，`new`命令会返回这个新对象，而不是`this`对象。这一点需要特别引起注意。
 
 ```javascript
 var Vehicle = function (){
@@ -168,32 +174,55 @@ var Vehicle = function (){
 // 2000
 ```
 
-上面代码中，构造函数Vehicle的return语句，返回的是一个新对象。new命令会返回这个对象，而不是this对象。
+上面代码中，构造函数`Vehicle`的`return`语句，返回的是一个新对象。`new`命令会返回这个对象，而不是`this`对象。
 
-new命令简化的内部流程，可以用下面的代码表示。
+另一方面，如果对普通函数（内部没有`this`关键字的函数）使用`new`命令，则会返回一个空对象。
 
 ```javascript
-function _new(/* constructor, param, ... */) {
+function getMessage() {
+  return 'this is a message';
+}
+
+var msg = new getMessage();
+
+msg // {}
+typeof msg // "Object"
+```
+
+上面代码中，`getMessage`是一个普通函数，返回一个字符串。对它使用`new`命令，会得到一个空对象。这是因为`new`命令总是返回一个对象，要么是实例对象，要么是`return`语句指定的对象。本例中，`return`语句返回的是字符串，所以`new`命令就忽略了该语句。
+
+`new`命令简化的内部流程，可以用下面的代码表示。
+
+```javascript
+function _new(/* 构造函数 */ constructor, /* 构造函数参数 */ param1) {
+  // 将 arguments 对象转为数组
   var args = [].slice.call(arguments);
+  // 取出构造函数
   var constructor = args.shift();
+  // 创建一个空对象，继承构造函数的 prototype 属性
   var context = Object.create(constructor.prototype);
+  // 执行构造函数
   var result = constructor.apply(context, args);
+  // 如果返回结果是对象，就直接返回，则返回 context 对象
   return (typeof result === 'object' && result != null) ? result : context;
 }
 
-var actor = _new(Person, "张三", 28);
+// 实例
+var actor = _new(Person, '张三', 28);
 ```
 
 ## instanceof运算符
 
-`instanceof`运算符返回一个布尔值，表示一个对象是否由某个构造函数创建。
+`instanceof`运算符用来判断指定对象是否为某个构造函数的实例。如果是的，返回`true`，否则返回`false`。
 
 ```javascript
 var v = new Vehicle();
 v instanceof Vehicle // true
 ```
 
-`instanceof`运算符的左边是实例对象，右边是构造函数。
+上面代码中，对象`v`是构造函数`Vehicle`的实例，所以返回`true`。
+
+可以看到，`instanceof`运算符的左边是实例对象，右边是构造函数。
 
 在JavaScript之中，只要是对象，就有对应的构造函数。因此，`instanceof`运算符可以用来判断值的类型。
 
