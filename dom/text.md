@@ -8,7 +8,9 @@ modifiedOn: 2015-05-01
 
 ## Text节点的概念
 
-Text节点代表Element节点和Attribute节点的文本内容。如果一个节点只包含一段文本，那么它就有一个Text子节点，代表该节点的文本内容。通常我们使用Element节点的firstChild、nextSibling等属性获取Text节点，或者使用Document节点的createTextNode方法创造一个Text节点。
+`Text`节点代表`Element`节点和`Attribute`节点的文本内容。如果一个节点只包含一段文本，那么它就有一个`Text`子节点，代表该节点的文本内容。
+
+通常我们使用`Node`节点的`firstChild`、`nextSibling`等属性获取`Text`节点，或者使用`Document`节点的`createTextNode`方法创造一个`Text`节点。
 
 {% highlight javascript %}
 
