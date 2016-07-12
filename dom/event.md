@@ -685,15 +685,13 @@ mousedown事件在按下鼠标键时触发。
 
 **（4）mousemove事件**
 
-mousemove事件当鼠标在一个节点内部移动时触发。当鼠标持续移动时，该事件会连续触发。为了避免性能问题，建议对该事件的监听函数做一些限定，比如限定一段时间内只能运行一次代码。
+`mousemove`事件当鼠标在一个节点内部移动时触发。当鼠标持续移动时，该事件会连续触发。为了避免性能问题，建议对该事件的监听函数做一些限定，比如限定一段时间内只能运行一次代码。
 
 **（5）mouseover事件，mouseenter事件**
 
-mouseover事件和mouseenter事件，都是鼠标进入一个节点时触发。
+`mouseover`事件和`mouseenter`事件，都是鼠标进入一个节点时触发。
 
-两者的区别是，mouseover事件会冒泡，mouseenter事件不会。子节点的mouseover事件会冒泡到父节点，进而触发父节点的mouseover事件。mouseenter事件就没有这种效果，所以进入子节点时，不会触发父节点的监听函数。
-
-下面的例子是mouseenter事件与mouseover事件的区别。
+两者的区别是，`mouseenter`事件只触发一次，而只要鼠标在节点内部移动，`mouseover`事件会在子节点上触发多次。
 
 ```javascript
 // HTML代码为
@@ -703,26 +701,26 @@ mouseover事件和mouseenter事件，都是鼠标进入一个节点时触发。
 //   <li>item 3</li>
 // </ul>
 
-var test = document.getElementById("test");
+var test = document.getElementById('test');
 
 // 进入test节点以后，该事件只会触发一次
-test.addEventListener("mouseenter", function( event ) {
-  event.target.style.color = "purple";
-  setTimeout(function() {
-    event.target.style.color = "";
+// event.target 是 ul 节点
+test.addEventListener('mouseenter', function (event) {
+  event.target.style.color = 'purple';
+  setTimeout(function () {
+    event.target.style.color = '';
   }, 500);
 }, false);
 
-// 接入test节点以后，只要在子Element节点上移动，该事件会触发多次
-test.addEventListener("mouseover", function( event ) {
-  event.target.style.color = "orange";
-  setTimeout(function() {
-    event.target.style.color = "";
+// 进入test节点以后，只要在子Element节点上移动，该事件会触发多次
+// event.target 是 li 节点
+test.addEventListener('mouseover', function (event) {
+  event.target.style.color = 'orange';
+  setTimeout(function () {
+    event.target.style.color = '';
   }, 500);
 }, false);
 ```
-
-上面代码中，由于mouseover事件会冒泡，所以子节点的mouseover事件会触发父节点的监听函数。
 
 **（6）mouseout事件，mouseleave事件**
 

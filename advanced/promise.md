@@ -395,7 +395,7 @@ doSomething().then(doSomethingElse());
 doSomething().then(doSomethingElse);
 ```
 
-为了便于讲解，这四种写法都再用`then`方法接一个回调函数`finalHandler`。写法一的`finalHandler`回调函数的参数，是`doSomethingElse`函数的运行结果。
+为了便于讲解，下面这四种写法都再用`then`方法接一个回调函数`finalHandler`。写法一的`finalHandler`回调函数的参数，是`doSomethingElse`函数的运行结果。
 
 ```javascript
 doSomething().then(function () {
