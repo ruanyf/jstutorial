@@ -334,7 +334,7 @@ B.print === A.prototype.print // true
 实际上，`Object.create`方法可以用下面的代码代替。如果老式浏览器不支持`Object.create`方法，可以就用这段代码自己部署。
 
 ```javascript
-if (typeof Object.create !== "function") {
+if (typeof Object.create !== 'function') {
   Object.create = function (o) {
     function F() {}
     F.prototype = o;
@@ -371,7 +371,7 @@ Object.create()
 // TypeError: Object prototype may only be an Object or null
 ```
 
-`bject.create`方法生成的新对象，动态继承了原型。在原型上添加或修改任何方法，会立刻反映在新对象之上。
+`object.create`方法生成的新对象，动态继承了原型。在原型上添加或修改任何方法，会立刻反映在新对象之上。
 
 ```javascript
 var o1 = { p: 1 };
@@ -398,19 +398,18 @@ o.p1 = 123;
 o.p2 = 'abc';
 ```
 
-由于`Object.create`方法不使用构造函数，所以不能用`instanceof`运算符判断，返回的对象是哪一个构造函数的实例。
+`Object.create`方法生成的对象，继承了它的原型对象的构造函数。
 
 ```javascript
-var o1 = {};
-var o2 = Object.create(o1);
+function A() {}
+var a = new A();
+var b = Object.create(a);
 
-o2 instanceof o1
-// TypeError: Right-hand side of 'instanceof' is not callable
+b.constructor === A // true
+b instanceof A // true
 ```
 
-上面代码中，由于`o1`不是一个函数，所以用于`instanceof`运算符会报错。
-
-这时，可以使用下面的`isPrototypeOf`方法，判读原型是哪一个对象。
+上面代码中，`b`对象的原型是`a`对象，因此继承了`a`对象的构造函数`A`。
 
 ## Object.prototype.isPrototypeOf()
 
