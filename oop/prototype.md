@@ -238,6 +238,42 @@ Sub.superclass = new Super();
 
 上面代码中，`Super`和`Sub`都是构造函数，在`Sub`内部的`this`上调用`Super`，就会形成`Sub`继承`Super`的效果。
 
+由于`constructor`属性是一种原型对象与构造函数的关联关系，所以修改原型对象的时候，务必要小心。
+
+```javascript
+function A() {}
+var a = new A();
+a instanceof A // true
+
+function B() {}
+A.prototype = B.prototype;
+a instanceof A // false
+```
+
+上面代码中，`a`是`A`的实例。修改了`A.prototype`以后，`constructor`属性的指向就变了，导致`instanceof`运算符失真。
+
+所以，修改原型对象时，一般要同时校正`constructor`属性的指向。
+
+```javascript
+// 避免这种写法
+C.prototype = {
+  method1: function (...) { ... },
+  // ...
+};
+
+// 较好的写法
+C.prototype = {
+  constructor: C,
+  method1: function (...) { ... },
+  // ...
+};
+
+// 好的写法
+C.prototype.method1 = function (...) { ... };
+```
+
+上面代码中，避免完全覆盖掉原来的`prototype`属性，要么将`constructor`属性重新指向原来的构造函数，要么只在原型对象上添加方法，这样可以保证`instanceof`运算符不会失真。
+
 此外，通过`name`属性，可以从实例得到构造函数的名称。
 
 ```javascript
@@ -245,6 +281,86 @@ function Foo() {}
 var f = new Foo();
 f.constructor.name // "Foo"
 ```
+
+## instanceof运算符
+
+`instanceof`运算符返回一个布尔值，表示指定对象是否为某个构造函数的实例。
+
+```javascript
+var v = new Vehicle();
+v instanceof Vehicle // true
+```
+
+上面代码中，对象`v`是构造函数`Vehicle`的实例，所以返回`true`。
+
+`instanceof`运算符的左边是实例对象，右边是构造函数。它的运算实质是检查右边构建函数的原型对象，是否在左边对象的原型链上。因此，下面两种写法是等价的。
+
+```javascript
+v instanceof Vehicle
+// 等同于
+Vehicle.prototype.isPrototypeOf(v)
+```
+
+由于`instanceof`对整个原型链上的对象都有效，因此同一个实例对象，可能会对多个构造函数都返回`true`。
+
+```javascript
+var d = new Date();
+d instanceof Date // true
+d instanceof Object // true
+```
+
+上面代码中，`d`同时是`Date`和`Object`的实例，因此对这两个构造函数都返回`true`。
+
+`instanceof`的原理是检查原型链，对于那些不存在原型链的对象，就无法判断。
+
+```javascript
+Object.create(null) instanceof Object // false
+```
+
+上面代码中，`Object.create(null)`返回的新对象的原型是`null`，即不存在原型，因此`instanceof`就认为该对象不是`Object`的实例。
+
+除了上面这种继承`null`的特殊情况，JavaScript之中，只要是对象，就有对应的构造函数。因此，`instanceof`运算符的一个用处，是判断值的类型。
+
+```javascript
+var x = [1, 2, 3];
+var y = {};
+x instanceof Array // true
+y instanceof Object // true
+```
+
+上面代码中，`instanceof`运算符判断，变量`x`是数组，变量`y`是对象。
+
+注意，`instanceof`运算符只能用于对象，不适用原始类型的值。
+
+```javascript
+var s = 'hello';
+s instanceof String // false
+```
+
+上面代码中，字符串不是`String`对象的实例（因为字符串不是对象），所以返回`false`。
+
+此外，`undefined`和`null`不是对象，所以`instanceOf`运算符总是返回`false`。
+
+```javascript
+undefined instanceof Object // false
+null instanceof Object // false
+```
+
+利用`instanceof`运算符，还可以巧妙地解决，调用构造函数时，忘了加`new`命令的问题。
+
+```javascript
+function Fubar (foo, bar) {
+  if (this instanceof Fubar) {
+    this._foo = foo;
+    this._bar = bar;
+  }
+  else {
+    return new Fubar(foo, bar);
+  }
+}
+```
+
+上面代码使用`instanceof`运算符，在函数体内部判断`this`关键字是否为构造函数`Fubar`的实例。如果不是，就表明忘了加`new`命令。
 
 ## Object.getPrototypeOf()
 
