@@ -288,6 +288,15 @@ one + two + three // "33"
 // "HELLO WORLD"
 ```
 
+这个方法也可以将布尔值或数组转为大写字符串，但是需要通过`call`方法使用。
+
+```javascript
+String.prototype.toUpperCase.call(true)
+// 'TRUE'
+String.prototype.toUpperCase.call(['a','b','c'])
+// 'A,B,C'
+```
+
 ### localeCompare()
 
 `localeCompare`方法用于比较两个字符串。它返回一个整数，如果小于0，表示第一个字符串小于第二个字符串；如果等于0，表示两者相等；如果大于0，表示第一个字符串大于第二个字符串。

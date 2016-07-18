@@ -209,6 +209,15 @@ for (var i in o) {
 
 ### 可枚举性（enumerable）
 
+JavaScript的最初版本，`in` 运算符和基于它的`for...in`循环，会遍历对象实例的所有属性，包括继承的属性。
+
+```javascript
+var obj = {};
+'toString' in obj // true
+```
+
+上面代码中，`toString`不是`obj`对象自身的属性，但是`in`运算符也返回`true`，导致被`for...in`循环遍历，这显然不太合理。后来就引入了“可枚举性”这个概念，只有可枚举的属性，才会被`for...in`循环遍历，同时还规定原生继承的属性都是不可枚举的，这样就保证了`for...in`循环的可用性。
+
 可枚举性（enumerable）用来控制所描述的属性，是否将被包括在`for...in`循环之中。具体来说，如果一个属性的`enumerable`为`false`，下面三个操作不会取到该属性。
 
 - `for..in`循环

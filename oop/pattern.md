@@ -12,6 +12,35 @@ modifiedOn: 2014-04-06
 
 让一个构造函数继承另一个构造函数，是非常常见的需求。
 
+这可以分成两步实现。第一步是在子类的构造函数中，调用父类的构造函数。
+
+```javascript
+function Sub(value) {
+  Super.call(this);
+  this.prop = value;
+}
+```
+
+上面代码中，`Sub`是子类的构造函数，`this`是子类的实例。在实例上调用父类的构造函数`Super`，就会让子类实例具有父类实例的属性。
+
+第二步，是让子类的原型指向父类的原型，这样子类就可以继承父类原型。
+
+```javascript
+Sub.prototype = Object.create(Super.prototype);
+Sub.prototype.constructor = Sub;
+Sub.prototype.method = '...';
+```
+
+上面代码中，`Sub.prototype`是子类的原型，要将它赋值为`Object.create(Super.prototype)`，而不是直接等于`Super.prototype`。否则后面两行对`Sub.prototype`的操作，会连父类的原型`Super.prototype`一起修改掉。
+
+另外一种写法是`Sub.prototype`等于一个父类实例。
+
+```javascript
+Sub.prototype = new Super();
+```
+
+上面这种写法也有继承的效果，但是子类会具有父类实例的方法。有时，这可能不是我们需要的，所以不推荐使用这种写法。
+
 举例来说，下面是一个`Shape`构造函数。
 
 ```javascript
@@ -30,6 +59,7 @@ Shape.prototype.move = function (x, y) {
 我们需要让`Rectangle`构造函数继承`Shape`。
 
 ```javascript
+// 第一步，子类继承父类的实例
 function Rectangle() {
   Shape.call(this); // 调用父类构造函数
 }
@@ -39,19 +69,20 @@ function Rectangle() {
   this.base();
 }
 
-// 子类继承父类的方法
+// 第二步，子类继承父类的原型
 Rectangle.prototype = Object.create(Shape.prototype);
 Rectangle.prototype.constructor = Rectangle;
+```
 
+采用这样的写法以后，`instanceof`运算符会对子类和父类的构造函数，都返回`true`。
+
+```javascript
 var rect = new Rectangle();
+rect.move(1, 1) // 'Shape moved.'
 
 rect instanceof Rectangle  // true
 rect instanceof Shape  // true
-
-rect.move(1, 1) // 'Shape moved.'
 ```
-
-上面代码表示，构造函数的继承分成两部分，一部分是子类调用父类的构造方法，另一部分是子类的原型指向父类的原型。
 
 上面代码中，子类是整体继承父类。有时只需要单个方法的继承，这时可以采用下面的写法。
 

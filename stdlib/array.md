@@ -155,7 +155,7 @@ a // ['a', 'b']
 
 `push`和`pop`结合使用，就构成了“后进先出”的栈结构（stack）。
 
-### join()，concat()
+### join()
 
 `join`方法以参数作为分隔符，将所有数组成员组成一个字符串返回。如果不提供参数，默认用逗号分隔。
 
@@ -167,12 +167,22 @@ a.join(' | ') // "1 | 2 | 3 | 4"
 a.join() // "1,2,3,4"
 ```
 
-通过`call`方法，`join`方法（即Array.prototype.join）也可以用于字符串。
+通过`call`方法，这个方法也可以用于字符串。
 
 ```javascript
 Array.prototype.join.call('hello', '-')
 // "h-e-l-l-o"
 ```
+
+`join`方法也可以用于类似数组的对象。
+
+```javascript
+var obj = { 0: 'a', 1: 'b', length: 2 };
+Array.prototype.join.call(obj, '-')
+// 'a-b'
+```
+
+### concat()
 
 `concat`方法用于多个数组的合并。它将新数组的成员，添加到原数组的尾部，然后返回一个新数组，原数组不变。
 
@@ -429,17 +439,19 @@ numbers
 
 ```javascript
 [1, 2, 3].map(function(elem, index, arr) {
-  return elem * elem;
+  return elem * index;
 });
-// [1, 4, 9]
+// [0, 2, 6]
 ```
 
-上面代码中，map方法的回调函数的三个参数之中，`elem`为当前成员的值，`index`为当前成员的位置，`arr`为原数组（`[1, 2, 3]`）。
+上面代码中，`map`方法的回调函数的三个参数之中，`elem`为当前成员的值，`index`为当前成员的位置，`arr`为原数组（`[1, 2, 3]`）。
 
 `map`方法不仅可以用于数组，还可以用于字符串，用来遍历字符串的每个字符。但是，不能直接使用，而要通过函数的`call`方法间接使用，或者先将字符串转为数组，然后使用。
 
 ```javascript
-var upper = function (x) { return x.toUpperCase() };
+var upper = function (x) {
+  return x.toUpperCase();
+};
 
 [].map.call('abc', upper)
 // [ 'A', 'B', 'C' ]
@@ -592,6 +604,23 @@ var log = function (n) {
 ```
 
 上面代码中，`forEach`方法不会跳过`undefined`和`null`，但会跳过空位。
+
+`forEach`方法也可以用于类似数组的对象。
+
+```javascript
+var obj = {
+  0: 1,
+  a: 'hello',
+  length: 1
+}
+
+Array.prototype.forEach.call(obj, function (elem, i) {
+  console.log( i + ':' + elem);
+});
+// 0:1
+```
+
+上面代码中，`obj`是一个类似数组的对象，`forEach`方法可以读到它的数字键。
 
 ### filter方法
 

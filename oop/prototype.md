@@ -542,6 +542,15 @@ o1.isPrototypeOf(o3) // true
 
 上面代码表明，只要某个对象处在原型链上，`isProtypeOf`都返回`true`。
 
+```javascript
+Object.prototype.isPrototypeOf({}) // true
+Object.prototype.isPrototypeOf([]) // true
+Object.prototype.isPrototypeOf(/xyz/) // true
+Object.prototype.isPrototypeOf(Object.create(null)) // false
+```
+
+上面代码中，由于`Object.prototype`处于原型链的最顶端，所以对各种实例都返回`true`，只有继承`null`的对象除外。
+
 ## Object.prototype.\_\_proto\_\_
 
 `__proto__`属性（前后各两个下划线）可以改写某个对象的原型对象。
