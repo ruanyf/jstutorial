@@ -285,9 +285,9 @@ function logArgs() {
 
 // forEach方法
 function logArgs() {
-    Array.prototype.forEach.call(arguments, function (elem, i) {
-        console.log(i+'. '+elem);
-    });
+  Array.prototype.forEach.call(arguments, function (elem, i) {
+    console.log(i+'. '+elem);
+  });
 }
 ```
 
@@ -422,25 +422,17 @@ var a = [, , ,];
 a[1] // undefined
 ```
 
-使用`delete`命令删除一个值，会形成空位。
+使用`delete`命令删除一个数组成员，会形成空位，并且不会影响`length`属性。
 
 ```javascript
 var a = [1, 2, 3];
-
 delete a[1];
+
 a[1] // undefined
-```
-
-`delete`命令不影响`length`属性。
-
-```javascript
-var a = [1, 2, 3];
-delete a[1];
-delete a[2];
 a.length // 3
 ```
 
-上面代码用`delete`命令删除了两个键，对`length`属性没有影响。也就是说，`length`属性不过滤空位。所以，使用`length`属性进行数组遍历，一定要非常小心。
+上面代码用`delete`命令删除了数组的第二个元素，这个位置就形成了空位，但是对`length`属性没有影响。也就是说，`length`属性不过滤空位。所以，使用`length`属性进行数组遍历，一定要非常小心。
 
 数组的某个位置是空位，与某个位置是`undefined`，是不一样的。如果是空位，使用数组的`forEach`方法、`for...in`结构、以及`Object.keys`方法进行遍历，空位都会被跳过。
 
