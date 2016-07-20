@@ -92,7 +92,7 @@ Array.isArray(a) // true
 
 ## Array实例的方法
 
-### valueOf方法，toString方法
+### valueOf()，toString()
 
 `valueOf`方法返回数组本身。
 
@@ -907,18 +907,24 @@ a.lastIndexOf(7) // -1
 
 上面这些数组方法之中，有不少返回的还是数组，所以可以链式使用。
 
-{% highlight javascript %}
-
-var users = [{name:"tom", email:"tom@example.com"},
-			 {name:"peter", email:"peter@example.com"}];
+```javascript
+var users = [
+  {name: 'tom', email: 'tom@example.com'},
+  {name: 'peter', email: 'peter@example.com'}
+];
 
 users
-.map(function (user){ return user.email; })
-.filter(function (email) { return /^t/.test(email); })
+.map(function (user) {
+  return user.email;
+})
+.filter(function (email) {
+  return /^t/.test(email);
+})
 .forEach(alert);
 // 弹出tom@example.com
+```
 
-{% endhighlight %}
+上面代码中，先产生一个所有Email地址组成的数组，然后再过滤出以`t`开头的Email地址。
 
 ## 参考链接
 
