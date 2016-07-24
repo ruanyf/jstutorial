@@ -530,7 +530,7 @@ Array.prototype.slice.apply({length:1})
 ```javascript
 var o = new Object();
 
-o.f = function ()v {
+o.f = function () {
   console.log(this === o);
 }
 
