@@ -577,7 +577,7 @@ http.createServer(function (req, res) {
     reject(new Error("Broken."))
   })
 
-  p.info = {url: req.url}
+  promise.info = {url: req.url}
 }).listen(8080)
 
 process.on('unhandledRejection', function (err, p) {
