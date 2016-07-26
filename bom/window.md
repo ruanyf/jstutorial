@@ -27,23 +27,23 @@ window.a // 1
 
 浏览器提供一系列属性，用来获取浏览器窗口的大小和位置。
 
-（1）window.screenX，window.screenY
+**（1）window.screenX，window.screenY**
 
 `window.screenX`和`window.screenY`属性，返回浏览器窗口左上角相对于当前屏幕左上角（`(0, 0)`）的水平距离和垂直距离，单位为像素。
 
-（2）window.innerHeight，window.innerWidth
+**（2）window.innerHeight，window.innerWidth**
 
 `window.innerHeight`和`window.innerWidth`属性，返回网页在当前窗口中可见部分的高度和宽度，即“视口”（viewport），单位为像素。
 
-当用户放大网页的时候（比如将网页从100%的大小放大为200%），这两个属性会变小。因为这时网页的像素大小不变，只是每个像素占据的屏幕空间变大了，因为可见部分（视口）就变小了。
+当用户放大网页的时候（比如将网页从100%的大小放大为200%），这两个属性会变小。因为这时网页的像素大小不变（比如宽度还是960像素），只是每个像素占据的屏幕空间变大了，因为可见部分（视口）就变小了。
 
 注意，这两个属性值包括滚动条的高度和宽度。
 
-（3）window.outerHeight，window.outerWidth
+**（3）window.outerHeight，window.outerWidth**
 
 `window.outerHeight`和`window.outerWidth`属性返回浏览器窗口的高度和宽度，包括浏览器菜单和边框，单位为像素。
 
-（4）window.pageXOffset属性，window.pageYOffset属性
+**（4）window.pageXOffset属性，window.pageYOffset属性**
 
 `window.pageXOffset`属性返回页面的水平滚动距离，`window.pageYOffset`属性返回页面的垂直滚动距离，单位都为像素。
 
@@ -95,7 +95,7 @@ console.log(window.name)
 window.location === document.location // true
 ```
 
-## 框架窗口
+### window.frames
 
 `window.frames`属性返回一个类似数组的对象，成员为页面内所有框架窗口，包括`frame`元素和`iframe`元素。`window.frames[0]`表示页面中第一个框架窗口，`window.frames['someName']`则是根据框架窗口的`name`属性的值（不是`id`属性），返回该窗口。另外，通过`document.getElementById()`方法也可以引用指定的框架窗口。
 
@@ -141,46 +141,40 @@ if (window.parent != window.self) {
 
 ## navigator对象
 
-Window对象的navigator属性，指向一个包含浏览器相关信息的对象。
+`window`对象的`navigator`属性，指向一个包含浏览器相关信息的对象。
 
-**（1）navigator.userAgent属性**
+### navigator.userAgent
 
-navigator.userAgent属性返回浏览器的User-Agent字符串，用来标示浏览器的种类。下面是Chrome浏览器的User-Agent。
+`navigator.userAgent`属性返回浏览器的User-Agent字符串，用来标示浏览器的种类。下面是Chrome浏览器的`userAgent`。
 
-{% highlight javascript %}
-
+```javascript
 navigator.userAgent
 // "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.57 Safari/537.36"
+```
 
-{% endhighlight %}
+通过`userAgent`属性识别浏览器，不是一个好办法。因为必须考虑所有的情况（不同的浏览器，不同的版本），非常麻烦，而且无法保证未来的适用性，更何况各种上网设备层出不穷，难以穷尽。所以，现在一般不再识别浏览器了，而是使用“功能识别”方法，即逐一测试当前浏览器是否支持要用到的JavaScript功能。
 
-通过userAgent属性识别浏览器，不是一个好办法。因为必须考虑所有的情况（不同的浏览器，不同的版本），非常麻烦，而且无法保证未来的适用性，更何况各种上网设备层出不穷，难以穷尽。所以，现在一般不再识别浏览器了，而是使用“功能识别”方法，即逐一测试当前浏览器是否支持要用到的JavaScript功能。
+不过，通过`userAgent`可以大致准确地识别手机浏览器，方法就是测试是否包含`mobi`字符串。
 
-不过，通过userAgent可以大致准确地识别手机浏览器，方法就是测试是否包含“mobi”字符串。
-
-{% highlight javascript %}
-
+```javascript
 var ua = navigator.userAgent.toLowerCase();
- 
-if (/mobi/i.test(ua)) {
-    // 手机浏览器
-} else {
-    // 非手机浏览器
-}
 
-{% endhighlight %}
+if (/mobi/i.test(ua)) {
+  // 手机浏览器
+} else {
+  // 非手机浏览器
+}
+```
 
 如果想要识别所有移动设备的浏览器，可以测试更多的特征字符串。
 
-{% highlight javascript %}
-
+```javascript
 /mobi|android|touch|mini/i.test(ua)
+```
 
-{% endhighlight %}
+### navigator.plugins
 
-**（2）navigator.plugins属性**
-
-navigator.plugins属性返回一个类似数组的对象，成员是浏览器安装的插件，比如Flash、ActiveX等。
+`navigator.plugins`属性返回一个类似数组的对象，成员是浏览器安装的插件，比如Flash、ActiveX等。
 
 ## window.screen对象
 
@@ -305,16 +299,40 @@ if (typeof window.print === 'function') {
 }
 ```
 
-### URL的编码/解码方法
+### window.getComputedStyle()
+
+`getComputedStyle`方法接受一个HTML元素作为参数，返回一个包含该HTML元素的最终样式信息的对象。详见《DOM》一章的CSS章节。
+
+### window.matchMedia()
+
+`window.matchMedia`方法用来检查CSS的mediaQuery语句。详见《DOM》一章的CSS章节。
+
+### window.focus()
+
+`focus`方法会激活指定当前窗口，使其获得焦点。
+
+```javascript
+if ((popup !== null) && !popup.closed) {
+  popup.focus();
+}
+```
+
+上面代码先检查`popup`窗口是否依然存在，确认后激活该窗口。
+
+当前窗口获得焦点时，会触发`focus`事件；当前窗口失去焦点时，会触发`blur`事件。
+
+## URL的编码/解码方法
+
+URL里面只允许出现英语字母、数值和少数几个标点符号，超出这个范围的字符，都会被浏览器转码。
 
 JavaScript提供四个URL的编码/解码方法。
 
-- encodeURI()
-- encodeURIComponent()
-- decodeURI()
-- decodeURIComponent()
+- `encodeURI()`
+- `encodeURIComponent()`
+- `decodeURI()`
+- `decodeURIComponent()`
 
-#### encodeURI
+### encodeURI
 
 `encodeURI` 方法的参数为完整的统一资源标识符（URI）的字符串，它使用 1 到 4 个转义字符串来替换 UTF-8 编码字符串中的每个字符（只有由 2 个代理字符区组成的字符才用 4 个转义字符编码）。例如：
 
@@ -344,7 +362,7 @@ console.log(encodeURI('\uD800'));
 console.log(encodeURI('\uDFFF'));
 ```
 
-#### encodeURIComponent
+### encodeURIComponent
 
 `encodeURIComponent` 方法的参数为统一资源标识符（URI）的一部分的字符串，它使用 1 到 4 个转义字符串来替换 UTF-8 编码字符串中的每个字符（只有由 2 个代理字符区组成的字符才用 4 个转义字符编码）。
 
@@ -355,7 +373,7 @@ encodeURIComponent('http://www.example.com?foo=bar&code=<p>')'</p>')
 // http%3A%2F%2Fwww.example.com%3Ffoo%3Dbar%26code%3D%3Cp%3E""
 ```
 
-#### decodeURI
+### decodeURI
 
 `decodeURI` 方法的参数为一个字符串，用于解码由 `encodeURI` 方法或者其它类似方法编码的统一资源标识符（URI）。例如：
 
@@ -364,7 +382,7 @@ decodeURI('http://www.example.com?foo=bar&code=%3Cp%3E')
 // http://www.example.com?foo=bar&code=<p>
 ```
 
-#### decodeURIComponent
+### decodeURIComponent
 
 `decodeURIComponent` 方法的参数为一个字符串，用于解码由 `encodeURIComponent` 方法或者其它类似方法编码的部分统一资源标识符（URI）。例如：
 
@@ -373,43 +391,17 @@ decodeURIComponent('http%3A%2F%2Fwww.example.com%3Ffoo%3Dbar%26code%3D%3Cp%3E')
 // http://www.example.com?foo=bar&code=<p>
 ```
 
-### window.getComputedStyle方法
+## error事件和onerror属性
 
-getComputedStyle方法接受一个HTML元素作为参数，返回一个包含该HTML元素的最终样式信息的对象。详见《DOM》一章的CSS章节。
-
-### window.matchMedia方法
-
-window.matchMedia方法用来检查CSS的mediaQuery语句。详见《DOM》一章的CSS章节。
-
-### window.focus()
-
-`focus`方法会激活指定当前窗口，使其获得焦点。
+浏览器脚本发生错误时，会触发window对象的`error`事件。我们可以通过`window.onerror`属性对该事件指定回调函数。
 
 ```javascript
-if ((popup !== null) && !popup.closed) {
-  popup.focus();
-}
-```
-
-上面代码先检查`popup`窗口是否依然存在，确认后激活该窗口。
-
-当前窗口获得焦点时，会触发`focus`事件；当前窗口失去焦点时，会触发`blur`事件。
-
-## window对象的事件
-
-### window.onerror
-
-浏览器脚本发生错误时，会触发window对象的error事件。我们可以通过`window.onerror`属性对该事件指定回调函数。
-
-```javascript
-
 window.onerror = function (message, filename, lineno, colno, error) {
-    console.log("出错了！--> %s", error.stack);
+  console.log("出错了！--> %s", error.stack);
 };
-
 ```
 
-error事件的回调函数，一共可以有五个参数，它们的含义依次如下。
+`error`事件的回调函数，一共可以有五个参数，它们的含义依次如下。
 
 - 出错信息
 - 出错脚本的网址
@@ -421,14 +413,11 @@ error事件的回调函数，一共可以有五个参数，它们的含义依次
 
 需要注意的是，如果脚本网址与网页网址不在同一个域（比如使用了CDN），浏览器根本不会提供详细的出错信息，只会提示出错，错误类型是“Script error.”，行号为0，其他信息都没有。这是浏览器防止向外部脚本泄漏信息。一个解决方法是在脚本所在的服务器，设置Access-Control-Allow-Origin的HTTP头信息。
 
-
 ```bash
-
 Access-Control-Allow-Origin:*
-
 ```
 
-然后，在网页的script标签中设置crossorigin属性。
+然后，在网页的`<script>`标签中设置`crossorigin`属性。
 
 ```html
 <script crossorigin="anonymous" src="//example.com/file.js"></script>
@@ -436,7 +425,7 @@ Access-Control-Allow-Origin:*
 
 上面代码的`crossorigin="anonymous"`表示，读取文件不需要身份信息，即不需要cookie和HTTP认证信息。如果设为`crossorigin="use-credentials"`，就表示浏览器会上传cookie和HTTP认证信息，同时还需要服务器端打开HTTP头信息Access-Control-Allow-Credentials。
 
-并不是所有的错误，都会触发JavaScript的error事件（即让JavaScript报错），只限于以下三类事件。
+并不是所有的错误，都会触发JavaScript的`error`事件（即让JavaScript报错），只限于以下三类事件。
 
 - JavaScript语言错误
 - JavaScript脚本文件不存在
