@@ -425,7 +425,7 @@ try {
 }
 ```
 
-上面代码分别用process.nextTick和setTimeout方法，在下一轮事件循环抛出两个异常，代表异步操作抛出的错误。它们都无法被catch代码块捕获，因此catch代码块所在的那部分已经运行结束了。
+上面代码分别用process.nextTick和setTimeout方法，在下一轮事件循环抛出两个异常，代表异步操作抛出的错误。它们都无法被catch代码块捕获，因为catch代码块所在的那部分已经运行结束了。
 
 一种解决方法是将错误捕获代码，也放到异步执行。
 
@@ -577,7 +577,7 @@ http.createServer(function (req, res) {
     reject(new Error("Broken."))
   })
 
-  p.info = {url: req.url}
+  promise.info = {url: req.url}
 }).listen(8080)
 
 process.on('unhandledRejection', function (err, p) {

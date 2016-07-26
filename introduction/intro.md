@@ -80,7 +80,7 @@ Mozilla基金会的手机操作系统Firefox OS，更是直接将JavaScript作�
 
 **（6）跨平台的桌面应用程序**
 
-Chromium OS、Windows 8等操作系统直接支持JavaScript编写应用程序。Mozilla的Open Web Apps项目、Google的[Chrome App项目](http://developer.chrome.com/apps/about_apps)、Github的[Electron项目](http://electron.atom.io/)、以及[TideSDK项目](http://www.tidesdk.org/)，都可以用来编写运行于Windows、Mac OS和Android等多个桌面平台的程序，不依赖浏览器。
+Chromium OS、Windows 8等操作系统直接支持JavaScript编写应用程序。Mozilla的Open Web Apps项目、Google的[Chrome App项目](http://developer.chrome.com/apps/about_apps)、Github的[Electron项目](http://electron.atom.io/)、以及[TideSDK项目](http://tidesdk.multipart.net/docs/user-dev/generated/)，都可以用来编写运行于Windows、Mac OS和Android等多个桌面平台的程序，不依赖浏览器。
 
 **（7）小结**
 
