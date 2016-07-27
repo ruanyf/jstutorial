@@ -135,13 +135,18 @@ obj.foo // 123
 
 ```javascript
 var obj = {
-  m1: function m1() {},
+  m1: function f() {},
   m2: function () {}
 };
 
-obj.m1.name // m1
+obj.m1.name // "f"
+// ES5环境
 obj.m2.name // undefined
+// ES6环境
+obj.m2.name // "m2"
 ```
+
+上面代码中，方法的`name`属性返回紧跟在`function`关键字后面的函数名。如果是匿名函数，ES5环境会返回`undefined`，ES6环境会返回方法名。
 
 ### 对象的引用
 
