@@ -188,7 +188,7 @@ a[1] // undefined
 ```javascript
 var a = [];
 
-a['p'] = 'abc';，
+a['p'] = 'abc';
 a.length // 0
 
 a[2.1] = 'abc';
