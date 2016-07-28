@@ -34,6 +34,7 @@ modifiedOn: 2014-05-18
 - [Date对象](stdlib/date.html)
 - [RegExp对象](stdlib/regexp.html)
 - [JSON对象](stdlib/json.html)
+- [console对象](stdlib/console.html)
 - [属性描述对象](stdlib/attributes.html)
 
 <h2 id="oop">面向对象编程</h2>
@@ -89,8 +90,6 @@ modifiedOn: 2014-05-18
 
 <h2 id="tool">开发工具</h2>
 
-- [console对象](tool/console.html)
-- [Gulp：任务自动管理工具](tool/gulp.html)
 - [Browserify：浏览器加载Node.js模块](tool/browserify.html)
 - [Source map](tool/sourcemap.html)
 - [JavaScript 测试](tool/testing.html)
@@ -99,7 +98,6 @@ modifiedOn: 2014-05-18
 
 - [Promise](advanced/promise.html)
 - [有限状态机](advanced/fsm.html)
-- [MVC模式和Backbone.js](advanced/backbonejs.html)
 - [严格模式](advanced/strict.html)
 
 ---
@@ -117,6 +115,8 @@ modifiedOn: 2014-05-18
 - [Grunt：任务自动管理工具](tool/grunt.html)
 - [RequireJS和AMD规范](tool/requirejs.html)
 - [Lint工具](tool/lint.html)
+- [MVC模式和Backbone.js](advanced/backbonejs.html)
+- [Gulp：任务自动管理工具](tool/gulp.html)
 
 <h2 id="jquery">草稿：jQuery</h2>
 
