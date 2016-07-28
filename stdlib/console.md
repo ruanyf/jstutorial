@@ -239,7 +239,7 @@ greet('bob')
 
 上面代码根据参数的不同，显示`bob`执行了两次，`alice`执行了一次。
 
-### dir()
+### dir()，dirxml()
 
 `dir`方法用来对一个对象进行检查（inspect），并以易于阅读和打印的格式显示。
 
@@ -262,9 +262,7 @@ console.dir({f1: 'foo', f2: 'bar'})
 console.dir(document.body)
 ```
 
-### dirxml()
-
-`dirxml`主要用于以目录树的形式，显示DOM节点。
+`dirxml`方法主要用于以目录树的形式，显示DOM节点。
 
 ```javascript
 console.dirxml(document.body)
