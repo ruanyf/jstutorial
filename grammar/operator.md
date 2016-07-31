@@ -357,7 +357,7 @@ NaN === NaN  // false
 两个复合类型（对象、数组、函数）的数据比较时，不是比较它们的值是否相等，而是比较它们是否指向同一个对象。
 
 ```javascript
-({} === {}） // false
+({} === {}) // false
 [] === [] // false
 (function (){} === function (){}) // false
 ```
