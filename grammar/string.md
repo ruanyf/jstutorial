@@ -216,18 +216,27 @@ s.length // 5
 
 ## 字符集
 
-JavaScript使用Unicode字符集，也就是说在JavaScript内部，所有字符都用Unicode表示。
+JavaScript使用Unicode字符集。也就是说，在JavaScript引擎内部，所有字符都用Unicode表示。
 
-不仅JavaScript内部使用Unicode储存字符，而且还可以直接在程序中使用Unicode，所有字符都可以写成"\uxxxx"的形式，其中xxxx代表该字符的Unicode编码。比如，`\u00A9`代表版权符号。
+JavaScript不仅以Unicode储存字符，还允许直接在程序中使用Unicode编号表示字符，即将字符写成`\uxxxx`的形式，其中`xxxx`代表该字符的Unicode编码。比如，`\u00A9`代表版权符号。
 
 ```javascript
 var s = '\u00A9';
 s // "©"
 ```
 
-每个字符在JavaScript内部都是以16位（即2个字节）的UTF-16格式储存。也就是说，JavaScript的单位字符长度固定为16位长度，即2个字节。
+解析代码的时候，JavaScript会自动识别一个字符是字面形式表示，还是Unicode形式表示。输出给用户的时候，所有字符都会转成字面形式。
 
-但是，UTF-16有两种长度：对于`U+0000`到`U+FFFF`之间的字符，长度为16位（即2个字节）；对于`U+10000`到`U+10FFFF`之间的字符，长度为32位（即4个字节），而且前两个字节在`0xD800`到`0xDBFF`之间，后两个字节在`0xDC00`到`0xDFFF`之间。举例来说，`U+1D306`对应的字符为𝌆，它写成UTF-16就是`0xD834 0xDF06`。浏览器会正确将这四个字节识别为一个字符，但是JavaScript内部的字符长度总是固定为16位，会把这四个字节视为两个字符。
+```javascript
+var f\u006F\u006F = 'abc';
+foo // "abc"
+```
+
+上面代码中，第一行的变量名`foo`是Unicode形式表示，第二行是字面形式表示。JavaScript会自动识别。
+
+我们还需要知道，每个字符在JavaScript内部都是以16位（即2个字节）的UTF-16格式储存。也就是说，JavaScript的单位字符长度固定为16位长度，即2个字节。
+
+但是，UTF-16有两种长度：对于`U+0000`到`U+FFFF`之间的字符，长度为16位（即2个字节）；对于`U+10000`到`U+10FFFF`之间的字符，长度为32位（即4个字节），而且前两个字节在`0xD800`到`0xDBFF`之间，后两个字节在`0xDC00`到`0xDFFF`之间。举例来说，`U+1D306`对应的字符为`𝌆，`它写成UTF-16就是`0xD834 0xDF06`。浏览器会正确将这四个字节识别为一个字符，但是JavaScript内部的字符长度总是固定为16位，会把这四个字节视为两个字符。
 
 ```javascript
 var s = '\uD834\uDF06';
