@@ -13,6 +13,7 @@ modifiedOn: 2014-05-18
 <h2 id="grammar">语法</h2>
 
 - [基本语法](grammar/basic.html)
+- [数据类型](grammar/types.html)
 - [数值](grammar/number.html)
 - [字符串](grammar/string.html)
 - [对象](grammar/object.html)
