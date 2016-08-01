@@ -5,14 +5,14 @@ date: 2012-11-18
 modifiedOn: 2014-05-18
 ---
 
-<h2 id="introduction">导论与历史</h2>
+<h2 id="introduction">导论</h2>
 
-- [导论](introduction/intro.html)
+- [概述](introduction/intro.html)
 - [JavaScript的历史](introduction/history.html)
 
-<h2 id="grammar">基本语法</h2>
+<h2 id="grammar">语法</h2>
 
-- [概述](grammar/basic.html)
+- [基本语法](grammar/basic.html)
 - [数值](grammar/number.html)
 - [字符串](grammar/string.html)
 - [对象](grammar/object.html)
