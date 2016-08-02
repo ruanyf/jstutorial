@@ -46,6 +46,12 @@ modifiedOn: 2014-05-18
 - [Object 对象与继承](oop/object.html)
 - [面向对象编程的模式](oop/pattern.html)
 
+<h2 id="advanced">JavaScript高级语法</h2>
+
+- [定时器](advanced/timer.html)
+- [Promise](advanced/promise.html)
+- [严格模式](advanced/strict.html)
+
 <h2 id="dom">DOM</h2>
 
 - [Node节点](dom/node.html)
@@ -59,7 +65,6 @@ modifiedOn: 2014-05-18
 <h2 id="bom">浏览器环境</h2>
 
 - [浏览器的JavaScript引擎](bom/engine.html)
-- [定时器](bom/timer.html)
 - [window对象](bom/window.html)
 - [History对象](bom/history.html)
 - [Cookie](bom/cookie.html)
@@ -89,18 +94,6 @@ modifiedOn: 2014-05-18
 - [WebRTC](htmlapi/webrtc.html)
 - [Web Components](htmlapi/webcomponents.html)
 
-<h2 id="tool">开发工具</h2>
-
-- [Browserify：浏览器加载Node.js模块](tool/browserify.html)
-- [Source map](tool/sourcemap.html)
-- [JavaScript 测试](tool/testing.html)
-
-<h2 id="advanced">JavaScript高级语法</h2>
-
-- [Promise](advanced/promise.html)
-- [有限状态机](advanced/fsm.html)
-- [严格模式](advanced/strict.html)
-
 ---
 
 <h2 id="library">废稿</h2>
@@ -118,6 +111,10 @@ modifiedOn: 2014-05-18
 - [Lint工具](tool/lint.html)
 - [MVC模式和Backbone.js](advanced/backbonejs.html)
 - [Gulp：任务自动管理工具](tool/gulp.html)
+- [Browserify：浏览器加载Node.js模块](tool/browserify.html)
+- [JavaScript 测试](tool/testing.html)
+- [Source map](tool/sourcemap.html)
+- [有限状态机](advanced/fsm.html)
 
 <h2 id="jquery">草稿：jQuery</h2>
 

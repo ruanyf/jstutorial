@@ -570,15 +570,15 @@ while (true) {
 
 ### for循环
 
-`for`语句是循环命令的另一种形式。
+`for`语句是循环命令的另一种形式，可以指定循环的起点、终点和终止条件。它的格式如下。
 
 ```javascript
-for(initialize; test; increment)
+for (initialize; test; increment)
   statement
 
 // 或者
 
-for(initialize; test; increment) {
+for (initialize; test; increment) {
   statement
 }
 ```
@@ -632,13 +632,13 @@ for ( ; ; ){
 ```javascript
 do
   statement
-while(expression);
+while (expression);
 
 // 或者
 
 do {
   statement
-} while(expression);
+} while (expression);
 ```
 
 不管条件是否为真，`do..while`循环至少运行一次，这是这种结构最大的特点。另外，`while`语句后面的分号不能省略。

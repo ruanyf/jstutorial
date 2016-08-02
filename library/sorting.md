@@ -22,53 +22,50 @@ modifiedOn: 2013-01-30
 
 由于每进行一次这个过程，在该次比较的最后一个位置上，正确的数会自己冒出来，就好像“冒泡”一样，这种算法因此得名。
 
-以对数组[3, 2, 4, 5, 1] 进行从小到大排序为例，步骤如下：
+以对数组`[3, 2, 4, 5, 1]`进行从小到大排序为例，步骤如下：
 
-1. 第一位的“3”与第二位的“2”进行比较，3大于2，互换位置，数组变成[2, 3, 4, 5, 1] 。
+1. 第一位的“3”与第二位的“2”进行比较，3大于2，互换位置，数组变成`[2, 3, 4, 5, 1]`。
 
 2. 第二位的“3”与第三位的“4”进行比较，3小于4，数组不变。
 
 3. 第三位的“4”与第四位的“5”进行比较，4小于5，数组不变。
 
-4. 第四位的“5”与第五位的“1”进行比较，5大于1，互换位置，数组变成[2, 3, 4, 1, 5] 。
+4. 第四位的“5”与第五位的“1”进行比较，5大于1，互换位置，数组变成`[2, 3, 4, 1, 5]`。
 
-第一轮排序完成，可以看到最后一位的5，已经是正确的数了。然后，再对剩下的数[2, 3, 4, 1] 重复这个过程，每一轮都会在本轮最后一位上出现正确的数。直至剩下最后一个位置，所有排序结束。
+第一轮排序完成，可以看到最后一位的5，已经是正确的数了。然后，再对剩下的数`[2, 3, 4, 1]`重复这个过程，每一轮都会在本轮最后一位上出现正确的数。直至剩下最后一个位置，所有排序结束。
 
 ### 算法实现
 
 先定义一个交换函数，作用是交换两个位置的值。
 
-{% highlight javascript %}
-
+```javascript
 function swap(myArray, p1, p2){
-    var temp = myArray[p1];
-    myArray[p1] = myArray[p2];
-    myArray[p2] = temp;
+  var temp = myArray[p1];
+  myArray[p1] = myArray[p2];
+  myArray[p2] = temp;
 }
-
-{% endhighlight %}
+```
 
 然后定义主函数。
 
-{% highlight javascript %}
-
+```javascript
 function bubbleSort(myArray){
+  var len = myArray.length;
+  var i;
+  var j;
+  var stop;
 
-    var len = myArray.length,
-        i, j, stop;
-
-    for (i=0; i < len; i++){
-        for (j=0, stop=len-1-i; j < stop; j++){
-            if (myArray[j] > myArray[j+1]){
-                swap(myArray, j, j+1);
-            }
-        }
+  for (i = 0; i < len - 1; i++){
+    for (j = 0, stop = len - 1 - i; j < stop; j++){
+      if (myArray[j] > myArray[j + 1]){
+        swap(myArray, j, j + 1);
+      }
     }
+  }
 
-    return myArray;
+  return myArray;
 }
-
-{% endhighlight %}
+```
 
 ## 选择排序
 

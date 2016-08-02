@@ -278,7 +278,7 @@ one + two + three // "33"
 
 ### toLowerCase()，toUpperCase()
 
-`toLowerCase`方法用于将一个字符串全部转为小写，`toUpperCase`则是全部转为大写。
+`toLowerCase`方法用于将一个字符串全部转为小写，`toUpperCase`则是全部转为大写。它们都返回一个新字符串，不改变原字符串。
 
 ```javascript
 'Hello World'.toLowerCase()
@@ -293,7 +293,7 @@ one + two + three // "33"
 ```javascript
 String.prototype.toUpperCase.call(true)
 // 'TRUE'
-String.prototype.toUpperCase.call(['a','b','c'])
+String.prototype.toUpperCase.call(['a', 'b', 'c'])
 // 'A,B,C'
 ```
 
