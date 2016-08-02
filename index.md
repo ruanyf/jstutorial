@@ -48,6 +48,7 @@ modifiedOn: 2014-05-18
 
 <h2 id="advanced">JavaScript高级语法</h2>
 
+- [单线程模型](advanced/single-thread.html)
 - [定时器](advanced/timer.html)
 - [Promise](advanced/promise.html)
 - [严格模式](advanced/strict.html)
