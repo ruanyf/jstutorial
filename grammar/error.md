@@ -120,7 +120,7 @@ new 123
 
 var obj = {};
 obj.unknownMethod()
-// TypeError: undefined is not a function 
+// TypeError: obj.unknownMethod is not a function 
 ```
 
 上面代码的第二种情况，调用对象不存在的方法，会抛出TypeError错误。
