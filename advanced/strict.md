@@ -6,24 +6,22 @@ date: 2013-01-11
 modifiedOn: 2013-01-25
 ---
 
-## 概述
+除了正常的运行模式，JavaScript还有第二种运行模式：“严格模式”（strict mode）。顾名思义，这种模式采用更加严格的JavaScript语法。
 
-### 设计目的
+同样的代码，在”正常模式“和”严格模式“中，可能会有不一样的运行结果。一些在"正常模式"下可以运行的语句，在"严格模式"下将不能运行。掌握这些内容，有助于更细致深入地理解JavaScript，让你变成一个更好的程序员。
 
-除了正常运行模式，ECMAScript 5添加了第二种运行模式：“严格模式”（strict mode）。顾名思义，这种模式使得JavaScript在更严格的条件下运行。
+## 设计目的
 
-设立”严格模式“的目的，主要有以下几个：
+设立”严格模式“的目的，主要有以下几个。
 
-- 消除JavaScript语法的一些不合理、不严谨之处，减少一些怪异行为;
-- 增加更多报错的场合，消除代码运行的一些不安全之处，保证代码运行的安全；
-- 提高编译器效率，增加运行速度；
+- 明确禁止一些不合理、不严谨的语法，减少JavaScript的一些怪异行为。
+- 增加更多报错的场合，消除代码运行的一些不安全之处，保证代码运行的安全。
+- 提高编译器效率，增加运行速度。
 - 为未来新版本的JavaScript做好铺垫。
 
 “严格模式”体现了JavaScript更合理、更安全、更严谨的发展方向。
 
-同样的代码，在”正常模式“和”严格模式“中，可能会有不一样的运行结果。一些在"正常模式"下可以运行的语句，在"严格模式"下将不能运行。掌握这些内容，有助于更细致深入地理解JavaScript，让你变成一个更好的程序员。
-
-### 启用方法
+## 启用方法
 
 进入“严格模式”的标志，是一行字符串`use strict`。
 
@@ -54,16 +52,22 @@ modifiedOn: 2013-01-25
 
 如果字符串`use strict`出现在代码中间，则不起作用，即严格模式必须从代码一开始就生效。
 
-两个不同模式的脚本合并成一个文件，如果严格模式的脚本在前，则合并后的脚本都是”严格模式“；如果正常模式的脚本在前，则合并后的脚本都是”正常模式“。总之，这两种情况下，合并后的结果都是不正确的。因此，建议在多个脚本需要合并的场合，”严格模式“只在函数中打开，不针对整个脚本打开。
-
 **（2）针对单个函数**
 
-将“use strict”放在函数体的第一行，则整个函数以“严格模式”运行。
+`use strict`放在函数体的第一行，则整个函数以“严格模式”运行。
 
 ```javascript
 function strict() {
   'use strict';
   return '这是严格模式';
+}
+
+function strict2() {
+  'use strict';
+  function f() {
+    return '这也是严格模式';
+  }
+  return f();
 }
 
 function notStrict() {
@@ -73,11 +77,13 @@ function notStrict() {
 
 **（3）脚本文件的变通写法**
 
-因为在脚本文件第一行放置`use strict`不利于文件合并，所以更好的做法是，借用第二种方法，将整个脚本文件放在一个立即执行的匿名函数之中。
+两个不同模式的脚本合并成一个文件，如果严格模式的脚本在前，则合并后的脚本都是”严格模式“；如果正常模式的脚本在前，则合并后的脚本都是”正常模式“。总之，这两种情况下，合并后的结果都是不正确的。
+
+正确的做法是，使用前面第二种方法，将整个脚本文件放在一个立即执行的匿名函数之中。
 
 ```javascript
 (function () {
-  "use strict";
+  'use strict';
   // some code here
 })();
 ```
@@ -86,49 +92,53 @@ function notStrict() {
 
 严格模式使得JavaScript的语法变得更严格，更多的操作会显式报错。其中有些操作，在正常模式下只会默默地失败，不会报错。
 
-### 字符串的length属性不可写
+### 只读属性不可写
 
 严格模式下，设置字符串的`length`属性，会报错。
 
 ```javascript
 'use strict';
 'abc'.length = 5;
+// TypeError: Cannot assign to read only property 'length' of string 'abc'
 ```
 
-实际上，严格模式下，对只读属性赋值，或者删除不可配置（nonconfigurable）属性都会报错。
-
-### eval、arguments不可用作函数名
-
-使用`eval`，或者在函数内部使用`arguments`，作为标识名，将会报错。
-
-下面的语句都会报错。
+这是因为`length`是只读属性。
 
 ```javascript
-'use strict';
-eval = 17;
-arguments++;
-++eval;
-var obj = { set p(arguments) { } };
-var eval;
-try { } catch (arguments) { }
-function x(eval) { }
-function arguments() { }
-var y = function eval() { };
-var f = new Function("arguments", "'use strict'; return 17;");
+var str = Object('abc');
+Object.getOwnPropertyDescriptor(str, 'length')
+// Object {
+//   value: 3,
+//   writable: false,
+//   enumerable: false,
+//   configurable: false
+// }
 ```
 
-### 只读属性不可写
-
-正常模式下，对一个对象的只读属性进行赋值，不会报错，只会默默地失败。严格模式下，将报错。
+严格模式下，对只读属性赋值，或者删除不可配置（nonconfigurable）属性都会报错。
 
 ```javascript
+// 对只读属性赋值会报错
 'use strict';
-
 var o = {};
 
-Object.defineProperty(o, 'v', { value: 1, writable: false });
+Object.defineProperty(o, 'a', {
+  value: 37,
+  writable: false
+});
 
-o.v = 2; // 报错
+o.a = 123;
+// TypeError: Cannot assign to read only property 'a' of object #<Object>
+
+// 删除不可配置的属性会报错
+'use strict';
+var o = Object.defineProperty({}, 'p', {
+  value: 1,
+  configurable: false
+});
+
+delete o.p
+// TypeError: Cannot delete property 'p' of #<Object>
 ```
 
 ### 只设置了赋值器的属性不可写
@@ -136,7 +146,7 @@ o.v = 2; // 报错
 严格模式下，对一个只设置了赋值器（getter）的属性赋值，会报错。
 
 ```javascript
-"use strict";
+'use strict';
 
 var o = {
   get v() { return 1; }
@@ -157,14 +167,23 @@ Object.preventExtensions(o);
 o.v = 1; // 报错
 ```
 
-### 禁止删除不可删除的属性
+### eval、arguments不可用作标识名
 
-严格模式下，删除一个不可删除的属性，会报错。
+严格模式下，使用`eval`或者`arguments`作为标识名，将会报错。
+
+下面的语句都会报错。
 
 ```javascript
 'use strict';
-
-delete Object.prototype; // 报错
+var eval = 17;
+var arguments = 17;
+var obj = { set p(arguments) { } };
+try { } catch (arguments) { }
+function x(eval) { }
+function arguments() { }
+var y = function eval() { };
+var f = new Function('arguments', "'use strict'; return 17;");
+// SyntaxError: Unexpected eval or arguments in strict mode
 ```
 
 ### 函数不能有重名的参数
@@ -287,10 +306,10 @@ f(); // 报错
 
 ### 禁止删除变量
 
-严格模式下无法删除变量，如果使用`delete`命令删除一个变量，会报错。只有对象的属性，且属性的描述对象的`configurable`属性设置为true，才能被`delete`命令删除。
+严格模式下无法删除变量，如果使用`delete`命令删除一个变量，会报错。只有对象的属性，且属性的描述对象的`configurable`属性设置为`true`，才能被`delete`命令删除。
 
 ```javascript
-"use strict";
+'use strict';
 var x;
 delete x; // 语法错误
 
@@ -339,6 +358,8 @@ with (o) { // SyntaxError
 })()
 ```
 
+上面代码中，由于`eval`语句内部是一个独立作用域，所以内部的变量`x`不会泄露到外部。
+
 注意，如果希望`eval`语句也使用严格模式，有两种方式。
 
 ```javascript
@@ -386,12 +407,12 @@ f(1); // 严格模式为[2, 1]
 
 JavaScript语言的下一个版本是ECMAScript 6，为了平稳过渡，严格模式引入了一些ES6语法。
 
-### 函数必须声明在顶层
+### 非函数代码块不得声明函数
 
-JavaScript的新版本ES6会引入“块级作用域”。为了与新版本接轨，严格模式只允许在全局作用域或函数作用域的顶层声明函数。也就是说，不允许在非函数的代码块内声明函数。
+JavaScript的新版本ES6会引入“块级作用域”。为了与新版本接轨，严格模式只允许在全局作用域或函数作用域声明函数。也就是说，不允许在非函数的代码块内声明函数。
 
 ```javascript
-"use strict";
+'use strict';
 if (true) {
   function f1() { } // 语法错误
 }
