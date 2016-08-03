@@ -415,7 +415,7 @@ function foo(x) {
 
 ### 函数本身的作用域
 
-函数本身也是一个值，也有自己的作用域。它的作用域绑定其声明时所在的作用域。
+函数本身也是一个值，也有自己的作用域。它的作用域与变量一样，就是其声明时所在的作用域，与其运行时所在的作用域无关。
 
 ```javascript
 var a = 1;
@@ -436,11 +436,11 @@ f() // 1
 很容易犯错的一点是，如果函数`A`调用函数`B`，却没考虑到函数`B`不会引用函数`A`的内部变量。
 
 ```javascript
-var x = function (){
+var x = function () {
   console.log(a);
 };
 
-function y(f){
+function y(f) {
   var a = 2;
   f();
 }
@@ -956,7 +956,7 @@ a // 1
 eval('return;');
 ```
 
-由于`eval`没有自己的作用域，都在当前作用域内执行，因此可能会修改其他外部变量的值，造成安全问题。
+`eval`没有自己的作用域，都在当前作用域内执行，因此可能会修改当前作用域的变量的值，造成安全问题。
 
 ```javascript
 var a = 1;
@@ -965,14 +965,43 @@ eval('a = 2');
 a // 2
 ```
 
-上面代码中，`eval`命令修改了外部变量a的值。由于这个原因，所以`eval`有安全风险，如果无法做到作用域隔离，最好不要使用。此外，`eval`的命令字符串不会得到JavaScript引擎的优化，运行速度较慢，也是另一个不应该使用它的理由。通常情况下，`eval`最常见的场合是解析JSON数据字符串，正确的做法是这时应该使用浏览器提供的`JSON.parse`方法。
+上面代码中，`eval`命令修改了外部变量`a`的值。由于这个原因，`eval`有安全风险。
 
-ECMAScript 5将`eval`的使用分成两种情况，像上面这样的调用，就叫做“直接使用”，这种情况下`eval`的作用域就是当前作用域（即全局作用域或函数作用域）。另一种情况是，`eval`不是直接调用，而是“间接调用”，此时eval的作用域总是全局作用域。
+为了防止这种风险，JavaScript规定，如果使用严格模式，`eval`内部声明的变量，不会影响到外部作用域。
+
+```javascript
+(function f() {
+  'use strict';
+  eval('var foo = 123');
+  console.log(foo);  // ReferenceError: foo is not defined
+})()
+```
+
+上面代码中，函数`f`内部是严格模式，这时`eval`内部声明的`foo`变量，就不会影响到外部。
+
+不过，即使在严格模式下，`eval`依然可以读写当前作用域的变量。
+
+```javascript
+(function f() {
+  'use strict';
+  var foo = 1;
+  eval('foo = 2');
+  console.log(foo);  // 2
+})()
+```
+
+上面代码中，严格模式下，`eval`内部还是改写了外部变量，可见安全风险依然存在。
+
+此外，`eval`的命令字符串不会得到JavaScript引擎的优化，运行速度较慢。这也是一个不应该使用它的理由。
+
+通常情况下，`eval`最常见的场合是解析JSON数据字符串，不过正确的做法应该是使用浏览器提供的`JSON.parse`方法。
+
+JavaScript引擎内部，`eval`实际上是一个引用，默认调用一个内部方法。这使得`eval`的使用分成两种情况，一种是像上面这样的调用`eval(expression)`，这叫做“直接使用”，这种情况下`eval`的作用域就是当前作用域。除此之外的调用方法，都叫“间接调用”，此时`eval`的作用域总是全局作用域（为什么引用会造成函数作用域的差异，详见《面向对象编程》一章的《this》一节）。
 
 ```javascript
 var a = 1;
 
-function f(){
+function f() {
   var a = 2;
   var e = eval;
   e('console.log(a)');
@@ -983,24 +1012,13 @@ f() // 1
 
 上面代码中，`eval`是间接调用，所以即使它是在函数中，它的作用域还是全局作用域，因此输出的`a`为全局变量。
 
-eval的间接调用的形式五花八门，只要不是直接调用，几乎都属于间接调用。
+`eval`的间接调用的形式五花八门，只要不是直接调用，都属于间接调用。
 
 ```javascript
 eval.call(null, '...')
 window.eval('...')
 (1, eval)('...')
 (eval, eval)('...')
-(1 ? eval : 0)('...')
-(__ = eval)('...')
-var e = eval; e('...')
-(function(e) { e('...') })(eval)
-(function(e) { return e })(eval)('...')
-(function() { arguments[0]('...') })(eval)
-this.eval('...')
-this['eval']('...')
-[eval][0]('...')
-eval.call(this, '...')
-eval('eval')('...')
 ```
 
 上面这些形式都是`eval`的间接调用，因此它们的作用域都是全局作用域。
@@ -1008,7 +1026,7 @@ eval('eval')('...')
 与`eval`作用类似的还有`Function`构造函数。利用它生成一个函数，然后调用该函数，也能将字符串当作命令执行。
 
 ```javascript
-var jsonp = 'foo({"id":42})';
+var jsonp = 'foo({"id": 42})';
 
 var f = new Function( "foo", jsonp );
 // 相当于定义了如下函数
@@ -1022,6 +1040,8 @@ f(function(json){
 ```
 
 上面代码中，`jsonp`是一个字符串，`Function`构造函数将这个字符串，变成了函数体。调用该函数的时候，`jsonp`就会执行。这种写法的实质是将代码放到函数作用域执行，避免对全局作用域造成影响。
+
+不过，`new Function()`的写法也可以读写全局作用域，所以也是应该避免使用它。
 
 ## 参考链接
 

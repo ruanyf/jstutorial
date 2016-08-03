@@ -19,7 +19,7 @@ chapters:
 - nodejs
 
 introduction: 导论
-grammar: 基本语法
+grammar: 语法
 stdlib: 标准库
 oop: 面向对象编程
 dom: DOM

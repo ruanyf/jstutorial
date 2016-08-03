@@ -323,7 +323,12 @@ if ((popup !== null) && !popup.closed) {
 
 ## URL的编码/解码方法
 
-URL里面只允许出现英语字母、数值和少数几个标点符号，超出这个范围的字符，都会被浏览器转码。
+网页URL的合法字符分成两类。
+
+- URL元字符：分号（`;`），逗号（','），斜杠（`/`），问号（`?`），冒号（`:`），at（`@`），`&`，等号（`=`），加号（`+`），美元符号（`$`），井号（`#`）
+- 语义字符：`a-z`，`A-Z`，`0-9`，连词号（`-`），下划线（`_`），点（`.`），感叹号（`!`），波浪线（`~`），星号（`*`），单引号（`\``），圆括号（`()`）
+
+除了以上字符，其他字符出现在URL之中都必须转义，规则是根据操作系统的默认编码，将每个字节转为百分号（`%`）加上两个大写的十六进制字母。比如，UTF-8的操作系统上，`http://www.example.com/q=春节`这个URL之中，汉字“春节”不是URL的合法字符，所以被浏览器自动转成`http://www.example.com/q=%E6%98%A5%E8%8A%82`。其中，“春”转成了`%E6%98%A5`，“节”转成了“%E8%8A%82”。这是因为“春”和”节“的UTF-8编码分别是`E6 98 A5`和`E8 8A 82`，将每个字节前面加上百分号，就构成了URL编码。
 
 JavaScript提供四个URL的编码/解码方法。
 
@@ -334,61 +339,42 @@ JavaScript提供四个URL的编码/解码方法。
 
 ### encodeURI
 
-`encodeURI` 方法的参数为完整的统一资源标识符（URI）的字符串，它使用 1 到 4 个转义字符串来替换 UTF-8 编码字符串中的每个字符（只有由 2 个代理字符区组成的字符才用 4 个转义字符编码）。例如：
+`encodeURI` 方法的参数是一个字符串，代表整个URL。它会将元字符和语义字符之外的字符，都进行转义。
 
 ```javascript
-encodeURI('http://www.example.com?foo=bar&code=<p>')'</p>')
-// http://www.example.com?foo=bar&code=%3Cp%3E
-```
-
-需要注意的是，`encodeURI` 方法不会替换下列字符：
-
-类型 | 包含
---- | ---
-保留字符 | ; , / ? : @ & = + $
-非转义的字符 | 字母 数字 - _ . ! ~ * ' (  )
-数字符号 | #
-
-另外，如果试图编码一个非高（lead surrogates）-低（trail surrogates）代理位完整的代理对（surrogate pair），将会抛出一个 URIError 错误，例如：
-
-```javascript
-// 编码完整代理对 ok
-console.log(encodeURI('\uD800\uDFFF'));
-
-// 编码单独的高代理位抛出 "Uncaught URIError: URI malformed"
-console.log(encodeURI('\uD800'));
-
-// 编码单独的低代理位抛出 "Uncaught URIError: URI malformed"
-console.log(encodeURI('\uDFFF'));
+encodeURI('http://www.example.com/q=春节')
+// "http://www.example.com/q=%E6%98%A5%E8%8A%82"
 ```
 
 ### encodeURIComponent
 
-`encodeURIComponent` 方法的参数为统一资源标识符（URI）的一部分的字符串，它使用 1 到 4 个转义字符串来替换 UTF-8 编码字符串中的每个字符（只有由 2 个代理字符区组成的字符才用 4 个转义字符编码）。
-
-与 `encodeURI` 方法的区别在于，`encodeURIComponent` 方法会转义除了字母、数字、-、\_、.、!、~、\*、'、( 和 ) 之外的所有字符。例如：
+`encodeURIComponent`只转除了语义字符之外的字符，元字符也会被转义。因此，它的参数通常是URL的路径或参数值，而不是整个URL。
 
 ```javascript
-encodeURIComponent('http://www.example.com?foo=bar&code=<p>')'</p>')
-// http%3A%2F%2Fwww.example.com%3Ffoo%3Dbar%26code%3D%3Cp%3E""
+encodeURIComponent('春节')
+// "%E6%98%A5%E8%8A%82"
+encodeURIComponent('http://www.example.com/q=春节')
+// "http%3A%2F%2Fwww.example.com%2Fq%3D%E6%98%A5%E8%8A%82"
 ```
+
+上面代码中，`encodeURIComponent`会连URL元字符一起转义，所以通常只用它转URL的片段。
 
 ### decodeURI
 
-`decodeURI` 方法的参数为一个字符串，用于解码由 `encodeURI` 方法或者其它类似方法编码的统一资源标识符（URI）。例如：
+`decodeURI`用于还原转义后的URL。它是`encodeURI`方法的逆运算。
 
 ```javascript
-decodeURI('http://www.example.com?foo=bar&code=%3Cp%3E')
-// http://www.example.com?foo=bar&code=<p>
+decodeURI('http://www.example.com/q=%E6%98%A5%E8%8A%82')
+// "http://www.example.com/q=春节"
 ```
 
 ### decodeURIComponent
 
-`decodeURIComponent` 方法的参数为一个字符串，用于解码由 `encodeURIComponent` 方法或者其它类似方法编码的部分统一资源标识符（URI）。例如：
+`decodeURIComponent`用于还原转义后的URL片段。它是`encodeURIComponent`方法的逆运算。
 
 ```javascript
-decodeURIComponent('http%3A%2F%2Fwww.example.com%3Ffoo%3Dbar%26code%3D%3Cp%3E')
-// http://www.example.com?foo=bar&code=<p>
+decodeURIComponent('%E6%98%A5%E8%8A%82')
+// "春节"
 ```
 
 ## error事件和onerror属性

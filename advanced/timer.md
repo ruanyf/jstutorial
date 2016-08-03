@@ -1,6 +1,6 @@
 ---
 title: 定时器
-category: bom
+category: advanced
 layout: page
 date: 2014-10-12
 modifiedOn: 2014-10-12

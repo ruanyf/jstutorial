@@ -5,14 +5,15 @@ date: 2012-11-18
 modifiedOn: 2014-05-18
 ---
 
-<h2 id="introduction">导论与历史</h2>
+<h2 id="introduction">导论</h2>
 
-- [导论](introduction/intro.html)
+- [概述](introduction/intro.html)
 - [JavaScript的历史](introduction/history.html)
 
-<h2 id="grammar">基本语法</h2>
+<h2 id="grammar">语法</h2>
 
-- [概述](grammar/basic.html)
+- [基本语法](grammar/basic.html)
+- [数据类型](grammar/types.html)
 - [数值](grammar/number.html)
 - [字符串](grammar/string.html)
 - [对象](grammar/object.html)
@@ -34,6 +35,7 @@ modifiedOn: 2014-05-18
 - [Date对象](stdlib/date.html)
 - [RegExp对象](stdlib/regexp.html)
 - [JSON对象](stdlib/json.html)
+- [console对象](stdlib/console.html)
 - [属性描述对象](stdlib/attributes.html)
 
 <h2 id="oop">面向对象编程</h2>
@@ -43,6 +45,13 @@ modifiedOn: 2014-05-18
 - [prototype 对象](oop/prototype.html)
 - [Object 对象与继承](oop/object.html)
 - [面向对象编程的模式](oop/pattern.html)
+
+<h2 id="advanced">高级语法</h2>
+
+- [单线程模型](advanced/single-thread.html)
+- [定时器](advanced/timer.html)
+- [Promise](advanced/promise.html)
+- [严格模式](advanced/strict.html)
 
 <h2 id="dom">DOM</h2>
 
@@ -57,7 +66,6 @@ modifiedOn: 2014-05-18
 <h2 id="bom">浏览器环境</h2>
 
 - [浏览器的JavaScript引擎](bom/engine.html)
-- [定时器](bom/timer.html)
 - [window对象](bom/window.html)
 - [History对象](bom/history.html)
 - [Cookie](bom/cookie.html)
@@ -87,21 +95,6 @@ modifiedOn: 2014-05-18
 - [WebRTC](htmlapi/webrtc.html)
 - [Web Components](htmlapi/webcomponents.html)
 
-<h2 id="tool">开发工具</h2>
-
-- [console对象](tool/console.html)
-- [Gulp：任务自动管理工具](tool/gulp.html)
-- [Browserify：浏览器加载Node.js模块](tool/browserify.html)
-- [Source map](tool/sourcemap.html)
-- [JavaScript 测试](tool/testing.html)
-
-<h2 id="advanced">JavaScript高级语法</h2>
-
-- [Promise](advanced/promise.html)
-- [有限状态机](advanced/fsm.html)
-- [MVC模式和Backbone.js](advanced/backbonejs.html)
-- [严格模式](advanced/strict.html)
-
 ---
 
 <h2 id="library">废稿</h2>
@@ -117,6 +110,12 @@ modifiedOn: 2014-05-18
 - [Grunt：任务自动管理工具](tool/grunt.html)
 - [RequireJS和AMD规范](tool/requirejs.html)
 - [Lint工具](tool/lint.html)
+- [MVC模式和Backbone.js](advanced/backbonejs.html)
+- [Gulp：任务自动管理工具](tool/gulp.html)
+- [Browserify：浏览器加载Node.js模块](tool/browserify.html)
+- [JavaScript 测试](tool/testing.html)
+- [Source map](tool/sourcemap.html)
+- [有限状态机](advanced/fsm.html)
 
 <h2 id="jquery">草稿：jQuery</h2>
 

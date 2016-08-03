@@ -52,9 +52,7 @@ if (a) {
 
 因此，总是使用大括号表示区块。
 
-另外，区块起首的大括号的位置，有许多不同的写法。
-
-最流行的有两种。一种是起首的大括号另起一行：
+另外，区块起首的大括号的位置，有许多不同的写法。最流行的有两种。一种是起首的大括号另起一行：
 
 ```javascript
 block
@@ -519,6 +517,8 @@ function doAction(action) {
 
 ## 参考链接
 
-- Eric Elliott, Programming JavaScript Applications, [Chapter 2. JavaScript Style Guide](http://chimera.labs.oreilly.com/books/1234000000262/ch02.html), O'reilly, 2013.
+- Eric Elliott, Programming JavaScript Applications, [Chapter 2. JavaScript Style Guide](http://chimera.labs.oreilly.com/books/1234000000262/ch02.html), O'Reilly, 2013
 - Axel Rauschmayer, [A meta style guide for JavaScript](http://www.2ality.com/2013/07/meta-style-guide.html)
+- Axel Rauschmayer, [Automatic semicolon insertion in JavaScript](http://www.2ality.com/2011/05/semicolon-insertion.html)
+- Rod Vagg, [JavaScript and Semicolons](http://dailyjs.com/2012/04/19/semicolons/)
 
