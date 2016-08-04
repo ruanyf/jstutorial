@@ -134,7 +134,7 @@ Stream接口分成三类。
 ```javascript
 var Readable = require('stream').Readable;
 
-var rs = new Readable;
+var rs = new Readable();
 rs.push('beep ');
 rs.push('boop\n');
 rs.push(null);
@@ -211,6 +211,10 @@ readable事件表示系统缓冲之中有可读的数据，使用read方法去�
 - Readable.resume()：恢复暂停的数据流。
 - readable.unpipe()：从管道中移除目的地数据流。如果该方法使用时带有参数，会阻止“可读数据流”进入某个特定的目的地数据流。如果使用时不带有参数，则会移除所有的目的地数据流。
 
+### readable 属性
+
+一个数据流的`readable`属性返回一个布尔值。如果数据流是一个仍然打开的可读数据流，就返回`true`，否则返回`false`。
+
 ### read()
 
 read方法从系统缓存读取并返回数据。如果读不到数据，则返回null。
@@ -233,7 +237,7 @@ readable.on('readable', function() {
 
 ### _read()
 
-可读数据流的_read方法，可以将数据放入可读数据流。
+可读数据流的`_read`方法，可以将数据放入可读数据流。
 
 ```javascript
 var Readable = require('stream').Readable;
@@ -259,6 +263,8 @@ abcdefghijklmnopqrstuvwxyz
 
 调用该方法，会使得数据流返回指定编码的字符串，而不是缓存之中的二进制对象。比如，调用`setEncoding('utf8')`，数据流会返回UTF-8字符串，调用`setEncoding('hex')`，数据流会返回16进制的字符串。
 
+`setEncoding`的参数是字符串的编码方法，比如`utf8`、`ascii`、`base64`等。
+
 该方法会正确处理多字节的字符，而缓存的方法`buf.toString(encoding)`不会。所以如果想要从数据流读取字符串，应该总是使用该方法。
 
 ```javascript
@@ -272,9 +278,10 @@ readable.on('data', function(chunk) {
 
 ### resume()
 
-resume方法会使得“可读数据流”继续释放data事件，即转为流动态。
+`resume`方法会使得“可读数据流”继续释放`data`事件，即转为流动态。
 
 ```javascript
+// 新建一个readable数据流
 var readable = getReadableStreamSomehow();
 readable.resume();
 readable.on('end', function(chunk) {
@@ -282,13 +289,14 @@ readable.on('end', function(chunk) {
 });
 ```
 
-上面代码中，调用resume方法使得数据流进入流动态，只定义end事件的监听函数，不定义data事件的监听函数，表示不从数据流读取任何数据，只监听数据流到达尾部。
+上面代码中，调用`resume`方法使得数据流进入流动态，只定义`end`事件的监听函数，不定义`data`事件的监听函数，表示不从数据流读取任何数据，只监听数据流到达尾部。
 
 ### pause()
 
-pause方法使得流动态的数据流，停止释放data事件，转而进入暂停态。任何此时已经可以读到的数据，都将停留在系统缓存。
+`pause`方法使得流动态的数据流，停止释放`data`事件，转而进入暂停态。任何此时已经可以读到的数据，都将停留在系统缓存。
 
 ```javascript
+// 新建一个readable数据流
 var readable = getReadableStreamSomehow();
 readable.on('data', function(chunk) {
   console.log('读取%d字节的数据', chunk.length);
@@ -395,6 +403,16 @@ setTimeout(function() {
 
 ### 事件
 
+下面代码中，`s`是一个readable数据流，它可以监听以下事件。
+
+```javas
+s.on('data', f);    // 收到新的数据时，data事件就会发生，触发f()
+s.on('end', f);     // 数据读取完以后，不会再收到数据了，end事件发生，触发f()
+s.on('error', f);   // 发生错误时，error事件发生，触发f()
+s.readable          // => true if it is a readable stream that is still open
+s.pause();          // Pause "data" events.  For throttling uploads, e.g.
+s.resume();         // Resume again
+
 （1）readable
 
 readable事件在数据流能够向外提供数据时触发。
@@ -490,13 +508,26 @@ readableStream.on('data', function(chunk) {
 });
 ```
 
-上面代码中，fs模块的createWriteStream方法针对特定文件，创建了一个“可写数据流”，本质上就是对写入操作部署了Stream接口。然后，“可写数据流”的write方法，可以将数据写入文件。
+上面代码中，fs模块的`createWriteStream`方法针对特定文件，创建了一个“可写数据流”，本质上就是对写入操作部署了`Stream`接口。然后，“可写数据流”的`write`方法，可以将数据写入文件。
+
+### writable属性
+
+`writable`属性返回一个布尔值。如果数据流仍然打开，并且可写，就返回`true`，否则返回`false`。
+
+```javascript
+s.writeable
+```
 
 ### write()
 
-write方法用于向“可写数据流”写入数据。它接受两个参数，一个是写入的内容，可以是字符串，也可以是一个stream对象（比如可读数据流），另一个是写入完成后的回调函数。
+`write`方法用于向“可写数据流”写入数据。它接受两个参数，一个是写入的内容，可以是字符串，也可以是一个`stream`对象（比如可读数据流）或`buffer`对象（表示二进制数据），另一个是写入完成后的回调函数，它是可选的。
 
-它返回一个布尔值，表示本次数据是否处理完成。如果返回true，就表示可以写入新的数据了。如果等待写入的数据被缓存了，就返回false。不过，在返回false的情况下，也可以继续传入新的数据等待写入。只是这时，新的数据不会真的写入，只会缓存在内存中。为了避免内存消耗，比较好的做法还是等待该方法返回true，然后再写入。
+```javascript
+s.write(buffer);          // 写入二进制数据
+s.write(string, encoding) // 写入字符串，编码默认为utf-8
+```
+
+`write`方法返回一个布尔值，表示本次数据是否处理完成。如果返回`true`，就表示可以写入新的数据了。如果等待写入的数据被缓存了，就返回`false`，表示此时不能立刻写入新的数据。不过，返回`false`的情况下，也可以继续传入新的数据等待写入。只是这时，新的数据不会真的写入，只会缓存在内存中。为了避免内存消耗，比较好的做法还是等待该方法返回`true`，然后再写入。
 
 ```javascript
 var fs = require('fs');
@@ -505,7 +536,7 @@ var ws = fs.createWriteStream('message.txt');
 ws.write('beep ');
 
 setTimeout(function () {
-    ws.end('boop\n');
+  ws.end('boop\n');
 }, 1000);
 ```
 
@@ -521,7 +552,15 @@ setDefaultEncoding方法用于将写入的数据编码成新的格式。它返�
 
 ### end()
 
-end方法用于终止“可写数据流”。该方法可以接受三个参数，全部都是可选参数。第一个参数是最后所要写入的数据，可以是字符串，也可以是stream对象；第二个参数是写入编码；第三个参数是一个回调函数，finish事件触发时，会调用这个回调函数。
+`end`方法用于终止“可写数据流”。该方法可以接受三个参数，全部都是可选参数。第一个参数是最后所要写入的数据，可以是字符串，也可以是`stream`对象或`buffer`对象；第二个参数是写入编码；第三个参数是一个回调函数，`finish`事件发生时，会触发这个回调函数。
+
+```javascript
+s.end()                  // 关闭可写数据流
+s.end(buffer)            // 最后一段写入二进制数据，然后关闭可写数据流
+s.end(str, encoding)     // 最后一段写入字符串，然后关闭可写数据流
+```
+
+下面是一个例子。
 
 ```javascript
 var file = fs.createWriteStream('example.txt');
@@ -543,7 +582,13 @@ file.write('hello, '); // 报错
 
 （1）drain事件
 
-`writable.write(chunk)`返回false以后，当缓存数据全部写入完成，可以继续写入时，会触发drain事件。
+`writable.write(chunk)`返回`false`以后，当缓存数据全部写入完成，可以继续写入时，会触发`drain`事件，表示缓存空了。
+
+```javascript
+s.on('drain', f);
+```
+
+下面是一个例子。
 
 ```javascript
 function writeOneMillionTimes(writer, data, encoding, callback) {

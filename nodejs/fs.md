@@ -8,12 +8,23 @@ modifiedOn: 2015-02-08
 
 `fs`是`filesystem`的缩写，该模块提供本地文件的读写能力，基本上是POSIX文件操作命令的简单包装。但是，这个模块几乎对所有操作提供异步和同步两种操作方式，供开发者选择。
 
-## readFileSync()
+## readFile()，readFileSync()
 
-readFileSync方法用于同步读取文件，返回一个字符串。
+`readFile`方法用于异步读取数据。
 
 ```javascript
-var text = fs.readFileSync(fileName, "utf8");
+fs.readFile('image.png', function (err, buffer) {
+  if (err) throw err;
+  process(buffer);
+});
+```
+
+`readFile`方法的第二个参数参数是读取完成后的回调函数。该函数的第一个参数是发生错误时的错误对象，第二个参数是代表文件内容的`Buffer`实例。
+
+`readFileSync`方法用于同步读取文件，返回一个字符串。
+
+```javascript
+var text = fs.readFileSync(fileName, 'utf8');
 
 // 将文件按行拆成数组
 text.split(/\r?\n/).forEach(function (line) {
@@ -21,23 +32,40 @@ text.split(/\r?\n/).forEach(function (line) {
 });
 ```
 
-该方法的第一个参数是文件路径，第二个参数是文本文件编码，默认为utf8。
+`readFileSync`方法的第一个参数是文件路径，第二个参数是文本文件编码，默认为`utf8`。
 
 不同系统的行结尾字符不同，可以用下面的方法判断。
 
 ```javascript
-
 // 方法一，查询现有的行结尾字符
-var EOL = fileContents.indexOf("\r\n") >= 0 ? "\r\n" : "\n";
+var EOL =
+  fileContents.indexOf('\r\n') >= 0 ? '\r\n' : '\n';
 
 // 方法二，根据当前系统处理
-var EOL = (process.platform === 'win32' ? '\r\n' : '\n')
-
+var EOL =
+  (process.platform === 'win32' ? '\r\n' : '\n');
 ```
 
-## writeFileSync()
+## writeFile()，writeFileSync()
 
-writeFileSync方法用于同步写入文件。
+`writeFile`方法用于异步写入文件。
+
+```javascript
+fs.writeFile('message.txt', 'Hello Node.js', (err) => {
+  if (err) throw err;
+  console.log('It\'s saved!');
+});
+```
+
+上面代码中，`writeFile`方法的第一个参数是写入的文件名，第二个参数是写入的字符串，第三个参数是回调函数。
+
+回调函数前面，还可以再加一个参数，表示写入字符串的编码（默认是`utf8`）。
+
+```javascript
+fs.writeFile('message.txt', 'Hello Node.js', 'utf8', callback);
+```
+
+`writeFileSync`方法用于同步写入文件。
 
 ```javascript
 fs.writeFileSync(fileName, str, 'utf8');

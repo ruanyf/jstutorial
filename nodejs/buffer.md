@@ -8,28 +8,64 @@ modifiedOn: 2015-06-07
 
 ## 概述
 
-Buffer对象是Node.js用来处理二进制数据的一个接口。JavaScript比较擅长处理Unicode数据，对于处理二进制格式的数据（比如TCP数据流），就不太擅长。Buffer对象就是为了解决这个问题而提供的。该对象也是一个构造函数，它的实例代表了V8引擎分配的一段内存，基本上是一个数组，成员都为整数值。
+`Buffer`对象是Node处理二进制数据的一个接口。它是Node原生提供的全局对象，可以直接使用，不需要`require('buffer')`。
 
-Buffer是Node原生提供的全局对象，可以直接使用，不需要`require('buffer')`。
+JavaScript比较擅长处理字符串，对于处理二进制数据（比如TCP数据流），就不太擅长。`Buffer`对象就是为了解决这个问题而设计的。它是一个构造函数，生成的实例代表了V8引擎分配的一段内存，是一个类似数组的对象，成员都为0到255的整数值，即一个8位的字节。
 
-Buffer对象与字符串的互相转换，需要指定编码格式。目前，Buffer对象支持以下编码格式。
+```javascript
+// 生成一个256字节的Buffer实例
+var bytes = new Buffer(256);
+
+// 遍历每个字节，写入内容
+for (var i = 0; i < bytes.length; i++) {
+  bytes[i] = i;
+}
+
+// 生成一个buffer的view
+// 从240字节到256字节
+var end = bytes.slice(240, 256);
+
+end[0] // 240
+end[0] = 0;
+end[0] // 0
+```
+
+上面代码演示了如何生成`Buffer`对象实例，以及它的赋值和取值。
+
+除了直接赋值，`Buffer`实例还可以拷贝生成。
+
+```javascript
+var bytes = new Buffer(8);
+
+for (var i = 0; i < bytes.length; i++) {
+  bytes[i] = i;
+}
+
+var more = new Buffer(4);
+bytes.copy(more, 0, 4, 8);
+more[0] // 4
+```
+
+上面代码中，`copy`方法将`bytes`实例的4号成员到7号成员的这一段，都拷贝到了`more`实例从0号成员开始的区域。
+
+`Buffer`对象与字符串的互相转换，需要指定编码格式。目前，Buffer对象支持以下编码格式。
 
 - ascii
 - utf8
-- utf16le：UTF-16的小头编码，支持大于U+10000的四字节字符。
+- utf16le：UTF-16的小端编码，支持大于U+10000的四字节字符。
 - ucs2：utf16le的别名。
 - base64
 - hex：将每个字节转为两个十六进制字符。
 
-V8引擎将Buffer对象占用的内存，解释为一个整数数组，而不是二进制数组。所以，`new Uint32Array(new Buffer([1, 2, 3, 4]))`，生成的`Uint32Array`数组是一个4个成员的`Uint32Array`数组，而不是只有单个成员（`[0x1020304]`或者`[0x4030201]`）。
+## 与二进制数组的关系
 
-注意，这时二进制数组所对应的内存是从Buffer对象拷贝的，而不是共享的。二进制数组的`buffer`属性，保留指向原Buffer对象的指针。
+`TypedArray`构造函数可以接受`Buffer`实例作为参数，生成一个二进制数组。比如，`new Uint32Array(new Buffer([1, 2, 3, 4]))`，生成一个4个成员的二进制数组。注意，新数组的成员有四个，而不是只有单个成员（`[0x1020304]`或者`[0x4030201]`）。另外，这时二进制数组所对应的内存是从Buffer对象拷贝的，而不是共享的。二进制数组的`buffer`属性，保留指向原Buffer对象的指针。
 
 二进制数组的操作，与Buffer对象的操作基本上是兼容的，只有轻微的差异。比如，二进制数组的`slice`方法返回原内存的拷贝，而Buffer对象的`slice`方法创造原内存的一个视图（view）。
 
 ## Buffer构造函数
 
-Buffer作为构造函数，可以用`new`命令生成一个实例，它可以接受多种形式的参数。
+`Buffer`作为构造函数，可以用`new`命令生成一个实例，它可以接受多种形式的参数。
 
 ```javascript
 // 参数是整数，指定分配多少个字节内存
@@ -41,6 +77,8 @@ hello.toString() // 'Hello'
 
 // 参数是字符串（默认为utf8编码）
 var hello = new Buffer('Hello');
+hello.length // 5
+hello.toString() // "Hello"
 
 // 参数是字符串（不省略编码）
 var hello = new Buffer('Hello', 'utf8');
@@ -145,7 +183,7 @@ length属性是可写的，但是这会导致未定义的行为，不建议使�
 
 ### write()
 
-write方法可以向指定的Buffer对象写入数据。它的第一个参数是所写入的内容，第二个参数（可省略）是所写入的起始位置（从0开始），第三个参数（可省略）是编码方式，默认为utf8。
+`write`方法可以向指定的Buffer对象写入数据。它的第一个参数是所写入的内容，第二个参数（可省略）是所写入的起始位置（默认从0开始），第三个参数（可省略）是编码方式，默认为`utf8`。
 
 ```javascript
 var buf = new Buffer(5);
@@ -169,7 +207,7 @@ chunk.toString()
 
 ### toString()
 
-toString方法将Buffer对象，按照指定编码（默认为utf8）转为字符串。
+`toString`方法将Buffer实例，按照指定编码（默认为`utf8`）转为字符串。
 
 ```javascript
 var hello = new Buffer('Hello');

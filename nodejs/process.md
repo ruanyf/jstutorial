@@ -238,7 +238,7 @@ if (err) {
 
 ### process.on()
 
-`process.on`方法用来监听各种事件，并指定回调函数。
+`process`对象部署了EventEmitter接口，可以使用`on`方法监听各种事件，并指定回调函数。
 
 ```javascript
 process.on('uncaughtException', function(err){
@@ -253,18 +253,23 @@ setTimeout(function(){
 
 上面代码是`process`监听Node的一个全局性事件`uncaughtException`，只要有错误没有捕获，就会触发这个事件。
 
-process支持的事件有以下一些。
+`process`支持的事件还有下面这些。
 
-- data事件：数据输出输入时触发
-- SIGINT事件：接收到系统信号时触发
+- `data`事件：数据输出输入时触发
+- `SIGINT`事件：接收到系统信号`SIGINT`时触发，主要是用户按`Ctrl + c`时触发。
+- `SIGTERM`事件：系统发出进程终止信号`SIGTERM`时触发
+- `exit`事件：进程退出前触发
 
 ```javascript
-
 process.on('SIGINT', function () {
   console.log('Got a SIGINT. Goodbye cruel world');
   process.exit(0);
 });
 
+// 也可以忽略这个信号
+process.on('SIGINT', function() {
+  console.log("Ignored Ctrl-C");
+});
 ```
 
 使用时，向该进程发出系统信号，就会导致进程退出。
@@ -273,13 +278,13 @@ process.on('SIGINT', function () {
 $ kill -s SIGINT [process_id]
 ```
 
-SIGTERM信号表示内核要求当前进程停止，进程可以自行停止，也可以忽略这个信号。
+`SIGTERM`信号表示内核要求当前进程停止，进程可以自行停止，也可以忽略这个信号。
 
 ```javascript
-
 var http = require('http');
 
 var server = http.createServer(function (req, res) {
+  // ...
 });
 
 process.on('SIGTERM', function () {
@@ -290,7 +295,15 @@ process.on('SIGTERM', function () {
 
 ```
 
-上面代码表示，进程接到SIGTERM信号之后，关闭服务器，然后退出进程。需要注意的是，这时进程不会马上退出，而是要回应完最后一个请求，处理完所有回调函数，然后再退出。
+上面代码表示，进程接到`SIGTERM`信号之后，关闭服务器，然后退出进程。需要注意的是，这时进程不会马上退出，而是要回应完最后一个请求，处理完所有回调函数，然后再退出。
+
+`exit`事件在Node进程退出前触发。
+
+```javascript
+process.on('exit', function() {
+  console.log('Goodbye');
+});
+```
 
 ### process.kill()
 
