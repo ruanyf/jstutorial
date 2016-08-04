@@ -229,7 +229,7 @@ try {
 但是由于存在函数名的提升，所以在条件语句中声明函数，可能是无效的，这是非常容易出错的地方。
 
 ```javascript
-if (false){
+if (false) {
   function f() {}
 }
 

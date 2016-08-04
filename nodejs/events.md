@@ -8,23 +8,21 @@ modifiedOn: 2014-10-20
 
 ## 概述
 
-### 基本用法
-
 `Events`模块是Node对“发布/订阅”模式（publish/subscribe）的实现。一个对象通过这个模块，向另一个对象传递消息。
 
-该模块通过`EventEmitter`属性，提供了一个构造函数。该构造函数的实例具有on方法，可以用来监听指定事件，并触发回调函数。任意对象都可以发布指定事件，被`EventEmitter`实例的`on`方法监听到。
+该模块通过`EventEmitter`属性，提供了一个构造函数。该构造函数的实例具有`on`方法，可以用来监听指定事件，并触发回调函数。任意对象都可以发布指定事件，被`EventEmitter`实例的`on`方法监听到。
 
 ```javascript
 var EventEmitter = require('events').EventEmitter;
-var ee = new EventEmitter();
+var emitter = new EventEmitter();
 
-ee.on('someEvent', function () {
+emitter.on('someEvent', function () {
   console.log('event has occured');
 });
 
 function f() {
   console.log('start');
-  ee.emit('someEvent');
+  emitter.emit('someEvent');
   console.log('end');
 }
 
@@ -38,46 +36,55 @@ f()
 
 上面代码也表明，`EventEmitter`对象的事件触发和监听是同步的，即只有事件的回调函数执行以后，函数`f`才会继续执行。
 
-### on方法
+## 实例对象的方法
 
-默认情况下，Node.js允许同一个事件最多可以指定10个回调函数。
+`EventEmitter`实例对象的方法如下。
+
+- `emitter.on(name, f)` 对事件`name`指定监听函数`f`
+- `emitter.addListener(name, f)` `addListener`是`on`方法的别名
+- `emitter.once(name, f)` 与`on`方法类似，但是监听函数`f`是一次性的，使用后自动移除
+- `emitter.listeners(name)` 返回一个数组，成员是事件`name`所有监听函数
+- `emitter.removeListener(name, f)` 移除事件`name`的监听函数`f`
+- `emitter.removeAllListeners(name)` 移除事件`name`的所有监听函数
+
+### emit()
+
+`EventEmitter`实例对象的`emit`方法，用来触发事件。它的第一个参数是事件名称，其余参数都会依次传入回调函数。
 
 ```javascript
-ee.on("someEvent", function () { console.log("event 1"); });
-ee.on("someEvent", function () { console.log("event 2"); });
-ee.on("someEvent", function () { console.log("event 3"); });
-```
-
-超过10个回调函数，会发出一个警告。这个门槛值可以通过`setMaxListeners`方法改变。
-
-```javascript
-ee.setMaxListeners(20);
-```
-
-### emit方法
-
-EventEmitter实例的emit方法，用来触发事件。它的第一个参数是事件名称，其余参数都会依次传入回调函数。
-
-{% highlight javascript %}
-
 var EventEmitter = require('events').EventEmitter;
-var myEmitter = new EventEmitter;
+var myEmitter = new EventEmitter();
 
-var connection = function(id){
+var connection = function (id) {
   console.log('client id: ' + id);
 };
 
 myEmitter.on('connection', connection);
 myEmitter.emit('connection', 6);
+// client id: 6
+```
 
-{% endhighlight %}
+### setMaxListeners()
+
+Node默认允许同一个事件最多可以指定10个回调函数。
+
+```javascript
+emitter.on('someEvent', function () { console.log('event 1'); });
+emitter.on('someEvent', function () { console.log('event 2'); });
+emitter.on('someEvent', function () { console.log('event 3'); });
+```
+
+超过10个回调函数，会发出一个警告。这个门槛值可以通过`setMaxListeners`方法改变。
+
+```javascript
+emitter.setMaxListeners(20);
+```
 
 ## EventEmitter接口的部署
 
 Events模块的作用，还在于其他模块可以部署EventEmitter接口，从而也能够订阅和发布消息。
 
-{% highlight javascript %}
-
+```javascript
 var EventEmitter = require('events').EventEmitter;
 
 function Dog(name) {
@@ -97,8 +104,7 @@ simon.on('bark', function(){
 setInterval(function(){
   simon.emit('bark');
 }, 500);
-
-{% endhighlight %}
+```
 
 上面代码新建了一个构造函数Dog，然后让其继承EventEmitter，因此Dog就拥有了EventEmitter的接口。最后，为Dog的实例指定bark事件的监听函数，再使用EventEmitter的emit方法，触发bark事件。
 

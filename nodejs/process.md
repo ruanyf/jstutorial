@@ -8,11 +8,7 @@ modifiedOn: 2014-10-20
 
 `process`对象是Node的一个全局对象，提供当前Node进程的信息。它可以在脚本的任意位置使用，不必通过`require`命令加载。该对象部署了`EventEmitter`接口。
 
-## 进程信息
-
-通过`process`对象，可以获知当前进程的很多信息。
-
-### 退出码
+## 进程的退出码
 
 进程退出时，会返回一个整数值，表示退出时的状态。这个整数值就叫做退出码。下面是常见的Node进程退出码。
 
@@ -21,6 +17,18 @@ modifiedOn: 2014-10-20
 - 5，V8执行错误
 - 8，不正确的参数
 - 128 + 信号值，如果Node接受到退出信号（比如SIGKILL或SIGHUP），它的退出码就是128加上信号值。由于128的二进制形式是10000000, 所以退出码的后七位就是信号值。
+
+Bash可以使用环境变量`$?`，获取上一步操作的退出码。
+
+```bash
+$ node nonexist.js
+Error: Cannot find 'nonexist.js'
+
+$ echo $?
+1
+```
+
+上面代码中，Node执行一个不存在的脚本文件，结果报错，退出码就是1。
 
 ## 属性
 
@@ -38,7 +46,7 @@ process对象提供一系列属性，用于返回系统信息。
 
 ### stdout，stdin，stderr
 
-以下属性指向系统IO。
+以下属性指向系统I/O。
 
 **（1）stdout**
 
@@ -213,10 +221,10 @@ setTimeout(function () {
 1. `setTimeout(f,0)`
 1. 各种到期的回调函数
 1. `process.nextTick`
-
+push(), sort(), reverse(), and splice() 
 ### process.exit()
 
-`process.exit`方法用来退出当前进程，它可以接受一个数值参数。如果参数大于0，表示执行失败；如果等于0表示执行成功。
+`process.exit`方法用来退出当前进程。它可以接受一个数值参数，如果参数大于0，表示执行失败；如果等于0表示执行成功。
 
 ```bash
 if (err) {
