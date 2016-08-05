@@ -178,12 +178,11 @@ console.log(data);
 
 对于流量较大的服务器，最好还是采用异步操作，因为同步操作时，只有前一个操作结束，才会开始后一个操作，如果某个操作特别耗时（常常发生在读写数据时），会导致整个程序停顿。
 
-## readdir()
+## readdir()，readdirSync()
 
-readdir方法用于读取目录，返回一个所包含的文件和子目录的数组。
+`readdir`方法用于读取目录，返回一个所包含的文件和子目录的数组。
 
-{% highlight javascript %}
-
+```javascript
 fs.readdir(process.cwd(), function (err, files) {
   if (err) {
     console.log(err);
@@ -202,15 +201,15 @@ fs.readdir(process.cwd(), function (err, files) {
     });
   });
 });
+```
 
-{% endhighlight %}
+`readdirSync`方法是`readdir`方法的同步版本。
 
 ## stat()
 
 stat方法的参数是一个文件或目录，它产生一个对象，该对象包含了该文件或目录的具体信息。我们往往通过该方法，判断正在处理的到底是一个文件，还是一个目录。
 
 ```javascript
-
 var fs = require('fs');
 
 fs.readdir('/etc/', function (err, files) {
@@ -225,12 +224,11 @@ fs.readdir('/etc/', function (err, files) {
       }
       else if (stats.isDirectory ()) {
       console.log("%s is a directory", file);
-      }    
+      }
     console.log('stats:  %s',JSON.stringify(stats));
     });
   });
 });
-
 ```
 
 ## watchfile()，unwatchfile()
@@ -238,7 +236,6 @@ fs.readdir('/etc/', function (err, files) {
 watchfile方法监听一个文件，如果该文件发生变化，就会自动触发回调函数。
 
 ```javascript
-
 var fs = require('fs');
 
 fs.watchFile('./testFile.txt', function (curr, prev) {
@@ -251,16 +248,15 @@ fs.writeFile('./testFile.txt', "changed", function (err) {
 
   console.log("file write complete");   
 });
-
 ```
-unwatchfile方法用于解除对文件的监听。
+
+`unwatchfile`方法用于解除对文件的监听。
 
 ## createReadStream()
 
-createReadStream方法往往用于打开大型的文本文件，创建一个读取操作的数据流。所谓大型文本文件，指的是文本文件的体积很大，读取操作的缓存装不下，只能分成几次发送，每次发送会触发一个data事件，发送结束会触发end事件。
+`createReadStream`方法往往用于打开大型的文本文件，创建一个读取操作的数据流。所谓大型文本文件，指的是文本文件的体积很大，读取操作的缓存装不下，只能分成几次发送，每次发送会触发一个`data`事件，发送结束会触发`end`事件。
 
 ```javascript
-
 var fs = require('fs');
 
 function readLines(input, func) {
@@ -293,17 +289,32 @@ function func(data) {
 
 var input = fs.createReadStream('lines.txt');
 readLines(input, func);
-
 ```
 
 ## createWriteStream()
 
-createWriteStream方法创建一个写入数据流对象，该对象的write方法用于写入数据，end方法用于结束写入操作。
+`createWriteStream`方法创建一个写入数据流对象，该对象的`write`方法用于写入数据，`end`方法用于结束写入操作。
 
 ```javascript
-
-var out = fs.createWriteStream(fileName, { encoding: "utf8" });
+var out = fs.createWriteStream(fileName, {
+  encoding: 'utf8'
+});
 out.write(str);
 out.end();
+```
 
+`createWriteStream`方法和`createReadStream`方法配合，可以实现拷贝大型文件。
+
+```javascript
+function fileCopy(filename1, filename2, done) {
+  var input = fs.createReadStream(filename1);
+  var output = fs.createWriteStream(filename2);
+
+  input.on('data', function(d) { output.write(d); });
+  input.on('error', function(err) { throw err; });
+  input.on('end', function() {
+    output.end();
+    if (done) done();
+  });
+}
 ```
