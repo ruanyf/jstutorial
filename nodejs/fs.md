@@ -203,7 +203,20 @@ fs.readdir(process.cwd(), function (err, files) {
 });
 ```
 
-`readdirSync`方法是`readdir`方法的同步版本。
+`readdirSync`方法是`readdir`方法的同步版本。下面是同步列出目录内容的代码。
+
+```javascript
+var files = fs.readdirSync(dir);
+files.forEach(function (filename) {
+  var fullname = path.join(dir,filename);
+  var stats = fs.statSync(fullname);
+  if (stats.isDirectory()) filename += '/';
+  process.stdout.write(filename + '\t' +
+    stats.size + '\t' +
+    stats.mtime + '\n'
+  );
+});
+```
 
 ## stat()
 

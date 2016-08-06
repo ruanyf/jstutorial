@@ -579,7 +579,7 @@ newDiv.appendChild(newContent);
 
 上面代码新建一个`div`节点和一个文本节点，然后将文本节点插入`div`节点。
 
-这个方法可以确保返回的节点，被浏览器当作txt文本渲染，而不是当作HTML代码渲染。因此，可以用来展示用户的输入，避免XSS攻击。
+这个方法可以确保返回的节点，被浏览器当作文本渲染，而不是当作HTML代码渲染。因此，可以用来展示用户的输入，避免XSS攻击。
 
 ```javascript
 var div = document.createElement('div');

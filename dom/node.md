@@ -199,7 +199,7 @@ var ulElementChildNodes = document.querySelector('ul').childNodes;
 
 **（2）firstChild**
 
-`firstChild`属性返回当前节点的第一个子节点，如果当前节点没有子节点，则返回`null`。
+`firstChild`属性返回当前节点的第一个子节点，如果当前节点没有子节点，则返回`null`（注意，不是`undefined`）。
 
 ```html
 <p id="para-01"><span>First span</span></p>
@@ -254,18 +254,18 @@ baseURI属性返回一个字符串，由当前网页的协议、域名和所在�
 
 **（1）appendChild()**
 
-appendChild方法接受一个节点对象作为参数，将其作为最后一个子节点，插入当前节点。
+`appendChild`方法接受一个节点对象作为参数，将其作为最后一个子节点，插入当前节点。
 
-{% highlight javascript %}
-
-var p = document.createElement("p");
+```javascript
+var p = document.createElement('p');
 document.body.appendChild(p);
-
-{% endhighlight %}
+```
 
 如果参数节点是文档中现有的其他节点，appendChild方法会将其从原来的位置，移动到新位置。
 
-hasChildNodes方法返回一个布尔值，表示当前节点是否有子节点。
+**（2）hasChildNodes()**
+
+`hasChildNodes`方法返回一个布尔值，表示当前节点是否有子节点。
 
 ```javascript
 var foo = document.getElementById("foo");
@@ -277,25 +277,23 @@ if ( foo.hasChildNodes() ) {
 
 上面代码表示，如果foo节点有子节点，就移除第一个子节点。
 
-**（2）hasChildNodes()**
-
-hasChildNodes方法结合firstChild属性和nextSibling属性，可以遍历当前节点的所有后代节点。
+`hasChildNodes`方法结合`firstChild`属性和`nextSibling`属性，可以遍历当前节点的所有后代节点。
 
 ```javascript
-function DOMComb (oParent, oCallback) {
-  if (oParent.hasChildNodes()) {
-    for (var oNode = oParent.firstChild; oNode; oNode = oNode.nextSibling) {
-      DOMComb(oNode, oCallback);
+function DOMComb(parent, callback) {
+  if (parent.hasChildNodes()) {
+    for (var node = parent.firstChild; node; node = node.nextSibling) {
+      DOMComb(node, callback);
     }
   }
-  oCallback.call(oParent);
+  callback.call(parent);
 }
 ```
 
-上面代码的DOMComb函数的第一个参数是某个指定的节点，第二个参数是回调函数。这个回调函数会依次作用于指定节点，以及指定节点的所有后代节点。
+上面代码的`DOMComb`函数的第一个参数是某个指定的节点，第二个参数是回调函数。这个回调函数会依次作用于指定节点，以及指定节点的所有后代节点。
 
 ```javascript
-function printContent () {
+function printContent() {
   if (this.nodeValue) {
     console.log(this.nodeValue);
   }
@@ -841,9 +839,7 @@ document.querySelector('li').matchesSelector('li:first-child')
 focus方法用于将当前页面的焦点，转移到指定元素上。
 
 ```javascript
-
 document.getElementById('my-span').focus();
-
 ```
 
 ### table元素
@@ -861,8 +857,7 @@ document.getElementById('my-span').focus();
 
 下面是使用JavaScript生成表格的一个例子。
 
-{% highlight javascript %}
-
+```javascript
 var table = document.createElement('table');
 var tbody = document.createElement('tbody');
 table.appendChild(tbody);
@@ -882,12 +877,11 @@ table.createCaption();
 table.caption.appendChild(document.createTextNode('A DOM-Generated Table'));
 
 document.body.appendChild(table);
+```
 
-{% endhighlight %}
+这些代码相当易读，其中需要注意的就是`insertRow`和`insertCell`方法，接受一个表示位置的参数（从0开始的整数）。
 
-这些代码相当易读，其中需要注意的就是insertRow和insertCell方法，接受一个表示位置的参数（从0开始的整数）。
-
-table元素有以下属性：
+`table`元素有以下属性：
 
 - **caption**：标题。
 - **tHead**：表头。

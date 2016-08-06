@@ -6,7 +6,7 @@ date: 2015-04-15
 modifiedOn: 2015-04-15
 ---
 
-Element对象对应网页的HTML标签元素。每一个HTML标签元素，在DOM树上都会转化成一个Element节点对象（以下简称元素节点）。
+`Element`对象对应网页的HTML标签元素。每一个HTML标签元素，在DOM树上都会转化成一个`Element`节点对象（以下简称元素节点）。
 
 元素节点的`nodeType`属性都是1，但是不同HTML标签生成的元素节点是不一样的。JavaScript内部使用不同的构造函数，生成不同的Element节点，比如`<a>`标签的节点对象由`HTMLAnchorElement()`构造函数生成，`<button>`标签的节点对象由`HTMLButtonElement()`构造函数生成。因此，元素节点不是一种对象，而是一组对象。
 
@@ -208,13 +208,11 @@ className属性用来读取和设置当前元素的class属性。它的值是一
 
 classList属性则返回一个类似数组的对象，当前元素节点的每个class就是这个对象的一个成员。
 
-{% highlight html %}
-
+```html
 <div class="one two three" id="myDiv"></div>
+```
 
-{% endhighlight %}
-
-上面这个div元素的节点对象的className属性和classList属性，分别如下。
+上面这个`div`元素的节点对象的`className`属性和c`lassList`属性，分别如下。
 
 ```javascript
 document.getElementById('myDiv').className
@@ -229,7 +227,7 @@ document.getElementById('myDiv').classList
 // }
 ```
 
-从上面代码可以看出，className属性返回一个空格分隔的字符串，而classList属性指向一个类似数组的对象，该对象的length属性（只读）返回当前元素的class数量。
+从上面代码可以看出，`className`属性返回一个空格分隔的字符串，而`classList`属性指向一个类似数组的对象，该对象的`length`属性（只读）返回当前元素的`class`数量。
 
 classList对象有下列方法。
 
@@ -253,7 +251,6 @@ myDiv.classList.toString();
 下面比较一下，className和classList在添加和删除某个类时的写法。
 
 ```javascript
-
 // 添加class
 document.getElementById('foo').className += 'bold';
 document.getElementById('foo').classList.add('bold');
@@ -262,7 +259,6 @@ document.getElementById('foo').classList.add('bold');
 document.getElementById('foo').classList.remove('bold');
 document.getElementById('foo').className =
   document.getElementById('foo').className.replace(/^bold$/, '');
-
 ```
 
 toggle方法可以接受一个布尔值，作为第二个参数。如果为`true`，则添加该属性；如果为`false`，则去除该属性。
@@ -349,6 +345,10 @@ document.querySelector('div').scrollTop = 150;
 ```
 
 上面代码将div元素向下滚动150像素。
+
+### style属性
+
+每个元素节点都有`style`用来读写该元素的行内样式信息，具体介绍参见《CSS操作》一节。
 
 ## 方法
 
