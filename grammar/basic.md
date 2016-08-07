@@ -461,8 +461,7 @@ function getItemPricing(customer, item) {
 ```javascript
 var pricing = {
   'VIP': 0.50,
-  'Preferred': 0.75,
-  'Regular': 1.0
+  'Preferred': 0.75
 };
 
 function getItemPricing(customer, item) {
