@@ -120,9 +120,11 @@ What time is it?
 
 `javascript:`协议的常见用途是书签脚本Bookmarklet。由于浏览器的书签保存的是一个网址，所以`javascript:`网址也可以保存在里面，用户选择这个书签的时候，就会在当前页面执行这个脚本。为了防止书签替换掉当前文档，可以在脚本最后返回`void 0`。
 
-## `<script>`标签的工作原理
+## script标签
 
-正常的网页加载流程是这样的。
+### 工作原理
+
+浏览器加载JavaScript脚本，主要通过`<script>`标签完成。正常的网页加载流程是这样的。
 
 1. 浏览器一边下载HTML网页，一边开始解析
 2. 解析过程中，发现`<script>`标签
@@ -130,7 +132,7 @@ What time is it?
 4. 如果`<script>`标签引用了外部脚本，就下载该脚本，否则就直接执行
 5. 执行完毕，控制权交还渲染引擎，恢复往下解析HTML网页
 
-也就是说，加载外部脚本时，浏览器会暂停页面渲染，等待脚本下载并执行完成后，再继续渲染。原因是JavaScript可以修改DOM（比如使用`document.write`方法），所以必须把控制权让给它，否则会导致复杂的线程竞赛的问题。
+加载外部脚本时，浏览器会暂停页面渲染，等待脚本下载并执行完成后，再继续渲染。原因是JavaScript可以修改DOM（比如使用`document.write`方法），所以必须把控制权让给它，否则会导致复杂的线程竞赛的问题。
 
 如果外部脚本加载时间很长（比如一直无法完成下载），就会造成网页长时间失去响应，浏览器就会呈现“假死”状态，这被称为“阻塞效应”。
 
@@ -185,7 +187,7 @@ What time is it?
 </body>
 ```
 
-如果有多个script标签，比如下面这样。
+如果有多个`script`标签，比如下面这样。
 
 ```html
 <script src="a.js"></script>
@@ -202,7 +204,7 @@ Gecko和Webkit引擎在网页被阻塞后，会生成第二个线程解析文档
 
 此外，对于来自同一个域名的资源，比如脚本文件、样式表文件、图片文件等，浏览器一般最多同时下载六个（IE11允许同时下载13个）。如果是来自不同域名的资源，就没有这个限制。所以，通常把静态文件放在不同的域名之下，以加快下载速度。
 
-## defer属性
+### defer属性
 
 为了解决脚本文件下载阻塞网页渲染的问题，一个方法是加入defer属性。
 
@@ -222,7 +224,7 @@ Gecko和Webkit引擎在网页被阻塞后，会生成第二个线程解析文档
 
 对于内置而不是连接外部脚本的script标签，以及动态生成的script标签，`defer`属性不起作用。
 
-## async属性
+### async属性
 
 解决“阻塞效应”的另一个方法是加入`async`属性。
 
@@ -245,7 +247,100 @@ Gecko和Webkit引擎在网页被阻塞后，会生成第二个线程解析文档
 
 一般来说，如果脚本之间没有依赖关系，就使用`async`属性，如果脚本之间有依赖关系，就使用`defer`属性。如果同时使用`async`和`defer`属性，后者不起作用，浏览器行为由`async`属性决定。
 
-## 重流和重绘
+### 脚本的动态嵌入
+
+除了用静态的`script`标签，还可以动态嵌入`script`标签。
+
+```javascript
+['1.js', '2.js'].forEach(function(src) {
+  var script = document.createElement('script');
+  script.src = src;
+  document.head.appendChild(script);
+});
+```
+
+这种方法的好处是，动态生成的`script`标签不会阻塞页面渲染，也就不会造成浏览器假死。但是问题在于，这种方法无法保证脚本的执行顺序，哪个脚本文件先下载完成，就先执行哪个。
+
+如果想避免这个问题，可以设置async属性为`false`。
+
+```javascript
+['1.js', '2.js'].forEach(function(src) {
+  var script = document.createElement('script');
+  script.src = src;
+  script.async = false;
+  document.head.appendChild(script);
+});
+```
+
+上面的代码依然不会阻塞页面渲染，而且可以保证`2.js`在`1.js`后面执行。不过需要注意的是，在这段代码后面加载的脚本文件，会因此都等待`2.js`执行完成后再执行。
+
+我们可以把上面的写法，封装成一个函数。
+
+```javascript
+(function() {
+  var scripts = document.getElementsByTagName('script')[0];
+  function load(url) {
+    var script = document.createElement('script');
+    script.async = true;
+    script.src = url;
+    scripts.parentNode.insertBefore(script, scripts);
+  }
+  load('//apis.google.com/js/plusone.js');
+  load('//platform.twitter.com/widgets.js');
+  load('//s.thirdpartywidget.com/widget.js');
+}());
+```
+
+上面代码中，`async`属性设为`true`，是因为加载的脚本没有互相依赖关系。而且，这样就不会造成堵塞。
+
+此外，动态嵌入还有一个地方需要注意。动态嵌入必须等待CSS文件加载完成后，才会去下载外部脚本文件。静态加载就不存在这个问题，`script`标签指定的外部脚本文件，都是与CSS文件同时并发下载的。
+
+### 加载使用的协议
+
+如果不指定协议，浏览器默认采用HTTP协议下载。
+
+```html
+<script src="example.js"></script>
+```
+
+上面的`example.js`默认就是采用HTTP协议下载，如果要采用HTTPS协议下载，必需写明（假定服务器支持）。
+
+```html
+<script src="https://example.js"></script>
+```
+
+但是有时我们会希望，根据页面本身的协议来决定加载协议，这时可以采用下面的写法。
+
+```html
+<script src="//example.js"></script>
+```
+
+## 浏览器的组成
+
+浏览器的核心是两部分：渲染引擎和JavaScript解释器（又称JavaScript引擎）。
+
+### 渲染引擎
+
+渲染引擎的主要作用是，将网页代码渲染为用户视觉可以感知的平面文档。
+
+不同的浏览器有不同的渲染引擎。
+
+- Firefox：Gecko引擎
+- Safari：WebKit引擎
+- Chrome：Blink引擎
+- IE: Trident引擎
+- Edge: EdgeHTML引擎
+
+渲染引擎处理网页，通常分成四个阶段。
+
+1. 解析代码：HTML代码解析为DOM，CSS代码解析为CSSOM（CSS Object Model）
+2. 对象合成：将DOM和CSSOM合成一棵渲染树（render tree）
+3. 布局：计算出渲染树的布局（layout）
+4. 绘制：将渲染树绘制到屏幕
+
+以上四步并非严格按顺序执行，往往第一步还没完成，第二步和第三步就已经开始了。所以，会看到这种情况：网页的HTML代码还没下载完，但浏览器已经显示出内容了。
+
+### 重流和重绘
 
 渲染树转换为网页布局，称为“布局流”（flow）；布局显示到页面的这个过程，称为“绘制”（paint）。它们都具有阻塞效应，并且会耗费很多时间和计算资源。
 
@@ -299,99 +394,6 @@ function doubleHeight(element) {
 
 all_my_elements.forEach(doubleHeight);
 ```
-
-## 脚本的动态嵌入
-
-除了用静态的`script`标签，还可以动态嵌入`script`标签。
-
-```javascript
-['1.js', '2.js'].forEach(function(src) {
-  var script = document.createElement('script');
-  script.src = src;
-  document.head.appendChild(script);
-});
-```
-
-这种方法的好处是，动态生成的`script`标签不会阻塞页面渲染，也就不会造成浏览器假死。但是问题在于，这种方法无法保证脚本的执行顺序，哪个脚本文件先下载完成，就先执行哪个。
-
-如果想避免这个问题，可以设置async属性为`false`。
-
-```javascript
-['1.js', '2.js'].forEach(function(src) {
-  var script = document.createElement('script');
-  script.src = src;
-  script.async = false;
-  document.head.appendChild(script);
-});
-```
-
-上面的代码依然不会阻塞页面渲染，而且可以保证`2.js`在`1.js`后面执行。不过需要注意的是，在这段代码后面加载的脚本文件，会因此都等待`2.js`执行完成后再执行。
-
-我们可以把上面的写法，封装成一个函数。
-
-```javascript
-(function() {
-  var scripts = document.getElementsByTagName('script')[0];
-  function load(url) {
-    var script = document.createElement('script');
-    script.async = true;
-    script.src = url;
-    scripts.parentNode.insertBefore(script, scripts);
-  }
-  load('//apis.google.com/js/plusone.js');
-  load('//platform.twitter.com/widgets.js');
-  load('//s.thirdpartywidget.com/widget.js');
-}());
-```
-
-上面代码中，`async`属性设为`true`，是因为加载的脚本没有互相依赖关系。而且，这样就不会造成堵塞。
-
-此外，动态嵌入还有一个地方需要注意。动态嵌入必须等待CSS文件加载完成后，才会去下载外部脚本文件。静态加载就不存在这个问题，`script`标签指定的外部脚本文件，都是与CSS文件同时并发下载的。
-
-## 加载使用的协议
-
-如果不指定协议，浏览器默认采用HTTP协议下载。
-
-```html
-<script src="example.js"></script>
-```
-
-上面的`example.js`默认就是采用HTTP协议下载，如果要采用HTTPS协议下载，必需写明（假定服务器支持）。
-
-```html
-<script src="https://example.js"></script>
-```
-
-但是有时我们会希望，根据页面本身的协议来决定加载协议，这时可以采用下面的写法。
-
-```html
-<script src="//example.js"></script>
-```
-
-## 浏览器的组成
-
-浏览器的核心是两部分：渲染引擎和JavaScript解释器（又称JavaScript引擎）。
-
-### 渲染引擎
-
-渲染引擎的主要作用是，将网页代码渲染为用户视觉可以感知的平面文档。
-
-不同的浏览器有不同的渲染引擎。
-
-- Firefox：Gecko引擎
-- Safari：WebKit引擎
-- Chrome：Blink引擎
-- IE: Trident引擎
-- Edge: EdgeHTML引擎
-
-渲染引擎处理网页，通常分成四个阶段。
-
-1. 解析代码：HTML代码解析为DOM，CSS代码解析为CSSOM（CSS Object Model）
-2. 对象合成：将DOM和CSSOM合成一棵渲染树（render tree）
-3. 布局：计算出渲染树的布局（layout）
-4. 绘制：将渲染树绘制到屏幕
-
-以上四步并非严格按顺序执行，往往第一步还没完成，第二步和第三步就已经开始了。所以，会看到这种情况：网页的HTML代码还没下载完，但浏览器已经显示出内容了。
 
 ### JavaScript引擎
 

@@ -440,50 +440,15 @@ switch (x) {
 
 上面代码中，由于变量`x`没有发生类型转换，所以不会执行`case true`的情况。这表明，`switch`语句内部采用的是“严格相等运算符”，详细解释请参考《运算符》一节。
 
-`switch`结构不利于代码重用，往往可以用对象形式重写。
-
-```javascript
-function getItemPricing(customer, item) {
-  switch(customer.type) {
-    case 'VIP':
-      return item.price * item.quantity * 0.50;
-    case 'Preferred':
-      return item.price * item.quantity * 0.75;
-    case 'Regular':
-    case default:
-      return item.price * item.quantity;
-  }
-}
-```
-
-上面代码根据不同用户，返回不同的价格。你可以发现，`switch`语句包含的三种情况，内部逻辑都是相同的，不同只是折扣率。这启发我们可以用对象属性，重写这个判断。
-
-```javascript
-var pricing = {
-  'VIP': 0.50,
-  'Preferred': 0.75,
-  'Regular': 1.0
-};
-
-function getItemPricing(customer, item) {
-  if (pricing[customer.type])
-    return item.price * item.quantity * pricing[customer.type];
-  else
-    return item.price * item.quantity * pricing.Regular;
-}
-```
-
-如果价格档次再多一些，对象属性写法的简洁优势就更明显了。
-
 ### 三元运算符 ?:
 
 JavaScript还有一个三元运算符（即该运算符需要三个运算子）`?:`，也可以用于逻辑判断。
 
 ```javascript
-(contidion) ? expression1 : expression2
+(contidion) ? expr1 : expr2
 ```
 
-上面代码中，如果`contidion`为`true`，则返回`expression1`的值，否则返回`expression2`的值。
+上面代码中，如果`contidion`为`true`，则返回`expr1`的值，否则返回`expr2`的值。
 
 ```javascript
 var even = (n % 2 === 0) ? true : false;
