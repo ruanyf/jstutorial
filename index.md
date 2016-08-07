@@ -46,7 +46,7 @@ modifiedOn: 2014-05-18
 - [Object 对象与继承](oop/object.html)
 - [面向对象编程的模式](oop/pattern.html)
 
-<h2 id="advanced">高级语法</h2>
+<h2 id="advanced">语法专题</h2>
 
 - [单线程模型](advanced/single-thread.html)
 - [定时器](advanced/timer.html)

@@ -6,40 +6,20 @@ date: 2013-03-10
 modifiedOn: 2013-12-22
 ---
 
-## 浏览器的组成
-
-浏览器的核心是两部分：渲染引擎和JavaScript解释器（又称JavaScript引擎）。
-
-**（1）渲染引擎**
-
-渲染引擎的主要作用是，将网页从代码“渲染”为用户视觉上可以感知的平面文档。不同的浏览器有不同的渲染引擎。
-
-- Firefox：Gecko引擎
-- Safari：WebKit引擎
-- Chrome：Blink引擎
-- IE: Trident引擎
-- Edge: EdgeHTML引擎
-
-渲染引擎处理网页，通常分成四个阶段。
-
-1. 解析代码：HTML代码解析为DOM，CSS代码解析为CSSOM（CSS Object Model）
-2. 对象合成：将DOM和CSSOM合成一棵渲染树（render tree）
-3. 布局：计算出渲染树的布局（layout）
-4. 绘制：将渲染树绘制到屏幕
-
-以上四步并非严格按顺序执行，往往第一步还没完成，第二步和第三步就已经开始了。所以，会看到这种情况：网页的HTML代码还没下载完，但浏览器已经显示出内容了。
-
-**（2）JavaScript引擎**
-
-JavaScript引擎的主要作用是，读取网页中的JavaScript代码，对其处理后运行。
-
-本节主要介绍JavaScript引擎的工作方式。
-
 ## JavaScript代码嵌入网页的方法
 
-JavaScript代码只有嵌入网页，才能运行。网页中嵌入JavaScript代码有多种方法。
+JavaScript代码只有嵌入网页，才能运行。
 
-### 直接添加代码块
+网页中嵌入JavaScript代码，主要有四种方法。
+
+- `<script>`标签：代码嵌入网页
+- `<script>`标签：加载外部脚本
+- 事件属性：代码写入HTML元素的事件处理属性，比如`onclick`或者`onmouseover`
+- URL协议：URL支持以`javascript:`协议的方式，执行JavaScript代码
+
+后两种方法用得很少，常用的是前两种方法。由于内容（HTML代码）和行为（JavaScript）代码应该分离，所以第一种方法应当谨慎使用。
+
+### script标签：代码嵌入网页
 
 通过`<script>`标签，可以直接将JavaScript代码嵌入网页。
 
@@ -49,16 +29,24 @@ JavaScript代码只有嵌入网页，才能运行。网页中嵌入JavaScript代
 </script>
 ```
 
-`<script>`标签有一个`type`属性，用来指定脚本类型。不过，如果嵌入的是JavaScript脚本，`type`属性可以省略。
-
-对JavaScript脚本来说，`type`属性可以设为两种值。
+`<script>`标签有一个`type`属性，用来指定脚本类型。对JavaScript脚本来说，`type`属性可以设为两种值。
 
 - `text/javascript`：这是默认值，也是历史上一贯设定的值。如果你省略`type`属性，默认就是这个值。对于老式浏览器，设为这个值比较好。
 - `application/javascript`：对于较新的浏览器，建议设为这个值。
 
-### 加载外部脚本
+```html
+<script type="application/javascript">
+  console.log('Hello World');
+</script>
+```
 
-`script`标签也可以指定加载外部的脚本文件。
+由于`<script>`标签默认就是JavaScript代码。所以，嵌入JavaScript脚本时，`type`属性也可以省略。
+
+如果`type`属性的值，浏览器不认识，那么它不会执行其中的代码。利用这一点，可以在`<script>`标签之中嵌入任意的文本内容，然后加上一个浏览器不认识的`type`属性即可。
+
+### script标签：加载外部脚本
+
+`<script>`标签也可以指定加载外部的脚本文件。
 
 ```html
 <script src="example.js"></script>
@@ -69,6 +57,8 @@ JavaScript代码只有嵌入网页，才能运行。网页中嵌入JavaScript代
 ```html
 <script charset="utf-8" src="example.js"></script>
 ```
+
+所加载的脚本必须是纯的HTML代码，不能有`HTML`代码和`<script>`标签。
 
 加载外部脚本和直接添加代码块，这两种方法不能混用。下面代码的`console.log`语句直接被忽略。
 
@@ -88,19 +78,47 @@ JavaScript代码只有嵌入网页，才能运行。网页中嵌入JavaScript代
 
 上面代码中，`script`标签有一个`integrity`属性，指定了外部脚本`/assets/application.js`的SHA265签名。一旦有人改了这个脚本，导致SHA265签名不匹配，浏览器就会拒绝加载。
 
-除了JavaScript脚本，外部的CSS样式表也可以设置这个属性。
+### 事件属性
 
-### 行内代码
-
-除了上面两种方法，HTML语言允许在某些元素的事件属性和`a`元素的`href`属性中，直接写入JavaScript。
+某些HTML元素的事件属性（比如`onclick`和`onmouseover`），可以写入JavaScript代码。当指定事件发生时，就会调用这些代码。
 
 ```html
 <div onclick="alert('Hello')"></div>
+```
 
+上面的事件属性代码只有一个语句。如果有多个语句，用分号分隔即可。
+
+###  URL协议
+
+URL支持`javascript:`协议，调用这个URL时，就会执行JavaScript代码。
+
+```html
 <a href="javascript:alert('Hello')"></a>
 ```
 
-这种写法将HTML代码与JavaScript代码混写在一起，非常不利于代码管理，不建议使用。
+浏览器的地址栏也可以执行`javascipt:`协议。将`javascript:alert('Hello')`放入地址栏，按回车键，就会跳出提示框。
+
+如果JavaScript代码返回一个字符串，浏览器就会新建一个文档，展示这个字符串的内容，原有文档的内容都会消失。
+
+```html
+<a href="javascript:new Date().toLocaleTimeString();">
+  What time is it?
+</a>
+```
+
+上面代码中，用户点击链接以后，会打开一个新文档，里面有当前时间。
+
+如果返回的不是字符串，那么浏览器不会新建文档，也不会跳转。
+
+```javascript
+<a href="javascript:console.log(new Date().toLocaleTimeString())">
+What time is it?
+</a>
+```
+
+上面代码中，用户点击链接后，网页不会跳转，只会在控制台显示当前时间。
+
+`javascript:`协议的常见用途是书签脚本Bookmarklet。由于浏览器的书签保存的是一个网址，所以`javascript:`网址也可以保存在里面，用户选择这个书签的时候，就会在当前页面执行这个脚本。为了防止书签替换掉当前文档，可以在脚本最后返回`void 0`。
 
 ## `<script>`标签的工作原理
 
@@ -350,9 +368,38 @@ all_my_elements.forEach(doubleHeight);
 <script src="//example.js"></script>
 ```
 
-## JavaScript虚拟机
+## 浏览器的组成
 
-JavaScript是一种解释型语言，也就是说，它不需要编译，可以由解释器实时运行。这样的好处是运行和修改都比较方便，刷新页面就可以重新解释；缺点是每次运行都要调用解释器，系统开销较大，运行速度慢于编译型语言。为了提高运行速度，目前的浏览器都将JavaScript进行一定程度的编译，生成类似字节码（bytecode）的中间代码，以提高运行速度。
+浏览器的核心是两部分：渲染引擎和JavaScript解释器（又称JavaScript引擎）。
+
+### 渲染引擎
+
+渲染引擎的主要作用是，将网页代码渲染为用户视觉可以感知的平面文档。
+
+不同的浏览器有不同的渲染引擎。
+
+- Firefox：Gecko引擎
+- Safari：WebKit引擎
+- Chrome：Blink引擎
+- IE: Trident引擎
+- Edge: EdgeHTML引擎
+
+渲染引擎处理网页，通常分成四个阶段。
+
+1. 解析代码：HTML代码解析为DOM，CSS代码解析为CSSOM（CSS Object Model）
+2. 对象合成：将DOM和CSSOM合成一棵渲染树（render tree）
+3. 布局：计算出渲染树的布局（layout）
+4. 绘制：将渲染树绘制到屏幕
+
+以上四步并非严格按顺序执行，往往第一步还没完成，第二步和第三步就已经开始了。所以，会看到这种情况：网页的HTML代码还没下载完，但浏览器已经显示出内容了。
+
+### JavaScript引擎
+
+JavaScript引擎的主要作用是，读取网页中的JavaScript代码，对其处理后运行。
+
+JavaScript是一种解释型语言，也就是说，它不需要编译，由解释器实时运行。这样的好处是运行和修改都比较方便，刷新页面就可以重新解释；缺点是每次运行都要调用解释器，系统开销较大，运行速度慢于编译型语言。
+
+为了提高运行速度，目前的浏览器都将JavaScript进行一定程度的编译，生成类似字节码（bytecode）的中间代码，以提高运行速度。
 
 早期，浏览器内部对JavaScript的处理过程如下：
 
@@ -361,9 +408,7 @@ JavaScript是一种解释型语言，也就是说，它不需要编译，可以�
 3. 使用“翻译器”（translator），将代码转为字节码（bytecode）。
 4. 使用“字节码解释器”（bytecode interpreter），将字节码转为机器码。
 
-逐行解释将字节码转为机器码，是很低效的。为了提高运行速度，现代浏览器改为采用“即时编译”（Just In Time compiler，缩写JIT），即字节码只在运行时编译，用到哪一行就编译哪一行，并且把编译结果缓存（inline cache）。通常，一个程序被经常用到的，只是其中一小部分代码，有了缓存的编译结果，整个程序的运行速度就会显著提升。
-
-不同的浏览器有不同的编译策略。有的浏览器只编译最经常用到的部分，比如循环的部分；有的浏览器索性省略了字节码的翻译步骤，直接编译成机器码，比如chrome浏览器的V8引擎。
+逐行解释将字节码转为机器码，是很低效的。为了提高运行速度，现代浏览器改为采用“即时编译”（Just In Time compiler，缩写JIT），即字节码只在运行时编译，用到哪一行就编译哪一行，并且把编译结果缓存（inline cache）。通常，一个程序被经常用到的，只是其中一小部分代码，有了缓存的编译结果，整个程序的运行速度就会显著提升。不同的浏览器有不同的编译策略。有的浏览器只编译最经常用到的部分，比如循环的部分；有的浏览器索性省略了字节码的翻译步骤，直接编译成机器码，比如chrome浏览器的V8引擎。
 
 字节码不能直接运行，而是运行在一个虚拟机（Virtual Machine）之上，一般也把虚拟机称为JavaScript引擎。因为JavaScript运行时未必有字节码，所以JavaScript虚拟机并不完全基于字节码，而是部分基于源码，即只要有可能，就通过JIT（just in time）编译器直接把源码编译成机器码运行，省略字节码步骤。这一点与其他采用虚拟机（比如Java）的语言不尽相同。这样做的目的，是为了尽可能地优化代码、提高性能。下面是目前最常见的一些JavaScript虚拟机：
 

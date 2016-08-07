@@ -1882,9 +1882,13 @@ IE8不支持DOMContentLoaded事件，但是支持这个事件。因此，可以�
 
 **（1）scroll事件**
 
-scroll事件在文档或文档元素滚动时触发。
+`scroll`事件在文档或文档元素滚动时触发，主要出现在用户拖动滚动条。
 
-由于该事件会连续地大量触发，所以它的监听函数之中不应该有非常耗费计算的操作。推荐的做法是使用requestAnimationFrame或setTimeout控制该事件的触发频率，然后可以结合customEvent抛出一个新事件。
+```javascript
+window.addEventListener('scroll', callback);
+```
+
+由于该事件会连续地大量触发，所以它的监听函数之中不应该有非常耗费计算的操作。推荐的做法是使用`requestAnimationFrame`或`setTimeout`控制该事件的触发频率，然后可以结合`customEvent`抛出一个新事件。
 
 ```javascript
 (function() {
@@ -1903,23 +1907,25 @@ scroll事件在文档或文档元素滚动时触发。
   };
 
   // 将scroll事件重定义为optimizedScroll事件
-  throttle("scroll", "optimizedScroll");
+  throttle('scroll', 'optimizedScroll');
 })();
 
-window.addEventListener("optimizedScroll", function() {
+window.addEventListener('optimizedScroll', function() {
   console.log("Resource conscious scroll callback!");
 });
 ```
 
-上面代码中，throttle函数用于控制事件触发频率，requestAnimationFrame方法保证每次页面重绘（每秒60次），只会触发一次scroll事件的监听函数。改用setTimeout方法，可以放置更大的时间间隔。
+上面代码中，`throttle`函数用于控制事件触发频率，`requestAnimationFrame`方法保证每次页面重绘（每秒60次），只会触发一次`scroll`事件的监听函数。也就是说，上面方法将`scroll`事件的触发频率，限制在每秒60次。
+
+改用`setTimeout`方法，可以放置更大的时间间隔。
 
 ```javascript
 (function() {
-  window.addEventListener("scroll", scrollThrottler, false);
+  window.addEventListener('scroll', scrollThrottler, false);
 
   var scrollTimeout;
   function scrollThrottler() {
-    if ( !scrollTimeout ) {
+    if (!scrollTimeout) {
       scrollTimeout = setTimeout(function() {
         scrollTimeout = null;
         actualScrollHandler();
@@ -1933,7 +1939,31 @@ window.addEventListener("optimizedScroll", function() {
 }());
 ```
 
-上面代码中，setTimeout指定scroll事件的监听函数，每66毫秒触发一次（每秒15次）。
+上面代码中，`setTimeout`指定`scroll`事件的监听函数，每66毫秒触发一次（每秒15次）。
+
+下面是一个更一般的`throttle`函数的写法。
+
+```javascript
+function throttle(fn, wait) {
+  var time = Date.now();
+  return function() {
+    if ((time + wait - Date.now()) < 0) {
+      fn();
+      time = Date.now();
+    }
+  }
+}
+
+window.addEventListener('scroll', throttle(callback, 1000));
+```
+
+上面的代码将`scroll`事件的触发频率，限制在一秒一次。
+
+`lodash`函数库提供了现成的`throttle`函数，可以直接引用。
+
+```javascript
+window.addEventListener('scroll', _.throttle(callback, 1000));
+```
 
 **（2）resize事件**
 
