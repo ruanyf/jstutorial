@@ -65,7 +65,7 @@ modifiedOn: 2014-05-18
 
 <h2 id="bom">浏览器环境</h2>
 
-- [浏览器的JavaScript引擎](bom/engine.html)
+- [概述](bom/engine.html)
 - [window对象](bom/window.html)
 - [History对象](bom/history.html)
 - [Cookie](bom/cookie.html)

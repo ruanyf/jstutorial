@@ -1,5 +1,5 @@
 ---
-title: 浏览器的JavaScript引擎
+title: 浏览器环境概述
 layout: page
 category: bom
 date: 2013-03-10
@@ -8,7 +8,7 @@ modifiedOn: 2013-12-22
 
 ## JavaScript代码嵌入网页的方法
 
-JavaScript代码只有嵌入网页，才能运行。
+JavaScript代码只有嵌入网页，才能在用户浏览器网页时运行。
 
 网页中嵌入JavaScript代码，主要有四种方法。
 
