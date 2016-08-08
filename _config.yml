@@ -8,14 +8,10 @@ chapters:
 - grammar
 - stdlib
 - oop
+- advanced
 - dom
 - bom
 - htmlapi
-- jquery
-- tool
-- advanced
-- appendix
-- library
 - nodejs
 
 introduction: 导论

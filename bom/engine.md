@@ -194,9 +194,7 @@ What time is it?
 <script src="b.js"></script>
 ```
 
-浏览器会同时并行下载`a.js`和`b.js`，但是，执行时会保证先执行`a.js`，然后再执行`b.js`，即使后者先下载完成，也是如此。也就是说，脚本的执行顺序由它们在页面中的出现顺序决定，这是为了保证脚本之间的依赖关系不受到破坏。
-
-当然，加载这两个脚本都会产生“阻塞效应”，必须等到它们都加载完成，浏览器才会继续页面渲染。
+浏览器会同时并行下载`a.js`和`b.js`，但是，执行时会保证先执行`a.js`，然后再执行`b.js`，即使后者先下载完成，也是如此。也就是说，脚本的执行顺序由它们在页面中的出现顺序决定，这是为了保证脚本之间的依赖关系不受到破坏。当然，加载这两个脚本都会产生“阻塞效应”，必须等到它们都加载完成，浏览器才会继续页面渲染。
 
 Gecko和Webkit引擎在网页被阻塞后，会生成第二个线程解析文档，下载外部资源，但是不会修改DOM，网页还是处于阻塞状态。
 
@@ -206,31 +204,33 @@ Gecko和Webkit引擎在网页被阻塞后，会生成第二个线程解析文档
 
 ### defer属性
 
-为了解决脚本文件下载阻塞网页渲染的问题，一个方法是加入defer属性。
+为了解决脚本文件下载阻塞网页渲染的问题，一个方法是加入`defer`属性。
 
 ```html
-<script src="1.js" defer></script>
-<script src="2.js" defer></script>
+<script src="a.js" defer></script>
+<script src="b.js" defer></script>
 ```
 
-`defer`属性的作用是，告诉浏览器，等到DOM加载完成后，再执行指定脚本。
+上面代码中，只有等到DOM加载完成后，才会执行`a.js`和`b.js`。
+
+`defer`的运行流程如下。
 
 1. 浏览器开始解析HTML网页
-2. 解析过程中，发现带有`defer`属性的script标签
-3. 浏览器继续往下解析HTML网页，同时并行下载script标签中的外部脚本
+2. 解析过程中，发现带有`defer`属性的`script`标签
+3. 浏览器继续往下解析HTML网页，同时并行下载`script`标签中的外部脚本
 4. 浏览器完成解析HTML网页，此时再执行下载的脚本
 
 有了`defer`属性，浏览器下载脚本文件的时候，不会阻塞页面渲染。下载的脚本文件在`DOMContentLoaded`事件触发前执行（即刚刚读取完`</html>`标签），而且可以保证执行顺序就是它们在页面上出现的顺序。
 
-对于内置而不是连接外部脚本的script标签，以及动态生成的script标签，`defer`属性不起作用。
+对于内置而不是加载外部脚本的`script`标签，以及动态生成的`script`标签，`defer`属性不起作用。另外，使用`defer`加载的外部脚本不应该使用`document.write`方法。
 
 ### async属性
 
 解决“阻塞效应”的另一个方法是加入`async`属性。
 
 ```html
-<script src="1.js" async></script>
-<script src="2.js" async></script>
+<script src="a.js" async></script>
+<script src="b.js" async></script>
 ```
 
 `async`属性的作用是，使用另一个进程下载脚本，下载时不会阻塞渲染。
@@ -247,12 +247,12 @@ Gecko和Webkit引擎在网页被阻塞后，会生成第二个线程解析文档
 
 一般来说，如果脚本之间没有依赖关系，就使用`async`属性，如果脚本之间有依赖关系，就使用`defer`属性。如果同时使用`async`和`defer`属性，后者不起作用，浏览器行为由`async`属性决定。
 
-### 脚本的动态嵌入
+### 脚本的动态加载
 
-除了用静态的`script`标签，还可以动态嵌入`script`标签。
+除了静态的`script`标签，还可以动态生成`script`标签，然后加入页面，从而实现脚本的动态加载。
 
 ```javascript
-['1.js', '2.js'].forEach(function(src) {
+['a.js', 'b.js'].forEach(function(src) {
   var script = document.createElement('script');
   script.src = src;
   document.head.appendChild(script);
@@ -264,7 +264,7 @@ Gecko和Webkit引擎在网页被阻塞后，会生成第二个线程解析文档
 如果想避免这个问题，可以设置async属性为`false`。
 
 ```javascript
-['1.js', '2.js'].forEach(function(src) {
+['a.js', 'b.js'].forEach(function(src) {
   var script = document.createElement('script');
   script.src = src;
   script.async = false;
@@ -272,7 +272,7 @@ Gecko和Webkit引擎在网页被阻塞后，会生成第二个线程解析文档
 });
 ```
 
-上面的代码依然不会阻塞页面渲染，而且可以保证`2.js`在`1.js`后面执行。不过需要注意的是，在这段代码后面加载的脚本文件，会因此都等待`2.js`执行完成后再执行。
+上面的代码依然不会阻塞页面渲染，而且可以保证`b.js`在`a.js`后面执行。不过需要注意的是，在这段代码后面加载的脚本文件，会因此都等待`b.js`执行完成后再执行。
 
 我们可以把上面的写法，封装成一个函数。
 
