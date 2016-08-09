@@ -12,7 +12,6 @@ chapters:
 - dom
 - bom
 - htmlapi
-- nodejs
 
 introduction: 导论
 grammar: 语法

@@ -10,7 +10,7 @@ modifiedOn: 2013-12-19
 
 ## EventTarget接口
 
-DOM的事件操作（监听和触发），都定义在`EventTarget`接口。`Element`节点、`document`节点和`window`对象，都部署了这个接口。此外，XMLHttpRequest、AudioNode、AudioContext等浏览器内置对象，也部署了这个接口。
+DOM的事件操作（监听和触发），都定义在`EventTarget`接口。`Element`节点、`document`节点和`window`对象，都部署了这个接口。此外，`XMLHttpRequest`、`AudioNode`、`AudioContext`等浏览器内置对象，也部署了这个接口。
 
 该接口就是三个方法，`addEventListener`和`removeEventListener`用于绑定和移除监听函数，`dispatchEvent`用于触发事件。
 
@@ -19,34 +19,37 @@ DOM的事件操作（监听和触发），都定义在`EventTarget`接口。`Ele
 `addEventListener`方法用于在当前节点或对象上，定义一个特定事件的监听函数。
 
 ```javascript
+// 使用格式
 target.addEventListener(type, listener[, useCapture]);
+
+// 实例
+window.addEventListener('load', function () {...}, false);
+request.addEventListener('readystatechange', function () {...}, false);
 ```
 
-上面是使用格式，addEventListener方法接受三个参数。
+`addEventListener`方法接受三个参数。
 
-- type，事件名称，大小写不敏感。
-
-- listener，监听函数。指定事件发生时，会调用该监听函数。
-
-- useCapture，监听函数是否在捕获阶段（capture）触发（参见后文《事件的传播》部分）。该参数是一个布尔值，默认为false（表示监听函数只在冒泡阶段被触发）。老式浏览器规定该参数必写，较新版本的浏览器允许该参数可选。为了保持兼容，建议总是写上该参数。
+- `type`：事件名称，大小写不敏感。
+- `listener`：监听函数。事件发生时，会调用该监听函数。
+- `useCapture`：布尔值，表示监听函数是否在捕获阶段（capture）触发（参见后文《事件的传播》部分），默认为`false`（监听函数只在冒泡阶段被触发）。老式浏览器规定该参数必写，较新版本的浏览器允许该参数可选。为了保持兼容，建议总是写上该参数。
 
 下面是一个例子。
 
 ```javascript
-function hello(){
+function hello() {
   console.log('Hello world');
 }
 
-var button = document.getElementById("btn");
+var button = document.getElementById('btn');
 button.addEventListener('click', hello, false);
 ```
 
-上面代码中，addEventListener方法为button节点，绑定click事件的监听函数hello，该函数只在冒泡阶段触发。
+上面代码中，`addEventListener`方法为`button`元素节点，绑定`click`事件的监听函数`hello`，该函数只在冒泡阶段触发。
 
-可以使用addEventListener方法，为当前对象的同一个事件，添加多个监听函数。这些函数按照添加顺序触发，即先添加先触发。如果为同一个事件多次添加同一个监听函数，该函数只会执行一次，多余的添加将自动被去除（不必使用removeEventListener方法手动去除）。
+`addEventListener`方法可以为当前对象的同一个事件，添加多个监听函数。这些函数按照添加顺序触发，即先添加先触发。如果为同一个事件多次添加同一个监听函数，该函数只会执行一次，多余的添加将自动被去除（不必使用`removeEventListener`方法手动去除）。
 
 ```javascript
-function hello(){
+function hello() {
   console.log('Hello world');
 }
 
@@ -54,7 +57,7 @@ document.addEventListener('click', hello, false);
 document.addEventListener('click', hello, false);
 ```
 
-执行上面代码，点击文档只会输出一行“Hello world”。
+执行上面代码，点击文档只会输出一行`Hello world`。
 
 如果希望向监听函数传递参数，可以用匿名函数包装一下监听函数。
 
@@ -63,24 +66,24 @@ function print(x) {
   console.log(x);
 }
 
-var el = document.getElementById("div1");
-el.addEventListener("click", function(){print('Hello')}, false);
+var el = document.getElementById('div1');
+el.addEventListener('click', function () { print('Hello'); }, false);
 ```
 
-上面代码通过匿名函数，向监听函数print传递了一个参数。
+上面代码通过匿名函数，向监听函数`print`传递了一个参数。
 
 ### removeEventListener()
 
-removeEventListener方法用来移除addEventListener方法添加的事件监听函数。
+`removeEventListener`方法用来移除`addEventListener`方法添加的事件监听函数。
 
 ```javascript
 div.addEventListener('click', listener, false);
 div.removeEventListener('click', listener, false);
 ```
 
-removeEventListener方法的参数，与addEventListener方法完全一致。它对第一个参数“事件类型”，也是大小写不敏感。
+`removeEventListener`方法的参数，与`addEventListener`方法完全一致。它的第一个参数“事件类型”，也是大小写不敏感。
 
-注意，removeEventListener方法移除的监听函数，必须与对应的addEventListener方法的参数完全一致，而且在同一个元素节点，否则无效。
+注意，`removeEventListener`方法移除的监听函数，必须与对应的`addEventListener`方法的参数完全一致，而且必须在同一个元素节点，否则无效。
 
 ### dispatchEvent()
 

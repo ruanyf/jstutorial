@@ -198,7 +198,18 @@ characterSet属性返回渲染当前文档的字符集，比如UTF-8、ISO-8859-
 
 **（1）readyState**
 
-readyState属性返回当前文档的状态，共有三种可能的值，加载HTML代码阶段（尚未完成解析）是“loading”，加载外部资源阶段是“interactive”，全部加载完成是“complete”。
+`readyState`属性返回当前文档的状态，共有三种可能的值。
+
+- `loading`：加载HTML代码阶段（尚未完成解析）
+- `interactive`：加载外部资源阶段时
+- `complete`：加载完成时
+
+这个属性变化的过程如下。
+
+1. 浏览器开始解析HTML文档，`document.readyState`属性等于`loading`。
+1. 浏览器遇到HTML文档中的`<script>`元素，并且没有`async`或`defer`属性，就暂停解析，开始执行脚本，这时`document.readyState`属性还是等于`loading`。
+1. HTML文档解析完成，`document.readyState`属性变成`interactive`。
+1. 浏览器等待图片、样式表、字体文件等外部资源加载完成，一旦全部加载完成，`document. readyState`属性变成`complete`。
 
 下面的代码用来检查网页是否加载成功。
 
@@ -236,20 +247,20 @@ iframe_node.contentDocument.designMode = "on";
 implementation属性返回一个对象，用来甄别当前环境部署了哪些DOM相关接口。implementation属性的hasFeature方法，可以判断当前环境是否部署了特定版本的特定接口。
 
 ```javascript
-
 document.implementation.hasFeature( 'HTML', '2.0')
 // true
 
 document.implementation.hasFeature('MutationEvents','2.0')
 // true
-
 ```
 
 上面代码表示，当前环境部署了DOM HTML 2.0版和MutationEvents的2.0版。
 
 **（2）compatMode**
 
-compatMode属性返回浏览器处理文档的模式，可能的值为BackCompat（向后兼容模式）和 CSS1Compat（严格模式）。
+`compatMode`属性返回浏览器处理文档的模式，可能的值为`BackCompat`（向后兼容模式）和`CSS1Compat`（严格模式）。
+
+一般来说，如果网页代码的第一行设置了明确的`DOCTYPE`（比如`<!doctype html>`），`document.compatMode`的值都为`CSS1Compat`。
 
 ### anchors，embeds，forms，images，links，scripts，styleSheets
 
@@ -345,7 +356,7 @@ document.write('world');
 document.close();
 ```
 
-如果页面已经渲染完成（DOMContentLoaded事件发生之后），再调用write方法，它会先调用open方法，擦除当前文档所有内容，然后再写入。
+如果页面已经解析完成（DOMContentLoaded事件发生之后），再调用write方法，它会先调用open方法，擦除当前文档所有内容，然后再写入。
 
 ```javascript
 document.addEventListener("DOMContentLoaded", function(event) {
