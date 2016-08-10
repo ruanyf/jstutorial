@@ -80,12 +80,14 @@ activeElement属性返回当前文档中获得焦点的那个元素。用户通�
 
 **（1）documentURI，URL**
 
-`documentURI`属性和`URL`属性都返回当前文档的网址。不同之处是`documentURI`属性是所有文档都具备的，`URL`属性则是HTML文档独有的。
+`documentURI`属性和`URL`属性都返回一个字符串，表示当前文档的网址。不同之处是`documentURI`属性是所有文档都具备的，`URL`属性则是HTML文档独有的。
 
 ```javascript
 document.documentURI === document.URL
 // true
 ```
+
+另外，如果文档的锚点（`#anchor`）变化，这两个属性都不会跟着变化。但是，`document.location`会跟着变化。
 
 **（2）domain**
 
@@ -118,9 +120,9 @@ if (Date.parse(doc1.lastModified) > Date.parse(doc2.lastModified)) {
 }
 ```
 
-**（4）location**
+### document.location
 
-`document.location`属性返回一个只读的`location`对象，提供了当前文档的URL信息。
+`document.location`属性返回`location`对象，提供了当前文档的URL信息。
 
 ```javascript
 // 当前网址为 http://user:passwd@www.example.com:4097/path/a.html?x=111#part1
@@ -134,18 +136,28 @@ document.location.search // "?x=111"
 document.location.hash // "#part1"
 document.location.user // "user"
 document.location.password // "passed"
+```
 
+`location`对象有以下方法。
+
+- `location.assign()`
+- `location.reload()`
+- `location.toString()`
+
+```javascript
 // 跳转到另一个网址
 document.location.assign('http://www.google.com')
 // 优先从服务器重新加载
 document.location.reload(true)
 // 优先从本地缓存重新加载（默认值）
 document.location.reload(false)
+// 跳转到新网址，并将取代掉history对象中的当前记录
+document.location.replace('http://www.google.com');
 // 将location对象转为字符串，等价于document.location.href
 document.location.toString()
 ```
 
-虽然`location`属性返回的对象是只读的，但是可以将`URL`赋值给这个属性，网页就会自动跳转到指定网址。
+如果将新的网址赋值给`location`对象，网页就会自动跳转到新网址。
 
 ```javascript
 document.location = 'http://www.example.com';
@@ -153,44 +165,41 @@ document.location = 'http://www.example.com';
 document.location.href = 'http://www.example.com';
 ```
 
-注意，采用上面的方法重置URL，跟用户点击链接跳转的效果是一样的。上一个网页依然将保存在浏览器历史之中，点击“后退”按钮就可以回到前一个网页。如果不希望用户看到前一个网页，可以使用`location.replace`方法，浏览器`history`对象就会用新的网址，取代当前网址，这样的话，“后退”按钮就不会回到当前网页了。
+也可以指定相对URL。
 
 ```javascript
-window.location.replace('http://www.example.com/otherpage.html');
+document.location = 'page2.html';
 ```
 
-`location`对象的`search`属性代表URL的查询字符串（包括`?`）。
+如果指定的是锚点，浏览器会自动滚动到锚点处。
 
 ```javascript
-// 查询字符串为 ?id=x&sort=name
-var search = window.location.search;
-search = search.slice(1); // 得到 'id=x&sort=name'
-search = search.split('&'); // 得到数组 ['id=x', 'sort=name']
+document.location = '#top';
 ```
+
+注意，采用上面的方法重置URL，跟用户点击链接跳转的效果是一样的。上一个网页依然将保存在浏览器历史之中，点击“后退”按钮就可以回到前一个网页。
+
+如果不希望用户看到前一个网页，可以使用`location.replace`方法，浏览器`history`对象就会用新的网址，取代当前网址，这样的话，“后退”按钮就不会回到当前网页了。它的一个应用就是，当脚本发现当前是移动设备时，就立刻跳转到移动版网页。
 
 `document.location`属性与`window.location`属性等价。
 
 ```javascript
-document.location === window.location //true
+document.location === window.location // true
 ```
 
-历史上，IE曾经不允许对document.location赋值，为了保险起见，建议优先使用`window.location`。如果只是单纯地获取当前网址，建议使用`document.URL`，语义性更好。
+历史上，IE曾经不允许对`document.location`赋值，为了保险起见，建议优先使用`window.location`。如果只是单纯地获取当前网址，建议使用`document.URL`，语义性更好。
 
-**（5）referrer**
+### document.referrer，document.title，document.characterSet
 
-referrer属性返回一个字符串，表示当前文档的访问来源，如果是无法获取来源或是用户直接键入网址，而不是从其他网页点击，则返回一个空字符串。
+`document.referrer`属性返回一个字符串，表示当前文档的访问来源，如果是无法获取来源或是用户直接键入网址，而不是从其他网页点击，则返回一个空字符串。
 
-**（6）title**
-
-`title`属性返回当前文档的标题，该属性是可写的。
+`document.title`属性返回当前文档的标题，该属性是可写的。
 
 ```javascript
 document.title = '新标题';
 ```
 
-**（7）characterSet**
-
-characterSet属性返回渲染当前文档的字符集，比如UTF-8、ISO-8859-1。
+`document.characterSet`属性返回渲染当前文档的字符集，比如UTF-8、ISO-8859-1。
 
 ### readyState，designMode
 

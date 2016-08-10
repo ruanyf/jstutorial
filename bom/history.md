@@ -10,7 +10,7 @@ modifiedOn: 2014-05-06
 
 浏览器窗口有一个`history`对象，用来保存浏览历史。
 
-比如，当前窗口先后访问了三个地址，那么`history`对象就包括三项，`history.length`属性等于3。
+如果当前窗口先后访问了三个网址，那么`history`对象就包括三项，`history.length`属性等于3。
 
 ```javascript
 history.length // 3
@@ -30,7 +30,7 @@ history.go(-2);
 
 如果移动的位置超出了访问历史的边界，以上三个方法并不报错，而是默默的失败。
 
-以下命令相当于刷新当前页面。
+`history.go(0)`相当于刷新当前页面。
 
 ```javascript
 history.go(0);
@@ -46,10 +46,9 @@ document.getElementById('backLink').onclick = function () {
 
 注意，返回上一页时，页面通常是从浏览器缓存之中加载，而不是重新要求服务器发送新的网页。
 
-## history.pushState()，history.replaceState()
+## history.pushState()
 
-HTML5为history对象添加了两个新方法，history.pushState() 和 history.replaceState()，用来在浏览历史中添加和修改记录。所有主流浏览器都支持该方法（包括IE10）。
-
+HTML5为`history`对象添加了两个新方法，`history.pushState()`和`history.replaceState()`，用来在浏览历史中添加和修改记录。
 
 ```javascript
 if (!!(window.history && history.pushState)){
@@ -61,52 +60,59 @@ if (!!(window.history && history.pushState)){
 
 上面代码可以用来检查，当前浏览器是否支持History API。如果不支持的话，可以考虑使用Polyfill库[History.js]( https://github.com/browserstate/history.js/)。
 
-history.pushState方法接受三个参数，依次为：
+`history.pushState`方法接受三个参数，依次为：
 
-- **state**：一个与指定网址相关的状态对象，popstate事件触发时，该对象会传入回调函数。如果不需要这个对象，此处可以填null。
-- **title**：新页面的标题，但是所有浏览器目前都忽略这个值，因此这里可以填null。
-- **url**：新的网址，必须与当前页面处在同一个域。浏览器的地址栏将显示这个网址。
+- `state`：一个与指定网址相关的状态对象，`popstate`事件触发时，该对象会传入回调函数。如果不需要这个对象，此处可以填`null`。
+- `title`：新页面的标题，但是所有浏览器目前都忽略这个值，因此这里可以填`null`。
+- `url`：新的网址，必须与当前页面处在同一个域。浏览器的地址栏将显示这个网址。
 
-假定当前网址是`example.com/1.html`，我们使用pushState方法在浏览记录（history对象）中添加一个新记录。
+假定当前网址是`example.com/1.html`，我们使用`pushState`方法在浏览记录（`history`对象）中添加一个新记录。
 
-{% highlight javascript %}
+```javascript
+var stateObj = { foo: 'bar' };
+history.pushState(stateObj, 'page 2', '2.html');
+```
 
-var stateObj = { foo: "bar" };
+添加上面这个新记录后，浏览器地址栏立刻显示`example.com/2.html`，但并不会跳转到`2.html`，甚至也不会检查`2.html`是否存在，它只是成为浏览历史中的最新记录。假定这时你访问了`google.com`，然后点击了倒退按钮，页面的url将显示`2.html`，但是内容还是原来的`1.html`。你再点击一次倒退按钮，url将显示`1.html`，内容不变。
 
-history.pushState(stateObj, "page 2", "2.html");
+总之，`pushState`方法不会触发页面刷新，只是导致`history`对象发生变化，地址栏会有反应。
 
-{% endhighlight %}
-
-添加上面这个新记录后，浏览器地址栏立刻显示`example.com/2.html`，但并不会跳转到2.html，甚至也不会检查2.html是否存在，它只是成为浏览历史中的最新记录。假定这时你访问了google.com，然后点击了倒退按钮，页面的url将显示2.html，但是内容还是原来的1.html。你再点击一次倒退按钮，url将显示1.html，内容不变。
-
-> 注意，pushState方法不会触发页面刷新。
-
-如果 pushState 的url参数，设置了一个当前网页的#号值（即hash），并不会触发hashchange事件。如果设置了一个非同域的网址，则会报错。
+如果`pushState`的url参数，设置了一个新的锚点值（即`hash`），并不会触发`hashchange`事件。如果设置了一个跨域网址，则会报错。
 
 ```javascript
 // 报错
 history.pushState(null, null, 'https://twitter.com/hello');
 ```
 
-上面代码中，pushState想要插入一个非同域的网址，导致报错。这样设计的目的是，防止恶意代码让用户以为他们是在另一个网站上。
+上面代码中，`pushState`想要插入一个跨域的网址，导致报错。这样设计的目的是，防止恶意代码让用户以为他们是在另一个网站上。
 
-`history.replaceState`方法的参数与`pushState`方法一模一样，区别是它修改浏览历史中当前页面的值。下面的例子假定当前网页是example.com/example.html。
+## history.replaceState()
+
+`history.replaceState`方法的参数与`pushState`方法一模一样，区别是它修改浏览历史中当前纪录。
+
+假定当前网页是`example.com/example.html`。
 
 ```javascript
-history.pushState({page: 1}, "title 1", "?page=1");
-history.pushState({page: 2}, "title 2", "?page=2");
-history.replaceState({page: 3}, "title 3", "?page=3");
-history.back(); // url显示为http://example.com/example.html?page=1
-history.back(); // url显示为http://example.com/example.html
-history.go(2);  // url显示为http://example.com/example.html?page=3
+history.pushState({page: 1}, 'title 1', '?page=1');
+history.pushState({page: 2}, 'title 2', '?page=2');
+history.replaceState({page: 3}, 'title 3', '?page=3');
+
+history.back()
+// url显示为http://example.com/example.html?page=1
+
+history.back()
+// url显示为http://example.com/example.html
+
+history.go(2)
+// url显示为http://example.com/example.html?page=3
 ```
 
 ## history.state属性
 
-history.state属性保存当前页面的state对象。
+`history.state`属性返回当前页面的`state`对象。
 
 ```javascript
-history.pushState({page: 1}, "title 1", "?page=1");
+history.pushState({page: 1}, 'title 1', '?page=1');
 
 history.state
 // { page: 1 }
@@ -114,44 +120,42 @@ history.state
 
 ## popstate事件
 
-每当同一个文档的浏览历史（即history对象）出现变化时，就会触发popstate事件。需要注意的是，仅仅调用pushState方法或replaceState方法 ，并不会触发该事件，只有用户点击浏览器倒退按钮和前进按钮，或者使用JavaScript调用back、forward、go方法时才会触发。另外，该事件只针对同一个文档，如果浏览历史的切换，导致加载不同的文档，该事件也不会触发。
+每当同一个文档的浏览历史（即`history`对象）出现变化时，就会触发`popstate`事件。
 
-使用的时候，可以为popstate事件指定回调函数。这个回调函数的参数是一个event事件对象，它的state属性指向pushState和replaceState方法为当前url所提供的状态对象（即这两个方法的第一个参数）。
+需要注意的是，仅仅调用`pushState`方法或`replaceState`方法 ，并不会触发该事件，只有用户点击浏览器倒退按钮和前进按钮，或者使用JavaScript调用`back`、`forward`、`go`方法时才会触发。另外，该事件只针对同一个文档，如果浏览历史的切换，导致加载不同的文档，该事件也不会触发。
 
-{% highlight javascript %}
+使用的时候，可以为`popstate`事件指定回调函数。这个回调函数的参数是一个`event`事件对象，它的`state`属性指向`pushState`和`replaceState`方法为当前URL所提供的状态对象（即这两个方法的第一个参数）。
 
-window.onpopstate = function(event) {
-  console.log("location: " + document.location);
-  console.log("state: " + JSON.stringify(event.state));
+```javascript
+window.onpopstate = function (event) {
+  console.log('location: ' + document.location);
+  console.log('state: ' + JSON.stringify(event.state));
 };
 
 // 或者
 
-window.addEventListener('popstate', function(event) {  
-  console.log("location: " + document.location);
-  console.log("state: " + JSON.stringify(event.state));  
+window.addEventListener('popstate', function(event) {
+  console.log('location: ' + document.location);
+  console.log('state: ' + JSON.stringify(event.state));
 });
+```
 
-{% endhighlight %}
+上面代码中的`event.state`，就是通过`pushState`和`replaceState`方法，为当前URL绑定的`state`对象。
 
-上面代码中的event.state，就是通过pushState和replaceState方法，为当前url绑定的state对象。
+这个`state`对象也可以直接通过`history`对象读取。
 
-这个state对象也可以直接通过history对象读取。
-
-{% highlight javascript %}
-
+```javascript
 var currentState = history.state;
+```
 
-{% endhighlight %}
-
-另外，需要注意的是，当页面第一次加载的时候，在onload事件发生后，Chrome和Safari浏览器（Webkit核心）会触发popstate事件，而Firefox和IE浏览器不会。
+注意，页面第一次加载的时候，在`load`事件发生后，Chrome和Safari浏览器（Webkit核心）会触发`popstate`事件，而Firefox和IE浏览器不会。
 
 ## URLSearchParams API
 
 URLSearchParams API用于处理URL之中的查询字符串，即问号之后的部分。没有部署这个API的浏览器，可以用[url-search-params](https://github.com/WebReflection/url-search-params)这个垫片库。
 
 ```javascript
-var paramsString = 'q=URLUtils.searchParams&topic=api'
+var paramsString = 'q=URLUtils.searchParams&topic=api';
 var searchParams = new URLSearchParams(paramsString);
 ```
 
@@ -166,7 +170,7 @@ URLSearchParams有以下方法，用来操作某个参数。
 - `toString()`：返回整个查询字符串
 
 ```javascript
-var paramsString = "q=URLUtils.searchParams&topic=api"
+var paramsString = 'q=URLUtils.searchParams&topic=api';
 var searchParams = new URLSearchParams(paramsString);
 
 searchParams.has('topic') // true
@@ -193,31 +197,31 @@ URLSearchParams还有三个方法，用来遍历所有参数。
 - `values()`：遍历所有参数值
 - `entries()`：遍历所有参数的键值对
 
-上面三个方法返回的都是Iterator对象。
+上面三个方法返回的都是`Iterator`对象。
 
 ```javascript
 var searchParams = new URLSearchParams('key1=value1&key2=value2');
 
-for(var key of searchParams.keys()) {
+for (var key of searchParams.keys()) {
   console.log(key);
 }
 // key1
 // key2
 
-for(var value of searchParams.values()) {
+for (var value of searchParams.values()) {
   console.log(value);
 }
 // value1
 // value2
 
-for(var pair of searchParams.entries()) {
+for (var pair of searchParams.entries()) {
   console.log(pair[0]+ ', '+ pair[1]);
 }
 // key1, value1
 // key2, value2
 ```
 
-在Chrome浏览器之中，`URLSearchParams`实例本身就是Iterator对象，与`entries`方法返回值相同。所以，可以写成下面的样子。
+在Chrome浏览器之中，`URLSearchParams`实例本身就是`Iterator`对象，与`entries`方法返回值相同。所以，可以写成下面的样子。
 
 ```javascript
 for (var p of searchParams) {

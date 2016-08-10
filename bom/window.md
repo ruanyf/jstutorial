@@ -31,6 +31,10 @@ window.a // 1
 window.window === this // true
 ```
 
+### window.length
+
+`window.length`属性返回当前网页包含的框架总数。如果当前网页不包含`frame`和`iframe`元素，那么`window.length`就返回0。更多介绍参见下文的`window.frames`属性介绍。
+
 ### window.closed
 
 `window.closed`属性返回一个布尔值，表示窗口是否关闭。
@@ -71,7 +75,7 @@ console.log(window.name)
 
 ### window.location
 
-`window.location`返回一个`location`对象，用于获取窗口当前的URL信息。它等同于`document.location`对象。
+`window.location`返回一个`location`对象，用于获取窗口当前的URL信息。它等同于`document.location`对象，详细介绍见《document对象》一节。
 
 ```javascript
 window.location === document.location // true
@@ -92,7 +96,7 @@ var frameDoc = frame.contentDocument;
 frameWindow.function()
 ```
 
-`window.length`属性返回当前页面中所有框架窗口总数。
+`window.frames.length`属性返回当前页面中所有框架窗口总数。
 
 ```javascript
 window.frames.length === window.length // true
@@ -111,12 +115,12 @@ var iframe_title = iframe.contentWindow.title;
 
 上面代码用于获取`iframe`页面的标题。
 
-`iframe`元素遵守同源政策，只有当父页面与框架页面来自同一个域名，两者之间才可以用脚本通信，否则只有使用window.postMessage方法。
+`iframe`元素遵守同源政策，只有当父页面与框架页面来自同一个域名，两者之间才可以用脚本通信，否则只有使用`window.postMessage`方法。
 
 `iframe`窗口内部，使用`window.parent`引用父窗口。如果当前页面没有父窗口，则`window.parent`属性返回自身。因此，可以通过`window.parent`是否等于`window.self`，判断当前窗口是否为`iframe`窗口。
 
 ```javascript
-if (window.parent != window.self) {
+if (window.parent !== window.self) {
   // 当前窗口是子窗口
 }
 ```
@@ -143,11 +147,13 @@ if (window.parent != window.self) {
 
 ## navigator对象
 
-`window`对象的`navigator`属性，指向一个包含浏览器相关信息的对象。
+`window`对象的`navigator`属性，指向一个包含浏览器信息的对象。
 
 ### navigator.userAgent
 
-`navigator.userAgent`属性返回浏览器的User-Agent字符串，用来标示浏览器的种类。下面是Chrome浏览器的`userAgent`。
+`navigator.userAgent`属性返回浏览器的User-Agent字符串，标示浏览器的厂商和版本信息。
+
+下面是Chrome浏览器的`userAgent`。
 
 ```javascript
 navigator.userAgent
@@ -177,6 +183,43 @@ if (/mobi/i.test(ua)) {
 ### navigator.plugins
 
 `navigator.plugins`属性返回一个类似数组的对象，成员是浏览器安装的插件，比如Flash、ActiveX等。
+
+### navigator.platform
+
+`navigator.platform`属性返回用户的操作系统信息。
+
+```javascript
+navigator.platform
+// "Linux x86_64"
+```
+
+### navigator.onLine
+
+`navigator.onLine`属性返回一个布尔值，表示用户当前在线还是离线。
+
+```javascript
+navigator.onLine // true
+```
+
+### navigator.geolocation
+
+`navigator.geolocation`返回一个Geolocation对象，包含用户地理位置的信息。
+
+### navigator.javaEnabled()，navigator.cookieEnabled()
+
+`javaEnabled`方法返回一个布尔值，表示浏览器是否能运行Java Applet小程序。
+
+```javascript
+navigator.javaEnabled() // false
+```
+
+`cookieEnabled`方法返回一个布尔值，表示浏览器是否能储存Cookie。
+
+```javascript
+navigator.cookieEnabled() // true
+```
+
+注意，这个返回值与是否储存某个网站的Cookie无关。用户可以设置某个网站不得储存Cookie，这时`cookieEnabled`方法返回的还是`true`。
 
 ## window.screen对象
 
@@ -314,6 +357,8 @@ if (typeof window.print === 'function') {
 `focus`方法会激活指定当前窗口，使其获得焦点。
 
 ```javascript
+var popup = window.open('popup.html', 'Popup Window');
+
 if ((popup !== null) && !popup.closed) {
   popup.focus();
 }
@@ -353,7 +398,7 @@ window.onerror = function (message, filename, lineno, colno, error) {
 };
 ```
 
-`error`事件的回调函数，一共可以有五个参数，它们的含义依次如下。
+由于历史原因，`window`的`error`事件的回调函数不接受错误对象作为参数，而是一共可以接受五个参数，它们的含义依次如下。
 
 - 出错信息
 - 出错脚本的网址
@@ -362,20 +407,6 @@ window.onerror = function (message, filename, lineno, colno, error) {
 - 错误对象
 
 老式浏览器只支持前三个参数。
-
-需要注意的是，如果脚本网址与网页网址不在同一个域（比如使用了CDN），浏览器根本不会提供详细的出错信息，只会提示出错，错误类型是“Script error.”，行号为0，其他信息都没有。这是浏览器防止向外部脚本泄漏信息。一个解决方法是在脚本所在的服务器，设置Access-Control-Allow-Origin的HTTP头信息。
-
-```bash
-Access-Control-Allow-Origin:*
-```
-
-然后，在网页的`<script>`标签中设置`crossorigin`属性。
-
-```html
-<script crossorigin="anonymous" src="//example.com/file.js"></script>
-```
-
-上面代码的`crossorigin="anonymous"`表示，读取文件不需要身份信息，即不需要cookie和HTTP认证信息。如果设为`crossorigin="use-credentials"`，就表示浏览器会上传cookie和HTTP认证信息，同时还需要服务器端打开HTTP头信息Access-Control-Allow-Credentials。
 
 并不是所有的错误，都会触发JavaScript的`error`事件（即让JavaScript报错），只限于以下三类事件。
 
@@ -387,6 +418,33 @@ Access-Control-Allow-Origin:*
 
 - CSS文件不存在
 - iframe文件不存在
+
+下面是一个例子，如果整个页面未捕获错误超过3个，就显示警告。
+
+```javascript
+window.onerror = function(msg, url, line) {
+  if (onerror.num++ > onerror.max) {
+    alert('ERROR: ' + msg + '\n' + url + ':' + line);
+    return true;
+  }
+}
+onerror.max = 3;
+onerror.num = 0;
+```
+
+需要注意的是，如果脚本网址与网页网址不在同一个域（比如使用了CDN），浏览器根本不会提供详细的出错信息，只会提示出错，错误类型是“Script error.”，行号为0，其他信息都没有。这是浏览器防止向外部脚本泄漏信息。一个解决方法是在脚本所在的服务器，设置`Access-Control-Allow-Origin`的HTTP头信息。
+
+```bash
+Access-Control-Allow-Origin: *
+```
+
+然后，在网页的`<script>`标签中设置`crossorigin`属性。
+
+```html
+<script crossorigin="anonymous" src="//example.com/file.js"></script>
+```
+
+上面代码的`crossorigin="anonymous"`表示，读取文件不需要身份信息，即不需要cookie和HTTP认证信息。如果设为`crossorigin="use-credentials"`，就表示浏览器会上传cookie和HTTP认证信息，同时还需要服务器端打开HTTP头信息`Access-Control-Allow-Credentials`。
 
 ## URL的编码/解码方法
 
@@ -518,6 +576,8 @@ window.onunload = function() {
   return confirm('你确定要离开当面页面吗？');
 }
 ```
+
+这三个方法都具有堵塞效应，一旦弹出对话框，整个页面就是暂停执行，等待用户做出反应。
 
 ## 参考链接
 
