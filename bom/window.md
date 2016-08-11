@@ -23,41 +23,13 @@ window.a // 1
 
 ## window对象的属性
 
-### window.window
+### window.window，window.name
 
 `window`对象的`window`属性指向自身。
 
 ```javascript
 window.window === this // true
 ```
-
-### window.length
-
-`window.length`属性返回当前网页包含的框架总数。如果当前网页不包含`frame`和`iframe`元素，那么`window.length`就返回0。更多介绍参见下文的`window.frames`属性介绍。
-
-### window.closed
-
-`window.closed`属性返回一个布尔值，表示窗口是否关闭。
-
-```javascript
-window.closed // false
-```
-
-上面代码检查当前窗口是否关闭。这种检查意义不大，因为只要能运行代码，当前窗口肯定没有关闭。这个属性一般用来检查，使用脚本打开的新窗口是否关闭。
-
-### window.opener
-
-`window.opener`属性返回打开当前窗口的父窗口。如果当前窗口没有父窗口，则返回`null`。
-
-```javascript
-var windowA = window.opener;
-```
-
-通过`opener`属性，可以获得父窗口的的全局变量和方法，比如`windowA.window.propertyName`和`windowA.window.functionName()`。
-
-该属性只适用于两个窗口属于同源的情况（参见《[同源政策](/bom/same-origin.html)》一节），且其中一个窗口由另一个打开。
-
-### window.name
 
 `window.name`属性用于设置当前浏览器窗口的名字。
 
@@ -81,7 +53,27 @@ console.log(window.name)
 window.location === document.location // true
 ```
 
-### window.frames
+### window.closed，window.opener
+
+`window.closed`属性返回一个布尔值，表示窗口是否关闭。
+
+```javascript
+window.closed // false
+```
+
+上面代码检查当前窗口是否关闭。这种检查意义不大，因为只要能运行代码，当前窗口肯定没有关闭。这个属性一般用来检查，使用脚本打开的新窗口是否关闭。
+
+`window.opener`属性返回打开当前窗口的父窗口。如果当前窗口没有父窗口，则返回`null`。
+
+```javascript
+var windowA = window.opener;
+```
+
+通过`opener`属性，可以获得父窗口的的全局变量和方法，比如`windowA.window.propertyName`和`windowA.window.functionName()`。
+
+该属性只适用于两个窗口属于同源的情况（参见《[同源政策](/bom/same-origin.html)》一节），且其中一个窗口由另一个打开。
+
+### window.frames，window.length
 
 `window.frames`属性返回一个类似数组的对象，成员为页面内所有框架窗口，包括`frame`元素和`iframe`元素。`window.frames[0]`表示页面中第一个框架窗口，`window.frames['someName']`则是根据框架窗口的`name`属性的值（不是`id`属性），返回该窗口。另外，通过`document.getElementById()`方法也可以引用指定的框架窗口。
 
@@ -95,14 +87,6 @@ var frameDoc = frame.contentDocument;
 // 获取子窗口的变量和属性
 frameWindow.function()
 ```
-
-`window.frames.length`属性返回当前页面中所有框架窗口总数。
-
-```javascript
-window.frames.length === window.length // true
-```
-
-`window.frames.length`与`window.length`应该是相等的。
 
 由于传统的`frame`窗口已经不建议使用了，这里主要介绍`iframe`窗口。
 
@@ -124,6 +108,14 @@ if (window.parent !== window.self) {
   // 当前窗口是子窗口
 }
 ```
+
+`window.length`属性返回当前网页包含的框架总数。如果当前网页不包含`frame`和`iframe`元素，那么`window.length`就返回`0`。
+
+```javascript
+window.frames.length === window.length // true
+```
+
+`window.frames.length`与`window.length`应该是相等的。
 
 ### window.screenX，window.screenY
 

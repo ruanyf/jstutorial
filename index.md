@@ -80,7 +80,7 @@ modifiedOn: 2014-05-18
 
 <h2 id="htmlapi">HTML网页的API</h2>
 
-- [HTML网页元素](htmlapi/elements.html)
+- [概述](htmlapi/elements.html)
 - [Canvas](htmlapi/canvas.html)
 - [SVG图像](htmlapi/svg.html)
 - [表单](htmlapi/form.html)

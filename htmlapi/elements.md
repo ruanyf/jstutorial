@@ -1,34 +1,106 @@
 ---
-title: HTML网页元素
+title: 概述
 category: htmlapi
 layout: page
 date: 2014-07-08
 modifiedOn: 2014-07-08
 ---
 
+## 元素与变量名
+
+### id属性
+
+由于历史原因，HTML元素的`id`属性的名字，会自动成为全局变量，指向该HTML元素。
+
+```javascript
+// HTML元素为
+// <div id="example"></div>
+
+example // [object HTMLDivElement]
+```
+
+上面代码中，有一个`id`属性等于`example`的`div`元素，结果就自动生成了全局变量`example`，指向这个`div`元素。
+
+如果已有同名全局变量，则`id`元素不会自动生成全局变量。
+
+```html
+<script>
+var example = 1;
+</script>
+
+<div id="example"></div>
+
+<script>
+console.log(example) // 1
+</script>
+```
+
+上面代码中，已有全局变量`example`，这时`id`属性就不会自动变成全局变量。另一情况是，DOM生成以后，再对全局变量`example`赋值，这时也会覆盖`example`原来的值。
+
+由于这种原因，默认的全局变量名（比如，`history`、`location`、`navigator`等），最好不要设为`id`属性的名字。
+
+另外，由于原则上，网页之中不应该有同名`id`属性的HTML元素，所以，这种机制产生的全局变量不会重名。
+
+### name属性
+
+由于历史原因，以下HTML元素的`name`属性，也会成为全局变量。
+
+- `<a>`
+- `<applet>`
+- `<area>`
+- `<embed>`
+- `<form>`
+- `<frame>`
+- `<frameset>`
+- `<iframe>`
+- `<img>`
+- `<object>`
+
+```javascript
+// HTML代码为
+// <form name="myForm" />
+
+myForm // [object HTMLFormElement]
+```
+
+上面代码中，`form`元素的`name`属性名`myForm`，自动成为全局变量`myForm`。
+
+如果`name`属性同名的HTML元素不止一个，或者某个元素的`id`属性与另一个元素的`name`属性同名，这时全局变量会指向一个类似数组的对象。
+
+```javascript
+// HTML代码为
+// <div id="myForm" />
+// <form name="myForm" />
+
+myForm[0] // [object HTMLDivElement]
+myForm[1] // [object HTMLFormElement]
+```
+
+上面代码中，全局变量`myForm`的第一个成员指向`div`元素，第二个成员指向`form`元素。
+
+另外，如果`iframe`元素有`name`属性或`id`属性，那么生成的全局变量，不是指向`iframe`元素节点，而是指向这个`iframe`代表的子页面`window`对象。
+
 ## image元素
 
 ### alt属性，src属性
 
-alt属性返回image元素的HTML标签的alt属性值，src属性返回image元素的HTML标签的src属性值。
+`alt`属性返回`image`元素的HTML标签的`alt`属性值，`src`属性返回`image`元素的HTML标签的`src`属性值。
 
 ```javascript
-
 // 方法一：HTML5构造函数Image
-var img1 = new Image(); 
+var img1 = new Image();
 img1.src = 'image1.png';
 img1.alt = 'alt';
 document.body.appendChild(img1);
 
 // 方法二：DOM HTMLImageElement
-var img2 = document.createElement('img'); 
+var img2 = document.createElement('img');
 img2.src = 'image2.jpg';
 img2.alt = 'alt text';
 document.body.appendChild(img2);
 
 document.images[0].src
 // image1.png
-
 ```
 
 ### complete属性
