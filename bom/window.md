@@ -63,51 +63,37 @@ window.closed // false
 
 上面代码检查当前窗口是否关闭。这种检查意义不大，因为只要能运行代码，当前窗口肯定没有关闭。这个属性一般用来检查，使用脚本打开的新窗口是否关闭。
 
+```javascript
+var popup = window.open();
+
+if ((popup !== null) && !popup.closed) {
+  // 窗口仍然打开着
+}
+```
+
 `window.opener`属性返回打开当前窗口的父窗口。如果当前窗口没有父窗口，则返回`null`。
 
 ```javascript
-var windowA = window.opener;
+window.open().opener === window // true
 ```
 
-通过`opener`属性，可以获得父窗口的的全局变量和方法，比如`windowA.window.propertyName`和`windowA.window.functionName()`。
+上面表达式会打开一个新窗口，然后返回`true`。
 
-该属性只适用于两个窗口属于同源的情况（参见《[同源政策](/bom/same-origin.html)》一节），且其中一个窗口由另一个打开。
+通过`opener`属性，可以获得父窗口的的全局变量和方法，比如`window.opener.propertyName`和`window.opener.functionName()`。但这只限于两个窗口属于同源的情况（参见《[同源政策](/bom/same-origin.html)》一节），且其中一个窗口由另一个打开。
 
 ### window.frames，window.length
 
-`window.frames`属性返回一个类似数组的对象，成员为页面内所有框架窗口，包括`frame`元素和`iframe`元素。`window.frames[0]`表示页面中第一个框架窗口，`window.frames['someName']`则是根据框架窗口的`name`属性的值（不是`id`属性），返回该窗口。另外，通过`document.getElementById()`方法也可以引用指定的框架窗口。
+`window.frames`属性返回一个类似数组的对象，成员为页面内所有框架窗口，包括`frame`元素和`iframe`元素。`window.frames[0]`表示页面中第一个框架窗口。
+
+如果`iframe`元素设置了`id`或`name`属性，那么就可以用属性值，引用这个`iframe`窗口。比如`<iframe name="myIFrame">`就可以用`frames['myIFrame']`或者`frames.myIFrame`来引用。
+
+`frames`属性实际上是`window`对象的别名。
 
 ```javascript
-var frame = document.getElementById('theFrame');
-var frameWindow = frame.contentWindow;
-
-// 等同于 frame.contentWindow.document
-var frameDoc = frame.contentDocument;
-
-// 获取子窗口的变量和属性
-frameWindow.function()
+frames === window // true
 ```
 
-由于传统的`frame`窗口已经不建议使用了，这里主要介绍`iframe`窗口。
-
-需要注意的是，`window.frames`的每个成员对应的是框架内的窗口（即框架的`window`对象）。如果要获取每个框架内部的DOM树，需要使用`window.frames[0].document`的写法。
-
-```javascript
-var iframe = window.getElementsByTagName('iframe')[0];
-var iframe_title = iframe.contentWindow.title;
-```
-
-上面代码用于获取`iframe`页面的标题。
-
-`iframe`元素遵守同源政策，只有当父页面与框架页面来自同一个域名，两者之间才可以用脚本通信，否则只有使用`window.postMessage`方法。
-
-`iframe`窗口内部，使用`window.parent`引用父窗口。如果当前页面没有父窗口，则`window.parent`属性返回自身。因此，可以通过`window.parent`是否等于`window.self`，判断当前窗口是否为`iframe`窗口。
-
-```javascript
-if (window.parent !== window.self) {
-  // 当前窗口是子窗口
-}
-```
+因此，`frames[0]`也可以用`window[0]`表示。但是，从语义上看，`frames`更清晰，而且考虑到`window`还是全局对象，因此推荐表示多窗口时，总是使用`frames[0]`的写法。更多介绍请看下文的《多窗口操作》部分。
 
 `window.length`属性返回当前网页包含的框架总数。如果当前网页不包含`frame`和`iframe`元素，那么`window.length`就返回`0`。
 
@@ -273,7 +259,14 @@ window.moveBy(25, 50)
 var popup = window.open('somefile.html');
 ```
 
-`open`方法的第一个参数是新窗口打开的网址，此外还可以加上第二个参数，表示新窗口的名字，以及第三个参数用来指定新窗口的参数，形式是一个逗号分隔的`property=value`字符串。
+上面代码会让浏览器弹出一个新建窗口，网址是当前域名下的`somefile.html`。
+
+`open`方法一共可以接受四个参数。
+
+- 第一个参数：字符串，表示新窗口的网址。如果省略，默认网址就是`about:blank`。
+- 第二个参数：字符串，表示新窗口的名字。如果该名字的窗口已经存在，则跳到该窗口，不再新建窗口。如果省略，就默认使用`_blank`，表示新建一个没有名字的窗口。
+- 第三个参数：字符串，内容为逗号分隔的键值对，表示新窗口的参数，比如有没有提示栏、工具条等等。如果省略，则默认打开一个完整UI的新窗口。
+- 第四个参数：布尔值，表示第一个参数指定的网址，是否应该替换`history`对象之中的当前网址记录，默认值为`false`。显然，这个参数只有在第二个参数指向已经存在的窗口时，才有意义。
 
 下面是一个例子。
 
@@ -281,11 +274,15 @@ var popup = window.open('somefile.html');
 var popup = window.open(
   'somepage.html',
   'DefinitionsWindows',
-  'height=200,width=200,location=no,resizable=yes,scrollbars=yes'
+  'height=200,width=200,location=no,status=yes,resizable=yes,scrollbars=yes'
 );
 ```
 
-注意，如果在第三个参数中设置了一部分参数，其他没有被设置的`yes/no`参数都会被设成No，只有`titlebar`和关闭按钮除外（它们的值默认为yes）。
+上面代码表示，打开的新窗口高度和宽度都为200像素，没有地址栏和滚动条，但有状态栏，允许用户调整大小。
+
+注意，如果在第三个参数中设置了一部分参数，其他没有被设置的`yes/no`参数都会被设成`no`，只有`titlebar`和关闭按钮除外（它们的值默认为`yes`）。
+
+另外，`open`方法的第二个参数虽然可以指定已经存在的窗口，但是不等于可以任意控制其他窗口。为了防止被不相干的窗口控制，浏览器只有在两个窗口同源，或者目标窗口被当前网页打开的情况下，才允许`open`方法指向该窗口。
 
 `open`方法返回新窗口的引用。
 
@@ -294,7 +291,17 @@ var windowB = window.open('windowB.html', 'WindowB');
 windowB.window.name // "WindowB"
 ```
 
-由于`open`这个方法很容易被滥用，许多浏览器默认都不允许脚本新建窗口。因此，有必要检查一下打开新窗口是否成功。
+下面是另一个例子。
+
+```javascript
+var w = window.open();
+w.alert('已经打开新窗口');
+w.location = 'http://example.com';
+```
+
+上面代码先打开一个新窗口，然后在该窗口弹出一个对话框，再将网址导向`example.com`。
+
+由于`open`这个方法很容易被滥用，许多浏览器默认都不允许脚本自动新建窗口。只允许在用户点击链接或按钮，脚本做出反应，弹出新窗口。因此，有必要检查一下打开新窗口是否成功。
 
 ```javascript
 if (popup === null) {
@@ -308,13 +315,7 @@ if (popup === null) {
 popup.close()
 ```
 
-`window.closed`属性用于检查当前窗口是否被关闭了。
-
-```javascript
-if ((popup !== null) && !popup.closed) {
-  // 窗口仍然打开着
-}
-```
+该方法只对顶层窗口有效，`iframe`框架之中的窗口使用该方法无效。
 
 ### window.print()
 
@@ -359,6 +360,98 @@ if ((popup !== null) && !popup.closed) {
 上面代码先检查`popup`窗口是否依然存在，确认后激活该窗口。
 
 当前窗口获得焦点时，会触发`focus`事件；当前窗口失去焦点时，会触发`blur`事件。
+
+## 多窗口操作
+
+由于网页可以使用`iframe`元素，嵌入其他网页，因此一个网页之中会形成多个窗口。另一情况是，子网页之中又嵌入别的网页，形成多级窗口。
+
+### 窗口的引用
+
+各个窗口之中的脚本，可以引用其他窗口。浏览器提供了一些特殊变量，用来返回其他窗口。
+
+- `top`：顶层窗口，即最上层的那个窗口
+- `parent`：父窗口
+- `self`：当前窗口，即自身
+
+下面代码可以判断，当前窗口是否为顶层窗口。
+
+```javascript
+top === self
+
+// 更好的写法
+window.top === window.self
+```
+
+下面的代码让父窗口的访问历史后退一次。
+
+```javascript
+parent.history.back();
+```
+
+与这些变量对应，浏览器还提供一些特殊的窗口名，供`open`方法、`<a>`标签、`<form>`标签等引用。
+
+- `_top`：顶层窗口
+- `_parent`：父窗口
+- `_blank`：新窗口
+
+下面代码就表示在顶层窗口打开链接。
+
+```html
+<a href="somepage.html" target="_top">Link</a>
+```
+
+### iframe标签
+
+对于`iframe`嵌入的窗口，`document.getElementById`方法可以拿到该窗口的DOM节点，然后使用`contentWindow`属性获得`iframe`节点包含的`window`对象，或者使用`contentDocument`属性获得包含的`document`对象。
+
+```javascript
+var frame = document.getElementById('theFrame');
+var frameWindow = frame.contentWindow;
+
+// 等同于 frame.contentWindow.document
+var frameDoc = frame.contentDocument;
+
+// 获取子窗口的变量和属性
+frameWindow.function()
+
+// 获取子窗口的标题
+frameWindow.title
+```
+
+`iframe`元素遵守同源政策，只有当父页面与框架页面来自同一个域名，两者之间才可以用脚本通信，否则只有使用`window.postMessage`方法。
+
+`iframe`窗口内部，使用`window.parent`引用父窗口。如果当前页面没有父窗口，则`window.parent`属性返回自身。因此，可以通过`window.parent`是否等于`window.self`，判断当前窗口是否为`iframe`窗口。
+
+```javascript
+if (window.parent !== window.self) {
+  // 当前窗口是子窗口
+}
+```
+
+`iframe`嵌入窗口的`window`对象，有一个`frameElement`属性，返回它在父窗口中的DOM节点。对于那么非嵌入的窗口，该属性等于`null`。
+
+```javascript
+var f1Element = document.getElementById('f1');
+var fiWindow = f1Element.contentWindow;
+f1Window.frameElement === f1Element // true
+window.frameElement === null // true
+```
+
+### frames属性
+
+`window`对象的`frames`属性返回一个类似数组的对象，成员是所有子窗口的`window`对象。可以使用这个属性，实现窗口之间的互相引用。比如，`frames[0]`返回第一个子窗口，`frames[1].frames[2]`返回第二个子窗口内部的第三个子窗口，`parent.frames[1]`返回父窗口的第二个子窗口。
+
+需要注意的是，`window.frames`每个成员的值，是框架内的窗口（即框架的`window`对象），而不是`iframe`标签在父窗口的DOM节点。如果要获取每个框架内部的DOM树，需要使用`window.frames[0].document`的写法。
+
+另外，如果`iframe`元素设置了`name`或`id`属性，那么属性值会自动成为全局变量，并且可以通过`window.frames`属性引用，返回子窗口的`window`对象。
+
+```javascript
+// HTML代码为<iframe id="myFrame">
+myFrame // [HTMLIFrameElement]
+frames.myframe === myFrame // true
+```
+
+另外，`name`属性的值会自动成为子窗口的名称，可以用在`window.open`方法的第二个参数，或者`<a>`和`<frame>`标签的`target`属性。
 
 ## 事件
 
