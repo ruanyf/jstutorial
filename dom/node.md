@@ -1,37 +1,38 @@
 ---
-title: Node节点
+title: DOM 模型概述
 layout: page
 category: dom
 date: 2013-10-07
 modifiedOn: 2014-05-18
 ---
 
-## DOM的概念
+## 基本概念
 
-DOM是文档对象模型（Document Object Model）的简称，它的基本思想是把结构化文档（比如HTML和XML）解析成一系列的节点，再由这些节点组成一个树状结构（DOM Tree）。所有的节点和最终的树状结构，都有规范的对外接口，以达到使用编程语言操作文档的目的（比如增删内容）。所以，DOM可以理解成文档（HTML文档、XML文档和SVG文档）的编程接口。
+### DOM
 
-DOM有自己的国际标准，目前的通用版本是[DOM 3](http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/core.html)，下一代版本[DOM 4](http://www.w3.org/TR/dom/)正在拟定中。本章介绍的就是JavaScript对DOM标准的实现和用法。
+DOM是JavaScript操作网页的接口，全称为“文档对象模型”（Document Object Model）。它的作用是将网页转为一个JavaScript对象，从而可以用脚本进行各种操作（比如增删内容）。
 
-严格地说，DOM不属于JavaScript，但是操作DOM是JavaScript最常见的任务，而JavaScript也是最常用于DOM操作的语言。所以，DOM往往放在JavaScript里面介绍。
+浏览器会根据DOM模型，将结构化文档（比如HTML和XML）解析成一系列的节点，再由这些节点组成一个树状结构（DOM Tree）。所有的节点和最终的树状结构，都有规范的对外接口。所以，DOM可以理解成网页的编程接口。DOM有自己的国际标准，目前的通用版本是[DOM 3](http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/core.html)，下一代版本[DOM 4](http://www.w3.org/TR/dom/)正在拟定中。
 
-## 节点的概念
+严格地说，DOM不属于JavaScript，但是操作DOM是JavaScript最常见的任务，而JavaScript也是最常用于DOM操作的语言。本章介绍的就是JavaScript对DOM标准的实现和用法。
 
-DOM的最小组成单位叫做节点（node），一个文档的树形结构（DOM树），就是由各种不同类型的节点组成。
+### 节点
 
-对于HTML文档，节点主要有以下六种类型：Document节点、DocumentType节点、Element节点、Attribute节点、Text节点和DocumentFragment节点。
+DOM的最小组成单位叫做节点（node）。文档的树形结构（DOM树），就是由各种不同类型的节点组成。每个节点可以看作是文档树的一片叶子。
 
-节点|名称|含义
-----|----|----
-Document | 文档节点 | 整个文档（window.document）
-DocumentType | 文档类型节点 | 文档的类型（比如&lt;!DOCTYPE html&gt;）
-Element | 元素节点 | HTML元素（比如&lt;body&gt;、&lt;a&gt;等）
-Attribute | 属性节点| HTML元素的属性（比如class="right"）
-Text | 文本节点 | HTML文档中出现的文本
-DocumentFragment | 文档碎片节点 | 文档的片段
+节点的类型有七种。
 
-浏览器原生提供一个Node对象，上表所有类型的节点都是Node对象派生出来的。也就是说，它们都继承了Node的属性和方法。
+- `Document`：整个文档树的顶层节点
+- `DocumentType`：`doctype`标签（比如`<!DOCTYPE html>`）
+- `Element`：网页的各种HTML标签（比如`<body>`、`<a>`等）
+- `Attribute`：网页元素的属性（比如`class="right"`）
+- `Text`：标签之间或标签包含的文本
+- `Comment`：注释
+- `DocumentFragment`：文档的片段
 
-## Node节点的属性
+这七种节点都属于浏览器原生提供的节点对象的派生对象，具有一些共同的属性和方法。
+
+## 节点对象的属性
 
 ### nodeName，nodeType
 
@@ -246,7 +247,7 @@ baseURI属性返回一个字符串，由当前网页的协议、域名和所在�
 
 该属性不仅document对象有（`document.baseURI`），元素节点也有（`element.baseURI`）。通常情况下，它们的值是相同的。
 
-## Node节点的方法
+## 节点对象的方法
 
 ### appendChild()，hasChildNodes()
 

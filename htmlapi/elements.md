@@ -45,7 +45,6 @@ console.log(example) // 1
 
 由于历史原因，以下HTML元素的`name`属性，也会成为全局变量。
 
-- `<a>`
 - `<applet>`
 - `<area>`
 - `<embed>`
@@ -77,6 +76,17 @@ myForm[1] // [object HTMLFormElement]
 ```
 
 上面代码中，全局变量`myForm`的第一个成员指向`div`元素，第二个成员指向`form`元素。
+
+这些元素的`name`属性名，也会成为`document`对象的属性。
+
+```javascript
+// HTML代码为<img name="xx" />
+document.xx === xx // true
+```
+
+上面代码中，`name`属性为`xx`的`img`元素，自动生成了全局变量`xx`和`document`对象的属性`xx`。
+
+如果有多个`name`属性相同的元素，那么`document`对象的该属性指向一个类似数组的对象（NodeList对象的实例）。
 
 另外，如果`iframe`元素有`name`属性或`id`属性，那么生成的全局变量，不是指向`iframe`元素节点，而是指向这个`iframe`代表的子页面`window`对象。
 

@@ -53,9 +53,9 @@ modifiedOn: 2014-05-18
 - [Promise](advanced/promise.html)
 - [严格模式](advanced/strict.html)
 
-<h2 id="dom">DOM</h2>
+<h2 id="dom">DOM模型</h2>
 
-- [Node节点](dom/node.html)
+- [概述](dom/node.html)
 - [Document节点](dom/document.html)
 - [Element节点](dom/element.html)
 - [Text节点和DocumentFragment节点](dom/text.html)

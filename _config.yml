@@ -17,7 +17,7 @@ introduction: 导论
 grammar: 语法
 stdlib: 标准库
 oop: 面向对象编程
-dom: DOM
+dom: DOM模型
 bom: 浏览器环境
 htmlapi: HTML网页的API
 jquery: jQuery

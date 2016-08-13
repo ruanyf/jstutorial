@@ -446,11 +446,7 @@ focused = document.hasFocus();
 
 注意，有焦点的文档必定被激活（active），反之不成立，激活的文档未必有焦点。比如如果用户点击按钮，从当前窗口跳出一个新窗口，该新窗口就是激活的，但是不拥有焦点。
 
-### querySelector()，getElementById()，querySelectorAll()，getElementsByTagName()，getElementsByClassName()，getElementsByName()，elementFromPoint()
-
-以下方法用来选中当前文档中的元素。
-
-**（1）querySelector()**
+### querySelector()
 
 `querySelector`方法返回匹配指定的CSS选择器的元素节点。如果有多个节点满足匹配条件，则返回第一个匹配的节点。如果没有发现匹配的节点，则返回`null`。
 
@@ -461,26 +457,26 @@ var el2 = document.querySelector('#myParent > [ng-click]');
 
 `querySelector`方法无法选中CSS伪元素。
 
-**（2）getElementById()**
+### getElementById()
 
-`getElementById`方法返回匹配指定ID属性的元素节点。如果没有发现匹配的节点，则返回null。
+`getElementById`方法返回匹配指定`id`属性的元素节点。如果没有发现匹配的节点，则返回`null`。
 
 ```javascript
-var elem = document.getElementById("para1");
+var elem = document.getElementById('para1');
 ```
 
-注意，在搜索匹配节点时，`id`属性是大小写敏感的。比如，如果某个节点的`id`属性是`main`，那么`document.getElementById("Main")`将返回`null`，而不是指定节点。
+注意，在搜索匹配节点时，`id`属性是大小写敏感的。比如，如果某个节点的`id`属性是`main`，那么`document.getElementById('Main')`将返回`null`，而不是指定节点。
 
-`getElementById`方法与`querySelector`方法都能获取元素节点，不同之处是`querySelector`方法的参数使用CSS选择器语法，`getElementById`方法的参数是HTML标签元素的id属性。
+`getElementById`方法与`querySelector`方法都能获取元素节点，不同之处是`querySelector`方法的参数使用CSS选择器语法，`getElementById`方法的参数是HTML标签元素的`id`属性。
 
 ```javascript
 document.getElementById('myElement')
 document.querySelector('#myElement')
 ```
 
-上面代码中，两个方法都能选中id为myElement的元素，但是getElementById()比querySelector()效率高得多。
+上面代码中，两个方法都能选中`id`为`myElement`的元素，但是`getElementById()`比`querySelector()`效率高得多。
 
-**（3）querySelectorAll()**
+### querySelectorAll()
 
 `querySelectorAll`方法返回匹配指定的CSS选择器的所有节点，返回的是NodeList类型的对象。NodeList对象不是动态集合，所以元素节点的变化无法实时反映在返回结果中。
 
@@ -499,7 +495,6 @@ var matches = document.querySelectorAll('div.note, div.alert');
 querySelectorAll方法支持复杂的CSS选择器。
 
 ```javascript
-
 // 选中data-foo-bar属性等于someval的元素
 document.querySelectorAll('[data-foo-bar="someval"]');
 
@@ -511,16 +506,15 @@ document.querySelectorAll('DIV:not(.ignore)');
 
 // 同时选中div，a，script三类元素
 document.querySelectorAll('DIV, A, SCRIPT');
-
 ```
 
 如果`querySelectorAll`方法和`getElementsByTagName`方法的参数是字符串`*`，则会返回文档中的所有HTML元素节点。
 
 与querySelector方法一样，querySelectorAll方法无法选中CSS伪元素。
 
-**（4）getElementsByClassName()**
+### getElementsByClassName()
 
-getElementsByClassName方法返回一个类似数组的对象（HTMLCollection类型的对象），包括了所有class名字符合指定条件的元素（搜索范围包括本身），元素的变化实时反映在返回结果中。这个方法不仅可以在document对象上调用，也可以在任何元素节点上调用。
+`document.getElementsByClassName`方法返回一个类似数组的对象（HTMLCollection类型的对象），包括了所有class名字符合指定条件的元素（搜索范围包括本身），元素的变化实时反映在返回结果中。这个方法不仅可以在document对象上调用，也可以在任何元素节点上调用。
 
 ```javascript
 // document对象上调用
@@ -537,39 +531,39 @@ document.getElementsByClassName('red test');
 
 上面代码返回class同时具有red和test的元素。
 
-**（5）getElementsByTagName()**
+### getElementsByTagName()
 
-getElementsByTagName方法返回所有指定标签的元素（搜索范围包括本身）。返回值是一个HTMLCollection对象，也就是说，搜索结果是一个动态集合，任何元素的变化都会实时反映在返回的集合中。这个方法不仅可以在document对象上调用，也可以在任何元素节点上调用。
+`document.getElementsByTagName`方法返回所有指定标签的元素（搜索范围包括本身）。返回值是一个`HTMLCollection`对象，也就是说，搜索结果是一个动态集合，任何元素的变化都会实时反映在返回的集合中。这个方法不仅可以在`document`对象上调用，也可以在任何元素节点上调用。
 
 ```javascript
-var paras = document.getElementsByTagName("p");
+var paras = document.getElementsByTagName('p');
 ```
 
-上面代码返回当前文档的所有p元素节点。
+上面代码返回当前文档的所有`p`元素节点。
 
-注意，getElementsByTagName方法会将参数转为小写后，再进行搜索。
+注意，`getElementsByTagName`方法会将参数转为小写后，再进行搜索。
 
-**（6）getElementsByName()**
+### getElementsByName()
 
-getElementsByName方法用于选择拥有name属性的HTML元素，比如form、img、frame、embed和object，返回一个NodeList格式的对象，不会实时反映元素的变化。
+`document.getElementsByName`方法用于选择拥有`name`属性的HTML元素（比如`<form>`、`<img>`、`<frame>`、`<embed>`和`<object>`等），返回一个类似数组的的对象（`NodeList`对象的实例）。
 
 ```javascript
 // 表单为 <form name="x"></form>
-var forms = document.getElementsByName("x");
+var forms = document.getElementsByName('x');
 forms[0].tagName // "FORM"
 ```
 
-注意，在IE浏览器使用这个方法，会将没有name属性、但有同名id属性的元素也返回，所以name和id属性最好设为不一样的值。
+注意，`getElementsByName`返回的结果不会实时反映网页元素的变化。
 
-**（7）elementFromPoint()**
+### elementFromPoint()
 
-elementFromPoint方法返回位于页面指定位置的元素。
+`document.elementFromPoint`方法返回位于页面指定位置的元素。
 
 ```javascript
 var element = document.elementFromPoint(x, y);
 ```
 
-上面代码中，elementFromPoint方法的参数x和y，分别是相对于当前窗口左上角的横坐标和纵坐标，单位是CSS像素。elementFromPoint方法返回位于这个位置的DOM元素，如果该元素不可返回（比如文本框的滚动条），则返回它的父元素（比如文本框）。如果坐标值无意义（比如负值），则返回null。
+上面代码中，`elementFromPoint`方法的参数`x`和`y`，分别是相对于当前窗口左上角的横坐标和纵坐标，单位是像素。`elementFromPoint`方法返回位于这个位置的DOM元素，如果该元素不可返回（比如文本框的滚动条），则返回它的父元素（比如文本框）。如果坐标值无意义（比如负值），则返回`null`。
 
 ### createElement()，createTextNode()，createAttribute()，createDocumentFragment()
 
