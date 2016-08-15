@@ -32,7 +32,7 @@ text.split(/\r?\n/).forEach(function (line) {
 });
 ```
 
-`readFileSync`方法的第一个参数是文件路径，第二个参数是文本文件编码，默认为`utf8`。
+`readFileSync`方法的第一个参数是文件路径，第二个参数是文本文件编码，默认为 `null`，如果不指定则返回 `Buffer` 实例。
 
 不同系统的行结尾字符不同，可以用下面的方法判断。
 
@@ -96,7 +96,7 @@ if (fs.existsSync(outputFolder)) {
 }
 ```
 
-## mkdir()，writeFile()，readfile()
+## mkdir()，writeFile()，readFile()
 
 mkdir方法用于新建目录。
 
@@ -125,7 +125,7 @@ fs.writeFile('./helloDir/message.txt', 'Hello Node', function (err) {
 
 ```
 
-readfile方法用于读取文件内容。
+readFile方法用于读取文件内容。
 
 {% highlight javascript %}
 
