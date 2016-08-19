@@ -19,7 +19,7 @@ fs.readFile('image.png', function (err, buffer) {
 });
 ```
 
-`readFile`方法的第二个参数参数是读取完成后的回调函数。该函数的第一个参数是发生错误时的错误对象，第二个参数是代表文件内容的`Buffer`实例。
+`readFile`方法的第二个参数是读取完成后的回调函数。该函数的第一个参数是发生错误时的错误对象，第二个参数是代表文件内容的`Buffer`实例。
 
 `readFileSync`方法用于同步读取文件，返回一个字符串。
 
@@ -32,7 +32,7 @@ text.split(/\r?\n/).forEach(function (line) {
 });
 ```
 
-`readFileSync`方法的第一个参数是文件路径，第二个参数是文本文件编码，默认为 `null`，如果不指定则返回 `Buffer` 实例。
+`readFileSync`方法的第一个参数是文件路径，第二个参数可以是一个表示配置的对象，也可以是一个表示文本文件编码的字符串。默认的配置对象是`{ encoding: null, flag: 'r' }`，即文件编码默认为`null`，读取模式默认为`r`（只读）。如果第二个参数不指定编码（`encoding`），`readFileSync`方法返回一个`Buffer`实例，否则返回的是一个字符串。
 
 不同系统的行结尾字符不同，可以用下面的方法判断。
 
