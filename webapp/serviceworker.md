@@ -34,6 +34,8 @@ Service worker有自己的生命周期。
 
 ## register
 
+登记是安装前的准备步骤。
+
 ```javascript
 window.addEventListener('load', function () {
   if ('serviceWorker' in navigator) {
@@ -44,3 +46,75 @@ window.addEventListener('load', function () {
   }
 }
 ```
+
+上面的代码先检查，浏览器是否支持`serviceWorker`，如果支持就用`register`方法加载Service worker的脚本，浏览器会自动判别该脚本是否登记过。`register`返回一个Promise对象。
+
+这里需要注意，上面例子的Service Worker脚本放在域名的根目录下，这意味着这个脚本的作用域是整个域。这个域下面的任何变化，都会让Service Worker脚本收到`fetch`事件。如果Service worker脚本放在域名的子目录下，比如`/example/sw.js`，那么这个脚本只能接收到`/example/`开头的网址（比如`/example/page1/`、`/example/page2/`）下发生的变化。
+
+登记以后，访问Chrome浏览器的`chrome://inspect/#service-workers`，可以看到Service Worker脚本的细节。
+
+## 安装
+
+Service worker脚本开始登记以后，脚本内部的代码就会收到`install`事件。
+
+```javascript
+self.addEventListener('install', function(event) {
+  // Perform install steps
+});
+```
+
+这个事件里面可以执行安装步骤。
+
+1. 新建缓存对象
+1. 缓存文件
+1. 确认所有需要的静态资源是否都缓存了
+
+```javascript
+var CACHE_NAME = 'my-site-cache-v1';
+var urlsToCache = [
+  '/',
+  '/styles/main.css',
+  '/script/main.js'
+];
+
+self.addEventListener('install', function(event) {
+  // Perform install steps
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(function(cache) {
+        console.log('Opened cache');
+        return cache.addAll(urlsToCache);
+      })
+  );
+});
+```
+
+上面代码中，`caches.open()`新建了一个缓存区域，`cache.addAll()`方法将需要的静态资源加入这个缓存区域。这两个方法都返回Promise对象。`event.waitUntil()`方法接受一个Promise对象作为参数，用来知道整个操作花费了多少时间，以及是否成功。
+
+如果所有静态资源全部成功缓存，安装就算成功了。如果有任何一个静态资源没有下载成功，安装步骤就失败了。所以，这一步可以定义所有需要的静态资源。需要注意的是，不宜缓存太多静态资源，因为下载的文件越多，安装步骤就越容易失败。
+
+## fetch
+
+Service worker安装以后，用户访问作用域之内的其他网页或刷新页面，Service worker脚本就会收到`fetch`事件。
+
+```javascript
+self.addEventListener('fetch', function(event) {
+  event.respondWith(
+    caches.match(event.request)
+      .then(function(response) {
+        // 如何缓冲之中包含这个静态资源，就返回它
+        if (response) {
+          return response;
+        }
+        return fetch(event.request);
+      }
+    )
+  );
+});
+```
+
+上面代码中，Service worker脚本收到`fetch`事件以后，调用`event.respondWith()`方法，它接受一个Promise对象作为参数。这个Promise对象由`caches.match()`方法产生，这个方法检查客户端的请求，发现是否有缓存匹配这个请求。如果有的，就返回这个缓存，如果没有就去抓取这个静态资源。
+
+## 参考链接
+
+- [Introduction to Service Worker](https://developers.google.com/web/fundamentals/primers/service-worker/?hl=en), by Google

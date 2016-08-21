@@ -19,68 +19,145 @@ document节点有不同的办法可以获取。
 
 上面这四种`document`节点，都部署了[Document接口](http://dom.spec.whatwg.org/#interface-document)，因此有共同的属性和方法。当然，各自也有一些自己独特的属性和方法，比如HTML和XML文档的`document`节点就不一样。
 
-## document节点的属性
+## 指向内部节点的属性
 
-document节点有很多属性，用得比较多的是下面这些。
+`document`节点有很多属性，其中相当一部分属于快捷方式，指向文档内部的某个节点。
 
-### doctype，documentElement，defaultView，body，head，activeElement
+### document.doctype，document.documentElement，document.defaultView
 
-以下属性指向文档内部的某个节点。
-
-**（1）doctype**
-
-对于HTML文档来说，document对象一般有两个子节点。第一个子节点是document.doctype，它是一个对象，包含了当前文档类型（Document Type Declaration，简写DTD）信息。对于HTML5文档，该节点就代表&lt;!DOCTYPE html&gt;。如果网页没有声明DTD，该属性返回null。
+对于HTML文档来说，`document`对象一般有两个子节点。第一个子节点是`document.doctype`，它是一个对象，包含了当前文档类型（Document Type Declaration，简写DTD）信息。对于HTML5文档，该节点就代表`<!DOCTYPE html>`。如果网页没有声明DTD，该属性返回`null`。
 
 ```javascript
-
 var doctype = document.doctype;
-
 doctype // "<!DOCTYPE html>"
 doctype.name // "html"
-
 ```
 
-document.firstChild通常就返回这个节点。
+`document.firstChild`通常就返回这个节点。
 
-**（2）documentElement**
+`document.documentElement`属性返回当前文档的根节点（root）。它通常是`document`节点的第二个子节点，紧跟在`document.doctype`节点后面。
 
-document.documentElement属性，表示当前文档的根节点（root）。它通常是document节点的第二个子节点，紧跟在`document.doctype`节点后面。
+对于HTML网页，该属性返回HTML节点，代表`<html lang="en">`。
 
-对于HTML网页，该属性返回HTML节点，代表&lt;html lang="en"&gt;。
-
-**（3）defaultView**
-
-defaultView属性，在浏览器中返回document对象所在的window对象，否则返回null。
+`document.defaultView`属性，在浏览器中返回`document`对象所在的`window`对象，否则返回`null`。
 
 ```javascript
-
-var win = document.defaultView;
-
+document.defaultView === window // true
 ```
 
-**（4）body**
+### document.body，document.head
 
-body属性返回当前文档的body或frameset节点，如果不存在这样的节点，就返回null。这个属性是可写的，如果对其写入一个新的节点，会导致原有的所有子节点被移除。
+`document.body`属性返回当前文档的body或frameset节点，如果不存在这样的节点，就返回null。这个属性是可写的，如果对其写入一个新的节点，会导致原有的所有子节点被移除。
 
-**（4）head**
-
-head属性返回当前文档的head节点。如果当前文档有多个head，则返回第一个。
+`document.head`属性返回当前文档的head节点。如果当前文档有多个head，则返回第一个。
 
 ```javascript
 document.head === document.querySelector('head')
 ```
 
-**（5）activeElement**
+### document.activeElement
 
-activeElement属性返回当前文档中获得焦点的那个元素。用户通常可以使用tab键移动焦点，使用空格键激活焦点，比如如果焦点在一个链接上，此时按一下空格键，就会跳转到该链接。
+`document.activeElement`属性返回当前文档中获得焦点的那个元素。用户通常可以使用Tab键移动焦点，使用空格键激活焦点。比如，如果焦点在一个链接上，此时按一下空格键，就会跳转到该链接。
 
-### documentURI，URL，domain，lastModified，location，referrer，title，characterSet
+## 返回节点集合的属性
+
+以下属性返回文档内部特定元素的集合，都是类似数组的对象。这些集合都是动态的，原节点有任何变化，立刻会反映在集合中。
+
+### document.links，document.forms，document.images，document.embeds
+
+`document.links`属性返回当前文档所有的`a`元素，或者说返回具有`href`属性的元素。
+
+`document.forms`属性返回页面中所有表单元素`form`。
+
+```javascript
+var selectForm = document.forms[0];
+```
+
+上面代码获取文档第一个表单。
+
+`document.images`属性返回页面所有图片元素（即`img`标签）。
+
+```javascript
+var imglist = document.images;
+
+for(var i = 0; i < imglist.length; i++) {
+  if (imglist[i].src === 'banner.gif') {
+    // ...
+  }
+}
+```
+
+上面代码在所有`img`标签中，寻找特定图片。
+
+`document.embeds`属性返回网页中所有嵌入对象，即`embed`标签。
+
+以上四个属性返回的都是`HTMLCollection`对象实例。
+
+```javascript
+document.links instanceof HTMLCollection // true
+document.images instanceof HTMLCollection // true
+document.forms instanceof HTMLCollection // true
+document.embeds instanceof HTMLCollection // true
+```
+
+由于`HTMLCollection`实例可以用HTML元素的`id`或`name`属性引用，因此如果一个元素有`id`或`name`属性，就可以在上面这四个属性上引用。
+
+```javascript
+// HTML代码为
+// <form name="myForm" >
+
+document.myForm === document.forms.myForm // true
+```
+
+### document.scripts，document.styleSheets
+
+`document.scripts`属性返回当前文档的所有脚本（即`script`标签）。
+
+```javascript
+var scripts = document.scripts;
+if (scripts.length !== 0 ) {
+  console.log('当前网页有脚本');
+}
+```
+
+`document.scripts`返回的也是`HTMLCollection`实例。
+
+```javascript
+document.scripts instanceof HTMLCollection // true
+```
+
+因此，如果一个`script`标签有`id`或`name`属性，就可以在`document.scripts`上引用。
+
+```javascript
+// HTML代码为
+// <script id="myScript" >
+
+document.scripts.myScript
+// <script id="myScript"></script>
+```
+
+`document.styleSheets`属性返回当前网页的所有样式表。每个样式表对象都有`cssRules`属性，返回该样式表的所有CSS规则，这样这可以操作具体的CSS规则了。
+
+```javascript
+var allSheets = [].slice.call(document.styleSheets);
+```
+
+上面代码中，使用`slice`方法将`document.styleSheets`转为数组，以便于进一步处理。
+
+这两个属性返回的也是`HTMLCollection`实例。
+
+```javascript
+document.scripts instanceof HTMLCollection // true
+document.styleSheets instanceof HtmlCollection
+```
+
+## 返回文档信息的属性
 
 以下属性返回文档信息。
 
-**（1）documentURI，URL**
+### document.documentURI，document.URL
 
-`documentURI`属性和`URL`属性都返回一个字符串，表示当前文档的网址。不同之处是`documentURI`属性是所有文档都具备的，`URL`属性则是HTML文档独有的。
+`document.documentURI`属性和`document.URL`属性都返回一个字符串，表示当前文档的网址。不同之处是`documentURI`属性是所有文档都具备的，`URL`属性则是HTML文档独有的。
 
 ```javascript
 document.documentURI === document.URL
@@ -89,9 +166,9 @@ document.documentURI === document.URL
 
 另外，如果文档的锚点（`#anchor`）变化，这两个属性都不会跟着变化。但是，`document.location`会跟着变化。
 
-**（2）domain**
+### document.domain
 
-`domain`属性返回当前文档的域名。比如，某张网页的网址是 http://www.example.com/hello.html ，`domain`属性就等于`www.example.com`。如果无法获取域名，该属性返回`null`。
+`document.domain`属性返回当前文档的域名。比如，某张网页的网址是 http://www.example.com/hello.html ，`domain`属性就等于`www.example.com`。如果无法获取域名，该属性返回`null`。
 
 ```javascript
 var badDomain = 'www.example.xxx';
@@ -103,9 +180,9 @@ if (document.domain === badDomain)
 
 二级域名的情况下，domain属性可以设置为对应的一级域名。比如，当前域名是sub.example.com，则domain属性可以设置为example.com。除此之外的写入，都是不可以的。
 
-**（3）lastModified**
+### document.lastModified
 
-lastModified属性返回当前文档最后修改的时间戳，格式为字符串。
+`document.lastModified`属性返回当前文档最后修改的时间戳，格式为字符串。
 
 ```javascript
 document.lastModified
@@ -201,13 +278,9 @@ document.title = '新标题';
 
 `document.characterSet`属性返回渲染当前文档的字符集，比如UTF-8、ISO-8859-1。
 
-### readyState，designMode
+### document.readyState
 
-以下属性与文档行为有关。
-
-**（1）readyState**
-
-`readyState`属性返回当前文档的状态，共有三种可能的值。
+`document.readyState`属性返回当前文档的状态，共有三种可能的值。
 
 - `loading`：加载HTML代码阶段（尚未完成解析）
 - `interactive`：加载外部资源阶段时
@@ -237,23 +310,17 @@ var interval = setInterval(function() {
 }, 100);
 ```
 
-**（2）designMode**
+### document.designMode
 
-designMode属性控制当前document是否可编辑。通常会打开iframe的designMode属性，将其变为一个所见即所得的编辑器。
+`document.designMode`属性控制当前document是否可编辑。通常会打开iframe的designMode属性，将其变为一个所见即所得的编辑器。
 
 ```javascript
-
 iframe_node.contentDocument.designMode = "on";
-
 ```
 
-### implementation，compatMode
+### document.implementation
 
-以下属性返回文档的环境信息。
-
-**（1）implementation**
-
-implementation属性返回一个对象，用来甄别当前环境部署了哪些DOM相关接口。implementation属性的hasFeature方法，可以判断当前环境是否部署了特定版本的特定接口。
+`document.implementation`属性返回一个对象，用来甄别当前环境部署了哪些DOM相关接口。implementation属性的hasFeature方法，可以判断当前环境是否部署了特定版本的特定接口。
 
 ```javascript
 document.implementation.hasFeature( 'HTML', '2.0')
@@ -265,81 +332,11 @@ document.implementation.hasFeature('MutationEvents','2.0')
 
 上面代码表示，当前环境部署了DOM HTML 2.0版和MutationEvents的2.0版。
 
-**（2）compatMode**
+### document.compatMode
 
 `compatMode`属性返回浏览器处理文档的模式，可能的值为`BackCompat`（向后兼容模式）和`CSS1Compat`（严格模式）。
 
 一般来说，如果网页代码的第一行设置了明确的`DOCTYPE`（比如`<!doctype html>`），`document.compatMode`的值都为`CSS1Compat`。
-
-### anchors，embeds，forms，images，links，scripts，styleSheets
-
-以下属性返回文档内部特定元素的集合（即HTMLCollection对象，详见下文）。这些集合都是动态的，原节点有任何变化，立刻会反映在集合中。
-
-**（1）anchors**
-
-anchors属性返回网页中所有的a节点元素。注意，只有指定了name属性的a元素，才会包含在anchors属性之中。
-
-**（2）embeds**
-
-embeds属性返回网页中所有嵌入对象，即embed标签，返回的格式为类似数组的对象（nodeList）。
-
-**（3）forms**
-
-forms属性返回页面中所有表单。
-
-```javascript
-
-var selectForm = document.forms[index];
-var selectFormElement = document.forms[index].elements[index];
-
-```
-
-上面代码获取指定表单的指定元素。
-
-**（4）images**
-
-images属性返回页面所有图片元素（即img标签）。
-
-```javascript
-
-var ilist = document.images;
-
-for(var i = 0; i < ilist.length; i++) {
-  if(ilist[i].src == "banner.gif") {
-    // ...
-  }
-}
-
-```
-
-上面代码在所有img标签中，寻找特定图片。
-
-**（4）links**
-
-links属性返回当前文档所有的链接元素（即a标签，或者说具有href属性的元素）。
-
-**（5）scripts**
-
-scripts属性返回当前文档的所有脚本（即script标签）。
-
-```javascript
-var scripts = document.scripts;
-if (scripts.length !== 0 ) {
-  console.log("当前网页有脚本");
-}
-```
-
-**（6）styleSheets**
-
-styleSheets属性返回一个类似数组的对象，包含了当前网页的所有样式表。该属性提供了样式表操作的接口。然后，每张样式表对象的cssRules属性，返回该样式表的所有CSS规则。这又方便了操作具体的CSS规则。
-
-```javascript
-
-var allSheets = [].slice.call(document.styleSheets);
-
-```
-
-上面代码中，使用slice方法将document.styleSheets转为数组，以便于进一步处理。
 
 ### document.cookie
 
@@ -533,15 +530,32 @@ document.getElementsByClassName('red test');
 
 ### getElementsByTagName()
 
-`document.getElementsByTagName`方法返回所有指定标签的元素（搜索范围包括本身）。返回值是一个`HTMLCollection`对象，也就是说，搜索结果是一个动态集合，任何元素的变化都会实时反映在返回的集合中。这个方法不仅可以在`document`对象上调用，也可以在任何元素节点上调用。
+`document.getElementsByTagName`方法返回所有指定HTML标签的元素，返回值是一个类似数组的`HTMLCollection`对象，可以实时反映HTML文档的变化。如果没有任何匹配的元素，就返回一个空集。
 
 ```javascript
 var paras = document.getElementsByTagName('p');
+
+paras instanceof HTMLCollection // true
 ```
 
 上面代码返回当前文档的所有`p`元素节点。
 
-注意，`getElementsByTagName`方法会将参数转为小写后，再进行搜索。
+HTML标签名是大小写不敏感的，因此`getElementsByTagName`方法也是大小写不敏感的。另外，返回结果中，各个成员的顺序就是它们在文档中出现的顺序。
+
+如果传入`*`，就可以返回文档中所有HTML元素。
+
+```javascript
+var allElements = document.getElementsByTagName('*');
+```
+
+注意，HTML元素本身也定义了`getElementsByTagName`方法，返回该元素的后代元素中符合指定标签的元素。也就是说，这个方法不仅可以在`document`对象上调用，也可以在任何元素节点上调用。
+
+```javascript
+var firstPara = document.getElementsByTagName('p')[0];
+var spans = firstPara.getElementsByTagName('span');
+```
+
+上面代码选中第一个`p`元素内部的所有`span`元素。
 
 ### getElementsByName()
 

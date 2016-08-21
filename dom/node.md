@@ -484,14 +484,12 @@ nodeA.before(nodeB)
 
 isEqualNode方法返回一个布尔值，用于检查两个节点是否相等。所谓相等的节点，指的是两个节点的类型相同、属性相同、子节点相同。
 
-{% highlight javascript %}
-
+```javascript
 var targetEl = document.getElementById("targetEl");
 var firstDiv = document.getElementsByTagName("div")[0];
 
 targetEl.isEqualNode(firstDiv)
-
-{% endhighlight %}
+```
 
 ### normalize()
 
@@ -514,15 +512,28 @@ wrapper.childNodes.length // 1
 
 该方法是`Text.splitText`的逆方法，可以查看《Text节点》章节，了解更多内容。
 
-## NodeList接口，HTMLCollection接口
+## NodeList对象，HTMLCollection对象
 
-节点对象都是单个节点，但是有时会需要一种数据结构，能够容纳多个节点。DOM提供两种接口，用于部署这种节点的集合：NodeList接口和HTMLCollection接口。
+节点对象都是单个节点，但是有时会需要一种数据结构，能够容纳多个节点。DOM提供两种集合对象，用于实现这种节点的集合：`NodeList`和`HTMLCollection`。
 
-### NodeList接口
+这两个对象都是构造函数。
 
-有些属性和方法返回的是一组节点，比如Node.childNodes、document.querySelectorAll()。它们返回的都是一个部署了NodeList接口的对象。
+```javascript
+typeof NodeList // "function"
+typeof HTMLCollection // "function"
+```
 
-NodeList接口有时返回一个动态集合，有时返回一个静态集合。所谓动态集合就是一个活的集合，DOM树删除或新增一个相关节点，都会立刻反映在NodeList接口之中。Node.childNodes返回的，就是一个动态集合。
+但是，一般不把它们当作函数使用，甚至都没有直接使用它们的场合。主要是许多DOM属性和方法，返回的结果是`NodeList`实例或`HTMLCollection`实例，所以一般只使用它们的实例。
+
+### NodeList对象
+
+`NodeList`实例对象是一个类似数组的对象，它的成员是节点对象。`Node.childNodes`、`document.querySelectorAll()`返回的都是`NodeList`实例对象。
+
+```javascript
+document.childNodes instanceof NodeList // true
+```
+
+`NodeList`实例对象可能是动态集合，也可能是静态集合。所谓动态集合就是一个活的集合，DOM树删除或新增一个相关节点，都会立刻反映在NodeList接口之中。`Node.childNodes`返回的，就是一个动态集合。
 
 ```javascript
 var parent = document.getElementById('parent');
@@ -531,11 +542,11 @@ parent.appendChild(document.createElement('div'));
 parent.childNodes.length // 3
 ```
 
-上面代码中，`parent.childNodes`返回的是一个部署了NodeList接口的对象。当parent节点新增一个子节点以后，该对象的成员个数就增加了1。
+上面代码中，`parent.childNodes`返回的是一个`NodeList`实例对象。当`parent`节点新增一个子节点以后，该对象的成员个数就增加了1。
 
-document.querySelectorAll方法返回的是一个静态，DOM内部的变化，并不会实时反映在该方法的返回结果之中。
+`document.querySelectorAll`方法返回的是一个静态集合。DOM内部的变化，并不会实时反映在该方法的返回结果之中。
 
-NodeList接口提供length属性和数字索引，因此可以像数组那样，使用数字索引取出每个节点，但是它本身并不是数组，不能使用pop或push之类数组特有的方法。
+`NodeList`接口实例对象提供`length`属性和数字索引，因此可以像数组那样，使用数字索引取出每个节点，但是它本身并不是数组，不能使用`pop`或`push`之类数组特有的方法。
 
 ```javascript
 // 数组的继承链
@@ -545,14 +556,16 @@ myArray --> Array.prototype --> Object.prototype --> null
 myNodeList --> NodeList.prototype --> Object.prototype --> null
 ```
 
-从上面的继承链可以看到，NodeList接口对象并不继承Array.prototype，因此不具有数组接口提供的方法。如果要在NodeList接口使用数组方法，可以将NodeList接口对象转为真正的数组。
+从上面的继承链可以看到，`NodeList`实例对象并不继承`Array.prototype`，因此不具有数组的方法。如果要在`NodeList`实例对象使用数组方法，可以将`NodeList`实例转为真正的数组。
 
 ```javascript
 var div_list = document.querySelectorAll('div');
 var div_array = Array.prototype.slice.call(div_list);
 ```
 
-也可以通过下面的方法调用。
+注意，采用上面的方法将`NodeList`实例转为真正的数组以后，`div_array`就是一个静态集合了，不再能动态反映DOM的变化。
+
+另一种方法是通过`call`方法，间接在`NodeList`实例上使用数组方法。
 
 ```javascript
 var forEach = Array.prototype.forEach;
@@ -562,9 +575,9 @@ forEach.call(element.childNodes, function(child){
 });
 ```
 
-上面代码让数组的forEach方法在NodeList接口对象上调用。
+上面代码让数组的`forEach`方法在`NodeList`实例对象上调用。
 
-不过，遍历NodeList接口对象的首选方法，还是使用for循环。
+遍历`NodeList`实例对象的首选方法，是使用`for`循环。
 
 ```javascript
 for (var i = 0; i < myNodeList.length; ++i) {
@@ -572,18 +585,18 @@ for (var i = 0; i < myNodeList.length; ++i) {
 }
 ```
 
-不要使用for...in循环去遍历NodeList接口对象，因为for...in循环会将非数字索引的length属性和下面要讲到的item方法，也遍历进去，而且不保证各个成员遍历的顺序。
+不要使用`for...in`循环去遍历`NodeList`实例对象，因为`for...in`循环会将非数字索引的`length`属性和下面要讲到的`item`方法，也遍历进去，而且不保证各个成员遍历的顺序。
 
-ES6新增的for...of循环，也可以正确遍历NodeList接口对象。
+ES6新增的`for...of`循环，也可以正确遍历`NodeList`实例对象。
 
 ```javascript
-var list = document.querySelectorAll( 'input[type=checkbox]' );
+var list = document.querySelectorAll('input[type=checkbox]');
 for (var item of list) {
   item.checked = true;
 }
 ```
 
-NodeList接口提供item方法，接受一个数字索引作为参数，返回该索引对应的成员。如果取不到成员，或者索引不合法，则返回null。
+`NodeList`实例对象的`item`方法，接受一个数字索引作为参数，返回该索引对应的成员。如果取不到成员，或者索引不合法，则返回`null`。
 
 ```javascript
 nodeItem = nodeList.item(index)
@@ -593,45 +606,47 @@ var divs = document.getElementsByTagName("div");
 var secondDiv = divs.item(1);
 ```
 
-上面代码中，由于数字索引从零开始计数，所以取出第二个成员，要使用数字索引1。
+上面代码中，由于数字索引从零开始计数，所以取出第二个成员，要使用数字索引`1`。
 
-所有类似数组的对象，都可以使用方括号运算符取出成员，所以一般情况下，都是使用下面的写法，而不使用item方法。
+所有类似数组的对象，都可以使用方括号运算符取出成员，所以一般情况下，都是使用下面的写法，而不使用`item`方法。
 
 ```javascript
 nodeItem = nodeList[index]
 ```
 
-### HTMLCollection接口
+### HTMLCollection对象
 
-HTMLCollection接口与NodeList接口类似，也是节点的集合，但是集合成员都是Element节点。该接口都是动态集合，节点的变化会实时反映在集合中。document.links、docuement.forms、document.images等属性，返回的都是HTMLCollection接口对象。
+`HTMLCollection`实例对象与`NodeList`实例对象类似，也是节点的集合，返回一个类似数组的对象。`document.links`、`docuement.forms`、`document.images`等属性，返回的都是`HTMLCollection`实例对象。
 
-部署了该接口的对象，具有length属性和数字索引，因此是一个类似于数组的对象。
+`HTMLCollection`与`NodeList`的区别有以下几点。
 
-item方法根据成员的位置参数（从0开始），返回该成员。如果取不到成员或数字索引不合法，则返回null。
+（1）`HTMLCollection`实例对象的成员只能是`Element`节点，`NodeList`实例对象的成员可以包含其他节点。
+
+（2）`HTMLCollection`实例对象都是动态集合，节点的变化会实时反映在集合中。`NodeList`实例对象可以是静态集合。
+
+（3）`HTMLCollection`实例对象可以用`id`属性或`name`属性引用节点元素，`NodeList`只能使用数字索引引用。
+
+`HTMLCollection`实例的`item`方法，可以根据成员的位置参数（从`0`开始），返回该成员。如果取不到成员或数字索引不合法，则返回`null`。
 
 ```javascript
-
 var c = document.images;
-var img1 = c.item(10);
+var img1 = c.item(1);
 
 // 等价于下面的写法
 var img1 = c[1];
-
 ```
 
-namedItem方法根据成员的ID属性或name属性，返回该成员。如果没有对应的成员，则返回null。
+`HTMLCollection`实例的`namedItem`方法根据成员的`ID`属性或`name`属性，返回该成员。如果没有对应的成员，则返回`null`。这个方法是`NodeList`实例不具有的。
 
 ```javascript
-
 // HTML代码为
 // <form id="myForm"></form>
-var elem = document.forms.namedItem("myForm");
+var elem = document.forms.namedItem('myForm');
 // 等价于下面的写法
-var elem = document.forms["myForm"];
-
+var elem = document.forms['myForm'];
 ```
 
-由于item方法和namedItem方法，都可以用方括号运算符代替，所以建议一律使用方括号运算符。
+由于`item`方法和`namedItem`方法，都可以用方括号运算符代替，所以建议一律使用方括号运算符。
 
 ## ParentNode接口，ChildNode接口
 
