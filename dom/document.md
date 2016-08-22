@@ -6,11 +6,11 @@ date: 2014-05-18
 modifiedOn: 2014-05-18
 ---
 
-## document节点概述
+## 概述
 
-`document`节点是文档的根节点，每张网页都有自己的`document`节点。`window.document`属性就指向这个节点。也就是说，只要浏览器开始载入HTML文档，这个节点对象就存在了，可以直接调用。
+`document`节点是文档的根节点，每张网页都有自己的`document`节点。`window.document`属性就指向这个节点。只要浏览器开始载入HTML文档，这个节点对象就存在了，可以直接调用。
 
-document节点有不同的办法可以获取。
+`document`节点有不同的办法可以获取。
 
 - 对于正常的网页，直接使用`document`或`window.document`。
 - 对于`iframe`载入的网页，使用`iframe`节点的`contentDocument`属性。
@@ -19,7 +19,7 @@ document节点有不同的办法可以获取。
 
 上面这四种`document`节点，都部署了[Document接口](http://dom.spec.whatwg.org/#interface-document)，因此有共同的属性和方法。当然，各自也有一些自己独特的属性和方法，比如HTML和XML文档的`document`节点就不一样。
 
-## 指向内部节点的属性
+## 内部节点属性
 
 `document`节点有很多属性，其中相当一部分属于快捷方式，指向文档内部的某个节点。
 
@@ -59,7 +59,7 @@ document.head === document.querySelector('head')
 
 `document.activeElement`属性返回当前文档中获得焦点的那个元素。用户通常可以使用Tab键移动焦点，使用空格键激活焦点。比如，如果焦点在一个链接上，此时按一下空格键，就会跳转到该链接。
 
-## 返回节点集合的属性
+## 节点集合属性
 
 以下属性返回文档内部特定元素的集合，都是类似数组的对象。这些集合都是动态的，原节点有任何变化，立刻会反映在集合中。
 
@@ -151,7 +151,7 @@ document.scripts instanceof HTMLCollection // true
 document.styleSheets instanceof HtmlCollection
 ```
 
-## 返回文档信息的属性
+## 文档信息属性
 
 以下属性返回文档信息。
 
@@ -511,22 +511,31 @@ document.querySelectorAll('DIV, A, SCRIPT');
 
 ### getElementsByClassName()
 
-`document.getElementsByClassName`方法返回一个类似数组的对象（HTMLCollection类型的对象），包括了所有class名字符合指定条件的元素（搜索范围包括本身），元素的变化实时反映在返回结果中。这个方法不仅可以在document对象上调用，也可以在任何元素节点上调用。
+`document.getElementsByClassName`方法返回一个类似数组的对象（`HTMLCollection`实例对象），包括了所有`class`名字符合指定条件的元素，元素的变化实时反映在返回结果中。
 
 ```javascript
 // document对象上调用
 var elements = document.getElementsByClassName(names);
+```
+
+由于`class`是保留字，所以JavaScript一律使用`className`表示CSS的`class`。
+
+如果参数是一个空格分隔的字符串，元素的`class`必须符合所有字符串之中所有的`class`才会返回。
+
+```javascript
+var elements = document.getElementsByClassName('foo bar');
+```
+
+上面代码返回同时具有`foo`和`bar`两个`class`的元素，`foo`和`bar`的顺序不重要。
+
+注意，正常模式下，CSS的`class`是大小写敏感的。（`quirks mode`下，大小写不敏感。）
+
+与`getElementsByTagName`方法一样，`getElementsByClassName`方法不仅可以`在document`对象上调用，也可以在任何元素节点上调用。
+
+```javascript
 // 非document对象上调用
 var elements = rootElement.getElementsByClassName(names);
 ```
-
-getElementsByClassName方法的参数，可以是多个空格分隔的class名字，返回同时具有这些节点的元素。
-
-```javascript
-document.getElementsByClassName('red test');
-```
-
-上面代码返回class同时具有red和test的元素。
 
 ### getElementsByTagName()
 

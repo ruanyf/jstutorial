@@ -1,67 +1,104 @@
 ---
-title: stream接口
+title: Stream接口
 layout: page
 category: nodejs
 date: 2014-10-23
 modifiedOn: 2014-10-23
 ---
 
-## Stream是什么？
+## 概念
 
-”流“（stream）这个概念，最简单的理解，就是在数据还没有接收完成时，就开始处理它。
+”数据流“（stream）是处理系统缓存的一种方式。操作系统采用数据块（chunk）的方式读取数据，每收到一次数据，就存入缓存。Node应用程序有两种缓存的处理方式，第一种是等到所有数据接收完毕，一次性从缓存读取，这就是传统的读取文件的方式；第二种是采用“数据流”的方式，收到一块数据，就读取一块，即在数据还没有接收完成时，就开始处理它。
+
+第一种方式先将数据全部读入内存，然后处理，优点是符合直觉，流程非常自然，缺点是如果遇到大文件，要花很长时间，才能进入数据处理的步骤。第二种方式每次只读入数据的一小块，像“流水”一样，每当系统读入了一小块数据，就会触发一个事件，发出“新数据块”的信号。应用程序只要监听这个事件，就能掌握数据读取的进展，做出相应处理，这样就提高了程序的性能。
 
 ```javascript
 var fs = require('fs');
-
-fs.createReadStream('./data/customers.csv').pipe(process.stdout);
+fs
+.createReadStream('./data/customers.csv')
+.pipe(process.stdout);
 ```
 
-上面代码中，`fs.createReadStream`方法以”流“的方式读取文件，这可以在文件还没有读取完的情况下，就输出到标准输出。这显然对大文件的读取非常有利。
+上面代码中，`fs.createReadStream`方法就是以”数据流“的方式读取文件，这可以在文件还没有读取完的情况下，就输出到标准输出。这显然对大文件的读取非常有利。
 
-Unix操作系统从很早以前，就有Stream（流）这个概念，它是不同进程之间传递数据的一种方式。管道命令Pipe就起到在不同命令之间，连接Stream的作用。
+Unix操作系统从很早以前，就有“数据流”这个概念，它是不同进程之间传递数据的一种方式。管道命令（pipe）就起到在不同命令之间，连接数据流的作用。“数据流”相当于把较大的数据拆成很小的部分，一个命令只要部署了数据流接口，就可以把一个流的输出接到另一个流的输入。Node引入了这个概念，通过数据流接口为异步读写数据提供的统一接口，无论是硬盘数据、网络数据，还是内存数据，都可以采用这个接口读写。
 
-Stream把较大的数据，拆成很小的部分。只要命令部署了Stream接口，就可以把一个流的输出接到另一个流的输入。Node引入了这个概念，通过Stream为异步读写数据提供的统一接口。无论是硬盘数据、网络数据，还是内存数据，都可以采用这个接口读写。
+数据流接口最大特点就是通过事件通信，具有`readable`、`writable`、`drain`、`data`、`end`、`close`等事件，既可以读取数据，也可以写入数据。读写数据时，每读入（或写入）一段数据，就会触发一次`data`事件，全部读取（或写入）完毕，触发`end`事件。如果发生错误，则触发`error`事件。
 
-读写数据有两种方式。一种方式是同步处理，即先将数据全部读入内存，然后处理。它的优点是符合直觉，流程非常自然，缺点是如果遇到大文件，要花很长时间，可能要过很久才能进入数据处理的步骤。另一种方式就是Stream方式，它是系统读取外部数据实际上的方式，即每次只读入数据的一小块，像“流水”一样。所以，Stream方式就是每当系统读入了一小块数据，就会触发一个事件，发出“新数据块”的信号，只要监听这个事件，就能掌握进展，做出相应处理，这样就提高了程序的性能。
-
-Stream接口最大特点就是通过事件通信，具有readable、writable、drain、data、end、close等事件，既可以读取数据，也可以写入数据。读写数据时，每读入（或写入）一段数据，就会触发一次data事件，全部读取（或写入）完毕，触发end事件。如果发生错误，则触发error事件。
-
-一个对象只要部署了Stream接口，就可以从读取数据，或者写入数据。Node内部很多涉及IO处理的对象，都部署了Stream接口，比如HTTP连接、文件读写、标准输入输出等。
+一个对象只要部署了数据流接口，就可以从它读取数据，或者写入数据。Node内部很多涉及IO处理的对象，都部署了Stream接口，比如HTTP连接、文件读写、标准输入输出等。
 
 ## 基本用法
 
-Node的I/O操作都是异步的，所以与磁盘和网络的交互，都要通过回调函数。一个典型的写文件操作，可能像下面这样。
+`fs`模块的`createReadStream`方法，就可以创建一个读取数据的数据流。
 
 ```javascript
-var http = require('http');
 var fs = require('fs');
-
-var server = http.createServer(function (req, res) {
-  fs.readFile(__dirname + '/data.txt', function (err, data) {
-    res.end(data);
-  });
-});
-server.listen(8000);
+var stream = fs.createReadStream('readme.txt');
+stream.setEncoding('utf8');
 ```
 
-上面的代码有一个问题，那就是它必须将整个data.txt文件读入内存，然后再输入。如果data.txt非常大，就会占用大量的内容。一旦有多个并发请求，操作就会变得非常缓慢，用户不得不等很久，才能得到结果。
+上面代码创建了一个文本文件`readme.txt`的数据流。由于这个数据流会当作文本处理，所以要用`setEncoding`方法设定编码。
 
-由于参数req和res都部署了Stream接口，可以使用`fs.createReadStream()`替代`fs.readFile()`，就能解决这个问题。
+然后，监听`data`事件，获取每一个数据块；监听`end`事件，当数据传送结束，再统一处理。
 
 ```javascript
-var http = require('http');
-var fs = require('fs');
+var data = '';
+stream.on('data', function(chunk) {
+  data += chunk;
+})
 
-var server = http.createServer(function (req, res) {
-  var stream = fs.createReadStream(__dirname + '/data.txt');
-  stream.pipe(res);
+stream.on('end', function() {
+  console.log('Data length: %d', data.length);
 });
-server.listen(8000);
 ```
 
-Stream接口的最大特点，就是数据会发出node和data事件，内置的pipe方法会处理这两个事件。
+监听`readable`事件，也可以取得与监听`data`事件同样的效果。
 
-数据流通过pipe方法，可以方便地导向其他具有Stream接口的对象。
+```javascript
+var data = '';
+stream.on('readable', function() {
+  var chunk;
+  while(chunk = stream.read()) {
+    data += chunk;
+  }
+});
+```
+
+数据流还有`pause`和`resume`方法，可以暂停和恢复数据传送。
+
+```javascript
+// 暂停
+stream.pause();
+
+// 1秒后恢复
+setTimeout(stream.resume.bind(stream), 1000);
+```
+
+注意，数据流新建以后，默认状态是暂停，只有指定了`data`事件的回调函数，或者调用了`resume`方法，数据才会开发发送。
+
+如果要同时使用`readable`与`data`事件，可以像下面这样写。
+
+```javascript
+stream.pause();
+
+var pulledData = '';
+var pushedData = '';
+
+stream.on('readable', function() {
+  var chunk;
+  while(chunk = stream.read()) {
+    pulledData += chunk;
+  }
+});
+
+stream.on('data', function(chunk) {
+  pushedData += chunk;
+});
+```
+
+上面代码中，显式调用`pause`方法，会使得`readable`事件释放一个`data`事件，否则`data`监听无效。
+
+如果觉得`data`事件和`end`事件写起来太麻烦，Stream接口还提供了`pipe`方法，自动处理这两个事件。数据流通过`pipe`方法，可以方便地导向其他具有Stream接口的对象。
 
 ```javascript
 var fs = require('fs');
@@ -72,7 +109,7 @@ fs.createReadStream('wow.txt')
   .pipe(process.stdout);
 ```
 
-上面代码先打开文本文件wow.txt，然后压缩，再导向标准输出。
+上面代码先打开文本文件`wow.txt`，然后压缩，再导向标准输出。
 
 ```javascript
 fs.createReadStream('wow.txt')
@@ -80,7 +117,7 @@ fs.createReadStream('wow.txt')
   .pipe(fs.createWriteStream('wow.gz'));
 ```
 
-上面代码压缩文件wow.txt以后，又将其写回压缩文件。
+上面代码压缩文件`wow.txt`以后，又将其写回压缩文件。
 
 下面代码新建一个Stream实例，然后指定写入事件和终止事件的回调函数，再将其接到标准输入之上。
 
@@ -112,7 +149,7 @@ input=hello
 bye
 ```
 
-上面代码调用脚本下，键入hello，会输出`input=hello`。然后按下ctrl-d，会输出bye。使用管道命令，可以看得更清楚。
+上面代码调用脚本下，键入`hello`，会输出`input=hello`。然后按下`ctrl-d`，会输出`bye`。使用管道命令，可以看得更清楚。
 
 ```bash
 $ echo hello | node pipe_out.js
@@ -880,3 +917,4 @@ http.createServer(function (req, res) {
 ## 参考链接
 
 - James Halliday, [cs294-101-streams-lecture](https://github.com/substack/cs294-101-streams-lecture)
+- Krishna Raman, [What’s New in io.js 1.0 Beta? – Streams3](What’s New in io.js 1.0 Beta? – Streams3)
