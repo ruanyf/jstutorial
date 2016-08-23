@@ -350,15 +350,13 @@ document.querySelector('div').scrollTop = 150;
 
 每个元素节点都有`style`用来读写该元素的行内样式信息，具体介绍参见《CSS操作》一节。
 
-## 方法
-
-### hasAttribute()，getAttribute()，removeAttribute()，setAttribute()
+## 属性相关的方法
 
 以下方法与元素节点的属性相关。
 
-**（1）hasAttribute()**
+### Element.hasAttribute()
 
-`hasAttribute`方法返回一个布尔值，表示当前元素节点是否包含指定的HTML属性。
+`Element.hasAttribute`方法返回一个布尔值，表示当前元素节点是否包含指定的HTML属性。
 
 ```javascript
 var d = document.getElementById("div1");
@@ -370,18 +368,18 @@ if (d.hasAttribute("align")) {
 
 上面代码检查`div`节点是否含有`align`属性。如果有，则设置为“居中对齐”。
 
-**（2）getAttribute()**
+### Element.getAttribute()
 
-`getAttribute`方法返回当前元素节点的指定属性。如果指定属性不存在，则返回`null`。
+`Element.getAttribute`方法返回当前元素节点的指定属性。如果指定属性不存在，则返回`null`。
 
 ```javascript
 var div = document.getElementById('div1');
 div.getAttribute('align') // "left"
 ```
 
-**（3）removeAttribute()**
+### Element.removeAttribute()
 
-removeAttribute方法用于从当前元素节点移除属性。
+`Element.removeAttribute`方法用于从当前元素节点移除属性。
 
 ```javascript
 // 原来的HTML代码
@@ -391,9 +389,9 @@ document.getElementById("div1").removeAttribute("align");
 // <div id="div1" width="200px">
 ```
 
-**（4）setAttribute()**
+### Element.setAttribute()
 
-`setAttribute`方法用于为当前元素节点新增属性，或编辑已存在的属性。
+`Element.setAttribute`方法用于为当前元素节点新增属性，或编辑已存在的属性。
 
 ```javascript
 var d = document.getElementById('d1');
@@ -417,11 +415,11 @@ el.value = 'hello';
 el.setAttribute('value', 'hello');
 ```
 
-### Element.querySelector()，Element.querySelectorAll()，getElementsByClassName()，getElementsByTagName()
+## 查找相关的方法
 
-以下方法与获取当前元素节点的子元素相关。
+以下方法用来查找与当前元素节点相关的节点。
 
-**（1）Element.querySelector()**
+### Element.querySelector()
 
 `Element.querySelector`方法接受CSS选择器作为参数，返回父元素的第一个匹配的子元素。
 
@@ -453,7 +451,7 @@ outer.querySelector('div p')
 // <p>Hello</p>
 ```
 
-**（2）Element.querySelectorAll()**
+### Element.querySelectorAll()
 
 `Element.querySelectorAll`方法接受CSS选择器作为参数，返回一个`NodeList`对象，包含所有匹配的子元素。
 
@@ -464,7 +462,7 @@ var matches = el.querySelectorAll('div.highlighted > p');
 
 该方法的执行机制与`querySelector`相同，也是先在全局范围内查找，再过滤出当前元素的子元素。因此，选择器实际上针对整个文档的。
 
-**（3）Element.getElementsByClassName()**
+### Element.getElementsByClassName()
 
 `Element.getElementsByClassName`方法返回一个`HTMLCollection`对象，成员是当前元素节点的所有匹配指定`class`的子元素。该方法与`document.getElementsByClassName`方法的用法类似，只是搜索范围不是整个文档，而是当前元素节点。
 
@@ -474,7 +472,7 @@ element.getElementsByClassName('red test');
 
 注意，该方法的参数大小写敏感。
 
-**（4）Element.getElementsByTagName()**
+### Element.getElementsByTagName()
 
 `Element.getElementsByTagName`方法返回一个`HTMLCollection`对象，成员是当前元素节点的所有匹配指定标签名的子元素。该方法与`document.getElementsByClassName`方法的用法类似，只是搜索范围不是整个文档，而是当前元素节点。
 
@@ -485,11 +483,9 @@ var cells = table.getElementsByTagName('td');
 
 注意，该方法的参数是大小写不敏感的。
 
-### closest()，matches()
+### Element.closest()
 
-**（1）closest()**
-
-closest方法返回当前元素节点的最接近的父元素（或者当前节点本身），条件是必须匹配给定的CSS选择器。如果不满足匹配，则返回null。
+`Element.closest`方法返回当前元素节点的最接近的父元素（或者当前节点本身），条件是必须匹配给定的CSS选择器。如果不满足匹配，则返回null。
 
 假定HTML代码如下。
 
@@ -515,9 +511,9 @@ el.closest(":not(div)") // article
 
 上面代码中，由于closet方法将当前元素节点也考虑在内，所以第二个closet方法返回div-03。
 
-**（2）match()**
+### Element.match()
 
-match方法返回一个布尔值，表示当前元素是否匹配给定的CSS选择器。
+`Element.match`方法返回一个布尔值，表示当前元素是否匹配给定的CSS选择器。
 
 ```javascript
 if (el.matches(".someClass")) {
@@ -547,9 +543,9 @@ matchesSelector(
 )
 ```
 
-### addEventListener()，removeEventListener()，dispatchEvent()
+## 事件相关的方法
 
-以下三个方法与Element节点的事件相关。这些方法都继承自EventTarget接口，详细介绍参见《Event对象》章节的《EventTarget》部分。
+`Element.addEventListener()`、`Element.removeEventListener()`、`Element.dispatchEvent()`这三个方法与`Element`节点的事件相关。这些方法都继承自`EventTarget`接口，详细介绍参见《Event对象》章节的《EventTarget》部分。
 
 ```javascript
 // 添加事件监听函数
@@ -563,13 +559,22 @@ var event = new Event('click');
 el.dispatchEvent(event);
 ```
 
-### getBoundingClientRect()，getClientRects()
+## 其他方法
 
-以下方法返回元素节点的CSS盒状模型信息。
+### Element.scrollIntoView()
 
-**（1）getBoundingClientRect()**
+`Element.scrollIntoView`方法滚动当前元素，进入浏览器的可见区域。
 
-getBoundingClientRect方法返回一个对象，该对象提供当前元素节点的大小、它相对于视口（viewport）的位置等信息，基本上就是CSS盒状模型的内容。
+```javascript
+el.scrollIntoView(); // 等同于el.scrollIntoView(true)
+el.scrollIntoView(false);
+```
+
+该方法可以接受一个布尔值作为参数。如果为`true`，表示元素的顶部与当前区域的可见部分的顶部对齐（前提是当前区域可滚动）；如果为`false`，表示元素的底部与当前区域的可见部分的尾部对齐（前提是当前区域可滚动）。如果没有提供该参数，默认为true。
+
+### Element.getBoundingClientRect()
+
+`Element.getBoundingClientRect`方法返回一个对象，该对象提供当前元素节点的大小、它相对于视口（viewport）的位置等信息，基本上就是CSS盒状模型的内容。
 
 ```javascript
 var rect = obj.getBoundingClientRect();
@@ -588,9 +593,9 @@ var rect = obj.getBoundingClientRect();
 
 注意，getBoundingClientRect方法的所有属性，都把边框（border属性）算作元素的一部分。也就是说，都是从边框外缘的各个点来计算。因此，width和height包括了元素本身 + padding + border。
 
-**（1）getClientRects()**
+### Element.getClientRects()
 
-getClientRects方法返回一个类似数组的对象，里面是当前元素在页面上形成的所有矩形。每个矩形都有`bottom`、`height`、`left`、`right`、`top`和`width`六个属性，表示它们相对于视口的四个坐标，以及本身的高度和宽度。
+`Element.getClientRects`方法返回一个类似数组的对象，里面是当前元素在页面上形成的所有矩形。每个矩形都有`bottom`、`height`、`left`、`right`、`top`和`width`六个属性，表示它们相对于视口的四个坐标，以及本身的高度和宽度。
 
 对于盒状元素（比如div和p），该方法返回的对象中只有该元素一个成员。对于行内元素（比如span、a、em），该方法返回的对象有多少个成员，取决于该元素在页面上占据多少行。
 
@@ -616,13 +621,9 @@ el.getClientRects()[0].width // 105.908203125
 
 这个方法主要用于判断行内元素是否换行，以及行内元素的每一行的位置偏移。
 
-### insertAdjacentHTML()，remove()
+### Element.insertAdjacentHTML()
 
-以下方法操作元素节点的DOM树。
-
-**（1）insertAdjacentHTML()**
-
-insertAdjacentHTML方法解析字符串，然后将生成的节点插入DOM树的指定位置。
+`Element.insertAdjacentHTML`方法解析HTML字符串，然后将生成的节点插入DOM树的指定位置。
 
 ```javascript
 element.insertAdjacentHTML(position, text);
@@ -632,10 +633,10 @@ element.insertAdjacentHTML(position, text);
 
 指定位置共有四个。
 
-- beforebegin：在当前元素节点的前面。
-- afterbegin：在当前元素节点的里面，插在它的第一个子元素之前。
-- beforeend：在当前元素节点的里面，插在它的最后一个子元素之后。
-- afterend：在当前元素节点的后面。'
+- `beforebegin`：在当前元素节点的前面。
+- `afterbegin`：在当前元素节点的里面，插在它的第一个子元素之前。
+- `beforeend`：在当前元素节点的里面，插在它的最后一个子元素之后。
+- `afterend`：在当前元素节点的后面。'
 
 ```javascript
 // 原来的HTML代码：<div id="one">one</div>
@@ -645,24 +646,14 @@ d1.insertAdjacentHTML('afterend', '<div id="two">two</div>');
 // <div id="one">one</div><div id="two">two</div>
 ```
 
-该方法不是彻底置换现有的DOM结构，这使得它的执行速度比innerHTML操作快得多。所有浏览器都支持这个方法，包括IE 6。
+该方法不是彻底置换现有的DOM结构，这使得它的执行速度比`innerHTML`操作快得多。所有浏览器都支持这个方法，包括IE 6。
 
-**（2）remove()**
+### Element.remove()
 
-remove方法用于将当前元素节点从DOM树删除。
+`Element.remove`方法用于将当前元素节点从DOM树删除。
 
 ```javascript
 var el = document.getElementById('div-01');
 el.remove();
 ```
 
-### scrollIntoView()
-
-scrollIntoView方法滚动当前元素，进入浏览器的可见区域。
-
-```javascript
-el.scrollIntoView(); // 等同于el.scrollIntoView(true)
-el.scrollIntoView(false);
-```
-
-该方法可以接受一个布尔值作为参数。如果为true，表示元素的顶部与当前区域的可见部分的顶部对齐（前提是当前区域可滚动）；如果为false，表示元素的底部与当前区域的可见部分的尾部对齐（前提是当前区域可滚动）。如果没有提供该参数，默认为true。
