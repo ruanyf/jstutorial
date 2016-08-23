@@ -545,16 +545,29 @@ matchesSelector(
 
 ## 事件相关的方法
 
-`Element.addEventListener()`、`Element.removeEventListener()`、`Element.dispatchEvent()`这三个方法与`Element`节点的事件相关。这些方法都继承自`EventTarget`接口，详细介绍参见《Event对象》章节的《EventTarget》部分。
+以下三个方法与`Element`节点的事件相关。这些方法都继承自`EventTarget`接口，详细介绍参见《Event对象》章节的《EventTarget》部分。
+
+### Element.addEventListener()
+
+`Element.addEventListener`方法用来添加事件的回调函数。
 
 ```javascript
-// 添加事件监听函数
 el.addEventListener('click', listener, false);
+```
 
-// 移除事件监听函数
+### Element.addEventListener()
+
+`Element.removeEventListener`方法用来移除事件监听函数。
+
+```javascript
 el.removeEventListener('click', listener, false);
+```
 
-// 触发事件
+### Element.dispatchEvent()
+
+`Element.dispatchEvent`方法用来触发事件。
+
+```javascript
 var event = new Event('click');
 el.dispatchEvent(event);
 ```
