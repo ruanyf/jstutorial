@@ -417,64 +417,73 @@ el.value = 'hello';
 el.setAttribute('value', 'hello');
 ```
 
-### querySelector()，querySelectorAll()，getElementsByClassName()，getElementsByTagName()
+### Element.querySelector()，Element.querySelectorAll()，getElementsByClassName()，getElementsByTagName()
 
 以下方法与获取当前元素节点的子元素相关。
 
-**（1）querySelector()**
+**（1）Element.querySelector()**
 
-querySelector方法接受CSS选择器作为参数，返回父元素的第一个匹配的子元素。
+`Element.querySelector`方法接受CSS选择器作为参数，返回父元素的第一个匹配的子元素。
 
 ```javascript
 var content = document.getElementById('content');
 var el = content.querySelector('p');
 ```
 
-上面代码返回content节点的第一个p元素。
+上面代码返回`content`节点的第一个`p`元素。
 
-注意，如果CSS选择器有多个组成部分，比如`div p`，querySelector方法会把父元素考虑在内。假定HTML代码如下。
+需要注意的是，浏览器执行`querySelector`方法时，是先在全局范围内搜索给定的CSS选择器，然后过滤出哪些属于当前元素的子元素。因此，会有一些违反直觉的结果，请看下面的HTML代码。
 
 ```html
-<div id="outer">
+<div>
+<blockquote id="outer">
   <p>Hello</p>
   <div id="inner">
     <p>World</p>
   </div>
+</blockquote>
 </div>
 ```
 
-那么，下面代码会选中第一个p元素。
+那么，下面代码实际上会返回第一个`p`元素，而不是返回空集。
 
 ```javascript
 var outer = document.getElementById('outer');
-var el = outer.querySelector('div p');
+outer.querySelector('div p')
+// <p>Hello</p>
 ```
 
-**（2）querySelectorAll()**
+**（2）Element.querySelectorAll()**
 
-querySelectorAll方法接受CSS选择器作为参数，返回一个NodeList对象，包含所有匹配的子元素。
+`Element.querySelectorAll`方法接受CSS选择器作为参数，返回一个`NodeList`对象，包含所有匹配的子元素。
 
 ```javascript
 var el = document.querySelector('#test');
 var matches = el.querySelectorAll('div.highlighted > p');
 ```
 
-在CSS选择器有多个组成部分时，querySelectorAll方法也是会把父元素本身考虑在内。
+该方法的执行机制与`querySelector`相同，也是先在全局范围内查找，再过滤出当前元素的子元素。因此，选择器实际上针对整个文档的。
 
-还是以上面的HTML代码为例，下面代码会同时选中两个p元素。
+**（3）Element.getElementsByClassName()**
+
+`Element.getElementsByClassName`方法返回一个`HTMLCollection`对象，成员是当前元素节点的所有匹配指定`class`的子元素。该方法与`document.getElementsByClassName`方法的用法类似，只是搜索范围不是整个文档，而是当前元素节点。
 
 ```javascript
-var outer = document.getElementById('outer');
-var el = outer.querySelectorAll('div p');
+element.getElementsByClassName('red test');
 ```
 
-**（3）getElementsByClassName()**
+注意，该方法的参数大小写敏感。
 
-getElementsByClassName方法返回一个HTMLCollection对象，成员是当前元素节点的所有匹配指定class的子元素。该方法与document.getElementsByClassName方法的用法类似，只是搜索范围不是整个文档，而是当前元素节点。
+**（4）Element.getElementsByTagName()**
 
-**（4）getElementsByTagName()**
+`Element.getElementsByTagName`方法返回一个`HTMLCollection`对象，成员是当前元素节点的所有匹配指定标签名的子元素。该方法与`document.getElementsByClassName`方法的用法类似，只是搜索范围不是整个文档，而是当前元素节点。
 
-getElementsByTagName方法返回一个HTMLCollection对象，成员是当前元素节点的所有匹配指定标签名的子元素。该方法与document.getElementsByClassName方法的用法类似，只是搜索范围不是整个文档，而是当前元素节点。此外，该方法搜索之前，会统一将标签名转为小写。
+```javascript
+var table = document.getElementById('forecast-table');
+var cells = table.getElementsByTagName('td');
+```
+
+注意，该方法的参数是大小写不敏感的。
 
 ### closest()，matches()
 

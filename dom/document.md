@@ -312,18 +312,18 @@ var interval = setInterval(function() {
 
 ### document.designMode
 
-`document.designMode`属性控制当前document是否可编辑。通常会打开iframe的designMode属性，将其变为一个所见即所得的编辑器。
+`document.designMode`属性控制当前文档是否可编辑，通常用在制作所见即所得编辑器。打开`iframe`元素包含的文档的`designMode`属性，就能将其变为一个所见即所得的编辑器。
 
 ```javascript
-iframe_node.contentDocument.designMode = "on";
+iframe_node.contentDocument.designMode = 'on';
 ```
 
 ### document.implementation
 
-`document.implementation`属性返回一个对象，用来甄别当前环境部署了哪些DOM相关接口。implementation属性的hasFeature方法，可以判断当前环境是否部署了特定版本的特定接口。
+`document.implementation`属性返回一个对象，用来甄别当前环境部署了哪些DOM相关接口。`implementation`属性的`hasFeature`方法，可以判断当前环境是否部署了特定版本的特定接口。
 
 ```javascript
-document.implementation.hasFeature( 'HTML', '2.0')
+document.implementation.hasFeature('HTML', '2.0')
 // true
 
 document.implementation.hasFeature('MutationEvents','2.0')
@@ -342,15 +342,15 @@ document.implementation.hasFeature('MutationEvents','2.0')
 
 `document.cookie`属性用来操作浏览器Cookie，详见《浏览器环境》一章的《Cookie》部分。
 
-## document对象的方法
+## 读写相关的方法
 
-document对象主要有以下一些方法。
+### document.open()，document.close()
 
-### open()，close()，write()，writeln()
+`document.open`方法用于新建一个文档，供write方法写入内容。它实际上等于清除当前文档，重新写入内容。不要将此方法与`window.open()`混淆，后者用来打开一个新窗口，与当前文档无关。
 
-document.open方法用于新建一个文档，供write方法写入内容。它实际上等于清除当前文档，重新写入内容。不要将此方法与window.open()混淆，后者用来打开一个新窗口，与当前文档无关。
+`document.close`方法用于关闭`open`方法所新建的文档。一旦关闭，`write`方法就无法写入内容了。如果再调用`write`方法，就等同于又调用`open`方法，新建一个文档，再写入内容。
 
-document.close方法用于关闭open方法所新建的文档。一旦关闭，write方法就无法写入内容了。如果再调用write方法，就等同于又调用open方法，新建一个文档，再写入内容。
+### document.write()，document.writeln()
 
 `document.write`方法用于向当前文档写入内容。只要当前文档还没有用`close`方法关闭，它所写入的内容就会追加在已有内容的后面。
 
@@ -362,7 +362,7 @@ document.write('world');
 document.close();
 ```
 
-如果页面已经解析完成（DOMContentLoaded事件发生之后），再调用write方法，它会先调用open方法，擦除当前文档所有内容，然后再写入。
+如果页面已经解析完成（DOMContentLoaded事件发生之后），再调用`write`方法，它会先调用`open`方法，擦除当前文档所有内容，然后再写入。
 
 ```javascript
 document.addEventListener("DOMContentLoaded", function(event) {
@@ -431,65 +431,34 @@ document.writeln(2);
 
 注意，`writeln`方法添加的是ASCII码的换行符，渲染成HTML网页时不起作用。
 
-### hasFocus()
+## 查找节点的方法
 
-document.hasFocus方法返回一个布尔值，表示当前文档之中是否有元素被激活或获得焦点。
+以下方法用来查找某个节点。
 
-```javascript
+### document.querySelector()，document.querySelectorAll()
 
-focused = document.hasFocus();
-
-```
-
-注意，有焦点的文档必定被激活（active），反之不成立，激活的文档未必有焦点。比如如果用户点击按钮，从当前窗口跳出一个新窗口，该新窗口就是激活的，但是不拥有焦点。
-
-### querySelector()
-
-`querySelector`方法返回匹配指定的CSS选择器的元素节点。如果有多个节点满足匹配条件，则返回第一个匹配的节点。如果没有发现匹配的节点，则返回`null`。
+`document.querySelector`方法接受一个CSS选择器作为参数，返回匹配该选择器的元素节点。如果有多个节点满足匹配条件，则返回第一个匹配的节点。如果没有发现匹配的节点，则返回`null`。
 
 ```javascript
 var el1 = document.querySelector('.myclass');
 var el2 = document.querySelector('#myParent > [ng-click]');
 ```
 
-`querySelector`方法无法选中CSS伪元素。
-
-### getElementById()
-
-`getElementById`方法返回匹配指定`id`属性的元素节点。如果没有发现匹配的节点，则返回`null`。
+`document.querySelectorAll`方法与`querySelector`用法类似，区别是返回一个`NodeList`对象，包含所有匹配给定选择器的节点。
 
 ```javascript
-var elem = document.getElementById('para1');
+elementList = document.querySelectorAll('.myclass');
 ```
 
-注意，在搜索匹配节点时，`id`属性是大小写敏感的。比如，如果某个节点的`id`属性是`main`，那么`document.getElementById('Main')`将返回`null`，而不是指定节点。
-
-`getElementById`方法与`querySelector`方法都能获取元素节点，不同之处是`querySelector`方法的参数使用CSS选择器语法，`getElementById`方法的参数是HTML标签元素的`id`属性。
-
-```javascript
-document.getElementById('myElement')
-document.querySelector('#myElement')
-```
-
-上面代码中，两个方法都能选中`id`为`myElement`的元素，但是`getElementById()`比`querySelector()`效率高得多。
-
-### querySelectorAll()
-
-`querySelectorAll`方法返回匹配指定的CSS选择器的所有节点，返回的是NodeList类型的对象。NodeList对象不是动态集合，所以元素节点的变化无法实时反映在返回结果中。
-
-```javascript
-elementList = document.querySelectorAll(selectors);
-```
-
-querySelectorAll方法的参数，可以是逗号分隔的多个CSS选择器，返回所有匹配其中一个选择器的元素。
+这两个方法的参数，可以是逗号分隔的多个CSS选择器，返回匹配其中一个选择器的元素节点。
 
 ```javascript
 var matches = document.querySelectorAll('div.note, div.alert');
 ```
 
-上面代码返回class属性是note或alert的div元素。
+上面代码返回`class`属性是`note`或`alert`的`div`元素。
 
-querySelectorAll方法支持复杂的CSS选择器。
+这两个方法都支持复杂的CSS选择器。
 
 ```javascript
 // 选中data-foo-bar属性等于someval的元素
@@ -505,39 +474,13 @@ document.querySelectorAll('DIV:not(.ignore)');
 document.querySelectorAll('DIV, A, SCRIPT');
 ```
 
-如果`querySelectorAll`方法和`getElementsByTagName`方法的参数是字符串`*`，则会返回文档中的所有HTML元素节点。
+但是，它们不支持CSS伪元素的选择器（比如`:first-line`和`:first-letter`）和伪类的选择器（比如`:link`和`:visited`），即无法选中伪元素和伪类。
 
-与querySelector方法一样，querySelectorAll方法无法选中CSS伪元素。
+如果`querySelectorAll`方法的参数是字符串`*`，则会返回文档中的所有HTML元素节点。另外，`querySelectorAll`的返回结果不是动态集合，不会实时反映元素节点的变化。
 
-### getElementsByClassName()
+最后，这两个方法除了定义在`document`对象上，还定义在元素节点上，即在元素节点上也可以调用。
 
-`document.getElementsByClassName`方法返回一个类似数组的对象（`HTMLCollection`实例对象），包括了所有`class`名字符合指定条件的元素，元素的变化实时反映在返回结果中。
-
-```javascript
-// document对象上调用
-var elements = document.getElementsByClassName(names);
-```
-
-由于`class`是保留字，所以JavaScript一律使用`className`表示CSS的`class`。
-
-如果参数是一个空格分隔的字符串，元素的`class`必须符合所有字符串之中所有的`class`才会返回。
-
-```javascript
-var elements = document.getElementsByClassName('foo bar');
-```
-
-上面代码返回同时具有`foo`和`bar`两个`class`的元素，`foo`和`bar`的顺序不重要。
-
-注意，正常模式下，CSS的`class`是大小写敏感的。（`quirks mode`下，大小写不敏感。）
-
-与`getElementsByTagName`方法一样，`getElementsByClassName`方法不仅可以`在document`对象上调用，也可以在任何元素节点上调用。
-
-```javascript
-// 非document对象上调用
-var elements = rootElement.getElementsByClassName(names);
-```
-
-### getElementsByTagName()
+### document.getElementsByTagName()
 
 `document.getElementsByTagName`方法返回所有指定HTML标签的元素，返回值是一个类似数组的`HTMLCollection`对象，可以实时反映HTML文档的变化。如果没有任何匹配的元素，就返回一个空集。
 
@@ -566,7 +509,35 @@ var spans = firstPara.getElementsByTagName('span');
 
 上面代码选中第一个`p`元素内部的所有`span`元素。
 
-### getElementsByName()
+### document.getElementsByClassName()
+
+`document.getElementsByClassName`方法返回一个类似数组的对象（`HTMLCollection`实例对象），包括了所有`class`名字符合指定条件的元素，元素的变化实时反映在返回结果中。
+
+```javascript
+// document对象上调用
+var elements = document.getElementsByClassName(names);
+```
+
+由于`class`是保留字，所以JavaScript一律使用`className`表示CSS的`class`。
+
+如果参数是一个空格分隔的字符串，元素的`class`必须符合所有字符串之中所有的`class`才会返回。
+
+```javascript
+var elements = document.getElementsByClassName('foo bar');
+```
+
+上面代码返回同时具有`foo`和`bar`两个`class`的元素，`foo`和`bar`的顺序不重要。
+
+注意，正常模式下，CSS的`class`是大小写敏感的。（`quirks mode`下，大小写不敏感。）
+
+与`getElementsByTagName`方法一样，`getElementsByClassName`方法不仅可以`在document`对象上调用，也可以在任何元素节点上调用。
+
+```javascript
+// 非document对象上调用
+var elements = rootElement.getElementsByClassName(names);
+```
+
+### document.getElementsByName()
 
 `document.getElementsByName`方法用于选择拥有`name`属性的HTML元素（比如`<form>`、`<img>`、`<frame>`、`<embed>`和`<object>`等），返回一个类似数组的的对象（`NodeList`对象的实例）。
 
@@ -578,7 +549,28 @@ forms[0].tagName // "FORM"
 
 注意，`getElementsByName`返回的结果不会实时反映网页元素的变化。
 
-### elementFromPoint()
+### getElementById()
+
+`getElementById`方法返回匹配指定`id`属性的元素节点。如果没有发现匹配的节点，则返回`null`。
+
+```javascript
+var elem = document.getElementById('para1');
+```
+
+注意，该方法的参数是大小写敏感的。比如，如果某个节点的`id`属性是`main`，那么`document.getElementById('Main')`将返回`null`，而不是那个节点。
+
+`document.getElementById`方法与`document.querySelector`方法都能获取元素节点，不同之处是`document.querySelector`方法的参数使用CSS选择器语法，`document.getElementById`方法的参数是HTML标签元素的`id`属性。
+
+```javascript
+document.getElementById('myElement')
+document.querySelector('#myElement')
+```
+
+上面代码中，两个方法都能选中`id`为`myElement`的元素，但是`getElementById()`比`querySelector()`效率高得多。
+
+另外，这个方法只能在`document`对象上使用，不能在其他元素节点上使用。
+
+### document.elementFromPoint()
 
 `document.elementFromPoint`方法返回位于页面指定位置的元素。
 
@@ -588,11 +580,11 @@ var element = document.elementFromPoint(x, y);
 
 上面代码中，`elementFromPoint`方法的参数`x`和`y`，分别是相对于当前窗口左上角的横坐标和纵坐标，单位是像素。`elementFromPoint`方法返回位于这个位置的DOM元素，如果该元素不可返回（比如文本框的滚动条），则返回它的父元素（比如文本框）。如果坐标值无意义（比如负值），则返回`null`。
 
-### createElement()，createTextNode()，createAttribute()，createDocumentFragment()
+## 生成节点的方法
 
 以下方法用于生成元素节点。
 
-**（1）createElement()**
+### document.createElement()
 
 createElement方法用来生成HTML元素节点。
 
@@ -604,7 +596,7 @@ var newDiv = document.createElement("div");
 
 createElement方法的参数为元素的标签名，即元素节点的tagName属性。如果传入大写的标签名，会被转为小写。如果参数带有尖括号（即&lt;和&gt;）或者是null，会报错。
 
-**（2）createTextNode()**
+### document.createTextNode()
 
 `document.createTextNode`方法用来生成文本节点，参数为所要生成的文本节点的内容。
 
@@ -645,7 +637,7 @@ div.innerHtml = profileLink;
 
 上面代码中，由于`createTextNode`方法不转义双引号，导致`onmouseover`方法被注入了代码。
 
-**（3）createAttribute()**
+### document.createAttribute()
 
 `document.createAttribute`方法生成一个新的属性对象节点，并返回它。
 
@@ -656,7 +648,6 @@ attribute = document.createAttribute(name);
 createAttribute方法的参数name，是属性的名称。
 
 ```javascript
-
 var node = document.getElementById("div1");
 var a = document.createAttribute("my_attrib");
 a.value = "newVal";
@@ -666,23 +657,19 @@ node.setAttributeNode(a);
 
 var node = document.getElementById("div1");
 node.setAttribute("my_attrib", "newVal");
-
 ```
 
-**（4）createDocumentFragment()**
+### document.createDocumentFragment()
 
 createDocumentFragment方法生成一个DocumentFragment对象。
 
 ```javascript
-
 var docFragment = document.createDocumentFragment();
-
 ```
 
 DocumentFragment对象是一个存在于内存的DOM片段，但是不属于当前文档，常常用来生成较复杂的DOM结构，然后插入当前文档。这样做的好处在于，因为DocumentFragment不属于当前文档，对它的任何改动，都不会引发网页的重新渲染，比直接修改当前文档的DOM有更好的性能表现。
 
 ```javascript
-
 var docfrag = document.createDocumentFragment();
 
 [1, 2, 3, 4].forEach(function(e) {
@@ -692,12 +679,13 @@ var docfrag = document.createDocumentFragment();
 });
 
 document.body.appendChild(docfrag);
-
 ```
 
-### createEvent()
+## 事件相关的方法
 
-createEvent方法生成一个事件对象，该对象可以被element.dispatchEvent方法使用，触发指定事件。
+### document.createEvent()
+
+`document.createEvent`方法生成一个事件对象，该对象可以被`element.dispatchEvent`方法使用，触发指定事件。
 
 ```javascript
 var event = document.createEvent(type);
@@ -714,13 +702,41 @@ document.addEventListener('build', function (e) {
 document.dispatchEvent(event);
 ```
 
-### createNodeIterator()，createTreeWalker()
+### document.addEventListener()，document.removeEventListener()，document.dispatchEvent()
+
+以下三个方法与`document`节点的事件相关。这些方法都继承自EventTarget接口，详细介绍参见《Event对象》章节的《EventTarget》部分。
+
+```javascript
+// 添加事件监听函数
+document.addEventListener('click', listener, false);
+
+// 移除事件监听函数
+document.removeEventListener('click', listener, false);
+
+// 触发事件
+var event = new Event('click');
+document.dispatchEvent(event);
+```
+
+## 其他方法
+
+### document.hasFocus()
+
+`document.hasFocus`方法返回一个布尔值，表示当前文档之中是否有元素被激活或获得焦点。
+
+```javascript
+var focused = document.hasFocus();
+```
+
+注意，有焦点的文档必定被激活（active），反之不成立，激活的文档未必有焦点。比如如果用户点击按钮，从当前窗口跳出一个新窗口，该新窗口就是激活的，但是不拥有焦点。
+
+### document.createNodeIterator()，document.createTreeWalker()
 
 以下方法用于遍历元素节点。
 
-**（1）createNodeIterator()**
+**（1）document.createNodeIterator()**
 
-createNodeIterator方法返回一个DOM的子节点遍历器。
+`document.createNodeIterator`方法返回一个DOM的子节点遍历器。
 
 ```javascript
 var nodeIterator = document.createNodeIterator(
@@ -761,11 +777,11 @@ currentNode === previousNode // true
 
 有一个需要注意的地方，遍历器返回的第一个节点，总是根节点。
 
-**（2）createTreeWalker()**
+**（2）document.createTreeWalker()**
 
-createTreeWalker方法返回一个DOM的子树遍历器。它与createNodeIterator方法的区别在于，后者只遍历子节点，而它遍历整个子树。
+`document.createTreeWalker`方法返回一个DOM的子树遍历器。它与createNodeIterator方法的区别在于，后者只遍历子节点，而它遍历整个子树。
 
-createTreeWalker方法的第一个参数，是所要遍历的根节点，第二个参数指定所要遍历的节点类型。
+`document.createTreeWalker`方法的第一个参数，是所要遍历的根节点，第二个参数指定所要遍历的节点类型。
 
 ```javascript
 var treeWalker = document.createTreeWalker(
@@ -780,13 +796,13 @@ while(treeWalker.nextNode()) nodeList.push(treeWalker.currentNode);
 
 上面代码遍历body节点下属的所有元素节点，将它们插入nodeList数组。
 
-### adoptNode()，importNode()
+### document.adoptNode()，document.importNode()
 
 以下方法用于获取外部文档的节点。
 
-**（1）adoptNode()**
+**（1）document.adoptNode()**
 
-adoptNode方法将某个节点，从其原来所在的文档移除，插入当前文档，并返回插入后的新节点。
+`document.adoptNode`方法将某个节点，从其原来所在的文档移除，插入当前文档，并返回插入后的新节点。
 
 ```javascript
 node = document.adoptNode(externalNode);
@@ -798,35 +814,18 @@ importNode方法从外部文档拷贝指定节点，插入当前文档。
 var node = document.importNode(externalNode, deep);
 ```
 
-**（2）importNode()**
+**（2）document.importNode()**
 
-importNode方法用于创造一个外部节点的拷贝，然后插入当前文档。它的第一个参数是外部节点，第二个参数是一个布尔值，表示对外部节点是深拷贝还是浅拷贝，默认是浅拷贝（false）。虽然第二个参数是可选的，但是建议总是保留这个参数，并设为true。
+`document.importNode`方法用于创造一个外部节点的拷贝，然后插入当前文档。它的第一个参数是外部节点，第二个参数是一个布尔值，表示对外部节点是深拷贝还是浅拷贝，默认是浅拷贝（false）。虽然第二个参数是可选的，但是建议总是保留这个参数，并设为`true`。
 
 另外一个需要注意的地方是，importNode方法只是拷贝外部节点，这时该节点的父节点是null。下一步还必须将这个节点插入当前文档的DOM树。
 
 ```javascript
-var iframe = document.getElementsByTagName("iframe")[0];
-var oldNode = iframe.contentWindow.document.getElementById("myNode");
+var iframe = document.getElementsByTagName('iframe')[0];
+var oldNode = iframe.contentWindow.document.getElementById('myNode');
 var newNode = document.importNode(oldNode, true);
 document.getElementById("container").appendChild(newNode);
 ```
 
 上面代码从iframe窗口，拷贝一个指定节点myNode，插入当前文档。
-
-### addEventListener()，removeEventListener()，dispatchEvent()
-
-以下三个方法与Document节点的事件相关。这些方法都继承自EventTarget接口，详细介绍参见《Event对象》章节的《EventTarget》部分。
-
-```javascript
-// 添加事件监听函数
-document.addEventListener('click', listener, false);
-
-// 移除事件监听函数
-document.removeEventListener('click', listener, false);
-
-// 触发事件
-var event = new Event('click');
-document.dispatchEvent(event);
-```
-
 
