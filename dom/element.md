@@ -150,13 +150,13 @@ d.nodeName // "DIV"
 document.documentElement.outerHTML = "test";  // DOMException
 ```
 
-### children，childElementCount，firstElementChild，lastElementChild
+## 相关节点的属性
 
-以下属性与元素节点的子元素相关。
+以下属性返回元素节点的相关节点。
 
-**（1）children**
+### Element.children，Element.childElementCount
 
-children属性返回一个类似数组的动态对象（实时反映变化），包括当前元素节点的所有子元素。如果当前元素没有子元素，则返回的对象包含零个成员。
+`Element.children`属性返回一个`HTMLCollection`对象，包括当前元素节点的所有子元素。它是一个类似数组的动态对象（实时反映网页元素的变化）。如果当前元素没有子元素，则返回的对象包含零个成员。
 
 ```javascript
 // para是一个p元素节点
@@ -168,25 +168,19 @@ if (para.children.length) {
 }
 ```
 
-**（2）childElementCount**
+这个属性与`Node.childNodes`属性的区别是，它只包括HTML元素类型的子节点，不包括其他类型的子节点。
 
-childElementCount属性返回当前元素节点包含的子元素节点的个数。
+`Element.childElementCount`属性返回当前元素节点包含的子HTML元素节点的个数，与`Element.children.length`的值相同。注意，该属性只计算HTML元素类型的子节点。
 
-**（3）firstElementChild**
+### Element.firstElementChild，Element.lastElementChild
 
-firstElementChild属性返回第一个子元素，如果没有，则返回null。
+`Element.firstElementChild`属性返回第一个HTML元素类型的子节点，`Element.lastElementChild`返回最后一个HTML元素类型的子节点。
 
-**（4）lastElementChild**
+如果没有HTML类型的子节点，这两个属性返回`null`。
 
-lastElementChild属性返回最后一个子元素，如果没有，则返回null。
+### Element.nextElementSibling，Element.previousElementSibling
 
-### nextElementSibling，previousElementSibling
-
-以下属性与元素节点的同级元素相关。
-
-**（1）nextElementSibling**
-
-nextElementSibling属性返回指定元素的后一个同级元素，如果没有则返回null。
+`Element.nextElementSibling`属性返回当前HTML元素节点的后一个同级HTML元素节点，如果没有则返回`null`。
 
 ```javascript
 // 假定HTML代码如下
@@ -198,9 +192,11 @@ el.nextElementSibling
 
 ```
 
-**（2）previousElementSibling**
+`Element.previousElementSibling`属性返回当前HTML元素节点的前一个同级HTML元素节点，如果没有则返回`null`。
 
-previousElementSibling属性返回指定元素的前一个同级元素，如果没有则返回null。
+## 特征相关的属性
+
+以下属性与HTML元素节点本身的特征相关。
 
 ### className，classList
 
