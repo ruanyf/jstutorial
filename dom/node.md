@@ -753,36 +753,6 @@ replaceWith方法使用参数指定的节点，替换当前节点。如果参数
 
 这两个属性返回html元素的宽度和高度，即网页的总宽度和总高度。
 
-### dataset属性
-
-`dataset`属性用于操作HTML标签元素的`data-*`属性。下面是一个有`data-*`属性的`div`节点。
-
-```html
-<div id="myDiv" data-id="myId"></div>
-```
-
-要读取`data-id`属性，可以从当前节点的`dataset.id`属性读取。
-
-```javascript
-var id = document.getElementById("myDiv").dataset.id;
-```
-
-要设置`data-id`属性，可以直接对`dataset.id`赋值。如果该属性不存在，将会被新建。
-
-```javascript
-document.getElementById('myDiv').dataset.id = 'hello';
-```
-
-删除一个`data-*`属性，可以直接使用`delete`命令。
-
-```javascript
-delete document.getElementById("myDiv").dataset.id;
-```
-
-除了`dataset`属性，也可以用`getAttribute('data-foo')`、`removeAttribute('data-foo')`、`setAttribute('data-foo')`、`hasAttribute('data-foo')`等方法操作`data-*`属性。
-
-需要注意的是，`dataset`属性使用骆驼拼写法表示属性名，这意味着`data-hello-world`会用`dataset.helloWorld`表示。而如果此时存在一个`data-helloWorld`属性，该属性将无法读取，也就是说，`data-*`属性本身只能使用连词号，不能使用骆驼拼写法。
-
 ### tabindex属性
 
 `tabindex`属性用来指定，当前HTML元素节点是否被tab键遍历，以及遍历的优先级。

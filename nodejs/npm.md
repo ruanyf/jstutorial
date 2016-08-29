@@ -63,6 +63,27 @@ $ npm set save-exact true
 
 上面命令设置加入模块时，`package.json`将记录模块的确切版本，而不是一个可选的版本范围。
 
+## npm config
+
+```bash
+$ npm config set prefix $dir
+```
+
+上面的命令将指定的`$dir`目录，设为模块的全局安装目录。如果当前有这个目录的写权限，那么运行`npm install`的时候，就不再需要`sudo`命令授权了。
+
+```bash
+$ npm config set save-prefix ~
+```
+
+上面的命令使得`npm install --save`和`npm install --save-dev`安装新模块时，允许的版本范围从克拉符号（`^`）改成波浪号（`~`），即从允许小版本升级，变成只允许补丁包的升级。
+
+```bash
+$ npm config set init.author.name $name
+$ npm config set init.author.email $email
+```
+
+上面命令指定使用`npm init`时，生成的`package.json`文件的字段默认值。
+
 ## npm info
 
 `npm info`命令可以查看每个模块的具体信息。比如，查看underscore模块的信息。
@@ -147,7 +168,7 @@ $ npm list underscore
 
 Node模块采用`npm install`命令安装。
 
-每个模块可以“全局安装”，也可以“本地安装”。“全局安装”指的是将一个模块安装到系统目录中，各个项目都可以调用。一般来说，全局安装只适用于工具模块，比如npm和grunt。“本地安装”指的是将一个模块下载到当前项目的`node_modules`子目录，然后只有在项目目录之中，才能调用这个模块。
+每个模块可以“全局安装”，也可以“本地安装”。“全局安装”指的是将一个模块安装到系统目录中，各个项目都可以调用。一般来说，全局安装只适用于工具模块，比如`eslint`和`gulp`。“本地安装”指的是将一个模块下载到当前项目的`node_modules`子目录，然后只有在项目目录之中，才能调用这个模块。
 
 ```bash
 # 本地安装
@@ -219,7 +240,7 @@ $ npm install <module-name>@beta (latest beta)
 $ npm install <module-name>@1.3.1-beta.3
 ```
 
-`npm install`默认会安装dependencies字段和devDependencies字段中的所有模块，如果使用production参数，可以只安装dependencies字段的模块。
+`npm install`默认会安装`dependencies`字段和`devDependencies`字段中的所有模块，如果使用`--production`参数，可以只安装`dependencies`字段的模块。
 
 ```bash
 $ npm install --production
@@ -227,7 +248,7 @@ $ npm install --production
 $ NODE_ENV=production npm install
 ```
 
-一旦安装了某个模块，就可以在代码中用require命令调用这个模块。
+一旦安装了某个模块，就可以在代码中用`require`命令加载这个模块。
 
 ```javascript
 var backbone = require('backbone')
@@ -909,6 +930,49 @@ $ npm owner add <user> <package name>
 # 删除维护者
 $ npm owner rm <user> <package name>
 ```
+
+## 其他命令
+
+### npm home，npm repo
+
+`npm home`命令可以打开一个模块的主页，`npm repo`命令则是打开一个模块的代码仓库。
+
+```bash
+$ npm home $package
+$ npm repo $package
+```
+
+这两个命令不需要模块先安装。
+
+### npm outdated
+
+`npm outdated`命令检查当前项目所依赖的模块，是否已经有新版本。
+
+```bash
+$ npm outdated
+```
+
+它会输出当前版本（current version）、应当安装的版本（wanted version）和最新发布的版本（latest version）。
+
+### npm prune
+
+`npm prune`检查当前项目的`node_modules`目录中，是否有`package.json`里面没有提到的模块，然后将所有这些模块输出在命令行。
+
+```bash
+$ npm prune
+```
+
+### npm shrinkwrap
+
+`npm shrinkwrap`的作用是锁定当前项目的以来模块的版本。
+
+```bash
+$ npm shrinkwrap
+```
+
+运行该命令后，会在当前项目的根目录下生成一个`npm-shrinkwrap.json`文件，内容是`node_modules`目录下所有已经安装模块的版本。
+
+下次运行`npm install`命令时，`npm`发现当前目录下有`npm-shrinkwrap.json`文件，就会只安装里面提到的模块，且版本也会保持一致。
 
 ## 参考链接
 

@@ -58,6 +58,7 @@ modifiedOn: 2014-05-18
 - [概述](dom/node.html)
 - [Document节点](dom/document.html)
 - [Element节点](dom/element.html)
+- [属性的操作](dom/attribute.html)
 - [Text节点和DocumentFragment节点](dom/text.html)
 - [Event对象](dom/event.html)
 - [CSS操作](dom/css.html)

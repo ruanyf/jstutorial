@@ -309,3 +309,7 @@ var module1 = (function ($, YAHOO) {
 ```
 
 上面代码中，`finalCarousel`对象输出到全局，对外暴露`init`和`destroy`接口，内部方法`go`、`handleEvents`、`initialize`、`dieCarouselDie`都是外部无法调用的。
+
+## 参考链接
+
+- [JavaScript Modules: A Beginner’s Guide](https://medium.freecodecamp.com/javascript-modules-a-beginner-s-guide-783f7d7a5fcc), by Preethi Kasireddy

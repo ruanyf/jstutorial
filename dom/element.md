@@ -10,75 +10,31 @@ modifiedOn: 2015-04-15
 
 元素节点的`nodeType`属性都是1，但是不同HTML标签生成的元素节点是不一样的。JavaScript内部使用不同的构造函数，生成不同的Element节点，比如`<a>`标签的节点对象由`HTMLAnchorElement()`构造函数生成，`<button>`标签的节点对象由`HTMLButtonElement()`构造函数生成。因此，元素节点不是一种对象，而是一组对象。
 
-## 属性
+## 特征相关的属性
 
-### attributes，id，tagName
+以下属性与元素特点本身的特征相关。
 
-以下属性返回元素节点的性质。
+### Element.attributes
 
-**（1）attributes**
+`Element.attributes`属性返回一个类似数组的对象，成员是当前元素节点的所有属性节点，详见本章《属性的操作》一节。
 
-attributes属性返回一个类似数组的对象，成员是当前元素节点的所有属性节点，每个数字索引对应一个属性节点（Attribute）对象。返回值中，所有成员都是动态的，即属性的变化会实时反映在结果集。
+### Element.id，Element.tagName
 
-下面是一个HTML代码。
+`Element.id`属性返回指定元素的`id`属性，该属性可读写。
 
-```html
-<p id="para">Hello World</p>
-```
-
-获取attributes成员的代码如下。
+`Element.tagName`属性返回指定元素的大写标签名，与`nodeName`属性的值相等。
 
 ```javascript
-var para = document.getElementById('para');
-var attr = para.attributes[0];
-
-attr.name // id
-attr.value // para
-```
-
-上面代码说明，通过attributes属性获取属性节点对象（attr）以后，可以通过name属性获取属性名（id），通过value属性获取属性值（para）。
-
-注意，属性节点的name属性和value属性，等同于nodeName属性和nodeValue属性。
-
-下面代码是遍历一个元素节点的所有属性。
-
-```javascript
-var para = document.getElementsByTagName("p")[0];
-
-if (para.hasAttributes()) {
-  var attrs = para.attributes;
-  var output = "";
-  for(var i = attrs.length - 1; i >= 0; i--) {
-    output += attrs[i].name + "->" + attrs[i].value;
-  }
-  result.value = output;
-} else {
-  result.value = "No attributes to show";
-}
-```
-
-**（2）id属性**
-
-id属性返回指定元素的id标识。该属性可读写。
-
-**（3）tagName属性**
-
-tagName属性返回指定元素的大写的标签名，与nodeName属性的值相等。
-
-```javascript
-// 假定HTML代码如下
-// <span id="span">Hello</span>
-var span = document.getElementById("span");
+// HTML代码为
+// <span id="myspan">Hello</span>
+var span = document.getElementById('span');
+span.id // "myspan"
 span.tagName // "SPAN"
 ```
 
-### innerHTML，outerHTML
+### Element.innerHTML
 
-以下属性返回元素节点的HTML内容。
-
-**（1）innerHTML**
-
-innerHTML属性返回该元素包含的HTML代码。该属性可读写，常用来设置某个节点的内容。
+`Element.innerHTML`属性返回该元素包含的HTML代码。该属性可读写，常用来设置某个节点的内容。
 
 如果将该属性设为空，等于删除所有它包含的所有节点。
 
@@ -112,9 +68,9 @@ el.innerHTML = name;
 
 上面代码中，alert方法是会执行的。因此为了安全考虑，如果插入的是文本，最好用textContent属性代替innerHTML。
 
-**（2）outerHTML**
+### Element.outerHTML
 
-outerHTML属性返回一个字符串，内容为指定元素的所有HTML代码，包括它自身和包含的所有子元素。
+`Element.outerHTML`属性返回一个字符串，内容为指定元素节点的所有HTML代码，包括它自身和包含的所有子元素。
 
 ```javascript
 // 假定HTML代码如下
@@ -126,7 +82,7 @@ dump(d.outerHTML);
 // '<div id="d"><p>Hello</p></div>'
 ```
 
-outerHTML属性是可读写的，对它进行赋值，等于替换掉当前元素。
+`outerHTML`属性是可读写的，对它进行赋值，等于替换掉当前元素。
 
 ```javascript
 // 假定HTML代码如下
@@ -142,63 +98,15 @@ container.firstChild.nodeName // "P"
 d.nodeName // "DIV"
 ```
 
-上面代码中，outerHTML属性重新赋值以后，内层的div元素就不存在了，被p元素替换了。但是，变量d依然指向原来的div元素，这表示被替换的DIV元素还存在于内存中。
+上面代码中，`outerHTML`属性重新赋值以后，内层的`div`元素就不存在了，被`p`元素替换了。但是，变量`d`依然指向原来的`div`元素，这表示被替换的`DIV`元素还存在于内存中。
 
-如果指定元素没有父节点，对它的outerTHML属性重新赋值，会抛出一个错误。
-
-```javascript
-document.documentElement.outerHTML = "test";  // DOMException
-```
-
-## 相关节点的属性
-
-以下属性返回元素节点的相关节点。
-
-### Element.children，Element.childElementCount
-
-`Element.children`属性返回一个`HTMLCollection`对象，包括当前元素节点的所有子元素。它是一个类似数组的动态对象（实时反映网页元素的变化）。如果当前元素没有子元素，则返回的对象包含零个成员。
+如果指定元素没有父节点，对它的`outerHTML`属性重新赋值，会抛出一个错误。
 
 ```javascript
-// para是一个p元素节点
-if (para.children.length) {
-  var children = para.children;
-    for (var i = 0; i < children.length; i++) {
-      // ...
-    }
-}
+document.documentElement.outerHTML = 'test';  // DOMException
 ```
 
-这个属性与`Node.childNodes`属性的区别是，它只包括HTML元素类型的子节点，不包括其他类型的子节点。
-
-`Element.childElementCount`属性返回当前元素节点包含的子HTML元素节点的个数，与`Element.children.length`的值相同。注意，该属性只计算HTML元素类型的子节点。
-
-### Element.firstElementChild，Element.lastElementChild
-
-`Element.firstElementChild`属性返回第一个HTML元素类型的子节点，`Element.lastElementChild`返回最后一个HTML元素类型的子节点。
-
-如果没有HTML类型的子节点，这两个属性返回`null`。
-
-### Element.nextElementSibling，Element.previousElementSibling
-
-`Element.nextElementSibling`属性返回当前HTML元素节点的后一个同级HTML元素节点，如果没有则返回`null`。
-
-```javascript
-// 假定HTML代码如下
-// <div id="div-01">Here is div-01</div>
-// <div id="div-02">Here is div-02</div>
-var el = document.getElementById('div-01');
-el.nextElementSibling
-// <div id="div-02">Here is div-02</div>
-
-```
-
-`Element.previousElementSibling`属性返回当前HTML元素节点的前一个同级HTML元素节点，如果没有则返回`null`。
-
-## 特征相关的属性
-
-以下属性与HTML元素节点本身的特征相关。
-
-### className，classList
+### Element.className，Element.classList
 
 className属性用来读取和设置当前元素的class属性。它的值是一个字符串，每个class之间用空格分割。
 
@@ -271,7 +179,7 @@ if (boolValue){
 }
 ```
 
-### clientHeight，clientLeft，clientTop，clientWidth
+### Element.clientHeight，Element.clientLeft，Element.clientTop，Element.clientWidth
 
 以下属性与元素节点的可见区域的坐标相关。
 
@@ -295,7 +203,7 @@ clientWidth属性等于网页元素的可见宽度，即包括padding、但不�
 
 如果一个元素是可以滚动的，则clientWidth只计算它的可见部分的宽度。
 
-### scrollHeight，scrollWidth，scrollLeft，scrollTop
+### Element.scrollHeight，Element.scrollWidth，Element.scrollLeft，Element.scrollTop
 
 以下属性与元素节点占据的总区域的坐标相关。
 
@@ -342,74 +250,64 @@ document.querySelector('div').scrollTop = 150;
 
 上面代码将div元素向下滚动150像素。
 
-### style属性
+### Element.style
 
 每个元素节点都有`style`用来读写该元素的行内样式信息，具体介绍参见《CSS操作》一节。
 
-## 属性相关的方法
+## 相关节点的属性
 
-以下方法与元素节点的属性相关。
+以下属性返回元素节点的相关节点。
 
-### Element.hasAttribute()
+### Element.children，Element.childElementCount
 
-`Element.hasAttribute`方法返回一个布尔值，表示当前元素节点是否包含指定的HTML属性。
+`Element.children`属性返回一个`HTMLCollection`对象，包括当前元素节点的所有子元素。它是一个类似数组的动态对象（实时反映网页元素的变化）。如果当前元素没有子元素，则返回的对象包含零个成员。
 
 ```javascript
-var d = document.getElementById("div1");
-
-if (d.hasAttribute("align")) {
-  d.setAttribute("align", "center");
+// para是一个p元素节点
+if (para.children.length) {
+  var children = para.children;
+    for (var i = 0; i < children.length; i++) {
+      // ...
+    }
 }
 ```
 
-上面代码检查`div`节点是否含有`align`属性。如果有，则设置为“居中对齐”。
+这个属性与`Node.childNodes`属性的区别是，它只包括HTML元素类型的子节点，不包括其他类型的子节点。
 
-### Element.getAttribute()
+`Element.childElementCount`属性返回当前元素节点包含的子HTML元素节点的个数，与`Element.children.length`的值相同。注意，该属性只计算HTML元素类型的子节点。
 
-`Element.getAttribute`方法返回当前元素节点的指定属性。如果指定属性不存在，则返回`null`。
+### Element.firstElementChild，Element.lastElementChild
 
-```javascript
-var div = document.getElementById('div1');
-div.getAttribute('align') // "left"
-```
+`Element.firstElementChild`属性返回第一个HTML元素类型的子节点，`Element.lastElementChild`返回最后一个HTML元素类型的子节点。
 
-### Element.removeAttribute()
+如果没有HTML类型的子节点，这两个属性返回`null`。
 
-`Element.removeAttribute`方法用于从当前元素节点移除属性。
+### Element.nextElementSibling，Element.previousElementSibling
 
-```javascript
-// 原来的HTML代码
-// <div id="div1" align="left" width="200px">
-document.getElementById("div1").removeAttribute("align");
-// 现在的HTML代码
-// <div id="div1" width="200px">
-```
-
-### Element.setAttribute()
-
-`Element.setAttribute`方法用于为当前元素节点新增属性，或编辑已存在的属性。
+`Element.nextElementSibling`属性返回当前HTML元素节点的后一个同级HTML元素节点，如果没有则返回`null`。
 
 ```javascript
-var d = document.getElementById('d1');
-d.setAttribute('align', 'center');
+// 假定HTML代码如下
+// <div id="div-01">Here is div-01</div>
+// <div id="div-02">Here is div-02</div>
+var el = document.getElementById('div-01');
+el.nextElementSibling
+// <div id="div-02">Here is div-02</div>
+
 ```
 
-该方法会将所有属性名，都当作小写处理。对于那些已存在的属性，该方法是编辑操作，否则就会新建属性。
+`Element.previousElementSibling`属性返回当前HTML元素节点的前一个同级HTML元素节点，如果没有则返回`null`。
 
-下面是一个对`img`元素的`src`属性赋值的例子。
+## 属性相关的方法
 
-```javascript
-var myImage = document.querySelector('img');
-myImage.setAttribute ('src', 'path/to/example.png');
-```
+元素节点提供以下四个方法，用来操作HTML标签的属性。
 
-大多数情况下，直接对属性赋值比使用该方法更好。
+- `Element.getAttribute()`：读取指定属性
+- `Element.setAttribute()`：设置指定属性
+- `Element.hasAttribute()`：返回一个布尔值，表示当前元素节点是否有指定的属性
+- `Element.removeAttribute()`：移除指定属性
 
-```javascript
-el.value = 'hello';
-// or
-el.setAttribute('value', 'hello');
-```
+这些属性的详细介绍，详见本章的《属性的操作》一节。
 
 ## 查找相关的方法
 

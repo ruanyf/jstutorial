@@ -8,14 +8,14 @@ modifiedOn: 2013-08-13
 
 ## 概述
 
-Node程序由许多个模块组成，每个模块就是一个文件。Node模块采用了CommonJS规范。
+Node应用由模块组成，采用CommonJS模块规范。
 
-根据CommonJS规范，一个单独的文件就是一个模块。每一个模块都是一个单独的作用域，也就是说，在一个文件定义的变量（还包括函数和类），都是私有的，对其他文件是不可见的。
+根据这个规范，每个文件就是一个模块，有自己的作用域。在一个文件里面定义的变量、函数、类，都是私有的，对其他文件不可见。
 
 ```javascript
 // example.js
 var x = 5;
-var addX = function(value) {
+var addX = function (value) {
   return value + x;
 };
 ```
@@ -30,20 +30,20 @@ global.warning = true;
 
 上面代码的`warning`变量，可以被所有文件读取。当然，这样写法是不推荐的。
 
-CommonJS规定，每个文件的对外接口是`module.exports`对象。这个对象的所有属性和方法，都可以被其他文件导入。
+CommonJS规范规定，每个模块内部，`module`变量代表当前模块。这个变量是一个对象，它的`exports`属性（即`module.exports`）是对对的接口。加载某个模块，其实是加载该模块的`module.exports`属性。
 
 ```javascript
 var x = 5;
-var addX = function(value) {
+var addX = function (value) {
   return value + x;
 };
 module.exports.x = x;
 module.exports.addX = addX;
 ```
 
-上面代码通过`module.exports`对象，定义对外接口，输出变量`x`和函数`addX`。`module.exports`对象是可以被其他文件导入的，它其实就是文件内部与外部通信的桥梁。
+上面代码通过`module.exports`输出变量`x`和函数`addX`。
 
-`require`方法用于在其他文件加载这个接口，具体用法参见《Require命令》的部分。
+`require`方法用于加载模块。
 
 ```javascript
 var example = require('./example.js');
@@ -51,6 +51,8 @@ var example = require('./example.js');
 console.log(example.x); // 5
 console.log(example.addX(1)); // 6
 ```
+
+`require`方法的详细解释参见《Require命令》一节。
 
 CommonJS模块的特点如下。
 
