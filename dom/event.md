@@ -1768,36 +1768,32 @@ submit事件当表单数据向服务器提交时触发。注意，submit事件�
 
 **（1）beforeunload事件**
 
-beforeunload事件当窗口将要关闭，或者document和网页资源将要卸载时触发。它可以用来防止用户不当心关闭网页。
+`beforeunload`事件在窗口将要关闭，或者网页（即`document`对象）将要卸载时触发。它可以用来防止用户不小心关闭网页。
 
-该事件的默认动作就是关闭当前窗口或文档。如果在监听函数中，调用了`event.preventDefault()`，或者对事件对象的returnValue属性赋予一个非空的值，就会自动跳出一个确认框，让用户确认是否关闭网页。如果用户点击“取消”按钮，网页就不会关闭。监听函数所返回的字符串，会显示在确认对话框之中。
-
-```javascript
-window.onbeforeunload = function() {
-  if (textarea.value != textarea.defaultValue) {
-    return '你确认要离开吗？';
-  }
-};
-```
-
-上面代码表示，当用户关闭网页，会跳出一个确认对话框，上面显示“你确认要离开吗？”。
-
-下面的两种写法，具有同样效果。
+根据标准，只要在该事件的回调函数中，调用了`event.preventDefault()`，或者`event.returnValue`属性的值是一个非空的值，就会自动跳出一个确认框，让用户确认是否关闭网页。如果用户点击“取消”按钮，网页就不会关闭。`event.returnValue`属性的值，会显示在确认对话框之中。
 
 ```javascript
 window.addEventListener('beforeunload', function( event ) {
   event.returnValue = '你确认要离开吗？';
 });
 
-// 等同于
 window.addEventListener('beforeunload', function( event ) {
   event.preventDefault();
 });
 ```
 
-上面代码中，事件对象的returnValue属性的值，将会成为确认框的提示文字。
+但是，浏览器的行为很不一致，Chrome就不遵守`event.preventDefault()`，还是会关闭窗口，而IE需要显式返回一个非空的字符串。而且，大多数浏览器在对话框中不显示指定文本，只显示默认文本。因此，可以采用下面的写法，取得最大的兼容性。
 
-只要定义了beforeunload事件的监听函数，网页不会被浏览器缓存。
+```javascript
+window.addEventListener('beforeunload', function (e) {
+  var confirmationMessage = '确认关闭窗口？';
+
+  e.returnValue = confirmationMessage;
+  return confirmationMessage;
+});
+```
+
+需要特别注意的是，许多手机浏览器默认忽视这个事件，而桌面浏览器也可以这样设置，所以这个事件有可能根本不生效。所以，不能依赖它来阻止用户关闭窗口。
 
 **（2）unload事件**
 

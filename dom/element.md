@@ -307,7 +307,7 @@ el.nextElementSibling
 - `Element.hasAttribute()`：返回一个布尔值，表示当前元素节点是否有指定的属性
 - `Element.removeAttribute()`：移除指定属性
 
-这些属性的详细介绍，详见本章的《属性的操作》一节。
+这些属性的详细介绍，参见本章的《属性的操作》一节。
 
 ## 查找相关的方法
 
@@ -439,31 +439,18 @@ matchesSelector(
 
 ## 事件相关的方法
 
-以下三个方法与`Element`节点的事件相关。这些方法都继承自`EventTarget`接口，详细介绍参见《Event对象》章节的《EventTarget》部分。
+以下三个方法与`Element`节点的事件相关。这些方法都继承自`EventTarget`接口，详见本章的《Event对象》一节。
 
-### Element.addEventListener()
-
-`Element.addEventListener`方法用来添加事件的回调函数。
-
-```javascript
-el.addEventListener('click', listener, false);
-```
-
-### Element.addEventListener()
-
-`Element.removeEventListener`方法用来移除事件监听函数。
+- `Element.addEventListener()`：添加事件的回调函数
+- `Element.removeEventListener()`：移除事件监听函数
+- `Element.dispatchEvent()`：触发事件
 
 ```javascript
-el.removeEventListener('click', listener, false);
-```
+element.addEventListener('click', listener, false);
+element.removeEventListener('click', listener, false);
 
-### Element.dispatchEvent()
-
-`Element.dispatchEvent`方法用来触发事件。
-
-```javascript
 var event = new Event('click');
-el.dispatchEvent(event);
+element.dispatchEvent(event);
 ```
 
 ## 其他方法
