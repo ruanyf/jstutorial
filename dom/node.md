@@ -442,7 +442,7 @@ nodeA.contains(nodeA) // true
 
 **（2）compareDocumentPosition()**
 
-compareDocumentPosition方法的用法，与contains方法完全一致，返回一个7个比特位的二进制值，表示参数节点与当前节点的关系。
+`compareDocumentPosition`方法的用法，与`contains`方法完全一致，返回一个7个比特位的二进制值，表示参数节点与当前节点的关系。
 
 二进制值 | 数值 | 含义
 ---------|------|-----
@@ -456,20 +456,20 @@ compareDocumentPosition方法的用法，与contains方法完全一致，返回�
 
 ```javascript
 // HTML代码为
-// <div id="writeroot">
+// <div id="mydiv">
 //   <form>
 //     <input id="test" />
 //   </form>
 // </div>
 
-var x = document.getElementById('writeroot');
-var y = document.getElementById('test');
+var div = document.getElementById('mydiv');
+var input = document.getElementById('test');
 
-x.compareDocumentPosition(y) // 20
-y.compareDocumentPosition(x) // 10
+div.compareDocumentPosition(input) // 20
+input.compareDocumentPosition(div) // 10
 ```
 
-上面代码中，节点x包含节点y，而且节点y在节点x的后面，所以第一个compareDocumentPosition方法返回20（010100），第二个compareDocumentPosition方法返回10（0010010）。
+上面代码中，节点`div`包含节点`input`，而且节点`input`在节点`div`的后面，所以第一个`compareDocumentPosition`方法返回`20`（二进制`010100`），第二个`compareDocumentPosition`方法返回`10`（二进制`001010`）。
 
 由于compareDocumentPosition返回值的含义，定义在每一个比特位上，所以如果要检查某一种特定的含义，就需要使用比特位运算符。
 

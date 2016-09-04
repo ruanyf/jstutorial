@@ -100,7 +100,7 @@ Animal.prototype.walk = function () {
 };
 ```
 
-上面代码中，`Animal.protype`对象上面定义了一个`walk`方法，这个方法将可以在所有`Animal`实例对象上面调用。
+上面代码中，`Animal.prototype`对象上面定义了一个`walk`方法，这个方法将可以在所有`Animal`实例对象上面调用。
 
 由于JavaScript的所有对象都有构造函数，而所有构造函数都有`prototype`属性（其实是所有函数都有`prototype`属性），所以所有对象都有自己的原型对象。
 

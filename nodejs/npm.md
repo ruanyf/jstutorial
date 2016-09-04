@@ -783,17 +783,17 @@ npm的通配符的规则如下。
 
 ## npm link
 
-开发Npm模块的时候，有时我们会希望，边开发边试用。但是，常规情况下，使用一个模块，需要将其安装到`node_modules`目录之中，这对于开发中的模块，显然非常不方便。`npm link`就能起到这个作用，建立一个符号链接，在全局的`node_modules`目录之中，生成一个符号链接，指向模块的本地目录。
+开发NPM模块的时候，有时我们会希望，边开发边试用，比如本地调试的时候，`require('myModule')`会自动加载本机开发中的模块。Node规定，使用一个模块时，需要将其安装到全局的或项目的`node_modules`目录之中。对于开发中的模块，解决方法就是在全局的`node_modules`目录之中，生成一个符号链接，指向模块的本地目录。
 
-为了理解`npm link`，请设想这样一个场景。你开发了一个模块`myModule`，目录为`src/myModule`，你自己的项目`myProject`要用到这个模块，项目目录为`src/myProject`。每一次，你更新`myModul`e，就要用`npm publish`命令发布，然后切换到项目目录，使用`npm update`更新模块。这样显然很不方便，如果我们可以从项目目录建立一个符号链接，直接连到模块目录，就省去了中间步骤，项目可以直接使用最新版的模块。
+`npm link`就能起到这个作用，会自动建立这个符号链接。
 
-首先，在模块目录（`src/myModule`）下运行`npm link`命令。
+请设想这样一个场景，你开发了一个模块`myModule`，目录为`src/myModule`，你自己的项目`myProject`要用到这个模块，项目目录为`src/myProject`。首先，在模块目录（`src/myModule`）下运行`npm link`命令。
 
 ```bash
 src/myModule$ npm link
 ```
 
-上面的命令会在Npm的全局模块目录内，生成一个符号链接文件，该文件的名字就是`package.json`文件中指定的文件名。
+上面的命令会在NPM的全局模块目录内，生成一个符号链接文件，该文件的名字就是`package.json`文件中指定的模块名。
 
 ```bash
 /path/to/global/node_modules/myModule -> src/myModule
