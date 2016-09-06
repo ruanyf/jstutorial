@@ -123,6 +123,8 @@ window.frames.length === window.length // true
 
 `window.pageXOffset`属性返回页面的水平滚动距离，`window.pageYOffset`属性返回页面的垂直滚动距离，单位都为像素。
 
+举例来说，如果用户向下拉动了垂直滚动条75像素，那么`window.pageYOffset`就是75。用户水平向右拉动水平滚动条200像素，`window.pageXOffset`就是200。
+
 ## navigator对象
 
 `window`对象的`navigator`属性，指向一个包含浏览器信息的对象。
