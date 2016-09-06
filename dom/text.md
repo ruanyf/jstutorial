@@ -38,10 +38,9 @@ Text节点除了继承Node节点的属性和方法，还继承了CharacterData�
 
 ### data
 
-data属性等同于nodeValue属性，用来设置或读取Text节点的内容。
+`data`属性等同于`nodeValue`属性，用来设置或读取Text节点的内容。
 
-{% highlight javascript %}
-
+```javascript
 // 读取文本内容
 document.querySelector('p').firstChild.data
 // 等同于
@@ -49,8 +48,7 @@ document.querySelector('p').firstChild.nodeValue
 
 // 设置文本内容
 document.querySelector('p').firstChild.data = 'Hello World';
-
-{% endhighlight %}
+```
 
 ### wholeText
 
@@ -183,27 +181,25 @@ p.childNodes.length // 1
 
 ## DocumentFragment节点
 
-DocumentFragment节点代表一个文档的片段，本身就是一个完整的DOM树形结构。它没有父节点，不属于当前文档，操作DocumentFragment节点，要比直接操作DOM树快得多。
+`DocumentFragment`节点代表一个文档的片段，本身就是一个完整的DOM树形结构。它没有父节点，`parentNode`返回`null`，但是可以插入任意数量的子节点。它不属于当前文档，操作`DocumentFragment`节点，要比直接操作DOM树快得多。
 
-它一般用于构建一个DOM结构，然后插入当前文档。document.createDocumentFragment方法，以及浏览器原生的DocumentFragment构造函数，可以创建一个空的DocumentFragment节点。然后再使用其他DOM方法，向其添加子节点。
+它一般用于构建一个DOM结构，然后插入当前文档。`document.createDocumentFragment`方法，以及浏览器原生的`DocumentFragment`构造函数，可以创建一个空的`DocumentFragment`节点。然后再使用其他DOM方法，向其添加子节点。
 
-{% highlight javascript %}
-
+```javascript
 var docFrag = document.createDocumentFragment();
 // or
 var docFrag = new DocumentFragment();
 
-var li = document.createElement("li");
-li.textContent = "Hello World";
+var li = document.createElement('li');
+li.textContent = 'Hello World';
 docFrag.appendChild(li);
 
 document.queryselector('ul').appendChild(docFrag);
+```
 
-{% endhighlight %}
+上面代码创建了一个`DocumentFragment`节点，然后将一个`li`节点添加在它里面，最后将`DocumentFragment`节点移动到原文档。
 
-上面代码创建了一个DocumentFragment节点，然后将一个li节点添加在它里面，最后将DocumentFragment节点移动到原文档。
-
-一旦DocumentFragment节点被添加进原文档，它自身就变成了空节点（textContent属性为空字符串）。如果想要保存DocumentFragment节点的内容，可以使用cloneNode方法。
+注意，`DocumentFragment`节点本身不能被插入当前文档。当它作为`appendChild()`、`insertBefore()`、`replaceChild()`等方法的参数时，是它的所有子节点插入当前文档，而不是它自身。一旦`DocumentFragment`节点被添加进当前文档，它自身就变成了空节点（`textContent`属性为空字符串），可以被再次使用。如果想要保存`DocumentFragment`节点的内容，可以使用`cloneNode`方法。
 
 ```javascript
 document
@@ -211,11 +207,20 @@ document
   .appendChild(docFrag.cloneNode(true));
 ```
 
-DocumentFragment节点对象没有自己的属性和方法，全部继承自Node节点和ParentNode接口。也就是说，DocumentFragment节点比Node节点多出以下四个属性。
+下面是一个例子，使用`DocumentFragment`反转一个指定节点的所有子节点的顺序。
 
-- children：返回一个动态的HTMLCollection集合对象，包括当前DocumentFragment对象的所有子元素节点。
-- firstElementChild：返回当前DocumentFragment对象的第一个子元素节点，如果没有则返回null。
-- lastElementChild：返回当前DocumentFragment对象的最后一个子元素节点，如果没有则返回null。
-- childElementCount：返回当前DocumentFragment对象的所有子元素数量。
+```javascript
+function reverse(n) {
+  var f = document.createDocumentFragment();
+  while(n.lastChild) f.appendChild(n.lastChild);
+  n.appendChild(f);
+}
+```
 
-另外，Node节点的所有方法，都接受DocumentFragment节点作为参数（比如Node.appendChild、Node.insertBefore）。这时，DocumentFragment的子节点（而不是DocumentFragment节点本身）将插入当前节点。
+`DocumentFragment`节点对象没有自己的属性和方法，全部继承自`Node`节点和`ParentNode`接口。也就是说，`DocumentFragment`节点比`Node`节点多出以下四个属性。
+
+- `children`：返回一个动态的`HTMLCollection`集合对象，包括当前`DocumentFragment`对象的所有子元素节点。
+- `firstElementChild`：返回当前`DocumentFragment`对象的第一个子元素节点，如果没有则返回`null`。
+- `lastElementChild`：返回当前`DocumentFragment`对象的最后一个子元素节点，如果没有则返回`null`。
+- `childElementCount`：返回当前`DocumentFragment`对象的所有子元素数量。
+

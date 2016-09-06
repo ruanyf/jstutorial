@@ -17,7 +17,7 @@ JavaScript代码只有嵌入网页，才能在用户浏览器网页时运行。
 - 事件属性：代码写入HTML元素的事件处理属性，比如`onclick`或者`onmouseover`
 - URL协议：URL支持以`javascript:`协议的方式，执行JavaScript代码
 
-后两种方法用得很少，常用的是前两种方法。由于内容（HTML代码）和行为（JavaScript）代码应该分离，所以第一种方法应当谨慎使用。
+后两种方法用得很少，常用的是前两种方法。由于内容（HTML代码）和行为代码（JavaScript）应该分离，所以第一种方法应当谨慎使用。
 
 ### script标签：代码嵌入网页
 
@@ -43,6 +43,21 @@ JavaScript代码只有嵌入网页，才能在用户浏览器网页时运行。
 由于`<script>`标签默认就是JavaScript代码。所以，嵌入JavaScript脚本时，`type`属性也可以省略。
 
 如果`type`属性的值，浏览器不认识，那么它不会执行其中的代码。利用这一点，可以在`<script>`标签之中嵌入任意的文本内容，然后加上一个浏览器不认识的`type`属性即可。
+
+```html
+<script id="mydata" type="x-custom-data">
+  console.log('Hello World');
+</script>
+```
+
+上面的代码，浏览器不会执行，也不会显示它的内容，因为不认识它的`type`属性。但是，这个`<script>`节点依然存在于DOM之中，可以使用`<script>`节点的`text`属性读出它的内容。
+
+```javascript
+document.getElementById('mydata').text
+// "
+//   console.log('Hello World');
+// "
+```
 
 ### script标签：加载外部脚本
 

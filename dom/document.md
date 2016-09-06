@@ -586,15 +586,13 @@ var element = document.elementFromPoint(x, y);
 
 ### document.createElement()
 
-createElement方法用来生成HTML元素节点。
+`document.createElement`方法用来生成HTML元素节点。
 
 ```javascript
-var element = document.createElement(tagName);
-// 实例
-var newDiv = document.createElement("div");
+var newDiv = document.createElement('div');
 ```
 
-createElement方法的参数为元素的标签名，即元素节点的tagName属性。如果传入大写的标签名，会被转为小写。如果参数带有尖括号（即&lt;和&gt;）或者是null，会报错。
+`createElement`方法的参数为元素的标签名，即元素节点的`tagName`属性，对HTML文档大小写不敏感。如果参数带有尖括号（即`<`和`>`）或者是`null`，会报错。
 
 ### document.createTextNode()
 
@@ -796,11 +794,7 @@ while(treeWalker.nextNode()) nodeList.push(treeWalker.currentNode);
 
 上面代码遍历body节点下属的所有元素节点，将它们插入nodeList数组。
 
-### document.adoptNode()，document.importNode()
-
-以下方法用于获取外部文档的节点。
-
-**（1）document.adoptNode()**
+### document.adoptNode()
 
 `document.adoptNode`方法将某个节点，从其原来所在的文档移除，插入当前文档，并返回插入后的新节点。
 
@@ -808,17 +802,17 @@ while(treeWalker.nextNode()) nodeList.push(treeWalker.currentNode);
 node = document.adoptNode(externalNode);
 ```
 
-importNode方法从外部文档拷贝指定节点，插入当前文档。
+### document.importNode()
+
+`document.importNode`方法从外部文档拷贝指定节点，插入当前文档。
 
 ```javascript
 var node = document.importNode(externalNode, deep);
 ```
 
-**（2）document.importNode()**
-
 `document.importNode`方法用于创造一个外部节点的拷贝，然后插入当前文档。它的第一个参数是外部节点，第二个参数是一个布尔值，表示对外部节点是深拷贝还是浅拷贝，默认是浅拷贝（false）。虽然第二个参数是可选的，但是建议总是保留这个参数，并设为`true`。
 
-另外一个需要注意的地方是，importNode方法只是拷贝外部节点，这时该节点的父节点是null。下一步还必须将这个节点插入当前文档的DOM树。
+注意，`importNode方法`只是拷贝外部节点，这时该节点的父节点是null。下一步还必须将这个节点插入当前文档的DOM树。
 
 ```javascript
 var iframe = document.getElementsByTagName('iframe')[0];
@@ -827,5 +821,4 @@ var newNode = document.importNode(oldNode, true);
 document.getElementById("container").appendChild(newNode);
 ```
 
-上面代码从iframe窗口，拷贝一个指定节点myNode，插入当前文档。
-
+上面代码从`iframe`窗口，拷贝一个指定节点`myNode`，插入当前文档。

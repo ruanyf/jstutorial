@@ -8,7 +8,7 @@ modifiedOn: 2015-04-15
 
 `Element`对象对应网页的HTML标签元素。每一个HTML标签元素，在DOM树上都会转化成一个`Element`节点对象（以下简称元素节点）。
 
-元素节点的`nodeType`属性都是1，但是不同HTML标签生成的元素节点是不一样的。JavaScript内部使用不同的构造函数，生成不同的Element节点，比如`<a>`标签的节点对象由`HTMLAnchorElement()`构造函数生成，`<button>`标签的节点对象由`HTMLButtonElement()`构造函数生成。因此，元素节点不是一种对象，而是一组对象。
+元素节点的`nodeType`属性都是`1`，但是不同HTML标签生成的元素节点是不一样的。JavaScript内部使用不同的构造函数，生成不同的Element节点，比如`<a>`标签的节点对象由`HTMLAnchorElement()`构造函数生成，`<button>`标签的节点对象由`HTMLButtonElement()`构造函数生成。因此，元素节点不是一种对象，而是一组对象。
 
 ## 特征相关的属性
 
@@ -42,9 +42,9 @@ span.tagName // "SPAN"
 el.innerHTML = '';
 ```
 
-上面代码等于将el节点变成了一个空节点，el原来包含的节点被全部删除。
+上面代码等于将`el`节点变成了一个空节点，`el`原来包含的节点被全部删除。
 
-注意，如果文本节点中包含&amp;、小于号（&lt;）和大于号（%gt;），innerHTML属性会将它们转为实体形式&amp、&lt、&gt。
+注意，如果文本节点中包含`&`、小于号（`<`）和大于号（`>`），`innerHTML`属性会将它们转为实体形式`&amp;`、`&lt;`、`&gt;`。
 
 ```javascript
 // HTML代码如下 <p id="para"> 5 > 3 </p>
@@ -52,59 +52,52 @@ document.getElementById('para').innerHTML
 // 5 &gt; 3
 ```
 
-由于上面这个原因，导致在innerHTML插入&lt;script&gt;标签，不会被执行。
+由于上面这个原因，导致用`innerHTML`插入`<script>`标签，不会被执行。
 
 ```javascript
 var name = "<script>alert('haha')</script>";
 el.innerHTML = name;
 ```
 
-上面代码将脚本插入内容，脚本并不会执行。但是，innerHTML还是有安全风险的。
+上面代码将脚本插入内容，脚本并不会执行。但是，`innerHTML`还是有安全风险的。
 
 ```javascript
 var name = "<img src=x onerror=alert(1)>";
 el.innerHTML = name;
 ```
 
-上面代码中，alert方法是会执行的。因此为了安全考虑，如果插入的是文本，最好用textContent属性代替innerHTML。
+上面代码中，`alert`方法是会执行的。因此为了安全考虑，如果插入的是文本，最好用`textContent`属性代替`innerHTML`。
 
 ### Element.outerHTML
 
 `Element.outerHTML`属性返回一个字符串，内容为指定元素节点的所有HTML代码，包括它自身和包含的所有子元素。
 
 ```javascript
-// 假定HTML代码如下
+// HTML代码如下
 // <div id="d"><p>Hello</p></div>
 
-d = document.getElementById("d");
-dump(d.outerHTML);
-
+d = document.getElementById('d');
+d.outerHTML
 // '<div id="d"><p>Hello</p></div>'
 ```
 
 `outerHTML`属性是可读写的，对它进行赋值，等于替换掉当前元素。
 
 ```javascript
-// 假定HTML代码如下
+// HTML代码如下
 // <div id="container"><div id="d">Hello</div></div>
 
-container = document.getElementById("container");
+container = document.getElementById('container');
 d = document.getElementById("d");
 container.firstChild.nodeName // "DIV"
 d.nodeName // "DIV"
 
-d.outerHTML = "<p>Hello</p>";
+d.outerHTML = '<p>Hello</p>';
 container.firstChild.nodeName // "P"
 d.nodeName // "DIV"
 ```
 
 上面代码中，`outerHTML`属性重新赋值以后，内层的`div`元素就不存在了，被`p`元素替换了。但是，变量`d`依然指向原来的`div`元素，这表示被替换的`DIV`元素还存在于内存中。
-
-如果指定元素没有父节点，对它的`outerHTML`属性重新赋值，会抛出一个错误。
-
-```javascript
-document.documentElement.outerHTML = 'test';  // DOMException
-```
 
 ### Element.className，Element.classList
 
@@ -540,7 +533,7 @@ d1.insertAdjacentHTML('afterend', '<div id="two">two</div>');
 // <div id="one">one</div><div id="two">two</div>
 ```
 
-该方法不是彻底置换现有的DOM结构，这使得它的执行速度比`innerHTML`操作快得多。所有浏览器都支持这个方法，包括IE 6。
+该方法不是彻底置换现有的DOM结构，这使得它的执行速度比`innerHTML`操作快得多。
 
 ### Element.remove()
 
