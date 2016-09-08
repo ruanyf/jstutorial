@@ -140,18 +140,6 @@ mine instanceof Array // true
 
 上面代码中，`mine`是构造函数`MyArray`的实例对象，由于`MyArray`的`prototype`属性指向一个数组实例，使得`mine`可以调用数组方法（这些方法定义在数组实例的`prototype`对象上面）。至于最后那行`instanceof`表达式，我们知道`instanceof`运算符用来比较一个对象是否为某个构造函数的实例，最后一行就表示`mine`为`Array`的实例。
 
-```javascript
-mine instanceof Array
-
-// 等同于
-
-(Array === MyArray.prototype.constructor) ||
-(Array === Array.prototype.constructor) ||
-(Array === Object.prototype.constructor )
-```
-
-上面代码说明了`instanceof`运算符的实质，它依次与实例对象的所有原型对象的`constructor`属性（关于该属性的介绍，请看下一节）进行比较，只要有一个符合就返回`true`，否则返回`false`。
-
 下面的代码可以找出，某个属性到底是原型链上哪个对象自身的属性。
 
 ```javascript
