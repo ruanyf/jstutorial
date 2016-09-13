@@ -327,7 +327,7 @@ function f() {/*
   多行注释
 */}
 
-multiline(f.toString())
+multiline(f);
 // " 这是一个
 //   多行注释"
 ```
@@ -847,7 +847,7 @@ function Person(name) {
   };
 }
 
-var p1 = person('张三');
+var p1 = Person('张三');
 p1.setAge(25);
 p1.getAge() // 25
 ```
