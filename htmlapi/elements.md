@@ -88,7 +88,21 @@ document.xx === xx // true
 
 如果有多个`name`属性相同的元素，那么`document`对象的该属性指向一个类似数组的对象（NodeList对象的实例）。
 
+这样设计的原意是，通过引用`document.elementName`就可以获得该元素。但是，由于这些属性是自动生成的，既不规范，也不利于除错，所以建议不要使用它们。
+
 另外，如果`iframe`元素有`name`属性或`id`属性，那么生成的全局变量，不是指向`iframe`元素节点，而是指向这个`iframe`代表的子页面`window`对象。
+
+除了自动成为`window`和`document`的属性，带有`id`或`name`属性的HTML元素，还会自动成为集合对象的属性。举例来说，如果有一个表单元素`<form>`。
+
+```html
+<form name="myform">
+```
+
+它会自动成为集合对象`document.forms`的属性。
+
+```javascript
+document.forms.myforms;
+```
 
 ## image元素
 

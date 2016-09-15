@@ -10,7 +10,7 @@ modifiedOn: 2013-06-10
 
 Canvas API（画布）用于在网页实时生成图像，并且可以操作图像内容，基本上它是一个可以用JavaScript操作的位图（bitmap）。
 
-使用前，首先需要新建一个canvas网页元素。
+使用前，首先需要新建一个`<canvas>`网页元素。
 
 ```html
 <canvas id="myCanvas" width="400" height="200">
@@ -18,9 +18,9 @@ Canvas API（画布）用于在网页实时生成图像，并且可以操作图�
 </canvas>
 ```
 
-上面代码中，如果浏览器不支持这个API，则就会显示canvas标签中间的文字——“您的浏览器不支持canvas！”。
+上面代码中，如果浏览器不支持这个API，则就会显示`<canvas>`标签中间的文字——“您的浏览器不支持canvas！”。
 
-每个canvas元素都有一个对应的context对象（上下文对象），Canvas API定义在这个context对象上面，所以需要获取这个对象，方法是使用getContext方法。
+每个`canvas`节点都有一个对应的`context`对象（上下文对象），Canvas API定义在这个`context`对象上面，所以需要获取这个对象，方法是使用`getContext`方法。
 
 ```javascript
 var canvas = document.getElementById('myCanvas');
@@ -30,26 +30,24 @@ if (canvas.getContext) {
 }
 ```
 
-上面代码中，getContext方法指定参数2d，表示该canvas对象用于生成2D图案（即平面图案）。如果参数是`webgl`，就表示用于生成3D图像（即立体图案），这部分实际上单独叫做WebGL API（本书不涉及）。
+上面代码中，`getContext`方法指定参数`2d`，表示该`canvas`节点用于生成2D图案（即平面图案）。如果参数是`webgl`，就表示用于生成3D图像（即立体图案），这部分实际上单独叫做WebGL API（本书不涉及）。
 
 ## 绘图方法
 
-canvas画布提供了一个用来作图的平面空间，该空间的每个点都有自己的坐标，x表示横坐标，y表示竖坐标。原点(0, 0)位于图像左上角，x轴的正向是原点向右，y轴的正向是原点向下。
+canvas画布提供了一个用来作图的平面空间，该空间的每个点都有自己的坐标，`x`表示横坐标，`y`表示竖坐标。原点`(0, 0)`位于图像左上角，`x`轴的正向是原点向右，`y`轴的正向是原点向下。
 
 **（1）绘制路径**
 
 beginPath方法表示开始绘制路径，moveTo(x, y)方法设置线段的起点，lineTo(x, y)方法设置线段的终点，stroke方法用来给透明的线段着色。
 
-{% highlight javascript %}
-
+```javascript
 ctx.beginPath(); // 开始路径绘制
 ctx.moveTo(20, 20); // 设置路径起点，坐标为(20,20)
 ctx.lineTo(200, 20); // 绘制一条到(200,20)的直线
 ctx.lineWidth = 1.0; // 设置线宽
-ctx.strokeStyle = "#CC0000"; // 设置线的颜色
+ctx.strokeStyle = '#CC0000'; // 设置线的颜色
 ctx.stroke(); // 进行线的着色，这时整条线才变得可见
-
-{% endhighlight %}
+```
 
 moveto和lineto方法可以多次使用。最后，还可以使用closePath方法，自动绘制一条当前点到起点的直线，形成一个封闭图形，省却使用一次lineto方法。
 
@@ -181,15 +179,15 @@ ctx.fillRect(10,10,200,100);
 
 ### drawImage方法
 
-canvas允许将图像文件插入画布，做法是读取图片后，使用drawImage方法在画布内进行重绘。
+Canvas API 允许将图像文件插入画布，做法是读取图片后，使用`drawImage`方法在画布内进行重绘。
 
 ```javascript
 var img = new Image();
-img.src = "image.png";
+img.src = 'image.png';
 ctx.drawImage(img, 0, 0); // 设置对应的图像对象，以及它在画布上的位置
 ```
 
-上面代码将一个PNG图像载入canvas。
+上面代码将一个PNG图像载入画布。`drawImage()`方法接受三个参数，第一个参数是图像文件的DOM元素（即`<img>`节点），第二个和第三个参数是图像左上角在画布中的坐标，上例中的`(0, 0)`就表示将图像左上角放置在画布的左上角。
 
 由于图像的载入需要时间，`drawImage`方法只能在图像完全载入后才能调用，因此上面的代码需要改写。
 
@@ -208,8 +206,6 @@ image.onload = function() {
 
 image.src = 'image.png';
 ```
-
-`drawImage()`方法接受三个参数，第一个参数是图像文件的DOM元素（即img标签），第二个和第三个参数是图像左上角在Canvas元素中的坐标，上例中的（0, 0）就表示将图像左上角放置在Canvas元素的左上角。
 
 ### getImageData方法，putImageData方法
 

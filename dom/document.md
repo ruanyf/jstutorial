@@ -35,9 +35,7 @@ doctype.name // "html"
 
 `document.firstChild`通常就返回这个节点。
 
-`document.documentElement`属性返回当前文档的根节点（root）。它通常是`document`节点的第二个子节点，紧跟在`document.doctype`节点后面。
-
-对于HTML网页，该属性返回HTML节点，代表`<html lang="en">`。
+`document.documentElement`属性返回当前文档的根节点（root）。它通常是`document`节点的第二个子节点，紧跟在`document.doctype`节点后面。对于HTML网页，该属性返回`<html>`节点，代表`<html lang="en">`。
 
 `document.defaultView`属性，在浏览器中返回`document`对象所在的`window`对象，否则返回`null`。
 
@@ -47,13 +45,14 @@ document.defaultView === window // true
 
 ### document.body，document.head
 
-`document.body`属性返回当前文档的body或frameset节点，如果不存在这样的节点，就返回null。这个属性是可写的，如果对其写入一个新的节点，会导致原有的所有子节点被移除。
-
-`document.head`属性返回当前文档的head节点。如果当前文档有多个head，则返回第一个。
+`document.head`属性返回当前文档的`<head>`节点，`document.body`属性返回当前文档的`<body>`。
 
 ```javascript
-document.head === document.querySelector('head')
+document.head === document.querySelector('head') // true
+document.body === document.querySelector('body') // true
 ```
+
+这两个属性总是存在的，如果网页源码里面省略了`<head>`或`<body>`，浏览器会自动创造。另外，这两个属性是可写的，如果对其写入一个新的节点，会导致原有的所有子节点被移除。
 
 ### document.activeElement
 
@@ -514,7 +513,6 @@ var spans = firstPara.getElementsByTagName('span');
 `document.getElementsByClassName`方法返回一个类似数组的对象（`HTMLCollection`实例对象），包括了所有`class`名字符合指定条件的元素，元素的变化实时反映在返回结果中。
 
 ```javascript
-// document对象上调用
 var elements = document.getElementsByClassName(names);
 ```
 
@@ -539,15 +537,13 @@ var elements = rootElement.getElementsByClassName(names);
 
 ### document.getElementsByName()
 
-`document.getElementsByName`方法用于选择拥有`name`属性的HTML元素（比如`<form>`、`<img>`、`<frame>`、`<embed>`和`<object>`等），返回一个类似数组的的对象（`NodeList`对象的实例）。
+`document.getElementsByName`方法用于选择拥有`name`属性的HTML元素（比如`<form>`、`<radio>`、`<img>`、`<frame>`、`<embed>`和`<object>`等），返回一个类似数组的的对象（`NodeList`对象的实例），因为`name`属性相同的元素可能不止一个。
 
 ```javascript
 // 表单为 <form name="x"></form>
 var forms = document.getElementsByName('x');
 forms[0].tagName // "FORM"
 ```
-
-注意，`getElementsByName`返回的结果不会实时反映网页元素的变化。
 
 ### getElementById()
 

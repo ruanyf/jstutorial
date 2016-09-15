@@ -14,7 +14,26 @@ SVG图像可以用专门的图像软件生成。目前，所有主流浏览器�
 
 ## 插入文件
 
-SVG插入网页的方法有多种，可以直接把SVG代码写在HTML网页里面，也可以用在`<img>`、`<object>`、`<embed>`、`<iframe>`等标签，以及CSS的`background-image`属性。
+SVG插入网页的方法有多种，可以直接把SVG代码写在HTML网页里面。
+
+```html
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+<svg
+  id="mysvg"
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 800 600"
+  preserveAspectRatio="xMidYMid meet"
+>
+  <circle id="mycircle" cx="400" cy="300" r="50" />
+<svg>
+</body>
+</html>
+```
+
+SVG代码也可以写在一个独立文件中，然后用在`<img>`、`<object>`、`<embed>`、`<iframe>`等标签，以及CSS的`background-image`属性，将这个文件插入网页。
 
 ```html
 <!-- 方法一 -->
@@ -111,6 +130,49 @@ SVG文件里面还可以插入图片文件。
 ```
 
 上面代码中，`viewBox`表示长宽比例，这里是1：1（即正方形），第一对`width`和`height`表示图形默认的宽和高（CSS代码可以覆盖掉这两个值），`xlink:href`表示引用图像的来源，第二对`width`和`height`表示图像占满整个SVG图形，`preserveAspectRatio`等于`xMidYMid slice`，告诉浏览器置中图片，并且删去溢出的部分，更多参数可以参考[MDN](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/preserveAspectRatio)。
+
+## DOM 操作
+
+如果SVG代码直接写在HTML网页之中，它就成为网页DOM的一部分，可以直接用DOM操作。
+
+```html
+<svg
+  id="mysvg"
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 800 600"
+  preserveAspectRatio="xMidYMid meet"
+>
+  <circle id="mycircle" cx="400" cy="300" r="50" />
+<svg>
+```
+
+上面代码插入网页之后，就可以用CSS定制样式。
+
+```css
+circle {
+  stroke-width: 5;
+  stroke: #f00;
+  fill: #ff0;
+}
+
+circle:hover {
+  stroke: #090;
+  fill: #fff;
+}
+```
+
+然后，可以用JavaScript代码操作SVG文件。
+
+```javascript
+var mycircle = document.getElementById('mycircle');
+
+mycircle.addEventListener('click', function(e) {
+  console.log('circle clicked - enlarging');
+  mycircle.setAttributeNS(null, 'r', 60);
+}, false);
+```
+
+上面代码指定，如果点击图形，就改写`circle`元素的`r`属性。
 
 ## JavaScript操作
 

@@ -17,10 +17,20 @@ var http = require('http');
 
 http.createServer(function (request, response){
   response.writeHead(200, {'Content-Type': 'text/plain'});
-  response.end('Hello World\n');
+  response.write("Hello World");
+  response.end();
 }).listen(8080, '127.0.0.1');
 
 console.log('Server running on port 8080.');
+
+// 另一种写法
+function onRequest(request, response) {
+  response.writeHead(200, {"Content-Type": "text/plain"});
+  response.write("Hello World");
+  response.end();
+}
+
+http.createServer(onRequest).listen(process.env.PORT);
 ```
 
 上面代码第一行`var http = require("http")`，表示加载`http`模块。然后，调用`http`模块的`createServer`方法，创造一个服务器实例。
@@ -57,9 +67,8 @@ console.log('Server running on port 8080.');
 
 下面的修改则是根据不同网址的请求，显示不同的内容，已经相当于做出一个网站的雏形了。
 
-{% highlight javascript %}
-
-var http = require("http");
+```javascript
+var http = require('http');
 
 http.createServer(function(req, res) {
 
@@ -82,14 +91,59 @@ http.createServer(function(req, res) {
   }
 
 }).listen(8080, "localhost");
+```
 
-{% endhighlight %}
+### request 对象
 
-回调函数的req（request）对象，拥有以下属性。
+`createServer`方法的回调函数的第一个参数是一个`request`对象，拥有以下属性。
 
-- url：发出请求的网址。
-- method：HTTP请求的方法。
-- headers：HTTP请求的所有HTTP头信息。
+- `url`：发出请求的网址。
+- `method`：HTTP请求的方法。
+- `headers`：HTTP请求的所有HTTP头信息。
+
+下面的例子是获取请求的路径名。
+
+```javascript
+var url = require('url');
+var pathname = url.parse(request.url).pathname;
+```
+
+`setEncoding()`方法用于设置请求的编码。
+
+```javascript
+request.setEncoding("utf8");
+```
+
+`addListener()`方法用于为请求添加监听事件的回调函数。
+
+```javascript
+var querystring = require('querystring');
+var postData = '';
+
+request.addListener('data', function (postDataChunk) {
+  postData += postDataChunk;
+});
+
+request.addListener('end', function () {
+  response.writeHead(200, {'Content-Type': 'text/plain'});
+  response.write("You've sent the text: " + querystring.parse(postData).text);
+  response.end();
+});
+```
+
+### 处理异步操作
+
+遇到异步操作时，会先处理后面的请求，等到当前请求有了结果以后，再返回结果。
+
+```javascript
+var exec = require("child_process").exec;
+
+exec('ls -lah', function (error, stdout, stderr) {
+  response.writeHead(200, {'Content-Type': 'text/plain'});
+  response.write(stdout);
+  response.end();
+});
+```
 
 ### 处理POST请求
 

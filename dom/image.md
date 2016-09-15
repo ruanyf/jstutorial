@@ -67,17 +67,18 @@ document.body.appendChild(img);
 `Image`实例具有以下属性。
 
 - alt：对应`<img>`的`alt`属性，表示图像的说明文字
-- complete：返回一个布尔值，表示图表是否已经加载完成
+- `complete`：返回一个布尔值，表示图表是否已经加载完成
 - crossOrigin：图像跨域的`CORS`设置
 - height：图像的高度，可读写
 - isMap：图像是否为服务器端的`image-map`，可读写
+- onload：指定一个图像加载完成后的回调函数。
 - naturalHeight：图像的原始高度，只读
 - naturalWidth：图像的原始宽度，只读
 - src：`<img>`的`src`属性，即图像的来源，可读写
 - useMap：设置图像的`usemap`属性
 - width：图像的宽度，可读写
 
-下面是一个例子。
+下面是`complete`属性的一个例子。
 
 ```javascript
 document.addEventListener("DOMContentLoaded", function (event) {
@@ -101,3 +102,13 @@ document.addEventListener("DOMContentLoaded", function (event) {
 ```
 
 上面的代码，选取了容器里面所有的`<img>`元素，然后检查它的高度是否大于宽度，如果是的，就为它加上一个`portrait`类。
+
+下面是`onload`属性的一个例子。
+
+```javascript
+var img = new Image();
+img.src = "nastya.jpg";
+img.onload = function() {
+  // ...
+};
+```

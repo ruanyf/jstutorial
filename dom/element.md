@@ -330,7 +330,7 @@ var el = content.querySelector('p');
 </div>
 ```
 
-那么，下面代码实际上会返回第一个`p`元素，而不是返回空集。
+那么，下面代码实际上会返回第一个`p`元素，而不是第二个。
 
 ```javascript
 var outer = document.getElementById('outer');
@@ -461,24 +461,26 @@ el.scrollIntoView(false);
 
 ### Element.getBoundingClientRect()
 
-`Element.getBoundingClientRect`方法返回一个对象，该对象提供当前元素节点的大小、它相对于视口（viewport）的位置等信息，基本上就是CSS盒状模型的内容。
+`Element.getBoundingClientRect`方法返回一个对象，该对象提供当前元素节点的大小、位置等信息，基本上就是CSS盒状模型提供的所有信息。
 
 ```javascript
 var rect = obj.getBoundingClientRect();
 ```
 
-上面代码中，getBoundingClientRect方法返回的对象，具有以下属性（全部为只读）。
+上面代码中，`getBoundingClientRect`方法返回的`rect`对象，具有以下属性（全部为只读）。
 
-- bottom：元素底部相对于视口的纵坐标。
-- height：元素高度（等于bottom减去top）。
-- left：元素左上角相对于视口的坐标。
-- right：元素右边界相对于视口的横坐标。
-- top：元素顶部相对于视口的纵坐标。
-- width：元素宽度（等于right减去left）。
+- `x`：元素左上角相对于视口的横坐标
+- `left`：元素左上角相对于视口的横坐标，与`x`属性相等
+- `right`：元素右边界相对于视口的横坐标（等于`x`加上`width`）
+- `width`：元素宽度（等于`right`减去`left`）
+- `y`：元素顶部相对于视口的纵坐标
+- `top`：元素顶部相对于视口的纵坐标，与`y`属性相等
+- `bottom`：元素底部相对于视口的纵坐标
+- `height`：元素高度（等于`y`加上`height`）
 
-由于元素相对于视口（viewport）的位置，会随着页面滚动变化，因此表示位置的四个属性值，都不是固定不变的。
+由于元素相对于视口（viewport）的位置，会随着页面滚动变化，因此表示位置的四个属性值，都不是固定不变的。如果想得到绝对位置，可以将`left`属性加上`window.scrollX`，`top`属性加上`window.scrollY`。
 
-注意，getBoundingClientRect方法的所有属性，都把边框（border属性）算作元素的一部分。也就是说，都是从边框外缘的各个点来计算。因此，width和height包括了元素本身 + padding + border。
+注意，`getBoundingClientRect`方法的所有属性，都把边框（`border`属性）算作元素的一部分。也就是说，都是从边框外缘的各个点来计算。因此，`width`和`height`包括了元素本身 + `padding` + `border`。
 
 ### Element.getClientRects()
 
@@ -544,3 +546,6 @@ var el = document.getElementById('div-01');
 el.remove();
 ```
 
+## 参考链接
+
+- Craig Buckler，[How to Translate from DOM to SVG Coordinates and Back Again](https://www.sitepoint.com/how-to-translate-from-dom-to-svg-coordinates-and-back-again/)
