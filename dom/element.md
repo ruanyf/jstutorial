@@ -178,9 +178,23 @@ if (boolValue){
 
 **（1）clientHeight**
 
-`clientHeight`属性返回元素节点的可见高度，包括padding、但不包括水平滚动条、边框和margin的高度，单位为像素。该属性可以计算得到，等于元素的CSS高度，加上CSS的padding高度，减去水平滚动条的高度（如果存在水平滚动条）。
+`clientHeight`属性返回元素节点的可见高度，包括Padding、但不包括水平滚动条、边框和Margin的高度，单位为像素。该属性可以计算得到，等于元素的CSS高度加上CSS的Padding高度，减去水平滚动条的高度（如果存在水平滚动条）。
 
 如果一个元素是可以滚动的，则`clientHeight`只计算它的可见部分的高度。
+
+对于整张网页来说，当前可见高度（即视口高度）要从`document.documentElement`对象（即`<html>`节点）上获取，等同于`window.innerHeight`属性减去水平滚动条的高度。没有滚动条时，这两个值是相等的；有滚动条时，前者小于后者。
+
+```javascript
+var rootElement = document.documentElement;
+
+// 没有水平滚动条时
+rootElement.clientHeight === window.innerHeight // true
+
+// 没有垂直滚动条时
+rootElement.clientWidth === window.innerWidth // true
+```
+
+注意，这里不能用`document.body.client`。因为`document.body`返回`<body>`节点，由于整张网页的滚动条是针对`<html>`节点的，所以`<body>`本身并没有滚动条，`document.body.clientHeight`与`document.body.scrollHeight`的值是相等的。
 
 **（2）clientLeft**
 
@@ -196,15 +210,25 @@ clientWidth属性等于网页元素的可见宽度，即包括padding、但不�
 
 如果一个元素是可以滚动的，则clientWidth只计算它的可见部分的宽度。
 
-### Element.scrollHeight，Element.scrollWidth，Element.scrollLeft，Element.scrollTop
+### Element.scrollHeight，Element.scrollWidth
 
-以下属性与元素节点占据的总区域的坐标相关。
+`Element.scrollHeight`属性返回某个网页元素的总高度，`Element.scrollWidth`属性返回总宽度。它们都包括由于溢出容器而无法显示在网页上的那部分高度或宽度。这两个属性是只读属性。
 
-**（1）scrollHeight**
+它们返回的是整个元素的高度或宽度，包括由于存在滚动条而不可见的部分。默认情况下，它们包括Padding，但不包括Border和Margin。
 
-`Element.scrollHeight`属性返回指定元素的总高度，包括由于溢出而无法展示在网页的不可见部分。如果一个元素是可以滚动的，则`scrollHeight`包括整个元素的高度，不管是否存在垂直滚动条。`scrollHeight`属性包括padding，但不包括border和margin。该属性为只读属性。
+注意，整张网页的总高度要从`document.documentElement`元素上读取。
 
-如果不存在垂直滚动条，`scrollHeight`属性与`clientHeight`属性是相等的。如果存在滚动条，`scrollHeight`属性总是大于`clientHeight`属性。当滚动条滚动到内容底部时，下面的表达式为`true`。
+```javascript
+document.documentElement.scrollHeight
+```
+
+不存在滚动条时，`scrollHeight`属性与`clientHeight`属性是相等的，`scrollWidth`属性与`clientHeight`属性是相等的。如果存在滚动条，`scrollHeight`属性大于`clientHeight`属性，`scrollWidth`属性大于`clientHeight`属性。
+
+```javascript
+document.documentElement.scrollHeight > document.documentElement.clientHeight
+```
+
+当滚动条滚动到内容底部时，下面的表达式为`true`。
 
 ```javascript
 element.scrollHeight - element.scrollTop === element.clientHeight
@@ -225,23 +249,18 @@ function checking(){
 }
 ```
 
-**（2）scrollWidth**
+### Element.scrollLeft，Element.scrollTop
 
-`Element.scrollWidth`属性返回元素的总宽度，包括由于溢出容器而无法显示在网页上的那部分宽度，不管是否存在水平滚动条。该属性是只读属性。
+`Element.scrollLeft`属性表示网页元素的水平滚动条向右侧滚动的像素数量，`Element.scrollTop`属性表示网页元素的垂直滚动条向下滚动的像素数量。对于那些没有滚动条的网页元素，这两个属性总是等于0。
 
-**（3）scrollLeft**
-
-`Element.scrollLeft`属性设置或返回水平滚动条向右侧滚动的像素数量。它的值等于元素的最左边与其可见的最左侧之间的距离。对于那些没有滚动条或不需要滚动的元素，该属性等于0。该属性是可读写属性，设置该属性的值，会导致浏览器将指定元素自动滚动到相应的位置。
-
-**（4）scrollTop**
-
-`Element.scrollTop`属性设置或返回垂直滚动条向下滚动的像素数量。它的值等于元素的顶部与其可见的最高位置之间的距离。对于那些没有滚动条或不需要滚动的元素，该属性等于0。该属性是可读写属性，设置该属性的值，会导致浏览器将指定元素自动滚动到相应位置。
+如果要查看整张网页的水平的和垂直的滚动距离，要从`document.body`元素上读取。
 
 ```javascript
-document.querySelector('div').scrollTop = 150;
+document.body.scrollLeft
+document.body.scrollTop
 ```
 
-上面代码将`div`元素向下滚动150像素。
+这两个属性都可读写，设置该属性的值，会导致浏览器将指定元素自动滚动到相应的位置。
 
 ### Element.style
 
@@ -486,7 +505,7 @@ var rect = obj.getBoundingClientRect();
 
 `Element.getClientRects`方法返回一个类似数组的对象，里面是当前元素在页面上形成的所有矩形。每个矩形都有`bottom`、`height`、`left`、`right`、`top`和`width`六个属性，表示它们相对于视口的四个坐标，以及本身的高度和宽度。
 
-对于盒状元素（比如div和p），该方法返回的对象中只有该元素一个成员。对于行内元素（比如span、a、em），该方法返回的对象有多少个成员，取决于该元素在页面上占据多少行。
+对于盒状元素（比如`<div>`和`<p>`），该方法返回的对象中只有该元素一个成员。对于行内元素（比如span、a、em），该方法返回的对象有多少个成员，取决于该元素在页面上占据多少行。这是它和`Element.getBoundingClientRect()`方法的主要区别，对于行内元素，后者总是返回一个矩形区域，前者可能返回多个矩形区域，所以方法名中的`Rect`用的是复数。
 
 ```html
 <span id="inline">
@@ -496,7 +515,7 @@ Hello World
 </span>
 ```
 
-上面代码是一个行内元素span，如果它在页面上占据三行，getClientRects方法返回的对象就有三个成员，如果它在页面上占据一行，getClientRects方法返回的对象就只有一个成员。
+上面代码是一个行内元素`<span>`，如果它在页面上占据三行，`getClientRects`方法返回的对象就有三个成员，如果它在页面上占据一行，`getClientRects`方法返回的对象就只有一个成员。
 
 ```javascript
 var el = document.getElementById('inline');
