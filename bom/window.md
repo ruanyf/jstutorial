@@ -253,6 +253,22 @@ window.moveBy(25, 50)
 
 上面代码将窗口向右移动25像素、向下移动50像素。
 
+### window.scrollTo()，window.scrollBy()
+
+`window.scrollTo`方法用于将网页的指定位置，滚动到浏览器左上角。它的参数是相对于整张网页的横坐标和纵坐标。它有一个别名`window.scroll`。
+
+```javascript
+window.scrollTo(0, 1000);
+```
+
+`window.scrollBy`方法用于将网页移动指定距离，单位为像素。它接受两个参数：向右滚动的像素，向下滚动的像素。
+
+```javascript
+window.scrollBy(0, window.innerHeight)
+```
+
+上面代码用于将网页向下滚动一屏。
+
 ### window.open(), window.close()
 
 `window.open`方法用于新建另一个浏览器窗口，并且返回该窗口对象。

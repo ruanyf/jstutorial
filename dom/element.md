@@ -172,15 +172,13 @@ if (boolValue){
 }
 ```
 
-### Element.clientHeight，Element.clientLeft，Element.clientTop，Element.clientWidth
+## 盒状模型相关属性
 
-以下属性与元素节点的可见区域的坐标相关。
+### Element.clientHeight，Element.clientWidth
 
-**（1）clientHeight**
+`Element.clientHeight`属性返回元素节点的可见高度，`Element.clientWidth`属性返回元素节点的可见宽度，包括Padding、但不包括滚动条、边框和Margin的高度（或宽度），单位为像素。这两个属性可以计算得到，等于元素的CSS高度（或宽度）加上CSS的Padding，减去滚动条（如果存在）。
 
-`clientHeight`属性返回元素节点的可见高度，包括Padding、但不包括水平滚动条、边框和Margin的高度，单位为像素。该属性可以计算得到，等于元素的CSS高度加上CSS的Padding高度，减去水平滚动条的高度（如果存在水平滚动条）。
-
-如果一个元素是可以滚动的，则`clientHeight`只计算它的可见部分的高度。
+如果一个元素是可以滚动的，这两个属性只计算可见部分的高度（或宽度）。
 
 对于整张网页来说，当前可见高度（即视口高度）要从`document.documentElement`对象（即`<html>`节点）上获取，等同于`window.innerHeight`属性减去水平滚动条的高度。没有滚动条时，这两个值是相等的；有滚动条时，前者小于后者。
 
@@ -196,19 +194,13 @@ rootElement.clientWidth === window.innerWidth // true
 
 注意，这里不能用`document.body.client`。因为`document.body`返回`<body>`节点，由于整张网页的滚动条是针对`<html>`节点的，所以`<body>`本身并没有滚动条，`document.body.clientHeight`与`document.body.scrollHeight`的值是相等的。
 
-**（2）clientLeft**
+### Element.clientLeft，Element.clientTop
 
-`clientLeft`属性等于元素节点左边框（left border）的宽度，单位为像素，包括垂直滚动条的宽度，不包括左侧的margin和padding。但是，除非排版方向是从右到左，且发生元素高度溢出，否则是不可能存在左侧滚动条。如果该元素的显示设为`display: inline`，`clientLeft`一律为0，不管是否存在左边框。
+`Element.clientLeft`属性等于元素节点左边框（left border）的宽度，`Element.clientTop`属性等于网页元素顶部边框的宽度，单位为像素。
 
-**（3）clientTop**
+这两个属性包括滚动条的宽度，但不包括Margin和Padding。不过，一般来说，除非排版方向是从右到左，且发生元素高度溢出，否则不可能存在左侧滚动条，亦不可能存在顶部的滚动条。
 
-clientTop属性等于网页元素顶部边框的宽度，不包括顶部的margin和padding。
-
-**（4）clientWidth**
-
-clientWidth属性等于网页元素的可见宽度，即包括padding、但不包括垂直滚动条（如果有的话）、边框和margin的宽度，单位为像素。
-
-如果一个元素是可以滚动的，则clientWidth只计算它的可见部分的宽度。
+如果元素的显示设为`display: inline`，它的`clientLeft`属性一律为`0`，不管是否存在左边框。
 
 ### Element.scrollHeight，Element.scrollWidth
 
@@ -216,19 +208,15 @@ clientWidth属性等于网页元素的可见宽度，即包括padding、但不�
 
 它们返回的是整个元素的高度或宽度，包括由于存在滚动条而不可见的部分。默认情况下，它们包括Padding，但不包括Border和Margin。
 
-注意，整张网页的总高度要从`document.documentElement`元素上读取。
+整张网页的总高度可以从`document.documentElement`或`document.body`上读取。
 
 ```javascript
 document.documentElement.scrollHeight
 ```
 
-不存在滚动条时，`scrollHeight`属性与`clientHeight`属性是相等的，`scrollWidth`属性与`clientHeight`属性是相等的。如果存在滚动条，`scrollHeight`属性大于`clientHeight`属性，`scrollWidth`属性大于`clientHeight`属性。
+如果内容正好适合它的容器，没有溢出，那么`Element.scrollHeight`和`Element.clientHeight`是相等的，`scrollWidth`属性与`clientHeight`属性是相等的。如果存在溢出，那么`scrollHeight`属性大于`clientHeight`属性，`scrollWidth`属性大于`clientHeight`属性。
 
-```javascript
-document.documentElement.scrollHeight > document.documentElement.clientHeight
-```
-
-当滚动条滚动到内容底部时，下面的表达式为`true`。
+存在溢出时，当滚动条滚动到内容底部时，下面的表达式为`true`。
 
 ```javascript
 element.scrollHeight - element.scrollTop === element.clientHeight
@@ -262,9 +250,103 @@ document.body.scrollTop
 
 这两个属性都可读写，设置该属性的值，会导致浏览器将指定元素自动滚动到相应的位置。
 
+### Element.offsetHeight，Element.offsetWidth
+
+`Element.offsetHeight`属性返回元素可见部分的垂直高度，`Element.offsetWidth`属性返回水平宽度。这两个属性包括Padding和Border、以及滚动条的高度或宽度，单位为像素，都是只读。也就是说，`Element.offsetHeight`只比`Element.clientHeight`少了边框的高度。
+
+整张网页的高度，可以在`document.body`上读取。
+
+```javascript
+document.body.offsetHeight
+document.body.offsetWidth
+```
+
+### Element.offsetLeft，Element.offsetTop
+
+`Element.offsetLeft`和`Element.offsetTop`属性，返回某个元素左上角相对于`Element.offsetParent`节点的偏移，单位为像素。
+
+下面的代码可以算出元素左上角相对于整张网页的坐标。
+
+```javascript
+function getElementPosition(e) {
+  var x = 0;
+  var y = 0;
+  while (e !== null)  {
+    x += e.offsetLeft;
+    y += e.offsetTop;
+    e = e.offsetParent;
+  }
+  return {x: x, y: y};
+}
+```
+
+注意，上面的代码假定所有元素都适合它的容器，不存在内容溢出。
+
 ### Element.style
 
 每个元素节点都有`style`用来读写该元素的行内样式信息，具体介绍参见《CSS操作》一节。
+
+### 总结
+
+整张网页的高度和宽度，从`document.documentElement`上读取。
+
+```javascript
+// 网页总高度
+document.documentElement.offsetHeight
+
+// 网页总宽度
+document.documentElement.offsetWidth
+```
+
+视口的高度和宽度，从`window`对象上读取。
+
+```javascript
+// 视口高度
+window.innerHeight
+
+// 视口宽度
+window.innerWidth
+```
+
+某个网页元素距离视口左上角的坐标，使用`Element.getBoundingClientRect`方法读取。
+
+```javascript
+// 网页元素左上角的视口横坐标
+Element.getBoundingClientRect().left
+
+// 网页元素左上角的视口纵坐标
+Element.getBoundingClientRect().top
+```
+
+某个网页元素距离网页左上角的坐标，使用视口坐标加上网页滚动距离。
+
+```javascript
+// 网页元素左上角的网页横坐标
+Element.getBoundingClientRect().left + document.body.scrollLeft
+
+// 网页元素左上角的网页纵坐标
+Element.getBoundingClientRect().top + document.body.scrollTop
+```
+
+网页目前滚动的距离，可以从`document.body`对象上得到。
+
+```javascript
+// 网页滚动的水平距离
+document.body.scrollLeft
+
+// 网页滚动的垂直距离
+document.body.scrollTop
+```
+
+网页元素本身的高度和宽度（不含overflow溢出的部分），通过`offsetHeight`和`offsetWidth`属性（包括Padding和Border）或`Element.getBoundingClientRect`方法获取。
+
+```javascript
+// 网页元素的高度
+Element.offsetHeight
+
+// 网页元素的宽度
+Element.offsetWidth
+```
 
 ## 相关节点的属性
 
@@ -309,6 +391,12 @@ el.nextElementSibling
 ```
 
 `Element.previousElementSibling`属性返回当前HTML元素节点的前一个同级HTML元素节点，如果没有则返回`null`。
+
+### Element.offsetParent
+
+`Element.offsetParent`属性返回指定元素距离最近的容器元素，通常就是父节点。
+
+该属性主要用于确定子元素的位置偏移，是`Element.offsetTop`和`Element.offsetLeft`的计算基准。
 
 ## 属性相关的方法
 
@@ -469,14 +557,14 @@ element.dispatchEvent(event);
 
 ### Element.scrollIntoView()
 
-`Element.scrollIntoView`方法滚动当前元素，进入浏览器的可见区域。
+`Element.scrollIntoView`方法滚动当前元素，进入浏览器的可见区域，类似于设置`window.location.hash`的效果。
 
 ```javascript
 el.scrollIntoView(); // 等同于el.scrollIntoView(true)
 el.scrollIntoView(false);
 ```
 
-该方法可以接受一个布尔值作为参数。如果为`true`，表示元素的顶部与当前区域的可见部分的顶部对齐（前提是当前区域可滚动）；如果为`false`，表示元素的底部与当前区域的可见部分的尾部对齐（前提是当前区域可滚动）。如果没有提供该参数，默认为true。
+该方法可以接受一个布尔值作为参数。如果为`true`，表示元素的顶部与当前区域的可见部分的顶部对齐（前提是当前区域可滚动）；如果为`false`，表示元素的底部与当前区域的可见部分的尾部对齐（前提是当前区域可滚动）。如果没有提供该参数，默认为`true`。
 
 ### Element.getBoundingClientRect()
 

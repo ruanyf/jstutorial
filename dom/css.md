@@ -13,7 +13,8 @@ CSS与JavaScript是两个有着明确分工的领域，前者负责页面的视�
 操作Element节点的CSS样式，最简单的方法之一就是使用节点对象的`getAttribute`方法、`setAttribute`方法和`removeAttribute`方法，读写或删除HTML元素的`style`属性。
 
 ```javascript
-div.setAttribute('style',
+div.setAttribute(
+  'style',
   'background-color:red;' + 'border:1px solid black;'
 );
 ```
