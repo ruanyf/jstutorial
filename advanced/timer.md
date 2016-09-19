@@ -304,64 +304,32 @@ Object.observe(models.todo, todoChanges);
 
 ## 运行机制
 
-setTimeout和setInterval的运行机制是，将指定的代码移出本次执行，等到下一轮Event Loop时，再检查是否到了指定时间。如果到了，就执行对应的代码；如果不到，就等到再下一轮Event Loop时重新判断。这意味着，setTimeout指定的代码，必须等到本次执行的所有代码都执行完，才会执行。
+`setTimeout`和`setInterval`的运行机制是，将指定的代码移出本次执行，等到下一轮Event Loop时，再检查是否到了指定时间。如果到了，就执行对应的代码；如果不到，就等到再下一轮Event Loop时重新判断。
 
-每一轮Event Loop时，都会将“任务队列”中需要执行的任务，一次执行完。setTimeout和setInterval都是把任务添加到“任务队列”的尾部。因此，它们实际上要等到当前脚本的所有同步任务执行完，然后再等到本次Event Loop的“任务队列”的所有任务执行完，才会开始执行。由于前面的任务到底需要多少时间执行完，是不确定的，所以没有办法保证，setTimeout和setInterval指定的任务，一定会按照预定时间执行。
+这意味着，`setTimeout`和`setInterval`指定的代码，必须等到本轮Event Loop的所有同步任务都执行完，再等到本轮Event Loop的“任务队列”的所有任务执行完，才会开始执行。由于前面的任务到底需要多少时间执行完，是不确定的，所以没有办法保证，`setTimeout`和`setInterval`指定的任务，一定会按照预定时间执行。
 
 ```javascript
-setTimeout(someTask,100);
+setTimeout(someTask, 100);
 veryLongTask();
 ```
 
-上面代码的setTimeout，指定100毫秒以后运行一个任务。但是，如果后面立即运行的任务（当前脚本的同步任务））非常耗时，过了100毫秒还无法结束，那么被推迟运行的someTask就只有等着，等到前面的veryLongTask运行结束，才轮到它执行。
+上面代码的`setTimeout`，指定100毫秒以后运行一个任务。但是，如果后面的`veryLongTask`函数（同步任务）运行时间非常长，过了100毫秒还无法结束，那么被推迟运行的`someTask`就只有等着，等到`veryLongTask`运行结束，才轮到它执行。
 
-这一点对于setInterval影响尤其大。
+这一点对于`setInterval`影响尤其大。
 
 ```javascript
-setInterval(function(){
+setInterval(function () {
   console.log(2);
-},1000);
+}, 1000);
 
-(function (){
+(function () {
   sleeping(3000);
 })();
 ```
 
 上面的第一行语句要求每隔1000毫秒，就输出一个2。但是，第二行语句需要3000毫秒才能完成，请问会发生什么结果？
 
-结果就是等到第二行语句运行完成以后，立刻连续输出三个2，然后开始每隔1000毫秒，输出一个2。也就是说，setIntervel具有累积效应，如果某个操作特别耗时，超过了setInterval的时间间隔，排在后面的操作会被累积起来，然后在很短的时间内连续触发，这可能或造成性能问题（比如集中发出Ajax请求）。
-
-为了进一步理解JavaScript的单线程模型，请看下面这段伪代码。
-
-```javascript
-function init(){
-  { 耗时5ms的某个操作 }
-  触发mouseClickEvent事件
-  { 耗时5ms的某个操作 }
-  setInterval(timerTask,10);
-  { 耗时5ms的某个操作 }
-}
-
-function handleMouseClick(){
-  耗时8ms的某个操作
-}
-
-function timerTask(){
-  耗时2ms的某个操作
-}
-```
-
-请问调用init函数后，这段代码的运行顺序是怎样的？
-
-- **0-15ms**：运行init函数。
-
-- **15-23ms**：运行handleMouseClick函数。请注意，这个函数是在5ms时触发的，应该在那个时候就立即运行，但是由于单线程的关系，必须等到init函数完成之后再运行。
-
-- **23-25ms**：运行timerTask函数。这个函数是在10ms时触发的，规定每10ms运行一次，即在20ms、30ms、40ms等时候运行。由于20ms时，JavaScript线程还有任务在运行，因此必须延迟到前面任务完成时再运行。
-
-- **30-32ms**：运行timerTask函数。
-
-- **40-42ms**：运行timerTask函数。
+结果就是等到第二行语句运行完成以后，立刻连续输出三个2，然后开始每隔1000毫秒，输出一个2。也就是说，`setIntervel`具有累积效应，如果某个操作特别耗时，超过了`setInterval`的时间间隔，排在后面的操作会被累积起来，然后在很短的时间内连续触发，这可能或造成性能问题（比如集中发出Ajax请求）。
 
 ## setTimeout(f,0)
 

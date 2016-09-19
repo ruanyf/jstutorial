@@ -513,7 +513,7 @@ wrapper.childNodes.length // 1
 
 ## NodeList对象，HTMLCollection对象
 
-节点对象都是单个节点，但是有时会需要一种数据结构，能够容纳多个节点。DOM提供两种集合对象，用于实现这种节点的集合：`NodeList`和`HTMLCollection`。
+节点都是单个对象，有时会需要一种数据结构，能够容纳多个节点。DOM提供两种集合对象，用于实现这种节点的集合：`NodeList`和`HTMLCollection`。
 
 这两个对象都是构造函数。
 
@@ -574,7 +574,7 @@ forEach.call(element.childNodes, function(child){
 });
 ```
 
-上面代码让数组的`forEach`方法在`NodeList`实例对象上调用。
+上面代码让数组的`forEach`方法在`NodeList`实例对象上调用。注意，Chrome浏览器在`NodeList.prototype`上部署了`forEach`方法，所以可以直接使用，但它是非标准的。
 
 遍历`NodeList`实例对象的首选方法，是使用`for`循环。
 
