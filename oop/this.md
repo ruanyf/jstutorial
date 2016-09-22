@@ -416,30 +416,32 @@ $('#button').on('click', o.f);
 
 为了解决这个问题，可以采用下面的一些方法对`this`进行绑定，也就是使得`this`固定指向某个对象，减少不确定性。
 
-## function.prototype.call()
+## 绑定 this 的方法
 
 `this`的动态切换，固然为JavaScript创造了巨大的灵活性，但也使得编程变得困难和模糊。有时，需要把`this`固定下来，避免出现意想不到的情况。JavaScript提供了`call`、`apply`、`bind`这三个方法，来切换/固定`this`的指向。
 
-函数实例的`call`方法，可以指定该函数内部this的指向（即函数执行时所在的作用域），然后在所指定的作用域中，调用该函数。
+### function.prototype.call()
+
+函数实例的`call`方法，可以指定函数内部`this`的指向（即函数执行时所在的作用域），然后在所指定的作用域中，调用该函数。
 
 ```javascript
-var o = {};
+var obj = {};
 
-var f = function (){
+var f = function () {
   return this;
 };
 
 f() === this // true
-f.call(o) === o // true
+f.call(obj) === obj // true
 ```
 
-上面代码中，在全局环境运行函数f时，this指向全局环境；call方法可以改变this的指向，指定this指向对象o，然后在对象o的作用域中运行函数f。
+上面代码中，在全局环境运行函数`f`时，`this`指向全局环境；`call`方法可以改变`this`的指向，指定`this`指向对象`obj`，然后在对象`obj`的作用域中运行函数`f`。
 
-再看一个例子。
+`call`方法的参数，应该是一个对象。如果参数为空、`null`和`undefined`，则默认传入全局对象。
 
 ```javascript
 var n = 123;
-var o = { n : 456 };
+var obj = { n: 456 };
 
 function a() {
   console.log(this.n);
@@ -449,36 +451,50 @@ a.call() // 123
 a.call(null) // 123
 a.call(undefined) // 123
 a.call(window) // 123
-a.call(o) // 456
+a.call(obj) // 456
 ```
 
-上面代码中，a函数中的this关键字，如果指向全局对象，返回结果为123。如果使用call方法将this关键字指向o对象，返回结果为456。可以看到，如果call方法没有参数，或者参数为null或undefined，则等同于指向全局对象。
+上面代码中，`a`函数中的`this`关键字，如果指向全局对象，返回结果为`123`。如果使用`call`方法将`this`关键字指向`obj`对象，返回结果为`456`。可以看到，如果`call`方法没有参数，或者参数为`null`或`undefined`，则等同于指向全局对象。
 
-call方法的完整使用格式如下。
+如果`call`方法的参数是一个原始值，那么这个原始值会自动转成对应的包装对象，然后传入`call`方法。
+
+```javascript
+var f = function () {
+  return this;
+};
+
+f.call(5)
+// Number {[[PrimitiveValue]]: 5}
+```
+
+上面代码中，`call`的参数为`5`，不是对象，会被自动转成包装对象（`Number`的实例），绑定`f`内部的`this`。
+
+`call`方法还可以接受多个参数。
 
 ```javascript
 func.call(thisValue, arg1, arg2, ...)
 ```
 
-它的第一个参数就是this所要指向的那个对象，后面的参数则是函数调用时所需的参数。
+`call`的第一个参数就是`this`所要指向的那个对象，后面的参数则是函数调用时所需的参数。
 
 ```javascript
-function add(a,b) {
-  return a+b;
+function add(a, b) {
+  return a + b;
 }
 
-add.call(this,1,2) // 3
+add.call(this, 1, 2) // 3
 ```
 
-上面代码中，call方法指定函数add在当前环境（对象）中运行，并且参数为1和2，因此函数add运行后得到3。
+上面代码中，`call`方法指定函数`add`内部的`this`绑定当前环境（对象），并且参数为`1`和`2`，因此函数`add`运行后得到`3`。
 
-call方法的一个应用是调用对象的原生方法。
+`call`方法的一个应用是调用对象的原生方法。
 
 ```javascript
 var obj = {};
 obj.hasOwnProperty('toString') // false
 
-obj.hasOwnProperty = function (){
+// 覆盖掉继承的 hasOwnProperty 方法
+obj.hasOwnProperty = function () {
   return true;
 };
 obj.hasOwnProperty('toString') // true
@@ -486,9 +502,9 @@ obj.hasOwnProperty('toString') // true
 Object.prototype.hasOwnProperty.call(obj, 'toString') // false
 ```
 
-上面代码中，hasOwnProperty是obj对象继承的方法，如果这个方法一旦被覆盖，就不会得到正确结果。call方法可以解决这个方法，它将hasOwnProperty方法的原始定义放到obj对象上执行，这样无论obj上有没有同名方法，都不会影响结果。
+上面代码中，`hasOwnProperty`是`obj`对象继承的方法，如果这个方法一旦被覆盖，就不会得到正确结果。`call`方法可以解决这个方法，它将`hasOwnProperty`方法的原始定义放到`obj`对象上执行，这样无论`obj`上有没有同名方法，都不会影响结果。
 
-## function.prototype.apply()
+### function.prototype.apply()
 
 `apply`方法的作用与`call`方法类似，也是改变`this`指向，然后再调用该函数。唯一的区别就是，它接收一个数组作为函数执行时的参数，使用格式如下。
 
@@ -593,7 +609,7 @@ $('#button').on('click', f);
 
 点击按钮以后，控制台将会显示`true`。由于`apply`方法（或者`call`方法）不仅绑定函数执行时所在的对象，还会立即执行函数，因此不得不把绑定语句写在一个函数体内。更简洁的写法是采用下面介绍的`bind`方法。
 
-## function.prototype.bind()
+### function.prototype.bind()
 
 `bind`方法用于将函数体内的`this`绑定到某个对象，然后返回一个新函数。
 
