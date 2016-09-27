@@ -81,7 +81,7 @@ function exists(pth, mode) {
 
 ## path.relative
 
-`path.relative`方法接受两个参数，这两个参数都应该是绝对路径。该方法返回第二个路径想对于地一个路径的系那个相对路径。
+`path.relative`方法接受两个参数，这两个参数都应该是绝对路径。该方法返回第二个路径相对于第一个路径的那个相对路径。
 
 ```javascript
 path.relative('/data/orandea/test/aaa', '/data/orandea/impl/bbb')
