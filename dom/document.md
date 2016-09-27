@@ -568,13 +568,15 @@ document.querySelector('#myElement')
 
 ### document.elementFromPoint()
 
-`document.elementFromPoint`方法返回位于页面指定位置的元素。
+`document.elementFromPoint`方法返回位于页面指定位置最上层的Element子节点。
 
 ```javascript
-var element = document.elementFromPoint(x, y);
+var element = document.elementFromPoint(50, 50);
 ```
 
-上面代码中，`elementFromPoint`方法的参数`x`和`y`，分别是相对于当前视口左上角的横坐标和纵坐标，单位是像素。`elementFromPoint`方法返回位于这个位置的DOM元素，如果该元素不可返回（比如文本框的滚动条），则返回它的父元素（比如文本框）。如果坐标值无意义（比如负值或超过视口大小），则返回`null`。
+上面代码选中在`(50, 50)`这个坐标位置的最上层的那个HTML元素。
+
+`elementFromPoint`方法的两个参数，依次是相对于当前视口左上角的横坐标和纵坐标，单位是像素。如果位于该位置的HTML元素不可返回（比如文本框的滚动条），则返回它的父元素（比如文本框）。如果坐标值无意义（比如负值或超过视口大小），则返回`null`。
 
 ## 生成节点的方法
 

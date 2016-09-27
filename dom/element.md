@@ -176,9 +176,7 @@ if (boolValue){
 
 ### Element.clientHeight，Element.clientWidth
 
-`Element.clientHeight`属性返回元素节点的可见高度，`Element.clientWidth`属性返回元素节点的可见宽度，包括Padding、但不包括滚动条、边框和Margin的高度（或宽度），单位为像素。这两个属性可以计算得到，等于元素的CSS高度（或宽度）加上CSS的Padding，减去滚动条（如果存在）。
-
-如果一个元素是可以滚动的，这两个属性只计算可见部分的高度（或宽度）。
+`Element.clientHeight`属性返回元素节点可见部分的高度，`Element.clientWidth`属性返回元素节点可见部分的宽度。所谓“可见部分”，指的是不包括溢出（overflow）的大小，只返回该元素在容器中占据的大小，对于有滚动条的元素来说，它们等于滚动条围起来的区域大小。这两个属性的值包括Padding、但不包括滚动条、边框和Margin，单位为像素。这两个属性可以计算得到，等于元素的CSS高度（或宽度）加上CSS的Padding，减去滚动条（如果存在）。
 
 对于整张网页来说，当前可见高度（即视口高度）要从`document.documentElement`对象（即`<html>`节点）上获取，等同于`window.innerHeight`属性减去水平滚动条的高度。没有滚动条时，这两个值是相等的；有滚动条时，前者小于后者。
 
@@ -192,7 +190,7 @@ rootElement.clientHeight === window.innerHeight // true
 rootElement.clientWidth === window.innerWidth // true
 ```
 
-注意，这里不能用`document.body.client`。因为`document.body`返回`<body>`节点，由于整张网页的滚动条是针对`<html>`节点的，所以`<body>`本身并没有滚动条，`document.body.clientHeight`与`document.body.scrollHeight`的值是相等的。
+注意，这里不能用`document.body.clientHeight`或`document.body.clientWidth`，因为`document.body`返回`<body>`节点，与视口大小是无关的。
 
 ### Element.clientLeft，Element.clientTop
 
@@ -204,7 +202,7 @@ rootElement.clientWidth === window.innerWidth // true
 
 ### Element.scrollHeight，Element.scrollWidth
 
-`Element.scrollHeight`属性返回某个网页元素的总高度，`Element.scrollWidth`属性返回总宽度。它们都包括由于溢出容器而无法显示在网页上的那部分高度或宽度。这两个属性是只读属性。
+`Element.scrollHeight`属性返回某个网页元素的总高度，`Element.scrollWidth`属性返回总宽度，可以理解成元素在垂直和水平两个方向上可以滚动的距离。它们都包括由于溢出容器而无法显示在网页上的那部分高度或宽度。这两个属性是只读属性。
 
 它们返回的是整个元素的高度或宽度，包括由于存在滚动条而不可见的部分。默认情况下，它们包括Padding，但不包括Border和Margin。
 
@@ -252,18 +250,23 @@ document.body.scrollTop
 
 ### Element.offsetHeight，Element.offsetWidth
 
-`Element.offsetHeight`属性返回元素可见部分的垂直高度，`Element.offsetWidth`属性返回水平宽度。这两个属性包括Padding和Border、以及滚动条的高度或宽度，单位为像素，都是只读。也就是说，`Element.offsetHeight`只比`Element.clientHeight`少了边框的高度。
+`Element.offsetHeight`属性返回元素的垂直高度，`Element.offsetWidth`属性返回水平宽度，可以理解成元素右下角距离左上角的位移。这两个属性值包括`Padding`和`Border`、以及滚动条，也就是说从边框的左上角开始计算，这也意味着，`Element.offsetHeight`只比`Element.clientHeight`少了边框的高度。它们的单位为像素，都是只读。
 
-整张网页的高度，可以在`document.body`上读取。
+整张网页的高度，可以在`document.documentElement`和`document.body`上读取。
 
 ```javascript
+// 网页总高度
+document.documentElement.offsetHeight
 document.body.offsetHeight
+
+// 网页总宽度
+document.documentElement.offsetWidth
 document.body.offsetWidth
 ```
 
 ### Element.offsetLeft，Element.offsetTop
 
-`Element.offsetLeft`和`Element.offsetTop`属性，返回某个元素左上角相对于`Element.offsetParent`节点的偏移，单位为像素。
+`Element.offsetLeft`返回当前元素左上角相对于`Element.offsetParent`节点的垂直偏移，`Element.offsetTop`返回水平位移，单位为像素。通常，这两个值是指相对于父节点的位移。
 
 下面的代码可以算出元素左上角相对于整张网页的坐标。
 
@@ -288,24 +291,34 @@ function getElementPosition(e) {
 
 ### 总结
 
-整张网页的高度和宽度，从`document.documentElement`上读取。
+整张网页的高度和宽度，可以从`document.documentElement`（即`<html>`元素）或`<body>`元素上读取。
 
 ```javascript
 // 网页总高度
 document.documentElement.offsetHeight
+document.documentElement.scrollHeight
+document.body.offsetHeight
+document.body.scrollHeight
 
 // 网页总宽度
 document.documentElement.offsetWidth
+document.documentElement.scrollWidth
+document.body.offsetWidth
+document.body.scrollWidth
 ```
 
-视口的高度和宽度，从`window`对象上读取。
+由于`<html>`和`<body>`的宽度可能设得不一样，因此从`<body>`上取值会更保险一点。
+
+视口的高度和宽度（包括滚动条），有两种方法可以获得。
 
 ```javascript
 // 视口高度
-window.innerHeight
+window.innerHeight // 包括滚动条
+document.documentElement.clientHeight // 不包括滚动条
 
 // 视口宽度
-window.innerWidth
+window.innerWidth // 包括滚动条
+document.documentElement.clientWidth // 不包括滚动条
 ```
 
 某个网页元素距离视口左上角的坐标，使用`Element.getBoundingClientRect`方法读取。
@@ -394,7 +407,7 @@ el.nextElementSibling
 
 ### Element.offsetParent
 
-`Element.offsetParent`属性返回指定元素距离最近的容器元素，通常就是父节点。
+`Element.offsetParent`属性返回当前HTML元素的最靠近的、并且CSS的`position`属性不等于`static`的父元素。如果某个元素的所有上层节点都将`position`属性设为`static`，则`Element.offsetParent`属性指向`<body>`元素。
 
 该属性主要用于确定子元素的位置偏移，是`Element.offsetTop`和`Element.offsetLeft`的计算基准。
 
@@ -411,7 +424,20 @@ el.nextElementSibling
 
 ## 查找相关的方法
 
-以下方法用来查找与当前元素节点相关的节点。
+以下四个方法用来查找与当前元素节点相关的节点。这四个方法也部署在`document`对象上，用法完全一致。
+
+- `Element.querySelector()`
+- `Element.querySelectorAll()`
+- `Element.getElementsByTagName()`
+- `Element.getElementsByClassName()`
+
+上面四个方法只返回Element子节点，因此可以采用链式写法。
+
+```javascript
+document
+  .getElementById('header')
+  .getElementsByClassName('a')
+```
 
 ### Element.querySelector()
 
@@ -510,8 +536,8 @@ el.closest(":not(div)") // article
 `Element.match`方法返回一个布尔值，表示当前元素是否匹配给定的CSS选择器。
 
 ```javascript
-if (el.matches(".someClass")) {
-  console.log("Match!");
+if (el.matches('.someClass')) {
+  console.log('Match!');
 }
 ```
 
@@ -651,6 +677,14 @@ d1.insertAdjacentHTML('afterend', '<div id="two">two</div>');
 ```javascript
 var el = document.getElementById('div-01');
 el.remove();
+```
+
+### Element.focus()
+
+`Element.focus`方法用于将当前页面的焦点，转移到指定元素上。
+
+```javascript
+document.getElementById('my-span').focus();
 ```
 
 ## 参考链接

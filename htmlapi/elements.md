@@ -104,6 +104,65 @@ document.xx === xx // true
 document.forms.myforms;
 ```
 
+## 表单
+
+表单主要用于收集用户的输入，送到服务器或者在前端处理。
+
+### 选中表单元素
+
+如果`<form>`元素带有`name`或者`id`属性，这个元素节点会自动成为`window`和`document`的属性，并且可以从`document.forms`上取到。`<form name="myForm">`节点用下面几种方法可以拿到。
+
+```javascirpt
+window.myForm
+document.myForm
+document.forms.myForm
+document.forms[n]
+```
+
+`document.forms`返回一个类似数组的对象（`HTMLCollection`的实例），包含了当前页面中所有表单（`<form>`元素）。`HTMLCollection`的实例都可以使用某个节点的`id`和`name`属性，取到该节点。
+
+表单对象本身也是一个`HTMLCollection`对象的实例，它里面的各个子节点也可以用`id`属性、`name`属性或者索引值取到。举例来说，`myForm`表单的第一个子节点是`<input type="text" name="address">`，它可以用下面的方法取到。
+
+```javascript
+document.forms.myForm[0]
+document.forms.myForm.address
+document.myForm.address // 只对name属性生效，对id属性不生效
+```
+
+表单节点都有一个`elements`属性，包含了当前表单的所有子元素，所以也可以用下面的方法取到`address`子节点。
+
+```javascript
+document.forms.myForm.elements[0]
+document.forms.myForm.elements.address
+```
+
+表单之中，会有多个元素共用同一个`name`属性的情况。
+
+```html
+<form name="myForm">
+  <label><input type="radio" name="method" value="1">1</label>
+  <label><input type="radio" name="method" value="2">2</label>
+  <label><input type="radio" name="method" value="3">3</label>
+</form>
+```
+
+上面代码中，三个单选框元素共用同一个`name`属性，这时如果使用这个`name`属性去引用子节点，返回的将是一个类似数组的对象。
+
+```javascript
+document.forms.myForm.elements.method.length // 3
+```
+
+如果想知道，用户到底选中了哪一个子节点，就必须遍历所有的同名节点。
+
+```javascript
+var methods = document.forms.myForm.elements.method;
+var result;
+
+for (var i = 0; i < methods.length; i++) {
+  if (methods[i].checked) value = methods[i].value;
+}
+```
+
 ## image元素
 
 ### alt属性，src属性
@@ -148,6 +207,54 @@ myImage.addEventListener('onload', function() {
 
 ```
 
+## table元素
+
+表格有一些特殊的DOM操作方法。
+
+- **insertRow()**：在指定位置插入一个新行（tr）。
+- **deleteRow()**：在指定位置删除一行（tr）。
+- **insertCell()**：在指定位置插入一个单元格（td）。
+- **deleteCell()**：在指定位置删除一个单元格（td）。
+- **createCaption()**：插入标题。
+- **deleteCaption()**：删除标题。
+- **createTHead()**：插入表头。
+- **deleteTHead()**：删除表头。
+
+下面是使用JavaScript生成表格的一个例子。
+
+```javascript
+var table = document.createElement('table');
+var tbody = document.createElement('tbody');
+table.appendChild(tbody);
+
+for (var i = 0; i <= 9; i++) {
+  var rowcount = i + 1;
+  tbody.insertRow(i);
+  tbody.rows[i].insertCell(0);
+  tbody.rows[i].insertCell(1);
+  tbody.rows[i].insertCell(2);
+  tbody.rows[i].cells[0].appendChild(document.createTextNode('Row ' + rowcount + ', Cell 1'));
+  tbody.rows[i].cells[1].appendChild(document.createTextNode('Row ' + rowcount + ', Cell 2'));
+  tbody.rows[i].cells[2].appendChild(document.createTextNode('Row ' + rowcount + ', Cell 3'));
+}
+
+table.createCaption();
+table.caption.appendChild(document.createTextNode('A DOM-Generated Table'));
+
+document.body.appendChild(table);
+```
+
+这些代码相当易读，其中需要注意的就是`insertRow`和`insertCell`方法，接受一个表示位置的参数（从0开始的整数）。
+
+`table`元素有以下属性：
+
+- **caption**：标题。
+- **tHead**：表头。
+- **tFoot**：表尾。
+- **rows**：行元素对象，该属性只读。
+- **rows.cells**：每一行的单元格对象，该属性只读。
+- **tBodies**：表体，该属性只读。
+
 ## audio元素，video元素
 
 audio元素和video元素加载音频和视频时，以下事件按次序发生。
@@ -180,3 +287,18 @@ timeupdate|网页元素的currentTime属性改变时触发。
 volumechange|音量改变时触发（包括静音）。
 waiting|由于另一个操作（比如搜索）还没有结束，导致当前操作（比如播放）不得不等待。
 
+## tabindex属性
+
+`tabindex`属性用来指定，当前HTML元素节点是否被tab键遍历，以及遍历的优先级。
+
+```javascript
+var b1 = document.getElementById("button1");
+
+b1.tabIndex = 1;
+```
+
+如果`tabindex = -1`，tab键跳过当前元素。
+
+如果`tabindex = 0`，表示tab键将遍历当前元素。如果一个元素没有设置tabindex，默认值就是0。
+
+如果`tabindex > 0`，表示tab键优先遍历。值越大，就表示优先级越大。
