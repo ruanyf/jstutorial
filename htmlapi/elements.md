@@ -104,7 +104,7 @@ document.xx === xx // true
 document.forms.myforms;
 ```
 
-## 表单
+## Form 元素（表单）
 
 表单主要用于收集用户的输入，送到服务器或者在前端处理。
 
@@ -162,6 +162,117 @@ for (var i = 0; i < methods.length; i++) {
   if (methods[i].checked) value = methods[i].value;
 }
 ```
+
+### Form 对象
+
+`<form>`元素对应的DOM节点是一个Form对象。这个对象除了上一小节提到的`elements`属性，还有以下属性，分别对应元素标签中的同名属性。
+
+- `action`
+- `encoding`
+- `method`
+- `target`
+
+Form对象还有两个属性，可以指定事件的回调函数。
+
+- `onsubmit`：提交表单前调用，只要返回`false`，就会取消提交。可以在这个函数里面，校验用户的输入。该函数只会在用户提交表单时调用，脚本调用`submit()`方法是不会触发这个函数的。
+- `onreset`：重置表单前调用，只要返回`false`，就会取消表单重置。该函数只能由真实的reset按钮触发，脚本调用`reset()`方法并不会触发这个函数。
+
+```javascript
+<form onreset="return confirm('你要重置表单吗？')">
+  <!-- ... -->
+  <button type="reset">重置</button>
+</form>
+```
+
+Form对象的方法主要是下面两个。
+
+- `submit()`：将表单数据提交到服务器
+- `reset()`：重置表单数据
+
+### 表单控件对象
+
+表单包含了各种控件，每个控件都是一个对象。它们都包含了以下四个属性。
+
+- `type`：表示控件的类型，对于`<input>`元素、`<button>`元素等于这些标签的`type`属性，对于其他控件，`<select>`为`select-one`，`<select multiple>`为`select-multiple`，`<textarea>`为`textarea`。该属性只读。
+- `form`：指向包含该控件的表单对象，如果该控件不包含在表单之中，则返回`null`。该属性只读。
+- `name`：返回控件标签的`name`属性。该属性只读。
+- `value`：返回或设置该控件的值，这个值会被表单提交到服务器。该属性可读写。
+才会
+`form`属性有一个特别的应用，就是在控件的事件回调函数里面，`this`指向事件所在的控件对象，所以`this.form`就指向控件所在的表单，`this.form.x`就指向其他控件元素，里面的`x`就是该控件的`name`属性或`id`属性的值。
+
+表单控件之中，只要是按钮，都有`onclick`属性，用来指定用户点击按钮时的回调函数；其他的控件一般都有`onchange`属性，控件值发生变化，并且该控件失去焦点时调用。单选框（Radio控件）和多选框（Checkbox控件）可以同时设置`onchange`和`onclick`属性。
+
+表单控件还有以下两个事件。
+
+- `focus`：得到焦点时触发
+- `blur`：失去焦点时触发
+
+### Select元素
+
+`<select>`元素用来生成下拉列表。默认情况下，浏览器只显示一条选项，其他选项需要点击下拉按钮才会显示。`size`选项如果大于1，那么浏览器就会默认显示多个选项。
+
+```html
+<select size="3">
+```
+
+上面代码指定默认显示三个选项，更多的选项需要点击下拉按钮才会显示。
+
+`<select>`元素默认只能选中一个选项，如果想选中多个选项，必须指定`multiple`属性。
+
+```html
+<select multiple>
+```
+
+用户选中或者取消一个下拉选项时，会触发`Select`对象的`change`事件，从而自动执行`onchange`监听函数。
+
+`<select>`元素有一个`options`属性，返回一个类似数组的对象，包含了所有的`<option>`元素。
+
+```html
+// HTML 代码为
+// <select id="example">
+//   <option>1</option>
+//   <option>2</option>
+//   <option>3</option>
+// </select>
+
+var element = document.querySelector('#example');
+element.options.length
+// 3
+```
+
+上面代码中，`<select>`元素的`options`属性包含了三个`<option>`元素。
+
+`options`属性可读写，可以通过设置`options.length`，控制向用户显示的下拉选项的值。将`options.length`设为0，可以不再显示任何下拉属性。将`options`里面某个位置的`Option`对象设为`null`，将等于移除这个选项，后面的`Option`对象会自动递补这个位置。
+
+`Select`对象的`selectedIndex`属性，返回用户选中的第一个下拉选项的位置（从0开始）。如果返回`-1`，则表示用户没有选中任何选项。该属性可读写。对于单选的下拉列表，这个属性就可以得知用户的选择；对于多选的下拉列表，这个属性还不够，必须逐个轮询`options`属性，判断每个`Option`对象的`selected`属性是否为`true`。
+
+### Option元素
+
+`<option>`元素用于在下拉列表（`<select>`）中生成下拉选项。每个下拉选项就是一个`Option`对象，它有以下属性。
+
+- `selectd`：返回一个布尔值，表示用户是否选中该选项。
+- `text`：返回该下拉选项的显示的文本。该属性可读写，可用来显示向用户显示的文本。
+- `value`：返回该下拉选项的值，即向服务器发送的那个值。该属性可读写。
+- `defaultSelected`：返回一个布尔值，表示这个下拉选项是否默认选中。
+
+浏览器提供`Option`构造函数，用来生成下拉列表的选项对象。利用这个函数，可以用脚本生成下拉选项，然后放入`Select.options`对象里面，从而自动生成下拉列表。
+
+```javascript
+var item = new Option(
+  'Hello World',  // 显示的文本，即 text 属性
+  'myValue',  // 向服务器发送的值，即 value 属性
+  false,    // 是否为默认选项，即 defaultSelected 属性
+  false   // 是否已经选中，即 selected 属性
+);
+
+// 获取 Selector 对象
+var mySelector = document.forms.myForm.mySelector;
+mySelector.options[mySelector.options.length] = item;
+```
+
+上面代码在下拉列表的末尾添加了一个选项。从中可以看到，`Option`构造函数可以接受四个选项，对应`<Option>`对象的四个属性。
+
+注意，用脚本插入下拉选项完全可以用标准的DOM操作方法实现，比如`Document.create Element()`、`Node.insertBefore()`和`Node.removeChild()`等等。
 
 ## image元素
 

@@ -379,6 +379,20 @@ if ((popup !== null) && !popup.closed) {
 
 当前窗口获得焦点时，会触发`focus`事件；当前窗口失去焦点时，会触发`blur`事件。
 
+### window.getSelection()
+
+`window.getSelection`方法返回一个`Selection`对象，表示用户现在选中的文本。
+
+```javascript
+var selObj = window.getSelection();
+```
+
+使用`Selction`对象的`toString`方法可以得到选中的文本。
+
+```javascript
+var selectedText = selObj.toString();
+```
+
 ## 多窗口操作
 
 由于网页可以使用`iframe`元素，嵌入其他网页，因此一个网页之中会形成多个窗口。另一情况是，子网页之中又嵌入别的网页，形成多级窗口。
