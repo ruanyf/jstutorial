@@ -32,6 +32,60 @@ Service worker有自己的生命周期。
 
 激活成功后，Service worker就控制了页面。但是，Service worker必须等到用户第二次访问这个页面时才会生效。一旦生效，Service worker就只有两种状态：要么关闭（terminate），这样可以节省内存；要么就处理网络请求产生的各种事件。
 
+Service worker脚本的生命周期。
+
+该脚本接受的第一个事件是`install`。Service worker脚本一旦运行，就会触发这个事件，但是只会触发一次。可以使用这个事件，向缓存添加文件。
+
+```javascript
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open('static-v1').then(cache => cache.add('/cat.svg'))
+  );
+});
+```
+
+上面代码中，`install`事件的回调函数，会得到一个事件对象`event`作为参数。该对象的`waitUntil()`接受一个Promise对象作为参数，它的意思是直到这个Promise完成，`install`事件才算执行完成。如果Promise执行失败，浏览器就会抛弃Service worker脚本，不会让它控制客户端。
+
+安装完成后，Service worker脚本的状态就变成了”active“。
+
+```javascript
+self.addEventListener('activate', event => {
+  console.log('V1 now ready to handle fetches!');
+});
+```
+
+如果要更新缓存，也是在`activate`事件里面完成。
+
+```javascript
+self.addEventListener('activate', event => {
+  // 删除缓存里面已有的文件，就想当于更新缓存了
+  event.waitUntil(
+    caches.keys().then(keys => Promise.all(
+      keys.map(key => {
+        if (!expectedCaches.includes(key)) {
+          return caches.delete(key);
+        }
+      })
+    )).then(() => {
+      console.log('V2 now ready to handle fetches!');
+    })
+  );
+});
+```
+
+激活以后，收到用户的请求，会先判断该网址是否已经存在于缓存之中。如果在，就从缓存之中取出。
+
+```javascript
+self.addEventListener('fetch', event => {
+  const url = new URL(event.request.url);
+  if (url.origin == location.origin && url.pathname == '/dog.svg') {
+    event.respondWith(caches.match('/cat.svg'));
+  }
+});
+```
+
+上面代码中，如果用户请求`dog.svg`，则会返回`cat.svg`。注意，第一次加载网页的时候，用户看到的是`dog.svg`，再刷新才会看到`cat.svg`。
+
 ## register
 
 登记是安装前的准备步骤。

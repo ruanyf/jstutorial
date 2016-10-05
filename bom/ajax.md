@@ -856,7 +856,7 @@ xhr.send(file);
 
 ### 基本用法
 
-Ajax操作所用的`XMLHttpRequest`对象，已经有十多年的历史，它的API设计并不是很好，输入、输出、状态都在同一个接口管理，容易写出非常混乱的代码。Fetch API是一种新规范，用来取代`XMLHttpRequest`对象。它主要有两个特点，一是简化接口，将API分散在几个不同的对象上，二是返回`Promise`对象，避免了嵌套的回调函数。
+Ajax操作所用的`XMLHttpRequest`对象，已经有十多年的历史，它的API设计并不是很好，输入、输出、状态都在同一个接口管理，容易写出非常混乱的代码。Fetch API是一种新规范，用来取代`XMLHttpRequest`对象。它主要有两个特点，一是接口合理化，Ajax是将所有不同性质的接口都放在XHR对象上，而Fetch是将它们分散在几个不同的对象上，设计更合理；二是Fetch操作返回`Promise`对象，避免了嵌套的回调函数。
 
 下面的代码检查浏览器是否部署了Fetch API。
 
@@ -880,7 +880,7 @@ fetch(url).then(function (response) {
 });
 ```
 
-上面代码向指定的URL发出请求，得到回应后，将其转为JSON格式，输出到控制台。如果出错，则输出一条提示信息。
+上面代码向指定的URL发出请求，得到回应后，将其转为JSON格式，输出到控制台。如果出错，则输出一条提示信息。注意，`fetch`方法返回的是一个Promise对象。
 
 作为比较，`XMLHttpRequest`的写法如下。
 
@@ -899,7 +899,25 @@ xhr.send();
 
 ### stream数据流
 
-Fetch API最大的特点是，数据传送是以数据流（stream）的形式进行的。对于大文件，数据是一段一段得到的。
+Fetch API最大的特点是，除了返回`Promise`对象，还有一点就是数据传送是以数据流（stream）的形式进行的。对于大文件，数据是一段一段得到的。
+
+```javascript
+response.text().then(function (responseText) {
+  console.log(responseText);
+}
+```
+
+上面代码中的`text()`，其实就是一个数据流读取器，并使用指定格式解读。
+
+Fetch API提供以下五个数据流读取器。
+
+- `.text()`：返回字符串
+- `.json()`：返回一个JSON对象
+- `.formData()`：返回一个`FormData`对象
+- `.blob()`：返回一个`blob`对象
+- `.arrayBuffer()`：返回一个二进制数组
+
+数据流只能读取一次，一旦读取，数据流就空了。再次读取就不会得到结果。解决方法是在读取之前，先使用`.clone()`方法，复制一份一模一样的副本。
 
 ```javascript
 var url = 'LargeFile.txt';
@@ -1041,17 +1059,18 @@ fetch("http://www.example.org/submit.php", {
 
 ### Headers
 
-Fetch API引入三个新的对象（也是构造函数）：Headers, Request 和 Response。其中，Headers对象用来构造/读取HTTP数据包的头信息。
+Fetch API引入三个新的对象（也是构造函数）：`Headers`, `Request`和`Response`。其中，`Headers`对象用来构造/读取HTTP数据包的头信息。
 
 ```javascript
-var content = "Hello World";
-var reqHeaders = new Headers();
-reqHeaders.append("Content-Type", "text/plain");
-reqHeaders.append("Content-Length", content.length.toString());
-reqHeaders.append("X-Custom-Header", "ProcessThisImmediately");
+var content = 'Hello World';
+var headers = new Headers();
+headers.append("Accept", "application/json");
+headers.append("Content-Type", "text/plain");
+headers.append("Content-Length", content.length.toString());
+headers.append("X-Custom-Header", "ProcessThisImmediately");
 ```
 
-Headers对象的实例，除了使用append方法添加属性，也可以直接通过构造函数一次性生成。
+`Headers`对象的实例，除了使用`append`方法添加属性，也可以直接通过构造函数一次性生成。
 
 ```javascript
 reqHeaders = new Headers({
@@ -1195,7 +1214,7 @@ var postReq = new Request(req, {method: 'POST'});
 
 fetch方法返回Response对象实例，它有以下属性。
 
-- status：整数值，表示状态码（比如200）
+- `status`：整数值，表示状态码（比如200）
 - statusText：字符串，表示状态信息，默认是“OK”
 - ok：布尔值，表示状态码是否在200-299的范围内
 - headers：Headers对象，表示HTTP回应的头信息
@@ -1206,6 +1225,16 @@ Response对象还有两个静态方法。
 
 - Response.error() 返回一个type属性为error的Response对象实例
 - Response.redirect(url, status) 返回的Response对象实例会重定向到另一个URL
+
+```javascript
+fetch("https://example.com", init)
+.then(function (response) {
+// Check that the response is a 200
+  if (response.status === 200) {
+    alert("Content type: " + response.headers.get('Content-Type'));
+  }
+});
+```
 
 ### body属性
 
