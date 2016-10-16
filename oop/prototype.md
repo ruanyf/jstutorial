@@ -416,7 +416,7 @@ var A = {
 
 var B = Object.create(A);
 
-B.print // hello
+B.print() // hello
 B.print === A.print // true
 ```
 
