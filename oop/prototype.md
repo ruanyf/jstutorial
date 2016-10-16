@@ -394,7 +394,7 @@ var F = function () {
   this.foo = 'bar';
 };
 
-var f = new Foo();
+var f = new F();
 
 // 等同于
 var f = Object.setPrototypeOf({}, F.prototype);

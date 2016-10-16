@@ -870,7 +870,7 @@ $ npm login
 $ npm publish
 ```
 
-如果当前模块是一个beta版，比如`1.3.1-beta.3`，那么发布的时候需要使用`tag`参数。
+如果当前模块是一个beta版，比如`1.3.1-beta.3`，那么发布的时候需要使用`tag`参数，将其发布到指定标签，默认的发布标签是`latest`。
 
 ```bash
 $ npm publish --tag beta

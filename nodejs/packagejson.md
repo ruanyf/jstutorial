@@ -178,7 +178,7 @@ scripts: {
 
 ## main字段
 
-`main`字段指定了加载该模块时的入门文件，默认是模块根目录下面的`index.js`。
+`main`字段指定了加载的入口文件，`require('moduleName')`就会加载这个文件。这个字段的默认值是模块根目录下面的`index.js`。
 
 ## config字段
 

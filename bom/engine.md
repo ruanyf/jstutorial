@@ -308,6 +308,22 @@ Gecko和Webkit引擎在网页被阻塞后，会生成第二个线程解析文档
 
 上面代码中，`async`属性设为`true`，是因为加载的脚本没有互相依赖关系。而且，这样就不会造成堵塞。
 
+如果想为动态加载的脚本指定回调函数，可以使用下面的写法。
+
+```javascript
+function loadScript(src, done) {
+  var js = document.createElement('script');
+  js.src = src;
+  js.onload = function() {
+    done();
+  };
+  js.onerror = function() {
+    done(new Error('Failed to load script ' + src));
+  };
+  document.head.appendChild(js);
+}
+```
+
 此外，动态嵌入还有一个地方需要注意。动态嵌入必须等待CSS文件加载完成后，才会去下载外部脚本文件。静态加载就不存在这个问题，`script`标签指定的外部脚本文件，都是与CSS文件同时并发下载的。
 
 ### 加载使用的协议

@@ -8,9 +8,9 @@ modifiedOn: 2014-01-31
 
 CSS与JavaScript是两个有着明确分工的领域，前者负责页面的视觉效果，后者负责与用户的行为互动。但是，它们毕竟同属网页开发的前端，因此不可避免有着交叉和互相配合。本节介绍如果通过JavaScript操作CSS。
 
-## HTML元素的style属性
+## style属性
 
-操作Element节点的CSS样式，最简单的方法之一就是使用节点对象的`getAttribute`方法、`setAttribute`方法和`removeAttribute`方法，读写或删除HTML元素的`style`属性。
+操作CSS样式最简单的方法，就是使用网页元素节点的`getAttribute`方法、`setAttribute`方法和`removeAttribute`方法，读写或删除HTML元素的`style`属性。
 
 ```javascript
 div.setAttribute(
@@ -21,11 +21,9 @@ div.setAttribute(
 
 这三个方法的详细用法，详见《Node节点》一节。
 
-## Element节点的style属性
+### Style对象
 
-### 基本用法
-
-Element节点本身还提供`style`属性，用来操作CSS样式。`style`属性指向一个对象，用来读写页面元素的行内CSS样式。
+网页元素节点的`style`属性，本身是一个对象，可以用来读写行内CSS样式。
 
 ```javascript
 var divStyle = document.querySelector('div').style;
@@ -48,7 +46,7 @@ divStyle.width // 100px
 
 ### cssText属性
 
-style对象的`cssText`可以用来读写或删除整个style属性。
+Style对象的`cssText`可以用来读写或删除整个Style属性。
 
 ```javascript
 var divStyle = document.querySelector('div').style;
@@ -121,7 +119,7 @@ CSS.supports('(display: table-cell) and (display: list-item)');
 
 ### setProperty()，getPropertyValue()，removeProperty()
 
-`style`对象的以下三个方法，用来读写行内CSS规则。
+Style对象的以下三个方法，用来读写行内CSS规则。
 
 - `setProperty(propertyName,value)`：设置某个CSS属性。
 - `getPropertyValue(propertyName)`：读取某个CSS属性。
@@ -136,6 +134,41 @@ divStyle.setProperty('background-color','red');
 divStyle.getPropertyValue('background-color');
 divStyle.removeProperty('background-color');
 ```
+
+## window.getComputedStyle()
+
+上面介绍的行内样式具有最高的优先级，改变行内样式，通常会立即反映出来。但是，网页元素最终的样式是综合各种规则计算出来的。因此，如果想得到元素现有的样式，只读取行内样式是不够的，我们需要得到浏览器最终计算出来的那个样式规则。
+
+`window.getComputedStyle`方法，就用来返回这个规则。它接受一个DOM节点对象作为参数，返回一个包含该节点最终样式信息的对象。所谓“最终样式信息”，指的是各种CSS规则叠加后的结果。
+
+```javascript
+var div = document.querySelector('div');
+window.getComputedStyle(div).backgroundColor
+```
+
+`getComputedStyle`方法还可以接受第二个参数，表示指定节点的伪元素。
+
+```javascript
+var result = window.getComputedStyle(div, ':before');
+```
+
+下面的例子是如何获取元素的高度。
+
+```javascript
+var elem = document.getElementById('elem-container');
+var hValue = window.getComputedStyle(elem, null)
+  .getPropertyValue('height');
+```
+
+上面代码得到的`height`属性，是浏览器最终渲染出来的高度，因此比其他方法得到的高度有更大的可靠性。
+
+有几点需要注意。
+
+- 计算出来的CSS都是绝对单位，比如长度都是像素单位（返回值包括`px`后缀），颜色是`rgb(#, #, #)`或`rgba(#, #, #, #)`格式。
+- CSS规则的简便写法无效，比如想读取`margin`属性的值，不能直接读，只能读`marginLeft`、`marginTop`等属性。
+- 如果一个元素不是绝对定位，`top`和`left`属性总是返回`auto`。
+- 该方法返回的样式对象的`cssText`属性无效，返回`undefined`。
+- 该方法返回的样式对象是只读的，如果想设置样式，应该使用元素节点的`style`属性。
 
 ## CSS伪元素
 
@@ -507,28 +540,6 @@ for (var i = styleObj.length - 1; i >= 0; i--) {
 
 ```javascript
 styleObj.cssText = '';
-```
-
-## window.getComputedStyle()
-
-`getComputedStyle`方法接受一个DOM节点对象作为参数，返回一个包含该节点最终样式信息的对象。所谓“最终样式信息”，指的是各种CSS规则叠加后的结果。
-
-```javascript
-var div = document.querySelector('div');
-window.getComputedStyle(div).backgroundColor
-```
-
-getComputedStyle方法还可以接受第二个参数，表示指定节点的伪元素。
-
-```javascript
-var result = window.getComputedStyle(div, ':before');
-```
-
-getComputedStyle方法返回的是一个CSSStyleDeclaration对象。但是此时，这个对象是只读的，也就是只能用来读取样式信息，不能用来设置。如果想设置样式，应该使用Element节点的style属性。
-
-```javascript
-var elem = document.getElementById("elem-container");
-var hValue = window.getComputedStyle(elem,null).getPropertyValue("height");
 ```
 
 ## window.matchMedia()
