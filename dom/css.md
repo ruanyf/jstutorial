@@ -10,7 +10,7 @@ CSS与JavaScript是两个有着明确分工的领域，前者负责页面的视�
 
 ## style属性
 
-操作CSS样式最简单的方法，就是使用网页元素节点的`getAttribute`方法、`setAttribute`方法和`removeAttribute`方法，读写或删除HTML元素的`style`属性。
+操作CSS样式最简单的方法，就是使用网页元素节点的`getAttribute`方法、`setAttribute`方法和`removeAttribute`方法，直接读写或删除网页元素的`style`属性。
 
 ```javascript
 div.setAttribute(
@@ -19,11 +19,15 @@ div.setAttribute(
 );
 ```
 
-这三个方法的详细用法，详见《Node节点》一节。
+上面的代码相当于下面的HTML代码。
+
+```html
+<div style="background-color:red; border:1px solid black;" />
+```
 
 ### Style对象
 
-网页元素节点的`style`属性，本身是一个对象，可以用来读写行内CSS样式。
+对于网页元素节点来说，`style`属性还是一个可以直接操作的属性，可以用来读写行内CSS样式。
 
 ```javascript
 var divStyle = document.querySelector('div').style;
@@ -43,6 +47,19 @@ divStyle.width // 100px
 从上面代码可以看到，`style`对象的属性与CSS规则名一一对应，但是需要改写。具体规则是将横杠从CSS属性名中去除，然后将横杠后的第一个字母大写，比如`background-color`写成`backgroundColor`。如果CSS属性名是JavaScript保留字，则规则名之前需要加上字符串“css”，比如`float`写成`cssFloat`。
 
 注意，`style`对象的属性值都是字符串，而且包括单位。所以，`divStyle.width`不能设置为`100`，而要设置为`100px`。
+
+下面是一个例子，通过监听事件，改写网页元素的CSS样式。
+
+```javascript
+var docStyle = document.documentElement.style;
+var someElement = document.querySelector(...);
+
+document.addEventListener('mousemove', function (e) {
+  someElement.style.transform =
+    'translateX(' + e.clientX + 'px)' +
+    'translateY(' + e.clientY + 'px)';
+});
+```
 
 ### cssText属性
 
