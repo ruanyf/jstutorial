@@ -236,7 +236,7 @@ Array.prototype.join.call(obj, '-')
 如果不提供参数，`concat`方法返回当前数组的一个浅拷贝。所谓“浅拷贝”，指的是如果数组成员包括复合类型的值（比如对象），则新数组拷贝的是该值的引用。
 
 ```javascript
-var obj = { a:1 };
+var obj = { a:2 };
 var oldArray = [obj];
 
 var newArray = oldArray.concat();
