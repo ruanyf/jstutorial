@@ -30,7 +30,7 @@ global.warning = true;
 
 上面代码的`warning`变量，可以被所有文件读取。当然，这样写法是不推荐的。
 
-CommonJS规范规定，每个模块内部，`module`变量代表当前模块。这个变量是一个对象，它的`exports`属性（即`module.exports`）是对对的接口。加载某个模块，其实是加载该模块的`module.exports`属性。
+CommonJS规范规定，每个模块内部，`module`变量代表当前模块。这个变量是一个对象，它的`exports`属性（即`module.exports`）是对外的接口。加载某个模块，其实是加载该模块的`module.exports`属性。
 
 ```javascript
 var x = 5;
