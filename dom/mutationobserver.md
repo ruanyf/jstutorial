@@ -22,7 +22,7 @@ Mutation Observer有以下特点：
 
 - 它既可以观察发生在DOM的所有类型变动，也可以观察某一类变动。
 
-目前，Firefox（14+）、 Chrome(26+)、Opera（15+）、IE（11+）和Safari（6.1+）支持这个API。Safari 6.0和Chrome 18-25使用这个API的时候，需要加上WebKit前缀（WebKitMutationObserver）。可以使用下面的表达式，检查当前浏览器是否支持这个API。
+下面的表达式检查当前浏览器是否支持这个API。
 
 ```javascript
 var MutationObserver = window.MutationObserver
@@ -34,19 +34,19 @@ var observeMutationSupport = !!MutationObserver;
 
 ## MutationObserver构造函数
 
-首先，使用MutationObserver构造函数，新建一个观察器实例，同时指定这个实例的回调函数。
+使用时，首先使用`MutationObserver`构造函数，新建一个观察器实例，同时指定这个实例的回调函数。
 
 ```javascript
 var observer = new MutationObserver(callback);
 ```
 
-观察器的回调函数会在每次DOM发生变动后调用。它接受两个参数，第一个是变动数组（详见后文），第二个是观察器实例。
+观察器的回调函数会在每次DOM发生变动后调用。它接受两个参数，第一个是变动数组，第二个是观察器实例，详见后文的例子。
 
 ## Mutation Observer实例的方法
 
 ### observe()
 
-observe方法指定所要观察的DOM节点，以及所要观察的特定变动。
+`observe`方法指定所要观察的DOM节点，以及所要观察的特定变动。
 
 ```javascript
 var article = document.querySelector('article');
@@ -59,7 +59,7 @@ var  options = {
 observer.observe(article, options);
 ```
 
-上面代码中，observe方法接受两个参数，第一个是所要观察的DOM元素是article，第二个是所要观察的变动类型（子节点变动和属性变动）。
+上面代码中，`observe`方法接受两个参数，第一个是所要观察的DOM元素是`article`，第二个是所要观察的变动类型（子节点变动和属性变动）。
 
 观察器所能观察的DOM变动类型（即上面代码的options对象），有以下几种：
 
@@ -68,19 +68,19 @@ observer.observe(article, options);
 - **characterData**：节点内容或节点文本的变动。
 - **subtree**：所有后代节点的变动。
 
-想要观察哪一种变动类型，就在option对象中指定它的值为true。需要注意的是，不能单独观察subtree变动，必须同时指定childList、attributes和characterData中的一种或多种。
+想要观察哪一种变动类型，就在`option`对象中指定它的值为`true`。需要注意的是，如果设置观察`subtree`的变动，必须同时指定`childList`、`attributes`和`characterData`中的一种或多种。
 
-除了变动类型，options对象还可以设定以下属性：
+除了变动类型，`options`对象还可以设定以下属性：
 
-- **attributeOldValue**：类型为布尔值，表示观察attributes变动时，是否需要记录变动前的属性值。
+- `attributeOldValue`：类型为布尔值，表示观察`attributes`变动时，是否需要记录变动前的属性值。
 
-- **characterDataOldValue**：类型为布尔值，表示观察characterData变动时，是否需要记录变动前的值。
+- `characterDataOldValue`：类型为布尔值，表示观察`characterData`变动时，是否需要记录变动前的值。
 
-- **attributeFilter**：类型为数组，表示需要观察的特定属性（比如['class','src']）。
+- `attributeFilter`：类型为数组，表示需要观察的特定属性（比如`['class','src']`）。
 
-对一个节点添加观察器，就像添加addEventListener方法一样。多次添加同一个观察器是无效的，回调函数依然只会触发一次。但是，如果指定不同的options对象，就会被当作两个不同的观察器。
+对一个节点添加观察器，就像使用`addEventListener`方法一样，多次添加同一个观察器是无效的，回调函数依然只会触发一次。但是，如果指定不同的`options`对象，就会被当作两个不同的观察器。
 
-下面的例子观察新增的子节点。
+下面的例子是观察新增的子节点。
 
 ```javascript
 var insertedNodes = [];
@@ -96,13 +96,13 @@ console.log(insertedNodes);
 
 ### disconnect()，takeRecords（）
 
-disconnect方法用来停止观察。再发生相应变动，就不再调用回调函数。
+`disconnect`方法用来停止观察。再发生相应变动，就不再调用回调函数。
 
 ```javascript
 observer.disconnect();
 ```
 
-takeRecords方法用来清除变动记录，即不再处理未处理的变动。该方法返回变动记录的数组。
+`takeRecords`方法用来清除变动记录，即不再处理未处理的变动。该方法返回变动记录的数组。
 
 ```javascript
 observer.takeRecords();
@@ -110,18 +110,18 @@ observer.takeRecords();
 
 ### MutationRecord对象
 
-DOM每次发生变化，就会生成一条变动记录。这个变动记录对应一个MutationRecord对象，该对象包含了与变动相关的所有信息。Mutation Observer处理的是一个个MutationRecord对象所组成的数组。
+DOM每次发生变化，就会生成一条变动记录。这个变动记录对应一个`MutationRecord`对象，该对象包含了与变动相关的所有信息。Mutation Observer处理的是一个个`MutationRecord`对象所组成的数组。
 
-MutationRecord对象包含了DOM的相关信息，有如下属性：
+`MutationRecord`对象包含了DOM的相关信息，有如下属性：
 
-- **type**：观察的变动类型（attribute、characterData或者childList）。
-- **target**：发生变动的DOM节点。
-- **addedNodes**：新增的DOM节点。
-- **removedNodes**：删除的DOM节点。
-- **previousSibling**：前一个同级节点，如果没有则返回null。
-- **nextSibling**：下一个同级节点，如果没有则返回null。
-- **attributeName**：发生变动的属性。如果设置了attributeFilter，则只返回预先指定的属性。
-- **oldValue**：变动前的值。这个属性只对attribute和characterData变动有效，如果发生childList变动，则返回null。
+- `type`：观察的变动类型（`attribute`、`characterData`或者`childList`）。
+- `target`：发生变动的DOM节点。
+- `addedNodes`：新增的DOM节点。
+- `removedNodes`：删除的DOM节点。
+- `previousSibling`：前一个同级节点，如果没有则返回`null`。
+- `nextSibling`：下一个同级节点，如果没有则返回`null`。
+- `attributeName`：发生变动的属性。如果设置了`attributeFilter`，则只返回预先指定的属性。
+- `oldValue`：变动前的值。这个属性只对`attribute`和`characterData`变动有效，如果发生`childList`变动，则返回`null`。
 
 ## 应用示例
 
@@ -147,15 +147,15 @@ var option = {
 mo.observe(document.body, option);
 ```
 
-上面代码的观察器，观察body的所有下级节点（childList表示观察子节点，subtree表示观察后代节点）的变动。回调函数会在控制台显示所有变动的类型和目标节点。
+上面代码的观察器，观察`<body>`的所有下级节点（`childList`表示观察子节点，`subtree`表示观察后代节点）的变动。回调函数会在控制台显示所有变动的类型和目标节点。
 
 ### 属性的变动
 
 下面的例子说明如何追踪属性的变动。
 
 ```javascript
-var callback = function(records){
-  records.map(function(record){
+var callback = function (records) {
+  records.map(function (record) {
     console.log('Previous attribute value: ' + record.oldValue);
   });
 };
@@ -172,11 +172,11 @@ var options = {
 mo.observe(element, options);
 ```
 
-上面代码先设定追踪属性变动（'attributes': true），然后设定记录变动前的值。实际发生变动时，会将变动前的值显示在控制台。
+上面代码先设定追踪属性变动（`'attributes': true`），然后设定记录变动前的值。实际发生变动时，会将变动前的值显示在控制台。
 
 ### 取代DOMContentLoaded事件
 
-网页加载的时候，DOM节点的生成会产生变动记录，因此只要观察DOM的变动，就能在第一时间触发相关事件，因此也就没有必要使用DOMContentLoaded事件。
+网页加载的时候，DOM节点的生成会产生变动记录，因此只要观察DOM的变动，就能在第一时间触发相关事件，因此也就没有必要使用`DOMContentLoaded`事件。
 
 ```javascript
 var observer = new MutationObserver(callback);
@@ -186,12 +186,11 @@ observer.observe(document.documentElement, {
 });
 ```
 
-上面代码中，监听document.documentElement（即HTML节点）的子节点的变动，subtree属性指定监听还包括后代节点。因此，任意一个网页元素一旦生成，就能立刻被监听到。
+上面代码中，监听`document.documentElement`（即HTML节点）的子节点的变动，`subtree`属性指定监听还包括后代节点。因此，任意一个网页元素一旦生成，就能立刻被监听到。
 
-下面的代码，使用MutationObserver对象封装一个监听DOM生成的函数。
+下面的代码，使用`MutationObserver`对象封装一个监听DOM生成的函数。
 
 ```javascript
-
 (function(win){
   'use strict';
 
@@ -244,11 +243,11 @@ observer.observe(document.documentElement, {
 ready('.foo', function(element){
   // ...
 });
-
 ```
 
 ## 参考链接
 
+- Paul Kinlan, [Detect DOM changes with Mutation Observers](https://developers.google.com/web/updates/2012/02/Detect-DOM-changes-with-Mutation-Observers)
 - Tiffany Brown, [Getting to know mutation observers](http://dev.opera.com/articles/view/mutation-observers-tutorial/)
 - Michal Budzynski, [JavaScript: The less known parts. DOM Mutations](http://michalbe.blogspot.com/2013/04/javascript-less-known-parts-dom.html)
 - Jeff Griffiths, [DOM MutationObserver – reacting to DOM changes without killing browser performance](https://hacks.mozilla.org/2012/05/dom-mutationobserver-reacting-to-dom-changes-without-killing-browser-performance/)
