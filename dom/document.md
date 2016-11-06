@@ -135,20 +135,13 @@ document.scripts.myScript
 // <script id="myScript"></script>
 ```
 
-`document.styleSheets`属性返回当前网页的所有样式表。每个样式表对象都有`cssRules`属性，返回该样式表的所有CSS规则，这样这可以操作具体的CSS规则了。
+`document.styleSheets`属性返回一个类似数组的对象，代表当前网页的所有样式表。每个样式表对象都有`cssRules`属性，返回该样式表的所有CSS规则，这样这可以操作具体的CSS规则了。
 
 ```javascript
 var allSheets = [].slice.call(document.styleSheets);
 ```
 
 上面代码中，使用`slice`方法将`document.styleSheets`转为数组，以便于进一步处理。
-
-这两个属性返回的也是`HTMLCollection`实例。
-
-```javascript
-document.scripts instanceof HTMLCollection // true
-document.styleSheets instanceof HtmlCollection
-```
 
 ## 文档信息属性
 
