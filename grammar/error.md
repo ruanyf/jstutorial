@@ -400,13 +400,13 @@ try {
 
 上面代码首先打开一个文件，然后在`try`代码块中写入文件，如果没有发生错误，则运行`finally`代码块关闭文件；一旦发生错误，则先使用`catch`代码块处理错误，再使用`finally`代码块关闭文件。
 
-下面的例子充分反应了`try...catch...finally`这三者之间的执行顺序。
+下面的例子充分反映了`try...catch...finally`这三者之间的执行顺序。
 
 ```javascript
 function f() {
   try {
     console.log(0);
-    throw "bug";
+    throw 'bug';
   } catch(e) {
     console.log(1);
     return true; // 这句原本会延迟到finally代码块结束再执行

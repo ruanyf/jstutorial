@@ -27,7 +27,7 @@ div.setAttribute(
 
 ### Style对象
 
-对于网页元素节点来说，`style`属性还是一个可以直接操作的属性，可以用来读写行内CSS样式。
+每一个网页元素对应一个DOM节点对象。这个对象的`style`属性可以直接操作，用来读写行内CSS样式。
 
 ```javascript
 var divStyle = document.querySelector('div').style;
@@ -44,9 +44,9 @@ divStyle.height // 100px
 divStyle.width // 100px
 ```
 
-从上面代码可以看到，`style`对象的属性与CSS规则名一一对应，但是需要改写。具体规则是将横杠从CSS属性名中去除，然后将横杠后的第一个字母大写，比如`background-color`写成`backgroundColor`。如果CSS属性名是JavaScript保留字，则规则名之前需要加上字符串“css”，比如`float`写成`cssFloat`。
+上面代码中，`style`属性的值是一个对象（简称`style`对象）。这个对象所包含的属性与CSS规则一一对应，但是名字需要改写，比如`background-color`写成`backgroundColor`。改写的规则是将横杠从CSS属性名中去除，然后将横杠后的第一个字母大写。如果CSS属性名是JavaScript保留字，则规则名之前需要加上字符串`css`，比如`float`写成`cssFloat`。
 
-注意，`style`对象的属性值都是字符串，而且包括单位。所以，`divStyle.width`不能设置为`100`，而要设置为`100px`。
+注意，`style`对象的属性值都是字符串，设置时必须包括单位，办事不含规则结尾的分号。比如，`divStyle.width`不能写为`100`，而要写为`100px`。
 
 下面是一个例子，通过监听事件，改写网页元素的CSS样式。
 
@@ -63,7 +63,7 @@ document.addEventListener('mousemove', function (e) {
 
 ### cssText属性
 
-Style对象的`cssText`可以用来读写或删除整个Style属性。
+元素节点对象的`style`对象，有一个`cssText`属性，可以读写或删除整个样式。
 
 ```javascript
 var divStyle = document.querySelector('div').style;

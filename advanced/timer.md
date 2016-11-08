@@ -488,7 +488,15 @@ console.log(5);
 
 这是因为`setTimeout`语句指定的是“正常任务”，即不会在当前的Event Loop执行。而Promise会将它的回调函数，在状态改变后的那一轮Event Loop指定为微任务。所以，3和4输出在5之后、2之前。
 
-除了`setTimeout`，正常任务还包括各种事件（比如鼠标单击事件）的回调函数。微任务目前主要就是Promise。
+正常任务包括以下情况。
+
+- setTimeout
+- setInterval
+- setImmediate
+- I/O
+- 各种事件（比如鼠标单击事件）的回调函数
+
+微任务目前主要是`process.nextTick`和 Promise 这两种情况。
 
 ## 参考链接
 
@@ -497,3 +505,4 @@ console.log(5);
 - MDN, [WindowTimers.setTimeout()](https://developer.mozilla.org/en-US/docs/Web/API/WindowTimers.setTimeout)
 - Artem Tyurin, [Being evil with setTimeout](http://agentcooper.ghost.io/being-evil-with-settimeout/)
 - Jake Archibald, [Tasks, microtasks, queues and schedules](https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/)
+- Tamas Kadlecsik, [Node.js at Scale - Understanding the Node.js Event Loop](https://blog.risingstack.com/node-js-at-scale-understanding-node-js-event-loop/)
