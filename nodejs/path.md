@@ -91,3 +91,17 @@ path.relative('/data/orandea/test/aaa', '/data/orandea/impl/bbb')
 上面代码中，如果当前目录是`/data/orandea/test/aaa`，进入`path.relative`返回的相对路径，就会到达`/data/orandea/impl/bbb`。
 
 如果`path.relative`方法的两个参数相同，则返回一个空字符串。
+
+## path.parse()
+
+`path.parse()`方法可以返回路径各部分的信息。
+
+```javascript
+var myFilePath = '/someDir/someFile.json';
+path.parse(myFilePath).base
+// "someFile.json"
+path.parse(myFilePath).name
+// "someFile"
+path.parse(myFilePath).ext
+// ".json"
+```

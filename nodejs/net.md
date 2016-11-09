@@ -21,6 +21,15 @@ server.on('connection', function (stream) {
 });
 ```
 
+## isIP()
+
+`isIP`方法用于判断某个字符串是否为IP地址。
+
+```javascript
+require('net').isIP('10.0.0.1') // 4
+require('net').isIP('cats') // 0
+```
+
 ## 服务器端Socket接口
 
 来看一个简单的Telnet服务的[例子](https://gist.github.com/atdt/4037228)。

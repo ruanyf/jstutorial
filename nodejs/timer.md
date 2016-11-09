@@ -63,6 +63,19 @@ compute();
 
 上面代码中，服务器是不会响应HTTP请求的，因为嵌套的`process.nextTick`在网络I/O之前不断执行，不会结束。
 
+实际使用时，需要分清`process.nextTick`、`setImmediate`和`setTimeout(fn, 0)`的执行顺序。
+
+```javascript
+setImmediate(function () {console.log('setImmediate')});
+process.nextTick(function () {console.log('nextTick')});
+setTimeout(function () {console.log('setTimeout')}, 0);
+// nextTick
+// setTimeout
+// setImmediate
+```
+
+上面代码中，`nextTick`之所以排在最前面，是因为它在本轮 Event Loop 的结尾执行，而`setTimeout(fn, 0)`和`setImmediate`都是在下一轮 Event Loop 执行。
+
 `process.nextTick`的一个应用是，确保回调函数异步执行。
 
 ```javascript
@@ -119,22 +132,9 @@ function StreamLibrary(resourceName) {
 
 上面代码中，只有当前Event Loop的所有代码执行完，才会触发`start`事件，这就确保这个事件可以被监听到。
 
-```javascript
-setImmediate(function() { console.log('setImmediate'); });
-setTimeout(function() { console.log('setTimeout'); }, 0);
-process.nextTick(function() { console.log('nextTick'); });
-
-// output:
-// nextTick
-// setTimeout
-// setImmediate
-```
-
-上面的代码中，`process.nextTick`总是在`setTimeout`和`setImmediate`之前执行。这是因为`process.nextTick`是在本轮事件循环的末尾执行，而其他两个方法都是在下轮事件循环执行。所以，前者总是排在后者前面。
-
 ## setImmediate()
 
-`setImmediate`方法用于指定在下一轮Event Loop立即执行的回调函数。
+`setImmediate`方法用于指定在下一轮 Event Loop 执行的回调函数。
 
 ```javascript
 setImmediate(callback[, arg][, ...])

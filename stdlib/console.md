@@ -262,6 +262,12 @@ console.dir({f1: 'foo', f2: 'bar'})
 console.dir(document.body)
 ```
 
+Node 环境之中，还可以指定以代码高亮的形式输出。
+
+```javascript
+console.dir(obj, {colors: true})
+```
+
 `dirxml`方法主要用于以目录树的形式，显示DOM节点。
 
 ```javascript

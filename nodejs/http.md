@@ -6,6 +6,15 @@ date: 2015-05-30
 modifiedOn: 2015-05-30
 ---
 
+## http.STATUS_CODES
+
+`http.STATUS_CODES`是一个对象，属性名都是状态码，属性值则是该状态码的简短解释。
+
+```javascript
+require('http').STATUS_CODES['301']
+// "Moved Permanently"
+```
+
 ## 基本用法
 
 ### 处理GET请求
@@ -211,7 +220,6 @@ http.createServer(function (request, response) {
 get方法用于发出get请求。
 
 ```javascript
-
 function getTestPersonaLoginCredentials(callback) {
   return http.get({
     host: 'personatestuser.org',
@@ -232,7 +240,6 @@ function getTestPersonaLoginCredentials(callback) {
     });
   });
 },
-
 ```
 
 ### request()
@@ -362,6 +369,26 @@ server.on('request', function (request, response) {
   }
 });
 ```
+
+`listen`方法用于启动服务器，它可以接受多种参数。
+
+```javascript
+var server = new http.Server();
+
+// 端口
+server.listen(8000);
+
+// 端口，主机
+server.listen(8000, 'localhost');
+
+// 对象
+server.listen({
+  port: 8000,
+  host: 'localhost',
+})
+```
+
+以上三种写法都是合法的。
 
 ## 搭建HTTPs服务器
 

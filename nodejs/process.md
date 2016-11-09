@@ -242,7 +242,7 @@ if (err) {
 
 ```javascript
 process.on('uncaughtException', function(err){
-  console.log('got an error: %s', err.message);
+  console.error('got an error: %s', err.message);
   process.exit(1);
 });
 
@@ -307,13 +307,18 @@ process.on('exit', function() {
 
 ### process.kill()
 
-process.kill方法用来对指定ID的线程发送信号，默认为SIGINT信号。
+`process.kill`方法用来对指定ID的线程发送信号，默认为`SIGINT`信号。
 
 ```javascript
+process.kill(process.pid, 'SIGTERM');
+```
 
+上面代码用于杀死当前进程。
+
+```javascript
 process.on('SIGTERM', function(){
-    console.log('terminating');
-    process.exit(1);
+  console.log('terminating');
+  process.exit(1);
 });
 
 setTimeout(function(){
@@ -324,7 +329,6 @@ setTimeout(function(){
 setTimeout(function(){
     console.log('never called');
 }, 1000);
-
 ```
 
 上面代码中，500毫秒后向当前进程发送SIGTERM信号（终结进程），因此1000毫秒后的指定事件不会被触发。
