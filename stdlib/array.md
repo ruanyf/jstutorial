@@ -13,7 +13,7 @@ modifiedOn: 2013-11-29
 ```javascript
 var arr = new Array(2);
 arr.length // 2
-arr // [, ,]
+arr // [ undefined x 2 ]
 ```
 
 上面代码中，`Array`构造函数的参数`2`，表示生成一个两个成员的数组，每个位置都是空值。
@@ -33,8 +33,8 @@ var arr = Array(2);
 new Array() // []
 
 // 单个正整数参数，表示返回的新数组的长度
-new Array(1) // [ ,]
-new Array(2) // [ , ,]
+new Array(1) // [ undefined ]
+new Array(2) // [ undefined x 2 ]
 
 // 非正整数的数值作为参数，会报错
 new Array(3.2) // RangeError: Invalid array length

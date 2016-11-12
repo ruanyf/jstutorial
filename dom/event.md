@@ -29,7 +29,7 @@ request.addEventListener('readystatechange', function () {...}, false);
 
 `addEventListener`方法接受三个参数。
 
-- `type`：事件名称，大小写不敏感。
+- `type`：事件名称，大小写敏感。
 - `listener`：监听函数。事件发生时，会调用该监听函数。
 - `useCapture`：布尔值，表示监听函数是否在捕获阶段（capture）触发（参见后文《事件的传播》部分），默认为`false`（监听函数只在冒泡阶段被触发）。老式浏览器规定该参数必写，较新版本的浏览器允许该参数可选。为了保持兼容，建议总是写上该参数。
 
@@ -81,7 +81,7 @@ div.addEventListener('click', listener, false);
 div.removeEventListener('click', listener, false);
 ```
 
-`removeEventListener`方法的参数，与`addEventListener`方法完全一致。它的第一个参数“事件类型”，也是大小写不敏感。
+`removeEventListener`方法的参数，与`addEventListener`方法完全一致。它的第一个参数“事件类型”，大小写敏感。
 
 注意，`removeEventListener`方法移除的监听函数，必须与对应的`addEventListener`方法的参数完全一致，而且必须在同一个元素节点，否则无效。
 
@@ -509,7 +509,7 @@ function hide(e) {
 
 **（1）type**
 
-type属性返回一个字符串，表示事件类型，具体的值同addEventListener方法和removeEventListener方法的第一个参数一致，大小写不敏感。
+`type`属性返回一个字符串，表示事件类型，大小写敏感。
 
 ```javascript
 var string = event.type;
@@ -517,7 +517,7 @@ var string = event.type;
 
 **（2）detail**
 
-detail属性返回一个数值，表示事件的某种信息。具体含义与事件类型有关，对于鼠标事件，表示鼠标按键在某个位置按下的次数，比如对于dblclick事件，detail属性的值总是2。
+`detail`属性返回一个数值，表示事件的某种信息。具体含义与事件类型有关，对于鼠标事件，表示鼠标按键在某个位置按下的次数，比如对于dblclick事件，detail属性的值总是2。
 
 ```javascript
 function giveDetails(e) {
@@ -564,13 +564,13 @@ window.addEventListener('mousemove', function(event) {
 
 **（4）isTrusted**
 
-isTrusted属性返回一个布尔值，表示该事件是否可以信任。
+`isTrusted`属性返回一个布尔值，表示该事件是否为真实用户触发。
 
 ```javascript
 var bool = event.isTrusted;
 ```
 
-Firefox浏览器中，用户触发的事件会返回true，脚本触发的事件返回false；IE浏览器中，除了使用createEvent方法生成的事件，所有其他事件都返回true；Chrome浏览器不支持该属性。
+用户触发的事件返回`true`，脚本触发的事件返回`false`。
 
 ### preventDefault()
 
