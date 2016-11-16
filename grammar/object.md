@@ -58,17 +58,17 @@ var o ={
   1e2: true,
   1e-2: true,
   .234: true,
-  0xFF: true,
+  0xFF: true
 };
 
 o
 // Object {
 //   1: "a",
-//   100: true,
-//   255: true,
 //   3.2: "b",
+//   100: true,
 //   0.01: true,
-//   0.234: true
+//   0.234: true,
+//   255: true
 // }
 ```
 
