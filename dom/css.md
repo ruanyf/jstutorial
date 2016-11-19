@@ -154,7 +154,7 @@ divStyle.removeProperty('background-color');
 
 ## window.getComputedStyle()
 
-上面介绍的行内样式具有最高的优先级，改变行内样式，通常会立即反映出来。但是，网页元素最终的样式是综合各种规则计算出来的。因此，如果想得到元素现有的样式，只读取行内样式是不够的，我们需要得到浏览器最终计算出来的那个样式规则。
+行内样式（inline style）具有最高的优先级，改变行内样式，通常会立即反映出来。但是，网页元素最终的样式是综合各种规则计算出来的。因此，如果想得到元素现有的样式，只读取行内样式是不够的，我们需要得到浏览器最终计算出来的那个样式规则。
 
 `window.getComputedStyle`方法，就用来返回这个规则。它接受一个DOM节点对象作为参数，返回一个包含该节点最终样式信息的对象。所谓“最终样式信息”，指的是各种CSS规则叠加后的结果。
 
@@ -163,7 +163,7 @@ var div = document.querySelector('div');
 window.getComputedStyle(div).backgroundColor
 ```
 
-`getComputedStyle`方法还可以接受第二个参数，表示指定节点的伪元素。
+`getComputedStyle`方法还可以接受第二个参数，表示指定节点的伪元素（比如`:before`、`:after`、`:first-line`、`:first-letter`等）。
 
 ```javascript
 var result = window.getComputedStyle(div, ':before');
@@ -177,12 +177,12 @@ var hValue = window.getComputedStyle(elem, null)
   .getPropertyValue('height');
 ```
 
-上面代码得到的`height`属性，是浏览器最终渲染出来的高度，因此比其他方法得到的高度有更大的可靠性。
+上面代码得到的`height`属性，是浏览器最终渲染出来的高度，比其他方法得到的高度有更大的可靠性。
 
 有几点需要注意。
 
-- 计算出来的CSS都是绝对单位，比如长度都是像素单位（返回值包括`px`后缀），颜色是`rgb(#, #, #)`或`rgba(#, #, #, #)`格式。
-- CSS规则的简便写法无效，比如想读取`margin`属性的值，不能直接读，只能读`marginLeft`、`marginTop`等属性。
+- 返回的CSS值都是绝对单位，比如，长度都是像素单位（返回值包括`px`后缀），颜色是`rgb(#, #, #)`或`rgba(#, #, #, #)`格式。
+- CSS规则的简写形式无效，比如，想读取`margin`属性的值，不能直接读，只能读`marginLeft`、`marginTop`等属性。
 - 如果一个元素不是绝对定位，`top`和`left`属性总是返回`auto`。
 - 该方法返回的样式对象的`cssText`属性无效，返回`undefined`。
 - 该方法返回的样式对象是只读的，如果想设置样式，应该使用元素节点的`style`属性。
@@ -228,16 +228,16 @@ var color = window.getComputedStyle(test, ':before')
 
 ### 获取样式表
 
-StyleSheet对象代表网页的一张样式表，它包括link节点加载的样式表和style节点内嵌的样式表。
+`StyleSheet`对象代表网页的一张样式表，它包括`<link>`节点加载的样式表和`<style>`节点内嵌的样式表。
 
-document对象的styleSheets属性，可以返回当前页面的所有StyleSheet对象（即所有样式表）。它是一个类似数组的对象。
+`document`对象的`styleSheets`属性，可以返回当前页面的所有`StyleSheet`对象（即所有样式表）。它是一个类似数组的对象。
 
 ```javascript
 var sheets = document.styleSheets;
 var sheet = document.styleSheets[0];
 ```
 
-此外，link节点和style节点的sheet属性，也可以获取StyleSheet对象。
+此外，`<link>`节点和`<style>`节点的`sheet`属性，也可以获取`StyleSheet`对象。
 
 ```javascript
 // HTML代码为
@@ -278,11 +278,11 @@ document.querySelector('#linkElement').disabled = 'disabled';
 
 一旦样式表设置了`disabled`属性，这张样式表就将失效。
 
-注意，`disabled`属性只能在JavaScript中设置，不能在HTML语句中设置。
+注意，`disabled`属性只能在JavaScript脚本中设置，不能在HTML语句中设置。
 
 **（3）href属性**
 
-href属性是只读属性，返回StyleSheet对象连接的样式表地址。对于内嵌的style节点，该属性等于null。
+`href`属性是只读属性，返回`StyleSheet`对象连接的样式表地址。对于内嵌的`<style>`节点，该属性等于`null`。
 
 ```javascript
 document.styleSheets[0].href
@@ -290,11 +290,11 @@ document.styleSheets[0].href
 
 **（4）title属性**
 
-title属性返回StyleSheet对象的title值。
+`title`属性返回`StyleSheet`对象的`title`值。
 
 **（5）type属性**
 
-type属性返回StyleSheet对象的type值，通常是text/css。
+`type`属性返回`StyleSheet`对象的`type`值，通常是`text/css`。
 
 ```javascript
 document.styleSheets[0].type  // "text/css"
@@ -302,19 +302,19 @@ document.styleSheets[0].type  // "text/css"
 
 **（6）parentStyleSheet属性**
 
-CSS的@import命令允许在样式表中加载其他样式表。parentStyleSheet属性返回包括了当前样式表的那张样式表。如果当前样式表是顶层样式表，则该属性返回null。
+CSS的`@import`命令允许在样式表中加载其他样式表。`parentStyleSheet`属性返回包含了当前样式表的那张样式表。如果当前样式表是顶层样式表，则该属性返回`null`。
 
 ```javascript
 if (stylesheet.parentStyleSheet) {
-    sheet = stylesheet.parentStyleSheet;
+  sheet = stylesheet.parentStyleSheet;
 } else {
-    sheet = stylesheet;
+  sheet = stylesheet;
 }
 ```
 
 **（7）ownerNode属性**
 
-ownerNode属性返回StyleSheet对象所在的DOM节点，通常是&lt;link&gt;或&lt;style&gt;。对于那些由其他样式表引用的样式表，该属性为null。
+`ownerNode`属性返回`StyleSheet`对象所在的DOM节点，通常是`<link>`或`<style>`。对于那些由其他样式表引用的样式表，该属性为`null`。
 
 ```javascript
 // HTML代码为
@@ -325,7 +325,7 @@ document.styleSheets[0].ownerNode // [object HTMLLinkElement]
 
 **（8）cssRules属性**
 
-cssRules属性指向一个类似数组的对象，里面每一个成员就是当前样式表的一条CSS规则。使用该规则的cssText属性，可以得到CSS规则对应的字符串。
+`cssRules`属性指向一个类似数组的对象，里面每一个成员就是当前样式表的一条CSS规则。使用该规则的`cssText`属性，可以得到CSS规则对应的字符串。
 
 ```javascript
 var sheet = document.querySelector('#styleElement').sheet;
@@ -337,7 +337,7 @@ sheet.cssRules[1].cssText
 // "p { line-height: 1.4em; color: blue; }"
 ```
 
-每条CSS规则还有一个style属性，指向一个对象，用来读写具体的CSS命令。
+每条CSS规则还有一个`style`属性，指向一个对象，用来读写具体的CSS命令。
 
 ```javascript
 styleSheet.cssRules[0].style.color = 'red';
@@ -359,7 +359,7 @@ sheet.deleteRule(1);
 
 ### 添加样式表
 
-添加样式表有两种方式。一种是添加一张内置样式表，即在文档中添加一个&lt;style&gt;节点。
+添加样式表有两种方式。一种是添加一张内置样式表，即在文档中添加一个`<style>`节点。
 
 ```javascript
 var style = document.createElement('style');
@@ -375,7 +375,7 @@ sheet.insertRule("header { float: left; opacity: 0.8; }", 1);
 document.head.appendChild(style);
 ```
 
-另一种是添加外部样式表，即在文档中添加一个link节点，然后将href属性指向外部样式表的URL。
+另一种是添加外部样式表，即在文档中添加一个`<link>`节点，然后将`href`属性指向外部样式表的URL。
 
 ```javascript
 var linkElm = document.createElement('link');

@@ -101,15 +101,15 @@ d.nodeName // "DIV"
 
 ### Element.className，Element.classList
 
-className属性用来读取和设置当前元素的class属性。它的值是一个字符串，每个class之间用空格分割。
+`className`属性用来读写当前元素节点的`class`属性。它的值是一个字符串，每个`class`之间用空格分割。
 
-classList属性则返回一个类似数组的对象，当前元素节点的每个class就是这个对象的一个成员。
+`classList`属性则返回一个类似数组的对象，当前元素节点的每个`class`就是这个对象的一个成员。
 
 ```html
 <div class="one two three" id="myDiv"></div>
 ```
 
-上面这个`div`元素的节点对象的`className`属性和c`lassList`属性，分别如下。
+上面这个`div`元素的节点对象的`className`属性和`classList`属性，分别如下。
 
 ```javascript
 document.getElementById('myDiv').className
