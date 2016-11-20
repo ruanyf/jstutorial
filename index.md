@@ -60,7 +60,8 @@ modifiedOn: 2014-05-18
 - [Element节点](dom/element.html)
 - [属性的操作](dom/attribute.html)
 - [Text节点和DocumentFragment节点](dom/text.html)
-- [Event对象](dom/event.html)
+- [事件模型](dom/event.html)
+- [事件类型](dom/event-type.html)
 - [CSS操作](dom/css.html)
 - [Mutation Observer](dom/mutationobserver.html)
 
