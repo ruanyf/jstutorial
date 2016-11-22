@@ -185,7 +185,7 @@ navigator.onLine // true
 
 `navigator.geolocation`返回一个Geolocation对象，包含用户地理位置的信息。
 
-### navigator.javaEnabled()，navigator.cookieEnabled()
+### navigator.javaEnabled()，navigator.cookieEnabled
 
 `javaEnabled`方法返回一个布尔值，表示浏览器是否能运行Java Applet小程序。
 
@@ -193,13 +193,13 @@ navigator.onLine // true
 navigator.javaEnabled() // false
 ```
 
-`cookieEnabled`方法返回一个布尔值，表示浏览器是否能储存Cookie。
+`cookieEnabled`属性返回一个布尔值，表示浏览器是否能储存Cookie。
 
 ```javascript
-navigator.cookieEnabled() // true
+navigator.cookieEnabled // true
 ```
 
-注意，这个返回值与是否储存某个网站的Cookie无关。用户可以设置某个网站不得储存Cookie，这时`cookieEnabled`方法返回的还是`true`。
+注意，这个返回值与是否储存某个网站的Cookie无关。用户可以设置某个网站不得储存Cookie，这时`cookieEnabled`返回的还是`true`。
 
 ## window.screen对象
 
