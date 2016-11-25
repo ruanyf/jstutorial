@@ -35,7 +35,7 @@ doctype.name // "html"
 
 `document.firstChild`通常就返回这个节点。
 
-`document.documentElement`属性返回当前文档的根节点（root）。它通常是`document`节点的第二个子节点，紧跟在`document.doctype`节点后面。对于HTML网页，该属性返回`<html>`节点，代表`<html lang="en">`。
+`document.documentElement`属性返回当前文档的根节点（root）。它通常是`document`节点的第二个子节点，紧跟在`document.doctype`节点后面。对于HTML网页，该属性返回`<html>`节点。
 
 `document.defaultView`属性，在浏览器中返回`document`对象所在的`window`对象，否则返回`null`。
 
