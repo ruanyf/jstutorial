@@ -266,7 +266,7 @@ document.body.offsetWidth
 
 ### Element.offsetLeft，Element.offsetTop
 
-`Element.offsetLeft`返回当前元素左上角相对于`Element.offsetParent`节点的垂直偏移，`Element.offsetTop`返回水平位移，单位为像素。通常，这两个值是指相对于父节点的位移。
+`Element.offsetLeft`返回当前元素左上角相对于`Element.offsetParent`节点的水平位移，`Element.offsetTop`返回垂直位移，单位为像素。通常，这两个值是指相对于父节点的位移。
 
 下面的代码可以算出元素左上角相对于整张网页的坐标。
 
@@ -351,7 +351,7 @@ document.body.scrollLeft
 document.body.scrollTop
 ```
 
-网页元素本身的高度和宽度（不含overflow溢出的部分），通过`offsetHeight`和`offsetWidth`属性（包括Padding和Border）或`Element.getBoundingClientRect`方法获取。
+网页元素本身的高度和宽度（不含overflow溢出的部分），通过`offsetHeight`和`offsetWidth`属性（包括`Padding`和`Border`）或`Element.getBoundingClientRect`方法获取。
 
 ```javascript
 // 网页元素的高度
