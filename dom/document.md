@@ -15,7 +15,7 @@ modifiedOn: 2014-05-18
 - 对于正常的网页，直接使用`document`或`window.document`。
 - 对于`iframe`载入的网页，使用`iframe`节点的`contentDocument`属性。
 - 对Ajax操作返回的文档，使用XMLHttpRequest对象的`responseXML`属性。
-- 对于某个节点包含的文档，使用该节点的`ownerDocument`属性。
+- 对于包含某个节点的文档，使用该节点的`ownerDocument`属性。
 
 上面这四种`document`节点，都部署了[Document接口](http://dom.spec.whatwg.org/#interface-document)，因此有共同的属性和方法。当然，各自也有一些自己独特的属性和方法，比如HTML和XML文档的`document`节点就不一样。
 
