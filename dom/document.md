@@ -311,10 +311,10 @@ var interval = setInterval(function() {
 ```html
 <iframe id="editor" src="about:blank"></iframe>
 <script>
-onLoad(function () {
+!(function () {
   var editor = document.getElementById('editor');
   editor.contentDocument.designMode = 'on';
-});
+})();
 </script>
 ```
 
