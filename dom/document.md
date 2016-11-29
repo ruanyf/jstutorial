@@ -64,7 +64,7 @@ document.body === document.querySelector('body') // true
 
 ### document.links，document.forms，document.images，document.embeds
 
-`document.links`属性返回当前文档所有的`a`及`area`元素。
+`document.links`属性返回当前文档所有设定了`href`属性的`a`及`area`元素。
 
 `document.forms`属性返回页面中所有表单元素`form`。
 
