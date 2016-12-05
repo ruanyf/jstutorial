@@ -93,12 +93,13 @@ console.log('%d %s balloons', number, color);
 使用`%c`占位符时，对应的参数必须是CSS语句，用来对输出内容进行CSS渲染。
 
 ```javascript
-console.log('%cThis text is styled!',
+console.log(
+  '%cThis text is styled!',
   'color: red; background: yellow; font-size: 24px;'
 )
 ```
 
-上面代码运行后，输出的内容将显示为蓝底绿字。
+上面代码运行后，输出的内容将显示为黄底红字。
 
 `console.log`方法的两种参数格式，可以结合在一起使用。
 

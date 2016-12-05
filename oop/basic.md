@@ -1,5 +1,5 @@
 ---
-title: 面向对象编程概述
+title: 构造函数与 new 命令
 layout: page
 category: oop
 date: 2012-12-28
@@ -32,7 +32,7 @@ modifiedOn: 2014-02-04
 
 前面说过，“对象”是单个实物的抽象。通常需要一个模板，表示某一类实物的共同特征，然后“对象”根据这个模板生成。
 
-典型的面向对象编程语言（比如C++和Java），存在“类”（class）这个概念。所谓“类”就是对象的模板，对象就是“类”的实例。但是，JavaScript语言的对象体系，不是基于“类”的，而是基于构造函数（constructor）和原型链（prototype）。
+典型的面向对象编程语言（比如 C++ 和 Java），存在“类”（class）这个概念。所谓“类”就是对象的模板，对象就是“类”的实例。但是，JavaScript语言的对象体系，不是基于“类”的，而是基于构造函数（constructor）和原型链（prototype）。
 
 JavaScript语言使用构造函数（constructor）作为对象的模板。所谓“构造函数”，就是专门用来生成“对象”的函数。它提供模板，描述对象的基本结构。一个构造函数，可以生成多个对象，这些对象都有相同的结构。
 
@@ -211,3 +211,15 @@ function _new(/* 构造函数 */ constructor, /* 构造函数参数 */ param1) {
 var actor = _new(Person, '张三', 28);
 ```
 
+### new.target
+
+函数内部可以使用`new.target`属性。如果当前函数是`new`命令调用，`new.target`指向当前函数，否则为`undefined`。
+
+```javascript
+function f() {
+  console.log(new.target === f);
+}
+
+f() // false
+new f() // true
+```

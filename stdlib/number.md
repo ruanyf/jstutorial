@@ -8,7 +8,7 @@ modifiedOn: 2014-01-01
 
 ## 概述
 
-Number对象是数值对应的包装对象，可以作为构造函数使用，也可以作为工具函数使用。
+`Number`对象是数值对应的包装对象，可以作为构造函数使用，也可以作为工具函数使用。
 
 作为构造函数时，它用于生成值为数值的对象。
 
@@ -17,7 +17,7 @@ var n = new Number(1);
 typeof n // "object"
 ```
 
-上面代码中，`Number`对象作为构造函数使用，返回一个值为1的对象。
+上面代码中，`Number`对象作为构造函数使用，返回一个值为`1`的对象。
 
 作为工具函数时，它可以将任何类型的值转为数值。
 
@@ -25,11 +25,11 @@ typeof n // "object"
 Number(true) // 1
 ```
 
-上面代码将布尔值`true`转为数值1。Number对象的工具方法，详细介绍参见上一章的《数据类型转换》一节。
+上面代码将布尔值`true`转为数值`1`。`Number`作为工具函数的用法，详见上一章的《数据类型转换》一节。
 
 ## Number对象的属性
 
-Number对象拥有以下一些属性。
+`Number`对象拥有以下一些属性。
 
 - `Number.POSITIVE_INFINITY`：正的无限，指向`Infinity`。
 - `Number.NEGATIVE_INFINITY`：负的无限，指向`-Infinity`。
@@ -58,7 +58,7 @@ Number.MAX_SAFE_INTEGER // 9007199254740991
 Number.MIN_SAFE_INTEGER // -9007199254740991
 ```
 
-## Number对象实例的方法
+## Number 对象实例的方法
 
 `Number`对象有4个实例方法，都跟将数值转换成指定格式有关。
 

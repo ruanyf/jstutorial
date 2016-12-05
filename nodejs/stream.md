@@ -6,7 +6,11 @@ date: 2014-10-23
 modifiedOn: 2014-10-23
 ---
 
-## 概念
+数据读写可以看作是事件模式（Event）的特例，不断发送的数据块好比一个个的事件。读数据是`read`事件，写数据是`write`事件，而数据块是事件附带的信息。Node 为这类情况提供了一个特殊接口`Stream`。
+
+## 概述
+
+### 概念
 
 ”数据流“（stream）是处理系统缓存的一种方式。操作系统采用数据块（chunk）的方式读取数据，每收到一次数据，就存入缓存。Node应用程序有两种缓存的处理方式，第一种是等到所有数据接收完毕，一次性从缓存读取，这就是传统的读取文件的方式；第二种是采用“数据流”的方式，收到一块数据，就读取一块，即在数据还没有接收完成时，就开始处理它。
 
@@ -14,6 +18,7 @@ modifiedOn: 2014-10-23
 
 ```javascript
 var fs = require('fs');
+
 fs
 .createReadStream('./data/customers.csv')
 .pipe(process.stdout);
@@ -25,146 +30,20 @@ Unix操作系统从很早以前，就有“数据流”这个概念，它是不�
 
 数据流接口最大特点就是通过事件通信，具有`readable`、`writable`、`drain`、`data`、`end`、`close`等事件，既可以读取数据，也可以写入数据。读写数据时，每读入（或写入）一段数据，就会触发一次`data`事件，全部读取（或写入）完毕，触发`end`事件。如果发生错误，则触发`error`事件。
 
-一个对象只要部署了数据流接口，就可以从它读取数据，或者写入数据。Node内部很多涉及IO处理的对象，都部署了Stream接口，比如HTTP连接、文件读写、标准输入输出等。
+一个对象只要部署了数据流接口，就可以从它读取数据，或者写入数据。Node内部很多涉及IO处理的对象，都部署了Stream接口，下面就是其中的一些。
 
-## 基本用法
-
-`fs`模块的`createReadStream`方法，就可以创建一个读取数据的数据流。
-
-```javascript
-var fs = require('fs');
-var stream = fs.createReadStream('readme.txt');
-stream.setEncoding('utf8');
-```
-
-上面代码创建了一个文本文件`readme.txt`的数据流。由于这个数据流会当作文本处理，所以要用`setEncoding`方法设定编码。
-
-然后，监听`data`事件，获取每一个数据块；监听`end`事件，当数据传送结束，再统一处理。
-
-```javascript
-var data = '';
-stream.on('data', function(chunk) {
-  data += chunk;
-})
-
-stream.on('end', function() {
-  console.log('Data length: %d', data.length);
-});
-```
-
-监听`readable`事件，也可以取得与监听`data`事件同样的效果。
-
-```javascript
-var data = '';
-stream.on('readable', function() {
-  var chunk;
-  while(chunk = stream.read()) {
-    data += chunk;
-  }
-});
-```
-
-数据流还有`pause`和`resume`方法，可以暂停和恢复数据传送。
-
-```javascript
-// 暂停
-stream.pause();
-
-// 1秒后恢复
-setTimeout(stream.resume.bind(stream), 1000);
-```
-
-注意，数据流新建以后，默认状态是暂停，只有指定了`data`事件的回调函数，或者调用了`resume`方法，数据才会开发发送。
-
-如果要同时使用`readable`与`data`事件，可以像下面这样写。
-
-```javascript
-stream.pause();
-
-var pulledData = '';
-var pushedData = '';
-
-stream.on('readable', function() {
-  var chunk;
-  while(chunk = stream.read()) {
-    pulledData += chunk;
-  }
-});
-
-stream.on('data', function(chunk) {
-  pushedData += chunk;
-});
-```
-
-上面代码中，显式调用`pause`方法，会使得`readable`事件释放一个`data`事件，否则`data`监听无效。
-
-如果觉得`data`事件和`end`事件写起来太麻烦，Stream接口还提供了`pipe`方法，自动处理这两个事件。数据流通过`pipe`方法，可以方便地导向其他具有Stream接口的对象。
-
-```javascript
-var fs = require('fs');
-var zlib = require('zlib');
-
-fs.createReadStream('wow.txt')
-  .pipe(zlib.createGzip())
-  .pipe(process.stdout);
-```
-
-上面代码先打开文本文件`wow.txt`，然后压缩，再导向标准输出。
-
-```javascript
-fs.createReadStream('wow.txt')
-  .pipe(zlib.createGzip())
-  .pipe(fs.createWriteStream('wow.gz'));
-```
-
-上面代码压缩文件`wow.txt`以后，又将其写回压缩文件。
-
-下面代码新建一个Stream实例，然后指定写入事件和终止事件的回调函数，再将其接到标准输入之上。
-
-```javascript
-var stream = require('stream');
-var Stream = stream.Stream;
-
-var ws = new Stream;
-ws.writable = true;
-
-ws.write = function(data) {
-  console.log("input=" + data);
-}
-
-ws.end = function(data) {
-  console.log("bye");
-}
-
-process.stdin.pipe(ws);
-```
-
-调用上面的脚本，会产生以下结果。
-
-```bash
-$ node pipe_out.js
-hello
-input=hello
-^d
-bye
-```
-
-上面代码调用脚本下，键入`hello`，会输出`input=hello`。然后按下`ctrl-d`，会输出`bye`。使用管道命令，可以看得更清楚。
-
-```bash
-$ echo hello | node pipe_out.js
-input=hello
-
-bye
-```
-
-Stream接口分成三类。
-
-- 可读数据流接口，用于读取数据。
-- 可写数据流接口，用于写入数据。
-- 双向数据流接口，用于读取和写入数据，比如Node的tcp sockets、zlib、crypto都部署了这个接口。
+- 文件读写
+- HTTP 请求的读写
+- TCP 连接
+- 标准输入输出
 
 ## 可读数据流
+
+Stream 接口分成三类。
+
+- 可读数据流接口，用于对外提供数据。
+- 可写数据流接口，用于写入数据。
+- 双向数据流接口，用于读取和写入数据，比如Node的tcp sockets、zlib、crypto都部署了这个接口。
 
 “可读数据流”用来产生数据。它表示数据的来源，只要一个对象提供“可读数据流”，就表示你可以从其中读取数据。
 
@@ -179,8 +58,7 @@ rs.push(null);
 rs.pipe(process.stdout);
 ```
 
-上面代码产生了一个可写数据流，最后将其写入标注输出。可读数据流的push方法，用来将数据输入缓存。
-`rs.push(null)`中的null，用来告诉rs，数据输入完毕。
+上面代码产生了一个可写数据流，最后将其写入标注输出。可读数据流的`push`方法，用来将数据输入缓存。`rs.push(null)`中的null，用来告诉rs，数据输入完毕。
 
 “可读数据流”有两种状态：流动态和暂停态。处于流动态时，数据会尽快地从数据源导向用户的程序；处于暂停态时，必须显式调用`stream.read()`等指令，“可读数据流”才会释放数据。刚刚新建的时候，“可读数据流”处于暂停态。
 
@@ -516,9 +394,199 @@ readable.on('end', function() {
 
 当读取数据发生错误时，error事件被触发。
 
+## 继承可读数据流接口
+
+可读数据流又分成两种，一种是 pull 模式，自己拉数据，就好像用吸管吸水，只有你吸了，水才会上来；另一种是 push 模式，数据自动推送给你，就好像水从水龙头自动涌出来。如果监听`data`事件，那么自动激活 push 模式；如果自己从数据流读取数据，那就是在使用 pull 模式。
+
+任何对象都可以部署可读数据流的接口。
+
+```javascript
+var Readable = require('stream').Readable;
+var util = require('util');
+
+function MyObject(options) {
+  if (! (this instanceof MyObject)) return new MyObject(options);
+  if (! options) options = {};
+  options.objectMode = true;
+  Readable.call(this, options);
+}
+
+util.inherits(MyObject, Readable);
+
+MyObject.prototype._read = function read() {
+  var self = this;
+  someMethodGetData(function(err, data) {
+    if (err) self.emit('error', err);
+    else self.push(data);
+  });
+};
+```
+
+上面代码中，构造函数`MyObject`继承了读数据流的接口。`options.objectMode`设为`true`，是为了设置数据流处理的是对象，而不是字符串或者 buffer。此外，还要在`MyObject.prototype`上部署`_read`方法，每当数据流要读取数据，就会调用这个方法。在这个方法里面，我们取到数据，使用`stream.push(data)`将数据放进数据流。
+
+然后，`MyObject`的实例就可以使用“读数据流”的接口了。
+
+```javascript
+var myObj = new MyObject();
+
+myObj.on('data', function(data) {
+  console.log(data);
+});
+
+```
+
+上面是 push 模式，下面是 pull 模式。
+
+```javascript
+var myObj = new MyObject();
+
+var data = myObj.read();
+```
+
+`myObj`也可以暂停/恢复读数据。
+
+```javascript
+myObj.pause();
+
+setTimeout(function () {
+  myObj.resume();
+}, 5000);
+```
+
+### 实例： fs 模块的读数据流
+
+`fs`模块的`createReadStream`方法，就可以创建一个读取数据的数据流。
+
+```javascript
+var fs = require('fs');
+var stream = fs.createReadStream('readme.txt');
+stream.setEncoding('utf8');
+```
+
+上面代码创建了一个文本文件`readme.txt`的数据流。由于这个数据流会当作文本处理，所以要用`setEncoding`方法设定编码。
+
+然后，监听`data`事件，获取每一个数据块；监听`end`事件，当数据传送结束，再统一处理。
+
+```javascript
+var data = '';
+stream.on('data', function(chunk) {
+  data += chunk;
+})
+
+stream.on('end', function() {
+  console.log('Data length: %d', data.length);
+});
+```
+
+监听`readable`事件，也可以取得与监听`data`事件同样的效果。
+
+```javascript
+var data = '';
+stream.on('readable', function() {
+  var chunk;
+  while(chunk = stream.read()) {
+    data += chunk;
+  }
+});
+```
+
+数据流还有`pause`和`resume`方法，可以暂停和恢复数据传送。
+
+```javascript
+// 暂停
+stream.pause();
+
+// 1秒后恢复
+setTimeout(stream.resume(), 1000);
+```
+
+注意，数据流新建以后，默认状态是暂停，只有指定了`data`事件的回调函数，或者调用了`resume`方法，数据才会开发发送。
+
+如果要同时使用`readable`与`data`事件，可以像下面这样写。
+
+```javascript
+stream.pause();
+
+var pulledData = '';
+var pushedData = '';
+
+stream.on('readable', function() {
+  var chunk;
+  while(chunk = stream.read()) {
+    pulledData += chunk;
+  }
+});
+
+stream.on('data', function(chunk) {
+  pushedData += chunk;
+});
+```
+
+上面代码中，显式调用`pause`方法，会使得`readable`事件释放一个`data`事件，否则`data`监听无效。
+
+如果觉得`data`事件和`end`事件写起来太麻烦，Stream 接口还提供了`pipe`方法，自动处理这两个事件。数据流通过`pipe`方法，可以方便地导向其他具有Stream接口的对象。
+
+```javascript
+var fs = require('fs');
+var zlib = require('zlib');
+
+fs.createReadStream('wow.txt')
+  .pipe(zlib.createGzip())
+  .pipe(process.stdout);
+```
+
+上面代码先打开文本文件`wow.txt`，然后压缩，再导向标准输出。
+
+```javascript
+fs.createReadStream('wow.txt')
+  .pipe(zlib.createGzip())
+  .pipe(fs.createWriteStream('wow.gz'));
+```
+
+上面代码压缩文件`wow.txt`以后，又将其写回压缩文件。
+
+下面代码新建一个Stream实例，然后指定写入事件和终止事件的回调函数，再将其接到标准输入之上。
+
+```javascript
+var stream = require('stream');
+var Stream = stream.Stream;
+
+var ws = new Stream;
+ws.writable = true;
+
+ws.write = function(data) {
+  console.log("input=" + data);
+}
+
+ws.end = function(data) {
+  console.log("bye");
+}
+
+process.stdin.pipe(ws);
+```
+
+调用上面的脚本，会产生以下结果。
+
+```bash
+$ node pipe_out.js
+hello
+input=hello
+^d
+bye
+```
+
+上面代码调用脚本下，键入`hello`，会输出`input=hello`。然后按下`ctrl-d`，会输出`bye`。使用管道命令，可以看得更清楚。
+
+```bash
+$ echo hello | node pipe_out.js
+input=hello
+
+bye
+```
+
 ## 可写数据流
 
-“可写数据流”允许你将数据写入某个目的地。它是数据写入的一种抽象，不同的数据目的地部署了这个接口以后，就可以用统一的方法写入。
+“可读数据流”用来对外释放数据，“可写数据流”则是用来接收数据。它允许你将数据写入某个目的地。它是数据写入的一种抽象，不同的数据目的地部署了这个接口以后，就可以用统一的方法写入。
 
 以下是部署了可写数据流的一些场合。
 
@@ -530,6 +598,52 @@ readable.on('end', function() {
 - tcp sockets
 - child process stdin
 - process.stdout, process.stderr
+
+只要调用`stream.write(o)`，就能将数据写入可读数据流。`stream.write(payload, callback)`可以指定回调函数`callback`，一旦缓存中的数据释放（`payload`），就会调用这个回调函数。
+
+部署“可写数据流”，必须继承`stream.Writable`，以及实现`stream._write`方法。下面是一个例子，数据库的写入接口部署“可写数据流”接口。
+
+```javascript
+var Writable = require('stream').Writable;
+var util = require('util');
+
+module.exports = DatabaseWriteStream;
+
+function DatabaseWriteStream(options) {
+  if (! (this instanceof DatabaseWriteStream))
+    return new DatabaseWriteStream(options);
+  if (! options) options = {};
+  options.objectMode = true;
+  Writable.call(this, options);
+}
+
+util.inherits(DatabaseWriteStream, Writable);
+
+DatabaseWriteStream.prototype._write = function write(doc, encoding, callback) {
+  insertIntoDatabase(JSON.stringify(doc), callback);
+};
+```
+
+上面代码中，`_write`方法执行实际的写入操作，它必须接受三个参数。
+
+- `chunk`：要写入的数据块
+- `encoding`：如果写入的是字符串，必须字符串的编码
+- `callback`：写入完成后或发生错误时的回调函数
+
+下面是用法的例子。
+
+```javascript
+var DbWriteStream = require('./db_write_stream');
+var db = DbWriteStream();
+
+var Thermometer = require('./thermometer');
+
+var thermomether = Thermometer();
+
+thermomether.on('data', function(temp) {
+  db.write({when: Date.now(), temperature: temp});
+});
+```
 
 下面是fs模块的可写数据流的例子。
 
@@ -703,6 +817,80 @@ reader.unpipe(writer);
 如果写入数据或pipe数据时发生错误，就会触发该事件。
 
 该事件的回调函数，接受一个Error对象作为参数。
+
+## pipe 方法
+
+你可能会问为什么数据库要部署“可写数据流”接口，而不是直接使用原始的写入接口。答案就是为了可以使用`pipe`方法。
+
+```javascript
+var DbWriteStream = require('./db_write_stream');
+var db = DbWriteStream();
+
+var Thermometer = require('./thermometer');
+var thermomether = Thermometer();
+
+thermomether.pipe(db);
+
+// 10秒后断开连接
+setTimeout(function () {
+  thermometer.unpipe(db);
+}, 10e3);
+```
+
+当可读数据流与可写数据流通过`readable.pipe(writable)`结合在一起时，数据会自动调整到消费者的速率。在内部，`pipe`使用“可写数据流”的`.write()`方法的返回值，来决定是否是否暂停读数据：如果`writable.write`返回`true`，表明数据已经写入完毕，缓存已经空了；如果返回`false`，就表示`可写数据流`正在缓存写入的数据，这意味着可以读取数据。等到”可写数据流“排空，就会释放`drain`事件，告诉数据源可以恢复释放数据了。
+
+## 转换数据流
+
+转换数据流用于将可读数据流释放的数据，转换成另一种格式，然后再发给可写数据流。
+
+下面的例子是将一个JavaScript对象的数据流，转为JSON字符串的数据流。
+
+```javascript
+// json_encode_stream.js
+var Transform = require('stream').Transform;
+var inherits = require('util').inherits;
+
+module.exports = JSONEncode;
+
+function JSONEncode(options) {
+  if ( ! (this instanceof JSONEncode))
+    return new JSONEncode(options);
+
+  if (! options) options = {};
+  options.objectMode = true;
+  Transform.call(this, options);
+}
+
+inherits(JSONEncode, Transform);
+
+JSONEncode.prototype._transform = function _transform(obj, encoding, callback) {
+  try {
+    obj = JSON.stringify(obj);
+  } catch(err) {
+    return callback(err);
+  }
+
+  this.push(obj);
+  callback();
+};
+```
+
+上面代码中，`_transform`方法接受原始的JavaScript对象，将它们转为JSON字符串。
+
+然后，可读数据流与可写数据流之间，就可以用转换数据流连起来。
+
+```javascript
+var DbWriteStream = require('./db_write_stream');
+var db = DbWriteStream();
+
+var JSONEncodeStream = require('./json_encode_stream');
+var json = JSONEncodeStream();
+
+var Thermometer = require('../thermometer');
+var thermometer = Thermometer();
+
+thermometer.pipe(json).pipe(db);
+```
 
 ## HTTP请求
 

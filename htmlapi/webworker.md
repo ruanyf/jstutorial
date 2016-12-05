@@ -218,6 +218,38 @@ worker.postMessage('');
 
 上面所讲的Web Worker都是专属于某个网页的，当该网页关闭，worker就自动结束。除此之外，还有一种共享式的Web Worker，允许多个浏览器窗口共享同一个worker，只有当所有网口关闭，它才会结束。这种共享式的Worker用SharedWorker对象来建立，因为适用场合不多，这里就省略了。
 
+## 实例：Worker 进程完成论询
+
+有时，浏览器需要论询服务器状态，以便第一时间得知状态改变。这个工作可以放在 Worker 进程里面。
+
+```javascript
+var pollingWorker = createWorker(function (e) {
+  var cache;
+
+  function compare(new, old) { ... };
+
+  var myRequest = new Request('/my-api-endpoint');
+
+  setInterval(function () {
+    fetch('/my-api-endpoint').then(function (res) {
+      var data = res.json();
+
+      if(!compare(res.json(), cache)) {
+        cache = data;
+
+        self.postMessage(data);
+      }
+    })
+  }, 1000)
+});
+
+pollingWorker.onmessage = function () {
+  // render data
+}
+
+pollingWorker.postMessage('init');
+```
+
 ## Service Worker
 
 Service worker是一个在浏览器后台运行的脚本，与网页不相干，专注于那些不需要网页或用户互动就能完成的功能。它主要用于操作离线缓存。

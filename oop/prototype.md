@@ -528,7 +528,7 @@ o2.isPrototypeOf(o3) // true
 o1.isPrototypeOf(o3) // true
 ```
 
-上面代码表明，只要某个对象处在原型链上，`isProtypeOf`都返回`true`。
+上面代码表明，只要某个对象处在原型链上，`isPrototypeOf`都返回`true`。
 
 ```javascript
 Object.prototype.isPrototypeOf({}) // true
