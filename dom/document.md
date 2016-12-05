@@ -15,7 +15,7 @@ modifiedOn: 2014-05-18
 - 对于正常的网页，直接使用`document`或`window.document`。
 - 对于`iframe`载入的网页，使用`iframe`节点的`contentDocument`属性。
 - 对Ajax操作返回的文档，使用XMLHttpRequest对象的`responseXML`属性。
-- 对于某个节点包含的文档，使用该节点的`ownerDocument`属性。
+- 对于包含某个节点的文档，使用该节点的`ownerDocument`属性。
 
 上面这四种`document`节点，都部署了[Document接口](http://dom.spec.whatwg.org/#interface-document)，因此有共同的属性和方法。当然，各自也有一些自己独特的属性和方法，比如HTML和XML文档的`document`节点就不一样。
 
@@ -35,7 +35,7 @@ doctype.name // "html"
 
 `document.firstChild`通常就返回这个节点。
 
-`document.documentElement`属性返回当前文档的根节点（root）。它通常是`document`节点的第二个子节点，紧跟在`document.doctype`节点后面。对于HTML网页，该属性返回`<html>`节点，代表`<html lang="en">`。
+`document.documentElement`属性返回当前文档的根节点（root）。它通常是`document`节点的第二个子节点，紧跟在`document.doctype`节点后面。对于HTML网页，该属性返回`<html>`节点。
 
 `document.defaultView`属性，在浏览器中返回`document`对象所在的`window`对象，否则返回`null`。
 
@@ -64,7 +64,7 @@ document.body === document.querySelector('body') // true
 
 ### document.links，document.forms，document.images，document.embeds
 
-`document.links`属性返回当前文档所有的`a`元素，或者说返回具有`href`属性的元素。
+`document.links`属性返回当前文档所有设定了`href`属性的`a`及`area`元素。
 
 `document.forms`属性返回页面中所有表单元素`form`。
 
@@ -311,10 +311,10 @@ var interval = setInterval(function() {
 ```html
 <iframe id="editor" src="about:blank"></iframe>
 <script>
-onLoad(function () {
+!(function () {
   var editor = document.getElementById('editor');
   editor.contentDocument.designMode = 'on';
-});
+})();
 </script>
 ```
 
