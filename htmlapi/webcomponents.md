@@ -315,7 +315,7 @@ document.body.appendChild(shadowRoot);
 
 上面代码创造了一个`shadowRoot`元素，然后将其插入HTML文档。
 
-下面的例子是指定网页中某个现存的元素，作为Shadom DOM的根元素。
+下面的例子是指定网页中某个现存的元素，作为Shadow DOM的根元素。
 
 ```html
 <button>Hello, world!</button>
