@@ -250,7 +250,9 @@ document.body.scrollTop
 
 ### Element.offsetHeight，Element.offsetWidth
 
-`Element.offsetHeight`属性返回元素的垂直高度，`Element.offsetWidth`属性返回水平宽度，可以理解成元素右下角距离左上角的位移。这两个属性值包括`Padding`和`Border`、以及滚动条，也就是说从边框的左上角开始计算，这也意味着，`Element.offsetHeight`只比`Element.clientHeight`少了边框的高度。它们的单位为像素，都是只读。
+`Element.offsetHeight`属性返回元素的垂直高度，`Element.offsetWidth`属性返回水平宽度。`offsetHeight`可以理解成元素左下角距离左上角的位移，`offsetWidth`是元素右上角距离左上角的位移。它们的单位为像素，都是只读。
+
+这两个属性值包括`Padding`和`Border`、以及滚动条。这也意味着，如果不存在内容溢出，`Element.offsetHeight`只比`Element.clientHeight`多了边框的高度。
 
 整张网页的高度，可以在`document.documentElement`和`document.body`上读取。
 
