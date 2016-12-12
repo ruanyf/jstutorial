@@ -307,7 +307,7 @@ Object.prototype.toString.call(value)
 - Error对象：返回`[object Error]`。
 - Date对象：返回`[object Date]`。
 - RegExp对象：返回`[object RegExp]`。
-- 其他对象：返回`[object " + 构造函数的名称 + "]`。
+- 其他对象：返回`[object Object]`。
 
 也就是说，`Object.prototype.toString`可以得到一个实例对象的构造函数。
 
