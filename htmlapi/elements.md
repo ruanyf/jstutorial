@@ -112,7 +112,7 @@ document.forms.myforms;
 
 如果`<form>`元素带有`name`或者`id`属性，这个元素节点会自动成为`window`和`document`的属性，并且可以从`document.forms`上取到。`<form name="myForm">`节点用下面几种方法可以拿到。
 
-```javascirpt
+```javascript
 window.myForm
 document.myForm
 document.forms.myForm
@@ -126,7 +126,7 @@ document.forms[n]
 ```javascript
 document.forms.myForm[0]
 document.forms.myForm.address
-document.myForm.address // 只对name属性生效，对id属性不生效
+document.myForm.address
 ```
 
 表单节点都有一个`elements`属性，包含了当前表单的所有子元素，所以也可以用下面的方法取到`address`子节点。
