@@ -614,22 +614,23 @@ $('#button').on('click', f);
 `bind`方法用于将函数体内的`this`绑定到某个对象，然后返回一个新函数。
 
 ```javascript
-var print = console.log;
-print(2)
-// TypeError: Illegal invocation
+var d = new Date();
+d.getTime() // 1481869925657
+
+var print = d.getTime;
+print() // Uncaught TypeError: this is not a Date object.
 ```
 
-上面代码中，我们将`console`对象的`log`赋给变量`print`，然后调用`print`就报错了，因为这时`log`方法内部的`this`已经不指向`console`对象了。
+上面代码中，我们将`d.getTime`方法赋给变量`print`，然后调用`print`就报错了。这是因为`getTime`方法内部的`this`，绑定`Date`对象的实例，赋给变量`print`以后，内部的`this`已经不指向`Date`对象的实例了。
 
 `bind`方法可以解决这个问题，让`log`方法绑定`console`对象。
 
 ```javascript
-var print = console.log.bind(console);
-print(2)
-// 2
+var print = d.getTime.bind(d);
+print() // 1481869925657
 ```
 
-上面代码中，`bind`方法将`log`方法内部的`this`绑定到`console`对象，这时就可以安全地将这个方法赋值给其他变量了。
+上面代码中，`bind`方法将`getTime`方法内部的`this`绑定到`d`对象，这时就可以安全地将这个方法赋值给其他变量了。
 
 下面是一个更清晰的例子。
 

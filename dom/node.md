@@ -695,9 +695,9 @@ document.lastElementChild.nodeName
 
 childElementCount属性返回当前节点的所有Element子节点的数目。
 
-### ChildNode接口
+### ChildNode 接口
 
-ChildNode接口用于处理子节点（包含但不限于Element子节点）。Element节点、DocumentType节点和CharacterData接口，部署了ChildNode接口。凡是这三类节点（接口），都可以使用下面四个方法。但是现实的情况是，除了第一个remove方法，目前没有浏览器支持后面三个方法。
+`ChildNode`接口用于处理子节点（包含但不限于`Element`子节点）。`Element`节点、`DocumentType`节点和`CharacterData`接口，部署了`ChildNode`接口。凡是这三类节点（接口），都可以使用下面四个方法。
 
 **（1）remove()**
 
@@ -707,7 +707,7 @@ remove方法用于移除当前节点。
 el.remove()
 ```
 
-上面方法在DOM中移除了el节点。注意，调用这个方法的节点，是被移除的节点本身，而不是它的父节点。
+上面方法在DOM中移除了`el`节点。注意，调用这个方法的节点，是被移除的节点本身，而不是它的父节点。
 
 **（2）before()**
 

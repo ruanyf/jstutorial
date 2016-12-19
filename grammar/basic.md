@@ -445,10 +445,10 @@ switch (x) {
 JavaScript还有一个三元运算符（即该运算符需要三个运算子）`?:`，也可以用于逻辑判断。
 
 ```javascript
-(contidion) ? expr1 : expr2
+(condition) ? expr1 : expr2
 ```
 
-上面代码中，如果`contidion`为`true`，则返回`expr1`的值，否则返回`expr2`的值。
+上面代码中，如果`condition`为`true`，则返回`expr1`的值，否则返回`expr2`的值。
 
 ```javascript
 var even = (n % 2 === 0) ? true : false;
