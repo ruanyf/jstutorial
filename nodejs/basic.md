@@ -520,6 +520,7 @@ emitter.on('error', function(err) {
 当一个异常未被捕获，就会触发uncaughtException事件，可以对这个事件注册回调函数，从而捕获异常。
 
 ```javascript
+var logger = require('tracer').console();
 process.on('uncaughtException', function(err) {
   console.error('Error caught in uncaughtException event:', err);
 });
@@ -527,7 +528,7 @@ process.on('uncaughtException', function(err) {
 try {
   setTimeout(function(){
     throw new Error("error");
-  },1)
+  },1);
 } catch (err) {
   //can not catch it
   console.log(err);
@@ -538,7 +539,7 @@ try {
 
 ```javascript
 process.on('uncaughtException', function(err) {
-  logger(err);
+  logger.log(err);
   process.exit(1);
 });
 ```
