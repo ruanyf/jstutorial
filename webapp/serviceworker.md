@@ -6,35 +6,104 @@ date: 2016-08-14
 modifiedOn: 2016-08-14
 ---
 
-Service worker是一个指定网页在后台运行的服务进程。它有很多功能。
+## Service worker 是什么？
+
+Service worker 是一个指定网页在后台运行的服务进程。它有很多功能。
 
 - 推送通知（push notification）
 - 背景同步（background sync）
 - 拦截和处理网络请求，管理服务器回应（response）的缓存
 
-因此，Service worker可以提供离线体验，可以把它看作是一个可编程的网络代理，允许开发者控制页面的网络请求。
+因此，Service worker 可以提供离线体验，可以把它看作是一个可编程的网络代理，允许开发者控制页面的网络请求。
 
 它有以下注意点。
 
-- Service worker只支持HTTPS协议
-- Service worker不能直接获取DOM，只能通过`postMessage`接口，与它控制的页面进行通信，然后由页面上的脚本获取DOM。
-- Service worker不用的时候会关闭，需要的时候再重启，所以不能依赖它里面的全局状态。如果需要持久地保存一个值，Service worker可以用 IndexedDB API。
+- Service worker 只支持 HTTPS 协议
+- Service worker 不能直接获取 DOM，只能通过`postMessage`接口，与它控制的页面进行通信，然后由页面上的脚本获取 DOM。
+- Service worker 不用的时候会关闭，需要的时候再重启，所以不能依赖它里面的全局状态。如果需要持久地保存一个值，Service worker 可以用 IndexedDB API。
+
+## 注册
+
+网站的主页面（通常是`index.html`）需要注册 Service Worker。
+
+```javascript
+// 注册 Service Worker
+
+if ('serviceWorker' in navigator) {
+  // 路径是相对于缓存来源，而不是应用程序的目录.
+  navigator.serviceWorker.register('/pwa-photobooth/sw.js')
+  .then(function(reg) {
+    console.log('Registration succeeded. Scope is ' + reg.scope);
+  })
+  .catch(function(error) {
+    console.error('Registration failed with ' + error);
+  });
+}
+```
+
+上面代码中，`navigator.serviceWorker.register`这个方法用来注册 Service Worker，返回一个 Promise 对象。它会去执行 Service Worker 脚本，如果执行成功，就输出`Registration succeeded`，否则输出`Registration failed`。
+
+## Service Worker 脚本
+
+Service Worker 脚本采用事件监听的写法。最重要的两个事件是`install`和`fetch`，前者指将静态资源“安装”到本地缓存，后者指用户读取某个已经缓存的静态资源。
+
+`install`事件的监听函数写法如下。
+
+```javascript
+// 安装 service worker.
+this.addEventListener('install', function(event) {
+    event.waitUntil(
+        caches.open('v1').then(function(cache) {
+            // 如果下面这些资源中有任何资源不能保存，缓存就会失败
+            return cache.addAll([
+                // 路径是相对于缓存来源，而不是应用程序的目录。
+                '/pwa-photobooth/',
+                '/pwa-photobooth/index.html',
+                '/pwa-photobooth/assets/css/styles.css',
+                '/pwa-photobooth/assets/fonts/MaterialIcons-Regular.woff2',
+                '/pwa-photobooth/assets/js/script.js',
+                '/pwa-photobooth/assets/icons/ic-face.png',
+                '/pwa-photobooth/assets/icons/ic-face-large.png',
+                '/pwa-photobooth/manifest.json'
+            ])
+            .then(function() {
+                console.log('成功! App 离线可用!');
+            })
+        })
+    );
+});
+```
+
+`fetch`事件的监听函数写法如下。
+
+```javascript
+self.addEventListener('fetch', function(event) {
+    event.respondWith(
+        // 试着从缓存中获取.
+        caches.match(event.request)
+        .then(function(response) {
+            // 如果资源没有存储在缓存中，就回退到网络
+            return response || fetch(event.request);
+        })
+    );
+});
+```
 
 ## 生命周期
 
-Service worker有自己的生命周期。
+Service worker 有自己的生命周期。
 
-首先，页面加载以后，需要使用页面里的脚本“登记”（register）Service worker。“登记”会触发浏览器开始在后台“安装”Service worker。
+首先，页面加载以后，需要使用页面里的脚本“登记”（register）Service worker。“登记”会触发浏览器开始在后台“安装” Service worker。
 
 安装的时候，需要缓存一些静态资源。等到缓存成功，计算安装完毕了。如果有静态资源下载或者缓存失败，安装就会失败，Service worker就不会激活（activate），等到下次网页加载的时候，浏览器会再次尝试安装。如果安装成功，缓存里面就会有静态资源。
 
 安装完成后，就是激活，这一步主要是处理以前旧的缓存。
 
-激活成功后，Service worker就控制了页面。但是，Service worker必须等到用户第二次访问这个页面时才会生效。一旦生效，Service worker就只有两种状态：要么关闭（terminate），这样可以节省内存；要么就处理网络请求产生的各种事件。
+激活成功后，Service worker 就控制了页面。但是，Service worker 必须等到用户第二次访问这个页面时才会生效。一旦生效，Service worker 就只有两种状态：要么关闭（terminate），这样可以节省内存；要么就处理网络请求产生的各种事件。
 
-Service worker脚本的生命周期。
+Service worker 脚本的生命周期。
 
-该脚本接受的第一个事件是`install`。Service worker脚本一旦运行，就会触发这个事件，但是只会触发一次。可以使用这个事件，向缓存添加文件。
+该脚本接受的第一个事件是`install`。Service worker 脚本一旦运行，就会触发这个事件，但是只会触发一次。可以使用这个事件，向缓存添加文件。
 
 ```javascript
 self.addEventListener('install', event => {

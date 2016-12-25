@@ -337,20 +337,20 @@ Element.getBoundingClientRect().top
 
 ```javascript
 // 网页元素左上角的网页横坐标
-Element.getBoundingClientRect().left + document.body.scrollLeft
+Element.getBoundingClientRect().left + document.documentElement.scrollLeft
 
 // 网页元素左上角的网页纵坐标
-Element.getBoundingClientRect().top + document.body.scrollTop
+Element.getBoundingClientRect().top + document.documentElement.scrollTop
 ```
 
-网页目前滚动的距离，可以从`document.body`对象上得到。
+网页目前滚动的距离，可以从`document.documentElement`节点上得到。
 
 ```javascript
 // 网页滚动的水平距离
-document.body.scrollLeft
+document.documentElement.scrollLeft
 
 // 网页滚动的垂直距离
-document.body.scrollTop
+document.documentElement.scrollTop
 ```
 
 网页元素本身的高度和宽度（不含overflow溢出的部分），通过`offsetHeight`和`offsetWidth`属性（包括`Padding`和`Border`）或`Element.getBoundingClientRect`方法获取。

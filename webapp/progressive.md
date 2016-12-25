@@ -6,7 +6,7 @@ date: 2016-08-14
 modifiedOn: 2016-08-14
 ---
 
-渐进式Web应用（progressive Web App）是谷歌2005年提出的方案，主要目的是为了让Web App能具有原生应用的性能。
+渐进式 Web 应用（progressive Web App）是谷歌2015年提出的方案，主要目的是为了让 Web App 能具有原生应用的性能。
 
 它可以达到系统安装、离线使用、系统通知等正常的网页应用不具有的功能。
 
@@ -20,17 +20,34 @@ modifiedOn: 2016-08-14
 - 浏览器缓存
 - Push API
 
-它要求必须使用HTTPS协议。
+它要求必须使用 HTTPS 协议。
 
 ## Web App Manifest
 
-Manifest主要用于让Web App可以添加到桌面，告诉浏览器启动哪个文件，以及如何启动（全屏还是在浏览器窗口），以及在桌面如何显示图标。用户可以通过安卓系统的Chrome浏览器菜单中的“添加到主屏幕”选项，让网页拥有一个像原生App那样的图标，在主屏上显示。1网页之中必须有一个`link`元素，指向manifest文件（大多数人使用`manifest.json`这个名字）。
+默认情况下，任何网站都可以用 Chrome 浏览器菜单的 "添加到主屏幕" 按钮，保存到主屏幕上。不过，让用户以这种方式 "安装" 应用程序可能有点难，因为大多数人完全不知道这个功能。
+
+值得庆幸的是，还是有一种方式让应用程序提示用户保存它，即采用一个简单安装弹出窗口来提示。为防止开发者滥用这些弹出窗口，不允许以编程的方式显示它们。而是在应用程序满足如下几个条件时，才会让这些窗口自己出现：
+
+- 有一个有效的 Web Manifest。
+- 安装了有效的 Service Worker。
+- 通过 HTTPS 访问应用程序。
+
+满足上面的条件以后，当用户第二次访问网站时，就会得到安装提示。如果用户同意安装，以后应用就可以从主屏幕图标启动，表现得与原生应用一模一样。
+
+资金管理Manifest 主要用于让 Web App 可以添加到桌面，告诉浏览器启动哪个文件，以及如何启动（全屏还是在浏览器窗口），以及在桌面如何显示图标。用户可以通过安卓系统的Chrome浏览器菜单中的“添加到主屏幕”选项，让网页拥有一个像原生App那样的图标，在主屏上显示。1网页之中必须有一个`link`元素，指向manifest文件（大多数人使用`manifest.json`这个名字）。
 
 ```html
 <link rel="manifest" href="/manifest.json">
 ```
 
 Manifest是一个JSON文件，它有[国际标准](https://w3c.github.io/manifest/)。有了它，就可以像原生App那样，全屏使用Web App，并且可以安装，还能分配图标。
+
+Safari 不支持 Web Manifest 标准，可以用苹果独有的 meta 标记，定义类似行为。
+
+```html
+<!-- Meta tag for app-like behaviour in iOS -->
+<meta name=”apple-mobile-web-app-capable” content=”yes”>
+```
 
 Android系统会对具备以下条件的Web应用，显示[安装提示](https://developers.google.com/web/updates/2015/03/increasing-engagement-with-app-install-banners-in-chrome-for-android)，询问用户是否要在桌面添加图标。
 

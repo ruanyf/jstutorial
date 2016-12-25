@@ -110,10 +110,9 @@ window.parent.document.body
 
 如果两个窗口一级域名相同，只是二级域名不同，那么设置上一节介绍的`document.domain`属性，就可以规避同源政策，拿到DOM。
 
-对于完全不同源的网站，目前有三种方法，可以解决跨域窗口的通信问题。
+对于完全不同源的网站，目前有两种方法，可以解决跨域窗口的通信问题。
 
 > - 片段识别符（fragment identifier）
-> - window.name
 > - 跨文档通信API（Cross-document messaging）
 
 ### 片段识别符
@@ -143,30 +142,6 @@ function checkMessage() {
 ```javascript
 parent.location.href= target + “#” + hash;
 ```
-
-### window.name
-
-浏览器窗口有`window.name`属性。这个属性的最大特点是，无论是否同源，只要在同一个窗口里，前一个网页设置了这个属性，后一个网页可以读取它。
-
-父窗口先打开一个子窗口，载入一个不同源的网页，该网页将信息写入`window.name`属性。
-
-```javascript
-window.name = data;
-```
-
-接着，子窗口跳回一个与主窗口同域的网址。
-
-```javascript
-location = 'http://parent.url.com/xxx.html';
-```
-
-然后，主窗口就可以读取子窗口的`window.name`了。
-
-```javascript
-var data = document.getElementById('myFrame').contentWindow.name;
-```
-
-这种方法的优点是，`window.name`容量很大，可以放置非常长的字符串；缺点是必须监听子窗口`window.name`属性的变化，影响网页性能。
 
 ### window.postMessage
 
