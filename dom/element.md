@@ -212,7 +212,7 @@ rootElement.clientWidth === window.innerWidth // true
 document.documentElement.scrollHeight
 ```
 
-如果内容正好适合它的容器，没有溢出，那么`Element.scrollHeight`和`Element.clientHeight`是相等的，`scrollWidth`属性与`clientHeight`属性是相等的。如果存在溢出，那么`scrollHeight`属性大于`clientHeight`属性，`scrollWidth`属性大于`clientHeight`属性。
+如果内容正好适合它的容器，没有溢出，那么`Element.scrollHeight`和`Element.clientHeight`是相等的，`scrollWidth`属性与`clientWidth`属性是相等的。如果存在溢出，那么`scrollHeight`属性大于`clientHeight`属性，`scrollWidth`属性大于`clientWidth`属性。
 
 存在溢出时，当滚动条滚动到内容底部时，下面的表达式为`true`。
 
