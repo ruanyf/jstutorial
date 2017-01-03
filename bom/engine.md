@@ -73,7 +73,7 @@ document.getElementById('mydata').text
 <script charset="utf-8" src="example.js"></script>
 ```
 
-所加载的脚本必须是纯的HTML代码，不能有`HTML`代码和`<script>`标签。
+所加载的脚本必须是纯的 JavaScript 代码，不能有`HTML`代码和`<script>`标签。
 
 加载外部脚本和直接添加代码块，这两种方法不能混用。下面代码的`console.log`语句直接被忽略。
 

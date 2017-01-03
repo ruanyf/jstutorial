@@ -68,13 +68,13 @@ var f = function f() {};
 var add = new Function(
   'x',
   'y',
-  'return (x + y)'
+  'return x + y'
 );
 
 // 等同于
 
 function add(x, y) {
-  return (x + y);
+  return x + y;
 }
 ```
 
@@ -136,11 +136,9 @@ add(1, 1) // 2
 
 ```javascript
 function fib(num) {
-  if (num > 2) {
-    return fib(num - 2) + fib(num - 1);
-  } else {
-    return 1;
-  }
+  if (num === 0) return 0;
+  if (num === 1) return 1;
+  return fib(num - 2) + fib(num - 1);
 }
 
 fib(6) // 8
