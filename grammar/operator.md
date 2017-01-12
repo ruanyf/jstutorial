@@ -306,7 +306,7 @@ x > '11' // false
 
 ```javascript
 [2] > [1] // true
-// 等同于 [2].valueOf().toString() > [2].valueOf().toString()
+// 等同于 [2].valueOf().toString() > [1].valueOf().toString()
 // 即 '2' > '1'
 
 [2] > [11] // true
@@ -327,21 +327,21 @@ x > '11' // false
 'cat' > 'catalog' // false
 ```
 
-JavaScript引擎内部首先比较首字符的Unicode码点，如果相等，再比较第二个字符的Unicode码点，以此类推。
+JavaScript 引擎内部首先比较首字符的 Unicode 码点，如果相等，再比较第二个字符的 Unicode 码点，以此类推。
 
 ```javascript
 'cat' > 'Cat' // true'
 ```
 
-上面代码中，小写的`c`的Unicode码点（`99`）大于大写的`C`的Unicode码点（`67`），所以返回`true`。
+上面代码中，小写的`c`的 Unicode 码点（`99`）大于大写的`C`的 Unicode 码点（`67`），所以返回`true`。
 
-由于所有字符都有Unicode码点，因此汉字也可以比较。
+由于所有字符都有 Unicode 码点，因此汉字也可以比较。
 
 ```javascript
 '大' > '小' // false
 ```
 
-上面代码中，“大”的Unicode码点是22823，“小”是23567，因此返回`false`。
+上面代码中，“大”的 Unicode 码点是22823，“小”是23567，因此返回`false`。
 
 ### 严格相等运算符
 
