@@ -13,13 +13,13 @@ modifiedOn: 2015-02-08
 `readFile`方法用于异步读取数据。
 
 ```javascript
-fs.readFile('image.png', function (err, buffer) {
+fs.readFile('./image.png', function (err, buffer) {
   if (err) throw err;
   process(buffer);
 });
 ```
 
-`readFile`方法的第一个参数是文件的路径，可以是绝对路径，也可以是相对路径。如果是相对路径，就是想对于当前脚本所在的路径。
+`readFile`方法的第一个参数是文件的路径，可以是绝对路径，也可以是相对路径。注意，如果是相对路径，是相对于当前进程所在的路径（`process.cmd()`），而不是相对于当前脚本所在的路径。
 
 `readFile`方法的第二个参数是读取完成后的回调函数。该函数的第一个参数是发生错误时的错误对象，第二个参数是代表文件内容的`Buffer`实例。
 
