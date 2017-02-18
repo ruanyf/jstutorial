@@ -10,7 +10,7 @@ CSS与JavaScript是两个有着明确分工的领域，前者负责页面的视�
 
 ## style属性
 
-操作CSS样式最简单的方法，就是使用网页元素节点的`getAttribute`方法、`setAttribute`方法和`removeAttribute`方法，直接读写或删除网页元素的`style`属性。
+操作 CSS 样式最简单的方法，就是使用网页元素节点的`getAttribute`方法、`setAttribute`方法和`removeAttribute`方法，直接读写或删除网页元素的`style`属性。
 
 ```javascript
 div.setAttribute(
@@ -19,7 +19,7 @@ div.setAttribute(
 );
 ```
 
-上面的代码相当于下面的HTML代码。
+上面的代码相当于下面的 HTML 代码。
 
 ```html
 <div style="background-color:red; border:1px solid black;" />
@@ -464,15 +464,13 @@ document.styleSheets[0].cssRules[0].style.cssText
 
 ### CSSStyleDeclaration对象
 
-每一条CSS规则的样式声明部分（大括号内部的部分），都是一个CSSStyleDeclaration对象，主要包括三种情况。
+每一条 CSS 规则的样式声明部分（大括号内部的部分），都是一个`CSSStyleDeclaration`对象，主要包括三种情况。
 
-- HTML元素的行内样式（&lt;elem style="..."&gt;）
+- HTML 元素的行内样式（`<elem style="...">`）
+- `CSSStyleRule`接口的`style`属性
+- `window.getComputedStyle()`的返回结果
 
-- CSSStyleRule接口的style属性
-
-- window.getComputedStyle()的返回结果
-
-每一条CSS属性，都是CSSStyleDeclaration对象的属性。不过，连词号需要编程骆驼拼写法。
+每一条CSS属性，都是`CSSStyleDeclaration`对象的属性。不过，连词号需要变成骆驼拼写法。
 
 ```javascript
 var styleObj = document.styleSheets[0].cssRules[1].style;
@@ -480,19 +478,17 @@ styleObj.color // "red";
 styleObj.fontSize // "100%"
 ```
 
-除了CSS属性以外，CSSStyleDeclaration对象还包括以下属性。
+除了 CSS 属性以外，`CSSStyleDeclaration`对象还包括以下属性。
 
-- cssText：当前规则的所有样式声明文本。该属性可读写，即可用来设置当前规则。
+- `cssText`：当前规则的所有样式声明文本。该属性可读写，即可用来设置当前规则。
+- `length`：当前规则包含多少条声明。
+- `parentRule`：包含当前规则的那条规则，同 CSSRule 接口的`parentRule`属性。
 
-- length：当前规则包含多少条声明。
-
-- parentRule：包含当前规则的那条规则，同CSSRule接口的parentRule属性。
-
-CSSStyleDeclaration对象包括以下方法。
+`CSSStyleDeclaration`对象包括以下方法。
 
 **（1）getPropertyPriority()**
 
-getPropertyPriority方法返回指定声明的优先级，如果有的话，就是“important”，否则就是空字符串。
+`getPropertyPriority`方法返回指定声明的优先级，如果有的话，就是“important”，否则就是空字符串。
 
 ```javascript
 var styleObj = document.styleSheets[0].cssRules[1].style;
