@@ -8,7 +8,7 @@ modifiedOn: 2016-08-01
 
 ## 概述
 
-JavaScript语言的每一个值，都属于某一种数据类型。JavaScript的数据类型，共有六种。（ES6又新增了第七种Symbol类型的值，本教程不涉及。）
+JavaScript 语言的每一个值，都属于某一种数据类型。JavaScript 的数据类型，共有六种。（ES6 又新增了第七种 Symbol 类型的值，本教程不涉及。）
 
 - 数值（number）：整数和小数（比如1和3.14）
 - 字符串（string）：字符组成的文本（比如"Hello World"）
@@ -116,7 +116,7 @@ typeof null // "object"
 
 为了兼容以前的代码，后来就没法修改了。这并不是说`null`就属于对象，本质上`null`是一个类似于`undefined`的特殊值。
 
-既然`typeof`对数组（array）和对象（object）的显示结果都是`object`，那么怎么区分它们呢？instanceof运算符可以做到。
+既然`typeof`对数组（array）和对象（object）的显示结果都是`object`，那么怎么区分它们呢？`instanceof`运算符可以做到。
 
 ```javascript
 var o = {};
@@ -128,7 +128,7 @@ a instanceof Array // true
 
 `instanceof`运算符的详细解释，请见《面向对象编程》一章。
 
-## null和undefined
+## null 和 undefined
 
 ### 概述
 
@@ -159,11 +159,11 @@ undefined == null
 // true
 ```
 
-上面代码说明，两者的行为是何等相似！Google公司开发的JavaScript语言的替代品Dart语言，就明确规定只有`null`，没有`undefined`！
+从上面代码可见，两者的行为是何等相似！谷歌公司开发的 JavaScript 语言的替代品 Dart 语言，就明确规定只有`null`，没有`undefined`！
 
 既然含义与用法都差不多，为什么要同时设置两个这样的值，这不是无端增加复杂度，令初学者困扰吗？这与历史原因有关。
 
-1995年JavaScript诞生时，最初像Java一样，只设置了`null`作为表示"无"的值。根据C语言的传统，`null`被设计成可以自动转为`0`。
+1995年 JavaScript 诞生时，最初像Java一样，只设置了`null`作为表示"无"的值。根据C语言的传统，`null`被设计成可以自动转为`0`。
 
 ```javascript
 Number(null) // 0
@@ -197,7 +197,7 @@ typeof null // "object"
 
 对于`null`和`undefined`，可以大致可以像下面这样理解。
 
-`null`表示空值，即该处的值现在为空。比如，调用函数时，不需要传入某个参数，这时就可以传入`null`。
+`null`表示空值，即该处的值现在为空。调用函数时，某个参数未设置任何值，这时就可以传入`null`。比如，某个函数接受引擎抛出的错误作为参数，如果运行过程中未出错，那么这个参数就会传入`null`，表示未发生错误。
 
 `undefined`表示“未定义”，下面是返回`undefined`的典型场景。
 
