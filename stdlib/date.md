@@ -365,9 +365,9 @@ d.toLocaleDateString()
 // 英文版浏览器为"1/1/2013"
 ```
 
-**（8）Date.prototype.toLocalTimeString()**
+**（8）Date.prototype.toLocaleTimeString()**
 
-`toLocalTimeString`方法返回一个字符串，代表时间的当地写法。
+`toLocaleTimeString`方法返回一个字符串，代表时间的当地写法。
 
 ```javascript
 var d = new Date(2013, 0, 1);
