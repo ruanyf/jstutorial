@@ -147,10 +147,10 @@ function simulateClick() {
 
 以下属性返回一个布尔值，表示鼠标事件发生时，是否按下某个键。
 
-- altKey属性：alt键
-- ctrlKey属性：key键
-- metaKey属性：Meta键（Mac键盘是一个四瓣的小花，Windows键盘是Windows键）
-- shiftKey属性：Shift键
+- `altKey`属性：Alt 键
+- `ctrlKey`属性：Ctrl 键
+- `metaKey`属性：Meta 键（Mac键盘是一个四瓣的小花，Windows键盘是Windows键）
+- `shiftKey`属性：Shift 键
 
 ```javascript
 // HTML代码为
