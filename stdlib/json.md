@@ -63,7 +63,7 @@ ES5新增了`JSON`对象，用来处理JSON格式数据。它有两个方法：`
 
 ### 基本用法
 
-`JSON.stringify`方法用于将一个值转为字符串。该字符串应该符合JSON格式，并且可以被`JSON.parse`方法还原。
+`JSON.stringify`方法用于将一个值转为字符串。该字符串符合 JSON 格式，并且可以被`JSON.parse`方法还原。
 
 ```javascript
 JSON.stringify('abc') // ""abc""
@@ -79,19 +79,38 @@ JSON.stringify({ name: "张三" })
 // '{"name":"张三"}'
 ```
 
-上面代码将各种类型的值，转成JSON字符串。需要注意的是，对于原始类型的字符串，转换结果会带双引号，即字符串`abc`会被转成`"abc"`，这是因为将来还原的时候，双引号可以让JavaScript引擎知道，`abc`是一个字符串，而不是一个变量名。
+上面代码将各种类型的值，转成 JSON 字符串。
 
-如果原始对象中，有一个成员的值是`undefined`、函数或XML对象，这个成员会被省略。如果数组的成员是`undefined`、函数或XML对象，则这些值被转成`null`。
+需要注意的是，对于原始类型的字符串，转换结果会带双引号。
 
 ```javascript
-JSON.stringify({
-  f: function(){},
-  a: [ function(){}, undefined ]
-});
-// "{"a": [null,null]}"
+JSON.stringify('foo') === "foo" // false
+JSON.stringify('foo') === "\"foo\"" // true
 ```
 
-上面代码中，原始对象的`f`属性是一个函数，`JSON.stringify`方法返回的字符串会将这个属性省略。而`a`属性是一个数组，成员分别为函数和undefined，它们都被转成了`null`。
+上面代码中，字符串`foo`，被转成了`""foo""`。这是因为将来还原的时候，双引号可以让 JavaScript 引擎知道，`foo`是一个字符串，而不是一个变量名。
+
+如果原始对象中，有一个成员的值是`undefined`、函数或 XML 对象，这个成员会被过滤。
+
+```javascript
+var obj = {
+  a: undefined,
+  b: function () {}
+};
+
+JSON.stringify(obj) // "{}"
+```
+
+上面代码中，对象`obj`的`a`属性是`undefined`，而`b`属性是一个函数，结果都被`JSON.stringify`过滤。
+
+如果数组的成员是`undefined`、函数或 XML 对象，则这些值被转成`null`。
+
+```javascript
+var arr = [undefined, function () {}];
+JSON.stringify(arr) // "[null,null]"
+```
+
+上面代码中，数组`arr`的成员是`undefined`和函数，它们都被转成了`null`。
 
 正则对象会被转成空对象。
 
@@ -114,7 +133,7 @@ Object.defineProperties(obj, {
   }
 });
 
-JSON.stringify(obj); // {"foo":1}
+JSON.stringify(obj); // "{"foo":1}"
 ```
 
 上面代码中，`bar`是`obj`对象的不可遍历属性，`JSON.stringify`方法会忽略这个属性。
