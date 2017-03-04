@@ -6,7 +6,7 @@ date: 2012-12-14
 modifiedOn: 2013-11-23
 ---
 
-大部分面向对象的编程语言，都是以“类”（class）作为对象体系的语法基础。JavaScript语言不是如此，它的面向对象编程基于“原型对象”。
+大部分面向对象的编程语言，都是以“类”（class）作为对象体系的语法基础。JavaScript 语言不是如此，它的面向对象编程基于“原型对象”。
 
 ## 概述
 
@@ -492,8 +492,18 @@ o2.p
 
 ```javascript
 var o = Object.create({}, {
-  p1: { value: 123, enumerable: true },
-  p2: { value: 'abc', enumerable: true }
+  p1: {
+    value: 123,
+    enumerable: true,
+    configurable: true,
+    writable: true,
+  },
+  p2: {
+    value: 'abc',
+    enumerable: true,
+    configurable: true,
+    writable: true,
+  }
 });
 
 // 等同于
