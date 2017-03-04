@@ -27,7 +27,7 @@ modifiedOn: 2015-04-15
 ```javascript
 // HTML代码为
 // <span id="myspan">Hello</span>
-var span = document.getElementById('span');
+var span = document.getElementById('myspan');
 span.id // "myspan"
 span.tagName // "SPAN"
 ```
