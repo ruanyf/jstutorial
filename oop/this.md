@@ -623,7 +623,7 @@ print() // Uncaught TypeError: this is not a Date object.
 
 上面代码中，我们将`d.getTime`方法赋给变量`print`，然后调用`print`就报错了。这是因为`getTime`方法内部的`this`，绑定`Date`对象的实例，赋给变量`print`以后，内部的`this`已经不指向`Date`对象的实例了。
 
-`bind`方法可以解决这个问题，让`log`方法绑定`console`对象。
+`bind`方法可以解决这个问题，让`getTime`方法绑定`d`对象。
 
 ```javascript
 var print = d.getTime.bind(d);
