@@ -423,7 +423,7 @@ B.print === A.print // true
 上面代码中，`Object.create`方法在`A`的基础上生成了`B`。此时，`A`就成了`B`的原型，`B`就继承了`A`的所有属性和方法。这段代码等同于下面的代码。
 
 ```javascript
-var A = function () {};
+var A = {};
 A.prototype = {
  print: function () {
    console.log('hello');
