@@ -111,10 +111,10 @@ Math.round(0.5) // 1
 Math.round(0.6) // 1
 
 // 等同于
-Math.ceil(x + 0.5)
+Math.floor(x + 0.5)
 ```
 
-注意，它对负数的处理，主要是对`0.5`的处理。
+注意，它对负数的处理（主要是对`0.5`的处理）。
 
 ```javascript
 Math.round(-1.1) // -1
