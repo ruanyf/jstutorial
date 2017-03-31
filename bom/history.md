@@ -162,7 +162,7 @@ var searchParams = new URLSearchParams(paramsString);
 URLSearchParams有以下方法，用来操作某个参数。
 
 - `has()`：返回一个布尔值，表示是否具有某个参数
-- `get（）`：返回指定参数的第一个值
+- `get()`：返回指定参数的第一个值
 - `getAll()`：返回一个数组，成员是指定参数的所有值
 - `set()`：设置指定参数
 - `delete()`：删除指定参数
