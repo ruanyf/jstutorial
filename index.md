@@ -12,17 +12,17 @@ modifiedOn: 2014-05-18
 
 <h2 id="grammar">语法</h2>
 
-- [基本语法](grammar/basic.html)
-- [数据类型](grammar/types.html)
-- [数值](grammar/number.html)
-- [字符串](grammar/string.html)
-- [对象](grammar/object.html)
-- [数组](grammar/array.html)
-- [函数](grammar/function.html)
-- [运算符](grammar/operator.html)
-- [数据类型转换](grammar/conversion.html)
-- [错误处理机制](grammar/error.html)
-- [编程风格](grammar/style.html)
+- [基本语法](01grammar/01basic.md)
+- [数据类型](01grammar/02types.md)
+- [数值](01grammar/03number.md)
+- [字符串](01grammar/04string.md)
+- [对象](01grammar/05object.md)
+- [数组](01grammar/06array.md)
+- [函数](01grammar/07function.md)
+- [运算符](01grammar/08operator.md)
+- [数据类型转换](01grammar/09conversion.md)
+- [错误处理机制](01grammar/10error.md)
+- [编程风格](01grammar/11style.md)
 
 <h2 id="stdlib">标准库</h2>
 
