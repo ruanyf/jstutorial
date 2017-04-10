@@ -46,7 +46,7 @@ divStyle.width // 100px
 
 上面代码中，`style`属性的值是一个对象（简称`style`对象）。这个对象所包含的属性与CSS规则一一对应，但是名字需要改写，比如`background-color`写成`backgroundColor`。改写的规则是将横杠从CSS属性名中去除，然后将横杠后的第一个字母大写。如果CSS属性名是JavaScript保留字，则规则名之前需要加上字符串`css`，比如`float`写成`cssFloat`。
 
-注意，`style`对象的属性值都是字符串，设置时必须包括单位，办事不含规则结尾的分号。比如，`divStyle.width`不能写为`100`，而要写为`100px`。
+注意，`style`对象的属性值都是字符串，设置时必须包括单位，但是不含规则结尾的分号。比如，`divStyle.width`不能写为`100`，而要写为`100px`。
 
 下面是一个例子，通过监听事件，改写网页元素的CSS样式。
 
