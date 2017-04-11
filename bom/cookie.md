@@ -8,9 +8,9 @@ modifiedOn: 2016-04-10
 
 ## 概述
 
-Cookie是服务器保存在浏览器的一小段文本信息，每个Cookie的大小一般不能超过4KB。浏览器每次向服务器发出请求，就会自动附上这段信息。
+Cookie 是服务器保存在浏览器的一小段文本信息，每个 Cookie 的大小一般不能超过4KB。浏览器每次向服务器发出请求，就会自动附上这段信息。
 
-Cookie保存以下几方面的信息。
+Cookie 保存以下几方面的信息。
 
 - Cookie的名字
 - Cookie的值
@@ -20,9 +20,9 @@ Cookie保存以下几方面的信息。
 
 举例来说，如果当前URL是`www.example.com`，那么Cookie的路径就是根目录`/`。这意味着，这个Cookie对该域名的根路径和它的所有子路径都有效。如果路径设为`/forums`，那么这个Cookie只有在访问`www.example.com/forums`及其子路径时才有效。
 
-浏览器可以设置不接受Cookie，也可以设置不向服务器发送Cookie。`window.navigator.cookieEnabled`属性返回一个布尔值，表示浏览器是否打开Cookie功能。
+浏览器可以设置不接受 Cookie，也可以设置不向服务器发送 Cookie。`window.navigator.cookieEnabled`属性返回一个布尔值，表示浏览器是否打开 Cookie 功能。
 
-`document.cookie`属性返回当前网页的Cookie。
+`document.cookie`属性返回当前网页的 Cookie。
 
 ```javascript
 // 读取当前网页的所有cookie
@@ -83,7 +83,7 @@ Set-Cookie: cookie_name2=cookie_value2; expires=Sun, 16 Jul 3567 06:23:41 GMT
 - Cookie的各种属性，比如何时过期。
 - 哪个域名设置的Cookie，因为Cookie可能是一级域名设的，也可能是任意一个二级域名设的。
 
-## Cookie的属性
+## Cookie 的属性
 
 除了Cookie本身的内容，还有一些可选的属性也是可以写入的，它们都必须以分号开头。
 
@@ -111,13 +111,13 @@ Set-Cookie: value[; expires=date][; domain=domain][; path=path][; secure]
 
 如果未指定，默认为设定该Cookie的域名。所指定的域名必须是当前发送Cookie的域名的一部分，比如当前访问的域名是`example.com`，就不能将其设为`google.com`。只有访问的域名匹配domain属性，Cookie才会发送到服务器。
 
-（4）path属性
+（4）path 属性
 
-`path`属性用来指定路径，必须是绝对路径（比如`/`、`/mydir`），如果未指定，默认为请求该Cookie的网页路径。
+`path`属性用来指定路径，必须是绝对路径（比如`/`、`/mydir`），如果未指定，默认为请求该 Cookie 的网页路径。
 
-只有`path`属性匹配向服务器发送的路径，Cookie才会发送。这里的匹配不是绝对匹配，而是从根路径开始，只要`path`属性匹配发送路径的一部分，就可以发送。比如，`path`属性等于`/blog`，则发送路径是`/blog`或者`/blogroll`，Cookie都会发送。`path`属性生效的前提是`domain`属性匹配。
+只有`path`属性匹配向服务器发送的路径，Cookie 才会发送。这里的匹配不是绝对匹配，而是从根路径开始，只要`path`属性匹配发送路径的一部分，就可以发送。比如，`path`属性等于`/blog`，则发送路径是`/blog`或者`/blog/roll`，Cookie都会发送。`path`属性生效的前提是`domain`属性匹配。
 
-（5）secure
+（5）secure 属性
 
 `secure`属性用来指定Cookie只能在加密协议HTTPS下发送到服务器。
 
