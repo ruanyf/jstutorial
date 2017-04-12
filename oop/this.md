@@ -665,7 +665,7 @@ count // NaN
 
 上面代码中，函数`func`是在全局环境中运行的，这时`inc`内部的`this`指向顶层对象`window`，所以`counter.count`是不会变的，反而创建了一个全局变量`count`。因为`window.count`原来等于`undefined`，进行递增运算后`undefined++`就等于`NaN`。
 
-为了解决这个问题，可以使用`this`方法，将`inc`内部的`this`绑定到`counter`对象。
+为了解决这个问题，可以使用`bind`方法，将`inc`内部的`this`绑定到`counter`对象。
 
 ```javascript
 var func = counter.inc.bind(counter);
