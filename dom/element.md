@@ -34,9 +34,9 @@ span.tagName // "SPAN"
 
 ### Element.innerHTML
 
-`Element.innerHTML`属性返回该元素包含的HTML代码。该属性可读写，常用来设置某个节点的内容。
+`Element.innerHTML`属性返回该元素包含的 HTML 代码。该属性可读写，常用来设置某个节点的内容。
 
-如果将该属性设为空，等于删除所有它包含的所有节点。
+如果将`innerHTML`属性设为空，等于删除所有它包含的所有节点。
 
 ```javascript
 el.innerHTML = '';
@@ -52,7 +52,7 @@ document.getElementById('para').innerHTML
 // 5 &gt; 3
 ```
 
-由于上面这个原因，导致用`innerHTML`插入`<script>`标签，不会被执行。
+如果插入的文本包含 HTML 标签，会被解析成为节点对象插入 DOM。注意，如果文本之中含有`<script>`标签，虽然可以生成`script`节点，但是插入的代码不会执行。
 
 ```javascript
 var name = "<script>alert('haha')</script>";
