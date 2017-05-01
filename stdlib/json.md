@@ -262,7 +262,9 @@ JSON.stringify({ p1:1, p2:2 }, null, '|-');
 
 ### toJSON 方法
 
-如果`JSON.stringify`的参数对象有自定义的`toJSON`方法，那么`JSON.stringify`会使用这个方法的返回值作为参数，而忽略原对象的其他属性。
+如果对象有自定义的`toJSON`方法，那么`JSON.stringify`会使用这个方法的返回值作为参数，而忽略原对象的其他属性。
+
+下面是一个普通的对象。
 
 ```javascript
 var user = {
@@ -275,10 +277,8 @@ var user = {
 };
 
 JSON.stringify(user)
-// "{"firstName":"三","lastName":"张","fullName":"三张"}"
+// "{"firstName":"三","lastName":"张","fullName":"张三"}"
 ```
-
-上面代码是`JSON.stringify`方法处理一个正常的对象。
 
 现在，为这个对象加上`toJSON`方法。
 
