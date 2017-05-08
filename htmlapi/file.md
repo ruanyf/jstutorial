@@ -311,7 +311,7 @@ function readFile(file){
     applyDataUrlToCanvas( reader.result );
   };
 
-  reader.reaAsDataURL(file);
+  reader.readAsDataURL(file);
 }
 
 {% endhighlight %}
