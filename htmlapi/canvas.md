@@ -45,6 +45,8 @@ ctx.beginPath(); // 开始路径绘制
 ctx.moveTo(20, 20); // 设置路径起点，坐标为(20,20)
 ctx.lineTo(200, 20); // 绘制一条到(200,20)的直线
 ctx.lineWidth = 1.0; // 设置线宽
+ctx.lineCap = "butt"; //设置端点样式:butt(默认),round,square
+ctx.lineJoin = "miter"; //设置连接样式:miter(默认),bevel,round
 ctx.strokeStyle = '#CC0000'; // 设置线的颜色
 ctx.stroke(); // 进行线的着色，这时整条线才变得可见
 ```
@@ -174,6 +176,35 @@ ctx.fillStyle = "#CC0000";
 ctx.fillRect(10,10,200,100);
 
 {% endhighlight %}
+
+## 图像变换
+### 平移、旋转、缩放
+```js
+ctx.translate( x, y )//位移：把图像原点位移到(x， y)的位置
+ctx.rotate( deg )//旋转：旋转 deg 度数
+ctx.scale( sx, sy )//缩放：在横向进行 sx 倍的缩放，在纵向进行 sy 倍的缩放
+```
+缩放出现的问题
+1.如果有lineWith，宽度也会缩放
+2.如果起始点不是0 0，起始点也会缩放
+
+### 变换矩阵
+
+```js
+ctx.transform(a, b, c, d, e, f);
+/*
+a:水平缩放(默认值1)
+b:水平倾斜(默认值0)
+c:垂直倾斜(默认值0)
+d:垂直缩放(默认值1)
+e:水平位移(默认值0)
+f:垂直位移(默认值0)
+*/
+```
+`context.transform()`可以叠加使用，如果需要重新初始化矩阵变换的值，可以用:
+`context.setTransform(a, b, c, d, e, f)`
+它会使得之前设置的`context.transform()`失效，恢复为单位矩阵然后再transform
+
 
 ## 图像处理方法
 
