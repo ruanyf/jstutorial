@@ -128,7 +128,7 @@ setTimeout(function() {
 
 上面代码中，sayHi是在user作用域内执行，而不是在全局作用域内执行，所以能够显示正确的值。
 
-另一种解决方法是，使用bind方法，将绑定sayHi绑定在user上面。
+另一种解决方法是，使用`bind`方法，将绑定sayHi绑定在user上面。
 
 ```javascript
 setTimeout(user.sayHi.bind(user), 1000);
@@ -201,11 +201,11 @@ var hashWatcher = setInterval(function() {
 
 setInterval指定的是“开始执行”之间的间隔，并不考虑每次任务执行本身所消耗的时间。因此实际上，两次执行之间的间隔会小于指定的时间。比如，setInterval指定每100ms执行一次，每次执行需要5ms，那么第一次执行结束后95毫秒，第二次执行就会开始。如果某次执行耗时特别长，比如需要105毫秒，那么它结束后，下一次执行就会立即开始。
 
-为了确保两次执行之间有固定的间隔，可以不用setInterval，而是每次执行结束后，使用setTimeout指定下一次执行的具体时间。
+为了确保两次执行之间有固定的间隔，可以不用`setInterval`，而是每次执行结束后，使用`setTimeout`指定下一次执行的具体时间。
 
 ```javascript
 var i = 1;
-var timer = setTimeout(function() {
+var timer = setTimeout(function () {
   alert(i++);
   timer = setTimeout(arguments.callee, 2000);
 }, 2000);
@@ -213,7 +213,7 @@ var timer = setTimeout(function() {
 
 上面代码可以确保，下一个对话框总是在关闭上一个对话框之后2000毫秒弹出。
 
-根据这种思路，可以自己部署一个函数，实现间隔时间确定的setInterval的效果。
+根据这种思路，可以自己部署一个函数，实现间隔时间确定的`setInterval`的效果。
 
 ```javascript
 function interval(func, wait){
@@ -230,9 +230,9 @@ interval(function(){
 },1000);
 ```
 
-上面代码部署了一个interval函数，用循环调用setTimeout模拟了setInterval。
+上面代码部署了一个`interval`函数，用循环调用`setTimeout`模拟了`setInterval`。
 
-HTML 5标准规定，setInterval的最短间隔时间是10毫秒，也就是说，小于10毫秒的时间间隔会被调整到10毫秒。
+HTML 5标准规定，`setInterval`的最短间隔时间是10毫秒，也就是说，小于10毫秒的时间间隔会被调整到10毫秒。
 
 ## clearTimeout()，clearInterval()
 
@@ -246,7 +246,7 @@ clearTimeout(id1);
 clearInterval(id2);
 ```
 
-setTimeout和setInterval返回的整数值是连续的，也就是说，第二个setTimeout方法返回的整数值，将比第一个的整数值大1。利用这一点，可以写一个函数，取消当前所有的setTimeout。
+`setTimeout`和`setInterval`返回的整数值是连续的，也就是说，第二个`setTimeout`方法返回的整数值，将比第一个的整数值大1。利用这一点，可以写一个函数，取消当前所有的`setTimeout`。
 
 ```javascript
 (function() {
@@ -304,9 +304,9 @@ Object.observe(models.todo, todoChanges);
 
 ## 运行机制
 
-`setTimeout`和`setInterval`的运行机制是，将指定的代码移出本次执行，等到下一轮Event Loop时，再检查是否到了指定时间。如果到了，就执行对应的代码；如果不到，就等到再下一轮Event Loop时重新判断。
+`setTimeout`和`setInterval`的运行机制是，将指定的代码移出本次执行，等到下一轮 Event Loop 时，再检查是否到了指定时间。如果到了，就执行对应的代码；如果不到，就等到再下一轮 Event Loop 时重新判断。
 
-这意味着，`setTimeout`和`setInterval`指定的代码，必须等到本轮Event Loop的所有同步任务都执行完，再等到本轮Event Loop的“任务队列”的所有任务执行完，才会开始执行。由于前面的任务到底需要多少时间执行完，是不确定的，所以没有办法保证，`setTimeout`和`setInterval`指定的任务，一定会按照预定时间执行。
+这意味着，`setTimeout`和`setInterval`指定的代码，必须等到本轮 Event Loop 的所有任务都执行完，才会开始执行。由于前面的任务到底需要多少时间执行完，是不确定的，所以没有办法保证，`setTimeout`和`setInterval`指定的任务，一定会按照预定时间执行。
 
 ```javascript
 setTimeout(someTask, 100);
@@ -315,29 +315,25 @@ veryLongTask();
 
 上面代码的`setTimeout`，指定100毫秒以后运行一个任务。但是，如果后面的`veryLongTask`函数（同步任务）运行时间非常长，过了100毫秒还无法结束，那么被推迟运行的`someTask`就只有等着，等到`veryLongTask`运行结束，才轮到它执行。
 
-这一点对于`setInterval`影响尤其大。
+下面是`setInterval`的例子。
 
 ```javascript
 setInterval(function () {
   console.log(2);
 }, 1000);
 
-(function () {
-  sleeping(3000);
-})();
+sleep(3000);
 ```
 
-上面的第一行语句要求每隔1000毫秒，就输出一个2。但是，第二行语句需要3000毫秒才能完成，请问会发生什么结果？
+上面的第一行语句要求每隔1000毫秒，就输出一个2。但是，紧接着的语句需要3000毫秒才能完成，那么`setInterval`就必须推迟到3000毫秒之后才开始生效。这3000毫秒之内，`setInterval`不会产生累积效应。
 
-结果就是等到第二行语句运行完成以后，立刻连续输出三个2，然后开始每隔1000毫秒，输出一个2。也就是说，`setIntervel`具有累积效应，如果某个操作特别耗时，超过了`setInterval`的时间间隔，排在后面的操作会被累积起来，然后在很短的时间内连续触发，这可能或造成性能问题（比如集中发出Ajax请求）。
-
-## setTimeout(f,0)
+## setTimeout(f, 0)
 
 ### 含义
 
 `setTimeout`的作用是将代码推迟到指定时间执行，如果指定时间为`0`，即`setTimeout(f, 0)`，那么会立刻执行吗？
 
-答案是不会。因为上一段说过，必须要等到当前脚本的同步任务和“任务队列”中已有的事件，全部处理完以后，才会执行`setTimeout`指定的任务。也就是说，setTimeout的真正作用是，在“消息队列”的现有消息的后面再添加一个消息，规定在指定时间执行某段代码。`setTimeout`添加的事件，会在下一次`Event Loop`执行。
+答案是不会。因为上一段说过，必须要等到当前脚本的同步任务和“任务队列”中已有的事件，全部处理完以后，才会执行`setTimeout`指定的任务。也就是说，`setTimeout`的真正作用是，在“消息队列”的现有消息的后面再添加一个消息，规定在指定时间执行某段代码。`setTimeout`添加的事件，会在下一次`Event Loop`执行。
 
 `setTimeout(f, 0)`将第二个参数设为`0`，作用是让`f`在现有的任务（脚本的同步任务和“消息队列”指定的任务）一结束就立刻执行。也就是说，`setTimeout(f, 0)`的作用是，尽可能早地执行指定的任务。而并不是会立刻就执行这个任务。
 
