@@ -6,15 +6,47 @@ date: 2012-12-23
 modifiedOn: 2013-12-05
 ---
 
-## 概述
+## WebSocket 的由来
 
-HTTP协议是一种无状态协议，服务器端本身不具有识别客户端的能力，必须借助外部机制，比如session和cookie，才能与特定客户端保持对话。这多多少少带来一些不便，尤其在服务器端与客户端需要持续交换数据的场合（比如网络聊天），更是如此。为了解决这个问题，HTML5提出了浏览器的[WebSocket API](http://dev.w3.org/html5/websockets/)。
+WebSocket 是一种网络通信协议，很多高级功能都需要它。
 
-WebSocket的主要作用是，允许服务器端与客户端进行全双工（full-duplex）的通信。举例来说，HTTP协议有点像发电子邮件，发出后必须等待对方回信；WebSocket则是像打电话，服务器端和客户端可以同时向对方发送数据，它们之间存着一条持续打开的数据通道。
+初次接触 WebSocket 的人，都会问同样的问题：我们已经有了 HTTP 协议，为什么还需要另一个协议？它能带来什么好处？
 
-WebSocket协议完全可以取代Ajax方法，用来向服务器端发送文本和二进制数据，而且还没有“同域限制”。
+答案很简单，因为 HTTP 协议有一个缺陷：通信只能由客户端发起。
 
-WebSocket不使用HTTP协议，而是使用自己的协议。浏览器发出的WebSocket请求类似于下面的样子：
+举例来说，我们想了解今天的天气，只能是客户端向服务器发出请求，服务器返回查询结果。HTTP 协议做不到服务器主动向客户端推送信息。
+
+这种单向请求的特点，注定了如果服务器有连续的状态变化，客户端要获知就非常麻烦。我们只能使用“轮询”：每隔一段时候，就发出一个询问，了解服务器有没有新的信息。最典型的场景就是聊天室。
+
+轮询的效率低，非常浪费资源（因为必须不停连接，或者 HTTP 连接始终打开）。因此，工程师们一直在思考，有没有更好的方法。WebSocket 就是这样发明的。
+
+## 简介
+
+WebSocket 协议在2008年诞生，2011年成为国际标准。所有浏览器都已经支持了。
+
+它的最大特点就是，服务器可以主动向客户端推送信息，客户端也可以主动向服务器发送信息，是真正的双向平等对话，属于服务器推送技术的一种。WebSocket 允许服务器端与客户端进行全双工（full-duplex）的通信。举例来说，HTTP 协议有点像发电子邮件，发出后必须等待对方回信；WebSocket 则是像打电话，服务器端和客户端可以同时向对方发送数据，它们之间存着一条持续打开的数据通道。
+
+其他特点包括：
+
+（1）建立在 TCP 协议之上，服务器端的实现比较容易。
+
+（2）与 HTTP 协议有着良好的兼容性。默认端口也是80和443，并且握手阶段采用 HTTP 协议，因此握手时不容易屏蔽，能通过各种 HTTP 代理服务器。
+
+（3）数据格式比较轻量，性能开销小，通信高效。
+
+（4）可以发送文本，也可以发送二进制数据。
+
+（5）没有同源限制，客户端可以与任意服务器通信，完全可以取代 Ajax。
+
+（6）协议标识符是`ws`（如果加密，则为`wss`，对应 HTTPS 协议），服务器网址就是 URL。
+
+```html
+ws://example.com:80/some/path
+```
+
+## WebSocket 握手
+
+浏览器发出的 WebSocket 握手请求类似于下面的样子：
 
 ```http
 GET / HTTP/1.1
@@ -26,9 +58,9 @@ Sec-WebSocket-Key: sN9cRrP/n9NdMgdcy2VJFQ==
 Sec-WebSocket-Version: 13
 ```
 
-上面的头信息显示，有一个HTTP头是Upgrade。HTTP1.1协议规定，Upgrade头信息表示将通信协议从HTTP/1.1转向该项所指定的协议。“Connection: Upgrade”就表示浏览器通知服务器，如果可以，就升级到webSocket协议。Origin用于验证浏览器域名是否在服务器许可的范围内。Sec-WebSocket-Key则是用于握手协议的密钥，是base64编码的16字节随机字符串。
+上面的头信息之中，有一个 HTTP 头是`Upgrade`。HTTP1.1 协议规定，`Upgrade`表示将通信协议从`HTTP/1.1`转向该字段指定的协议。`Connection`字段表示浏览器通知服务器，如果可以的话，就升级到 WebSocket 协议。`Origin`字段用于提供请求发出的域名，供服务器验证是否许可的范围内（服务器也可以不验证）。`Sec-WebSocket-Key`则是用于握手协议的密钥，是 Base64 编码的16字节随机字符串。
 
-服务器端的WebSocket回应则是
+服务器的 WebSocket 回应如下。
 
 ```http
 HTTP/1.1 101 Switching Protocols
@@ -39,304 +71,244 @@ Sec-WebSocket-Origin: null
 Sec-WebSocket-Location: ws://example.com/
 ```
 
-服务器端同样用“Connection: Upgrade”通知浏览器，需要改变协议。Sec-WebSocket-Accept是服务器在浏览器提供的Sec-WebSocket-Key字符串后面，添加“258EAFA5-E914-47DA-95CA-C5AB0DC85B11” 字符串，然后再取sha-1的hash值。浏览器将对这个值进行验证，以证明确实是目标服务器回应了webSocket请求。Sec-WebSocket-Location表示进行通信的WebSocket网址。
+上面代码中，服务器同样用`Connection`字段通知浏览器，需要改变协议。`Sec-WebSocket-Accept`字段是服务器在浏览器提供的`Sec-WebSocket-Key`字符串后面，添加“258EAFA5-E914-47DA-95CA-C5AB0DC85B11”字符串，然后再取 SHA-1 的哈希值。浏览器将对这个值进行验证，以证明确实是目标服务器回应了 WebSocket 请求。`Sec-WebSocket-Location`字段表示进行通信的 WebSocket 网址。
 
-> 请注意，WebSocket协议用ws表示。此外，还有wss协议，表示加密的WebSocket协议，对应HTTPs协议。
+完成握手以后，WebSocket 协议就在 TCP 协议之上，开始传送数据。
 
-完成握手以后，WebSocket协议就在TCP协议之上，开始传送数据。
+## 客户端的简单示例
 
-WebSocket协议需要服务器支持，目前比较流行的实现是基于node.js的[socket.io](http://socket.io/)，更多的实现可参阅[Wikipedia](http://en.wikipedia.org/wiki/WebSocket#Server_side)。至于浏览器端，目前主流浏览器都支持WebSocket协议（包括IE 10+），仅有的例外是手机端的Opera Mini和Android Browser。
+WebSocket 的用法相当简单。
 
-## 客户端
+下面是一个网页脚本的例子，基本上一眼就能明白。
 
-浏览器端对WebSocket协议的处理，无非就是三件事：
+```javascript
+var ws = new WebSocket('wss://echo.websocket.org');
+
+ws.onopen = function(evt) {
+  console.log('Connection open ...');
+  ws.send('Hello WebSockets!');
+};
+
+ws.onmessage = function(evt) {
+  console.log('Received Message: ' + evt.data);
+  ws.close();
+};
+
+ws.onclose = function(evt) {
+  console.log('Connection closed.');
+};
+```
+
+## 客户端 API
+
+浏览器对 WebSocket 协议的处理，无非就是三件事。
 
 - 建立连接和断开连接
 - 发送数据和接收数据
 - 处理错误
 
-### 建立连接和断开连接
+### 构造函数 WebSocket
 
-首先，客户端要检查浏览器是否支持WebSocket，使用的方法是查看window对象是否具有WebSocket属性。
+`WebSocket`对象作为一个构造函数，用于新建`WebSocket`实例。
 
-{% highlight javascript	%}
+```javascript
+var ws = new WebSocket('ws://localhost:8080');
+```
 
-if(window.WebSocket != undefined) {
-	// WebSocket代码
+执行上面语句之后，客户端就会与服务器进行连接。
+
+### webSocket.readyState
+
+`readyState`属性返回实例对象的当前状态，共有四种。
+
+- CONNECTING：值为0，表示正在连接。
+- OPEN：值为1，表示连接成功，可以通信了。
+- CLOSING：值为2，表示连接正在关闭。
+- CLOSED：值为3，表示连接已经关闭，或者打开连接失败。
+
+下面是一个示例。
+
+```javascript
+switch (ws.readyState) {
+  case WebSocket.CONNECTING:
+    // do something
+    break;
+  case WebSocket.OPEN:
+    // do something
+    break;
+  case WebSocket.CLOSING:
+    // do something
+    break;
+  case WebSocket.CLOSED:
+    // do something
+    break;
+  default:
+    // this never happens
+    break;
 }
+```
 
-{% endhighlight %}
+### webSocket.onopen
 
-然后，开始与服务器建立连接（这里假定服务器就是本机的1740端口，需要使用ws协议）。
+实例对象的`onopen`属性，用于指定连接成功后的回调函数。
 
-{% highlight javascript	%}
-
-if(window.WebSocket != undefined) {
-	var connection = new WebSocket('ws://localhost:1740');
+```javascript
+ws.onopen = function () {
+  ws.send('Hello Server!');
 }
+```
 
-{% endhighlight %}
+如果要指定多个回调函数，可以使用`addEventListener`方法。
 
-建立连接以后的WebSocket实例对象（即上面代码中的connection），有一个readyState属性，表示目前的状态，可以取4个值：
+```javascript
+ws.addEventListener('open', function (event) {
+  ws.send('Hello Server!');
+});
+```
 
-- **0**： 正在连接
-- **1**： 连接成功
-- **2**： 正在关闭
-- **3**： 连接关闭
+### webSocket.onclose
 
-握手协议成功以后，readyState就从0变为1，并触发open事件，这时就可以向服务器发送信息了。我们可以指定open事件的回调函数。
+实例对象的`onclose`属性，用于指定连接关闭后的回调函数。
 
-{% highlight javascript	%}
+```javascript
+ws.onclose = function(event) {
+  var code = event.code;
+  var reason = event.reason;
+  var wasClean = event.wasClean;
+  // handle close event
+};
 
-connection.onopen = wsOpen;
+ws.addEventListener("close", function(event) {
+  var code = event.code;
+  var reason = event.reason;
+  var wasClean = event.wasClean;
+  // handle close event
+});
+```
 
-function wsOpen (event) {
-	console.log('Connected to: ' + event.currentTarget.URL);
+### webSocket.onmessage
+
+实例对象的`onmessage`属性，用于指定收到服务器数据后的回调函数。
+
+```javascript
+ws.onmessage = function(event) {
+  var data = event.data;
+  // 处理数据
+};
+
+ws.addEventListener("message", function(event) {
+  var data = event.data;
+  // 处理数据
+});
+```
+
+注意，服务器数据可能是文本，也可能是二进制数据（`blob`对象或`Arraybuffer`对象）。
+
+```javascript
+ws.onmessage = function(event){
+  if(typeOf event.data === String) {
+    console.log("Received data string");
+  }
+
+  if(event.data instanceof ArrayBuffer){
+    var buffer = event.data;
+    console.log("Received arraybuffer");
+  }
 }
+```
 
-{% endhighlight %}
+除了动态判断收到的数据类型，也可以使用`binaryType`属性，显式指定收到的二进制数据类型。
 
-关闭WebSocket连接，会触发close事件。
+```javascript
+// 收到的是 blob 数据
+ws.binaryType = "blob";
+ws.onmessage = function(e) {
+  console.log(e.data.size);
+};
 
-{% highlight javascript	%}
+// 收到的是 ArrayBuffer 数据
+ws.binaryType = "arraybuffer";
+ws.onmessage = function(e) {
+  console.log(e.data.byteLength);
+};
+```
 
-connection.onclose = wsClose;
+### webSocket.send()
 
-function wsClose () {
-	console.log("Closed");
-}
+实例对象的`send()`方法用于向服务器发送数据。
 
-connection.close();
+发送文本的例子。
 
-{% endhighlight %}
+```javascript
+ws.send('your message');
+```
 
-### 发送数据和接收数据
+发送 Blob 对象的例子。
 
-连接建立后，客户端通过send方法向服务器端发送数据。
+```javascript
+var file = document
+  .querySelector('input[type="file"]')
+  .files[0];
+ws.send(file);
+```
 
-{% highlight javascript	%}
+发送 ArrayBuffer 对象的例子。
 
-connection.send(message);
-
-{% endhighlight %}
-
-除了发送字符串，也可以使用 Blob 或 ArrayBuffer 对象发送二进制数据。
-
-{% highlight javascript	%}
-
-// 使用ArrayBuffer发送canvas图像数据
+```javascript
+// Sending canvas ImageData as ArrayBuffer
 var img = canvas_context.getImageData(0, 0, 400, 320);
 var binary = new Uint8Array(img.data.length);
 for (var i = 0; i < img.data.length; i++) {
-	binary[i] = img.data[i];
+  binary[i] = img.data[i];
 }
-connection.send(binary.buffer);
+ws.send(binary.buffer);
+```
 
-// 使用Blob发送文件
-var file = document.querySelector('input[type="file"]').files[0];
-connection.send(file);
+### webSocket.bufferedAmount
 
-{% endhighlight %}
-
-客户端收到服务器发送的数据，会触发message事件。可以通过定义message事件的回调函数，来处理服务端返回的数据。
-
-{% highlight javascript %}
-
-connection.onmessage = wsMessage;
-
-function wsMessage (event) {
-	console.log(event.data);
-}
-
-{% endhighlight %}
-
-上面代码的回调函数wsMessage的参数为事件对象event，该对象的data属性包含了服务器返回的数据。
-
-如果接收的是二进制数据，需要将连接对象的格式设为blob或arraybuffer。
+实例对象的`bufferedAmount`属性，表示还有多少字节的二进制数据没有发送出去。它可以用来判断发送是否结束。
 
 ```javascript
+var data = new ArrayBuffer(10000000);
+socket.send(data);
 
-connection.binaryType = 'arraybuffer';
+if (socket.bufferedAmount === 0) {
+  // 发送完毕
+} else {
+  // 发送还没结束
+}
+```
 
-connection.onmessage = function(e) {
-  console.log(e.data.byteLength); // ArrayBuffer对象有byteLength属性
+### webSocket.onerror
+
+实例对象的`onerror`属性，用于指定报错时的回调函数。
+
+```javascript
+socket.onerror = function(event) {
+  // handle error event
 };
 
-```
-
-### 处理错误
-
-如果出现错误，浏览器会触发WebSocket实例对象的error事件。
-
-{% highlight javascript %}
-
-connection.onerror = wsError;
-
-function wsError(event) {
-	console.log("Error: " + event.data);
-}
-
-{% endhighlight %}
-
-## 服务器端
-
-服务器端需要单独部署处理WebSocket的代码。下面用node.js搭建一个服务器环境。
-
-{% highlight javascript	%}
-
-var http = require('http');
-var server = http.createServer(function(request, response) {});
-
-{% endhighlight %}
-
-假设监听1740端口。
-
-{% highlight javascript	%}
-
-server.listen(1740, function() {
-    console.log((new Date()) + ' Server is listening on port 1740');
-});
-
-{% endhighlight %}
-
-接着启动WebSocket服务器。这需要加载websocket库，如果没有安装，可以先使用npm命令安装。
-
-{% highlight javascript	%}
-
-var WebSocketServer = require('websocket').server;
-var wsServer = new WebSocketServer({
-    httpServer: server
-});
-
-{% endhighlight %}
-
-WebSocket服务器建立request事件的回调函数。
-
-{% highlight javascript	%}
-
-var connection;
-
-wsServer.on('request', function(req){
-    connection = req.accept('echo-protocol', req.origin);
-});
-
-{% endhighlight %}
-
-上面代码的回调函数接受一个参数req，表示request请求对象。然后，在回调函数内部，建立WebSocket连接connection。接着，就要对connection的message事件指定回调函数。
-
-{% highlight javascript	%}
-
-wsServer.on('request', function(r){
-    connection = req.accept('echo-protocol', req.origin);
-
-	connection.on('message', function(message) {
-		var msgString = message.utf8Data;
-		connection.sendUTF(msgString);
-	});
-});
-
-{% endhighlight %}
-
-最后，监听用户的disconnect事件。
-
-{% highlight javascript	%}
-
-connection.on('close', function(reasonCode, description) {
-    console.log(connection.remoteAddress + ' disconnected.');
-});
-
-{% endhighlight %}
-
-使用[ws](https://github.com/einaros/ws)模块，部署一个简单的WebSocket服务器非常容易。
-
-```javascript
-
-var WebSocketServer = require('ws').Server;
-var wss = new WebSocketServer({ port: 8080 });
-
-wss.on('connection', function connection(ws) {
-  ws.on('message', function incoming(message) {
-    console.log('received: %s', message);
-  });
-
-  ws.send('something');
-});
-
-```
-
-## Socket.io简介
-
-[Socket.io](http://socket.io/)是目前最流行的WebSocket实现，包括服务器和客户端两个部分。它不仅简化了接口，使得操作更容易，而且对于那些不支持WebSocket的浏览器，会自动降为Ajax连接，最大限度地保证了兼容性。它的目标是统一通信机制，使得所有浏览器和移动设备都可以进行实时通信。
-
-第一步，在服务器端的项目根目录下，安装socket.io模块。
-
-```bash
-$ npm install socket.io
-```
-
-第二步，在根目录下建立`app.js`，并写入以下代码（假定使用了Express框架）。
-
-```javascript
-var app = require('express')();
-var server = require('http').createServer(app);
-var io = require('socket.io').listen(server);
-
-server.listen(80);
-
-app.get('/', function (req, res) {
-  res.sendfile(__dirname + '/index.html');
+socket.addEventListener("error", function(event) {
+  // handle error event
 });
 ```
 
-上面代码表示，先建立并运行HTTP服务器。Socket.io的运行建立在HTTP服务器之上。
+## WebSocket 服务器
 
-第三步，将Socket.io插入客户端网页。
+WebSocket 协议需要服务器支持。各种服务器的实现，可以查看维基百科的[列表](https://en.wikipedia.org/wiki/Comparison_of_WebSocket_implementations)。
 
-```html
-<script src="/socket.io/socket.io.js"></script>
-```
+常用的 Node 实现有以下三种。
 
-然后，在客户端脚本中，建立WebSocket连接。
+- [µWebSockets](https://github.com/uWebSockets/uWebSockets)
+- [Socket.IO](http://socket.io/)
+- [WebSocket-Node](https://github.com/theturtle32/WebSocket-Node)
 
-```javascript
-var socket = io.connect('http://localhost:80');
-```
-
-由于本例假定WebSocket主机与客户端是同一台机器，所以connect方法的参数是`http://localhost`。接着，指定news事件（即服务器端发送news）的回调函数。
-
-```javascript
-socket.on('news', function (data){
-   console.log(data);
-});
-```
-
-最后，用emit方法向服务器端发送信号，触发服务器端的anotherNews事件。
-
-```javascript
-socket.emit('anotherNews');
-```
-
-> 请注意，emit方法可以取代Ajax请求，而on方法指定的回调函数，也等同于Ajax的回调函数。
-
-第四步，在服务器端的app.js，加入以下代码。
-
-```javascript
-io.sockets.on('connection', function (socket) {
-  socket.emit('news', { hello: 'world' });
-  socket.on('anotherNews', function (data) {
-    console.log(data);
-  });
-});
-```
-
-上面代码的io.sockets.on方法指定connection事件（WebSocket连接建立）的回调函数。在回调函数中，用emit方法向客户端发送数据，触发客户端的news事件。然后，再用on方法指定服务器端anotherNews事件的回调函数。
-
-不管是服务器还是客户端，socket.io提供两个核心方法：emit方法用于发送消息，on方法用于监听对方发送的消息。
+具体的用法请查看它们的文档，本教程不详细介绍了。
 
 ## 参考链接
 
 - Ryan Stewart, [Real-time data exchange in HTML5 with WebSockets](http://www.adobe.com/devnet/html5/articles/real-time-data-exchange-in-html5-with-websockets.html)
-- Malte Ubl & Eiji Kitamura，[WEBSOCKETS 简介：将套接字引入网络](http://www.html5rocks.com/zh/tutorials/websockets/basics/)
+- Malte Ubl & Eiji Kitamura，[Introducing WebSockets: Bringing Sockets to the Web](https://www.html5rocks.com/en/tutorials/websockets/basics/)
 - Jack Lawson, [WebSockets: A Guide](http://buildnewgames.com/websockets/)
 - Michael W., [Starting with Node and Web Sockets](http://codular.com/node-web-sockets)
 - Jesse Cravens, [Introduction to WebSockets](http://tech.pro/tutorial/1167/introduction-to-websockets)
@@ -344,3 +316,6 @@ io.sockets.on('connection', function (socket) {
 - Maciej Sopyło, [Node.js: Better Performance With Socket.IO and doT](http://net.tutsplus.com/tutorials/javascript-ajax/node-js-better-performance-with-socket-io-and-dot/)
 - Jos Dirksen, [Capture Canvas and WebGL output as video using websockets](http://www.smartjava.org/content/capture-canvas-and-webgl-output-video-using-websockets)
 - Fionn Kellehe, [Understanding Socket.IO](https://nodesource.com/blog/understanding-socketio)
+- [How to Use WebSockets](http://cjihrig.com/blog/how-to-use-websockets/)
+- [WebSockets - Send & Receive Messages](https://www.tutorialspoint.com/websockets/websockets_send_receive_messages.htm)
+
