@@ -635,7 +635,7 @@ Int16Array.from(Int8Array.of(127, 126, 125), x => 2 * x)
 var buffer = new ArrayBuffer(24);
 
 var idView = new Uint32Array(buffer, 0, 1);
-var usernameView = new Uint8Array(buffer, 4, 16);
+var usernameView = new Int8Array(buffer, 4, 16);
 var amountDueView = new Float32Array(buffer, 20, 1);
 ```
 
