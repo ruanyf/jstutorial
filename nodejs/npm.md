@@ -966,13 +966,13 @@ $ npm prune
 
 ### npm shrinkwrap
 
-`npm shrinkwrap`的作用是锁定当前项目的以来模块的版本。
+`npm shrinkwrap`的作用是锁定当前项目的依赖模块的版本。
 
 ```bash
 $ npm shrinkwrap
 ```
 
-运行该命令后，会在当前项目的根目录下生成一个`npm-shrinkwrap.json`文件，内容是`node_modules`目录下所有已经安装模块的版本。
+运行该命令后，会在当前项目的根目录下生成一个`npm-shrinkwrap.json`文件，内容是`node_modules`目录下所有已经安装的模块，以及它们的精确版本。
 
 下次运行`npm install`命令时，`npm`发现当前目录下有`npm-shrinkwrap.json`文件，就会只安装里面提到的模块，且版本也会保持一致。
 
