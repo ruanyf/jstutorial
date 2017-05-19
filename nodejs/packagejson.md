@@ -19,7 +19,7 @@ modifiedOn: 2014-10-24
 }
 ```
 
-上面代码说明，`package.json`文件内部就是一个JSON对象，该对象的每一个成员就是当前项目的一项设置。比如`name`就是项目名称，`version`是版本（遵守“大版本.次要版本.小版本”的格式）。
+`package.json`文件就是一个JSON对象，该对象的每一个成员就是当前项目的一项设置。比如`name`就是项目名称，`version`是版本（遵守“大版本.次要版本.小版本”的格式）。
 
 下面是一个更完整的package.json文件。
 
@@ -180,11 +180,11 @@ scripts: {
 
 `main`字段指定了加载的入口文件，`require('moduleName')`就会加载这个文件。这个字段的默认值是模块根目录下面的`index.js`。
 
-## config字段
+## config 字段
 
-config字段用于向环境变量输出值。
+`config`字段用于添加命令行的环境变量。
 
-下面是一个package.json文件。
+下面是一个`package.json`文件。
 
 ```javascript
 {
@@ -194,10 +194,18 @@ config字段用于向环境变量输出值。
 }
 ```
 
-然后，在`server.js`脚本就可以引用config字段的值。
+然后，在`server.js`脚本就可以引用`config`字段的值。
 
 ```javascript
-http.createServer(...).listen(process.env.npm_package_config_port)
+http
+  .createServer(...)
+  .listen(process.env.npm_package_config_port)
+```
+
+用户执行`npm run start`命令时，这个脚本就可以得到值。
+
+```bash
+$ npm run start
 ```
 
 用户可以改变这个值。
