@@ -864,7 +864,7 @@ for (e in es6) {
 // committee
 // standard
 
-var engines = Set(["Gecko", "Trident", "Webkit", "Webkit"]);
+var engines = new Set(["Gecko", "Trident", "Webkit", "Webkit"]);
 for (var e of engines) {
     console.log(e);
 }
