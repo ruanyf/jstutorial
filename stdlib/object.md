@@ -182,7 +182,7 @@ Object.getOwnPropertyNames(o).length
 
 **（3）原型链相关方法**
 
-- Object.create()：生成一个新对象，并该对象的原型。
+- Object.create()：使用指定的原型对象和其属性创建了一个新的对象。
 - Object.getPrototypeOf()：获取对象的Prototype对象。
 
 ## Object对象的实例方法
