@@ -8,10 +8,10 @@ modifiedOn: 2013-12-15
 
 ## 概述
 
-JavaScript原生提供一个`Object`对象（注意起首的`O`是大写），所有其他对象都继承自这个对象。`Object`本身也是一个构造函数，可以直接通过它来生成新对象。
+JavaScript 原生提供`Object`对象（注意起首的`O`是大写），所有其他对象都继承自这个对象。`Object`本身也是一个构造函数，可以直接通过它来生成新对象。
 
 ```javascript
-var o = new Object();
+var obj = new Object();
 ```
 
 `Object`作为构造函数使用时，可以接受一个参数。如果该参数是一个对象，则直接返回这个对象；如果是一个原始类型的值，则返回该值对应的包装对象。
@@ -158,32 +158,32 @@ Object.keys(o).length
 Object.getOwnPropertyNames(o).length
 ```
 
-一般情况下，几乎总是使用Object.keys方法，遍历数组的属性。
+一般情况下，几乎总是使用`Object.keys`方法，遍历数组的属性。
 
 ### 其他方法
 
-除了上面提到的方法，Object还有不少其他方法，将在后文逐一详细介绍。
+除了上面提到的方法，`Object`还有不少其他方法，将在后文逐一详细介绍。
 
 **（1）对象属性模型的相关方法**
 
-- Object.getOwnPropertyDescriptor()：获取某个属性的attributes对象。
-- Object.defineProperty()：通过attributes对象，定义某个属性。
-- Object.defineProperties()：通过attributes对象，定义多个属性。
-- Object.getOwnPropertyNames()：返回直接定义在某个对象上面的全部属性的名称。
+- `Object.getOwnPropertyDescriptor()`：获取某个属性的`attributes`对象。
+- `Object.defineProperty()`：通过`attributes`对象，定义某个属性。
+- `Object.defineProperties()`：通过`attributes`对象，定义多个属性。
+- `Object.getOwnPropertyNames()`：返回直接定义在某个对象上面的全部属性的名称。
 
 **（2）控制对象状态的方法**
 
-- Object.preventExtensions()：防止对象扩展。
-- Object.isExtensible()：判断对象是否可扩展。
-- Object.seal()：禁止对象配置。
-- Object.isSealed()：判断一个对象是否可配置。
-- Object.freeze()：冻结一个对象。
-- Object.isFrozen()：判断一个对象是否被冻结。
+- `Object.preventExtensions()`：防止对象扩展。
+- `Object.isExtensible()`：判断对象是否可扩展。
+- `Object.seal()`：禁止对象配置。
+- `Object.isSealed()`：判断一个对象是否可配置。
+- `Object.freeze()`：冻结一个对象。
+- `Object.isFrozen()`：判断一个对象是否被冻结。
 
 **（3）原型链相关方法**
 
-- Object.create()：使用指定的原型对象和其属性创建了一个新的对象。
-- Object.getPrototypeOf()：获取对象的Prototype对象。
+- `Object.create()`：该方法可以指定原型对象和属性，返回一个新的对象。
+- `Object.getPrototypeOf()`：获取对象的`Prototype`对象。
 
 ## Object对象的实例方法
 
