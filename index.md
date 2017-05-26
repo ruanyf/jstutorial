@@ -80,7 +80,7 @@ modifiedOn: 2014-05-18
 - [Performance API](bom/performance.html)
 - [移动设备API](bom/mobile.html)
 
-<h2 id="htmlapi">HTML网页的API</h2>
+<h2 id="htmlapi">Web API</h2>
 
 - [概述](htmlapi/elements.html)
 - [Canvas](htmlapi/canvas.html)
