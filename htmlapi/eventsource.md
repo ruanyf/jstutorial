@@ -1,305 +1,242 @@
 ---
-title: SSE：服务器发送事件
+title: Server-Sent Events
 layout: page
 category: htmlapi
 date: 2013-01-07
 modifiedOn: 2013-01-07
 ---
 
-## 概述
+## 简介
 
-传统的网页都是浏览器向服务器“查询”数据，但是很多场合，最有效的方式是服务器向浏览器“发送”数据。比如，每当收到新的电子邮件，服务器就向浏览器发送一个“通知”，这要比浏览器按时向服务器查询（polling）更有效率。
+服务器向客户端推送数据，有很多解决方案。除了“轮询” 和 WebSocket，HTML 5 还提供了 Server-Sent Events（以下简称 SSE）。
 
-服务器发送事件（Server-Sent Events，简称SSE）就是为了解决这个问题，而提出的一种新API，部署在EventSource对象上。目前，除了IE，其他主流浏览器都支持。
+一般来说，HTTP 协议只能客户端向服务器发起请求，服务器不能主动向客户端推送。但是有一种特殊情况，就是服务器向客户端声明，接下来要发送的是流信息（streaming）。也就是说，发送的不是一次性的数据包，而是一个数据流，会连续不断地发送过来。这时，客户端不会关闭连接，会一直等着服务器发过来的新的数据流。
 
-简单说，所谓SSE，就是浏览器向服务器发送一个HTTP请求，然后服务器不断单向地向浏览器推送“信息”（message）。这种信息在格式上很简单，就是“信息”加上前缀“data: ”，然后以“\n\n”结尾。
+SSE 就是利用这种机制，实现的服务器推送信息的解决方案，基于 HTTP 协议。目前，除了IE，其他浏览器都支持。
 
-{% highlight bash %}
+## 与 WebSocket 的比较
 
-$ curl http://example.com/dates
-data: 1394572346452
+SSE 与 WebSocket 作用相似，都是建立浏览器与服务器之间的通信渠道，然后服务器可以向浏览器推送信息。总体来说，WebSocket 更强大和灵活。因为它是全双工通道，可以双向通信；SSE 是单向通道，只能服务器向浏览器端发送，因为 streaming 本质上可以看作是下载。如果浏览器向服务器发送信息，就变成了另一次 HTTP 请求。
 
-data: 1394572347457
+但是，SSE 也有自己的优点。
 
-data: 1394572348463
+- SSE 使用 HTTP 协议，现有的服务器软件都支持。WebSocket 是一个独立协议。
+- SSE 是一个轻量级协议，相对简单；WebSocket 是一种较重的协议，相对复杂。
+- SSE 默认支持断线重连，WebSocket 需要自己实现。
+- SSE 一般只用来传送文本，二进制数据需要编码后传送，WebSocket 默认支持传送二进制数据。
+- SSE 支持自定义发送的消息类型。
 
-^C
+因此，两者各有特点，适合不同的场合。
 
-{% endhighlight %}
+## 客户端 API
 
-SSE与WebSocket有相似功能，都是用来建立浏览器与服务器之间的通信渠道。两者的区别在于：
+### EventSource 对象
 
-- WebSocket是全双工通道，可以双向通信，功能更强；SSE是单向通道，只能服务器向浏览器端发送。
+SSE 的客户端 API 部署在`EventSource`对象上。使用下面的代码，可以检测浏览器是否支持 SSE。
 
-- WebSocket是一个新的协议，需要服务器端支持；SSE则是部署在HTTP协议之上的，现有的服务器软件都支持。
-
-- SSE是一个轻量级协议，相对简单；WebSocket是一种较重的协议，相对复杂。
-
-- SSE默认支持断线重连，WebSocket则需要额外部署。
-
-- SSE支持自定义发送的数据类型。
-
-从上面的比较可以看出，两者各有特点，适合不同的场合。
-
-## 客户端代码
-
-### 概述
-
-首先，使用下面的代码，检测浏览器是否支持SSE。
-
-{% highlight javascript %}
-
-if (!!window.EventSource) {
+```javascript
+if ('EventSource' in window) {
   // ...
 }
+```
 
-{% endhighlight %}
+使用 SSE 时，浏览器首先向服务器发起连接，生成一个`EventSource`实例。
 
-然后，部署SSE大概如下。
-
-{% highlight javascript %}
-
-var source = new EventSource('/dates');
-
-source.onmessage = function(e){
-  console.log(e.data);
-};
-
-// 或者
-
-source.addEventListener('message', function(e){})
-
-{% endhighlight %}
-
-### 建立连接
-
-首先，浏览器向服务器发起连接，生成一个EventSource的实例对象。
-
-{% highlight javascript %}
-
+```javascript
 var source = new EventSource(url);
+```
 
-{% endhighlight %}
+上面的`url`可以与当前网页的网址同域，也可以跨域。跨域时，需要指定第二个参数，打开`withCredentials`属性。
 
-参数url就是服务器网址，必须与当前网页的网址在同一个网域（domain），而且协议和端口都必须相同。
+```javascript
+var source = new EventSource(url, { withCredentials: true });
+```
 
-下面是一个建立连接的实例。
+### readyState 属性
 
-{% highlight javascript %}
+`EventSource`实例的`readyState`属性，表明连接的当前状态。该属性只读，可以取以下值。
 
-if (!!window.EventSource) {
-  var source = new EventSource('http://127.0.0.1/sses/');
-}
+- 0：相当于常量`EventSource.CONNECTING`，表示连接还未建立，或者连接断线，正在重连。
+- 1：相当于常量`EventSource.OPEN`，表示连接已经建立，可以接受数据。
+- 2：相当于常量`EventSource.CLOSED`，表示连接已断，且不会重连。
 
-{% endhighlight %}
+```javascript
+var source = new EventSource(url);
+console.log(source.readyState);
+```
 
-新生成的EventSource实例对象，有一个readyState属性，表明连接所处的状态。
+### url 属性
 
-{% highlight javascript %}
+`EventSource`实例的`url`属性返回连接的网址，该属性只读。
 
-source.readyState
+### withCredentials 属性
 
-{% endhighlight %}
+`EventSource`实例的`withCredentials`属性返回一个布尔值，表示当前实例是否开启 CORS 的`withCredentials`。该属性只读，默认是`false`。
 
-它可以取以下值：
+### onopen 属性
 
-- 0，相当于常量EventSource.CONNECTING，表示连接还未建立，或者连接断线。
+连接一旦建立，就会触发`open`事件，可以在`onopen`属性定义回调函数。
 
-- 1，相当于常量EventSource.OPEN，表示连接已经建立，可以接受数据。
-
-- 2，相当于常量EventSource.CLOSED，表示连接已断，且不会重连。
-
-### open事件
-
-连接一旦建立，就会触发open事件，可以定义相应的回调函数。
-
-{% highlight javascript %}
-
-source.onopen = function(event) {
-  // handle open event
+```javascript
+source.onopen = function (event) {
+  // ...
 };
 
-// 或者
-
-source.addEventListener("open", function(event) {
-  // handle open event
+// 另一种写法
+source.addEventListener('open', function (event) {
+  // ...
 }, false);
+```
 
-{% endhighlight %}
+### onmessage 属性
 
-### message事件
+客户端收到服务器发来的数据，就会触发`message`事件，可以在`onmessage`属性的回调函数。
 
-收到数据就会触发message事件。
-
-{% highlight javascript %}
-
-source.onmessage = function(event) {
+```javascript
+source.onmessage = function (event) {
   var data = event.data;
   var origin = event.origin;
   var lastEventId = event.lastEventId;
   // handle message
 };
 
-// 或者
-
-source.addEventListener("message", function(event) {
+// 另一种写法
+source.addEventListener('message', function (event) {
   var data = event.data;
   var origin = event.origin;
   var lastEventId = event.lastEventId;
   // handle message
 }, false);
+```
 
-{% endhighlight %}
+上面代码中，参数对象`event`有如下属性。
 
-参数对象event有如下属性：
+- `data`：服务器端传回的数据（文本格式）。
+- `origin`： 服务器 URL 的域名部分，即协议、域名和端口，表示消息的来源。
+- `lastEventId`：数据的编号，由服务器端发送。如果没有编号，这个属性为空。
 
-- data：服务器端传回的数据（文本格式）。
+### onerror 属性
 
-- origin： 服务器端URL的域名部分，即协议、域名和端口。
+如果发生通信错误（比如连接中断），就会触发`error`事件，可以在`onerror`属性定义回调函数。
 
-- lastEventId：数据的编号，由服务器端发送。如果没有编号，这个属性为空。
-
-### error事件
-
-如果发生通信错误（比如连接中断），就会触发error事件。
-
-{% highlight javascript %}
-
-source.onerror = function(event) {
+```javascript
+source.onerror = function (event) {
   // handle error event
 };
 
-// 或者
-
-source.addEventListener("error", function(event) {
+// 另一种写法
+source.addEventListener('error', function (event) {
   // handle error event
 }, false);
-
-{% endhighlight %}
+```
 
 ### 自定义事件
 
-服务器可以与浏览器约定自定义事件。这种情况下，发送回来的数据不会触发message事件。
+默认情况下，服务器发来的数据，总是触发浏览器的`message`事件。但是，服务器可以与浏览器约定自定义事件，这种情况下，发送回来的数据不会触发`message`事件。
 
-{% highlight javascript %}
-
-source.addEventListener("foo", function(event) {
+```javascript
+source.addEventListener('foo', function (event) {
   var data = event.data;
   var origin = event.origin;
   var lastEventId = event.lastEventId;
   // handle message
 }, false);
+```
 
-{% endhighlight %}
+上面代码中，浏览器对 SSE 的`foo`事件进行监听。如何实现服务器发送`foo`事件，请看后文。
 
-上面代码表示，浏览器对foo事件进行监听。
+### close() 方法
 
-### close方法
+`close`方法用于关闭 SSE 连接。
 
-close方法用于关闭连接。
-
-{% highlight javascript %}
-
+```javascript
 source.close();
+```
 
-{% endhighlight %}
+## 服务器实现
 
-## 数据格式
+### 数据格式
 
-### 概述
+服务器发送的 SSE 数据，必须是 UTF-8 编码的文本，具有如下的 HTTP 头信息。
 
-服务器端发送的数据的HTTP头信息如下：
-
-{% highlight html %}
-
+```html
 Content-Type: text/event-stream
 Cache-Control: no-cache
 Connection: keep-alive
+```
 
-{% endhighlight %}
+上面三行之中，第一行的`Content-Type`必须指定 MIME 类型为`event-steam`。
 
-后面的行都是如下格式：
+每一次发送的信息，由若干个`message`组成，每个`message`之间用`\n\n`分隔。每个`message`内部由若干行组成，每一行都是如下格式。
 
-{% highlight html %}
+```html
+[field]: value\n
+```
 
-field: value\n
+上面的`field`可以取四个值。
 
-{% endhighlight %}
+- data
+- event
+- id
+- retry
 
-field可以取四个值：“data”, “event”, “id”, or “retry”，也就是说有四类头信息。每次HTTP通信可以包含这四类头信息中的一类或多类。\n代表换行符。
+此外，还可以有冒号开头的行，表示注释。通常，服务器每隔一段时间就会向浏览器发送一个注释，保持连接不中断。
 
-以冒号开头的行，表示注释。通常，服务器每隔一段时间就会向浏览器发送一个注释，保持连接不中断。
-
-{% highlight html %}
-
+```html
 : This is a comment
+```
 
-{% endhighlight %}
+下面是一个例子。
 
-下面是一些例子。
-
-{% highlight html %}
-
+```html
 : this is a test stream\n\n
 
 data: some text\n\n
 
 data: another message\n
 data: with two lines \n\n
-
-{% endhighlight %}
+```
 
 ### data：数据栏
 
-数据内容用data表示，可以占用一行或多行。如果数据只有一行，则像下面这样，以“\n\n”结尾。
+数据内容用`data: `前缀表示，以`\n\n`结尾。
 
-{% highlight html %}
-
+```html
 data:  message\n\n
+```
 
-{% endhighlight %}
+如果数据很长，可以分成多行，最后一行用`\n\n`结尾，前面行都用`\n`结尾。
 
-如果数据有多行，则最后一行用“\n\n”结尾，前面行都用“\n”结尾。
-
-{% highlight html %}
-
+```html
 data: begin message\n
 data: continue message\n\n
+```
 
-{% endhighlight %}
+下面是一个发送 JSON 数据的例子。
 
-总之，最后一行的data，结尾要用两个换行符号，表示数据结束。
-
-以发送JSON格式的数据为例。
-
-{% highlight html %}
-
+```html
 data: {\n
 data: "foo": "bar",\n
 data: "baz", 555\n
 data: }\n\n
-
-{% endhighlight %}
+```
 
 ### id：数据标识符
 
-数据标识符用id表示，相当于每一条数据的编号。
+数据标识符用`id`表示，相当于每一条数据的编号。
 
-{% highlight html %}
-
+```html
 id: msg1\n
 data: message\n\n
+```
 
-{% endhighlight %}
+浏览器用`lastEventId`属性读取这个值。一旦连接断线，浏览器会发送一个 HTTP 头，里面包含一个特殊的`Last-Event-ID`头信息，将这个值发送回来，用来帮助服务器端重建连接。因此，这个头信息可以被视为一种同步机制。
 
-浏览器用lastEventId属性读取这个值。一旦连接断线，浏览器会发送一个HTTP头，里面包含一个特殊的“Last-Event-ID”头信息，将这个值发送回来，用来帮助服务器端重建连接。因此，这个头信息可以被视为一种同步机制。
+### event：自定义信息类型
 
-### event栏：自定义信息类型
+`event`字段表示自定义的事件类型，默认是`message`事件。浏览器可以用`addEventListener()`监听该事件。
 
-event头信息表示自定义的数据类型，或者说数据的名字。
-
-{% highlight html %}
-
+```html
 event: foo\n
 data: a foo event\n\n
 
@@ -307,83 +244,70 @@ data: an unnamed event\n\n
 
 event: bar\n
 data: a bar event\n\n
+```
 
-{% endhighlight %}
+上面的代码创造了三条信息。第一条的名字是`foo`，触发浏览器的`foo`事件；第二条未取名，表示默认类型，触发浏览器的`message`事件；第三条是`bar`，触发浏览器的`bar`事件。
 
-上面的代码创造了三条信息。第一条是foo，触发浏览器端的foo事件；第二条未取名，表示默认类型，触发浏览器端的message事件；第三条是bar，触发浏览器端的bar事件。
+下面是另一个例子。
+
+```html
+event: userconnect
+data: {"username": "bobby", "time": "02:33:48"}
+
+event: usermessage
+data: {"username": "bobby", "time": "02:34:11", "text": "Hi everyone."}
+
+event: userdisconnect
+data: {"username": "bobby", "time": "02:34:23"}
+
+event: usermessage
+data: {"username": "sean", "time": "02:34:36", "text": "Bye, bobby."}
+```
 
 ### retry：最大间隔时间
 
-服务器端可以用`retry`字段，指定浏览器重新发起连接的时间间隔。
+服务器可以用`retry`字段，指定浏览器重新发起连接的时间间隔。
 
 ```html
 retry: 10000\n
 ```
 
-两种情况会导致浏览器重新发起连接：一种是浏览器开始正常完毕服务器发来的信息，二是由于网络错误等原因，导致连接出错。
+两种情况会导致浏览器重新发起连接：一种是时间间隔到期，二是由于网络错误等原因，导致连接出错。
 
-## 服务器代码
+## Node 服务器实现
 
-服务器端发送事件，要求服务器与浏览器保持连接。对于不同的服务器软件来说，所消耗的资源是不一样的。Apache服务器，每个连接就是一个线程，如果要维持大量连接，势必要消耗大量资源。Node.js则是所有连接都使用同一个线程，因此消耗的资源会小得多，但是这要求每个连接不能包含很耗时的操作，比如磁盘的IO读写。
+SSE 要求服务器与浏览器保持连接。对于不同的服务器软件来说，所消耗的资源是不一样的。Apache 服务器，每个连接就是一个线程，如果要维持大量连接，势必要消耗大量资源。Node 则是所有连接都使用同一个线程，因此消耗的资源会小得多，但是这要求每个连接不能包含很耗时的操作，比如磁盘的IO读写。
 
-下面是Node.js的服务器发送事件的[代码实例](http://cjihrig.com/blog/server-sent-events-in-node-js/)。
+下面是 Node 的 SSE 服务器[实例](http://cjihrig.com/blog/server-sent-events-in-node-js/)。
 
-{% highlight javascript %}
-
+```javascript
 var http = require("http");
 
 http.createServer(function (req, res) {
+  var fileName = "." + req.url;
 
-	var fileName = "." + req.url;
+  if (fileName === "./stream") {
+    res.writeHead(200, {
+      "Content-Type":"text/event-stream",
+      "Cache-Control":"no-cache",
+      "Connection":"keep-alive",
+      "Access-Control-Allow-Origin": '*',
+    });
+    res.write("retry: 10000\n");
+    res.write("event: connecttime\n");
+    res.write("data: " + (new Date()) + "\n\n");
+    res.write("data: " + (new Date()) + "\n\n");
 
-	if (fileName === "./stream") {
-		res.writeHead(200, {"Content-Type":"text/event-stream", 
-							"Cache-Control":"no-cache", 
-							"Connection":"keep-alive"});
-		res.write("retry: 10000\n");
-		res.write("event: connecttime\n");
-		res.write("data: " + (new Date()) + "\n\n");
-		res.write("data: " + (new Date()) + "\n\n");
+    interval = setInterval(function () {
+      res.write("data: " + (new Date()) + "\n\n");
+    }, 1000);
 
-		interval = setInterval(function() {
-			res.write("data: " + (new Date()) + "\n\n");
-		}, 1000);
-
-		req.connection.addListener("close", function () {
-			clearInterval(interval);
-		}, false);
+    req.connection.addListener("close", function () {
+      clearInterval(interval);
+    }, false);
   }
 }).listen(80, "127.0.0.1");
-
-{% endhighlight %}
-
-PHP代码实例。
-
-{% highlight php %}
-
-<?php
-header('Content-Type: text/event-stream');
-header('Cache-Control: no-cache'); // 建议不要缓存SSE数据
-
-/**
- * Constructs the SSE data format and flushes that data to the client.
- *
- * @param string $id Timestamp/id of this connection.
- * @param string $msg Line of text that should be transmitted.
- */
-function sendMsg($id, $msg) {
-  echo "id: $id" . PHP_EOL;
-  echo "data: $msg" . PHP_EOL;
-  echo PHP_EOL;
-  ob_flush();
-  flush();
-}
-
-$serverTime = time();
-
-sendMsg($serverTime, 'server time: ' . date("h:i:s", time()));
-
-{% endhighlight %}
+```
 
 ## 参考链接
 

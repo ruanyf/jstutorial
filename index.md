@@ -88,12 +88,12 @@ modifiedOn: 2014-05-18
 - [表单](htmlapi/form.html)
 - [文件与二进制数据的操作](htmlapi/file.html)
 - [Web Worker](htmlapi/webworker.html)
-- [SSE：服务器发送事件](htmlapi/eventsource.html)
 - [Page Visiblity](htmlapi/pagevisibility.html)
 - [FullScreen API：全屏操作](htmlapi/fullscreen.html)
 - [Web Speech](htmlapi/webspeech.html)
 - [requestAnimationFrame](htmlapi/requestanimationframe.html)
 - [WebSocket](htmlapi/websocket.html)
+- [Server-Sent Events](htmlapi/eventsource.html)
 - [WebRTC](htmlapi/webrtc.html)
 - [Web Components](htmlapi/webcomponents.html)
 
