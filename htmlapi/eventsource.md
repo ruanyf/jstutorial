@@ -10,18 +10,20 @@ modifiedOn: 2013-01-07
 
 服务器向客户端推送数据，有很多解决方案。除了“轮询” 和 WebSocket，HTML 5 还提供了 Server-Sent Events（以下简称 SSE）。
 
-一般来说，HTTP 协议只能客户端向服务器发起请求，服务器不能主动向客户端推送。但是有一种特殊情况，就是服务器向客户端声明，接下来要发送的是流信息（streaming）。也就是说，发送的不是一次性的数据包，而是一个数据流，会连续不断地发送过来。这时，客户端不会关闭连接，会一直等着服务器发过来的新的数据流。
+一般来说，HTTP 协议只能客户端向服务器发起请求，服务器不能主动向客户端推送。但是有一种特殊情况，就是服务器向客户端声明，接下来要发送的是流信息（streaming）。也就是说，发送的不是一次性的数据包，而是一个数据流，会连续不断地发送过来。这时，客户端不会关闭连接，会一直等着服务器发过来的新的数据流。本质上，这种通信就是以流信息的方式，完成一次用时很长的下载。
 
-SSE 就是利用这种机制，实现的服务器推送信息的解决方案，基于 HTTP 协议。目前，除了IE，其他浏览器都支持。
+SSE 就是利用这种机制，使用流信息向浏览器推送信息。它基于 HTTP 协议，目前除了 IE/Edge，其他浏览器都支持。
 
 ## 与 WebSocket 的比较
 
-SSE 与 WebSocket 作用相似，都是建立浏览器与服务器之间的通信渠道，然后服务器可以向浏览器推送信息。总体来说，WebSocket 更强大和灵活。因为它是全双工通道，可以双向通信；SSE 是单向通道，只能服务器向浏览器端发送，因为 streaming 本质上可以看作是下载。如果浏览器向服务器发送信息，就变成了另一次 HTTP 请求。
+SSE 与 WebSocket 作用相似，都是建立浏览器与服务器之间的通信渠道，然后服务器向浏览器推送信息。
+
+总体来说，WebSocket 更强大和灵活。因为它是全双工通道，可以双向通信；SSE 是单向通道，只能服务器向浏览器发送，因为 streaming 本质上就是下载。如果浏览器向服务器发送信息，就变成了另一次 HTTP 请求。
 
 但是，SSE 也有自己的优点。
 
 - SSE 使用 HTTP 协议，现有的服务器软件都支持。WebSocket 是一个独立协议。
-- SSE 是一个轻量级协议，相对简单；WebSocket 是一种较重的协议，相对复杂。
+- SSE 是一个轻量级协议，相对简单；WebSocket 协议相对复杂。
 - SSE 默认支持断线重连，WebSocket 需要自己实现。
 - SSE 一般只用来传送文本，二进制数据需要编码后传送，WebSocket 默认支持传送二进制数据。
 - SSE 支持自定义发送的消息类型。
@@ -32,7 +34,7 @@ SSE 与 WebSocket 作用相似，都是建立浏览器与服务器之间的通�
 
 ### EventSource 对象
 
-SSE 的客户端 API 部署在`EventSource`对象上。使用下面的代码，可以检测浏览器是否支持 SSE。
+SSE 的客户端 API 部署在`EventSource`对象上。下面的代码可以检测浏览器是否支持 SSE。
 
 ```javascript
 if ('EventSource' in window) {
@@ -40,13 +42,13 @@ if ('EventSource' in window) {
 }
 ```
 
-使用 SSE 时，浏览器首先向服务器发起连接，生成一个`EventSource`实例。
+使用 SSE 时，浏览器首先生成一个`EventSource`实例，向服务器发起连接。
 
 ```javascript
 var source = new EventSource(url);
 ```
 
-上面的`url`可以与当前网页的网址同域，也可以跨域。跨域时，需要指定第二个参数，打开`withCredentials`属性。
+上面的`url`可以与当前网址同域，也可以跨域。跨域时，可以指定第二个参数，打开`withCredentials`属性，表示是否一起发送 Cookie。
 
 ```javascript
 var source = new EventSource(url, { withCredentials: true });
@@ -56,7 +58,7 @@ var source = new EventSource(url, { withCredentials: true });
 
 `EventSource`实例的`readyState`属性，表明连接的当前状态。该属性只读，可以取以下值。
 
-- 0：相当于常量`EventSource.CONNECTING`，表示连接还未建立，或者连接断线，正在重连。
+- 0：相当于常量`EventSource.CONNECTING`，表示连接还未建立，或者断线正在重连。
 - 1：相当于常量`EventSource.OPEN`，表示连接已经建立，可以接受数据。
 - 2：相当于常量`EventSource.CLOSED`，表示连接已断，且不会重连。
 
@@ -90,7 +92,7 @@ source.addEventListener('open', function (event) {
 
 ### onmessage 属性
 
-客户端收到服务器发来的数据，就会触发`message`事件，可以在`onmessage`属性的回调函数。
+客户端收到服务器发来的数据，就会触发`message`事件，可以在`onmessage`属性定义回调函数。
 
 ```javascript
 source.onmessage = function (event) {
@@ -132,7 +134,7 @@ source.addEventListener('error', function (event) {
 
 ### 自定义事件
 
-默认情况下，服务器发来的数据，总是触发浏览器的`message`事件。但是，服务器可以与浏览器约定自定义事件，这种情况下，发送回来的数据不会触发`message`事件。
+默认情况下，服务器发来的数据，总是触发浏览器`EventSource`实例的`message`事件。开发者还可以自定义 SSE 事件，这种情况下，发送回来的数据不会触发`message`事件。
 
 ```javascript
 source.addEventListener('foo', function (event) {
@@ -143,7 +145,7 @@ source.addEventListener('foo', function (event) {
 }, false);
 ```
 
-上面代码中，浏览器对 SSE 的`foo`事件进行监听。如何实现服务器发送`foo`事件，请看后文。
+上面代码中，浏览器对 SSE 的`foo`事件进行监听。如何实现服务器发送`foo`事件，请看下文。
 
 ### close() 方法
 
@@ -157,7 +159,7 @@ source.close();
 
 ### 数据格式
 
-服务器发送的 SSE 数据，必须是 UTF-8 编码的文本，具有如下的 HTTP 头信息。
+服务器向浏览器发送的 SSE 数据，必须是 UTF-8 编码的文本，具有如下的 HTTP 头信息。
 
 ```html
 Content-Type: text/event-stream
@@ -197,9 +199,9 @@ data: another message\n
 data: with two lines \n\n
 ```
 
-### data：数据栏
+### data 字段
 
-数据内容用`data: `前缀表示，以`\n\n`结尾。
+数据内容用`data`字段表示。
 
 ```html
 data:  message\n\n
@@ -221,9 +223,9 @@ data: "baz", 555\n
 data: }\n\n
 ```
 
-### id：数据标识符
+### id 字段
 
-数据标识符用`id`表示，相当于每一条数据的编号。
+数据标识符用`id`字段表示，相当于每一条数据的编号。
 
 ```html
 id: msg1\n
@@ -232,7 +234,7 @@ data: message\n\n
 
 浏览器用`lastEventId`属性读取这个值。一旦连接断线，浏览器会发送一个 HTTP 头，里面包含一个特殊的`Last-Event-ID`头信息，将这个值发送回来，用来帮助服务器端重建连接。因此，这个头信息可以被视为一种同步机制。
 
-### event：自定义信息类型
+### event 字段
 
 `event`字段表示自定义的事件类型，默认是`message`事件。浏览器可以用`addEventListener()`监听该事件。
 
@@ -264,7 +266,7 @@ event: usermessage
 data: {"username": "sean", "time": "02:34:36", "text": "Bye, bobby."}
 ```
 
-### retry：最大间隔时间
+### retry 字段
 
 服务器可以用`retry`字段，指定浏览器重新发起连接的时间间隔。
 
@@ -274,9 +276,9 @@ retry: 10000\n
 
 两种情况会导致浏览器重新发起连接：一种是时间间隔到期，二是由于网络错误等原因，导致连接出错。
 
-## Node 服务器实现
+## Node 服务器实例
 
-SSE 要求服务器与浏览器保持连接。对于不同的服务器软件来说，所消耗的资源是不一样的。Apache 服务器，每个连接就是一个线程，如果要维持大量连接，势必要消耗大量资源。Node 则是所有连接都使用同一个线程，因此消耗的资源会小得多，但是这要求每个连接不能包含很耗时的操作，比如磁盘的IO读写。
+SSE 要求服务器与浏览器保持连接。对于不同的服务器软件来说，所消耗的资源是不一样的。Apache 服务器，每个连接就是一个线程，如果要维持大量连接，势必要消耗大量资源。Node 则是所有连接都使用同一个线程，因此消耗的资源会小得多，但是这要求每个连接不能包含很耗时的操作，比如磁盘的 IO 读写。
 
 下面是 Node 的 SSE 服务器[实例](http://cjihrig.com/blog/server-sent-events-in-node-js/)。
 
@@ -306,7 +308,7 @@ http.createServer(function (req, res) {
       clearInterval(interval);
     }, false);
   }
-}).listen(80, "127.0.0.1");
+}).listen(8844, "127.0.0.1");
 ```
 
 ## 参考链接
