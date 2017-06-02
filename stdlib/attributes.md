@@ -921,32 +921,48 @@ Object.freeze(o);
 `Object.isFrozen`方法用于检查一个对象是否使用了`Object.freeze()`方法。
 
 ```javascript
-var o = {
+var obj = {
   p: 'hello'
 };
 
-Object.freeze(o);
-Object.isFrozen(o) // true
+Object.freeze(obj);
+Object.isFrozen(obj) // true
 ```
+
+前面说过，如果一个对象被冻结，再对它的属性赋值，在严格模式下会报错。`Object.isFrozen`方法可以防止发生这样的错误。
+
+```javascript
+var obj = {
+  p: 'hello'
+};
+
+Object.freeze(obj);
+
+if (!Object.isFrozen(obj)) {
+  obj.p = 'world';
+}
+```
+
+上面代码中，确认`obj`没有被冻结后，再对它的属性赋值，就不会报错了。
 
 ### 局限性
 
 需要注意的是，使用上面这些方法锁定对象的可写性，但是依然可以通过改变该对象的原型对象，来为它增加属性。
 
 ```javascript
-var o = new Object();
+var obj = new Object();
 Object.preventExtensions(o);
 
-var proto = Object.getPrototypeOf(o);
-proto.t = "hello";
-o.t
+var proto = Object.getPrototypeOf(obj);
+proto.t = 'hello';
+obj.t
 // hello
 ```
 
 一种解决方案是，把原型也冻结住。
 
 ```javascript
-var o = Object.seal(
+var obj = Object.seal(
   Object.create(
     Object.freeze({x: 1}),
     {
@@ -958,8 +974,8 @@ var o = Object.seal(
   )
 );
 
-Object.getPrototypeOf(o).t = "hello";
-o.hello // undefined
+Object.getPrototypeOf(obj).t = "hello";
+obj.hello // undefined
 ```
 
 另外一个局限是，如果属性值是对象，上面这些方法只能冻结属性指向的对象，而不能冻结对象本身的内容。
@@ -976,3 +992,4 @@ obj.bar // ["a", "b", "c"]
 ```
 
 上面代码中，`obj.bar`属性指向一个数组，`obj`对象被冻结以后，这个指向无法改变，即无法指向其他值，但是所指向的数组是可以改变的。
+
