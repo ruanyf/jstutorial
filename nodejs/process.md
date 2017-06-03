@@ -6,51 +6,25 @@ date: 2014-10-20
 modifiedOn: 2014-10-20
 ---
 
-`process`对象是Node的一个全局对象，提供当前Node进程的信息。它可以在脚本的任意位置使用，不必通过`require`命令加载。该对象部署了`EventEmitter`接口。
-
-## 进程的退出码
-
-进程退出时，会返回一个整数值，表示退出时的状态。这个整数值就叫做退出码。下面是常见的Node进程退出码。
-
-- 0，正常退出
-- 1，发生未捕获错误
-- 5，V8执行错误
-- 8，不正确的参数
-- 128 + 信号值，如果Node接受到退出信号（比如SIGKILL或SIGHUP），它的退出码就是128加上信号值。由于128的二进制形式是10000000, 所以退出码的后七位就是信号值。
-
-Bash可以使用环境变量`$?`，获取上一步操作的退出码。
-
-```bash
-$ node nonexist.js
-Error: Cannot find 'nonexist.js'
-
-$ echo $?
-1
-```
-
-上面代码中，Node执行一个不存在的脚本文件，结果报错，退出码就是1。
+`process`对象是 Node 的一个全局对象，提供当前 Node 进程的信息。它可以在脚本的任意位置使用，不必通过`require`命令加载。该对象部署了`EventEmitter`接口。
 
 ## 属性
 
-process对象提供一系列属性，用于返回系统信息。
+`process`对象提供一系列属性，用于返回系统信息。
 
-- **process.argv**：返回当前进程的命令行参数数组。
-- **process.env**：返回一个对象，成员为当前Shell的环境变量，比如`process.env.HOME`。
-- **process.installPrefix**：node的安装路径的前缀，比如`/usr/local`，则node的执行文件目录为`/usr/local/bin/node`。
-- **process.pid**：当前进程的进程号。
-- **process.platform**：当前系统平台，比如Linux。
-- **process.title**：默认值为“node”，可以自定义该值。
-- **process.version**：Node的版本，比如v0.10.18。
+- `process.arg`：返回一个数组，成员是当前进程的所有命令行参数。
+- `process.env`：返回一个对象，成员为当前Shell的环境变量，比如`process.env.HOME`。
+- `process.installPrefix`：返回一个字符串，表示 Node 安装路径的前缀，比如`/usr/local`。相应地，Node 的执行文件目录为`/usr/local/bin/node`。
+- `process.pid`：返回一个数字，表示当前进程的进程号。
+- `process.platform`：返回一个字符串，表示当前的操作系统，比如`Linux`。
+- `process.title`：返回一个字符串，默认值为`node`，可以自定义该值。
+- `process.version`：返回一个字符串，表示当前使用的 Node 版本，比如`v7.10.0`。
 
-下面是主要属性的介绍。
+`process`对象还有一些属性，用来指向 Shell 提供的接口。
 
-### stdout，stdin，stderr
+### process.stdout
 
-以下属性指向系统I/O。
-
-**（1）stdout**
-
-stdout属性指向标准输出（文件描述符1）。它的write方法等同于console.log，可用在标准输出向用户显示内容。
+`process.stdout`属性返回一个对象，表示标准输出。该对象的`write`方法等同于`console.log`，可用在标准输出向用户显示内容。
 
 ```javascript
 console.log = function(d) {
@@ -67,7 +41,7 @@ fs.createReadStream('wow.txt')
   .pipe(process.stdout);
 ```
 
-上面代码中，由于process.stdout和process.stdin与其他进程的通信，都是流（stream）形式，所以必须通过pipe管道命令中介。
+上面代码中，由于`process.stdout`和`process.stdin`与其他进程的通信，都是流（stream）形式，所以必须通过`pipe`管道命令中介。
 
 ```javascript
 var fs = require('fs');
@@ -78,11 +52,11 @@ fs.createReadStream('wow.txt')
   .pipe(process.stdout);
 ```
 
-上面代码通过pipe方法，先将文件数据压缩，然后再导向标准输出。
+上面代码通过`pipe`方法，先将文件数据压缩，然后再导向标准输出。
 
-**（2）stdin**
+### process.stdin
 
-stdin代表标准输入（文件描述符0）。
+`process.stdin`返回一个对象，表示标准输入。
 
 ```javascript
 process.stdin.pipe(process.stdout)
@@ -107,29 +81,29 @@ process.stdin.on('end', function() {
 });
 ```
 
-**（3）stderr**
+### stderr
 
-stderr属性指向标准错误（文件描述符2）。
+`process.stderr`属性指向标准错误。
 
-### argv，execPath，execArgv
+### process.argv，process.execPath，process.execArgv
 
-argv属性返回一个数组，由命令行执行脚本时的各个参数组成。它的第一个成员总是node，第二个成员是脚本文件名，其余成员是脚本文件的参数。
+`process.argv`属性返回一个数组，由命令行执行脚本时的各个参数组成。它的第一个成员总是`node`，第二个成员是脚本文件名，其余成员是脚本文件的参数。
 
-请看下面的例子，新建一个脚本文件argv.js。
+请看下面的例子，新建一个脚本文件`argv.js`。
 
 ```javascript
 // argv.js
-console.log("argv: ",process.argv);
+console.log("argv: ", process.argv);
 ```
 
-在命令行下调用这个脚本，会得到以下结果。
+命令行下调用这个脚本，会得到以下结果。
 
 ```javascript
 $ node argv.js a b c
 [ 'node', '/path/to/argv.js', 'a', 'b', 'c' ]
 ```
 
-上面代码表示，argv返回数组的成员依次是命令行的各个部分，真正的参数实际上是从`process.argv[2]`开始。要得到真正的参数部分，可以把argv.js改写成下面这样。
+上面代码表示，`argv`返回数组的成员依次是命令行的各个部分，真正的参数实际上是从`process.argv[2]`开始。要得到真正的参数部分，可以把`argv.js`改写成下面这样。
 
 ```javascript
 // argv.js
@@ -137,7 +111,7 @@ var myArgs = process.argv.slice(2);
 console.log(myArgs);
 ```
 
-execPath属性返回执行当前脚本的Node二进制文件的绝对路径。
+`process.execPath`属性返回执行当前脚本的Node二进制文件的绝对路径。
 
 ```javascript
 > process.execPath
@@ -145,7 +119,7 @@ execPath属性返回执行当前脚本的Node二进制文件的绝对路径。
 >
 ```
 
-execArgv属性返回一个数组，成员是命令行下执行脚本时，在Node可执行文件与脚本文件之间的命令行参数。
+`process.execArgv`属性返回一个数组，成员是命令行下执行脚本时，在 Node 可执行文件与脚本文件之间的命令行参数。
 
 ```bash
 # script.js的代码为
@@ -169,17 +143,17 @@ $ NODE_ENV=production node app.js
 
 ## 方法
 
-process对象提供以下方法：
+`process`对象提供以下方法：
 
-- **process.chdir()**：切换工作目录到指定目录。
-- **process.cwd()**：返回运行当前脚本的工作目录的路径。
-- **process.exit()**：退出当前进程。
-- **process.getgid()**：返回当前进程的组ID（数值）。
-- **process.getuid()**：返回当前进程的用户ID（数值）。
-- **process.nextTick()**：指定回调函数在当前执行栈的尾部、下一次Event Loop之前执行。
-- **process.on()**：监听事件。
-- **process.setgid()**：指定当前进程的组，可以使用数字ID，也可以使用字符串ID。
-- **process.setuid()**：指定当前进程的用户，可以使用数字ID，也可以使用字符串ID。
+- `process.chdir()`：切换工作目录到指定目录。
+- `process.cwd()`：返回运行当前脚本的工作目录的路径。
+- `process.exit()`：退出当前进程。
+- `process.getgid()`：返回当前进程的组ID（数值）。
+- `process.getuid()`：返回当前进程的用户ID（数值）。
+- `process.nextTick()`：指定回调函数在当前执行栈的尾部、下一次Event Loop之前执行。
+- `process.on()`：监听事件。
+- `process.setgid()`：指定当前进程的组，可以使用数字ID，也可以使用字符串ID。
+- `process.setuid()`：指定当前进程的用户，可以使用数字ID，也可以使用字符串ID。
 
 ### process.cwd()，process.chdir()
 
@@ -222,15 +196,43 @@ setTimeout(function () {
 1. 各种到期的回调函数
 1. `process.nextTick`
 push(), sort(), reverse(), and splice() 
+
 ### process.exit()
 
 `process.exit`方法用来退出当前进程。它可以接受一个数值参数，如果参数大于0，表示执行失败；如果等于0表示执行成功。
 
-```bash
+```javascript
 if (err) {
   process.exit(1);
 } else {
   process.exit(0);
+}
+```
+
+如果不带有参数，`exit`方法的参数默认为0。
+
+注意，`process.exit()`很多时候是不需要的。因为如果没有错误，一旦事件循环之中没有待完成的任务，Node 本来就会退出进程，不需要调用`process.exit(0)`。这时如果调用了，进程会立刻退出，不管有没有异步任务还在执行，所以不如等 Node 自然退出。另一方面，如果发生错误，Node 往往也会退出进程，也不一定要调用`process.exit(1)`。
+
+```javascript
+function printUsageStdout() {
+  process.stdout.write('...some long text ...');
+}
+
+if (true) {
+  printUsageToStdout();
+  process.exit(1);
+}
+```
+
+上面的代码可能不会达到预期效果。因为`process.stdout`有时会变成异步，不能保证一定会在当前事件循环之中输出所有内容，而`process.exit`会使当前进程立刻退出。
+
+更安全的方法是使用`exitcode`属性，指定退出状态，然后再抛出一个错误。
+
+```javascript
+if (true) {
+  printUsageToStdout();
+  process.exitCode = 1;
+  throw new Error("xx condition failed");
 }
 ```
 
@@ -418,6 +420,28 @@ process.on('SIGINT', function() {
 ```
 
 上面代码部署了SIGINT信号的监听函数，当用户按下Ctrl-C后，会显示提示文字。
+
+## 进程的退出码
+
+进程退出时，会返回一个整数值，表示退出时的状态。这个整数值就叫做退出码。下面是常见的Node进程退出码。
+
+- 0，正常退出
+- 1，发生未捕获错误
+- 5，V8执行错误
+- 8，不正确的参数
+- 128 + 信号值，如果Node接受到退出信号（比如SIGKILL或SIGHUP），它的退出码就是128加上信号值。由于128的二进制形式是10000000, 所以退出码的后七位就是信号值。
+
+Bash可以使用环境变量`$?`，获取上一步操作的退出码。
+
+```bash
+$ node nonexist.js
+Error: Cannot find 'nonexist.js'
+
+$ echo $?
+1
+```
+
+上面代码中，Node执行一个不存在的脚本文件，结果报错，退出码就是1。
 
 ## 参考链接
 
