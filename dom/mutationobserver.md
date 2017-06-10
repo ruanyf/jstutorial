@@ -1,5 +1,5 @@
 ---
-title: Mutation Observer
+title: Mutation Observer API
 category: dom
 layout: page
 date: 2013-09-16
@@ -8,31 +8,19 @@ ModifiedOn: 2013-09-16
 
 ## 概述
 
-Mutation Observer（变动观察器）是监视DOM变动的接口。DOM发生任何变动，Mutation Observer会得到通知。
+Mutation Observer API 用来监视 DOM 变动。DOM 的任何变动，比如节点的增减、属性的变动、文本内容的变动，这个 API 都可以得到通知。
 
-概念上，它很接近事件。可以理解为，当DOM发生变动，会触发Mutation Observer事件。但是，它与事件有一个本质不同：事件是同步触发，也就是说，当DOM发生变动，立刻会触发相应的事件；Mutation Observer则是异步触发，DOM发生变动以后，并不会马上触发，而是要等到当前所有DOM操作都结束后才触发。
+概念上，它很接近事件，可以理解为当 DOM 发生变动，就会触发 Mutation Observer 事件。但是，它与事件有一个本质不同：事件是同步触发，也就是说，DOM 的变动立刻会触发相应的事件；Mutation Observer 则是异步触发，DOM 的变动并不会马上触发，而是要等到当前所有 DOM 操作都结束才触发。
 
-这样设计是为了应付DOM变动频繁的特点。举例来说，如果在文档中连续插入1000个段落（p元素），就会连续触发1000个插入事件，执行每个事件的回调函数，这很可能造成浏览器的卡顿；而Mutation Observer完全不同，只在1000个段落都插入结束后才会触发，而且只触发一次。
+这样设计是为了应付 DOM 变动频繁的特点。举例来说，如果在文档中连续插入1000个`<p>`元素，就会连续触发1000个插入事件，执行每个事件的回调函数，这很可能造成浏览器的卡顿；而 Mutation Observer 完全不同，只在1000个段落都插入结束后才会触发，而且只触发一次。
 
-Mutation Observer有以下特点：
+Mutation Observer 有以下特点。
 
 - 它等待所有脚本任务完成后，才会运行，即采用异步方式。
+- 它把 DOM 变动记录封装成一个数组进行处理，而不是一条条地个别处理 DOM 变动。
+- 它既可以观察发生在 DOM 的所有类型变动，也可以观察某一类变动。
 
-- 它把DOM变动记录封装成一个数组进行处理，而不是一条条地个别处理DOM变动。
-
-- 它既可以观察发生在DOM的所有类型变动，也可以观察某一类变动。
-
-下面的表达式检查当前浏览器是否支持这个API。
-
-```javascript
-var MutationObserver = window.MutationObserver
-  || window.WebKitMutationObserver
-  || window.MozMutationObserver;
-
-var observeMutationSupport = !!MutationObserver;
-```
-
-## MutationObserver构造函数
+## MutationObserver 构造函数
 
 使用时，首先使用`MutationObserver`构造函数，新建一个观察器实例，同时指定这个实例的回调函数。
 
@@ -40,13 +28,24 @@ var observeMutationSupport = !!MutationObserver;
 var observer = new MutationObserver(callback);
 ```
 
-观察器的回调函数会在每次DOM发生变动后调用。它接受两个参数，第一个是变动数组，第二个是观察器实例，详见后文的例子。
+上面代码中的回调函数，会在每次 DOM 变动后调用。该回调函数接受两个参数，第一个是变动数组，第二个是观察器实例，下面是一个例子。
 
-## Mutation Observer实例的方法
+```javascript
+var observer = new MutationObserver(function (mutations, observer) {
+  mutations.forEach(function(mutation) {
+    console.log(mutation);
+  });
+});
+```
+
+## 实例方法
 
 ### observe()
 
-`observe`方法指定所要观察的DOM节点，以及所要观察的特定变动。
+`observe`方法用来开始监听，它接受两个参数。
+
+- 第一个参数是所要观察的 DOM 节点
+- 第二个参数是一个配置对象，用来指定所要观察的特定变动
 
 ```javascript
 var article = document.querySelector('article');
@@ -61,7 +60,7 @@ observer.observe(article, options);
 
 上面代码中，`observe`方法接受两个参数，第一个是所要观察的DOM元素是`article`，第二个是所要观察的变动类型（子节点变动和属性变动）。
 
-观察器所能观察的DOM变动类型（即上面代码的options对象），有以下几种：
+观察器所能观察的 DOM 变动类型（即上面代码的`options`对象），有以下几种。
 
 - **childList**：子节点的变动。
 - **attributes**：属性的变动。
@@ -73,10 +72,20 @@ observer.observe(article, options);
 除了变动类型，`options`对象还可以设定以下属性：
 
 - `attributeOldValue`：类型为布尔值，表示观察`attributes`变动时，是否需要记录变动前的属性值。
-
 - `characterDataOldValue`：类型为布尔值，表示观察`characterData`变动时，是否需要记录变动前的值。
-
 - `attributeFilter`：类型为数组，表示需要观察的特定属性（比如`['class','src']`）。
+
+```javascript
+// 开始监听文档根节点（即<html>标签）的变动
+mutationObserver.observe(document.documentElement, {
+  attributes: true,
+  characterData: true,
+  childList: true,
+  subtree: true,
+  attributeOldValue: true,
+  characterDataOldValue: true
+});
+```
 
 对一个节点添加观察器，就像使用`addEventListener`方法一样，多次添加同一个观察器是无效的，回调函数依然只会触发一次。但是，如果指定不同的`options`对象，就会被当作两个不同的观察器。
 
@@ -96,7 +105,7 @@ console.log(insertedNodes);
 
 ### disconnect()，takeRecords（）
 
-`disconnect`方法用来停止观察。再发生相应变动，就不再调用回调函数。
+`disconnect`方法用来停止观察。调用该方法后，DOM 再发生变动，也不会触发观察器。
 
 ```javascript
 observer.disconnect();
@@ -108,9 +117,19 @@ observer.disconnect();
 observer.takeRecords();
 ```
 
-### MutationRecord对象
+下面是一个例子。
 
-DOM每次发生变化，就会生成一条变动记录。这个变动记录对应一个`MutationRecord`对象，该对象包含了与变动相关的所有信息。Mutation Observer处理的是一个个`MutationRecord`对象所组成的数组。
+```javascript
+// 保存所有没有被观察器处理的变动
+var changes = mutationObserver.takeRecords();
+
+// 停止观察
+mutationObserver.disconnect();
+```
+
+## MutationRecord 对象
+
+DOM 每次发生变化，就会生成一条变动记录。这个变动记录对应一个`MutationRecord`对象，该对象包含了与变动相关的所有信息。Mutation Observer 处理的是一个个`MutationRecord`对象所组成的数组。
 
 `MutationRecord`对象包含了DOM的相关信息，有如下属性：
 
@@ -174,9 +193,9 @@ mo.observe(element, options);
 
 上面代码先设定追踪属性变动（`'attributes': true`），然后设定记录变动前的值。实际发生变动时，会将变动前的值显示在控制台。
 
-### 取代DOMContentLoaded事件
+### 取代 DOMContentLoaded 事件
 
-网页加载的时候，DOM节点的生成会产生变动记录，因此只要观察DOM的变动，就能在第一时间触发相关事件，因此也就没有必要使用`DOMContentLoaded`事件。
+网页加载的时候，DOM 节点的生成会产生变动记录，因此只要观察 DOM 的变动，就能在第一时间触发相关事件，因此也就没有必要使用`DOMContentLoaded`事件。
 
 ```javascript
 var observer = new MutationObserver(callback);
@@ -188,7 +207,7 @@ observer.observe(document.documentElement, {
 
 上面代码中，监听`document.documentElement`（即HTML节点）的子节点的变动，`subtree`属性指定监听还包括后代节点。因此，任意一个网页元素一旦生成，就能立刻被监听到。
 
-下面的代码，使用`MutationObserver`对象封装一个监听DOM生成的函数。
+下面的代码，使用`MutationObserver`对象封装一个监听 DOM 生成的函数。
 
 ```javascript
 (function(win){

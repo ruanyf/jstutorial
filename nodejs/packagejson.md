@@ -226,9 +226,19 @@ browser指定该模板供浏览器使用的版本。Browserify这样的浏览器
 },
 ```
 
-### engines字段
+### engines 字段
 
-engines指明了该项目所需要的node.js版本。
+`engines`字段指明了该模块运行的平台，比如 Node 的某个版本或者浏览器。
+
+```javascript
+{ "engines" : { "node" : ">=0.10.3 <0.12" } }
+```
+
+该字段也可以指定适用的`npm`版本。
+
+```javascript
+{ "engines" : { "npm" : "~1.0.20" } }
+```
 
 ### man字段
 
