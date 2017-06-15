@@ -861,7 +861,7 @@ Ajax操作所用的`XMLHttpRequest`对象，已经有十多年的历史，它的
 下面的代码检查浏览器是否部署了Fetch API。
 
 ```javascript
-if (fetch in window){
+if ("fetch" in window){
   // 支持
 } else {
   // 不支持
