@@ -8,7 +8,7 @@ modifiedOn: 2014-01-06
 
 ## 概述
 
-正则表达式（regular expression）是一种表达文本模式（即字符串结构）的方法，有点像字符串的模板，常常用作按照“给定模式”匹配文本的工具。比如，正则表达式给出一个Email地址的模式，然后用它来确定一个字符串是否为Email地址。JavaScript的正则表达式体系是参照Perl 5建立的。
+正则表达式（regular expression）是一种表达文本模式（即字符串结构）的方法，有点像字符串的模板，常常用作按照“给定模式”匹配文本的工具。比如，正则表达式给出一个 Email 地址的模式，然后用它来确定一个字符串是否为 Email 地址。JavaScript 的正则表达式体系是参照 Perl 5 建立的。
 
 新建正则表达式有两种方法。一种是使用字面量，以斜杠表示开始和结束。
 
@@ -16,7 +16,7 @@ modifiedOn: 2014-01-06
 var regex = /xyz/;
 ```
 
-另一种是使用RegExp构造函数。
+另一种是使用 RegExp 构造函数。
 
 ```javascript
 var regex = new RegExp('xyz');
@@ -24,7 +24,7 @@ var regex = new RegExp('xyz');
 
 上面两种写法是等价的，都新建了一个内容为`xyz`的正则表达式对象。它们的主要区别是，第一种方法在编译时新建正则表达式，第二种方法在运行时新建正则表达式。
 
-RegExp构造函数还可以接受第二个参数，表示修饰符（详细解释见下文）。
+RegExp 构造函数还可以接受第二个参数，表示修饰符（详细解释见下文）。
 
 ```javascript
 var regex = new RegExp('xyz', "i");
@@ -706,7 +706,7 @@ var html = "<b>Hello</b>\n<i>world!</i>";
 
 ```javascript
 /lo{2}k/.test('look') // true
-/lo{2, 5}k/.test('looook') // true
+/lo{2,5}k/.test('looook') // true
 ```
 
 上面代码中，第一个模式指定`o`连续出现2次，第二个模式指定`o`连续出现2次到5次之间。
