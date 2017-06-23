@@ -73,7 +73,7 @@ var stateObj = { foo: 'bar' };
 history.pushState(stateObj, 'page 2', '2.html');
 ```
 
-添加上面这个新记录后，浏览器地址栏立刻显示`example.com/2.html`，但并不会跳转到`2.html`，甚至也不会检查`2.html`是否存在，它只是成为浏览历史中的最新记录。假定这时你访问了`google.com`，然后点击了倒退按钮，页面的url将显示`2.html`，但是内容还是原来的`1.html`。你再点击一次倒退按钮，url将显示`1.html`，内容不变。
+添加上面这个新记录后，浏览器地址栏立刻显示`example.com/2.html`，但并不会跳转到`2.html`，甚至也不会检查`2.html`是否存在，它只是成为浏览历史中的最新记录。这时，你在地址栏输入一个新的地址(比如访问`google.com`)，然后点击了倒退按钮，页面的 URL 将显示`2.html`；你再点击一次倒退按钮，URL 将显示`1.html`。
 
 总之，`pushState`方法不会触发页面刷新，只是导致`history`对象发生变化，地址栏会有反应。
 
