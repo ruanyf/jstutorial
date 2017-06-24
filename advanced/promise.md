@@ -190,7 +190,7 @@ items.forEach(function(item) {
 });
 ```
 
-上面代码中，forEach方法会同时发起6个异步任务，等到它们全部完成以后，才会执行final函数。
+上面代码中，`forEach`方法会同时发起6个异步任务，等到它们全部完成以后，才会执行`final`函数。
 
 并行执行的好处是效率较高，比起串行执行一次只能执行一个任务，较为节约时间。但是问题在于如果并行的任务较多，很容易耗尽系统资源，拖慢运行速度。因此有了第三种流程控制方式。
 
@@ -213,7 +213,7 @@ function launcher() {
       if(items.length > 0) {
         launcher();
       } else if(running == 0) {
-        final();
+        final(results);
       }
     });
     running++;
@@ -223,13 +223,13 @@ function launcher() {
 launcher();
 ```
 
-上面代码中，最多只能同时运行两个异步任务。变量running记录当前正在运行的任务数，只要低于门槛值，就再启动一个新的任务，如果等于0，就表示所有任务都执行完了，这时就执行final函数。
+上面代码中，最多只能同时运行两个异步任务。变量`running`记录当前正在运行的任务数，只要低于门槛值，就再启动一个新的任务，如果等于0，就表示所有任务都执行完了，这时就执行`final`函数。
 
 ## Promise对象
 
 ### 简介
 
-Promise对象是CommonJS工作组提出的一种规范，目的是为异步操作提供[统一接口](http://wiki.commonjs.org/wiki/Promises/A)。
+Promise 对象是 CommonJS 工作组提出的一种规范，目的是为异步操作提供[统一接口](http://wiki.commonjs.org/wiki/Promises/A)。
 
 那么，什么是Promises？
 
