@@ -58,7 +58,7 @@ JavaScript的核心语法部分相当精简，只包括两个部分：基本的�
 - DOM
 - Web API
 
-JavaScript语言有多个版本。目前最新的版本是ECMAScript 2016，从历史上看，它属于ECMAScript的第6个版本，又称ES6。本书的内容基于ECMAScript 5.1版本，这是使用最广泛的版本，也是学习JavaScript的基础。ES6和更新的ES7语法请参考我写的[《ECMAScript 6入门》](http://es6.ruanyifeng.com/)。
+JavaScript语言有多个版本。目前最新的版本是ECMAScript 2016，从历史上看，它属于ECMAScript的第7个版本，又称ES7。本书的内容基于ECMAScript 5.1版本，这是使用最广泛的版本，也是学习JavaScript的基础。ES6和更新的ES7语法请参考我写的[《ECMAScript 6入门》](http://es6.ruanyifeng.com/)。
 
 ## 为什么学习JavaScript？
 
