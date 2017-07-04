@@ -951,7 +951,7 @@ if (!Object.isFrozen(obj)) {
 
 ```javascript
 var obj = new Object();
-Object.preventExtensions(o);
+Object.preventExtensions(obj);
 
 var proto = Object.getPrototypeOf(obj);
 proto.t = 'hello';
