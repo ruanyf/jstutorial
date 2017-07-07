@@ -12,7 +12,7 @@ modifiedOn: 2014-10-20
 
 `process`对象提供一系列属性，用于返回系统信息。
 
-- `process.arg`：返回一个数组，成员是当前进程的所有命令行参数。
+- `process.argv`：返回一个数组，成员是当前进程的所有命令行参数。
 - `process.env`：返回一个对象，成员为当前Shell的环境变量，比如`process.env.HOME`。
 - `process.installPrefix`：返回一个字符串，表示 Node 安装路径的前缀，比如`/usr/local`。相应地，Node 的执行文件目录为`/usr/local/bin/node`。
 - `process.pid`：返回一个数字，表示当前进程的进程号。
