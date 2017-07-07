@@ -97,7 +97,7 @@ ClassB.prototype.print = function() {
 
 ## 多重继承
 
-JavaScript不提供多重继承功能，即不允许一个对象同时继承多个对象。但是，可以通过变通方法，实现这个功能。
+JavaScript 不提供多重继承功能，即不允许一个对象同时继承多个对象。但是，可以通过变通方法，实现这个功能。
 
 ```javascript
 function M1() {
@@ -112,14 +112,21 @@ function S() {
   M1.call(this);
   M2.call(this);
 }
-S.prototype = M1.prototype;
+
+// 继承 M1
+S.prototype = Object.create(M1.prototype);
+// 继承链上加入 M2
+Object.assign(S.prototype, M2.prototype);
+
+// 指定构造函数
+S.prototype.constructor = S;
 
 var s = new S();
-s.hello // 'hello'
+s.hello // 'hello：'
 s.world // 'world'
 ```
 
-上面代码中，子类`S`同时继承了父类`M1`和`M2`。当然，从继承链来看，`S`只有一个父类`M1`，但是由于在`S`的实例上，同时执行`M1`和`M2`的构造函数，所以它同时继承了这两个类的方法。
+上面代码中，子类`S`同时继承了父类`M1`和`M2`。这种模式又称为 Mixin（混入）。
 
 ## 模块
 

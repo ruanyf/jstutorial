@@ -403,24 +403,25 @@ F.call(f);
 
 ## Object.create()
 
-`Object.create`方法用于从原型对象生成新的实例对象，可以替代`new`命令。
+生成实例对象的常用方法，就是使用`new`命令，让构造函数返回一个实例。但是很多时候，拿不到构造函数，只能拿到一个实例对象，那么能不能从一个实例对象，生成另一个实例对象呢？
 
-它接受一个对象作为参数，返回一个新对象，后者完全继承前者的属性，即原有对象成为新对象的原型。
+JavaScript 提供了`Object.create`方法，用来满足这种需求。该方法接受一个对象作为参数，然后以它为原型，返回一个实例对象。该实例完全继承继承原型对象的属性。
 
 ```javascript
+// 原型对象
 var A = {
- print: function () {
-   console.log('hello');
- }
+  print: function () {
+    console.log('hello');
+  }
 };
 
+// 实例对象
 var B = Object.create(A);
-
 B.print() // hello
 B.print === A.print // true
 ```
 
-上面代码中，`Object.create`方法在`A`的基础上生成了`B`。此时，`A`就成了`B`的原型，`B`就继承了`A`的所有属性和方法。这段代码等同于下面的代码。
+上面代码中，`Object.create`方法以`A`对象为原型，生成了`B`对象。`B`继承了`A`的所有属性和方法。这段代码等同于下面的代码。
 
 ```javascript
 var A = function () {};
@@ -431,7 +432,6 @@ A.prototype = {
 };
 
 var B = new A();
-
 B.print === A.prototype.print // true
 ```
 
@@ -439,59 +439,62 @@ B.print === A.prototype.print // true
 
 ```javascript
 if (typeof Object.create !== 'function') {
-  Object.create = function (o) {
+  Object.create = function (obj) {
     function F() {}
-    F.prototype = o;
+    F.prototype = obj;
     return new F();
   };
 }
 ```
 
-上面代码表示，`Object.create`方法实质是新建一个构造函数`F`，然后让`F`的`prototype`属性指向作为原型的对象`o`，最后返回一个`F`的实例，从而实现让实例继承`o`的属性。
+上面代码表明，`Object.create`方法的实质是新建一个构造函数`F`，然后让`F.prototype`属性指向参数对象`obj`，最后返回一个`F`的实例，从而实现让该实例继承`obj`的属性。
 
 下面三种方式生成的新对象是等价的。
 
 ```javascript
-var o1 = Object.create({});
-var o2 = Object.create(Object.prototype);
-var o3 = new Object();
+var obj1 = Object.create({});
+var obj2 = Object.create(Object.prototype);
+var obj3 = new Object();
 ```
 
 如果想要生成一个不继承任何属性（比如没有`toString`和`valueOf`方法）的对象，可以将`Object.create`的参数设为`null`。
 
 ```javascript
-var o = Object.create(null);
+var obj = Object.create(null);
 
-o.valueOf()
+obj.valueOf()
 // TypeError: Object [object Object] has no method 'valueOf'
 ```
 
-上面代码表示，如果对象`o`的原型是`null`，它就不具备一些定义在`Object.prototype`对象上面的属性，比如`valueOf`方法。
+上面代码中，对象`obj`的原型是`null`，它就不具备一些定义在`Object.prototype`对象上面的属性，比如`valueOf`方法。
 
-使用`Object.create`方法的时候，必须提供对象原型，否则会报错。
+使用`Object.create`方法的时候，必须提供对象原型，即参数不能为空，或者不是对象，否则会报错。
 
 ```javascript
 Object.create()
+// TypeError: Object prototype may only be an Object or null
+
+Object.create(123)
 // TypeError: Object prototype may only be an Object or null
 ```
 
 `object.create`方法生成的新对象，动态继承了原型。在原型上添加或修改任何方法，会立刻反映在新对象之上。
 
 ```javascript
-var o1 = { p: 1 };
-var o2 = Object.create(o1);
+var obj1 = { p: 1 };
+var obj2 = Object.create(obj1);
 
-o1.p = 2;
-o2.p
+obj1.p = 2;
+obj2.p
 // 2
 ```
 
-上面代码表示，修改对象原型会影响到新生成的对象。
+上面代码中，修改对象原型`obj1`会影响到新生成的实例对象`obj2`。
 
-除了对象的原型，`Object.create`方法还可以接受第二个参数。该参数是一个属性描述对象，它所描述的对象属性，会添加到新对象。
+除了对象的原型，`Object.create`方法还可以接受第二个参数。该参数是一个属性描述对象，它所描述的对象属性，会添加到实例对象，作为该对象自身的属性。
 
 ```javascript
-var o = Object.create({}, {
+var obj = Object.create({}, {
   p1: {
     value: 123,
     enumerable: true,
@@ -507,9 +510,9 @@ var o = Object.create({}, {
 });
 
 // 等同于
-var o = Object.create({});
-o.p1 = 123;
-o.p2 = 'abc';
+var obj = Object.create({});
+obj.p1 = 123;
+obj.p2 = 'abc';
 ```
 
 `Object.create`方法生成的对象，继承了它的原型对象的构造函数。
