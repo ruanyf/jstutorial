@@ -18,7 +18,7 @@ modifiedOn: 2016-04-09
 
 1995年，同源政策由 Netscape 公司引入浏览器。目前，所有浏览器都实行这个政策。
 
-最初，它的含义是指，A网页设置的 Cookie，B网页不能打开，除非这两个网页“同源”。所谓“同源”指的是”三个相同“。
+最初，它的含义是指，A 网页设置的 Cookie，B 网页不能打开，除非这两个网页“同源”。所谓“同源”指的是”三个相同“。
 
 > - 协议相同
 > - 域名相同
@@ -36,7 +36,7 @@ modifiedOn: 2016-04-09
 
 同源政策的目的，是为了保证用户信息的安全，防止恶意的网站窃取数据。
 
-设想这样一种情况：A网站是一家银行，用户登录以后，又去浏览其他网站。如果其他网站可以读取A网站的 Cookie，会发生什么？
+设想这样一种情况：A 网站是一家银行，用户登录以后，又去浏览其他网站。如果其他网站可以读取 A 网站的 Cookie，会发生什么？
 
 很显然，如果 Cookie 包含隐私（比如存款总额），这些信息就会泄漏。更可怕的是，Cookie 往往用来保存用户的登录状态，如果用户没有退出登录，其他网站就可以冒充用户，为所欲为。因为浏览器同时还规定，提交表单不受同源政策的限制。
 
@@ -50,7 +50,7 @@ modifiedOn: 2016-04-09
 >
 > （2） DOM 无法获得。
 >
-> （3） AJAX 请求不能发送。
+> （3） AJAX 请求无效（可以发送，但浏览器会拒绝接受响应）。
 
 虽然这些限制是必要的，但是有时很不方便，合理的用途也受到影响。下面，我将详细介绍，如何规避上面三种限制。
 
@@ -64,13 +64,13 @@ Cookie 是服务器写入浏览器的一小段信息，只有同源的网页才�
 document.domain = 'example.com';
 ```
 
-现在，A网页通过脚本设置一个 Cookie。
+现在，A 网页通过脚本设置一个 Cookie。
 
 ```javascript
 document.cookie = "test1=hello";
 ```
 
-B网页就可以读到这个 Cookie。
+B 网页就可以读到这个 Cookie。
 
 ```javascript
 var allCookie = document.cookie;
@@ -78,7 +78,7 @@ var allCookie = document.cookie;
 
 注意，这种方法只适用于 Cookie 和 iframe 窗口，LocalStorage 和 IndexedDB 无法通过这种方法，规避同源政策，而要使用下文介绍的PostMessage API。
 
-另外，服务器也可以在设置Cookie的时候，指定Cookie的所属域名为一级域名，比如`.example.com`。
+另外，服务器也可以在设置 Cookie 的时候，指定 Cookie 的所属域名为一级域名，比如`.example.com`。
 
 ```http
 Set-Cookie: key=value; domain=.example.com; path=/
