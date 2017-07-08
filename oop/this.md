@@ -888,7 +888,7 @@ Array.prototype.slice.call([1, 2, 3], 0, 1)
 // [1]
 ```
 
-上面的代码中，数组的slice方法从`[1, 2, 3]`里面，按照指定位置和长度切分出另一个数组。这样做的本质是在`[1, 2, 3]`上面调用`Array.prototype.slice`方法，因此可以用`call`方法表达这个过程，得到同样的结果。
+上面的代码中，数组的`slice`方法从`[1, 2, 3]`里面，按照指定位置和长度切分出另一个数组。这样做的本质是在`[1, 2, 3]`上面调用`Array.prototype.slice`方法，因此可以用`call`方法表达这个过程，得到同样的结果。
 
 `call`方法实质上是调用`Function.prototype.call`方法，因此上面的表达式可以用`bind`方法改写。
 
@@ -898,7 +898,7 @@ var slice = Function.prototype.call.bind(Array.prototype.slice);
 slice([1, 2, 3], 0, 1) // [1]
 ```
 
-可以看到，利用bind方法，将`[1, 2, 3].slice(0, 1)`变成了`slice([1, 2, 3], 0, 1)`的形式。这种形式的改变还可以用于其他数组方法。
+可以看到，利用`bind`方法，将`[1, 2, 3].slice(0, 1)`变成了`slice([1, 2, 3], 0, 1)`的形式。这种形式的改变还可以用于其他数组方法。
 
 ```javascript
 var push = Function.prototype.call.bind(Array.prototype.push);
