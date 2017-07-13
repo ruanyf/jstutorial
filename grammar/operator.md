@@ -510,7 +510,7 @@ false == undefined // false
 undefined == null // true
 ```
 
-绝大多数情况下，对象与`undefined`与`null`比较，都返回`false`。只有在对象转为原始值得到`undefined`时，才会返回`true`，这种情况是非常罕见的。
+绝大多数情况下，对象与`undefined`和`null`比较，都返回`false`。只有在对象转为原始值得到`undefined`时，才会返回`true`，这种情况是非常罕见的。
 
 **（4）相等运算符的缺点**
 
