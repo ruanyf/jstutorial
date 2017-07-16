@@ -8,20 +8,18 @@ modifiedOn: 2014-05-06
 
 ## 概述
 
-Notification API是浏览器的通知接口，用于在用户的桌面（而不是网页上）显示通知信息，桌面电脑和手机都适用，比如通知用户收到了一封Email。具体的实现形式由浏览器自行部署，对于手机来说，一般显示在顶部的通知栏。
+Notification API 是浏览器的通知接口，用于在用户的桌面（而不是网页上）显示通知信息，桌面电脑和手机都适用，比如通知用户收到了一封 Email。具体的实现形式由浏览器自行部署，对于手机来说，一般显示在顶部的通知栏。
 
 如果网页代码调用这个API，浏览器会询问用户是否接受。只有在用户同意的情况下，通知信息才会显示。
 
-下面的代码用于检查浏览器是否支持这个API。
+下面的代码用于检查浏览器是否支持这个 API。
 
 ```javascript
-
 if (window.Notification) {
   // 支持
 } else {
   // 不支持
 }
-
 ```
 
 目前，Chrome和Firefox在桌面端部署了这个API，Firefox和Blackberry在手机端部署了这个API。
@@ -80,30 +78,28 @@ var notification = new Notification(title, options);
 
 Notification构造函数的title属性是必须的，用来指定通知的标题，格式为字符串。options属性是可选的，格式为一个对象，用来设定各种设置。该对象的属性如下：
 
-- dir：文字方向，可能的值为auto、ltr（从左到右）和rtl（从右到左），一般是继承浏览器的设置。
-- lang：使用的语种，比如en-US、zh-CN。
+- dir：文字方向，可能的值为 auto、ltr（从左到右）和rtl（从右到左），一般是继承浏览器的设置。
+- lang：使用的语种，比如 en-US、zh-CN。
 - body：通知内容，格式为字符串，用来进一步说明通知的目的。。
-- tag：通知的ID，格式为字符串。一组相同tag的通知，不会同时显示，只会在用户关闭前一个通知后，在原位置显示。
-- icon：图表的URL，用来显示在通知上。
+- tag：通知的 ID，格式为字符串。一组相同tag的通知，不会同时显示，只会在用户关闭前一个通知后，在原位置显示。
+- icon：图标的 URL，用来显示在通知上。
 
 上面这些属性，都是可读写的。
 
 下面是一个生成Notification实例对象的例子。
 
 ```javascript
-
 var notification = new Notification('收到新邮件', {
   body: '您总共有3封未读邮件。'
 });
 
 notification.title // "收到新邮件"
 notification.body // "您总共有3封未读邮件。"
-
 ```
 
 ### 实例对象的事件
 
-Notification实例会触发以下事件。
+Notification 实例会触发以下事件。
 
 - show：通知显示给用户时触发。
 - click：用户点击通知时触发。
