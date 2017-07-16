@@ -397,7 +397,7 @@ var x = 1;
 
 switch (x) {
   case 1:
-    console.log('x 于1');
+    console.log('x 等于1');
   case 2:
     console.log('x 等于2');
   default:
