@@ -75,7 +75,7 @@ modifiedOn: 2014-05-18
 - [同源政策](bom/same-origin.html)
 - [Ajax](bom/ajax.html)
 - [CORS](bom/cors.html)
-:
+
 {% comment %}
 
 {% if site.posts.size != 0 %}
