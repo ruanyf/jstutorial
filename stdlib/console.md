@@ -378,16 +378,16 @@ console.trace()
 
 `console.clear`方法用于清除当前控制台的所有输出，将光标回置到第一行。
 
-## 命令行API
+## 命令行 API
 
-在控制台中，除了使用console对象，还可以使用一些控制台自带的命令行方法。
+控制台中，除了使用`console`对象，还可以使用一些控制台自带的命令行方法。
 
 （1）`$_`
 
 `$_`属性返回上一个表达式的值。
 
 ```javascript
-2+2
+2 + 2
 // 4
 $_
 // 4
@@ -399,16 +399,7 @@ $_
 
 （3）`$(selector)`
 
-`$(selector)`返回一个数组，包括特定的CSS选择器匹配的所有DOM元素。该方法实际上是`document.querySelectorAll`方法的别名。
-
-```javascript
-var images = $('img');
-for (each in images) {
-  console.log(images[each].src);
-}
-```
-
-上面代码打印出网页中所有`img`元素的`src`属性。
+`$(selector)`返回第一个匹配的元素，等同于`document.querySelector()`。注意，如果页面脚本对`$`有定义，则会覆盖原始的定义。比如，页面里面有 jQuery，控制台执行`$(selector)`就会采用 jQuery 的实现，返回一个数组。
 
 （4）`$$(selector)`
 
