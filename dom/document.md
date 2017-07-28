@@ -618,7 +618,7 @@ function escapeHtml(str) {
 
 var userWebsite = '" onmouseover="alert(\'derp\')" "';
 var profileLink = '<a href="' + escapeHtml(userWebsite) + '">Bob</a>';
-var div = document.getElemenetById('target');
+var div = document.getElementById('target');
 div.innerHtml = profileLink;
 // <a href="" onmouseover="alert('derp')" "">Bob</a>
 ```
