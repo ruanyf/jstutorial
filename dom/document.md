@@ -149,14 +149,17 @@ var allSheets = [].slice.call(document.styleSheets);
 
 ### document.documentURI，document.URL
 
-`document.documentURI`属性和`document.URL`属性都返回一个字符串，表示当前文档的网址。不同之处是`documentURI`属性是所有文档都具备的，`URL`属性则是HTML文档独有的。
+`document.documentURI`属性和`document.URL`属性都返回一个字符串，表示当前文档的网址。不同之处是`documentURI`属性可用于所有文档（包括 XML 文档），`URL`属性只能用于 HTML 文档。
 
 ```javascript
+document.URL
+// http://www.example.com/about
+
 document.documentURI === document.URL
 // true
 ```
 
-另外，如果文档的锚点（`#anchor`）变化，这两个属性都不会跟着变化，它们的值是静态的。但是，`document.location`会跟着变化，`document.location`总是返回最新的URL，会跟踪锚点的变化。
+如果文档的锚点（`#anchor`）变化，这两个属性都会跟着变化。
 
 ### document.domain
 
