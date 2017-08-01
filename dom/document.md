@@ -518,7 +518,7 @@ var elements = document.getElementsByClassName('foo bar');
 
 注意，正常模式下，CSS的`class`是大小写敏感的。（`quirks mode`下，大小写不敏感。）
 
-与`getElementsByTagName`方法一样，`getElementsByClassName`方法不仅可以`在document`对象上调用，也可以在任何元素节点上调用。
+与`getElementsByTagName`方法一样，`getElementsByClassName`方法不仅可以在`document`对象上调用，也可以在任何元素节点上调用。
 
 ```javascript
 // 非document对象上调用
