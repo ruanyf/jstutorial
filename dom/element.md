@@ -239,11 +239,11 @@ function checking(){
 
 `Element.scrollLeft`属性表示网页元素的水平滚动条向右侧滚动的像素数量，`Element.scrollTop`属性表示网页元素的垂直滚动条向下滚动的像素数量。对于那些没有滚动条的网页元素，这两个属性总是等于0。
 
-如果要查看整张网页的水平的和垂直的滚动距离，要从`document.body`元素上读取。然而，对于`scrollTop`，在有声明DTD的时候，需要从`document.documentElement`获取，没有声明DTD的时候，才可以从`document.body`上获取。
+如果要查看整张网页的水平的和垂直的滚动距离，要从`document.documentElement`元素上读取。
 
 ```javascript
-document.body.scrollLeft
-document.body.scrollTop
+document.documentElement.scrollLeft
+document.documentElement.scrollTop
 ```
 
 这两个属性都可读写，设置该属性的值，会导致浏览器将指定元素自动滚动到相应的位置。
