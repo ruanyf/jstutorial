@@ -660,7 +660,7 @@ element.insertAdjacentHTML(position, text);
 - `beforebegin`：在当前元素节点的前面。
 - `afterbegin`：在当前元素节点的里面，插在它的第一个子元素之前。
 - `beforeend`：在当前元素节点的里面，插在它的最后一个子元素之后。
-- `afterend`：在当前元素节点的后面。'
+- `afterend`：在当前元素节点的后面。
 
 ```javascript
 // 原来的HTML代码：<div id="one">one</div>
