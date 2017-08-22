@@ -409,9 +409,33 @@ el.nextElementSibling
 
 ### Element.offsetParent
 
-`Element.offsetParent`属性返回当前HTML元素的最靠近的、并且CSS的`position`属性不等于`static`的父元素。如果某个元素的所有上层节点都将`position`属性设为`static`，则`Element.offsetParent`属性指向`<body>`元素。
+`Element.offsetParent`属性返回当前 HTML 元素的最靠近的、并且 CSS 的`position`属性不等于`static`的上层元素。
 
-该属性主要用于确定子元素的位置偏移，是`Element.offsetTop`和`Element.offsetLeft`的计算基准。
+```html
+<div style="position: absolute;">
+  <p>
+    <span>Hello</span>
+  </p>
+</div>
+```
+
+上面代码中，`span`元素的`offsetParent`属性就是`div`元素。
+
+该属性主要用于确定子元素位置偏移的计算基准，`Element.offsetTop`和`Element.offsetLeft`就是`offsetParent`元素计算的。
+
+如果该元素是不可见的（`display`属性为`none`），或者位置是固定的（`position`属性为`fixed`），则`offsetParent`属性返回`null`。
+
+```html
+<div style="position: absolute;">
+  <p>
+    <span style="display: none;">Hello</span>
+  </p>
+</div>
+```
+
+上面代码中，`span`元素的`offsetParent`属性是`null`。
+
+如果某个元素的所有上层节点的`position`属性都是`static`，则`Element.offsetParent`属性指向`<body>`元素。
 
 ## 属性相关的方法
 
