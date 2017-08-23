@@ -28,7 +28,7 @@ modifiedOn: 2014-05-18
 
 - [Object对象](stdlib/object.html)
 - [Array对象](stdlib/array.html)
-- [包装对象和Boolean对象](stdlib/wrapper.html)
+- [包装对象](stdlib/wrapper.html)
 - [Number对象](stdlib/number.html)
 - [String对象](stdlib/string.html)
 - [Math对象](stdlib/math.html)
