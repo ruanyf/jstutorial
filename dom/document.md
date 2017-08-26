@@ -207,7 +207,7 @@ document.location.pathname // "/path/a.html"
 document.location.search // "?x=111"
 document.location.hash // "#part1"
 document.location.user // "user"
-document.location.password // "passed"
+document.location.password // "passwd"
 ```
 
 `location`对象有以下方法。
