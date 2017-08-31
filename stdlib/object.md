@@ -350,9 +350,7 @@ type(new Date()); // "date"
  'Number',
  'Boolean',
  'Function',
- 'RegExp',
- 'NaN',
- 'Infinite'
+ 'RegExp'
 ].forEach(function (t) {
   type['is' + t] = function (o) {
     return type(o) === t.toLowerCase();
