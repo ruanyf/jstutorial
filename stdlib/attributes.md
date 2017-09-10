@@ -947,7 +947,7 @@ if (!Object.isFrozen(obj)) {
 
 ### 局限性
 
-需要注意的是，使用上面这些方法锁定对象的可写性，但是依然可以通过改变该对象的原型对象，来为它增加属性。
+上面的方法锁定对象的可写性有一个漏洞，依然可以通过改变原型对象，来为对象增加属性。
 
 ```javascript
 var obj = new Object();
@@ -974,7 +974,7 @@ var obj = Object.seal(
   )
 );
 
-Object.getPrototypeOf(obj).t = "hello";
+Object.getPrototypeOf(obj).hello = "hello";
 obj.hello // undefined
 ```
 
