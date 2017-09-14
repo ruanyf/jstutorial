@@ -8,9 +8,9 @@ modifiedOn: 2013-08-13
 
 ## 概述
 
-Node应用由模块组成，采用CommonJS模块规范。
+Node 应用由模块组成，采用 CommonJS 模块规范。
 
-根据这个规范，每个文件就是一个模块，有自己的作用域。在一个文件里面定义的变量、函数、类，都是私有的，对其他文件不可见。
+每个文件就是一个模块，有自己的作用域。在一个文件里面定义的变量、函数、类，都是私有的，对其他文件不可见。
 
 ```javascript
 // example.js
@@ -114,7 +114,7 @@ console.log(module);
 }
 ```
 
-如果在命令行下调用某个模块，比如`node something.js`，那么`module.parent`就是`undefined`。如果是在脚本之中调用，比如`require('./something.js')`，那么`module.parent`就是调用它的模块。利用这一点，可以判断当前模块是否为入口脚本。
+如果在命令行下调用某个模块，比如`node something.js`，那么`module.parent`就是`null`。如果是在脚本之中调用，比如`require('./something.js')`，那么`module.parent`就是调用它的模块。利用这一点，可以判断当前模块是否为入口脚本。
 
 ```javascript
 if (!module.parent) {
