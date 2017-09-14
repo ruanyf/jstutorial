@@ -213,9 +213,7 @@ arr[4294967296] // "b"
 
 ## 类似数组的对象
 
-在JavaScript中，有些对象被称为“类似数组的对象”（array-like object）。意思是，它们看上去很像数组，可以使用`length`属性，但是它们并不是数组，所以无法使用一些数组的方法。
-
-下面就是一个类似数组的对象。
+如果一个对象的所有键名都是正整数或零，并且有`length`属性，那么这个对象就很像数组，语法上称为“类似数组的对象”（array-like object）。
 
 ```javascript
 var obj = {
@@ -226,14 +224,16 @@ var obj = {
 };
 
 obj[0] // 'a'
-obj[2] // 'c'
+obj[1] // 'b'
 obj.length // 3
 obj.push('d') // TypeError: obj.push is not a function
 ```
 
-上面代码中，变量`obj`是一个对象，使用的时候看上去跟数组很像，但是无法使用数组的方法。这就是类似数组的对象。
+上面代码中，对象`obj`就是一个类似数组的对象。
 
-类似数组的对象只有一个特征，就是具有`length`属性。换句话说，只要有`length`属性，就可以认为这个对象类似于数组。但是，对象的`length`属性不是动态值，不会随着成员的变化而变化。
+但是，“类似数组的对象”并不是数组，因为它们不具备数组特有的方法。上面例子中，`obj`对象没有数组的`push`方法，使用该方法就会报错。
+
+“类似数组的对象”的根本特征，就是具有`length`属性。只要有`length`属性，就可以认为这个对象类似于数组。但是有一个问题，这种`length`属性不是动态值，不会随着成员的变化而变化。
 
 ```javascript
 var obj = {
@@ -245,7 +245,7 @@ obj.length // 0
 
 上面代码为对象`obj`添加了一个数字键，但是`length`属性没变。这就说明了`obj`不是数组。
 
-典型的类似数组的对象是函数的`arguments`对象，以及大多数DOM元素集，还有字符串。
+典型的“类似数组的对象”是函数的`arguments`对象，以及大多数 DOM 元素集，还有字符串。
 
 ```javascript
 // arguments对象
@@ -267,34 +267,58 @@ elts instanceof Array // false
 'abc' instanceof Array // false
 ```
 
-数组的`slice`方法将类似数组的对象，变成真正的数组。
+数组的`slice`方法可以将“类似数组的对象”变成真正的数组。
 
 ```javascript
 var arr = Array.prototype.slice.call(arrayLike);
 ```
 
-遍历类似数组的对象，可以采用`for`循环，也可以采用数组的`forEach`方法。
+除了转为真正的数组，“类似数组的对象”还有一个办法可以使用数组的方法，就是通过`call()`把数组的方法放到对象上面。
 
 ```javascript
-// for循环
-function logArgs() {
-  for (var i = 0; i < arguments.length; i++) {
-    console.log(i + '. ' + arguments[i]);
-  }
+function print(value, index) {
+  console.log(index + ' : ' + value);
 }
 
-// forEach方法
+Array.prototype.forEach.call(arrayLike, print);
+```
+
+上面代码中，`arrayLike`代表一个类似数组的对象，本来是不可以使用数组的`forEach()`方法的，但是通过`call()`，可以把`forEach()`嫁接到`arrayLike`上面调用。
+
+下面的例子就是通过这种方法，在`arguments`对象上面调用`forEach`方法。
+
+```javascript
+// forEach 方法
 function logArgs() {
   Array.prototype.forEach.call(arguments, function (elem, i) {
     console.log(i+'. '+elem);
   });
 }
+
+// 等同于 for 循环
+function logArgs() {
+  for (var i = 0; i < arguments.length; i++) {
+    console.log(i + '. ' + arguments[i]);
+  }
+}
 ```
 
-由于字符串也是类似数组的对象，所以也可以用`Array.prototype.forEach.call`遍历。
+字符串也是类似数组的对象，所以也可以用`Array.prototype.forEach.call`遍历。
 
 ```javascript
-Array.prototype.forEach.call('abc', function(chr) {
+Array.prototype.forEach.call('abc', function (chr) {
+  console.log(chr);
+});
+// a
+// b
+// c
+```
+
+注意，这种方法比直接使用数组原生的`forEach`要慢，所以最好还是先将“类似数组的对象”转为真正的数组，然后再直接调用数组的`forEach`方法。
+
+```javascript
+var arr = Array.prototype.slice.call('abc');
+arr.forEach(function (chr) {
   console.log(chr);
 });
 // a
