@@ -9,12 +9,14 @@ Node 8 提供了`util.promisify`方法，用于将那些接受回调函数的函
 举例来说，`fs.readFile()`是一个接受回调函数的方法，用法如下。
 
 ```javascript
-fs.readFile('path/to/file', (err, data) => {
+fs.readFile('path/to/file', 'utf8', (err, data) => {
   // ...
 });
 ```
 
-`util.promisify`可以将这个方法转为 Promise。
+上面代码中，`fs.readFile`的第一个参数`path/to/file`和第二个参数`utf8`是运行所需要的，第三个参数是一个回调函数。该函数的参数符合 Node 的惯例，分别是运行中的错误`err`和运行结果`data`。
+
+`util.promisify`可以将这个方法转为 Promise。转化后的参数就是`fs.readFile`的前两个参数。一旦 Promise 成功，就会传回`data`，否则传回`err`。
 
 ```javascript
 const {promisify} = require('util');
@@ -23,13 +25,13 @@ const readFileAsync = promisify(fs.readFile);
 
 const filePath = process.argv[2];
 
-readFileAsync(filePath, {encoding: 'utf8'})
-  .then((text) => {
-      console.log('CONTENT:', text);
-  })
-  .catch((err) => {
-      console.log('ERROR:', err);
-  });
+readFileAsync(filePath, 'utf8')
+.then((text) => {
+  console.log('CONTENT:', text);
+})
+.catch((err) => {
+  console.log('ERROR:', err);
+});
 ```
 
 将上面的代码存为`echo.js`，用法如下。
@@ -58,7 +60,7 @@ async function main() {
 main();
 ```
 
-有些基于回调函数的函数，会向回调函数提供多于一个的参数，比如`dns.lookup()`。
+有些异步方法会向回调函数提供多于一个的参数，比如`dns.lookup()`。
 
 ```javascript
 dns.lookup('nodejs.org', function (err, address, family) {
@@ -110,6 +112,14 @@ util.promisify(foo) === fooAsync // true
 ```javascript
 setImmediate(callback, ...args);
 setTimeout(callback, delay, ...args);
+```
+
+`util.promisify`封装它们的例子如下。
+
+```javascript
+const {promisify} = require('util');
+const delay = promisify(setTimeout);
+delay(3000).then(() => console.log('done'));
 ```
 
 ## 参考链接
