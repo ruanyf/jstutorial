@@ -186,7 +186,7 @@ function getMessage() {
 var msg = new getMessage();
 
 msg // {}
-typeof msg // "Object"
+typeof msg // "object"
 ```
 
 上面代码中，`getMessage`是一个普通函数，返回一个字符串。对它使用`new`命令，会得到一个空对象。这是因为`new`命令总是返回一个对象，要么是实例对象，要么是`return`语句指定的对象。本例中，`return`语句返回的是字符串，所以`new`命令就忽略了该语句。
