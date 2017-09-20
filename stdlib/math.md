@@ -64,11 +64,13 @@ Math.abs(1) // 1
 Math.abs(-1) // 1
 ```
 
-`Math.max`方法和`Math.min`方法都可以接受多个参数，`Math.max`返回其中最大的参数，`Math.min`返回最小的参数。
+`Math.max`方法和`Math.min`方法都可以接受多个参数，`Math.max`返回其中最大的参数，`Math.min`返回最小的参数。有趣的是, `Math.min` 不传参数返回 `Infinity`, `Math.max` 不传参数返回 `-Infinity`。
 
 ```javascript
 Math.max(2, -1, 5) // 5
 Math.min(2, -1, 5) // -1
+Math.min() // Infinity
+Math.max() // -Infinity
 ```
 
 `Math.floor`方法接受一个参数，返回小于该参数的最大整数。
