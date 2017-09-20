@@ -398,7 +398,7 @@ false - 1 // -1
 false / '5' // 0
 'abc' - 1   // NaN
 null + 1 // 1
-underfined + 1 // NaN
+undefined + 1 // NaN
 ```
 
 上面代码中，运算符两侧的运算子，都被转成了数值。
