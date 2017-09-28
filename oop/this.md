@@ -246,6 +246,7 @@ a.b.m() // undefined
 var b = {
   m: function() {
    console.log(this.p);
+  }
 };
 
 var a = {
