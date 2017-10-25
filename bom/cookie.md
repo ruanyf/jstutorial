@@ -12,8 +12,8 @@ Cookie 是服务器保存在浏览器的一小段文本信息，每个 Cookie �
 
 Cookie 保存以下几方面的信息。
 
-- Cookie的名字
-- Cookie的值
+- Cookie 的名字
+- Cookie 的值
 - 到期时间
 - 所属域名（默认是当前域名）
 - 生效的路径（默认是当前网址）
@@ -29,7 +29,7 @@ Cookie 保存以下几方面的信息。
 var allCookies = document.cookie;
 ```
 
-由于`document.cookie`返回的是分号分隔的所有Cookie，所以必须手动还原，才能取出每一个Cookie的值。
+由于`document.cookie`返回的是分号分隔的所有 Cookie，所以必须手动还原，才能取出每一个 Cookie 的值。
 
 ```javascript
 var cookies = document.cookie.split(';');
@@ -39,15 +39,15 @@ for (var i = 0; i < cookies.length; i++) {
 }
 ```
 
-`document.cookie`属性是可写的，可以通过它为当前网站添加Cookie。
+`document.cookie`属性是可写的，可以通过它为当前网站添加 Cookie。
 
 ```javascript
 document.cookie = 'fontSize=14';
 ```
 
-Cookie的值必须写成`key=value`的形式。注意，等号两边不能有空格。另外，写入Cookie的时候，必须对分号、逗号和空格进行转义（它们都不允许作为Cookie的值），这可以用`encodeURIComponent`方法达到。
+Cookie 的值必须写成`key=value`的形式。注意，等号两边不能有空格。另外，写入 Cookie 的时候，必须对分号、逗号和空格进行转义（它们都不允许作为 Cookie 的值），这可以用`encodeURIComponent`方法达到。
 
-但是，`document.cookie`一次只能写入一个Cookie，而且写入并不是覆盖，而是添加。
+但是，`document.cookie`一次只能写入一个 Cookie，而且写入并不是覆盖，而是添加。
 
 ```javascript
 document.cookie = 'test1=hello';
@@ -56,7 +56,7 @@ document.cookie
 // test1=hello;test2=world
 ```
 
-`document.cookie`属性读写行为的差异（一次可以读出全部Cookie，但是只能写入一个Cookie），与服务器与浏览器之间的Cookie通信格式有关。浏览器向服务器发送Cookie的时候，是一行将所有Cookie全部发送。
+`document.cookie`属性读写行为的差异（一次可以读出全部 Cookie，但是只能写入一个 Cookie），与服务器与浏览器之间的 Cookie 通信格式有关。浏览器向服务器发送 Cookie 的时候，是使用一行将所有 Cookie 全部发送。
 
 ```http
 GET /sample_page.html HTTP/1.1
@@ -65,9 +65,9 @@ Cookie: cookie_name1=cookie_value1; cookie_name2=cookie_value2
 Accept: */*
 ```
 
-上面的头信息中，`Cookie`字段是浏览器向服务器发送的Cookie。
+上面的头信息中，`Cookie`字段是浏览器向服务器发送的 Cookie。
 
-服务器告诉浏览器需要储存Cookie的时候，则是分行指定。
+服务器告诉浏览器需要储存 Cookie 的时候，则是分行指定。
 
 ```http
 HTTP/1.0 200 OK
@@ -76,16 +76,16 @@ Set-Cookie: cookie_name1=cookie_value1
 Set-Cookie: cookie_name2=cookie_value2; expires=Sun, 16 Jul 3567 06:23:41 GMT
 ```
 
-上面的头信息中，`Set-Cookie`字段是服务器写入浏览器的Cookie，一行一个。
+上面的头信息中，`Set-Cookie`字段是服务器写入浏览器的 Cookie，一行一个。
 
-如果仔细看浏览器向服务器发送的Cookie，就会意识到，Cookie协议存在问题。对于服务器来说，有两点是无法知道的。
+如果仔细看浏览器向服务器发送的 Cookie，就会意识到，Cookie 协议存在问题。对于服务器来说，有两点是无法知道的。
 
-- Cookie的各种属性，比如何时过期。
-- 哪个域名设置的Cookie，因为Cookie可能是一级域名设的，也可能是任意一个二级域名设的。
+- Cookie 的各种属性，比如何时过期。
+- 哪个域名设置的 Cookie，因为 Cookie 可能是一级域名设的，也可能是任意一个二级域名设的。
 
 ## Cookie 的属性
 
-除了Cookie本身的内容，还有一些可选的属性也是可以写入的，它们都必须以分号开头。
+服务器向浏览器发送 Cookie 的时候，除了 Cookie 本身的内容，还有一些可选的属性也是可以写入的，它们都必须以分号开头。
 
 ```http
 Set-Cookie: value[; expires=date][; domain=domain][; path=path][; secure]
@@ -93,23 +93,23 @@ Set-Cookie: value[; expires=date][; domain=domain][; path=path][; secure]
 
 上面的`Set-Cookie`字段，用分号分隔多个属性。它们的含义如下。
 
-（1）value属性
+（1）value 属性
 
 `value`属性是必需的，它是一个键值对，用于指定Cookie的值。
 
-（2）expires属性
+（2）expires 属性
 
-`expires`属性用于指定Cookie过期时间。它的格式采用`Date.toUTCString()`的格式。
+`expires`属性用于指定 Cookie 过期时间。它的格式采用`Date.toUTCString()`的格式。
 
-如果不设置该属性，或者设为`null`，Cookie只在当前会话（session）有效，浏览器窗口一旦关闭，当前Session结束，该Cookie就会被删除。
+如果不设置该属性，或者设为`null`，Cookie只在当前会话（session）有效，浏览器窗口一旦关闭，当前 Session 结束，该 Cookie 就会被删除。
 
-浏览器根据本地时间，决定Cookie是否过期，由于本地时间是不精确的，所以没有办法保证Cookie一定会在服务器指定的时间过期。
+浏览器根据本地时间，决定 Cookie 是否过期，由于本地时间是不精确的，所以没有办法保证 Cookie 一定会在服务器指定的时间过期。
 
 （3）domain属性
 
-`domain`属性指定Cookie所在的域名，比如`example.com`或`.example.com`（这种写法将对所有子域名生效）、`subdomain.example.com`。
+`domain`属性指定 Cookie 所在的域名，比如`example.com`或`.example.com`（这种写法将对所有子域名生效）、`subdomain.example.com`。
 
-如果未指定，默认为设定该Cookie的域名。所指定的域名必须是当前发送Cookie的域名的一部分，比如当前访问的域名是`example.com`，就不能将其设为`google.com`。只有访问的域名匹配domain属性，Cookie才会发送到服务器。
+如果未指定，默认为设定该Cookie的域名。所指定的域名必须是当前发送Cookie的域名的一部分，比如当前访问的域名是`example.com`，就不能将其设为`google.com`。只有访问的域名匹配 domain 属性，Cookie 才会发送到服务器。
 
 （4）path 属性
 
@@ -137,25 +137,25 @@ Set-Cookie: value[; expires=date][; domain=domain][; path=path][; secure]
 Set-Cookie: key1=value1; domain=example.com; path=/blog
 ```
 
-改变上面这个cookie的值，就必须使用同样的`Set-Cookie`。
+改变上面这个 Cookie 的值，就必须使用同样的`Set-Cookie`。
 
 ```http
 Set-Cookie: key1=value2; domain=example.com; path=/blog
 ```
 
-只要有一个属性不同，就会生成一个全新的Cookie，而不是替换掉原来那个Cookie。
+只要有一个属性不同，就会生成一个全新的 Cookie，而不是替换掉原来那个 Cookie。
 
 ```http
 Set-Cookie: key1=value2; domain=example.com; path=/
 ```
 
-上面的命令设置了一个全新的同名Cookie，但是`path`属性不一样。下一次访问`example.com/blog`的时候，浏览器将向服务器发送两个同名的Cookie。
+上面的命令设置了一个全新的同名 Cookie，但是`path`属性不一样。下一次访问`example.com/blog`的时候，浏览器将向服务器发送两个同名的 Cookie。
 
 ```http
 Cookie: key1=value1; key1=value2
 ```
 
-上面代码的两个Cookie是同名的，匹配越精确的Cookie排在越前面。
+上面代码的两个 Cookie 是同名的，匹配越精确的Cookie排在越前面。
 
 浏览器设置这些属性的写法如下。
 
@@ -166,43 +166,43 @@ document.cookie = 'fontSize=14; '
   + 'domain=*.example.com';
 ```
 
-另外，这些属性只能用来设置Cookie。一旦设置完成，就没有办法读取这些属性的值。
+另外，这些属性只能用来设置 Cookie。一旦设置完成，就没有办法读取这些属性的值。
 
-删除一个 Cookie 的唯一方法是设置其 `expires` 为一个过去的日期，或者直接使用当前时间，设置为 `0` 或者 `-1` 没有作用。
+删除一个 Cookie 的唯一方法是设置其`expires`为一个过去的日期。
 
 ```javascript
 document.cookie = 'fontSize=;expires=Thu, 01-Jan-1970 00:00:01 GMT';
 ```
 
-上面代码中，名为`fontSize`的Cookie的值为空，过期时间设为1970年1月1月零点，就等同于删除了这个Cookie。
+上面代码中，名为`fontSize`的 Cookie 的值为空，过期时间设为1970年1月1月零点，就等同于删除了这个 Cookie。
 
-## Cookie的限制
+## Cookie 的限制
 
-浏览器对Cookie数量的限制，规定不一样。目前，Firefox是每个域名最多设置50个Cookie，而Safari和Chrome没有域名数量的限制。
+浏览器对 Cookie 数量的限制，规定不一样。目前，Firefox 是每个域名最多设置50个 Cookie，而 Safari 和 Chrome 没有域名数量的限制。
 
-所有Cookie的累加长度限制为4KB。超过这个长度的Cookie，将被忽略，不会被设置。
+所有 Cookie 的累加长度限制为4KB。超过这个长度的 Cookie，将被忽略，不会被设置。
 
-由于Cookie可能存在数量限制，有时为了规避限制，可以将cookie设置成下面的形式。
+由于 Cookie 可能存在数量限制，有时为了规避限制，可以将 Cookie 设置成下面的形式。
 
 ```http
 name=a=b&c=d&e=f&g=h
 ```
 
-上面代码实际上是设置了一个Cookie，但是这个Cookie内部使用`&`符号，设置了多部分的内容。因此，读取这个Cookie的时候，就要自行解析，得到多个键值对。这样就规避了cookie的数量限制。
+上面代码实际上是设置了一个 Cookie，但是这个 Cookie 内部使用`&`符号，设置了多部分的内容。因此，读取这个 Cookie 的时候，就要自行解析，得到多个键值对。这样就规避了 Cookie 的数量限制。
 
 ## 同源政策
 
-浏览器的同源政策规定，两个网址只要域名相同和端口相同，就可以共享Cookie。
+浏览器的同源政策规定，两个网址只要域名相同和端口相同，就可以共享 Cookie。
 
 注意，这里不要求协议相同。也就是说，`http://example.com`设置的Cookie，可以被`https://example.com`读取。
 
 ## Http-Only Cookie
 
-设置Cookie的时候，如果服务器加上了`HttpOnly`属性，则这个Cookie无法被JavaScript读取（即`document.cookie`不会返回这个Cookie的值），只用于向服务器发送。
+设置 Cookie 的时候，如果服务器加上了`HttpOnly`属性，则这个 Cookie 无法被 JavaScript 读取（即`document.cookie`不会返回这个Cookie的值），只用于向服务器发送。
 
 ```http
 Set-Cookie: key=value; HttpOnly
 ```
 
-上面的这个Cookie将无法用JavaScript获取。进行AJAX操作时，`XMLHttpRequest`对象也无法包括这个Cookie。这主要是为了防止XSS攻击盗取Cookie。
+上面的这个 Cookie 将无法用 JavaScript 获取。进行 AJAX 操作时，`XMLHttpRequest`对象也无法包括这个 Cookie。这主要是为了防止 XSS 攻击盗取 Cookie。
 
