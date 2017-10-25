@@ -168,7 +168,7 @@ document.cookie = 'fontSize=14; '
 
 另外，这些属性只能用来设置Cookie。一旦设置完成，就没有办法读取这些属性的值。
 
-删除一个Cookie的简便方法，就是设置`expires`属性等于0，或者等于一个过去的日期。
+删除一个 Cookie 的唯一方法是设置其 `expires` 为一个过去的日期，或者直接使用当前时间，设置为 `0` 或者 `-1` 没有作用。
 
 ```javascript
 document.cookie = 'fontSize=;expires=Thu, 01-Jan-1970 00:00:01 GMT';
