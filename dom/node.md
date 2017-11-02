@@ -186,7 +186,7 @@ previousSibling属性返回当前节点前面的、距离最近的一个同级�
 
 ```javascript
 // html代码如下
-// <a><b1 id="b1"/><b2 id="b2"/></a>
+// <a><b1 id="b1"></b1><b2 id="b2"></b2></a>
 
 document.getElementById("b1").previousSibling // null
 document.getElementById("b2").previousSibling.id // "b1"
