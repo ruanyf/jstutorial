@@ -237,22 +237,6 @@ var sheets = document.styleSheets;
 var sheet = document.styleSheets[0];
 ```
 
-此外，`<link>`节点和`<style>`节点的`sheet`属性，也可以获取`StyleSheet`对象。
-
-```javascript
-// HTML代码为
-// <link id="linkElement" href="http://path/to/stylesheet">
-// <style id="styleElement">
-//   body{font-size: 1.2 rem;}
-// </style>
-
-// 等同于document.styleSheets[0]
-document.querySelector('#linkElement').sheet
-
-// 等同于document.styleSheets[1]
-document.querySelector('#styleElement').sheet
-```
-
 ### 属性
 
 StyleSheet对象有以下属性。
