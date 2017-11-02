@@ -240,7 +240,7 @@ var ulElementChildNodes = document.querySelector('ul').childNodes;
 <script type="text/javascript">
   console.log(
     document.getElementById('para-01').firstChild.nodeName
-  ) // "span"
+  ) // "SPAN"
 </script>
 ```
 
