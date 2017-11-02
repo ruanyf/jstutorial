@@ -186,7 +186,7 @@ previousSibling属性返回当前节点前面的、距离最近的一个同级�
 
 ```javascript
 // html代码如下
-// <a><b1 id="b1"/><b2 id="b2"/></a>
+// <a><b1 id="b1"></b1><b2 id="b2"></b2></a>
 
 document.getElementById("b1").previousSibling // null
 document.getElementById("b2").previousSibling.id // "b1"
@@ -240,7 +240,7 @@ var ulElementChildNodes = document.querySelector('ul').childNodes;
 <script type="text/javascript">
   console.log(
     document.getElementById('para-01').firstChild.nodeName
-  ) // "span"
+  ) // "SPAN"
 </script>
 ```
 
@@ -349,17 +349,9 @@ parentElement.insertBefore(newElement, parentElement.firstChild);
 
 上面代码中，如果当前节点没有任何子节点，`parentElement.firstChild`会返回`null`，则新节点会成为当前节点的唯一子节点。
 
-如果`insertBefore`方法的第二个参数为`null`，则新节点将插在当前节点的最后位置，即变成最后一个子节点。
+如果`insertBefore`方法的第二个参数为`null`，则新节点将插在当前节点子节点的最后位置，即变成最后一个子节点。
 
 注意，如果所要插入的节点是当前DOM现有的节点，则该节点将从原有的位置移除，插入新的位置。
-
-由于不存在`insertAfter`方法，如果要插在当前节点的某个子节点后面，可以用`insertBefore`方法结合`nextSibling`属性模拟。
-
-```javascript
-parentDiv.insertBefore(s1, s2.nextSibling);
-```
-
-上面代码可以将`s1`节点，插在`s2`节点的后面。如果`s2`是当前节点的最后一个子节点，则`s2.nextSibling`返回`null`，这时`s1`节点会插在当前节点的最后，变成当前节点的最后一个子节点，等于紧跟在`s2`的后面。
 
 ### Node.removeChild()
 
