@@ -10,11 +10,11 @@ modifiedOn: 2014-05-18
 
 ### DOM
 
-DOM是JavaScript操作网页的接口，全称为“文档对象模型”（Document Object Model）。它的作用是将网页转为一个JavaScript对象，从而可以用脚本进行各种操作（比如增删内容）。
+DOM 是 JavaScript 操作网页的接口，全称为“文档对象模型”（Document Object Model）。它的作用是将网页转为一个 JavaScript 对象，从而可以用脚本进行各种操作（比如增删内容）。
 
-浏览器会根据DOM模型，将结构化文档（比如HTML和XML）解析成一系列的节点，再由这些节点组成一个树状结构（DOM Tree）。所有的节点和最终的树状结构，都有规范的对外接口。所以，DOM可以理解成网页的编程接口。DOM有自己的国际标准，目前的通用版本是[DOM 3](http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/core.html)，下一代版本[DOM 4](http://www.w3.org/TR/dom/)正在拟定中。
+浏览器会根据 DOM 模型，将结构化文档（比如 HTML 和 XML）解析成一系列的节点，再由这些节点组成一个树状结构（DOM Tree）。所有的节点和最终的树状结构，都有规范的对外接口。所以，DOM 可以理解成网页的编程接口。DOM 有自己的国际标准，目前的通用版本是[DOM 3](http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/core.html)，下一代版本[DOM 4](http://www.w3.org/TR/dom/)正在拟定中。
 
-严格地说，DOM不属于JavaScript，但是操作DOM是JavaScript最常见的任务，而JavaScript也是最常用于DOM操作的语言。本章介绍的就是JavaScript对DOM标准的实现和用法。
+严格地说，DOM 不属于 JavaScript，但是操作 DOM 是 JavaScript 最常见的任务，而 JavaScript 也是最常用于 DOM 操作的语言。本章介绍的就是 JavaScript 对 DOM 标准的实现和用法。
 
 ### 节点
 
@@ -182,14 +182,14 @@ document.firstChild.firstChild.nextSibling
 
 ### Node.previousSibling
 
-previousSibling属性返回当前节点前面的、距离最近的一个同级节点。如果当前节点前面没有同级节点，则返回null。
+`previousSibling`属性返回当前节点前面的、距离最近的一个同级节点。如果当前节点前面没有同级节点，则返回`null`。
 
 ```javascript
-// html代码如下
-// <a><b1 id="b1"/><b2 id="b2"/></a>
+// html 代码如下
+// <a><span id="b1"></span><span id="b2"></span></a>
 
-document.getElementById("b1").previousSibling // null
-document.getElementById("b2").previousSibling.id // "b1"
+document.getElementById('b1').previousSibling // null
+document.getElementById('b2').previousSibling.id // "b1"
 ```
 
 对于当前节点前面有空格，则`previousSibling`属性会返回一个内容为空格的文本节点。
@@ -240,7 +240,7 @@ var ulElementChildNodes = document.querySelector('ul').childNodes;
 <script type="text/javascript">
   console.log(
     document.getElementById('para-01').firstChild.nodeName
-  ) // "span"
+  ) // "SPAN"
 </script>
 ```
 
@@ -330,7 +330,7 @@ var cloneUL = document.querySelector('ul').cloneNode(true);
 
 ### Node.insertBefore()
 
-`Node.insertBefore`方法用于将某个节点插入当前节点的指定位置。它接受两个参数，第一个参数是所要插入的节点，第二个参数是当前节点的一个子节点，新的节点将插在这个节点的前面。该方法返回被插入的新节点。
+`insertBefore`方法用于将某个节点插入当前节点内部的指定位置。它接受两个参数，第一个参数是所要插入的节点，第二个参数是当前节点内部的一个子节点，新的节点将插在这个子节点的前面。该方法返回被插入的新节点。
 
 ```javascript
 var text1 = document.createTextNode('1');
@@ -349,17 +349,17 @@ parentElement.insertBefore(newElement, parentElement.firstChild);
 
 上面代码中，如果当前节点没有任何子节点，`parentElement.firstChild`会返回`null`，则新节点会成为当前节点的唯一子节点。
 
-如果`insertBefore`方法的第二个参数为`null`，则新节点将插在当前节点的最后位置，即变成最后一个子节点。
+如果`insertBefore`方法的第二个参数为`null`，则新节点将插在当前节点内部的最后位置，即变成最后一个子节点。
 
-注意，如果所要插入的节点是当前DOM现有的节点，则该节点将从原有的位置移除，插入新的位置。
+注意，如果所要插入的节点是当前 DOM 现有的节点，则该节点将从原有的位置移除，插入新的位置。
 
 由于不存在`insertAfter`方法，如果要插在当前节点的某个子节点后面，可以用`insertBefore`方法结合`nextSibling`属性模拟。
 
 ```javascript
-parentDiv.insertBefore(s1, s2.nextSibling);
+parent.insertBefore(s1, s2.nextSibling);
 ```
 
-上面代码可以将`s1`节点，插在`s2`节点的后面。如果`s2`是当前节点的最后一个子节点，则`s2.nextSibling`返回`null`，这时`s1`节点会插在当前节点的最后，变成当前节点的最后一个子节点，等于紧跟在`s2`的后面。
+上面代码中，`parent`是父节点，`s1`是一个全新的节点，`s2`是可以将`s1`节点，插在`s2`节点的后面。如果`s2`是当前节点的最后一个子节点，则`s2.nextSibling`返回`null`，这时`s1`节点会插在当前节点的最后，变成当前节点的最后一个子节点，等于紧跟在`s2`的后面。
 
 ### Node.removeChild()
 
