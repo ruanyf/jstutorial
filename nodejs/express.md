@@ -383,7 +383,7 @@ response.redirect方法允许网址的重定向。
 
 response.redirect("/hello/anime");
 response.redirect("http://www.example.com");
-response.redirect(301, "http://www.example.com"); 
+response.redirect(301, "http://www.example.com");
 
 {% endhighlight %}
 
@@ -625,19 +625,19 @@ app.get('/api', api.index);
 
 var express = require('express');
 var app = express();
- 
-app.get('/', function(req, res) {
-   res.sendfile('./views/index.html');
+
+app.get('/', function (req, res) {
+    res.sendFile(__dirname + '/views/index.html');
 });
- 
-app.get('/about', function(req, res) {
-   res.sendfile('./views/about.html');
+
+app.get('/about', (req, res) => {
+    res.sendFile(__dirname + '/views/about.html');
 });
- 
-app.get('/article', function(req, res) {
-   res.sendfile('./views/article.html');
+
+app.get('/article', (req, res) => {
+    res.sendFile(__dirname + '/views/article.html');
 });
- 
+
 app.listen(3000);
 
 {% endhighlight %}
@@ -652,16 +652,16 @@ app.listen(3000);
 <head>
    <title>首页</title>
 </head>
- 
+
 <body>
 <h1>Express Demo</h1>
- 
+
 <footer>
 <p>
    <a href="/">首页</a> - <a href="/about">自我介绍</a> - <a href="/article">文章</a>
 </p>
 </footer>
- 
+
 </body>
 </html>
 
@@ -761,7 +761,7 @@ var entries = [
 exports.getBlogEntries = function (){
    return entries;
 }
- 
+
 exports.getBlogEntry = function (id){
    for(var i=0; i < entries.length; i++){
       if(entries[i].id == id) return entries[i];
@@ -779,7 +779,7 @@ exports.getBlogEntry = function (id){
 <!-- views/index.html文件 -->
 
 <h1>文章列表</h1>
- 
+
 {{"{{"}}#each entries}}
    <p>
       <a href="/article/{{"{{"}}id}}">{{"{{"}}title}}</a><br/>
@@ -796,7 +796,7 @@ exports.getBlogEntry = function (id){
 <!-- views/about.html文件 -->
 
 <h1>自我介绍</h1>
- 
+
 <p>正文</p>
 
 {% endhighlight %}
@@ -809,9 +809,9 @@ exports.getBlogEntry = function (id){
 
 <h1>{{"{{"}}blog.title}}</h1>
 Published: {{"{{"}}blog.published}}
- 
+
 <p/>
- 
+
 {{"{{"}}blog.body}}
 
 {% endhighlight %}
@@ -823,21 +823,21 @@ Published: {{"{{"}}blog.published}}
 <!-- views/layout.html文件 -->
 
 <html>
- 
+
 <head>
    <title>{{"{{"}}title}}</title>
 </head>
- 
+
 <body>
- 
+
 	{{"{{{"}}body}}}
- 
+
    <footer>
       <p>
          <a href="/">首页</a> - <a href="/about">自我介绍</a>
       </p>
    </footer>
-    
+
 </body>
 </html>
 
@@ -853,29 +853,29 @@ Published: {{"{{"}}blog.published}}
 
 var express = require('express');
 var app = express();
- 
+
 var hbs = require('hbs');
 
 // 加载数据模块
 var blogEngine = require('./blog');
- 
+
 app.set('view engine', 'html');
 app.engine('html', hbs.__express);
 app.use(express.bodyParser());
- 
+
 app.get('/', function(req, res) {
    res.render('index',{title:"最近文章", entries:blogEngine.getBlogEntries()});
 });
- 
+
 app.get('/about', function(req, res) {
    res.render('about', {title:"自我介绍"});
 });
- 
+
 app.get('/article/:id', function(req, res) {
    var entry = blogEngine.getBlogEntry(req.params.id);
    res.render('article',{title:entry.title, blog:entry});
 });
- 
+
 app.listen(3000);
 
 {% endhighlight %}
@@ -969,7 +969,7 @@ use方法为router对象指定中间件，即在数据正式发给用户之前�
 
 router.use(function(req, res, next) {
 	console.log(req.method, req.url);
-	next();	
+	next();
 });
 
 {% endhighlight %}
@@ -988,7 +988,7 @@ router.param('name', function(req, res, next, name) {
 	// 对name进行验证或其他处理……
 	console.log(name);
 	req.name = name;
-	next();	
+	next();
 });
 
 router.get('/hello/:name', function(req, res) {
