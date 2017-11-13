@@ -430,7 +430,7 @@ function goInput(e) {
 
 **（2）event.eventPhase**
 
-eventPhase属性返回一个整数值，表示事件目前所处的节点。
+eventPhase属性返回一个整数值，表示事件目前所处的阶段。
 
 ```javascript
 var phase = event.eventPhase;
