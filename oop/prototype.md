@@ -90,8 +90,9 @@ cat2.color // "yellow"
 ```javascript
 cat1.color = 'black';
 
+cat1.color // 'black'
 cat2.color // 'yellow'
-Animal.prototype.color // "yellow";
+Animal.prototype.color // 'yellow';
 ```
 
 上面代码中，实例对象`cat1`的`color`属性改为`black`，就使得它不再去原型对象读取`color`属性，后者的值依然为`yellow`。
