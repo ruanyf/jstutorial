@@ -203,7 +203,7 @@ function _new(/* 构造函数 */ constructor, /* 构造函数参数 */ param1) {
   var context = Object.create(constructor.prototype);
   // 执行构造函数
   var result = constructor.apply(context, args);
-  // 如果返回结果是对象，就直接返回，则返回 context 对象
+  // 如果返回结果是对象，就直接返回，否则返回 context 对象
   return (typeof result === 'object' && result != null) ? result : context;
 }
 
