@@ -139,7 +139,7 @@ var fileType = selected_file.type;
 - `lastModifiedDate`：文件的上次修改时间，格式为`Date`对象实例。
 
 ```javascript
-$('#upload-file').files[0]
+$('#upload-file')[0].files[0]
 // {
 //   lastModified: 1449370355682,
 //   lastModifiedDate: Sun Dec 06 2015 10:52:35 GMT+0800 (CST),
