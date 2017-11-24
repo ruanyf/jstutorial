@@ -217,19 +217,32 @@ Constr.prototype.createCopy = function () {
 };
 ```
 
-由于`constructor`属性是一种原型对象与构造函数的关联关系，所以修改原型对象的时候，务必要小心。
+`constructor`属性表示原型对象与构造函数之间的关联关系，如果修改了原型对象，一般会同时修改`constructor`属性，防止引用的时候出错。
 
 ```javascript
-function A() {}
-var a = new A();
-a instanceof A // true
+function Person(name) {
+  this.name = name;
+}
 
-function B() {}
-A.prototype = B.prototype;
-a instanceof A // false
+Person.prototype.constructor === Person // true
+
+Person.prototype.copy = function () {
+  return new this.constructor(this.name);
+};
 ```
 
-上面代码中，`a`是`A`的实例。修改了`A.prototype`以后，`constructor`属性的指向就变了，导致`instanceof`运算符失真。
+上面代码中，`Person`构造函数的原型对象的`contructor`属性指向`Person`。然后，开发者在原型对象上定义了`copy`方法，该方法内部通过`this.constructor`调用`Person`。如果原型对象变了，这个`constructor`属性的指向可能就会出错。
+
+```javascript
+Person.prototype = {
+  method: function () {}
+};
+
+var p1 = new Person('张三');
+p1.copy() // TypeError: p1.copy is not a function
+```
+
+上面代码中，`Person.prototype`改成另一个对象，但是忘了改写`contructor`属性，结果导致调用实例方法报错。
 
 所以，修改原型对象时，一般要同时校正`constructor`属性的指向。
 
