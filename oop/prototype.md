@@ -276,7 +276,7 @@ f.constructor.name // "Foo"
 
 ## instanceof 运算符
 
-`instanceof`运算符返回一个布尔值，表示指定对象是否为某个构造函数的实例。
+`instanceof`运算符返回一个布尔值，表示某个对象是否为指定的构造函数的实例。
 
 ```javascript
 var v = new Vehicle();
@@ -285,7 +285,7 @@ v instanceof Vehicle // true
 
 上面代码中，对象`v`是构造函数`Vehicle`的实例，所以返回`true`。
 
-`instanceof`运算符的左边是实例对象，右边是构造函数。它会检查右边构建函数的原型对象，是否在左边对象的原型链上。因此，下面两种写法是等价的。
+`instanceof`运算符的左边是实例对象，右边是构造函数。它会检查右边构建函数的原型对象（prototype），是否在左边对象的原型链上。因此，下面两种写法是等价的。
 
 ```javascript
 v instanceof Vehicle
