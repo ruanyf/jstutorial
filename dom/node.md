@@ -453,19 +453,19 @@ input.compareDocumentPosition(div) // 10
 
 上面代码中，节点`div`包含节点`input`，而且节点`input`在节点`div`的后面，所以第一个`compareDocumentPosition`方法返回`20`（二进制`010100`），第二个`compareDocumentPosition`方法返回`10`（二进制`001010`）。
 
-由于compareDocumentPosition返回值的含义，定义在每一个比特位上，所以如果要检查某一种特定的含义，就需要使用比特位运算符。
+由于`compareDocumentPosition`返回值的含义，定义在每一个比特位上，所以如果要检查某一种特定的含义，就需要使用比特位运算符。
 
 ```javascript
 var head = document.head;
 var body = document.body;
 if (head.compareDocumentPosition(body) & 4) {
-  console.log("文档结构正确");
+  console.log('文档结构正确');
 } else {
-  console.log("<head> 不能在 <body> 前面");
+  console.log('<body> 不能在 <head> 前面');
 }
 ```
 
-上面代码中，compareDocumentPosition的返回值与4（又称掩码）进行与运算（&），得到一个布尔值，表示head是否在body前面。
+上面代码中，`compareDocumentPosition`的返回值与`4`（又称掩码）进行与运算（`&`），得到一个布尔值，表示`<head>`是否在`<body>`前面。
 
 在这个方法的基础上，可以部署一些特定的函数，检查节点的位置。
 
@@ -477,7 +477,7 @@ Node.prototype.before = function (arg) {
 nodeA.before(nodeB)
 ```
 
-上面代码在Node对象上部署了一个before方法，返回一个布尔值，表示参数节点是否在当前节点的前面。
+上面代码在`Node`对象上部署了一个`before`方法，返回一个布尔值，表示参数节点是否在当前节点的前面。
 
 ### Node.isEqualNode()
 
