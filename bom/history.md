@@ -118,13 +118,13 @@ history.state
 // { page: 1 }
 ```
 
-## popstate事件
+## popstate 事件
 
 每当同一个文档的浏览历史（即`history`对象）出现变化时，就会触发`popstate`事件。
 
-需要注意的是，仅仅调用`pushState`方法或`replaceState`方法 ，并不会触发该事件，只有用户点击浏览器倒退按钮和前进按钮，或者使用JavaScript调用`back`、`forward`、`go`方法时才会触发。另外，该事件只针对同一个文档，如果浏览历史的切换，导致加载不同的文档，该事件也不会触发。
+需要注意的是，仅仅调用`pushState`方法或`replaceState`方法 ，并不会触发该事件，只有用户点击浏览器倒退按钮和前进按钮，或者使用 JavaScript 调用`back`、`forward`、`go`方法时才会触发。另外，该事件只针对同一个文档，如果浏览历史的切换，导致加载不同的文档，该事件也不会触发。
 
-使用的时候，可以为`popstate`事件指定回调函数。这个回调函数的参数是一个`event`事件对象，它的`state`属性指向`pushState`和`replaceState`方法为当前URL所提供的状态对象（即这两个方法的第一个参数）。
+使用的时候，可以为`popstate`事件指定回调函数。
 
 ```javascript
 window.onpopstate = function (event) {
@@ -140,7 +140,7 @@ window.addEventListener('popstate', function(event) {
 });
 ```
 
-上面代码中的`event.state`，就是通过`pushState`和`replaceState`方法，为当前URL绑定的`state`对象。
+回调函数的参数是一个`event`事件对象，它的`state`属性指向`pushState`和`replaceState`方法为当前 URL 所提供的状态对象（即这两个方法的第一个参数）。上面代码中的`event.state`，就是通过`pushState`和`replaceState`方法，为当前URL绑定的`state`对象。
 
 这个`state`对象也可以直接通过`history`对象读取。
 
@@ -148,7 +148,7 @@ window.addEventListener('popstate', function(event) {
 var currentState = history.state;
 ```
 
-注意，页面第一次加载的时候，在`load`事件发生后，Chrome和Safari浏览器（Webkit核心）会触发`popstate`事件，而Firefox和IE浏览器不会。
+注意，页面第一次加载的时候，浏览器不会触发`popstate`事件。
 
 ## URLSearchParams API
 
