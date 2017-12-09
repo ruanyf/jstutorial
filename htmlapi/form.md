@@ -206,6 +206,15 @@ input.addEventListener('blur', function () {
 
 `setCustomValidity`方法用于自定义错误信息，该提示信息也反映在输入框的`validationMessage`属性中。如果将`setCustomValidity`设为空字符串，则意味该项目验证通过。
 
+```javascript
+var passcode_input = document.querySelector('#passcode');
+if (passcode_input.value !== '123') {
+  passcode_input.setCustomValidity('Wrong. It should be 123.');
+} else {
+  passcode_input.setCustomValidity('');
+}
+```
+
 ## 参考链接
 
 - Dave Rupert, [Happier HTML5 Form Validation](https://daverupert.com/2017/11/happier-html5-forms/)
