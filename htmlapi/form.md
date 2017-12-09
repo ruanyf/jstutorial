@@ -161,28 +161,54 @@ if (field.nodeName === "INPUT" && field.type !== field.getAttribute("type")) {
 }
 ```
 
-### checkValidity方法，setCustomValidity方法，validity对象
+### checkValidity()，setCustomValidity方法，validity对象
 
-checkValidity方法表示执行原生的表单验证，如果验证通过返回true。如果验证失败，则会触发一个invalid事件。使用该方法以后，会设置validity对象的值。
+提交表单之前（即`submit`事件发生之前），浏览器会执行`form.checkValidity()`，检查是否所有输入项都能通过验证。那些不能通过验证的输入项，会触发该输入项元素的`invalid`事件。因此，可以定义`invalid`事件的监听函数，一旦通不过验证，就显示报错提示。
 
-每一个表单元素都有一个validity对象，它有以下属性。
+```javascript
+// CSS 样式如下：
+// input.error {
+//   border-color: red;
+// }
+const inputs = document.querySelectorAll('input, select, textarea');
+inputs.forEach(input => {
+  input.addEventListener('invalid', event => {
+    input.classList.add('error');
+  }, false);
+});
+```
 
-- valid：如果该元素通过验证，则返回true。
-- valueMissing：如果用户没填必填项，则返回true。
-- typeMismatch：如果填入的格式不正确（比如Email地址），则返回true。
-- patternMismatch：如果不匹配指定的正则表达式，则返回true。
-- tooLong：如果超过最大长度，则返回true。
-- tooShort：如果小于最短长度，则返回true。
-- rangeUnderFlow：如果小于最小值，则返回true。
-- rangeOverflow：如果大于最大值，则返回true。
-- stepMismatch：如果不匹配步长（step），则返回true。
-- badInput：如果不能转为值，则返回true。
-- customError：如果该栏有自定义错误，则返回true。
+注意，一旦发生`invalid`事件，表单的`submit`事件就不会触发，即被取消了。
 
-setCustomValidity方法用于自定义错误信息，该提示信息也反映在该输入框的validationMessage属性中。如果将setCustomValidity设为空字符串，则意味该项目验证通过。
+单个输入项也有`checkValidity`方法，可以手动触发。
+
+```javascript
+input.addEventListener('blur', function () {
+  input.checkValidity();
+});
+```
+
+`checkValidity`方法表示执行原生的表单验证，即 HTML5 代码中为输入项指定的验证条件。如果验证通过返回`true`。如果验证失败，除了触发`invalid`事件，还会设置`validity`对象的值。
+
+每一个表单元素都有一个`validity`对象，具有以下属性。
+
+- `valid`：如果该元素通过验证，则为`true`。
+- `valueMissing`：如果用户没填必填项，则为`true`。
+- `typeMismatch`：如果填入的格式不正确（比如 Email 地址），则为`true`。
+- `patternMismatch`：如果不匹配指定的正则表达式，则为`true`。
+- `tooLong`：如果超过最大长度，则为`true`。
+- `tooShort`：如果小于最短长度，则为`true`。
+- `rangeUnderFlow`：如果小于最小值，则为`true`。
+- `rangeOverflow`：如果大于最大值，则为`true`。
+- `stepMismatch`：如果不匹配步长（step），则返回`true`。
+- `badInput`：如果不能转为值，则为`true`。
+- `customError`：如果该栏有自定义错误，则为`true`。
+
+`setCustomValidity`方法用于自定义错误信息，该提示信息也反映在输入框的`validationMessage`属性中。如果将`setCustomValidity`设为空字符串，则意味该项目验证通过。
 
 ## 参考链接
 
+- Dave Rupert, [Happier HTML5 Form Validation](https://daverupert.com/2017/11/happier-html5-forms/)
 - Craig Buckler, [HTML5 Forms: JavaScript and the Constraint Validation API](http://www.sitepoint.com/html5-forms-javascript-constraint-validation-api/)
 
 
