@@ -581,9 +581,9 @@ var bool = event.isTrusted;
 
 ### event.preventDefault()
 
-preventDefault方法取消浏览器对当前事件的默认行为，比如点击链接后，浏览器跳转到指定页面，或者按一下空格键，页面向下滚动一段距离。该方法生效的前提是，事件的cancelable属性为true，如果为false，则调用该方法没有任何效果。
+`preventDefault`方法取消浏览器对当前事件的默认行为，比如点击链接后，浏览器跳转到指定页面，或者按一下空格键，页面向下滚动一段距离。该方法生效的前提是，事件对象的`cancelable`属性为`true`，如果为`false`，则调用该方法没有任何效果。
 
-该方法不会阻止事件的进一步传播（stopPropagation方法可用于这个目的）。只要在事件的传播过程中（捕获阶段、目标阶段、冒泡阶段皆可），使用了preventDefault方法，该事件的默认方法就不会执行。
+该方法不会阻止事件的进一步传播（`stopPropagation`方法可用于这个目的）。只要在事件的传播过程中（捕获阶段、目标阶段、冒泡阶段皆可），使用了`preventDefault`方法，该事件的默认方法就不会执行。
 
 ```javascript
 // HTML代码为
@@ -610,13 +610,11 @@ function checkName(e) {
 }
 ```
 
-上面函数设为文本框的keypress监听函数后，将只能输入小写字母，否则输入事件的默认事件（写入文本框）将被取消。
-
-如果监听函数最后返回布尔值false（即return false），浏览器也不会触发默认行为，与preventDefault方法有等同效果。
+上面函数设为文本框的`keypress`监听函数后，将只能输入小写字母，否则输入事件的默认事件（写入文本框）将被取消。
 
 ### event.stopPropagation()
 
-`stopPropagation`方法阻止事件在DOM中继续传播，防止再触发定义在别的节点上的监听函数，但是不包括在当前节点上新定义的事件监听函数。
+`stopPropagation`方法阻止事件在 DOM 中继续传播，防止再触发定义在别的节点上的监听函数，但是不包括在当前节点上新定义的事件监听函数。
 
 ```javascript
 function stopEvent(e) {
