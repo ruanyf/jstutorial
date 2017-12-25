@@ -347,12 +347,6 @@ document.implementation.hasFeature('MutationEvents','2.0')
 
 ## 读写相关的方法
 
-### document.open()，document.close()
-
-`document.open`方法用于新建一个文档，供write方法写入内容。它实际上等于清除当前文档，重新写入内容。不要将此方法与`window.open()`混淆，后者用来打开一个新窗口，与当前文档无关。
-
-`document.close`方法用于关闭`open`方法所新建的文档。一旦关闭，`write`方法就无法写入内容了。如果再调用`write`方法，就等同于又调用`open`方法，新建一个文档，再写入内容。
-
 ### document.write()，document.writeln()
 
 `document.write`方法用于向当前文档写入内容。只要当前文档还没有用`close`方法关闭，它所写入的内容就会追加在已有内容的后面。
