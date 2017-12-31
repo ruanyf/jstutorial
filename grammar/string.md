@@ -26,7 +26,7 @@ modifiedOn: 2014-01-05
 
 上面两个都是合法的字符串。
 
-如果要在单引号字符串的内部，使用单引号（或者在双引号字符串的内部，使用双引号），就必须在内部的单引号（或者双引号）前面加上反斜杠，用来转义。
+如果要在单引号字符串的内部，使用单引号，就必须在内部的单引号前面加上反斜杠，用来转义。双引号字符串内部使用双引号，也是如此。
 
 ```javascript
 'Did she say \'Hello\'?'
@@ -36,7 +36,7 @@ modifiedOn: 2014-01-05
 // "Did she say "Hello"?"
 ```
 
-由于HTML语言的属性值使用双引号，所以很多项目约定JavaScript语言的字符串只使用单引号，本教程就遵守这个约定。当然，只使用双引号也完全可以。重要的是，坚持使用一种风格，不要两种风格混合。
+由于 HTML 语言的属性值使用双引号，所以很多项目约定 JavaScript 语言的字符串只使用单引号，本教程遵守这个约定。当然，只使用双引号也完全可以。重要的是坚持使用一种风格，不要一会使用单引号表示字符串，一会又使用双引号表示。
 
 字符串默认只能写在一行内，分成多行将会报错。
 
@@ -47,15 +47,15 @@ c'
 // SyntaxError: Unexpected token ILLEGAL
 ```
 
-上面代码将一个字符串分成三行，JavaScript就会报错。
+上面代码将一个字符串分成三行，JavaScript 就会报错。
 
 如果长字符串必须分成多行，可以在每一行的尾部使用反斜杠。
 
 ```javascript
-var longString = "Long \
+var longString = 'Long \
 long \
 long \
-string";
+string';
 
 longString
 // "Long long long string"
@@ -91,18 +91,18 @@ line 3
 
 反斜杠（\）在字符串内有特殊含义，用来表示一些特殊字符，所以又称为转义符。
 
-需要用反斜杠转义的特殊字符，主要有下面这些：
+需要用反斜杠转义的特殊字符，主要有下面这些。
 
-- `\0` null（\u0000）
-- `\b` 后退键（\u0008）
-- `\f` 换页符（\u000C）
-- `\n` 换行符（\u000A）
-- `\r` 回车键（\u000D）
-- `\t` 制表符（\u0009）
-- `\v` 垂直制表符（\u000B）
-- `\'` 单引号（\u0027）
-- `\"` 双引号（\u0022）
-- \\ 反斜杠（\u005C）
+- `\0` ：null（`\u0000`）
+- `\b` ：后退键（`\u0008`）
+- `\f` ：换页符（`\u000C`）
+- `\n` ：换行符（`\u000A`）
+- `\r` ：回车键（`\u000D`）
+- `\t` ：制表符（`\u0009`）
+- `\v` ：垂直制表符（`\u000B`）
+- `\'` ：单引号（`\u0027`）
+- `\"` ：双引号（`\u0022`）
+- `\\` ：反斜杠（`\u005C`）
 
 上面这些字符前面加上反斜杠，都表示特殊含义。
 
@@ -118,15 +118,15 @@ console.log('1\n2')
 
 （1）`\HHH`
 
-反斜杠后面紧跟三个八进制数（`000`到`377`），代表一个字符。`HHH`对应该字符的Unicode码点，比如`\251`表示版权符号。显然，这种方法只能输出256种字符。
+反斜杠后面紧跟三个八进制数（`000`到`377`），代表一个字符。`HHH`对应该字符的 Unicode 码点，比如`\251`表示版权符号。显然，这种方法只能输出256种字符。
 
 （2）`\xHH`
 
-`\x`后面紧跟两个十六进制数（`00`到`FF`），代表一个字符。`HH`对应该字符的Unicode码点，比如`\xA9`表示版权符号。这种方法也只能输出256种字符。
+`\x`后面紧跟两个十六进制数（`00`到`FF`），代表一个字符。`HH`对应该字符的 Unicode 码点，比如`\xA9`表示版权符号。这种方法也只能输出256种字符。
 
 （3）`\uXXXX`
 
-`\u`后面紧跟四个十六进制数（`0000`到`FFFF`），代表一个字符。`HHHH`对应该字符的Unicode码点，比如`\u00A9`表示版权符号。
+`\u`后面紧跟四个十六进制数（`0000`到`FFFF`），代表一个字符。`HHHH`对应该字符的 Unicode 码点，比如`\u00A9`表示版权符号。
 
 下面是这三种字符特殊写法的例子。
 
@@ -195,21 +195,7 @@ s // "hello"
 
 上面代码表示，字符串内部的单个字符无法改变和增删，这些操作会默默地失败。
 
-字符串也无法直接使用数组的方法，必须通过`call`方法间接使用。
-
-```javascript
-var s = 'hello';
-
-s.join(' ') // TypeError: s.join is not a function
-
-Array.prototype.join.call(s, ' ') // "h e l l o"
-```
-
-上面代码中，如果直接对字符串使用数组的`join`方法，会报错不存在该方法。但是，可以通过`call`方法，间接对字符串使用`join`方法。
-
-不过，由于字符串是只读的，那些会改变原数组的方法，比如`push()`、`sort()`、`reverse()`、`splice()`都对字符串无效，只有将字符串显式转为数组后才能使用，参见《标准库》一章的数组部分。
-
-### length属性
+### length 属性
 
 `length`属性返回字符串的长度，该属性也是无法改变的。
 
@@ -228,99 +214,48 @@ s.length // 5
 
 ## 字符集
 
-JavaScript使用Unicode字符集。也就是说，在JavaScript引擎内部，所有字符都用Unicode表示。
+JavaScript 使用 Unicode 字符集。JavaScript 引擎内部，所有字符都用 Unicode 表示。
 
-JavaScript不仅以Unicode储存字符，还允许直接在程序中使用Unicode编号表示字符，即将字符写成`\uxxxx`的形式，其中`xxxx`代表该字符的Unicode编码。比如，`\u00A9`代表版权符号。
+JavaScript 不仅以 Unicode 储存字符，还允许直接在程序中使用 Unicode 码点表示字符，即将字符写成`\uxxxx`的形式，其中`xxxx`代表该字符的 Unicode 码点。比如，`\u00A9`代表版权符号。
 
 ```javascript
 var s = '\u00A9';
 s // "©"
 ```
 
-解析代码的时候，JavaScript会自动识别一个字符是字面形式表示，还是Unicode形式表示。输出给用户的时候，所有字符都会转成字面形式。
+解析代码的时候，JavaScript 会自动识别一个字符是字面形式表示，还是 Unicode 形式表示。输出给用户的时候，所有字符都会转成字面形式。
 
 ```javascript
 var f\u006F\u006F = 'abc';
 foo // "abc"
 ```
 
-上面代码中，第一行的变量名`foo`是Unicode形式表示，第二行是字面形式表示。JavaScript会自动识别。
+上面代码中，第一行的变量名`foo`是 Unicode 形式表示，第二行是字面形式表示。JavaScript 会自动识别。
 
-我们还需要知道，每个字符在JavaScript内部都是以16位（即2个字节）的UTF-16格式储存。也就是说，JavaScript的单位字符长度固定为16位长度，即2个字节。
+我们还需要知道，每个字符在 JavaScript 内部都是以16位（即2个字节）的 UTF-16 格式储存。也就是说，JavaScript 的单位字符长度固定为16位长度，即2个字节。
 
-但是，UTF-16有两种长度：对于`U+0000`到`U+FFFF`之间的字符，长度为16位（即2个字节）；对于`U+10000`到`U+10FFFF`之间的字符，长度为32位（即4个字节），而且前两个字节在`0xD800`到`0xDBFF`之间，后两个字节在`0xDC00`到`0xDFFF`之间。举例来说，`U+1D306`对应的字符为`𝌆，`它写成UTF-16就是`0xD834 0xDF06`。浏览器会正确将这四个字节识别为一个字符，但是JavaScript内部的字符长度总是固定为16位，会把这四个字节视为两个字符。
+但是，UTF-16 有两种长度：对于码点在`U+0000`到`U+FFFF`之间的字符，长度为16位（即2个字节）；对于码点在`U+10000`到`U+10FFFF`之间的字符，长度为32位（即4个字节），而且前两个字节在`0xD800`到`0xDBFF`之间，后两个字节在`0xDC00`到`0xDFFF`之间。举例来说，码点`U+1D306`对应的字符为`𝌆，`它写成 UTF-16 就是`0xD834 0xDF06`。
 
-```javascript
-var s = '\uD834\uDF06';
-
-s // "𝌆"
-s.length // 2
-/^.$/.test(s) // false
-s.charAt(0) // ""
-s.charAt(1) // ""
-s.charCodeAt(0) // 55348
-s.charCodeAt(1) // 57094
-```
-
-上面代码说明，对于于`U+10000`到`U+10FFFF`之间的字符，JavaScript总是视为两个字符（字符的`length`属性为2），用来匹配单个字符的正则表达式会失败（JavaScript认为这里不止一个字符），`charAt`方法无法返回单个字符，`charCodeAt`方法返回每个字节对应的十进制值。
-
-所以处理的时候，必须把这一点考虑在内。对于4个字节的Unicode字符，假定`C`是字符的Unicode编号，`H`是前两个字节，`L`是后两个字节，则它们之间的换算关系如下。
+JavaScript 对 UTF-16 的支持是不完整的，由于历史原因，只支持两字节的字符，不支持四字节的字符。这是因为 JavaScript 第一版发布的时候，Unicode 的码点只编到`U+FFFF`，因此两字节足够表示了。后来，Unicode 纳入的字符越来越多，出现了四字节的编码。但是，JavaScript 的标准此时已经定型了，统一将字符长度限制在两字节，导致无法识别四字节的字符。上一节的那个四字节字符`𝌆`，浏览器会正确识别这是一个字符，但是 JavaScript 无法识别，会认为这是两个字符。
 
 ```javascript
-// 将大于U+FFFF的字符，从Unicode转为UTF-16
-H = Math.floor((C - 0x10000) / 0x400) + 0xD800
-L = (C - 0x10000) % 0x400 + 0xDC00
-
-// 将大于U+FFFF的字符，从UTF-16转为Unicode
-C = (H - 0xD800) * 0x400 + L - 0xDC00 + 0x10000
+'𝌆'.length // 2
 ```
 
-下面的正则表达式可以识别所有UTF-16字符。
+上面代码中，JavaScript 认为`𝌆`的长度为2，而不是1。
 
-```javascript
-([\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF])
-```
+总结一下，对于码点在`U+10000`到`U+10FFFF`之间的字符，JavaScript 总是认为它们是两个字符（`length`属性为2）。所以处理的时候，必须把这一点考虑在内，也就是说，JavaScript 返回的字符串长度可能是不正确的。
 
-由于JavaScript引擎（严格说是ES5规格）不能自动识别辅助平面（编号大于0xFFFF）的Unicode字符，导致所有字符串处理函数遇到这类字符，都会产生错误的结果（详见《标准库》一章的`String`对象章节）。如果要完成字符串相关操作，就必须判断字符是否落在`0xD800`到`0xDFFF`这个区间。
+## Base64 转码
 
-下面是能够正确处理字符串遍历的函数。
+有时，文本里面包含一些不可打印的符号，比如 ASCII 码0到31的符号都无法打印出来，这时可以使用 Base64 编码，将它们转成可以打印的字符。另一个场景是，有时需要以文本格式传递二进制数据，那么也可以使用 Base64 编码。
 
-```javascript
-function getSymbols(string) {
-  var length = string.length;
-  var index = -1;
-  var output = [];
-  var character;
-  var charCode;
-  while (++index < length) {
-    character = string.charAt(index);
-    charCode = character.charCodeAt(0);
-    if (charCode >= 0xD800 && charCode <= 0xDBFF) {
-      output.push(character + string.charAt(++index));
-    } else {
-      output.push(character);
-    }
-  }
-  return output;
-}
+所谓 Base64 就是一种编码方法，可以将任意值转成 0～9、A～Z、a-z、`+`和`/`这64个字符组成的可打印字符。使用它的主要目的，不是为了加密，而是为了不出现特殊字符，简化程序的处理。
 
-var symbols = getSymbols('𝌆');
+JavaScript 原生提供两个 Base64 相关的方法。
 
-symbols.forEach(function(symbol) {
-  // ...
-});
-```
-
-替换（`String.prototype.replace`）、截取子字符串（`String.prototype.substring`, `String.prototype.slice`）等其他字符串操作，都必须做类似的处理。
-
-## Base64转码
-
-Base64是一种编码方法，可以将任意字符转成可打印字符。使用这种编码方法，主要不是为了加密，而是为了不出现特殊字符，简化程序的处理。
-
-JavaScript原生提供两个Base64相关方法。
-
-- btoa()：字符串或二进制值转为Base64编码
-- atob()：Base64编码转为原来的编码
+- `btoa()`：任意值转为 Base64 编码
+- `atob()`：Base64 编码转为原来的值
 
 ```javascript
 var string = 'Hello World!';
@@ -328,14 +263,13 @@ btoa(string) // "SGVsbG8gV29ybGQh"
 atob('SGVsbG8gV29ybGQh') // "Hello World!"
 ```
 
-这两个方法不适合非ASCII码的字符，会报错。
+注意，这两个方法不适合非 ASCII 码的字符，会报错。
 
 ```javascript
-btoa('你好')
-// Uncaught DOMException: The string to be encoded contains characters outside of the Latin1 range.
+btoa('你好') // 报错
 ```
 
-要将非ASCII码字符转为Base64编码，必须中间插入一个转码环节，再使用这两个方法。
+要将非 ASCII 码字符转为 Base64 编码，必须中间插入一个转码环节，再使用这两个方法。
 
 ```javascript
 function b64Encode(str) {
