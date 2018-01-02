@@ -183,7 +183,7 @@ p.hasOwnProperty('constructor')
 // false
 ```
 
-上面代码中，`p`是构造函数`P`的实例对象，但是`p`自身没有`contructor`属性，该属性其实是读取原型链上面的`P.prototype.constructor`属性。
+上面代码中，`p`是构造函数`P`的实例对象，但是`p`自身没有`constructor`属性，该属性其实是读取原型链上面的`P.prototype.constructor`属性。
 
 `constructor`属性的作用，是分辨原型对象到底属于哪个构造函数。
 
@@ -231,7 +231,7 @@ Person.prototype.copy = function () {
 };
 ```
 
-上面代码中，`Person`构造函数的原型对象的`contructor`属性指向`Person`。然后，开发者在原型对象上定义了`copy`方法，该方法内部通过`this.constructor`调用`Person`。如果原型对象变了，这个`constructor`属性的指向可能就会出错。
+上面代码中，`Person`构造函数的原型对象的`constructor`属性指向`Person`。然后，开发者在原型对象上定义了`copy`方法，该方法内部通过`this.constructor`调用`Person`。如果原型对象变了，这个`constructor`属性的指向可能就会出错。
 
 ```javascript
 Person.prototype = {
@@ -242,7 +242,7 @@ var p1 = new Person('张三');
 p1.copy() // TypeError: p1.copy is not a function
 ```
 
-上面代码中，`Person.prototype`改成另一个对象，但是忘了改写`contructor`属性，结果导致调用实例方法报错。
+上面代码中，`Person.prototype`改成另一个对象，但是忘了改写`constructor`属性，结果导致调用实例方法报错。
 
 所以，修改原型对象时，一般要同时校正`constructor`属性的指向。
 
