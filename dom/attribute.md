@@ -48,6 +48,7 @@ n.attributes[0].nodeValue // "mydiv"
 
 ```javascript
 var para = document.getElementsByTagName('p')[0];
+var result = document.getElementsById('result');
 
 if (para.hasAttributes()) {
   var attrs = para.attributes;
@@ -55,9 +56,9 @@ if (para.hasAttributes()) {
   for(var i = attrs.length - 1; i >= 0; i--) {
     output += attrs[i].name + '->' + attrs[i].value;
   }
-  result.value = output;
+  result.textContent = output;
 } else {
-  result.value = 'No attributes to show';
+  result.textContent = 'No attributes to show';
 }
 ```
 

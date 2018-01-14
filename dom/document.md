@@ -103,8 +103,7 @@ document.embeds instanceof HTMLCollection // true
 
 ```javascript
 // HTML代码为
-// <form name="myForm" >
-
+// <form name="myForm">
 document.myForm === document.forms.myForm // true
 ```
 
