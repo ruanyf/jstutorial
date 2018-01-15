@@ -8,43 +8,29 @@ modifiedOn: 2013-12-15
 
 ## 概述
 
-JavaScript 原生提供`Object`对象（注意起首的`O`是大写），所有其他对象都继承自这个对象。`Object`本身也是一个构造函数，可以直接通过它来生成新对象。
+JavaScript 原生提供`Object`对象（注意起首的`O`是大写），本章介绍该对象原生的各种方法。
 
-```javascript
-var obj = new Object();
-```
+JavaScript 的所有其他对象都继承自`Object`对象，即那些对象都是`Object`的实例。
 
-`Object`作为构造函数使用时，可以接受一个参数。如果该参数是一个对象，则直接返回这个对象；如果是一个原始类型的值，则返回该值对应的包装对象。
+## 对象方法与实例方法
 
-```javascript
-var o1 = {a: 1};
-var o2 = new Object(o1);
-o1 === o2 // true
-
-new Object(123) instanceof Number
-// true
-```
-
-> 注意，通过`new Object()`的写法生成新对象，与字面量的写法`o = {}`是等价的。
-
-与其他构造函数一样，如果要在`Object`对象上面部署一个方法，有两种做法。
+如果要在`Object`对象上面部署一个方法，有两种做法。
 
 **（1）部署在`Object`对象本身**
 
 比如，在`Object`对象上面定义一个`print`方法，显示其他对象的内容。
 
 ```javascript
-Object.print = function(o){ console.log(o) };
+Object.print = function (o) { console.log(o) };
 
 var o = new Object();
 
-Object.print(o)
-// Object
+Object.print(o) // Object
 ```
 
 **（2）部署在`Object.prototype`对象**
 
-所有构造函数都有一个prototype属性，指向一个原型对象。凡是定义在Object.prototype对象上面的属性和方法，将被所有实例对象共享。（关于prototype属性的详细解释，参见《面向对象编程》一章。）
+所有构造函数都有一个`prototype`属性，指向一个原型对象。凡是定义在`Object.prototype`对象上面的属性和方法，将被所有实例对象共享。（关于`prototype`属性的详细解释，参见《面向对象编程》一章。）
 
 ```javascript
 Object.prototype.print = function(){ console.log(this)};
@@ -54,55 +40,59 @@ var o = new Object();
 o.print() // Object
 ```
 
-上面代码在Object.prototype定义了一个print方法，然后生成一个Object的实例o。o直接继承了Object.prototype的属性和方法，可以在自身调用它们，也就是说，o对象的print方法实质上是调用Object.prototype.print方法。。
+上面代码在`Object.prototype`定义了一个`print`方法，然后生成一个`Object`的实例`o`。`o`直接继承了`Object.prototype`的属性和方法，可以在自身调用它们，也就是说，`o`对象的`print`方法实质上是调用`Object.prototype.print`方法。。
 
 可以看到，尽管上面两种写法的`print`方法功能相同，但是用法是不一样的，因此必须区分“构造函数的方法”和“实例对象的方法”。
 
 ## Object()
 
-`Object`本身当作工具方法使用时，可以将任意值转为对象。这个方法常用于保证某个值一定是对象。
+`Object`本身是一个函数，可以当作工具方法使用，将任意值转为对象。这个方法常用于保证某个值一定是对象。
 
-如果参数是原始类型的值，`Object`方法返回对应的包装对象的实例（参见《原始类型的包装对象》一节）。
+如果参数为空（或者为`undefined`和`null`），`Object()`返回一个空对象。
 
 ```javascript
-Object() // 返回一个空对象
-Object() instanceof Object // true
+var obj = Object();
+// 等同于
+var obj = Object(undefined);
+var obj = Object(null);
 
-Object(undefined) // 返回一个空对象
-Object(undefined) instanceof Object // true
-
-Object(null) // 返回一个空对象
-Object(null) instanceof Object // true
-
-Object(1) // 等同于 new Number(1)
-Object(1) instanceof Object // true
-Object(1) instanceof Number // true
-
-Object('foo') // 等同于 new String('foo')
-Object('foo') instanceof Object // true
-Object('foo') instanceof String // true
-
-Object(true) // 等同于 new Boolean(true)
-Object(true) instanceof Object // true
-Object(true) instanceof Boolean // true
+obj instanceof Object // true
 ```
 
-上面代码表示`Object`函数可以将各种值转为对应的构造函数生成的对象。
+上面代码中，`obj`是一个空对象。
 
-如果`Object`方法的参数是一个对象，它总是返回原对象。
+如果参数是原始类型的值，`Object`方法返回对应的包装对象的实例（参见《原始类型的包装对象》一章）。
+
+```javascript
+var obj = Object(1);
+obj instanceof Object // true
+obj instanceof Number // true
+
+var obj = Object('foo');
+obj instanceof Object // true
+obj instanceof String // true
+
+var obj = Object(true);
+obj instanceof Object // true
+obj instanceof Boolean // true
+```
+
+上面代码中，`Object`函数的参数是各种原始类型的值，但是返回的都是对象，即各种原始类型数值对应的包装对象。
+
+如果`Object`方法的参数是一个对象，它总是返回该对象。
 
 ```javascript
 var arr = [];
-Object(arr) // 返回原数组
-Object(arr) === arr // true
+var obj = Object(arr); // 返回原数组
+obj === arr // true
 
-var obj = {};
-Object(obj) // 返回原对象
-Object(obj) === obj // true
+var value = {};
+var obj = Object(value) // 返回原对象
+obj === value // true
 
 var fn = function () {};
-Object(fn) // 返回原函数
-Object(fn) === fn // true
+var obj = Object(fn); // 返回原函数
+obj === fn // true
 ```
 
 利用这一点，可以写一个判断变量是否为对象的函数。
@@ -114,6 +104,29 @@ function isObject(value) {
 
 isObject([]) // true
 isObject(true) // false
+```
+
+## Object 构造函数
+
+`Object`不仅可以当作工具函数使用，还可以当作构造函数使用，即前面可以使用`new`命令。
+
+`Object`构造函数的首要用途，是直接通过它来生成新对象。
+
+```javascript
+var obj = new Object();
+```
+
+> 注意，通过`new Object()`的写法生成新对象，与字面量的写法`o = {}`是等价的。
+
+`Object`构造函数的用法，与工具方法很相似。使用时，可以接受一个参数，如果该参数是一个对象，则直接返回这个对象；如果是一个原始类型的值，则返回该值对应的包装对象（详见《包装对象》一章）。
+
+```javascript
+var o1 = {a: 1};
+var o2 = new Object(o1);
+o1 === o2 // true
+
+var obj = new Object(123);
+obj instanceof Number // true
 ```
 
 ## Object 对象的静态方法
