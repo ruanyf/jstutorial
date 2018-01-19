@@ -91,7 +91,7 @@ document.getElementById('mydata').text
 </script>
 ```
 
-上面代码中，`script`标签有一个`integrity`属性，指定了外部脚本`/assets/application.js`的SHA265签名。一旦有人改了这个脚本，导致SHA265签名不匹配，浏览器就会拒绝加载。
+上面代码中，`script`标签有一个`integrity`属性，指定了外部脚本`/assets/application.js`的 SHA256 签名。一旦有人改了这个脚本，导致 SHA256 签名不匹配，浏览器就会拒绝加载。
 
 ### 事件属性
 

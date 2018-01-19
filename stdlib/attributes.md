@@ -306,7 +306,7 @@ Object.defineProperty(o,'p', {writable: true})
 Object.defineProperty(o,'p', {enumerable: true})
 // TypeError: Cannot redefine property: p
 
-Object.defineProperties(o,'p',{configurable: true})
+Object.defineProperty(o,'p',{configurable: true})
 // TypeError: Cannot redefine property: p
 ```
 
