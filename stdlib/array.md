@@ -540,7 +540,7 @@ Array(2).map(function (){
   console.log('enter...');
   return 1;
 })
-// [, ,]
+// [empty × 2]
 ```
 
 上面代码中，`map`方法根本没有执行，直接返回了`Array(2)`生成的空数组。

@@ -248,20 +248,42 @@ f() // undefined
 
 ### name 属性
 
-函数的`name`属性返回紧跟在`function`关键字之后的那个函数名。
+函数的`name`属性返回函数的名字。
 
 ```javascript
 function f1() {}
-f1.name // 'f1'
+f1.name // "f1"
+```
 
+如果是通过变量赋值定义的函数，那么`name`属性返回变量名。
+
+```javascript
 var f2 = function () {};
-f2.name // ''
+f2.name // "f2"
+```
 
+但是，上面这种情况，只有在变量的值是一个匿名函数时才是如此。如果变量的值是一个具名函数，那么`name`属性返回`function`关键字之后的那个函数名。
+
+```javascript
 var f3 = function myName() {};
 f3.name // 'myName'
 ```
 
-上面代码中，函数的`name`属性总是返回紧跟在`function`关键字之后的那个函数名。对于`f2`来说，返回空字符串，匿名函数的`name`属性总是为空字符串；对于`f3`来说，返回函数表达式的名字（真正的函数名还是`f3`，`myName`这个名字只在函数体内部可用）。
+上面代码中，`f3.name`返回函数表达式的名字。注意，真正的函数名还是`f3`，而`myName`这个名字只在函数体内部可用。
+
+`name`属性的一个用处，就是获取参数函数的名字。
+
+```javascript
+var myFunc = function () {};
+
+function test(f) {
+  console.log(f.name);
+}
+
+test(myFunc) // myFunc
+```
+
+上面代码中，函数`test`内部通过`name`属性，就可以知道传入的参数是什么函数。
 
 ### length 属性
 
