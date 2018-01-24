@@ -503,9 +503,9 @@ window.onload = function() {
 
 上面代码在网页加载完毕后，获取指定元素并进行处理。
 
-### error事件和onerror属性
+### error 事件和 onerror 属性
 
-浏览器脚本发生错误时，会触发window对象的`error`事件。我们可以通过`window.onerror`属性对该事件指定回调函数。
+浏览器脚本发生错误时，会触发`window`对象的`error`事件。我们可以通过`window.onerror`属性对该事件指定回调函数。
 
 ```javascript
 window.onerror = function (message, filename, lineno, colno, error) {
@@ -523,16 +523,7 @@ window.onerror = function (message, filename, lineno, colno, error) {
 
 老式浏览器只支持前三个参数。
 
-并不是所有的错误，都会触发JavaScript的`error`事件（即让JavaScript报错），只限于以下三类事件。
-
-- JavaScript语言错误
-- JavaScript脚本文件不存在
-- 图像文件不存在
-
-以下两类事件不会触发JavaScript的error事件。
-
-- CSS文件不存在
-- iframe文件不存在
+并不是所有的错误，都会触发 JavaScript 的`error`事件（即让 JavaScript 报错）。一般来说，只有 JavaScript 脚本的错误，才会触发这个事件，而像资源文件不存在之类的错误，都不会触发。
 
 下面是一个例子，如果整个页面未捕获错误超过3个，就显示警告。
 
