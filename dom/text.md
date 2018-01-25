@@ -183,7 +183,7 @@ p.childNodes.length // 1
 
 `DocumentFragment`节点代表一个文档的片段，本身就是一个完整的DOM树形结构。它没有父节点，`parentNode`返回`null`，但是可以插入任意数量的子节点。它不属于当前文档，操作`DocumentFragment`节点，要比直接操作DOM树快得多。
 
-它一般用于构建一个DOM结构，然后插入当前文档。`document.createDocumentFragment`方法，以及浏览器原生的`DocumentFragment`构造函数，可以创建一个空的`DocumentFragment`节点。然后再使用其他DOM方法，向其添加子节点。
+它一般用于构建一个 DOM 结构，然后插入当前文档。`document.createDocumentFragment`方法，以及浏览器原生的`DocumentFragment`构造函数，可以创建一个空的`DocumentFragment`节点。然后再使用其他DOM方法，向其添加子节点。
 
 ```javascript
 var docFrag = document.createDocumentFragment();
@@ -194,7 +194,7 @@ var li = document.createElement('li');
 li.textContent = 'Hello World';
 docFrag.appendChild(li);
 
-document.queryselector('ul').appendChild(docFrag);
+document.querySelector('ul').appendChild(docFrag);
 ```
 
 上面代码创建了一个`DocumentFragment`节点，然后将一个`li`节点添加在它里面，最后将`DocumentFragment`节点移动到原文档。
