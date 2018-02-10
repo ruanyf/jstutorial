@@ -357,7 +357,7 @@ var obj = { p: 1 };
 
 ```javascript
 var obj = {};
-'toString' in o // true
+'toString' in obj // true
 ```
 
 上面代码中，`toString`方法不是对象`obj`自身的属性，而是继承的属性。但是，`in`运算符不能识别，对继承的属性也返回`true`。
