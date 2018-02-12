@@ -6,29 +6,20 @@ date: 2013-02-12
 modifiedOn: 2013-10-27
 ---
 
-`Math`是JavaScript的内置对象，提供一系列数学常数和数学方法。该对象不是构造函数，不能生成实例，所有的属性和方法都必须在`Math`对象上调用。
+`Math`是 JavaScript 的原生对象，提供各种数学功能。该对象不是构造函数，不能生成实例，所有的属性和方法都必须在`Math`对象上调用。
 
-```javascript
-new Math()
-// TypeError: object is not a function
-```
+## 静态属性
 
-上面代码表示，`Math`不能当作构造函数用。
+`Math`对象的静态属性，提供以下一些数学常数。
 
-## 属性
-
-`Math`对象提供以下一些只读的数学常数。
-
-- `Math.E`：常数e。
-- `Math.LN2`：2的自然对数。
-- `Math.LN10`：10的自然对数。
-- `Math.LOG2E`：以2为底的e的对数。
-- `Math.LOG10E`：以10为底的e的对数。
-- `Math.PI`：常数Pi。
-- `Math.SQRT1_2`：0.5的平方根。
-- `Math.SQRT2`：2的平方根。
-
-这些常数的值如下。
+- `Math.E`：常数`e`。
+- `Math.LN2`：2 的自然对数。
+- `Math.LN10`：10 的自然对数。
+- `Math.LOG2E`：以 2 为底的`e`的对数。
+- `Math.LOG10E`：以 10 为底的`e`的对数。
+- `Math.PI`：常数 Pi。
+- `Math.SQRT1_2`：0.5 的平方根。
+- `Math.SQRT2`：2 的平方根。
 
 ```javascript
 Math.E // 2.718281828459045
@@ -41,9 +32,11 @@ Math.SQRT1_2 // 0.7071067811865476
 Math.SQRT2 // 1.4142135623730951
 ```
 
-## 方法
+这些属性都是只读的，不能修改。
 
-`Math`对象提供以下一些数学方法。
+## 静态方法
+
+`Math`对象提供以下一些静态方法。
 
 - `Math.abs()`：绝对值
 - `Math.ceil()`：向上取整
@@ -57,6 +50,8 @@ Math.SQRT2 // 1.4142135623730951
 - `Math.round()`：四舍五入
 - `Math.random()`：随机数
 
+### Math.abs()
+
 `Math.abs`方法返回参数值的绝对值。
 
 ```javascript
@@ -64,7 +59,9 @@ Math.abs(1) // 1
 Math.abs(-1) // 1
 ```
 
-`Math.max`方法和`Math.min`方法都可以接受多个参数，`Math.max`返回其中最大的参数，`Math.min`返回最小的参数。有趣的是, `Math.min` 不传参数返回 `Infinity`, `Math.max` 不传参数返回 `-Infinity`。
+### Math.max()，Math.min()
+
+`Math.max`方法返回参数之中最大的那个值，`Math.min`返回最小的那个值。如果参数为空, `Math.min`返回`Infinity`, `Math.max`返回`-Infinity`。
 
 ```javascript
 Math.max(2, -1, 5) // 5
@@ -73,21 +70,23 @@ Math.min() // Infinity
 Math.max() // -Infinity
 ```
 
-`Math.floor`方法接受一个参数，返回小于该参数的最大整数。
+### Math.floor()，Math.ceil()
+
+`Math.floor`方法小于参数值的最大整数（地板值）。
 
 ```javascript
 Math.floor(3.2) // 3
 Math.floor(-3.2) // -4
 ```
 
-`Math.ceil`方法接受一个参数，返回大于该参数的最小整数。
+`Math.ceil`方法返回大于参数值的最小整数（天花板值）。
 
 ```javascript
 Math.ceil(3.2) // 4
 Math.ceil(-3.2) // -3
 ```
 
-如果需要一个总是返回某个数值整数部分的函数，可以自己实现。
+这两个方法可以结合起来，实现一个总是返回数值的整数部分的函数。
 
 ```javascript
 function ToInteger(x) {
@@ -104,6 +103,8 @@ ToInteger(-3.8) // -3
 ```
 
 上面代码中，不管正数或负数，`ToInteger`函数总是返回一个数值的整数部分。
+
+### Math.round()
 
 `Math.round`方法用于四舍五入。
 
@@ -124,10 +125,14 @@ Math.round(-1.5) // -1
 Math.round(-1.6) // -2
 ```
 
+### Math.pow()
+
 `Math.pow`方法返回以第一个参数为底数、第二个参数为幂的指数值。
 
 ```javascript
+// 等同于 2 ** 2
 Math.pow(2, 2) // 4
+// 等同于 2 ** 3
 Math.pow(2, 3) // 8
 ```
 
@@ -138,14 +143,18 @@ var radius = 20;
 var area = Math.PI * Math.pow(radius, 2);
 ```
 
-`Math.sqrt`方法返回参数值的平方根。如果参数是一个负值，则返回NaN。
+### Math.sqrt()
+
+`Math.sqrt`方法返回参数值的平方根。如果参数是一个负值，则返回`NaN`。
 
 ```javascript
 Math.sqrt(4) // 2
 Math.sqrt(-4) // NaN
 ```
 
-`Math.log`方法返回以e为底的自然对数值。
+### Math.log()
+
+`Math.log`方法返回以`e`为底的自然对数值。
 
 ```javascript
 Math.log(Math.E) // 1
@@ -159,7 +168,9 @@ Math.log(100)/Math.LN10 // 2
 Math.log(8)/Math.LN2 // 3
 ```
 
-`Math.exp`方法返回常数e的参数次方。
+### Math.exp()
+
+`Math.exp`方法返回常数`e`的参数次方。
 
 ```javascript
 Math.exp(1) // 2.718281828459045
@@ -222,9 +233,9 @@ random_str(6) // "NdQKOr"
 - `Math.sin()`：返回参数的正弦
 - `Math.cos()`：返回参数的余弦
 - `Math.tan()`：返回参数的正切
-- `Math.asin()`：返回参数的反正弦（弧度值）
-- `Math.acos()`：返回参数的反余弦（弧度值）
-- `Math.atan()`：返回参数的反正切（弧度值）
+- `Math.asin()`：返回参数的反正弦（参数为弧度值）
+- `Math.acos()`：返回参数的反余弦（参数为弧度值）
+- `Math.atan()`：返回参数的反正切（参数为弧度值）
 
 ```javascript
 Math.sin(0) // 0
@@ -234,3 +245,4 @@ Math.asin(1) // 1.5707963267948966
 Math.acos(1) // 0
 Math.atan(1) // 0.7853981633974483
 ```
+
