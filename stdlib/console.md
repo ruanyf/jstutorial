@@ -15,18 +15,18 @@ modifiedOn: 2013-12-03
 
 ## 浏览器实现
 
-`console`对象的浏览器实现，包含在浏览器自带的开发工具之中。以Chrome浏览器的“开发者工具”（Developer Tools）为例，可以使用下面三种方法的一种打开它。
+`console`对象的浏览器实现，包含在浏览器自带的开发工具之中。以 Chrome 浏览器的“开发者工具”（Developer Tools）为例，可以使用下面三种方法的打开它。
 
-1. 按 F12 或者`Control + Shift + i`（PC平台）/ `Alt + Command + i`（Mac平台）。
-2. 在菜单中选择“工具/开发者工具”。
+1. 按 F12 或者`Control + Shift + i`（PC）/ `Alt + Command + i`（Mac）。
+2. 浏览器菜单选择“工具/开发者工具”。
 3. 在一个页面元素上，打开右键菜单，选择其中的“Inspect Element”。
 
-打开“开发者工具”以后，可以在顶端看到，有多个面板可供选择，主要如下。
+打开开发者工具以后，顶端有多个面板。
 
-- **Elements**：查看网页的HTML源码和CSS代码。
-- **Resources**：查看网页加载的各种资源文件（比如代码文件、字体文件、css文件等），以及在硬盘上创建的各种内容（比如本地缓存、Cookie、Local Storage等）。
+- **Elements**：查看网页的 HTML 源码和 CSS 代码。
+- **Resources**：查看网页加载的各种资源文件（比如代码文件、字体文件 CSS 文件等），以及在硬盘上创建的各种内容（比如本地缓存、Cookie、Local Storage等）。
 - **Network**：查看网页的 HTTP 通信情况。
-- **Sources**：查看网页加载的所有源码。
+- **Sources**：查看网页加载的脚本源码。
 - **Timeline**：查看各种网页行为随时间变化的情况。
 - **Performance**：查看网页的性能情况，比如 CPU 和内存消耗。
 - **Console**：用来运行 JavaScript 命令。
@@ -35,18 +35,17 @@ modifiedOn: 2013-12-03
 
 `Console`面板基本上就是一个命令行窗口，你可以在提示符下，键入各种命令。
 
-## console 对象的方法
+## console 对象的静态方法
 
-`console`对象提供的各种方法，用来与控制台窗口互动。
+`console`对象提供的各种静态方法，用来与控制台窗口互动。
 
 ### console.log()，console.info()，console.debug()
 
-`console.log`方法用于在控制台输出信息。它可以接受多个参数，将它们的结果连接起来输出。
+`console.log`方法用于在控制台输出信息。它可以接受一个或多个参数，将它们连接起来输出。
 
 ```javascript
 console.log('Hello World')
 // Hello World
-
 console.log('a', 'b', 'c')
 // a b c
 ```
@@ -71,14 +70,14 @@ console.log(' %s + %s = %s', 1, 1, 2)
 
 上面代码中，`console.log`方法的第一个参数有三个占位符（`%s`），第二、三、四个参数会在显示时，依次替换掉这个三个占位符。
 
-`console.log`方法支持以下占位符，不同格式的数据必须使用对应格式的占位符。
+`console.log`方法支持以下占位符，不同类型的数据必须使用对应的占位符。
 
 - `%s` 字符串
 - `%d` 整数
 - `%i` 整数
 - `%f` 浮点数
 - `%o` 对象的链接
-- `%c` CSS格式字符串
+- `%c` CSS 格式字符串
 
 ```javascript
 var number = 11 * 9;
@@ -90,7 +89,7 @@ console.log('%d %s balloons', number, color);
 
 上面代码中，第二个参数是数值，对应的占位符是`%d`，第三个参数是字符串，对应的占位符是`%s`。
 
-使用`%c`占位符时，对应的参数必须是CSS语句，用来对输出内容进行CSS渲染。
+使用`%c`占位符时，对应的参数必须是 CSS 代码，用来对输出内容进行CSS渲染。
 
 ```javascript
 console.log(
@@ -113,14 +112,15 @@ console.log(' %s + %s ', 1, 1, '= 2')
 ```javascript
 console.log({foo: 'bar'})
 // Object {foo: "bar"}
-
 console.log(Date)
 // function Date() { [native code] }
 ```
 
 上面代码输出`Date`对象的值，结果为一个构造函数。
 
-`console.info()`和`console.debug()`都是`console.log`方法的别名，用法完全一样。只不过`console.info`方法会在输出信息的前面，加上一个蓝色图标。
+`console.info`是`console.log`方法的别名，用法完全一样。只不过`console.info`方法会在输出信息的前面，加上一个蓝色图标。
+
+`console.debug`方法与`console.log`方法类似，会在控制台输出调试信息。但是，默认情况下，`console.debug`输出的信息不会显示，只有在打开显示级别在`verbose`的情况下，才会显示。
 
 `console`对象的所有方法，都可以被覆盖。因此，可以按照自己的需要，定义`console.log`方法。
 
@@ -140,12 +140,11 @@ console.log("出错了！");
 
 ### console.warn()，console.error()
 
-`warn`方法和`error`方法也是在控制台输出信息，它们与`log`方法的不同之处在于，`warn`方法输出信息时，在最前面加一个黄色三角，表示警告；`error`方法输出信息时，在最前面加一个红色的叉，表示出错，同时会显示错误发生的堆栈。其他方面都一样。
+`warn`方法和`error`方法也是在控制台输出信息，它们与`log`方法的不同之处在于，`warn`方法输出信息时，在最前面加一个黄色三角，表示警告；`error`方法输出信息时，在最前面加一个红色的叉，表示出错。同时，还会高亮显示输出文字和错误发生的堆栈。其他方面都一样。
 
 ```javascript
 console.error('Error: %s (%i)', 'Server is not responding', 500)
 // Error: Server is not responding (500)
-
 console.warn('Warning! Too few nodes (%d)', document.childNodes.length)
 // Warning! Too few nodes (1)
 ```
@@ -174,7 +173,7 @@ console.table(languages);
 1|"TypeScript"|".ts"
 2|"CoffeeScript"|".coffee"
 
-复合型数据转为表格显示的条件是，必须拥有主键。对于数组来说，主键就是数字键。对于对象来说，主键就是它的最外层键。
+下面是显示表格内容的例子。
 
 ```javascript
 var languages = {
@@ -285,7 +284,7 @@ console.dir([1, 2, 3])
 
 ### console.assert()
 
-`assert`方法主要用于程序运行过程中，进行条件判断，如果不满足条件，就显示一个错误，但不会中断程序执行。这样就相当于提示用户，内部状态不正确。
+`console.assert`方法主要用于程序运行过程中，进行条件判断，如果不满足条件，就显示一个错误，但不会中断程序执行。这样就相当于提示用户，内部状态不正确。
 
 它接受两个参数，第一个参数是表达式，第二个参数是字符串。只有当第一个参数为`false`，才会提示有错误，在控制台输出第二个参数，否则不会有任何结果。
 
@@ -303,7 +302,7 @@ try {
 }
 ```
 
-下面是另一个例子，判断子节点的个数是否大于等于500。
+下面是一个例子，判断子节点的个数是否大于等于500。
 
 ```javascript
 console.assert(list.childNodes.length < 500, '节点个数大于等于500')
@@ -320,46 +319,31 @@ console.time('Array initialize');
 
 var array= new Array(1000000);
 for (var i = array.length - 1; i >= 0; i--) {
-    array[i] = new Object();
+  array[i] = new Object();
 };
 
 console.timeEnd('Array initialize');
 // Array initialize: 1914.481ms
 ```
 
-time方法表示计时开始，timeEnd方法表示计时结束。它们的参数是计时器的名称。调用timeEnd方法之后，console窗口会显示“计时器名称: 所耗费的时间”。
-
-### console.profile()，console.profileEnd()
-
-`console.profile`方法用来新建一个性能测试器（profile），它的参数是性能测试器的名字。
-
-```javascript
-console.profile('p')
-// Profile 'p' started.
-```
-
-`console.profileEnd`方法用来结束正在运行的性能测试器。
-
-```javascript
-console.profileEnd()
-// Profile 'p' finished.
-```
-
-打开浏览器的开发者工具，在`profile`面板中，可以看到这个性能调试器的运行结果。
+`time`方法表示计时开始，`timeEnd`方法表示计时结束。它们的参数是计时器的名称。调用`timeEnd`方法之后，控制台会显示“计时器名称: 所耗费的时间”。
 
 ### console.group()，console.groupend()，console.groupCollapsed()
 
 `console.group`和`console.groupend`这两个方法用于将显示的信息分组。它只在输出大量信息时有用，分在一组的信息，可以用鼠标折叠/展开。
 
 ```javascript
-console.group('Group One');
-console.group('Group Two');
+console.group('一级分组');
+console.log('一级分组的内容');
 
-// some code
+console.group('二级分组');
+console.log('二级分组的内容');
 
-console.groupEnd(); // Group Two 结束
-console.groupEnd(); // Group One 结束
+console.groupEnd(); // 一级分组结束
+console.groupEnd(); // 二级分组结束
 ```
+
+上面代码会将“二级分组”显示在“一级分组”内部，并且“一级分类”和“二级分类”前面都有一个折叠符号，可以用来折叠本级的内容。
 
 `console.groupCollapsed`方法与`console.group`方法很类似，唯一的区别是该组的内容，在第一次显示时是收起的（collapsed），而不是展开的。
 
@@ -387,11 +371,11 @@ console.trace()
 //   InjectedScript.evaluate
 ```
 
-`console.clear`方法用于清除当前控制台的所有输出，将光标回置到第一行。如果用户选中了控制台的“Preserve log”选项，网页脚本调用`console.log`将不起作用，但手动在控制台执行该方法依然有效。
+`console.clear`方法用于清除当前控制台的所有输出，将光标回置到第一行。如果用户选中了控制台的“Preserve log”选项，`console.clear`方法将不起作用。
 
 ## 命令行 API
 
-控制台中，除了使用`console`对象，还可以使用一些控制台自带的命令行方法。
+浏览器控制台中，除了使用`console`对象，还可以使用一些控制台自带的命令行方法。
 
 （1）`$_`
 
@@ -406,7 +390,7 @@ $_
 
 （2）`$0` - `$4`
 
-控制台保存了最近5个在Elements面板选中的DOM元素，$0代表倒数第一个，`$1`代表倒数第二个，以此类推直到`$4`。
+控制台保存了最近5个在 Elements 面板选中的 DOM 元素，`$0`代表倒数第一个（最近一个），`$1`代表倒数第二个，以此类推直到`$4`。
 
 （3）`$(selector)`
 
@@ -414,11 +398,11 @@ $_
 
 （4）`$$(selector)`
 
-`$$(selector)`返回一个选中的DOM对象，等同于`document.querySelectorAll`。
+`$$(selector)`返回选中的 DOM 对象，等同于`document.querySelectorAll`。
 
 （5）`$x(path)`
 
-`$x(path)`方法返回一个数组，包含匹配特定XPath表达式的所有DOM元素。
+`$x(path)`方法返回一个数组，包含匹配特定 XPath 表达式的所有 DOM 元素。
 
 ```javascript
 $x("//p[a]")
@@ -428,17 +412,17 @@ $x("//p[a]")
 
 （6）`inspect(object)`
 
-`inspect(object)`方法打开相关面板，并选中相应的元素：DOM元素在`Elements`面板中显示，JavaScript对象在`Profiles`面板中显示。
+`inspect(object)`方法打开相关面板，并选中相应的元素，显示它的细节。DOM 元素在`Elements`面板中显示，比如`inspect(document)`会在 Elements 面板显示`document`元素。JavaScript 对象在控制台面板`Profiles`面板中显示，比如`inspect(window)`。
 
 （7）`getEventListeners(object)`
 
-`getEventListeners(object)`方法返回一个对象，该对象的成员为登记了回调函数的各种事件（比如`click`或`keydown`），每个事件对应一个数组，数组的成员为该事件的回调函数。
+`getEventListeners(object)`方法返回一个对象，该对象的成员为`object`登记了回调函数的各种事件（比如`click`或`keydown`），每个事件对应一个数组，数组的成员为该事件的回调函数。
 
 （8）`keys(object)`，`values(object)`
 
-`keys(object)`方法返回一个数组，包含特定对象的所有键名。
+`keys(object)`方法返回一个数组，包含`object`的所有键名。
 
-`values(object)`方法返回一个数组，包含特定对象的所有键值。
+`values(object)`方法返回一个数组，包含`object`的所有键值。
 
 ```javascript
 var o = {'p1': 'a', 'p2': 'b'};
@@ -451,7 +435,7 @@ values(o)
 
 （9）`monitorEvents(object[, events]) ，unmonitorEvents(object[, events])`
 
-`monitorEvents(object[, events])`方法监听特定对象上发生的特定事件。当这种情况发生时，会返回一个Event对象，包含该事件的相关信息。unmonitorEvents方法用于停止监听。
+`monitorEvents(object[, events])`方法监听特定对象上发生的特定事件。事件发生时，会返回一个`Event`对象，包含该事件的相关信息。`unmonitorEvents`方法用于停止监听。
 
 ```javascript
 monitorEvents(window, "resize");
@@ -478,31 +462,22 @@ unmonitorEvents($0, 'mousemove');
 monitorEvents($("#msg"), "key");
 ```
 
-上面代码表示监听所有key大类的事件。
+上面代码表示监听所有`key`大类的事件。
 
-（10）`profile([name])`，`profileEnd()`
+（10）其他方法
 
-`profile`方法用于启动一个特定名称的CPU性能测试，`profileEnd`方法用于结束该性能测试。
-
-```javascript
-profile('My profile')
-profileEnd('My profile')
-```
-
-（11）其他方法
-
-命令行API还提供以下方法。
+命令行 API 还提供以下方法。
 
 - `clear()`：清除控制台的历史。
-- `copy(object)`：复制特定DOM元素到剪贴板。
+- `copy(object)`：复制特定 DOM 元素到剪贴板。
 - `dir(object)`：显示特定对象的所有属性，是`console.dir`方法的别名。
-- `dirxml(object)`：显示特定对象的XML形式，是`console.dirxml`方法的别名。
+- `dirxml(object)`：显示特定对象的 XML 形式，是`console.dirxml`方法的别名。
 
-## debugger语句
+## debugger 语句
 
-`debugger`语句主要用于除错，作用是设置断点。如果有正在运行的除错工具，程序运行到`debugger`语句时会自动停下。如果没有除错工具，`debugger`语句不会产生任何结果，JavaScript引擎自动跳过这一句。
+`debugger`语句主要用于除错，作用是设置断点。如果有正在运行的除错工具，程序运行到`debugger`语句时会自动停下。如果没有除错工具，`debugger`语句不会产生任何结果，JavaScript 引擎自动跳过这一句。
 
-在Chrome浏览器中，当代码运行到`debugger`语句时，就会暂停运行，自动打开控制台界面。
+Chrome 浏览器中，当代码运行到`debugger`语句时，就会暂停运行，自动打开脚本源码界面。
 
 ```javascript
 for(var i = 0; i < 5; i++){
@@ -511,7 +486,7 @@ for(var i = 0; i < 5; i++){
 }
 ```
 
-上面代码打印出0，1，2以后，就会暂停，自动打开控制台，等待进一步处理。
+上面代码打印出0，1，2以后，就会暂停，自动打开源码界面，等待进一步处理。
 
 ## 参考链接
 
