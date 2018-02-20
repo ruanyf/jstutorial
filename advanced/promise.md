@@ -1,239 +1,18 @@
 ---
-title: Promise对象
+title: Promise 对象
 layout: page
 category: advanced
 date: 2012-12-22
 modifiedOn: 2013-11-28
 ---
 
-Promise 是 JavaScript 异步操作解决方案。介绍 Promise 之前，先对异步操作做一个详细介绍。
+## 概述
 
-## JavaScript的异步执行
+Promise 对象是 JavaScript 的异步操作解决方案，为异步操作提供统一接口。
 
-### 概述
+那么，什么是 Promise？
 
-Javascript 语言的执行环境是“单线程”（single thread）。所谓“单线程”，就是指一次只能完成一件任务。如果有多个任务，就必须排队，前面一个任务完成，再执行后面一个任务。
-
-这种模式的好处是实现起来比较简单，执行环境相对单纯；坏处是只要有一个任务耗时很长，后面的任务都必须排队等着，会拖延整个程序的执行。常见的浏览器无响应（假死），往往就是因为某一段 JavaScript 代码长时间运行（比如死循环），导致整个页面卡在这个地方，其他任务无法执行。
-
-JavaScript 语言本身并不慢，慢的是读写外部数据，比如等待 Ajax 请求返回结果。这个时候，如果对方服务器迟迟没有响应，或者网络不通畅，就会导致脚本的长时间停滞。
-
-为了解决这个问题，Javascript 语言将任务的执行模式分成两种：同步（Synchronous）和异步（Asynchronous）。“同步模式”就是传统做法，后一个任务等待前一个任务结束，然后再执行，程序的执行顺序与任务的排列顺序是一致的、同步的。这往往用于一些简单的、快速的、不涉及 IO 读写的操作。
-
-“异步模式”则完全不同，每一个任务分成两段，第一段代码包含对外部数据的请求，第二段代码被写成一个回调函数，包含了对外部数据的处理。第一段代码执行完，不是立刻执行第二段代码，而是将程序的执行权交给第二个任务。等到外部数据返回了，再由系统通知执行第二段代码。所以，程序的执行顺序与任务的排列顺序是不一致的、异步的。
-
-以下总结了"异步模式"编程的几种方法，理解它们可以让你写出结构更合理、性能更出色、维护更方便的 JavaScript 程序。
-
-### 回调函数
-
-回调函数是异步编程最基本的方法。
-
-假定有两个函数`f1`和`f2`，后者必须等到前者执行完成，才能执行。这时，可以考虑改写`f1`，把`f2`写成`f1`的回调函数。
-
-```javascript
-function f1(callback) {
-  // f1 的代码
-
-  // f1 执行完成后，调用回调函数
-  callback();
-}
-```
-
-执行代码就变成下面这样。
-
-```javascript
-f1(f2);
-```
-
-回调函数的优点是简单、容易理解和部署，缺点是不利于代码的阅读和维护，各个部分之间高度[耦合](http://en.wikipedia.org/wiki/Coupling_(computer_programming))（Coupling），使得程序结构混乱、流程难以追踪（尤其是回调函数嵌套的情况），而且每个任务只能指定一个回调函数。
-
-### 事件监听
-
-另一种思路是采用事件驱动模式。任务的执行不取决于代码的顺序，而取决于某个事件是否发生。
-
-还是以`f1`和`f2`为例。首先，为f1绑定一个事件（这里采用的jQuery的[写法](http://api.jquery.com/on/)）。
-
-```javascript
-f1.on('done', f2);
-```
-
-上面这行代码的意思是，当f1发生done事件，就执行f2。然后，对f1进行改写：
-
-```javascript
-function f1(){
-  setTimeout(function () {
-    // f1的任务代码
-    f1.trigger('done');
-  }, 1000);
-}
-```
-
-上面代码中，`f1.trigger('done')`表示，执行完成后，立即触发`done`事件，从而开始执行`f2`。
-
-这种方法的优点是比较容易理解，可以绑定多个事件，每个事件可以指定多个回调函数，而且可以"[去耦合](http://en.wikipedia.org/wiki/Decoupling)"（Decoupling），有利于实现模块化。缺点是整个程序都要变成事件驱动型，运行流程会变得很不清晰。
-
-### 发布/订阅
-
-"事件"完全可以理解成"信号"，如果存在一个"信号中心"，某个任务执行完成，就向信号中心"发布"（publish）一个信号，其他任务可以向信号中心"订阅"（subscribe）这个信号，从而知道什么时候自己可以开始执行。这就叫做"[发布/订阅模式](http://en.wikipedia.org/wiki/Publish-subscribe_pattern)"（publish-subscribe pattern），又称"[观察者模式](http://en.wikipedia.org/wiki/Observer_pattern)"（observer pattern）。
-
-这个模式有多种[实现](http://msdn.microsoft.com/en-us/magazine/hh201955.aspx)，下面采用的是Ben Alman的[Tiny Pub/Sub](https://gist.github.com/661855)，这是jQuery的一个插件。
-
-首先，f2向"信号中心"jQuery订阅"done"信号。
-
-{% highlight javascript %}
-
-jQuery.subscribe("done", f2);
-
-{% endhighlight %}
-
-然后，f1进行如下改写：
-
-{% highlight javascript %}
-
-function f1(){
-	setTimeout(function () {
-		// f1的任务代码
-		jQuery.publish("done");
-	}, 1000);
-}
-
-{% endhighlight %}
-
-jQuery.publish("done")的意思是，f1执行完成后，向"信号中心"jQuery发布"done"信号，从而引发f2的执行。
-
-f2完成执行后，也可以取消订阅（unsubscribe）。
-
-{% highlight javascript %}
-
-jQuery.unsubscribe("done", f2);
-
-{% endhighlight %}
-
-这种方法的性质与"事件监听"类似，但是明显优于后者。因为我们可以通过查看"消息中心"，了解存在多少信号、每个信号有多少订阅者，从而监控程序的运行。
-
-## 异步操作的流程控制
-
-如果有多个异步操作，就存在一个流程控制的问题：确定操作执行的顺序，以后如何保证遵守这种顺序。
-
-```js
-function async(arg, callback) {
-  console.log('参数为 ' + arg +' , 1秒后返回结果');
-  setTimeout(function() { callback(arg * 2); }, 1000);
-}
-```
-
-上面代码的async函数是一个异步任务，非常耗时，每次执行需要1秒才能完成，然后再调用回调函数。
-
-如果有6个这样的异步任务，需要全部完成后，才能执行下一步的final函数。
-
-```js
-function final(value) {
-  console.log('完成: ', value);
-}
-```
-
-请问应该如何安排操作流程？
-
-```js
-async(1, function(value){
-  async(value, function(value){
-    async(value, function(value){
-      async(value, function(value){
-        async(value, function(value){
-          async(value, final);
-        });
-      });
-    });
-  });
-});
-```
-
-上面代码采用6个回调函数的嵌套，不仅写起来麻烦，容易出错，而且难以维护。
-
-### 串行执行
-
-我们可以编写一个流程控制函数，让它来控制异步任务，一个任务完成以后，再执行另一个。这就叫串行执行。
-
-```js
-var items = [ 1, 2, 3, 4, 5, 6 ];
-var results = [];
-function series(item) {
-  if(item) {
-    async( item, function(result) {
-      results.push(result);
-      return series(items.shift());
-    });
-  } else {
-    return final(results);
-  }
-}
-series(items.shift());
-```
-
-上面代码中，函数series就是串行函数，它会依次执行异步任务，所有任务都完成后，才会执行final函数。items数组保存每一个异步任务的参数，results数组保存每一个异步任务的运行结果。
-
-### 并行执行
-
-流程控制函数也可以是并行执行，即所有异步任务同时执行，等到全部完成以后，才执行final函数。
-
-```js
-var items = [ 1, 2, 3, 4, 5, 6 ];
-var results = [];
-
-items.forEach(function(item) {
-  async(item, function(result){
-    results.push(result);
-    if(results.length == items.length) {
-      final(results);
-    }
-  })
-});
-```
-
-上面代码中，`forEach`方法会同时发起6个异步任务，等到它们全部完成以后，才会执行`final`函数。
-
-并行执行的好处是效率较高，比起串行执行一次只能执行一个任务，较为节约时间。但是问题在于如果并行的任务较多，很容易耗尽系统资源，拖慢运行速度。因此有了第三种流程控制方式。
-
-### 并行与串行的结合
-
-所谓并行与串行的结合，就是设置一个门槛，每次最多只能并行执行n个异步任务。这样就避免了过分占用系统资源。
-
-```js
-var items = [ 1, 2, 3, 4, 5, 6 ];
-var results = [];
-var running = 0;
-var limit = 2;
-
-function launcher() {
-  while(running < limit && items.length > 0) {
-    var item = items.shift();
-    async(item, function(result) {
-      results.push(result);
-      running--;
-      if(items.length > 0) {
-        launcher();
-      } else if(running == 0) {
-        final(results);
-      }
-    });
-    running++;
-  }
-}
-
-launcher();
-```
-
-上面代码中，最多只能同时运行两个异步任务。变量`running`记录当前正在运行的任务数，只要低于门槛值，就再启动一个新的任务，如果等于0，就表示所有任务都执行完了，这时就执行`final`函数。
-
-## Promise对象
-
-### 简介
-
-Promise 对象是 CommonJS 工作组提出的一种规范，目的是为异步操作提供[统一接口](http://wiki.commonjs.org/wiki/Promises/A)。
-
-那么，什么是Promises？
-
-首先，它是一个对象，也就是说与其他JavaScript对象的用法，没有什么两样；其次，它起到代理作用（proxy），充当异步操作与回调函数之间的中介。它使得异步操作具备同步操作的接口，使得程序具备正常的同步运行的流程，回调函数不必再一层层嵌套。
+首先，它是一个对象，也就是说与其他 JavaScript 对象的用法，没有什么两样；其次，它起到代理作用（proxy），充当异步操作与回调函数之间的中介。它使得异步操作具备同步操作的接口，使得程序具备正常的同步运行的流程，回调函数不必再一层层嵌套。
 
 简单说，它的思想是，每一个异步任务立刻返回一个Promise对象，由于是立刻返回，所以可以采用同步操作的流程。这个Promises对象有一个then方法，允许指定回调函数，在异步任务完成后调用。
 
@@ -272,7 +51,7 @@ step1(function (value1) {
 
 Promises原本只是社区提出的一个构想，一些外部函数库率先实现了这个功能。ECMAScript 6将其写入语言标准，因此目前JavaScript语言原生支持Promise对象。
 
-### Promise接口
+## Promise 接口
 
 前面说过，Promise接口的基本思想是，异步任务返回一个Promise对象。
 
@@ -332,7 +111,7 @@ try {
 }
 ```
 
-### Promise对象的生成
+## Promise 对象的生成
 
 ES6提供了原生的Promise构造函数，用来生成Promise实例。
 
@@ -364,7 +143,7 @@ po.then(function(value) {
 });
 ```
 
-### 用法辨析
+## 用法辨析
 
 Promise的用法，简单说就是一句话：使用`then`方法添加回调函数。但是，不同的写法有一些细微的差别，请看下面四种写法，它们的差别在哪里？
 
@@ -513,9 +292,9 @@ function imgLoad(url) {
 }
 ```
 
-### 小结
+## 小结
 
-Promise对象的优点在于，让回调函数变成了规范的链式写法，程序流程可以看得很清楚。它的一整套接口，可以实现许多强大的功能，比如为多个异步操作部署一个回调函数、为多个回调函数中抛出的错误统一指定处理方法等等。
+Promise 的优点在于，让回调函数变成了规范的链式写法，程序流程可以看得很清楚。它的一整套接口，可以实现许多强大的功能，比如为多个异步操作部署一个回调函数、为多个回调函数中抛出的错误统一指定处理方法等等。
 
 而且，它还有一个前面三种方法都没有的好处：如果一个任务已经完成，再添加回调函数，该回调函数会立即执行。所以，你不用担心是否错过了某个事件或信号。这种方法的缺点就是，编写和理解都相对比较难。
 
