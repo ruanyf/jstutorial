@@ -252,10 +252,10 @@ obj.valueOf = function () {
   return 2;
 };
 
-1 + o // 3
+1 + obj // 3
 ```
 
-上面代码自定义了`obj`对象的`valueOf`方法，于是`1 + o`就得到了`3`。这种方法就相当于用自定义的`obj.valueOf`，覆盖`Object.prototype.valueOf`。
+上面代码自定义了`obj`对象的`valueOf`方法，于是`1 + obj`就得到了`3`。这种方法就相当于用自定义的`obj.valueOf`，覆盖`Object.prototype.valueOf`。
 
 ### Object.prototype.toString()
 
