@@ -12,13 +12,13 @@ modifiedOn: 2014-05-18
 
 DOM 是 JavaScript 操作网页的接口，全称为“文档对象模型”（Document Object Model）。它的作用是将网页转为一个 JavaScript 对象，从而可以用脚本进行各种操作（比如增删内容）。
 
-浏览器会根据 DOM 模型，将结构化文档（比如 HTML 和 XML）解析成一系列的节点，再由这些节点组成一个树状结构（DOM Tree）。所有的节点和最终的树状结构，都有规范的对外接口。所以，DOM 可以理解成网页的编程接口。DOM 有自己的国际标准，目前的通用版本是[DOM 3](http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/core.html)，下一代版本[DOM 4](http://www.w3.org/TR/dom/)正在拟定中。
+浏览器会根据 DOM 模型，将结构化文档（比如 HTML 和 XML）解析成一系列的节点，再由这些节点组成一个树状结构（DOM Tree）。所有的节点和最终的树状结构，都有规范的对外接口。
 
-严格地说，DOM 不属于 JavaScript，但是操作 DOM 是 JavaScript 最常见的任务，而 JavaScript 也是最常用于 DOM 操作的语言。本章介绍的就是 JavaScript 对 DOM 标准的实现和用法。
+DOM 只是一个接口规范，可以用各种语言实现。所以严格地说，DOM 不是 JavaScript 语法的一部分，但是 DOM 操作是 JavaScript 最常见的任务，离开了 DOM，JavaScript 就无法控制网页。另一方面，JavaScript 也是最常用于 DOM 操作的语言。后面介绍的就是 JavaScript 对 DOM 标准的实现和用法。
 
 ### 节点
 
-DOM的最小组成单位叫做节点（node）。文档的树形结构（DOM树），就是由各种不同类型的节点组成。每个节点可以看作是文档树的一片叶子。
+DOM 的最小组成单位叫做节点（node）。文档的树形结构（DOM 树），就是由各种不同类型的节点组成。每个节点可以看作是文档树的一片叶子。
 
 节点的类型有七种。
 
@@ -30,84 +30,124 @@ DOM的最小组成单位叫做节点（node）。文档的树形结构（DOM树�
 - `Comment`：注释
 - `DocumentFragment`：文档的片段
 
-这七种节点都属于浏览器原生提供的节点对象的派生对象，具有一些共同的属性和方法。
+浏览器提供一个原生的节点对象`Node`，上面这七种节点都继承了`Node`，因此具有一些共同的属性和方法。
 
 ### 节点树
 
-一个文档的所有节点，按照所在的层级，可以抽象成一种树状结构。这种树状结构就是DOM。
+一个文档的所有节点，按照所在的层级，可以抽象成一种树状结构。这种树状结构就是 DOM 树。它有一个顶层节点，下一层都是顶层节点的子节点，然后子节点又有自己的子节点，就这样层层衍生出一个金字塔结构，倒过来就像一棵树。
 
-最顶层的节点就是`document`节点，它代表了整个文档。文档里面最高一层的HTML标签，一般是`<html>`，它构成树结构的根节点（root node），其他HTML标签节点都是它的下级。
+浏览器原生提供`document`节点，代表整个文档。
 
-除了根节点以外，其他节点对于周围的节点都存在三种关系。
+```javascript
+document
+// 整个文档树
+```
+
+文档的第一层只有一个节点，就是 HTML 网页的第一个标签`<html>`，它构成了树结构的根节点（root node），其他 HTML 标签节点都是它的下级节点。
+
+除了根节点，其他节点都有三种层级关系。
 
 - 父节点关系（parentNode）：直接的那个上级节点
 - 子节点关系（childNodes）：直接的下级节点
 - 同级节点关系（sibling）：拥有同一个父节点的节点
 
-DOM提供操作接口，用来获取三种关系的节点。其中，子节点接口包括`firstChild`（第一个子节点）和`lastChild`（最后一个子节点）等属性，同级节点接口包括`nextSibling`（紧邻在后的那个同级节点）和`previousSibling`（紧邻在前的那个同级节点）属性。
+DOM 提供操作接口，用来获取这三种关系的节点。比如，子节点接口包括`firstChild`（第一个子节点）和`lastChild`（最后一个子节点）等属性，同级节点接口包括`nextSibling`（紧邻在后的那个同级节点）和`previousSibling`（紧邻在前的那个同级节点）属性。
 
-## 特征相关的属性
+## Node 接口的属性
 
-所有节点对象都是浏览器内置的`Node`对象的实例，继承了`Node`属性和方法。这是所有节点的共同特征。
+所有 DOM 节点都继承了 Node 接口，拥有一些共同的属性和方法。这是 DOM 操作的基础。
 
-以下属性与节点对象本身的特征相关。
+### Node.nodeType
 
-### Node.nodeName，Node.nodeType
+`nodeType`属性返回一个整数值，表示节点的类型。
 
-`nodeName`属性返回节点的名称，`nodeType`属性返回节点类型的常数值。具体的返回值，可查阅下方的表格。
-
-类型 | nodeName | nodeType
------|----------|---------
-ELEMENT_NODE | 大写的HTML元素名 | 1
-ATTRIBUTE_NODE | 等同于Attr.name | 2
-TEXT_NODE | #text | 3
-COMMENT_NODE | #comment | 8
-DOCUMENT_NODE | #document | 9
-DOCUMENT_FRAGMENT_NODE | #document-fragment | 11
-DOCUMENT_TYPE_NODE | 等同于DocumentType.name |10
-
-以`document`节点为例，它的`nodeName`属性等于`#document`，`nodeType`属性等于9。
-
-```javascript
-document.nodeName // "#document"
+```javascirpt
 document.nodeType // 9
 ```
 
-如果是一个`<p>`节点，它的`nodeName`是`P`，`nodeType`是1。文本节点的`nodeName`是`#text`，`nodeType`是3。
+上面代码中，文档节点的类型值为9。
 
-通常来说，使用`nodeType`属性确定一个节点的类型，比较方便。
+Node 对象定义了几个常量，对应这些类型值。
 
 ```javascript
-document.querySelector('a').nodeType === 1
-// true
-
-document.querySelector('a').nodeType === Node.ELEMENT_NODE
-// true
+document.nodeType === Node.DOCUMENT_NODE // true
 ```
 
-上面两种写法是等价的。
+上面代码中，文档节点的`nodeType`属性等于常量`Node.DOCUMENT_NODE`。
+
+不同节点的`nodeType`属性值和对应的常量如下。
+
+- 文档节点（document）：9，对应常量`Node.DOCUMENT_NODE`
+- 元素节点（element）：1，对应常量`Node.ELEMENT_NODE`
+- 属性节点（attr）：2，对应常量`Node.ATTRIBUTE_NODE`
+- 文本节点（text）：3，对应常量`Node.TEXT_NODE`
+- 文档片断节点（DocumentFragment）：11，对应常量`Node.DOCUMENT_FRAGMENT_NODE`
+- 文档类型节点（DocumentType）：10，对应常量`Node.DOCUMENT_TYPE_NODE`
+- 注释节点（Comment）：8，对应常量`Node.COMMENT_NODE`
+
+确定节点类型时，使用`nodeType`属性是常用方法。
+
+```javascript
+var node = document.documentElement.firstChild;
+if (node.nodeType !== Node.ELEMENT_NODE) {
+  console.log('该节点是元素节点');
+}
+```
+
+### Node.nodeName
+
+`nodeName`属性返回节点的名称。
+
+```javascript
+// HTML 代码如下
+// <div id="d1">hello world</div>
+var div = document.getElementById('d1');
+div.nodeName // "DIV"
+```
+
+上面代码中，元素节点`<div>`的`nodeName`属性就是大写的标签名`DIV`。
+
+不同节点的`nodeName`属性值如下。
+
+- 文档节点（document）：`#document`
+- 元素节点（element）：大写的标签名
+- 属性节点（attr）：属性的名称
+- 文本节点（text）：`#text`
+- 文档片断节点（DocumentFragment）：`#document-fragment`
+- 文档类型节点（DocumentType）：文档的类型
+- 注释节点（Comment）：`#comment`
 
 ### Node.nodeValue
 
-`Node.nodeValue`属性返回一个字符串，表示当前节点本身的文本值，该属性可读写。
+`nodeValue`属性返回一个字符串，表示当前节点本身的文本值，该属性可读写。
 
-由于只有Text节点、Comment节点、XML文档的CDATA节点有文本值，因此只有这三类节点的`nodeValue`可以返回结果，其他类型的节点一律返回`null`。同样的，也只有这三类节点可以设置`nodeValue`属性的值。对于那些返回`null`的节点，设置`nodeValue`属性是无效的。
+只有文本节点（text）和注释节点（comment）有文本值，因此这两类节点的`nodeValue`可以返回结果，其他类型的节点一律返回`null`。同样的，也只有这两类节点可以设置`nodeValue`属性的值，其他类型的节点设置无效。
+
+```javascript
+// HTML 代码如下
+// <div id="d1">hello world</div>
+var div = document.getElementById('d1');
+div.nodeValue // null
+div.firstChild.nodeValue // "hello world"
+```
+
+上面代码中，`div`是元素节点，`nodeValue`属性返回`null`。`div.firstChild`是文本节点，所以可以返回文本值。
 
 ### Node.textContent
 
-`Node.textContent`属性返回当前节点和它的所有后代节点的文本内容。
+`textContent`属性返回当前节点和它的所有后代节点的文本内容。
 
 ```javascript
-// HTML代码为
+// HTML 代码为
 // <div id="divA">This is <span>some</span> text</div>
 
 document.getElementById('divA').textContent
 // This is some text
 ```
 
-`textContent`属性自动忽略当前节点内部的HTML标签，返回所有文本内容。
+`textContent`属性自动忽略当前节点内部的 HTML 标签，返回所有文本内容。
 
-该属性是可读写的，设置该属性的值，会用一个新的文本节点，替换所有原来的子节点。它还有一个好处，就是自动对HTML标签转义。这很适合用于用户提供的内容。
+该属性是可读写的，设置该属性的值，会用一个新的文本节点，替换所有原来的子节点。它还有一个好处，就是自动对 HTML 标签转义。这很适合用于用户提供的内容。
 
 ```javascript
 document.getElementById('foo').textContent = '<p>GoodBye!</p>';
@@ -115,13 +155,13 @@ document.getElementById('foo').textContent = '<p>GoodBye!</p>';
 
 上面代码在插入文本时，会将`<p>`标签解释为文本，而不会当作标签处理。
 
-对于Text节点和Comment节点，该属性的值与`nodeValue`属性相同。对于其他类型的节点，该属性会将每个子节点的内容连接在一起返回，但是不包括Comment节点。如果一个节点没有子节点，则返回空字符串。
+对于文本节点（text）和注释节点（comment），`textContent`属性的值与`nodeValue`属性相同。对于其他类型的节点，该属性会将每个子节点的内容连接在一起返回，但是不包括注释节点。如果一个节点没有子节点，则返回空字符串。
 
-`document`节点和`doctype`节点的`textContent`属性为`null`。如果要读取整个文档的内容，可以使用`document.documentElement.textContent`。
+文档节点（document）和文档类型节点（doctype）的`textContent`属性为`null`。如果要读取整个文档的内容，可以使用`document.documentElement.textContent`。
 
 ### Node.baseURI
 
-`Node.baseURI`属性返回一个字符串，表示当前网页的绝对路径。如果无法取到这个值，则返回`null`。浏览器根据这个属性，计算网页上的相对路径的URL。该属性为只读。
+`baseURI`属性返回一个字符串，表示当前网页的绝对路径。浏览器根据这个属性，计算网页上的相对路径的 URL。该属性为只读。
 
 ```javascript
 // 当前网页的网址为
@@ -130,20 +170,15 @@ document.baseURI
 // "http://www.example.com/index.html"
 ```
 
-不同节点都可以调用这个属性（比如`document.baseURI`和`element.baseURI`），通常它们的值是相同的。
+如果无法读到网页的 URL，`baseURI`属性返回`null`。
 
-该属性的值一般由当前网址的URL（即`window.location`属性）决定，但是可以使用HTML的`<base>`标签，改变该属性的值。
+该属性的值一般由当前网址的 URL（即`window.location`属性）决定，但是可以使用 HTML 的`<base>`标签，改变该属性的值。
 
 ```html
 <base href="http://www.example.com/page.html">
-<base target="_blank" href="http://www.example.com/page.html">
 ```
 
 设置了以后，`baseURI`属性就返回`<base>`标签设置的值。
-
-## 相关节点的属性
-
-以下属性返回当前节点的相关节点。
 
 ### Node.ownerDocument
 
@@ -158,47 +193,54 @@ d === document // true
 
 ### Node.nextSibling
 
-`Node.nextSibling`属性返回紧跟在当前节点后面的第一个同级节点。如果当前节点后面没有同级节点，则返回`null`。注意，该属性还包括文本节点和评论节点。因此如果当前节点后面有空格，该属性会返回一个文本节点，内容为空格。
+`Node.nextSibling`属性返回紧跟在当前节点后面的第一个同级节点。如果当前节点后面没有同级节点，则返回`null`。
 
 ```javascript
-var el = document.getElementById('div-01').firstChild;
-var i = 1;
+// HTML 代码如下
+// <div id="d1">hello</div><div id="d2">world</div>
+var div1 = document.getElementById('d1');
+var div2 = document.getElementById('d2');
 
-while (el) {
-  console.log(i + '. ' + el.nodeName);
+d1.nextSibling === d2 // true
+```
+
+上面代码中，`d1.nextSibling`就是紧跟在`d1`后面的同级节点`d2`。
+
+注意，该属性还包括文本节点和评论节点。因此如果当前节点后面有空格，该属性会返回一个文本节点，内容为空格。
+
+`nextSibling`属性可以用来遍历所有子节点。
+
+```javascript
+var el = document.getElementById('div1').firstChild;
+
+while (el !== null) {
+  console.log(el.nodeName);
   el = el.nextSibling;
-  i++;
 }
 ```
 
-上面代码遍历`div-01`节点的所有子节点。
-
-下面两个表达式指向同一个节点。
-
-```javascript
-document.childNodes[0].childNodes[1]
-document.firstChild.firstChild.nextSibling
-```
+上面代码遍历`div1`节点的所有子节点。
 
 ### Node.previousSibling
 
 `previousSibling`属性返回当前节点前面的、距离最近的一个同级节点。如果当前节点前面没有同级节点，则返回`null`。
 
 ```javascript
-// html 代码如下
-// <a><span id="b1"></span><span id="b2"></span></a>
+// HTML 代码如下
+// <div id="d1">hello</div><div id="d2">world</div>
+var div1 = document.getElementById('d1');
+var div2 = document.getElementById('d2');
 
-document.getElementById('b1').previousSibling // null
-document.getElementById('b2').previousSibling.id // "b1"
+d2.nextSibling === d1 // true
 ```
 
-对于当前节点前面有空格，则`previousSibling`属性会返回一个内容为空格的文本节点。
+上面代码中，`d2.nextSibling`就是`d2`前面的同级节点`d1`。
+
+注意，该属性还包括文本节点和评论节点。因此如果当前节点前面有空格，该属性会返回一个文本节点，内容为空格。
 
 ### Node.parentNode
 
-`parentNode`属性返回当前节点的父节点。对于一个节点来说，它的父节点只可能是三种类型：`element`节点、`document`节点和`documentfragment`节点。
-
-下面代码是如何从父节点移除指定节点。
+`parentNode`属性返回当前节点的父节点。对于一个节点来说，它的父节点只可能是三种类型：元素节点（element）、文档节点（document）和文档片段节点（documentfragment）。
 
 ```javascript
 if (node.parentNode) {
@@ -206,65 +248,103 @@ if (node.parentNode) {
 }
 ```
 
-对于document节点和documentfragment节点，它们的父节点都是null。另外，对于那些生成后还没插入DOM树的节点，父节点也是null。
+上面代码中，通过`node.parentNode`属性将`node`节点从文档里面移除。
+
+文档节点（document）和文档片段节点（documentfragment）的父节点都是`null`。另外，对于那些生成后还没插入 DOM 树的节点，父节点也是`null`。
 
 ### Node.parentElement
 
-parentElement属性返回当前节点的父Element节点。如果当前节点没有父节点，或者父节点类型不是Element节点，则返回null。
+`parentElement`属性返回当前节点的父元素节点。如果当前节点没有父节点，或者父节点类型不是元素节点，则返回`null`。
 
 ```javascript
 if (node.parentElement) {
-  node.parentElement.style.color = "red";
+  node.parentElement.style.color = 'red';
 }
 ```
 
-上面代码设置指定节点的父Element节点的CSS属性。
+上面代码中，父元素节点的样式设定了红色。
 
-在IE浏览器中，只有Element节点才有该属性，其他浏览器则是所有类型的节点都有该属性。
-
-### Node.childNodes
-
-childNodes属性返回一个NodeList集合，成员包括当前节点的所有子节点。注意，除了HTML元素节点，该属性返回的还包括Text节点和Comment节点。如果当前节点不包括任何子节点，则返回一个空的NodeList集合。由于NodeList对象是一个动态集合，一旦子节点发生变化，立刻会反映在返回结果之中。
-
-```javascript
-var ulElementChildNodes = document.querySelector('ul').childNodes;
-```
+由于父节点只可能是三种类型：元素节点、文档节点（document）和文档片段节点（documentfragment）。`parentElement`属性相当于把后两种父节点都排除了。
 
 ### Node.firstChild，Node.lastChild
 
-`firstChild`属性返回当前节点的第一个子节点，如果当前节点没有子节点，则返回`null`（注意，不是`undefined`）。
+`firstChild`属性返回当前节点的第一个子节点，如果当前节点没有子节点，则返回`null`。
 
-```html
-<p id="para-01"><span>First span</span></p>
-
-<script type="text/javascript">
-  console.log(
-    document.getElementById('para-01').firstChild.nodeName
-  ) // "SPAN"
-</script>
+```javascript
+// HTML 代码如下
+// <p id="p1"><span>First span</span></p>
+var p1 = document.getElementById('p1');
+p1.firstChild.nodeName // "SPAN"
 ```
 
 上面代码中，`p`元素的第一个子节点是`span`元素。
 
-注意，`firstChild`返回的除了HTML元素子节点，还可能是文本节点或评论节点。
+注意，`firstChild`返回的除了元素节点，还可能是文本节点或评论节点。
 
-```html
-<p id="para-01">
-  <span>First span</span>
-</p>
-
-<script type="text/javascript">
-  console.log(
-    document.getElementById('para-01').firstChild.nodeName
-  ) // "#text"
-</script>
+```javascript
+// HTML 代码如下
+// <p id="p1">
+//   <span>First span</span>
+//  </p>
+var p1 = document.getElementById('p1');
+p1.firstChild.nodeName // "#text"
 ```
 
 上面代码中，`p`元素与`span`元素之间有空白字符，这导致`firstChild`返回的是文本节点。
 
-`Node.lastChild`属性返回当前节点的最后一个子节点，如果当前节点没有子节点，则返回null。
+`lastChild`属性返回当前节点的最后一个子节点，如果当前节点没有子节点，则返回`null`。用法与`firstChild`属性相同。
 
-## 节点对象的方法
+### Node.childNodes
+
+`childNodes`属性返回一个类似数组的对象（`NodeList`集合），成员包括当前节点的所有子节点。
+
+```javascript
+var children = document.querySelector('ul').childNodes;
+```
+
+上面代码中，`children`就是`ul`元素的所有子节点。
+
+使用该属性，可以遍历某个节点的所有子节点。
+
+```javascript
+var div = document.getElementById('div1');
+var children = div.childNodes;
+
+for (var i = 0; i < children.length; i++) {
+  // ...
+}
+```
+
+文档节点（document）就有两个子节点：文档类型节点（docType）和 HTML 根元素节点。
+
+```javascript
+var children = document.childNodes;
+for (var i = 0; i < children.length; i++) {
+  console.log(children[i].nodeType);
+}
+// 10
+// 1
+```
+
+上面代码中，文档节点的第一个子节点的类型是10（即文档类型节点），第二个子节点的类型是1（即元素节点）。
+
+注意，除了元素节点，`childNodes`属性的返回值还包括文本节点和注释节点。如果当前节点不包括任何子节点，则返回一个空的`NodeList`集合。由于`NodeList`对象是一个动态集合，一旦子节点发生变化，立刻会反映在返回结果之中。
+
+### Node.isConnected
+
+`isConnected`属性返回一个布尔值，表示当前节点是否在文档之中。
+
+```javascript
+var test = document.createElement('p');
+test.isConnected // false
+
+document.body.appendChild(test);
+test.isConnected // true
+```
+
+上面代码中，`test`节点是脚本生成的节点，没有插入文档之前，`isConnected`属性返回`false`，插入之后返回`true`。
+
+## Node 接口的方法
 
 ### Node.appendChild()
 
