@@ -528,7 +528,7 @@ for (var i = 0; i < arr.length; i++) {
   if (arr[i] === 2) break;
   console.log(arr[i]);
 }
-// 2
+// 1
 ```
 
 上面代码中，执行到数组的第二个成员时，就会中断执行。`forEach`方法做不到这一点。
