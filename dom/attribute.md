@@ -48,7 +48,7 @@ n.attributes[0].nodeValue // "mydiv"
 
 ```javascript
 var para = document.getElementsByTagName('p')[0];
-var result = document.getElementsById('result');
+var result = document.getElementById('result');
 
 if (para.hasAttributes()) {
   var attrs = para.attributes;

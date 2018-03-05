@@ -1,5 +1,5 @@
 ---
-title: document节点
+title: document 对象
 layout: page
 category: dom
 date: 2014-05-18
@@ -8,24 +8,24 @@ modifiedOn: 2014-05-18
 
 ## 概述
 
-`document`节点是文档的根节点，每张网页都有自己的`document`节点。`window.document`属性就指向这个节点。只要浏览器开始载入HTML文档，这个节点对象就存在了，可以直接调用。
+`document`对象是文档的根节点，每张网页都有自己的`document`对象。`window.document`属性就指向这个对象。只要浏览器开始载入 HTML 文档，该对象就存在了，可以直接使用。
 
-`document`节点有不同的办法可以获取。
+`document`对象有不同的办法可以获取。
 
-- 对于正常的网页，直接使用`document`或`window.document`。
-- 对于`iframe`载入的网页，使用`iframe`节点的`contentDocument`属性。
-- 对Ajax操作返回的文档，使用XMLHttpRequest对象的`responseXML`属性。
-- 对于包含某个节点的文档，使用该节点的`ownerDocument`属性。
+- 正常的网页，直接使用`document`或`window.document`。
+- `iframe`框架里面的网页，使用`iframe`节点的`contentDocument`属性。
+- Ajax 操作返回的文档，使用`XMLHttpRequest`对象的`responseXML`属性。
+- 内部节点的`ownerDocument`属性。
 
-上面这四种`document`节点，都部署了[Document接口](http://dom.spec.whatwg.org/#interface-document)，因此有共同的属性和方法。当然，各自也有一些自己独特的属性和方法，比如HTML和XML文档的`document`节点就不一样。
+## 属性
 
-## 内部节点属性
+### 快捷方式属性
 
-`document`节点有很多属性，其中相当一部分属于快捷方式，指向文档内部的某个节点。
+以下属性是指向文档内部的某个节点的快捷方式。
 
-### document.doctype，document.documentElement，document.defaultView
+**（1）document.doctype**
 
-对于HTML文档来说，`document`对象一般有两个子节点。第一个子节点是`document.doctype`，它是一个对象，包含了当前文档类型（Document Type Declaration，简写DTD）信息。对于HTML5文档，该节点就代表`<!DOCTYPE html>`。如果网页没有声明DTD，该属性返回`null`。
+对于 HTML 文档来说，`document`对象一般有两个子节点。第一个子节点是`document.doctype`，指向`<DOCTYPE>`节点，即文档类型（Document Type Declaration，简写DTD）节点。HTML 的文档类型节点，一般写成`<!DOCTYPE html>`。如果网页没有声明 DTD，该属性返回`null`。
 
 ```javascript
 var doctype = document.doctype;
@@ -35,38 +35,27 @@ doctype.name // "html"
 
 `document.firstChild`通常就返回这个节点。
 
-`document.documentElement`属性返回当前文档的根节点（root）。它通常是`document`节点的第二个子节点，紧跟在`document.doctype`节点后面。对于HTML网页，该属性返回`<html>`节点。
+**（2）document.documentElement**
 
-`document.defaultView`属性，在浏览器中返回`document`对象所在的`window`对象，否则返回`null`。
+`document.documentElement`属性返回当前文档的根节点（root）。它通常是`document`节点的第二个子节点，紧跟在`document.doctype`节点后面。HTML网页的该属性，一般是`<html>`节点。
 
-```javascript
-document.defaultView === window // true
-```
+**（3）document.body，document.head**
 
-### document.body，document.head
+`document.body`属性指向`<body>`节点，`document.head`属性指向`<head>`节点。
 
-`document.head`属性返回当前文档的`<head>`节点，`document.body`属性返回当前文档的`<body>`。
+这两个属性总是存在的，如果网页源码里面省略了`<head>`或`<body>`，浏览器会自动创建。另外，这两个属性是可写的，如果改写它们的值，相当于移除所有子节点。
 
-```javascript
-document.head === document.querySelector('head') // true
-document.body === document.querySelector('body') // true
-```
-
-这两个属性总是存在的，如果网页源码里面省略了`<head>`或`<body>`，浏览器会自动创造。另外，这两个属性是可写的，如果对其写入一个新的节点，会导致原有的所有子节点被移除。
-
-### document.activeElement
-
-`document.activeElement`属性返回当前文档中获得焦点的那个元素。用户通常可以使用Tab键移动焦点，使用空格键激活焦点。比如，如果焦点在一个链接上，此时按一下空格键，就会跳转到该链接。
-
-## 节点集合属性
+### 节点集合属性
 
 以下属性返回文档内部特定元素的集合，都是类似数组的对象。这些集合都是动态的，原节点有任何变化，立刻会反映在集合中。
 
-### document.links，document.forms，document.images，document.embeds
+**（1）document.links**
 
-`document.links`属性返回当前文档所有设定了`href`属性的`a`及`area`元素。
+`document.links`属性返回当前文档所有设定了`href`属性的`<a>`及`<area>`节点。
 
-`document.forms`属性返回页面中所有表单元素`form`。
+**（2）document.forms**
+
+`document.forms`属性返回页面中所有`<form>`表单节点。
 
 ```javascript
 var selectForm = document.forms[0];
@@ -74,7 +63,9 @@ var selectForm = document.forms[0];
 
 上面代码获取文档第一个表单。
 
-`document.images`属性返回页面所有图片元素（即`img`标签）。
+**（3）document.images**
+
+`document.images`属性返回页面所有`<img>`图片节点。
 
 ```javascript
 var imglist = document.images;
@@ -88,7 +79,9 @@ for(var i = 0; i < imglist.length; i++) {
 
 上面代码在所有`img`标签中，寻找特定图片。
 
-`document.embeds`属性返回网页中所有嵌入对象，即`embed`标签。
+**（4）document.embeds**
+
+`document.embeds`属性返回所有`<embed>`节点。
 
 以上四个属性返回的都是`HTMLCollection`对象实例。
 
@@ -141,6 +134,18 @@ var allSheets = [].slice.call(document.styleSheets);
 ```
 
 上面代码中，使用`slice`方法将`document.styleSheets`转为数组，以便于进一步处理。
+
+### document.defaultView
+
+`document.defaultView`属性返回`document`对象所属的`window`对象。
+
+```javascript
+document.defaultView === window // true
+```
+
+### document.activeElement
+
+`document.activeElement`属性返回当前文档中获得焦点的那个元素。用户通常可以使用Tab键移动焦点，使用空格键激活焦点。比如，如果焦点在一个链接上，此时按一下空格键，就会跳转到该链接。
 
 ## 文档信息属性
 
