@@ -47,15 +47,23 @@ doctype.name // "html"
 
 ### 节点集合属性
 
-以下属性返回文档内部特定元素的集合，都是类似数组的对象。这些集合都是动态的，原节点有任何变化，立刻会反映在集合中。
+以下属性返回一个`HTMLCollection`实例，表示文档内部特定元素的集合。这些集合都是动态的，原节点有任何变化，立刻会反映在集合中。
 
 **（1）document.links**
 
 `document.links`属性返回当前文档所有设定了`href`属性的`<a>`及`<area>`节点。
 
+```javascript
+// 打印文档所有的链接
+var links = document.links;
+for(var i = 0; i < links.length; i++) {
+  console.log(links[i]);
+}
+```
+
 **（2）document.forms**
 
-`document.forms`属性返回页面中所有`<form>`表单节点。
+`document.forms`属性返回所有`<form>`表单节点。
 
 ```javascript
 var selectForm = document.forms[0];
@@ -77,32 +85,15 @@ for(var i = 0; i < imglist.length; i++) {
 }
 ```
 
-上面代码在所有`img`标签中，寻找特定图片。
+上面代码在所有`img`标签中，寻找某张图片。
 
-**（4）document.embeds**
+**（4）document.embeds，document.plugins**
 
-`document.embeds`属性返回所有`<embed>`节点。
+`document.embeds`属性和`document.plugins`属性，都返回所有`<embed>`节点。
 
-以上四个属性返回的都是`HTMLCollection`对象实例。
+**（5）document.scripts**
 
-```javascript
-document.links instanceof HTMLCollection // true
-document.images instanceof HTMLCollection // true
-document.forms instanceof HTMLCollection // true
-document.embeds instanceof HTMLCollection // true
-```
-
-由于`HTMLCollection`实例可以用HTML元素的`id`或`name`属性引用，因此如果一个元素有`id`或`name`属性，就可以在上面这四个属性上引用。
-
-```javascript
-// HTML代码为
-// <form name="myForm">
-document.myForm === document.forms.myForm // true
-```
-
-### document.scripts，document.styleSheets
-
-`document.scripts`属性返回当前文档的所有脚本（即`script`标签）。
+`document.scripts`属性返回所有`<script>`节点。
 
 ```javascript
 var scripts = document.scripts;
@@ -111,41 +102,25 @@ if (scripts.length !== 0 ) {
 }
 ```
 
-`document.scripts`返回的也是`HTMLCollection`实例。
+**（6）小结**
+
+以上属性返回的都是`HTMLCollection`实例。
 
 ```javascript
+document.links instanceof HTMLCollection // true
+document.images instanceof HTMLCollection // true
+document.forms instanceof HTMLCollection // true
+document.embeds instanceof HTMLCollection // true
 document.scripts instanceof HTMLCollection // true
 ```
 
-因此，如果一个`script`标签有`id`或`name`属性，就可以在`document.scripts`上引用。
+`HTMLCollection`实例是类似数组的对象，所以这些属性都有`length`属性，都可以使用方括号运算符引用成员。如果成员有`id`或`name`属性，还可以用这两个属性的值，在`HTMLCollection`实例上引用到这个成员。
 
 ```javascript
-// HTML代码为
-// <script id="myScript" >
-
-document.scripts.myScript
-// <script id="myScript"></script>
+// HTML 代码如下
+// <form name="myForm">
+document.myForm === document.forms.myForm // true
 ```
-
-`document.styleSheets`属性返回一个类似数组的对象，代表当前网页的所有样式表。每个样式表对象都有`cssRules`属性，返回该样式表的所有CSS规则，这样这可以操作具体的CSS规则了。
-
-```javascript
-var allSheets = [].slice.call(document.styleSheets);
-```
-
-上面代码中，使用`slice`方法将`document.styleSheets`转为数组，以便于进一步处理。
-
-### document.defaultView
-
-`document.defaultView`属性返回`document`对象所属的`window`对象。
-
-```javascript
-document.defaultView === window // true
-```
-
-### document.activeElement
-
-`document.activeElement`属性返回当前文档中获得焦点的那个元素。用户通常可以使用Tab键移动焦点，使用空格键激活焦点。比如，如果焦点在一个链接上，此时按一下空格键，就会跳转到该链接。
 
 ## 文档信息属性
 
@@ -348,6 +323,18 @@ document.implementation.hasFeature('MutationEvents','2.0')
 ### document.cookie
 
 `document.cookie`属性用来操作浏览器Cookie，详见《浏览器环境》一章的《Cookie》部分。
+
+### document.defaultView
+
+`document.defaultView`属性返回`document`对象所属的`window`对象。
+
+```javascript
+document.defaultView === window // true
+```
+
+### document.activeElement
+
+`document.activeElement`属性返回当前文档中获得焦点的那个元素。用户通常可以使用Tab键移动焦点，使用空格键激活焦点。比如，如果焦点在一个链接上，此时按一下空格键，就会跳转到该链接。
 
 ## 读写相关的方法
 
