@@ -122,13 +122,13 @@ document.scripts instanceof HTMLCollection // true
 document.myForm === document.forms.myForm // true
 ```
 
-## 文档信息属性
+### 文档信息属性
 
 以下属性返回文档信息。
 
-### document.documentURI，document.URL
+**（1）document.documentURI，document.URL**
 
-`document.documentURI`属性和`document.URL`属性都返回一个字符串，表示当前文档的网址。不同之处是`documentURI`属性可用于所有文档（包括 XML 文档），`URL`属性只能用于 HTML 文档。
+`document.documentURI`属性和`document.URL`属性都返回一个字符串，表示当前文档的网址。不同之处是它们继承自不同的接口，`documentURI`继承自`Document`接口，可用于所有文档；`URL`继承自`HTMLDocument`接口，只能用于 HTML 文档。
 
 ```javascript
 document.URL
@@ -140,36 +140,61 @@ document.documentURI === document.URL
 
 如果文档的锚点（`#anchor`）变化，这两个属性都会跟着变化。
 
-### document.domain
+**（2）document.domain**
 
-`document.domain`属性返回当前文档的域名。比如，某张网页的网址是 http://www.example.com/hello.html ，`domain`属性就等于`www.example.com`。如果无法获取域名，该属性返回`null`。
+`document.domain`属性返回当前文档的域名，不包含协议和接口。比如，网页的网址是`http://www.example.com:80/hello.html`，那么`domain`属性就等于`www.example.com`。如果无法获取域名，该属性返回`null`。
 
-```javascript
-var badDomain = 'www.example.xxx';
-if (document.domain === badDomain)
-  window.close();
-```
+`document.domain`基本上是一个只读属性，只有一种情况除外。二级域名的网页，可以把`document.domain`设为对应的一级域名。比如，当前域名是`sub.example.com`，则`document.domain`属性可以设置为`example.com`。修改后，`document.domain`相同的两个网页，可以读取对方的资源，比如设置的 Cookie。
 
-上面代码判断，如果当前域名等于指定域名，则关闭窗口。
+**（3）document.lastModified**
 
-二级域名的情况下，domain属性可以设置为对应的一级域名。比如，当前域名是sub.example.com，则domain属性可以设置为example.com。除此之外的写入，都是不可以的。
-
-### document.lastModified
-
-`document.lastModified`属性返回当前文档最后修改的时间戳，格式为字符串。
+`document.lastModified`属性返回一个字符串，表示当前文档最后修改的时间。不同浏览器的返回值，日期格式是不一样的。
 
 ```javascript
 document.lastModified
-// Tuesday, July 10, 2001 10:19:42
+// "03/07/2018 11:18:27"
 ```
 
-注意，`lastModified`属性的值是字符串，所以不能用来直接比较，两个文档谁的日期更新，需要用`Date.parse`方法转成时间戳格式，才能进行比较。
+注意，`document.lastModified`属性的值是字符串，所以不能直接用来比较。`Date.parse`方法将其转为`Date`实例，才能比较两个网页。
 
 ```javascript
-if (Date.parse(doc1.lastModified) > Date.parse(doc2.lastModified)) {
-  // ...
+var lastVisitedDate = Date.parse('01/01/2018');
+if (Date.parse(document.lastModified) > lastVisitedDate) {
+  console.log('网页已经变更');
 }
 ```
+
+如果页面上有 JavaScript 生成的内容，`document.lastModified`属性返回的总是当前时间。
+
+**（4）document.title**
+
+`document.title`属性返回当前文档的标题。默认情况下，返回`<title>`节点的值。但是该属性是可写的，一旦被修改，就返回修改后的值。
+
+```javascript
+document.title = '新标题';
+document.title // "新标题"
+```
+
+**（5）document.characterSet**
+
+`document.characterSet`属性返回当前文档的编码，比如`UTF-8`、`ISO-8859-1`等等。
+
+**（6）document.referrer**
+
+`document.referrer`属性返回一个字符串，表示当前文档的访问者来自哪里。
+
+```javascript
+document.referrer
+// "https://example.com/path"
+```
+
+如果无法获取来源，或者用户直接键入网址而不是从其他网页点击进入，`document.referrer`返回一个空字符串。
+
+`document.referrer`的值，总是与 HTTP 头信息的`Referer`字段保持一致。但是，`document.referrer`的拼写有两个`r`，而头信息的`Referer`字段只有一个`r`。
+
+**（7）document.dir**
+
+`document.dir`返回一个字符串，表示文字方向。它只有两个可能的值：`rtl`表示文字从右到左，阿拉伯文是这种方式；`ltr`表示文字从左到右，包括英语和汉语在内的大多数文字采用这种方式。
 
 ### document.location
 
@@ -239,20 +264,6 @@ document.location === window.location // true
 ```
 
 历史上，IE曾经不允许对`document.location`赋值，为了保险起见，建议优先使用`window.location`。如果只是单纯地获取当前网址，建议使用`document.URL`，语义性更好。
-
-### document.referrer，document.title，document.characterSet
-
-`document.referrer`属性返回一个字符串，表示当前文档的访问来源，如果是无法获取来源或是用户直接键入网址，而不是从其他网页点击，则返回一个空字符串。
-
-`document.referrer`的值，总是与HTTP头信息的`Referer`保持一致，但是它的拼写有两个`r`。
-
-`document.title`属性返回当前文档的标题，该属性是可写的。
-
-```javascript
-document.title = '新标题';
-```
-
-`document.characterSet`属性返回渲染当前文档的字符集，比如UTF-8、ISO-8859-1。
 
 ### document.readyState
 
