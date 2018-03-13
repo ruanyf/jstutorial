@@ -144,9 +144,17 @@ document.documentURI === document.URL
 
 `document.domain`属性返回当前文档的域名，不包含协议和接口。比如，网页的网址是`http://www.example.com:80/hello.html`，那么`domain`属性就等于`www.example.com`。如果无法获取域名，该属性返回`null`。
 
-`document.domain`基本上是一个只读属性，只有一种情况除外。二级域名的网页，可以把`document.domain`设为对应的一级域名。比如，当前域名是`sub.example.com`，则`document.domain`属性可以设置为`example.com`。修改后，`document.domain`相同的两个网页，可以读取对方的资源，比如设置的 Cookie。
+`document.domain`基本上是一个只读属性，只有一种情况除外。次级域名的网页，可以把`document.domain`设为对应的上级域名。比如，当前域名是`a.sub.example.com`，则`document.domain`属性可以设置为`sub.example.com`，也可以设为`example.com`。修改后，`document.domain`相同的两个网页，可以读取对方的资源，比如设置的 Cookie。
 
-**（3）document.lastModified**
+另外，设置`document.domain`会导致端口被改成`null`。因此，如果通过设置`document.domain`来进行通信，双方网页都必须设置这个值，才能保证端口相同。
+
+**（3）document.location**
+
+`Location`对象是浏览器提供的原生对象，提供 URL 相关的信息和操作方法。通过`window.location`和`document.location`属性，可以拿到这个对象。
+
+关于这个对象的详细介绍，请看《浏览器模型》部分的《Location 对象》章节。
+
+**（4）document.lastModified**
 
 `document.lastModified`属性返回一个字符串，表示当前文档最后修改的时间。不同浏览器的返回值，日期格式是不一样的。
 
@@ -166,7 +174,7 @@ if (Date.parse(document.lastModified) > lastVisitedDate) {
 
 如果页面上有 JavaScript 生成的内容，`document.lastModified`属性返回的总是当前时间。
 
-**（4）document.title**
+**（5）document.title**
 
 `document.title`属性返回当前文档的标题。默认情况下，返回`<title>`节点的值。但是该属性是可写的，一旦被修改，就返回修改后的值。
 
@@ -175,11 +183,11 @@ document.title = '新标题';
 document.title // "新标题"
 ```
 
-**（5）document.characterSet**
+**（6）document.characterSet**
 
 `document.characterSet`属性返回当前文档的编码，比如`UTF-8`、`ISO-8859-1`等等。
 
-**（6）document.referrer**
+**（7）document.referrer**
 
 `document.referrer`属性返回一个字符串，表示当前文档的访问者来自哪里。
 
@@ -192,78 +200,9 @@ document.referrer
 
 `document.referrer`的值，总是与 HTTP 头信息的`Referer`字段保持一致。但是，`document.referrer`的拼写有两个`r`，而头信息的`Referer`字段只有一个`r`。
 
-**（7）document.dir**
+**（8）document.dir**
 
 `document.dir`返回一个字符串，表示文字方向。它只有两个可能的值：`rtl`表示文字从右到左，阿拉伯文是这种方式；`ltr`表示文字从左到右，包括英语和汉语在内的大多数文字采用这种方式。
-
-### document.location
-
-`document.location`属性返回`location`对象，提供了当前文档的URL信息。
-
-```javascript
-// 当前网址为 http://user:passwd@www.example.com:4097/path/a.html?x=111#part1
-document.location.href // "http://user:passwd@www.example.com:4097/path/a.html?x=111#part1"
-document.location.protocol // "http:"
-document.location.host // "www.example.com:4097"
-document.location.hostname // "www.example.com"
-document.location.port // "4097"
-document.location.pathname // "/path/a.html"
-document.location.search // "?x=111"
-document.location.hash // "#part1"
-document.location.user // "user"
-document.location.password // "passwd"
-```
-
-`location`对象有以下方法。
-
-- `location.assign()`
-- `location.reload()`
-- `location.toString()`
-
-```javascript
-// 跳转到另一个网址
-document.location.assign('http://www.google.com')
-// 优先从服务器重新加载
-document.location.reload(true)
-// 优先从本地缓存重新加载（默认值）
-document.location.reload(false)
-// 跳转到新网址，并将取代掉history对象中的当前记录
-document.location.replace('http://www.google.com');
-// 将location对象转为字符串，等价于document.location.href
-document.location.toString()
-```
-
-如果将新的网址赋值给`location`对象，网页就会自动跳转到新网址。
-
-```javascript
-document.location = 'http://www.example.com';
-// 等同于
-document.location.href = 'http://www.example.com';
-```
-
-也可以指定相对URL。
-
-```javascript
-document.location = 'page2.html';
-```
-
-如果指定的是锚点，浏览器会自动滚动到锚点处。
-
-```javascript
-document.location = '#top';
-```
-
-注意，采用上面的方法重置URL，跟用户点击链接跳转的效果是一样的。上一个网页依然将保存在浏览器历史之中，点击“后退”按钮就可以回到前一个网页。
-
-如果不希望用户看到前一个网页，可以使用`location.replace`方法，浏览器`history`对象就会用新的网址，取代当前网址，这样的话，“后退”按钮就不会回到当前网页了。它的一个应用就是，当脚本发现当前是移动设备时，就立刻跳转到移动版网页。
-
-`document.location`属性与`window.location`属性等价。
-
-```javascript
-document.location === window.location // true
-```
-
-历史上，IE曾经不允许对`document.location`赋值，为了保险起见，建议优先使用`window.location`。如果只是单纯地获取当前网址，建议使用`document.URL`，语义性更好。
 
 ### document.readyState
 
@@ -333,7 +272,7 @@ document.implementation.hasFeature('MutationEvents','2.0')
 
 ### document.cookie
 
-`document.cookie`属性用来操作浏览器Cookie，详见《浏览器环境》一章的《Cookie》部分。
+`document.cookie`属性用来操作浏览器 Cookie，详见《浏览器模型》部分的《Cookie》章节。
 
 ### document.defaultView
 

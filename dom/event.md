@@ -328,7 +328,7 @@ function callback(event) {
 
 注意，用户点击网页的时候，浏览器总是假定`click`事件的目标节点，就是点击位置的嵌套最深的那个节点（嵌套在`<div>`节点的`<p>`节点）。所以，`<p>`节点的捕获阶段和冒泡阶段，都会显示为`target`阶段。
 
-事件传播的最上层对象是`window`，接着依次是`document`，`html`（`document.documentElement`）和`body`（`document.dody`）。也就是说，如果`<body>`元素中有一个`<div>`元素，点击该元素。事件的传播顺序，在捕获阶段依次为`window`、`document`、`html`、`body`、`div`，在冒泡阶段依次为`div`、`body`、`html`、`document`、`window`。
+事件传播的最上层对象是`window`，接着依次是`document`，`html`（`document.documentElement`）和`body`（`document.body`）。也就是说，如果`<body>`元素中有一个`<div>`元素，点击该元素。事件的传播顺序，在捕获阶段依次为`window`、`document`、`html`、`body`、`div`，在冒泡阶段依次为`div`、`body`、`html`、`document`、`window`。
 
 ### 事件的代理
 
