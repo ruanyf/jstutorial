@@ -204,6 +204,10 @@ document.referrer
 
 `document.dir`返回一个字符串，表示文字方向。它只有两个可能的值：`rtl`表示文字从右到左，阿拉伯文是这种方式；`ltr`表示文字从左到右，包括英语和汉语在内的大多数文字采用这种方式。
 
+### document.cookie
+
+`document.cookie`属性用来操作浏览器 Cookie，详见《浏览器模型》部分的《Cookie》章节。
+
 ### document.readyState
 
 `document.readyState`属性返回当前文档的状态，共有三种可能的值。
@@ -269,10 +273,6 @@ document.implementation.hasFeature('MutationEvents','2.0')
 `compatMode`属性返回浏览器处理文档的模式，可能的值为`BackCompat`（向后兼容模式）和`CSS1Compat`（严格模式）。
 
 一般来说，如果网页代码的第一行设置了明确的`DOCTYPE`（比如`<!doctype html>`），`document.compatMode`的值都为`CSS1Compat`。
-
-### document.cookie
-
-`document.cookie`属性用来操作浏览器 Cookie，详见《浏览器模型》部分的《Cookie》章节。
 
 ### document.defaultView
 

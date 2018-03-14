@@ -10,24 +10,39 @@ modifiedOn: 2016-04-10
 
 Cookie 是服务器保存在浏览器的一小段文本信息，每个 Cookie 的大小一般不能超过4KB。浏览器每次向服务器发出请求，就会自动附上这段信息。
 
-Cookie 保存以下几方面的信息。
+Cookie 主要用来分辨两个请求是否来自同一个浏览器，以及用来保存一些状态信息。它的常用场合有以下一些。
+
+- 对话（session）管理：保存登录、购物车等需要记录的信息。
+- 个性化：保存用户的偏好，比如网页的字体大小、背景色等等。
+- 追踪：记录和分析用户行为。
+
+有些开发者使用 Cookie 作为客户端储存。这样做虽然可行，但是并不推荐，因为 Cookie 的设计目标并不是这个，它的容量很小（4KB），缺乏数据操作接口，而且会影响性能。客户端储存应该使用 Web storage API 和 IndexedDB。
+
+Cookie 包含以下几方面的信息。
 
 - Cookie 的名字
-- Cookie 的值
+- Cookie 的值（真正的数据写在这里面）
 - 到期时间
 - 所属域名（默认是当前域名）
 - 生效的路径（默认是当前网址）
 
-举例来说，如果当前URL是`www.example.com`，那么Cookie的路径就是根目录`/`。这意味着，这个Cookie对该域名的根路径和它的所有子路径都有效。如果路径设为`/forums`，那么这个Cookie只有在访问`www.example.com/forums`及其子路径时才有效。
+举例来说，用户访问网址`www.example.com`，服务器在浏览器写入一个 Cookie。这个 Cookie 就会包含`www.example.com`这个域名，以及根路径`/`。这意味着，这个 Cookie 对该域名的根路径和它的所有子路径都有效。如果路径设为`/forums`，那么这个 Cookie 只有在访问`www.example.com/forums`及其子路径时才有效。以后，浏览器一旦访问这个路径，浏览器就会附上这段 Cookie 发送给服务器。
 
 浏览器可以设置不接受 Cookie，也可以设置不向服务器发送 Cookie。`window.navigator.cookieEnabled`属性返回一个布尔值，表示浏览器是否打开 Cookie 功能。
+
+```javascript
+// 浏览器是否打开 Cookie 功能
+window.navigator.cookieEnabled // true
+```
 
 `document.cookie`属性返回当前网页的 Cookie。
 
 ```javascript
-// 读取当前网页的所有cookie
-var allCookies = document.cookie;
+// 当前网页的 Cookie
+document.cookie
 ```
+
+## document.cookie
 
 由于`document.cookie`返回的是分号分隔的所有 Cookie，所以必须手动还原，才能取出每一个 Cookie 的值。
 
