@@ -17,6 +17,8 @@ modifiedOn: 2014-05-18
 - Ajax 操作返回的文档，使用`XMLHttpRequest`对象的`responseXML`属性。
 - 内部节点的`ownerDocument`属性。
 
+`document`对象继承了`EventTarget`接口、`Node`接口、`ParentNode`接口。这意味着，这些接口的方法都可以在`document`对象上调用。除此之外，`document`对象还有很多自己的属性和方法。
+
 ## 属性
 
 ### 快捷方式属性
@@ -44,6 +46,17 @@ doctype.name // "html"
 `document.body`属性指向`<body>`节点，`document.head`属性指向`<head>`节点。
 
 这两个属性总是存在的，如果网页源码里面省略了`<head>`或`<body>`，浏览器会自动创建。另外，这两个属性是可写的，如果改写它们的值，相当于移除所有子节点。
+
+**（4）document.scrollingElement**
+
+`document.scrollingElement`属性返回文档的滚动元素。也就是说，当文档整体滚动时，到底是哪个元素在滚动。
+
+标准模式下，这个属性返回的文档的根元素`document.documentElement`（即`<html>`）。兼容（quirk）模式下，返回的是`<body>`元素，如果该元素不存在，返回`null`。
+
+```javascript
+// 页面滚动到浏览器顶部
+document.scrollingElement.scrollTop = 0;
+```
 
 ### 节点集合属性
 
@@ -122,7 +135,7 @@ document.scripts instanceof HTMLCollection // true
 document.myForm === document.forms.myForm // true
 ```
 
-### 文档信息属性
+### 文档静态信息属性
 
 以下属性返回文档信息。
 
@@ -204,6 +217,33 @@ document.referrer
 
 `document.dir`返回一个字符串，表示文字方向。它只有两个可能的值：`rtl`表示文字从右到左，阿拉伯文是这种方式；`ltr`表示文字从左到右，包括英语和汉语在内的大多数文字采用这种方式。
 
+**（9）document.compatMode**
+
+`compatMode`属性返回浏览器处理文档的模式，可能的值为`BackCompat`（向后兼容模式）和`CSS1Compat`（严格模式）。
+
+一般来说，如果网页代码的第一行设置了明确的`DOCTYPE`（比如`<!doctype html>`），`document.compatMode`的值都为`CSS1Compat`。
+
+### 文档状态属性
+
+**（1）document.hidden**
+
+`document.hidden`属性返回一个布尔值，表示当前页面是否可见。如果窗口最小化、浏览器切换了 Tab，都会导致导致页面不可见，使得`document.hidden`返回`true`。
+
+这个属性是 Page Visibility API 引入的，一般都是配合这个 API 使用。
+
+**（2）document.visibilityState**
+
+`document.visibilityState`返回文档的可见状态。
+
+它的值有四种可能。
+
+- visible：页面可见。注意，页面可能是部分可见，即不是焦点窗口，前面被其他窗口部分挡住了。
+- hidden： 页面不可见，有可能窗口最小化，或者浏览器切换到了另一个 Tab。
+- prerender：页面处于正在渲染状态，对于用于来说，该页面不可见。
+- unloaded：页面从内存里面卸载了。
+
+这个属性可以用在页面加载时，防止加载某些资源；或者页面不可见时，停掉一些页面功能。
+
 ### document.cookie
 
 `document.cookie`属性用来操作浏览器 Cookie，详见《浏览器模型》部分的《Cookie》章节。
@@ -256,23 +296,27 @@ var interval = setInterval(function() {
 
 ### document.implementation
 
-`document.implementation`属性返回一个对象，用来甄别当前环境部署了哪些DOM相关接口。`implementation`属性的`hasFeature`方法，可以判断当前环境是否部署了特定版本的特定接口。
+`document.implementation`属性返回一个`DOMImplementation`对象。该对象有三个方法，主要用于创建独立于当前文档的新的 Document 对象。
+
+- `DOMImplementation.createDocument()`：创建一个 XML 文档。
+- `DOMImplementation.createHTMLDocument()`：创建一个 HTML 文档。
+- `DOMImplementation.createDocumentType()`：创建一个 DocumentType 对象。
+
+下面是创建 HTML 文档的例子。
 
 ```javascript
-document.implementation.hasFeature('HTML', '2.0')
-// true
+var doc = document.implementation.createHTMLDocument('Title');
+var p = doc.createElement('p');
+p.innerHTML = 'hello world';
+doc.body.appendChild(p);
 
-document.implementation.hasFeature('MutationEvents','2.0')
-// true
+document.replaceChild(
+  doc.documentElement,
+  document.documentElement
+);
 ```
 
-上面代码表示，当前环境部署了DOM HTML 2.0版和MutationEvents的2.0版。
-
-### document.compatMode
-
-`compatMode`属性返回浏览器处理文档的模式，可能的值为`BackCompat`（向后兼容模式）和`CSS1Compat`（严格模式）。
-
-一般来说，如果网页代码的第一行设置了明确的`DOCTYPE`（比如`<!doctype html>`），`document.compatMode`的值都为`CSS1Compat`。
+上面代码中，第一步生成一个新的 HTML 文档`doc`，然后用它的根元素`document.documentElement`替换掉`document.documentElement`。这会使得当前文档的内容全部消失，变成`hello world`。
 
 ### document.defaultView
 
