@@ -347,12 +347,6 @@ document.replaceChild(
 
 上面代码中，第一步生成一个新的 HTML 文档`doc`，然后用它的根元素`document.documentElement`替换掉`document.documentElement`。这会使得当前文档的内容全部消失，变成`hello world`。
 
-
-
-### document.activeElement
-
-`document.activeElement`属性返回当前文档中获得焦点的那个元素。用户通常可以使用Tab键移动焦点，使用空格键激活焦点。比如，如果焦点在一个链接上，此时按一下空格键，就会跳转到该链接。
-
 ## 读写相关的方法
 
 ### document.write()，document.writeln()
