@@ -25,7 +25,15 @@ modifiedOn: 2014-05-18
 
 以下属性是指向文档内部的某个节点的快捷方式。
 
-**（1）document.doctype**
+**（1）document.defaultView**
+
+`document.defaultView`属性返回`document`对象所属的`window`对象。如果当前文档不属于`window`对象，该属性返回`null`。
+
+```javascript
+document.defaultView === window // true
+```
+
+**（2）document.doctype**
 
 对于 HTML 文档来说，`document`对象一般有两个子节点。第一个子节点是`document.doctype`，指向`<DOCTYPE>`节点，即文档类型（Document Type Declaration，简写DTD）节点。HTML 的文档类型节点，一般写成`<!DOCTYPE html>`。如果网页没有声明 DTD，该属性返回`null`。
 
@@ -37,17 +45,17 @@ doctype.name // "html"
 
 `document.firstChild`通常就返回这个节点。
 
-**（2）document.documentElement**
+**（3）document.documentElement**
 
 `document.documentElement`属性返回当前文档的根节点（root）。它通常是`document`节点的第二个子节点，紧跟在`document.doctype`节点后面。HTML网页的该属性，一般是`<html>`节点。
 
-**（3）document.body，document.head**
+**（4）document.body，document.head**
 
 `document.body`属性指向`<body>`节点，`document.head`属性指向`<head>`节点。
 
 这两个属性总是存在的，如果网页源码里面省略了`<head>`或`<body>`，浏览器会自动创建。另外，这两个属性是可写的，如果改写它们的值，相当于移除所有子节点。
 
-**（4）document.scrollingElement**
+**（5）document.scrollingElement**
 
 `document.scrollingElement`属性返回文档的滚动元素。也就是说，当文档整体滚动时，到底是哪个元素在滚动。
 
@@ -57,6 +65,22 @@ doctype.name // "html"
 // 页面滚动到浏览器顶部
 document.scrollingElement.scrollTop = 0;
 ```
+
+**（6）document.activeElement**
+
+`document.activeElement`属性返回获得当前焦点（focus）的 DOM 元素。通常，这个属性返回的是`<input>`、`<textarea>`、`<select>`等表单元素，如果当前没有焦点元素，返回`<body>`元素或`null`。
+
+**（7）document.fullscreenElement**
+
+`document.fullscreenElement`属性返回当前以全屏状态展示的 DOM 元素。如果不是全屏状态，该属性返回`null`。
+
+```javascript
+if (document.fullscreenElement.nodeName == 'VIDEO') {
+  console.log('全屏播放视频');
+}
+```
+
+上面代码中，通过`document.fullscreenElement`可以知道`<video>`元素有没有处在全屏状态，从而判断用户行为。
 
 ### 节点集合属性
 
@@ -115,9 +139,13 @@ if (scripts.length !== 0 ) {
 }
 ```
 
-**（6）小结**
+**（6）document.styleSheets**
 
-以上属性返回的都是`HTMLCollection`实例。
+`document.styleSheets`属性返回文档内嵌或引入的样式表集合，详细介绍请看《CSS 对象模型》一章。
+
+**（7）小结**
+
+除了`document.styleSheets`，以上的集合属性返回的都是`HTMLCollection`实例。
 
 ```javascript
 document.links instanceof HTMLCollection // true
@@ -244,24 +272,20 @@ document.referrer
 
 这个属性可以用在页面加载时，防止加载某些资源；或者页面不可见时，停掉一些页面功能。
 
-### document.cookie
-
-`document.cookie`属性用来操作浏览器 Cookie，详见《浏览器模型》部分的《Cookie》章节。
-
-### document.readyState
+**（3）document.readyState**
 
 `document.readyState`属性返回当前文档的状态，共有三种可能的值。
 
-- `loading`：加载HTML代码阶段（尚未完成解析）
-- `interactive`：加载外部资源阶段时
-- `complete`：加载完成时
+- `loading`：加载 HTML 代码阶段（尚未完成解析）
+- `interactive`：加载外部资源阶段
+- `complete`：加载完成
 
 这个属性变化的过程如下。
 
-1. 浏览器开始解析HTML文档，`document.readyState`属性等于`loading`。
-1. 浏览器遇到HTML文档中的`<script>`元素，并且没有`async`或`defer`属性，就暂停解析，开始执行脚本，这时`document.readyState`属性还是等于`loading`。
-1. HTML文档解析完成，`document.readyState`属性变成`interactive`。
-1. 浏览器等待图片、样式表、字体文件等外部资源加载完成，一旦全部加载完成，`document. readyState`属性变成`complete`。
+1. 浏览器开始解析 HTML 文档，`document.readyState`属性等于`loading`。
+1. 浏览器遇到 HTML 文档中的`<script>`元素，并且没有`async`或`defer`属性，就暂停解析，开始执行脚本，这时`document.readyState`属性还是等于`loading`。
+1. HTML 文档解析完成，`document.readyState`属性变成`interactive`。
+1. 浏览器等待图片、样式表、字体文件等外部资源加载完成，一旦全部加载完成，`document.readyState`属性变成`complete`。
 
 下面的代码用来检查网页是否加载成功。
 
@@ -280,18 +304,23 @@ var interval = setInterval(function() {
 }, 100);
 ```
 
+另外，每次状态变化都会触发一个`readystatechange`事件。
+
+### document.cookie
+
+`document.cookie`属性用来操作浏览器 Cookie，详见《浏览器模型》部分的《Cookie》章节。
+
 ### document.designMode
 
-`document.designMode`属性控制当前文档是否可编辑，通常用在制作所见即所得编辑器。打开`iframe`元素包含的文档的`designMode`属性，就能将其变为一个所见即所得的编辑器。
+`document.designMode`属性控制当前文档是否可编辑，通常用在所见即所得编辑器。该属性只有两个值`on`和`off`，默认值为`off`。
 
-```html
-<iframe id="editor" src="about:blank"></iframe>
-<script>
-!(function () {
-  var editor = document.getElementById('editor');
-  editor.contentDocument.designMode = 'on';
-})();
-</script>
+下面代码打开`iframe`元素内部文档的`designMode`属性，就能将其变为一个所见即所得的编辑器。
+
+```javascript
+// HTML 代码如下
+// <iframe id="editor" src="about:blank"></iframe>
+var editor = document.getElementById('editor');
+editor.contentDocument.designMode = 'on';
 ```
 
 ### document.implementation
@@ -318,13 +347,7 @@ document.replaceChild(
 
 上面代码中，第一步生成一个新的 HTML 文档`doc`，然后用它的根元素`document.documentElement`替换掉`document.documentElement`。这会使得当前文档的内容全部消失，变成`hello world`。
 
-### document.defaultView
 
-`document.defaultView`属性返回`document`对象所属的`window`对象。
-
-```javascript
-document.defaultView === window // true
-```
 
 ### document.activeElement
 
