@@ -110,7 +110,7 @@ a instanceof Array // true
 `null`返回`object`。
 
 ```javascript
-`typeof null // "object"
+typeof null // "object"
 ```
 
 `null`的类型是`object`，这是由于历史原因造成的。1995年的 JavaScript 语言第一版，只设计了五种数据类型（对象、整数、浮点数、字符串和布尔值），没考虑`null`，只把它当作`object`的一种特殊值。后来`null`独立出来，作为一种单独的数据类型，为了兼容以前的代码，`typeof null`返回`object`就没法改变了。

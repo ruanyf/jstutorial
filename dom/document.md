@@ -347,7 +347,7 @@ document.replaceChild(
 
 上面代码中，第一步生成一个新的 HTML 文档`doc`，然后用它的根元素`document.documentElement`替换掉`document.documentElement`。这会使得当前文档的内容全部消失，变成`hello world`。
 
-## 读写相关的方法
+## 方法
 
 ### document.write()，document.writeln()
 
@@ -564,13 +564,9 @@ var element = document.elementFromPoint(50, 50);
 
 `elementFromPoint`方法的两个参数，依次是相对于当前视口左上角的横坐标和纵坐标，单位是像素。如果位于该位置的HTML元素不可返回（比如文本框的滚动条），则返回它的父元素（比如文本框）。如果坐标值无意义（比如负值或超过视口大小），则返回`null`。
 
-## 生成节点的方法
-
-以下方法用于生成元素节点。
-
 ### document.createElement()
 
-`document.createElement`方法用来生成网页元素节点。
+`document.createElement`方法用来生成元素节点，并返回该节点。
 
 ```javascript
 var newDiv = document.createElement('div');
@@ -579,13 +575,19 @@ var newDiv = document.createElement('div');
 `createElement`方法的参数为元素的标签名，即元素节点的`tagName`属性，对于 HTML 网页大小写不敏感，即参数为`div`或`DIV`返回的是同一种节点。如果参数里面包含尖括号（即`<`和`>`）会报错。
 
 ```javascript
-document.createElement('<div>')
+document.createElement('<div>');
 // DOMException: The tag name provided ('<div>') is not a valid name
+```
+
+注意，`document.createElement`的参数可以是自定义的标签名。
+
+```javascript
+document.createElement('foo');
 ```
 
 ### document.createTextNode()
 
-`document.createTextNode`方法用来生成文本节点，参数为所要生成的文本节点的内容。
+`document.createTextNode`方法用来生成文本节点（`Text`实例），并返回该节点。它的参数是文本节点的内容。
 
 ```javascript
 var newDiv = document.createElement('div');
@@ -595,7 +597,7 @@ newDiv.appendChild(newContent);
 
 上面代码新建一个`div`节点和一个文本节点，然后将文本节点插入`div`节点。
 
-这个方法可以确保返回的节点，被浏览器当作文本渲染，而不是当作HTML代码渲染。因此，可以用来展示用户的输入，避免XSS攻击。
+这个方法可以确保返回的节点，被浏览器当作文本渲染，而不是当作 HTML 代码渲染。因此，可以用来展示用户的输入，避免 XSS 攻击。
 
 ```javascript
 var div = document.createElement('div');
@@ -606,7 +608,7 @@ console.log(div.innerHTML)
 
 上面代码中，`createTextNode`方法对大于号和小于号进行转义，从而保证即使用户输入的内容包含恶意代码，也能正确显示。
 
-需要注意的是，该方法不对单引号和双引号转义，所以不能用来对HTML属性赋值。
+需要注意的是，该方法不对单引号和双引号转义，所以不能用来对 HTML 属性赋值。
 
 ```html
 function escapeHtml(str) {
@@ -626,68 +628,82 @@ div.innerHTML = profileLink;
 
 ### document.createAttribute()
 
-`document.createAttribute`方法生成一个新的属性对象节点，并返回它。
+`document.createAttribute`方法生成一个新的属性节点（`Attr`实例），并返回它。
 
 ```javascript
-attribute = document.createAttribute(name);
+var attribute = document.createAttribute(name);
 ```
 
-createAttribute方法的参数name，是属性的名称。
+`document.createAttribute`方法的参数`name`，是属性的名称。
 
 ```javascript
-var node = document.getElementById("div1");
-var a = document.createAttribute("my_attrib");
-a.value = "newVal";
+var node = document.getElementById('div1');
+
+var a = document.createAttribute('my_attrib');
+a.value = 'newVal';
+
 node.setAttributeNode(a);
-
-// 等同于
-
-var node = document.getElementById("div1");
-node.setAttribute("my_attrib", "newVal");
+// 或者
+node.setAttribute('my_attrib', 'newVal');
 ```
+
+上面代码为`div1`节点，插入一个值为`newVal`的`my_attrib`属性。
+
+### document.createComment()
+
+`document.createComment`方法生成一个新的注释节点，并返回该节点。
+
+```javascript
+var CommentNode = document.createComment(data);
+```
+
+`document.createComment`方法的参数是一个字符串，会成为注释节点的内容。
 
 ### document.createDocumentFragment()
 
-createDocumentFragment方法生成一个DocumentFragment对象。
+`document.createDocumentFragment`方法生成一个空的文档片段对象（`DocumentFragment`实例）。
 
 ```javascript
 var docFragment = document.createDocumentFragment();
 ```
 
-DocumentFragment对象是一个存在于内存的DOM片段，但是不属于当前文档，常常用来生成较复杂的DOM结构，然后插入当前文档。这样做的好处在于，因为DocumentFragment不属于当前文档，对它的任何改动，都不会引发网页的重新渲染，比直接修改当前文档的DOM有更好的性能表现。
+`DocumentFragment`是一个存在于内存的 DOM 片段，不属于当前文档，常常用来生成一段较复杂的 DOM 结构，然后再插入当前文档。这样做的好处在于，因为`DocumentFragment`不属于当前文档，对它的任何改动，都不会引发网页的重新渲染，比直接修改当前文档的 DOM 有更好的性能表现。
 
 ```javascript
 var docfrag = document.createDocumentFragment();
 
-[1, 2, 3, 4].forEach(function(e) {
-  var li = document.createElement("li");
+[1, 2, 3, 4].forEach(function (e) {
+  var li = document.createElement('li');
   li.textContent = e;
   docfrag.appendChild(li);
 });
 
-document.body.appendChild(docfrag);
+var element  = document.getElementById('ul');
+element.appendChild(docfrag);
 ```
 
-## 事件相关的方法
+上面代码中，文档片断`docfrag`包含四个`<li>`节点，这些子节点被一次性插入了当前文档。
 
 ### document.createEvent()
 
-`document.createEvent`方法生成一个事件对象，该对象可以被`element.dispatchEvent`方法使用，触发指定事件。
+`document.createEvent`方法生成一个事件对象（`Event`实例），该对象可以被`element.dispatchEvent`方法使用，触发指定事件。
 
 ```javascript
 var event = document.createEvent(type);
 ```
 
-createEvent方法的参数是事件类型，比如UIEvents、MouseEvents、MutationEvents、HTMLEvents。
+`document.createEvent`方法的参数是事件类型，比如`UIEvents`、`MouseEvents`、`MutationEvents`、`HTMLEvents`。
 
 ```javascript
 var event = document.createEvent('Event');
 event.initEvent('build', true, true);
 document.addEventListener('build', function (e) {
-  // ...
+  console.log(e.type); // "build"
 }, false);
 document.dispatchEvent(event);
 ```
+
+上面代码新建了一个名为`build`的事件实例，然后触发该事件。
 
 ### document.addEventListener()，document.removeEventListener()，document.dispatchEvent()
 
@@ -705,8 +721,6 @@ var event = new Event('click');
 document.dispatchEvent(event);
 ```
 
-## 其他方法
-
 ### document.hasFocus()
 
 `document.hasFocus`方法返回一个布尔值，表示当前文档之中是否有元素被激活或获得焦点。
@@ -717,13 +731,39 @@ var focused = document.hasFocus();
 
 注意，有焦点的文档必定被激活（active），反之不成立，激活的文档未必有焦点。比如如果用户点击按钮，从当前窗口跳出一个新窗口，该新窗口就是激活的，但是不拥有焦点。
 
-### document.createNodeIterator()，document.createTreeWalker()
+### document.adoptNode()，document.importNode()
 
-以下方法用于遍历元素节点。
+`document.adoptNode`方法将某个节点及其子节点，从原来所在的文档或`DocumentFragment`里面移除，归属当前`document`对象，返回插入后的新节点。插入的节点对象的`ownerDocument`属性，会变成当前的`document`对象，而`parentNode`属性是`null`。
 
-**（1）document.createNodeIterator()**
+```javascript
+var node = document.adoptNode(externalNode);
+document.appendChild(node);
+```
 
-`document.createNodeIterator`方法返回一个DOM的子节点遍历器。
+注意，`document.adoptNode`方法只是改变了节点的归属，并没有将这个节点插入新的文档树。所有，还要再用`appendChild`方法或`insertBefore`方法，将新节点插入当前文档树。
+
+`document.importNode`方法则是从原来所在的文档或`DocumentFragment`里面，拷贝某个节点及其子节点，让它们归属当前`document`对象。拷贝的节点对象的`ownerDocument`属性，会变成当前的`document`对象，而`parentNode`属性是`null`。
+
+```javascript
+var node = document.importNode(externalNode, deep);
+```
+
+`document.adoptNode`方法的第一个参数是外部节点，第二个参数是一个布尔值，表示对外部节点是深拷贝还是浅拷贝，默认是浅拷贝（false）。虽然第二个参数是可选的，但是建议总是保留这个参数，并设为`true`。
+
+注意，`document.importNode方法`只是拷贝外部节点，这时该节点的父节点是`null`。下一步还必须将这个节点插入当前文档树。
+
+```javascript
+var iframe = document.getElementsByTagName('iframe')[0];
+var oldNode = iframe.contentWindow.document.getElementById('myNode');
+var newNode = document.importNode(oldNode, true);
+document.getElementById("container").appendChild(newNode);
+```
+
+上面代码从`iframe`窗口，拷贝一个指定节点`myNode`，插入当前文档。
+
+### document.createNodeIterator()
+
+`document.createNodeIterator`方法返回一个子节点遍历器。
 
 ```javascript
 var nodeIterator = document.createNodeIterator(
@@ -732,9 +772,16 @@ var nodeIterator = document.createNodeIterator(
 );
 ```
 
-上面代码返回body元素的遍历器。createNodeIterator方法的第一个参数为遍历器的根节点，第二个参数为所要遍历的节点类型，这里指定为元素节点。其他类型还有所有节点（NodeFilter.SHOW_ALL）、文本节点（NodeFilter.SHOW_TEXT）、评论节点（NodeFilter.SHOW_COMMENT）等。
+上面代码返回`<body>`元素子节点的遍历器。
 
-所谓“遍历器”，在这里指可以用nextNode方法和previousNode方法依次遍历根节点的所有子节点。
+`document.createNodeIterator`方法第一个参数为所要遍历的根节点，第二个参数为所要遍历的节点类型，这里指定为元素节点（`NodeFilter.SHOW_ELEMENT`）。几种主要的节点类型写法如下。
+
+- 所有节点：NodeFilter.SHOW_ALL
+- 元素节点：NodeFilter.SHOW_ELEMENT
+- 文本节点：NodeFilter.SHOW_TEXT
+- 评论节点：NodeFilter.SHOW_COMMENT
+
+`document.createNodeIterator`方法返回一个“遍历器”对象（`NodeFilter`实例）。该实例的`nextNode()`方法和`previousNode()`方法，可以用来遍历所有子节点。
 
 ```javascript
 var nodeIterator = document.createNodeIterator(document.body);
@@ -746,7 +793,7 @@ while (currentNode = nodeIterator.nextNode()) {
 }
 ```
 
-上面代码使用遍历器的nextNode方法，将根节点的所有子节点，按照从头部到尾部的顺序，读入一个数组。nextNode方法先返回遍历器的内部指针所在的节点，然后会将指针移向下一个节点。所有成员遍历完成后，返回null。previousNode方法则是先将指针移向上一个节点，然后返回该节点。
+上面代码中，使用遍历器的`nextNode`方法，将根节点的所有子节点，依次读入一个数组。`nextNode`方法先返回遍历器的内部指针所在的节点，然后会将指针移向下一个节点。所有成员遍历完成后，返回`null`。`previousNode`方法则是先将指针移向上一个节点，然后返回该节点。
 
 ```javascript
 var nodeIterator = document.createNodeIterator(
@@ -760,15 +807,19 @@ var previousNode = nodeIterator.previousNode();
 currentNode === previousNode // true
 ```
 
-上面代码中，currentNode和previousNode都指向同一个的节点。
+上面代码中，`currentNode`和`previousNode`都指向同一个的节点。
 
-有一个需要注意的地方，遍历器返回的第一个节点，总是根节点。
+注意，遍历器返回的第一个节点，总是根节点。
 
-**（2）document.createTreeWalker()**
+```javascript
+pars[0] === document.body // true
+```
 
-`document.createTreeWalker`方法返回一个DOM的子树遍历器。它与createNodeIterator方法的区别在于，后者只遍历子节点，而它遍历整个子树。
+### document.createTreeWalker()
 
-`document.createTreeWalker`方法的第一个参数，是所要遍历的根节点，第二个参数指定所要遍历的节点类型。
+`document.createTreeWalker`方法返回一个 DOM 的子树遍历器。它与`document.createNodeIterator`方法基本是类似的，区别在于它返回的是`TreeWalker`实例，后者返回的是`NodeIterator`实例。另外，它的第一个节点不是根节点。
+
+`document.createTreeWalker`方法的第一个参数是所要遍历的根节点，第二个参数指定所要遍历的节点类型（与`document.createNodeIterator`方法的第二个参数相同）。
 
 ```javascript
 var treeWalker = document.createTreeWalker(
@@ -778,39 +829,12 @@ var treeWalker = document.createTreeWalker(
 
 var nodeList = [];
 
-while(treeWalker.nextNode()) nodeList.push(treeWalker.currentNode);
+while(treeWalker.nextNode()) {
+  nodeList.push(treeWalker.currentNode);
+}
 ```
 
-上面代码遍历body节点下属的所有元素节点，将它们插入nodeList数组。
-
-### document.adoptNode()
-
-`document.adoptNode`方法将某个节点，从其原来所在的文档移除，插入当前文档，并返回插入后的新节点。
-
-```javascript
-node = document.adoptNode(externalNode);
-```
-
-### document.importNode()
-
-`document.importNode`方法从外部文档拷贝指定节点，插入当前文档。
-
-```javascript
-var node = document.importNode(externalNode, deep);
-```
-
-`document.importNode`方法用于创造一个外部节点的拷贝，然后插入当前文档。它的第一个参数是外部节点，第二个参数是一个布尔值，表示对外部节点是深拷贝还是浅拷贝，默认是浅拷贝（false）。虽然第二个参数是可选的，但是建议总是保留这个参数，并设为`true`。
-
-注意，`importNode方法`只是拷贝外部节点，这时该节点的父节点是null。下一步还必须将这个节点插入当前文档的DOM树。
-
-```javascript
-var iframe = document.getElementsByTagName('iframe')[0];
-var oldNode = iframe.contentWindow.document.getElementById('myNode');
-var newNode = document.importNode(oldNode, true);
-document.getElementById("container").appendChild(newNode);
-```
-
-上面代码从`iframe`窗口，拷贝一个指定节点`myNode`，插入当前文档。
+上面代码遍历`<body>`节点下属的所有元素节点，将它们插入`nodeList`数组。
 
 ### document.getSelection()
 
