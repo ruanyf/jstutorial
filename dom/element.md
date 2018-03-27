@@ -6,21 +6,46 @@ date: 2015-04-15
 modifiedOn: 2015-04-15
 ---
 
-`Element`对象对应网页的HTML标签元素。每一个HTML标签元素，在DOM树上都会转化成一个`Element`节点对象（以下简称元素节点）。
+`Element`对象对应网页的 HTML 元素。每一个 HTML 元素，在 DOM 树上都会转化成一个`Element`节点对象（以下简称元素节点）。
 
-元素节点的`nodeType`属性都是`1`，但是不同HTML标签生成的元素节点是不一样的。JavaScript内部使用不同的构造函数，生成不同的Element节点，比如`<a>`标签的节点对象由`HTMLAnchorElement()`构造函数生成，`<button>`标签的节点对象由`HTMLButtonElement()`构造函数生成。因此，元素节点不是一种对象，而是一组对象。
+元素节点的`nodeType`属性都是`1`。
 
-## 特征相关的属性
+```javascript
+var p = document.querySelector('p');
+p.nodeName // "P"
+p.nodeType // 1
+```
 
-以下属性与元素特点本身的特征相关。
+`Element`对象继承了`Node`接口，因此`Node`的属性和方法在`Element`对象都存在。此外，不同的 HTML 元素对应的元素节点是不一样的，浏览器使用不同的构造函数，生成不同的元素节点，比如`<a>`元素的节点对象由`HTMLAnchorElement`构造函数生成，`<button>`元素的节点对象由`HTMLButtonElement`构造函数生成。因此，元素节点不是一种对象，而是一组对象，这些对象除了继承`Element`的属性和方法，还有各自构造函数的属性和方法。
+
+## 属性
 
 ### Element.attributes
 
-`Element.attributes`属性返回一个类似数组的对象，成员是当前元素节点的所有属性节点，详见本章《属性的操作》一节。
+`Element.attributes`属性返回一个类似数组的对象，成员是当前元素节点的所有属性节点，详见《Attr 对象》一章。
+
+```javascript
+var p = document.querySelector('p');
+var attrs = p.attributes;
+
+for (var i = attrs.length - 1; i >= 0; i--) {
+  console.log(attrs[i].name + '->' + attrs[i].value);
+}
+```
+
+上面代码遍历`p`元素的所有属性。
 
 ### Element.id，Element.tagName
 
 `Element.id`属性返回指定元素的`id`属性，该属性可读写。
+
+```javascript
+// HTML 代码为 <p id="foo">
+var p = document.querySelector('p');
+p.id // "foo"
+```
+
+注意，`id`属性的值是大小写敏感，即浏览器能正确识别`<p id="foo">`和`<p id="FOO">`这两个元素的`id`属性，但是最好不要这样命名。
 
 `Element.tagName`属性返回指定元素的大写标签名，与`nodeName`属性的值相等。
 
@@ -103,19 +128,16 @@ d.nodeName // "DIV"
 
 `className`属性用来读写当前元素节点的`class`属性。它的值是一个字符串，每个`class`之间用空格分割。
 
-`classList`属性则返回一个类似数组的对象，当前元素节点的每个`class`就是这个对象的一个成员。
-
-```html
-<div class="one two three" id="myDiv"></div>
-```
-
-上面这个`div`元素的节点对象的`className`属性和`classList`属性，分别如下。
+`classList`属性返回一个类似数组的对象，当前元素节点的每个`class`就是这个对象的一个成员。
 
 ```javascript
-document.getElementById('myDiv').className
+// HTML 代码 <div class="one two three" id="myDiv"></div>
+var div = document.getElementById('myDiv');
+
+div.className
 // "one two three"
 
-document.getElementById('myDiv').classList
+div.classList
 // {
 //   0: "one"
 //   1: "two"
@@ -124,48 +146,50 @@ document.getElementById('myDiv').classList
 // }
 ```
 
-从上面代码可以看出，`className`属性返回一个空格分隔的字符串，而`classList`属性指向一个类似数组的对象，该对象的`length`属性（只读）返回当前元素的`class`数量。
+上面代码中，`className`属性返回一个空格分隔的字符串，而`classList`属性指向一个类似数组的对象，该对象的`length`属性（只读）返回当前元素的`class`数量。
 
-classList对象有下列方法。
+`classList`对象有下列方法。
 
-- add()：增加一个class。
-- remove()：移除一个class。
-- contains()：检查当前元素是否包含某个class。
-- toggle()：将某个class移入或移出当前元素。
-- item()：返回指定索引位置的class。
-- toString()：将class的列表转为字符串。
+- `add()`：增加一个 class。
+- `remove()`：移除一个 class。
+- `contains()`：检查当前元素是否包含某个 class。
+- `toggle()`：将某个 class 移入或移出当前元素。
+- `item()`：返回指定索引位置的 class。
+- `toString()`：将 class 的列表转为字符串。
 
 ```javascript
-myDiv.classList.add('myCssClass');
-myDiv.classList.add('foo', 'bar');
-myDiv.classList.remove('myCssClass');
-myDiv.classList.toggle('myCssClass'); // 如果myCssClass不存在就加入，否则移除
-myDiv.classList.contains('myCssClass'); // 返回 true 或者 false
-myDiv.classList.item(0); // 返回第一个Class
-myDiv.classList.toString();
+var div = document.getElementById('myDiv');
+
+div.classList.add('myCssClass');
+div.classList.add('foo', 'bar');
+div.classList.remove('myCssClass');
+div.classList.toggle('myCssClass'); // 如果 myCssClass 不存在就加入，否则移除
+div.classList.contains('myCssClass'); // 返回 true 或者 false
+div.classList.item(0); // 返回第一个 Class
+div.classList.toString();
 ```
 
-下面比较一下，className和classList在添加和删除某个类时的写法。
+下面比较一下，`className`和`classList`在添加和删除某个 class 时的写法。
 
 ```javascript
+var foo = document.getElementById('foo');
+
 // 添加class
-document.getElementById('foo').className += 'bold';
-document.getElementById('foo').classList.add('bold');
+foo.className += 'bold';
+foo.classList.add('bold');
 
 // 删除class
-document.getElementById('foo').classList.remove('bold');
-document.getElementById('foo').className =
-  document.getElementById('foo').className.replace(/^bold$/, '');
+foo.classList.remove('bold');
+foo.className = foo.className.replace(/^bold$/, '');
 ```
 
-toggle方法可以接受一个布尔值，作为第二个参数。如果为`true`，则添加该属性；如果为`false`，则去除该属性。
+`toggle`方法可以接受一个布尔值，作为第二个参数。如果为`true`，则添加该属性；如果为`false`，则去除该属性。
 
 ```javascript
 el.classList.toggle('abc', boolValue);
 
 // 等同于
-
-if (boolValue){
+if (boolValue) {
   el.classList.add('abc');
 } else {
   el.classList.remove('abc');

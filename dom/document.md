@@ -349,9 +349,23 @@ document.replaceChild(
 
 ## 方法
 
+### document.open()，document.close()
+
+`document.open`方法清除当前文档所有内容，使得文档处于可写状态，供`document.write`方法写入内容。
+
+`document.close`方法用来关闭`document.open()`打开的文档。
+
+```javascript
+document.open();
+document.write('hello world');
+document.close();
+```
+
 ### document.write()，document.writeln()
 
-`document.write`方法用于向当前文档写入内容。只要当前文档还没有用`close`方法关闭，它所写入的内容就会追加在已有内容的后面。
+`document.write`方法用于向当前文档写入内容。
+
+在网页的首次渲染阶段，只要页面没有关闭写入（即没有执行`document.close()`），`document.write`写入的内容就会追加在已有内容的后面。
 
 ```javascript
 // 页面显示“helloworld”
@@ -361,11 +375,13 @@ document.write('world');
 document.close();
 ```
 
-注意，`document.write`会当作HTML代码解析，不会转义。
+注意，`document.write`会当作 HTML 代码解析，不会转义。
 
 ```javascript
 document.write('<p>hello world</p>');
 ```
+
+上面代码中，`document.write`会将`<p>`当作 HTML 标签解释。
 
 如果页面已经解析完成（`DOMContentLoaded`事件发生之后），再调用`write`方法，它会先调用`open`方法，擦除当前文档所有内容，然后再写入。
 
@@ -375,7 +391,6 @@ document.addEventListener('DOMContentLoaded', function (event) {
 });
 
 // 等同于
-
 document.addEventListener('DOMContentLoaded', function (event) {
   document.open();
   document.write('<p>Hello World!</p>');
@@ -383,7 +398,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 });
 ```
 
-如果在页面渲染过程中调用`write`方法，并不会调用`open`方法。（可以理解成，`open`方法已调用，但`close`方法还未调用。）
+如果在页面渲染过程中调用`write`方法，并不会自动调用`open`方法。（可以理解成，`open`方法已调用，但`close`方法还未调用。）
 
 ```html
 <html>
@@ -402,7 +417,7 @@ hello
 
 `document.writeln`方法与`write`方法完全一致，除了会在输出内容的尾部添加换行符。
 
-```js
+```javascript
 document.write(1);
 document.write(2);
 // 12
@@ -414,15 +429,11 @@ document.writeln(2);
 //
 ```
 
-注意，`writeln`方法添加的是ASCII码的换行符，渲染成HTML网页时不起作用，即在网页上显示不出换行。
-
-## 查找节点的方法
-
-以下方法用来查找某个节点。
+注意，`writeln`方法添加的是 ASCII 码的换行符，渲染成 HTML 网页时不起作用，即在网页上显示不出换行。网页上的换行，必须显式写入`<br>`。
 
 ### document.querySelector()，document.querySelectorAll()
 
-`document.querySelector`方法接受一个CSS选择器作为参数，返回匹配该选择器的元素节点。如果有多个节点满足匹配条件，则返回第一个匹配的节点。如果没有发现匹配的节点，则返回`null`。
+`document.querySelector`方法接受一个 CSS 选择器作为参数，返回匹配该选择器的元素节点。如果有多个节点满足匹配条件，则返回第一个匹配的节点。如果没有发现匹配的节点，则返回`null`。
 
 ```javascript
 var el1 = document.querySelector('.myclass');
@@ -435,7 +446,7 @@ var el2 = document.querySelector('#myParent > [ng-click]');
 elementList = document.querySelectorAll('.myclass');
 ```
 
-这两个方法的参数，可以是逗号分隔的多个CSS选择器，返回匹配其中一个选择器的元素节点。
+这两个方法的参数，可以是逗号分隔的多个 CSS 选择器，返回匹配其中一个选择器的元素节点，这与 CSS 选择器的规则是一致的。
 
 ```javascript
 var matches = document.querySelectorAll('div.note, div.alert');
@@ -443,49 +454,48 @@ var matches = document.querySelectorAll('div.note, div.alert');
 
 上面代码返回`class`属性是`note`或`alert`的`div`元素。
 
-这两个方法都支持复杂的CSS选择器。
+这两个方法都支持复杂的 CSS 选择器。
 
 ```javascript
-// 选中data-foo-bar属性等于someval的元素
+// 选中 data-foo-bar 属性等于 someval 的元素
 document.querySelectorAll('[data-foo-bar="someval"]');
 
-// 选中myForm表单中所有不通过验证的元素
+// 选中 myForm 表单中所有不通过验证的元素
 document.querySelectorAll('#myForm :invalid');
 
-// 选中div元素，那些class含ignore的除外
+// 选中div元素，那些 class 含 ignore 的除外
 document.querySelectorAll('DIV:not(.ignore)');
 
-// 同时选中div，a，script三类元素
+// 同时选中 div，a，script 三类元素
 document.querySelectorAll('DIV, A, SCRIPT');
 ```
 
-但是，它们不支持CSS伪元素的选择器（比如`:first-line`和`:first-letter`）和伪类的选择器（比如`:link`和`:visited`），即无法选中伪元素和伪类。
+但是，它们不支持 CSS 伪元素的选择器（比如`:first-line`和`:first-letter`）和伪类的选择器（比如`:link`和`:visited`），即无法选中伪元素和伪类。
 
-如果`querySelectorAll`方法的参数是字符串`*`，则会返回文档中的所有HTML元素节点。另外，`querySelectorAll`的返回结果不是动态集合，不会实时反映元素节点的变化。
+如果`querySelectorAll`方法的参数是字符串`*`，则会返回文档中的所有元素节点。另外，`querySelectorAll`的返回结果不是动态集合，不会实时反映元素节点的变化。
 
 最后，这两个方法除了定义在`document`对象上，还定义在元素节点上，即在元素节点上也可以调用。
 
 ### document.getElementsByTagName()
 
-`document.getElementsByTagName`方法返回所有指定HTML标签的元素，返回值是一个类似数组的`HTMLCollection`对象，可以实时反映HTML文档的变化。如果没有任何匹配的元素，就返回一个空集。
+`document.getElementsByTagName`方法搜索 HTML 标签名，返回符合条件的元素。它的返回值是一个类似数组对象（`HTMLCollection`实例），可以实时反映 HTML 文档的变化。如果没有任何匹配的元素，就返回一个空集。
 
 ```javascript
 var paras = document.getElementsByTagName('p');
-
 paras instanceof HTMLCollection // true
 ```
 
 上面代码返回当前文档的所有`p`元素节点。
 
-HTML标签名是大小写不敏感的，因此`getElementsByTagName`方法也是大小写不敏感的。另外，返回结果中，各个成员的顺序就是它们在文档中出现的顺序。
+HTML 标签名是大小写不敏感的，因此`getElementsByTagName`方法也是大小写不敏感的。另外，返回结果中，各个成员的顺序就是它们在文档中出现的顺序。
 
-如果传入`*`，就可以返回文档中所有HTML元素。
+如果传入`*`，就可以返回文档中所有 HTML 元素。
 
 ```javascript
 var allElements = document.getElementsByTagName('*');
 ```
 
-注意，HTML元素本身也定义了`getElementsByTagName`方法，返回该元素的后代元素中符合指定标签的元素。也就是说，这个方法不仅可以在`document`对象上调用，也可以在任何元素节点上调用。
+注意，元素节点本身也定义了`getElementsByTagName`方法，返回该元素的后代元素中符合条件的元素。也就是说，这个方法不仅可以在`document`对象上调用，也可以在任何元素节点上调用。
 
 ```javascript
 var firstPara = document.getElementsByTagName('p')[0];
@@ -496,15 +506,15 @@ var spans = firstPara.getElementsByTagName('span');
 
 ### document.getElementsByClassName()
 
-`document.getElementsByClassName`方法返回一个类似数组的对象（`HTMLCollection`实例对象），包括了所有`class`名字符合指定条件的元素，元素的变化实时反映在返回结果中。
+`document.getElementsByClassName`方法返回一个类似数组的对象（`HTMLCollection`实例），包括了所有`class`名字符合指定条件的元素，元素的变化实时反映在返回结果中。
 
 ```javascript
 var elements = document.getElementsByClassName(names);
 ```
 
-由于`class`是保留字，所以JavaScript一律使用`className`表示CSS的`class`。
+由于`class`是保留字，所以 JavaScript 一律使用`className`表示 CSS 的`class`。
 
-如果参数是一个空格分隔的字符串，元素的`class`必须符合所有字符串之中所有的`class`才会返回。
+参数可以是多个`class`，它们之间使用空格分隔。
 
 ```javascript
 var elements = document.getElementsByClassName('foo bar');
@@ -512,7 +522,7 @@ var elements = document.getElementsByClassName('foo bar');
 
 上面代码返回同时具有`foo`和`bar`两个`class`的元素，`foo`和`bar`的顺序不重要。
 
-注意，正常模式下，CSS的`class`是大小写敏感的。（`quirks mode`下，大小写不敏感。）
+注意，正常模式下，CSS 的`class`是大小写敏感的。（`quirks mode`下，大小写不敏感。）
 
 与`getElementsByTagName`方法一样，`getElementsByClassName`方法不仅可以在`document`对象上调用，也可以在任何元素节点上调用。
 
@@ -523,7 +533,7 @@ var elements = rootElement.getElementsByClassName(names);
 
 ### document.getElementsByName()
 
-`document.getElementsByName`方法用于选择拥有`name`属性的HTML元素（比如`<form>`、`<radio>`、`<img>`、`<frame>`、`<embed>`和`<object>`等），返回一个类似数组的的对象（`NodeList`对象的实例），因为`name`属性相同的元素可能不止一个。
+`document.getElementsByName`方法用于选择拥有`name`属性的 HTML 元素（比如`<form>`、`<radio>`、`<img>`、`<frame>`、`<embed>`和`<object>`等），返回一个类似数组的的对象（`NodeList`实例），因为`name`属性相同的元素可能不止一个。
 
 ```javascript
 // 表单为 <form name="x"></form>
@@ -531,38 +541,57 @@ var forms = document.getElementsByName('x');
 forms[0].tagName // "FORM"
 ```
 
-### getElementById()
+### document.getElementById()
 
-`getElementById`方法返回匹配指定`id`属性的元素节点。如果没有发现匹配的节点，则返回`null`。
+`document.getElementById`方法返回匹配指定`id`属性的元素节点。如果没有发现匹配的节点，则返回`null`。
 
 ```javascript
 var elem = document.getElementById('para1');
 ```
 
-注意，该方法的参数是大小写敏感的。比如，如果某个节点的`id`属性是`main`，那么`document.getElementById('Main')`将返回`null`，而不是那个节点。
+注意，该方法的参数是大小写敏感的。比如，如果某个节点的`id`属性是`main`，那么`document.getElementById('Main')`将返回`null`。
 
-`document.getElementById`方法与`document.querySelector`方法都能获取元素节点，不同之处是`document.querySelector`方法的参数使用CSS选择器语法，`document.getElementById`方法的参数是HTML标签元素的`id`属性。
+`document.getElementById`方法与`document.querySelector`方法都能获取元素节点，不同之处是`document.querySelector`方法的参数使用 CSS 选择器语法，`document.getElementById`方法的参数是元素的`id`属性。
 
 ```javascript
 document.getElementById('myElement')
 document.querySelector('#myElement')
 ```
 
-上面代码中，两个方法都能选中`id`为`myElement`的元素，但是`getElementById()`比`querySelector()`效率高得多。
+上面代码中，两个方法都能选中`id`为`myElement`的元素，但是`document.getElementById()`比`document.querySelector()`效率高得多。
 
 另外，这个方法只能在`document`对象上使用，不能在其他元素节点上使用。
 
-### document.elementFromPoint()
+### document.elementFromPoint()，document.elementsFromPoint()
 
-`document.elementFromPoint`方法返回位于页面指定位置最上层的Element子节点。
+`document.elementFromPoint`方法返回位于页面指定位置最上层的元素节点。
 
 ```javascript
 var element = document.elementFromPoint(50, 50);
 ```
 
-上面代码选中在`(50, 50)`这个坐标位置的最上层的那个HTML元素。
+上面代码选中在`(50, 50)`这个坐标位置的最上层的那个 HTML 元素。
 
-`elementFromPoint`方法的两个参数，依次是相对于当前视口左上角的横坐标和纵坐标，单位是像素。如果位于该位置的HTML元素不可返回（比如文本框的滚动条），则返回它的父元素（比如文本框）。如果坐标值无意义（比如负值或超过视口大小），则返回`null`。
+`elementFromPoint`方法的两个参数，依次是相对于当前视口左上角的横坐标和纵坐标，单位是像素。如果位于该位置的 HTML 元素不可返回（比如文本框的滚动条），则返回它的父元素（比如文本框）。如果坐标值无意义（比如负值或超过视口大小），则返回`null`。
+
+`document.elementsFromPoint()`返回一个数组，成员是位于指定坐标（相对于视口）的所有元素。
+
+```javascript
+var elements = document.elementsFromPoint(x, y);
+```
+
+### document.caretPositionFromPoint()
+
+`document.caretPositionFromPoint()`返回一个 CaretPosition 对象，包含了指定坐标点在节点对象内部的位置信息。CaretPosition 对象就是光标插入点的概念，用于确定光标点在文本对象内部的具体位置。
+
+```javascript
+var range = document.caretPositionFromPoint(clientX, clientY);
+```
+
+上面代码中，`range`是指定坐标点的 CaretPosition 对象。该对象有两个属性。
+
+- CaretPosition.offsetNode：该位置的节点对象
+- CaretPosition.offset：该位置在`offsetNode`对象内部，与起始位置相距的字符数。
 
 ### document.createElement()
 
@@ -707,7 +736,7 @@ document.dispatchEvent(event);
 
 ### document.addEventListener()，document.removeEventListener()，document.dispatchEvent()
 
-以下三个方法与`document`节点的事件相关。这些方法都继承自EventTarget接口，详细介绍参见《Event对象》章节的《EventTarget》部分。
+这三个方法用于处理`document`节点的事件。它们都继承自`EventTarget`接口，详细介绍参见《EventTarget 接口》一章。
 
 ```javascript
 // 添加事件监听函数
@@ -729,7 +758,7 @@ document.dispatchEvent(event);
 var focused = document.hasFocus();
 ```
 
-注意，有焦点的文档必定被激活（active），反之不成立，激活的文档未必有焦点。比如如果用户点击按钮，从当前窗口跳出一个新窗口，该新窗口就是激活的，但是不拥有焦点。
+注意，有焦点的文档必定被激活（active），反之不成立，激活的文档未必有焦点。比如，用户点击按钮，从当前窗口跳出一个新窗口，该新窗口就是激活的，但是不拥有焦点。
 
 ### document.adoptNode()，document.importNode()
 
@@ -839,3 +868,4 @@ while(treeWalker.nextNode()) {
 ### document.getSelection()
 
 这个方法指向`window.getSelection()`，参见`window`对象一节的介绍。
+
