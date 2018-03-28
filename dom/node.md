@@ -553,7 +553,7 @@ div.compareDocumentPosition(input) // 20
 input.compareDocumentPosition(div) // 10
 ```
 
-上面代码中，节点`div`包含节点`input`，而且节点`input`在节点`div`的后面，所以第一个`compareDocumentPosition`方法返回`20`（二进制`010100`），第二个`compareDocumentPosition`方法返回`10`（二进制`001010`）。
+上面代码中，节点`div`包含节点`input`（二进制`010000`），而且节点`input`在节点`div`的后面（二进制`000100`），所以第一个`compareDocumentPosition`方法返回`20`（二进制`010100`，即`010000 + 000100`），第二个`compareDocumentPosition`方法返回`10`（二进制`001010`）。
 
 由于`compareDocumentPosition`返回值的含义，定义在每一个比特位上，所以如果要检查某一种特定的含义，就需要使用比特位运算符。
 

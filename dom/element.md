@@ -196,33 +196,23 @@ if (boolValue) {
 }
 ```
 
-## 盒状模型相关属性
-
 ### Element.clientHeight，Element.clientWidth
 
-`Element.clientHeight`属性返回元素节点可见部分的高度，`Element.clientWidth`属性返回元素节点可见部分的宽度。所谓“可见部分”，指的是不包括溢出（overflow）的大小，只返回该元素在容器中占据的大小，对于有滚动条的元素来说，它们等于滚动条围起来的区域大小。这两个属性的值包括Padding、但不包括滚动条、边框和Margin，单位为像素。这两个属性可以计算得到，等于元素的CSS高度（或宽度）加上CSS的Padding，减去滚动条（如果存在）。
+`Element.clientHeight`属性返回一个整数值，表示元素节点的 CSS 高度（单位像素），只对块级元素生效，对于行内元素返回`0`。如果块级元素没有设置 CSS 高度，则返回实际高度。
 
-对于整张网页来说，当前可见高度（即视口高度）要从`document.documentElement`对象（即`<html>`节点）上获取，等同于`window.innerHeight`属性减去水平滚动条的高度。没有滚动条时，这两个值是相等的；有滚动条时，前者小于后者。
+除了元素本身的高度，它还包括`padding`部分，但是不包括`border`、`margin`。如果有水平滚动条，还要减去水平滚动条的高度。注意，这个值始终是整数，如果是小数会被四舍五入。
 
-```javascript
-var rootElement = document.documentElement;
+`Element.clientWidth`属性返回元素节点的 CSS 宽度，同样只对块级元素有效，也是只包括元素本身的宽度和`padding`，如果有垂直滚动条，还要减去垂直滚动条的宽度。
 
-// 没有水平滚动条时
-rootElement.clientHeight === window.innerHeight // true
+`document`元素的高度就是当前可见高度（即视口高度），要从`document.documentElement`对象（即`<html>`节点）上获取，等同于`window.innerHeight`属性减去水平滚动条的高度。没有滚动条时，这两个值是相等的；有滚动条时，前者小于后者。
 
-// 没有垂直滚动条时
-rootElement.clientWidth === window.innerWidth // true
-```
-
-注意，这里不能用`document.body.clientHeight`或`document.body.clientWidth`，因为`document.body`返回`<body>`节点，与视口大小是无关的。
+`document.body`的高度则是网页的实际高度。一般来说，`document.body.clientHeight`大于`document.documentElement.clientHeight`。
 
 ### Element.clientLeft，Element.clientTop
 
-`Element.clientLeft`属性等于元素节点左边框（left border）的宽度，`Element.clientTop`属性等于网页元素顶部边框的宽度，单位为像素。
+`Element.clientLeft`属性等于元素节点左边框（left border）的宽度（单位像素），不包括左侧的`padding`和`margin`。如果没有设置左边框，或者是行内元素（`display: inline`），该属性返回`0`。该属性总是返回整数值，如果是小数，会四舍五入。
 
-这两个属性包括滚动条的宽度，但不包括Margin和Padding。不过，一般来说，除非排版方向是从右到左，且发生元素高度溢出，否则不可能存在左侧滚动条，亦不可能存在顶部的滚动条。
-
-如果元素的显示设为`display: inline`，它的`clientLeft`属性一律为`0`，不管是否存在左边框。
+`Element.clientTop`属性等于网页元素顶部边框的宽度（单位像素），其他特点都与`clientTop`相同。
 
 ### Element.scrollHeight，Element.scrollWidth
 
