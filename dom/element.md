@@ -59,7 +59,7 @@ span.tagName // "SPAN"
 
 ### Element.innerHTML
 
-`Element.innerHTML`属性返回该元素包含的 HTML 代码。该属性可读写，常用来设置某个节点的内容。
+`Element.innerHTML`属性返回一个字符串，等同于该元素包含的所有 HTML 代码。该属性可读写，常用来设置某个节点的内容。它能改写所有元素节点的内容，包括`<HTML>`和`<body>`元素。
 
 如果将`innerHTML`属性设为空，等于删除所有它包含的所有节点。
 
@@ -69,7 +69,7 @@ el.innerHTML = '';
 
 上面代码等于将`el`节点变成了一个空节点，`el`原来包含的节点被全部删除。
 
-注意，如果文本节点中包含`&`、小于号（`<`）和大于号（`>`），`innerHTML`属性会将它们转为实体形式`&amp;`、`&lt;`、`&gt;`。
+注意，读取属性值的时候，如果文本节点包含`&`、小于号（`<`）和大于号（`>`），`innerHTML`属性会将它们转为实体形式`&amp;`、`&lt;`、`&gt;`。如果想得到原文，建议使用`element.textContent`属性。
 
 ```javascript
 // HTML代码如下 <p id="para"> 5 > 3 </p>
@@ -77,7 +77,7 @@ document.getElementById('para').innerHTML
 // 5 &gt; 3
 ```
 
-如果插入的文本包含 HTML 标签，会被解析成为节点对象插入 DOM。注意，如果文本之中含有`<script>`标签，虽然可以生成`script`节点，但是插入的代码不会执行。
+写入的时候，如果插入的文本包含 HTML 标签，会被解析成为节点对象插入 DOM。注意，如果文本之中含有`<script>`标签，虽然可以生成`script`节点，但是插入的代码不会执行。
 
 ```javascript
 var name = "<script>alert('haha')</script>";
@@ -95,13 +95,12 @@ el.innerHTML = name;
 
 ### Element.outerHTML
 
-`Element.outerHTML`属性返回一个字符串，内容为指定元素节点的所有HTML代码，包括它自身和包含的所有子元素。
+`Element.outerHTML`属性返回一个字符串，表示当前元素节点的所有 HTML 代码，包括该元素本身和所有子元素。
 
 ```javascript
-// HTML代码如下
+// HTML 代码如下
 // <div id="d"><p>Hello</p></div>
-
-d = document.getElementById('d');
+var d = document.getElementById('d');
 d.outerHTML
 // '<div id="d"><p>Hello</p></div>'
 ```
@@ -109,11 +108,10 @@ d.outerHTML
 `outerHTML`属性是可读写的，对它进行赋值，等于替换掉当前元素。
 
 ```javascript
-// HTML代码如下
+// HTML 代码如下
 // <div id="container"><div id="d">Hello</div></div>
-
-container = document.getElementById('container');
-d = document.getElementById("d");
+var container = document.getElementById('container');
+var d = document.getElementById('d');
 container.firstChild.nodeName // "DIV"
 d.nodeName // "DIV"
 
@@ -122,7 +120,17 @@ container.firstChild.nodeName // "P"
 d.nodeName // "DIV"
 ```
 
-上面代码中，`outerHTML`属性重新赋值以后，内层的`div`元素就不存在了，被`p`元素替换了。但是，变量`d`依然指向原来的`div`元素，这表示被替换的`DIV`元素还存在于内存中。
+上面代码中，变量`d`代表子节点，它的`outerHTML`属性重新赋值以后，内层的`div`元素就不存在了，被`p`元素替换了。但是，变量`d`依然指向原来的`div`元素，这表示被替换的`DIV`元素还存在于内存中。
+
+注意，如果一个节点没有父节点，设置`outerHTML`属性会报错。
+
+```javascript
+var div = document.createElement('div');
+div.outerHTML = '<p>test</p>';
+// DOMException: This element has no parent node.
+```
+
+上面代码中，`div`元素没有父节点，设置`outerHTML`属性会报错。
 
 ### Element.className，Element.classList
 
@@ -204,9 +212,15 @@ if (boolValue) {
 
 `Element.clientWidth`属性返回元素节点的 CSS 宽度，同样只对块级元素有效，也是只包括元素本身的宽度和`padding`，如果有垂直滚动条，还要减去垂直滚动条的宽度。
 
-`document`元素的高度就是当前可见高度（即视口高度），要从`document.documentElement`对象（即`<html>`节点）上获取，等同于`window.innerHeight`属性减去水平滚动条的高度。没有滚动条时，这两个值是相等的；有滚动条时，前者小于后者。
+`document.documentElement`的`clientHeight`属性，返回当前视口的高度（即浏览器窗口的高度），等同于`window.innerHeight`属性减去水平滚动条的高度（如果有的话）。`document.body`的高度则是网页的实际高度。一般来说，`document.body.clientHeight`大于`document.documentElement.clientHeight`。
 
-`document.body`的高度则是网页的实际高度。一般来说，`document.body.clientHeight`大于`document.documentElement.clientHeight`。
+```javascript
+// 视口高度
+document.documentElement.clientHeight
+
+// 网页总高度
+document.body.clientHeight
+```
 
 ### Element.clientLeft，Element.clientTop
 
@@ -216,42 +230,31 @@ if (boolValue) {
 
 ### Element.scrollHeight，Element.scrollWidth
 
-`Element.scrollHeight`属性返回某个网页元素的总高度，`Element.scrollWidth`属性返回总宽度，可以理解成元素在垂直和水平两个方向上可以滚动的距离。它们都包括由于溢出容器而无法显示在网页上的那部分高度或宽度。这两个属性是只读属性。
+`Element.scrollHeight`属性返回一个整数值（小数会四舍五入），表示当前元素的总高度（单位像素），包括溢出容器、当前不可见的部分。它包括`padding`，但是不包括`border`、`margin`以及水平滚动条的高度（如果有水平滚动条的话），还包括伪元素（`::before`或`::after`）的高度。
 
-它们返回的是整个元素的高度或宽度，包括由于存在滚动条而不可见的部分。默认情况下，它们包括Padding，但不包括Border和Margin。
+`Element.scrollWidth`属性表示当前元素的总宽度（单位像素），其他地方都与`scrollHeight`属性类似。这两个属性只读。
 
 整张网页的总高度可以从`document.documentElement`或`document.body`上读取。
 
 ```javascript
+// 返回网页的总高度
 document.documentElement.scrollHeight
+document.body.scrollHeight
 ```
 
-如果内容正好适合它的容器，没有溢出，那么`Element.scrollHeight`和`Element.clientHeight`是相等的，`scrollWidth`属性与`clientWidth`属性是相等的。如果存在溢出，那么`scrollHeight`属性大于`clientHeight`属性，`scrollWidth`属性大于`clientWidth`属性。
-
-存在溢出时，当滚动条滚动到内容底部时，下面的表达式为`true`。
+注意，如果元素节点的内容出现溢出，即使溢出的内容是隐藏的，`scrollHeight`属性仍然返回元素的总高度。
 
 ```javascript
-element.scrollHeight - element.scrollTop === element.clientHeight
+// HTML 代码如下
+// <div id="myDiv" style="height: 200px; overflow: hidden;">...<div>
+document.getElementById('myDiv').scrollHeight // 356
 ```
 
-如果滚动条没有滚动到内容底部，上面的表达式为`false`。这个特性结合`onscroll`事件，可以判断用户是否滚动到了指定元素的底部，比如向用户展示某个内容区块时，判断用户是否滚动到了区块的底部。
-
-```javascript
-var rules = document.getElementById('rules');
-rules.onscroll = checking;
-
-function checking(){
-  if (this.scrollHeight - this.scrollTop === this.clientHeight) {
-    console.log('谢谢阅读');
-  } else {
-    console.log('您还未读完');
-  }
-}
-```
+上面代码中，即使`myDiv`元素的 CSS 高度只有200像素，且溢出部分不可见，但是`scrollHeight`仍然会返回该元素的原始高度。
 
 ### Element.scrollLeft，Element.scrollTop
 
-`Element.scrollLeft`属性表示网页元素的水平滚动条向右侧滚动的像素数量，`Element.scrollTop`属性表示网页元素的垂直滚动条向下滚动的像素数量。对于那些没有滚动条的网页元素，这两个属性总是等于0。
+`Element.scrollLeft`属性表示当前元素的水平滚动条向右侧滚动的像素数量，`Element.scrollTop`属性表示当前元素的垂直滚动条向下滚动的像素数量。对于那些没有滚动条的网页元素，这两个属性总是等于0。
 
 如果要查看整张网页的水平的和垂直的滚动距离，要从`document.documentElement`元素上读取。
 
@@ -260,7 +263,7 @@ document.documentElement.scrollLeft
 document.documentElement.scrollTop
 ```
 
-这两个属性都可读写，设置该属性的值，会导致浏览器将指定元素自动滚动到相应的位置。
+这两个属性都可读写，设置该属性的值，会导致浏览器将当前元素自动滚动到相应的位置。
 
 ### Element.offsetHeight，Element.offsetWidth
 
@@ -407,19 +410,18 @@ if (para.children.length) {
 
 ### Element.nextElementSibling，Element.previousElementSibling
 
-`Element.nextElementSibling`属性返回当前HTML元素节点的后一个同级HTML元素节点，如果没有则返回`null`。
+`Element.nextElementSibling`属性返回当前元素节点的后一个同级元素节点，如果没有则返回`null`。
 
 ```javascript
-// 假定HTML代码如下
+// HTML 代码如下
 // <div id="div-01">Here is div-01</div>
 // <div id="div-02">Here is div-02</div>
 var el = document.getElementById('div-01');
 el.nextElementSibling
 // <div id="div-02">Here is div-02</div>
-
 ```
 
-`Element.previousElementSibling`属性返回当前HTML元素节点的前一个同级HTML元素节点，如果没有则返回`null`。
+`Element.previousElementSibling`属性返回当前元素节点的前一个同级元素节点，如果没有则返回`null`。
 
 ### Element.offsetParent
 
