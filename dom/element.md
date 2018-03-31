@@ -453,16 +453,77 @@ el.nextElementSibling
 
 如果某个元素的所有上层节点的`position`属性都是`static`，则`Element.offsetParent`属性指向`<body>`元素。
 
-## 属性相关的方法
+### 属性相关方法
 
-元素节点提供以下四个方法，用来操作HTML标签的属性。
+以下方法用来操作当前节点的属性。
 
-- `Element.getAttribute()`：读取指定属性
-- `Element.setAttribute()`：设置指定属性
-- `Element.hasAttribute()`：返回一个布尔值，表示当前元素节点是否有指定的属性
-- `Element.removeAttribute()`：移除指定属性
+**（1）Element.getAttribute()**
 
-这些属性的详细介绍，参见本章的《属性的操作》一节。
+`Element.getAttribute`方法接受一个字符串作为参数，返回同名属性的值。如果没有该属性，则返回`null`。
+
+```javascript
+var mydiv = document.getElementById('mydiv');
+var id = mydiv.getAttribute('id');
+```
+
+上面代码读取`mydiv`的`id`的值。
+
+**（2）Element.getAttributeNames()**
+
+`Element.getAttributeNames()`返回一个数组，成员是当前元素的所有属性的名字。如果当前元素没有任何属性，则返回一个空数组。使用`Element.attributes`属性，也可以拿到同样的结果，唯一的区别是它返回的是类似数组的对象。
+
+```javascript
+var mydiv = document.getElementById('mydiv');
+
+mydiv.getAttributeNames().forEach(function (key) {
+  var value = mydiv.getAttribute(key);
+  console.log(key, value);
+})
+```
+
+上面代码用于遍历某个节点的所有属性。
+
+**（3）Element.setAttribute()**
+
+`Element.setAttribute`方法用于为当前节点设置属性。如果属性已经存在，将更新属性值，否则将添加该属性。该方法没有返回值。
+
+```javascript
+// HTML 代码为
+// <button>Hello World</button>
+var b = document.querySelector('button');
+b.setAttribute('name', 'myButton');
+b.setAttribute('disabled', true);
+```
+
+上面代码中，`button`元素的`name`属性被设成`myButton`，`disabled`属性被设成`true`。
+
+这里有两个地方需要注意，首先，属性值总是字符串，其他类型的值会自动转成字符串，比如布尔值`true`就会变成字符串`true`；其次，上例的`disable`属性是一个布尔属性，对于`<button>`元素来说，这个属性不需要属性值，只要设置了就总是会生效，因此`setAttribute`方法里面可以将`disabled`属性设成任意值。
+
+**（4）Element.hasAttribute()**
+
+`Element.hasAttribute`方法返回一个布尔值，表示当前元素节点是否有指定的属性。
+
+```javascript
+var foo = document.getElementById('foo');
+foo.hasAttribute('bar') // false
+```
+
+**（5）Element.hasAttributes()**
+
+`Element.hasAttributes`方法返回一个布尔值，表示当前元素是否有属性，如果没有任何属性，就返回`false`，否则返回`true`。
+
+```javascript
+var foo = document.getElementById('foo');
+foo.hasAttributes() // true
+```
+
+**（6）Element.removeAttribute()**
+
+`Element.removeAttribute`方法移除指定属性。该方法没有返回值。
+
+```javascript
+document.getElementById('div1').removeAttribute('id')
+```
 
 ## 查找相关的方法
 
@@ -547,31 +608,28 @@ var cells = table.getElementsByTagName('td');
 
 ### Element.closest()
 
-`Element.closest`方法返回当前元素节点的最接近的父元素（或者当前节点本身），条件是必须匹配给定的CSS选择器。如果不满足匹配，则返回null。
-
-假定HTML代码如下。
-
-```html
-<article>
-  <div id="div-01">Here is div-01
-    <div id="div-02">Here is div-02
-      <div id="div-03">Here is div-03</div>
-    </div>
-  </div>
-</article>
-```
-
-div-03节点的closet方法的例子如下。
+`Element.closest`方法接受一个 CSS 选择器作为参数，返回匹配该选择器的、最接近当前节点的一个祖先节点（包括当前节点本身）。如果没有任何节点匹配 CSS 选择器，则返回`null`。
 
 ```javascript
-var el = document.getElementById('div-03');
-el.closest("#div-02") // div-02
-el.closest("div div") // div-03
-el.closest("article > div") //div-01
-el.closest(":not(div)") // article
+// HTML 代码如下
+// <article>
+//   <div id="div-01">Here is div-01
+//     <div id="div-02">Here is div-02
+//       <div id="div-03">Here is div-03</div>
+//     </div>
+//   </div>
+// </article>
+
+var div03 = document.getElementById('div-03');
+
+// div-03 最近的祖先节点
+div03.closest("#div-02") // div-02
+div03.closest("div div") // div-03
+div03.closest("article > div") //div-01
+div03.closest(":not(div)") // article
 ```
 
-上面代码中，由于closet方法将当前元素节点也考虑在内，所以第二个closet方法返回div-03。
+上面代码中，由于`closest`方法将当前节点也考虑在内，所以第二个`closest`方法返回`div-03`。
 
 ### Element.matches()
 
