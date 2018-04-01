@@ -587,7 +587,7 @@ var matches = el.querySelectorAll('div.highlighted > p');
 
 ### Element.getElementsByClassName()
 
-`Element.getElementsByClassName`方法返回一个`HTMLCollection`对象，成员是当前元素节点的所有匹配指定`class`的子元素。该方法与`document.getElementsByClassName`方法的用法类似，只是搜索范围不是整个文档，而是当前元素节点。
+`Element.getElementsByClassName`方法返回一个`HTMLCollection`实例，成员是当前元素节点的所有具有指定 class 的子元素节点。该方法与`document.getElementsByClassName`方法的用法类似，只是搜索范围不是整个文档，而是当前元素节点。
 
 ```javascript
 element.getElementsByClassName('red test');
@@ -595,9 +595,33 @@ element.getElementsByClassName('red test');
 
 注意，该方法的参数大小写敏感。
 
+由于`HTMLCollection`实例是一个活的集合，`document`对象的任何变化会立刻反应到实例，下面的代码不会生效。
+
+```javascript
+// HTML 代码如下
+// <div id="example">
+//   <p class="foo"></p>
+//   <p class="foo"></p>
+// </div>
+var element = document.getElementById('example');
+var matches = element.getElementsByClassName('foo');
+
+for (var i = 0; i< matches.length; i++) {
+  matches[i].classList.remove('foo');
+  matches.item(i).classList.add('bar');
+}
+// 执行后，HTML 代码如下
+// <div id="example">
+//   <p></p>
+//   <p class="foo bar"></p>
+// </div>
+```
+
+上面代码中，`matches`集合的第一个成员，一旦被拿掉 class 里面的`foo`，就会立刻从`matches`里面消失，导致出现上面的结果。
+
 ### Element.getElementsByTagName()
 
-`Element.getElementsByTagName`方法返回一个`HTMLCollection`对象，成员是当前元素节点的所有匹配指定标签名的子元素。该方法与`document.getElementsByClassName`方法的用法类似，只是搜索范围不是整个文档，而是当前元素节点。
+`Element.getElementsByTagName`方法返回一个`HTMLCollection`实例，成员是当前节点的所有匹配指定标签名的子元素节点。该方法与`document.getElementsByClassName`方法的用法类似，只是搜索范围不是整个文档，而是当前元素节点。
 
 ```javascript
 var table = document.getElementById('forecast-table');
@@ -694,7 +718,7 @@ el.scrollIntoView(false);
 
 ### Element.getBoundingClientRect()
 
-`Element.getBoundingClientRect`方法返回一个对象，该对象提供当前元素节点的大小、位置等信息，基本上就是CSS盒状模型提供的所有信息。
+`Element.getBoundingClientRect`方法返回一个对象，提供当前元素节点的大小、位置等信息，基本上就是 CSS 盒状模型的所有信息。
 
 ```javascript
 var rect = obj.getBoundingClientRect();
@@ -703,23 +727,32 @@ var rect = obj.getBoundingClientRect();
 上面代码中，`getBoundingClientRect`方法返回的`rect`对象，具有以下属性（全部为只读）。
 
 - `x`：元素左上角相对于视口的横坐标
+- `y`：元素左上角相对于视口的纵坐标
+- `height`：元素高度
+- `width`：元素宽度
 - `left`：元素左上角相对于视口的横坐标，与`x`属性相等
-- `right`：元素右边界相对于视口的横坐标（等于`x`加上`width`）
-- `width`：元素宽度（等于`right`减去`left`）
-- `y`：元素顶部相对于视口的纵坐标
+- `right`：元素右边界相对于视口的横坐标（等于`x + width`）
 - `top`：元素顶部相对于视口的纵坐标，与`y`属性相等
-- `bottom`：元素底部相对于视口的纵坐标
-- `height`：元素高度（等于`y`加上`height`）
+- `bottom`：元素底部相对于视口的纵坐标（等于`y + height`）
 
 由于元素相对于视口（viewport）的位置，会随着页面滚动变化，因此表示位置的四个属性值，都不是固定不变的。如果想得到绝对位置，可以将`left`属性加上`window.scrollX`，`top`属性加上`window.scrollY`。
 
 注意，`getBoundingClientRect`方法的所有属性，都把边框（`border`属性）算作元素的一部分。也就是说，都是从边框外缘的各个点来计算。因此，`width`和`height`包括了元素本身 + `padding` + `border`。
 
+另外，上面的这些属性，都是继承自原型的属性，`Object.keys`会返回一个空数组，这一点也需要注意。
+
+```javascript
+var rect = document.body.getBoundingClientRect();
+Object.keys(rect) // []
+```
+
+上面代码中，`rect`对象没有自身属性，而`Object.keys`方法只返回对象自身的属性，所以返回了一个空数组。
+
 ### Element.getClientRects()
 
-`Element.getClientRects`方法返回一个类似数组的对象，里面是当前元素在页面上形成的所有矩形。每个矩形都有`bottom`、`height`、`left`、`right`、`top`和`width`六个属性，表示它们相对于视口的四个坐标，以及本身的高度和宽度。
+`Element.getClientRects`方法返回一个类似数组的对象，里面是当前元素在页面上形成的所有矩形（所以方法名中的`Rect`用的是复数）。每个矩形都有`bottom`、`height`、`left`、`right`、`top`和`width`六个属性，表示它们相对于视口的四个坐标，以及本身的高度和宽度。
 
-对于盒状元素（比如`<div>`和`<p>`），该方法返回的对象中只有该元素一个成员。对于行内元素（比如span、a、em），该方法返回的对象有多少个成员，取决于该元素在页面上占据多少行。这是它和`Element.getBoundingClientRect()`方法的主要区别，对于行内元素，后者总是返回一个矩形区域，前者可能返回多个矩形区域，所以方法名中的`Rect`用的是复数。
+对于盒状元素（比如`<div>`和`<p>`），该方法返回的对象中只有该元素一个成员。对于行内元素（比如`<span>`、`<a>`、`<em>`），该方法返回的对象有多少个成员，取决于该元素在页面上占据多少行。这是它和`Element.getBoundingClientRect()`方法的主要区别，后者对于行内元素总是返回一个矩形。
 
 ```html
 <span id="inline">
@@ -743,32 +776,69 @@ el.getClientRects()[0].width // 105.908203125
 
 这个方法主要用于判断行内元素是否换行，以及行内元素的每一行的位置偏移。
 
-### Element.insertAdjacentHTML()
+### Element.insertAdjacentElement()
 
-`Element.insertAdjacentHTML`方法解析HTML字符串，然后将生成的节点插入DOM树的指定位置。
+`Element.insertAdjacentElement`方法在相对于当前元素的指定位置，插入一个新的节点。该方法返回被插入的节点，如果插入失败，返回`null`。
+
+```javascript
+element.insertAdjacentElement(position, element);
+```
+
+`Element.insertAdjacentElement`方法一共可以接受两个参数，第一个参数是一个字符串，表示插入的位置，第二个参数是将要插入的节点。第一个参数只可以取如下的值。
+
+- `beforebegin`：当前元素之前
+- `afterbegin`：当前元素内部的第一个子节点前面
+- `beforeend`：当前元素内部的最后一个子节点后面
+- `afterend`：当前元素之后
+
+注意，`beforebegin`和`afterend`这两个值，只在当前节点有父节点时才会生效。如果当前节点是由脚本创建的，没有父节点，那么插入会失败。
+
+```javascript
+var p1 = document.createElement('p')
+var p2 = document.createElement('p')
+p1.insertAdjacentElement('afterend', p2) // null
+```
+
+上面代码中，`p1`没有父节点，所以插入`p2`到它后面就失败了。
+
+如果插入的节点是一个文档里现有的节点，它会从原有位置删除，放置到新的位置。
+
+### Element.insertAdjacentHTML()，Element.insertAdjacentText()
+
+`Element.insertAdjacentHTML`方法用于将一个 HTML 字符串，解析生成 DOM 结构，插入相对于当前节点的指定位置。
 
 ```javascript
 element.insertAdjacentHTML(position, text);
 ```
 
-该方法接受两个参数，第一个是指定位置，第二个是待解析的字符串。
+该方法接受两个参数，第一个是一个表示指定位置的字符串，第二个是待解析的 HTML 字符串。第一个参数只能设置下面四个值之一。
 
-指定位置共有四个。
-
-- `beforebegin`：在当前元素节点的前面。
-- `afterbegin`：在当前元素节点的里面，插在它的第一个子元素之前。
-- `beforeend`：在当前元素节点的里面，插在它的最后一个子元素之后。
-- `afterend`：在当前元素节点的后面。
+- `beforebegin`：当前元素之前
+- `afterbegin`：当前元素内部的第一个子节点前面
+- `beforeend`：当前元素内部的最后一个子节点后面
+- `afterend`：当前元素之后
 
 ```javascript
-// 原来的HTML代码：<div id="one">one</div>
+// HTML 代码：<div id="one">one</div>
 var d1 = document.getElementById('one');
 d1.insertAdjacentHTML('afterend', '<div id="two">two</div>');
-// 现在的HTML代码：
+// 执行后的 HTML 代码：
 // <div id="one">one</div><div id="two">two</div>
 ```
 
-该方法不是彻底置换现有的DOM结构，这使得它的执行速度比`innerHTML`操作快得多。
+该方法只是在现有的 DOM 结构里面插入节点，这使得它的执行速度比`innerHTML`方法快得多。
+
+注意，该方法不会转义 HTML 字符串，这导致它不能用来插入用户输入的内容，否则会有安全风险。
+
+`Element.insertAdjacentText`方法在相对于当前节点的指定位置，插入一个文本节点，用法与`Element.insertAdjacentHTML`方法完全一致。
+
+```javascript
+// HTML 代码：<div id="one">one</div>
+var d1 = document.getElementById('one');
+d1.insertAdjacentText('afterend', 'two');
+// 执行后的 HTML 代码：
+// <div id="one">one</div>two
+```
 
 ### Element.remove()
 
