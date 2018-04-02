@@ -525,26 +525,9 @@ foo.hasAttributes() // true
 document.getElementById('div1').removeAttribute('id')
 ```
 
-## 查找相关的方法
-
-以下四个方法用来查找与当前元素节点相关的节点。这四个方法也部署在`document`对象上，用法完全一致。
-
-- `Element.querySelector()`
-- `Element.querySelectorAll()`
-- `Element.getElementsByTagName()`
-- `Element.getElementsByClassName()`
-
-上面四个方法只返回Element子节点，因此可以采用链式写法。
-
-```javascript
-document
-  .getElementById('header')
-  .getElementsByClassName('a')
-```
-
 ### Element.querySelector()
 
-`Element.querySelector`方法接受CSS选择器作为参数，返回父元素的第一个匹配的子元素。
+`Element.querySelector`方法接受 CSS 选择器作为参数，返回父元素的第一个匹配的子元素。如果没有找到匹配的子元素，就返回`null`。
 
 ```javascript
 var content = document.getElementById('content');
@@ -553,7 +536,23 @@ var el = content.querySelector('p');
 
 上面代码返回`content`节点的第一个`p`元素。
 
-需要注意的是，浏览器执行`querySelector`方法时，是先在全局范围内搜索给定的CSS选择器，然后过滤出哪些属于当前元素的子元素。因此，会有一些违反直觉的结果，请看下面的HTML代码。
+`Element.querySelector`方法可以接受任何复杂的 CSS 选择器。
+
+```javascript
+document.body.querySelector("style[type='text/css'], style:not([type])");
+```
+
+注意，这个方法无法选中伪元素。
+
+它可以接受多个选择器，它们之间使用逗号分隔。
+
+```javascript
+element.querySelector('div, p')
+```
+
+上面代码返回`element`的第一个`div`或`p`子元素。
+
+需要注意的是，浏览器执行`querySelector`方法时，是先在全局范围内搜索给定的 CSS 选择器，然后过滤出哪些属于当前元素的子元素。因此，会有一些违反直觉的结果，下面是一段 HTML 代码。
 
 ```html
 <div>
@@ -566,7 +565,7 @@ var el = content.querySelector('p');
 </div>
 ```
 
-那么，下面代码实际上会返回第一个`p`元素，而不是第二个。
+那么，像下面这样查询的话，实际上返回的是第一个`p`元素，而不是第二个。
 
 ```javascript
 var outer = document.getElementById('outer');
@@ -576,14 +575,16 @@ outer.querySelector('div p')
 
 ### Element.querySelectorAll()
 
-`Element.querySelectorAll`方法接受CSS选择器作为参数，返回一个`NodeList`对象，包含所有匹配的子元素。
+`Element.querySelectorAll`方法接受 CSS 选择器作为参数，返回一个`NodeList`实例，包含所有匹配的子元素。
 
 ```javascript
 var el = document.querySelector('#test');
 var matches = el.querySelectorAll('div.highlighted > p');
 ```
 
-该方法的执行机制与`querySelector`相同，也是先在全局范围内查找，再过滤出当前元素的子元素。因此，选择器实际上针对整个文档的。
+该方法的执行机制与`querySelector`方法相同，也是先在全局范围内查找，再过滤出当前元素的子元素。因此，选择器实际上针对整个文档的。
+
+它也可以接受多个 CSS 选择器，它们之间使用逗号分隔。如果选择器里面有伪元素的选择器，则总是返回一个空的`NodeList`实例。
 
 ### Element.getElementsByClassName()
 
@@ -657,7 +658,7 @@ div03.closest(":not(div)") // article
 
 ### Element.matches()
 
-`Element.matches`方法返回一个布尔值，表示当前元素是否匹配给定的CSS选择器。
+`Element.matches`方法返回一个布尔值，表示当前元素是否匹配给定的 CSS 选择器。
 
 ```javascript
 if (el.matches('.someClass')) {
@@ -665,31 +666,9 @@ if (el.matches('.someClass')) {
 }
 ```
 
-该方法带有浏览器前缀，下面的函数可以兼容不同的浏览器，并且在浏览器不支持时，自行部署这个功能。
+### 事件相关方法
 
-```javascript
-function matchesSelector(el, selector) {
-  var p = Element.prototype;
-  var f = p.matches
-    || p.webkitMatchesSelector
-    || p.mozMatchesSelector
-    || p.msMatchesSelector
-    || function(s) {
-    return [].indexOf.call(document.querySelectorAll(s), this) !== -1;
-  };
-  return f.call(el, selector);
-}
-
-// 用法
-matchesSelector(
-  document.getElementById('myDiv'),
-  'div.someSelector[some-attribute=true]'
-)
-```
-
-## 事件相关的方法
-
-以下三个方法与`Element`节点的事件相关。这些方法都继承自`EventTarget`接口，详见本章的《Event对象》一节。
+以下三个方法与`Element`节点的事件相关。这些方法都继承自`EventTarget`接口，详见相关章节。
 
 - `Element.addEventListener()`：添加事件的回调函数
 - `Element.removeEventListener()`：移除事件监听函数
@@ -702,8 +681,6 @@ element.removeEventListener('click', listener, false);
 var event = new Event('click');
 element.dispatchEvent(event);
 ```
-
-## 其他方法
 
 ### Element.scrollIntoView()
 
@@ -842,12 +819,14 @@ d1.insertAdjacentText('afterend', 'two');
 
 ### Element.remove()
 
-`Element.remove`方法用于将当前元素节点从DOM树删除。
+`Element.remove`方法继承自 ChildNode 接口，用于将当前元素节点从它的父节点移除。
 
 ```javascript
-var el = document.getElementById('div-01');
+var el = document.getElementById('mydiv');
 el.remove();
 ```
+
+上面代码将`el`节点从 DOM 树里面移除。
 
 ### Element.focus()
 
