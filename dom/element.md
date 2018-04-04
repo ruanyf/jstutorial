@@ -204,6 +204,26 @@ if (boolValue) {
 }
 ```
 
+### Element.contentEditable，Element.isContentEditable
+
+HTML 元素可以设置`contentEditable`属性，使得元素的内容可以编辑。
+
+```html
+<div contenteditable>123</div>
+```
+
+上面代码中，`<div>`元素有`contenteditable`属性，因此用户可以在网页上编辑这个区块的内容。
+
+`Element.contentEditable`属性返回一个字符串，表示是否设置了`contenteditable`属性，有三种可能的值。
+
+- `"true"`：元素内容可编辑
+- `"false"`：元素内容不可编辑
+- `"inherit"`：元素是否可编辑，继承了父元素的设置
+
+`Element.isContentEditable`属性返回一个布尔值，同样表示是否设置了`contenteditable`属性。
+
+这两个属性都是只读属性。
+
 ### Element.clientHeight，Element.clientWidth
 
 `Element.clientHeight`属性返回一个整数值，表示元素节点的 CSS 高度（单位像素），只对块级元素生效，对于行内元素返回`0`。如果块级元素没有设置 CSS 高度，则返回实际高度。
