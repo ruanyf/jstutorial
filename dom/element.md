@@ -20,22 +20,9 @@ p.nodeType // 1
 
 ## 属性
 
-### Element.attributes
+### 元素特性的相关属性
 
-`Element.attributes`属性返回一个类似数组的对象，成员是当前元素节点的所有属性节点，详见《Attr 对象》一章。
-
-```javascript
-var p = document.querySelector('p');
-var attrs = p.attributes;
-
-for (var i = attrs.length - 1; i >= 0; i--) {
-  console.log(attrs[i].name + '->' + attrs[i].value);
-}
-```
-
-上面代码遍历`p`元素的所有属性。
-
-### Element.id，Element.tagName
+**（1）Element.id**
 
 `Element.id`属性返回指定元素的`id`属性，该属性可读写。
 
@@ -47,6 +34,8 @@ p.id // "foo"
 
 注意，`id`属性的值是大小写敏感，即浏览器能正确识别`<p id="foo">`和`<p id="FOO">`这两个元素的`id`属性，但是最好不要这样命名。
 
+**（2）Element.tagName**
+
 `Element.tagName`属性返回指定元素的大写标签名，与`nodeName`属性的值相等。
 
 ```javascript
@@ -55,6 +44,37 @@ p.id // "foo"
 var span = document.getElementById('myspan');
 span.id // "myspan"
 span.tagName // "SPAN"
+```
+
+**（3）Element.dir**
+
+`Element.dir`属性用于读写当前元素的文字方向，可能是从左到右（`"ltr"`），也可能是从右到左（`"rtl"`）。
+
+**（4）Element.accessKey**
+
+`Element.accessKey`属性用于读写分配给当前元素的快捷键。
+
+```javascript
+// HTML 代码如下
+// <button accesskey="h" id="btn">点击</button>
+var btn = document.getElementById('btn');
+btn.accessKey // "h"
+```
+
+上面代码中，`btn`元素的快捷键是`h`，按下`Alt + h`就能将焦点转移到它上面。
+
+**（5）Element.draggable**
+
+`Element.draggable`属性返回一个布尔值，表示当前元素是否可拖动。该属性可读写。
+
+**（6）Element.lang**
+
+`Element.lang`属性返回当前元素的语言设置。该属性可读写。
+
+```javascript
+// HTML 代码如下
+// <html lang="en">
+document.documentElement.lang // "en"
 ```
 
 ### Element.innerHTML
@@ -204,7 +224,86 @@ if (boolValue) {
 }
 ```
 
-### Element.contentEditable，Element.isContentEditable
+### Element.attributes
+
+`Element.attributes`属性返回一个类似数组的对象，成员是当前元素节点的所有属性节点，详见《Attr 对象》一章。
+
+```javascript
+var p = document.querySelector('p');
+var attrs = p.attributes;
+
+for (var i = attrs.length - 1; i >= 0; i--) {
+  console.log(attrs[i].name + '->' + attrs[i].value);
+}
+```
+
+上面代码遍历`p`元素的所有属性。
+
+### Element.dataset
+
+网页元素可以自定义`data-`属性，用来添加数据。
+
+```html
+<div data-timestamp="1522907809292"></div>
+```
+
+上面代码中，`<div>`元素有一个自定义的`data-timestamp`属性，用来为该元素添加一个时间戳。
+
+`Element.dataset`属性返回一个对象，可以从这个对象读写`data-`属性。
+
+```javascript
+// <article
+//   id="foo"
+//   data-columns="3"
+//   data-index-number="12314"
+//   data-parent="cars">
+//   ...
+// </article>
+var article = document.getElementById('foo');
+foo.dataset.columns // "3"
+foo.dataset.indexNumber // "12314"
+foo.dataset.parent // "cars"
+```
+
+注意，`dataset`上面的各个属性返回都是字符串。
+
+HTML 代码中，`data-`属性的属性名，只能包含英文字母、数字、连词线（`-`）、点（`.`）、冒号（`:`）和下划线（`_`）。它们转成 JavaScript 对应的`dataset`属性名，规则如下。
+
+- 开头的`data-`会省略。
+- 如果连词线后面跟了一个英文字母，那么连词线会取消，该字母变成大写。
+- 其他字符不变。
+
+因此，`data-abc-def`对应`dataset.abcDef`，`data-abc-1`对应`dataset["abc-1"]`。
+
+除了使用`dataset`读写`data-`属性，也可以使用`Element.getAttribute()`和`Element.setAttribute()`，通过完整的属性名读写这些属性。
+
+```javascript
+var mydiv = document.getElementById('mydiv');
+
+mydiv.dataset.foo = 'bar';
+mydiv.getAttribute('data-foo') // "bar"
+```
+
+### 元素状态的相关属性
+
+**（1）Element.hidden**
+
+`Element.hidden`属性返回一个布尔值，表示当前元素的`hidden`属性，用来控制当前元素是否可见。该属性可读写。
+
+```javascript
+var btn = document.getElementById('btn');
+var mydiv = document.getElementById('mydiv');
+
+btn.addEventListener('click', function () {
+  mydiv.hidden = !mydiv.hidden;
+}, false);
+```
+
+注意，该属性与 CSS 设置是互相独立的。CSS 对这个元素可见性的设置，`Element.hidden`并不能反映出来。也就是说，这个属性并不难用来判断当前元素的实际可见性。
+
+CSS 的设置高于`Element.hidden`。如果 CSS 指定了该元素不可见（`display: none`）或可见（`display: hidden`），那么`Element.hidden`并不能改变该元素实际的可见性。换言之，这个属性只在 CSS 没有明确设定当前元素的可见性时才有效。
+
+**（2）Element.contentEditable，Element.isContentEditable**
 
 HTML 元素可以设置`contentEditable`属性，使得元素的内容可以编辑。
 
