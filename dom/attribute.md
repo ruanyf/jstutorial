@@ -6,7 +6,7 @@ date: 2016-08-23
 modifiedOn: 2016-08-23
 ---
 
-HTML元素包括标签名和若干个键值对，这个键值对就称为“属性”（attribute）。
+HTML 元素包括标签名和若干个键值对，这个键值对就称为“属性”（attribute）。
 
 ```html
 <a id="test" href="http://www.example.com">
@@ -16,19 +16,23 @@ HTML元素包括标签名和若干个键值对，这个键值对就称为“属�
 
 上面代码中，`a`元素包括两个属性：`id`属性和`href`属性。
 
-在DOM中，属性本身是一个对象（`Attr`对象），但是实际上，这个对象极少使用。一般都是通过元素节点对象（`HTMlElement`对象）来操作属性。本节介绍如何操作这些属性。
+属性本身是一个对象（`Attr`对象），但是实际上，这个对象极少使用。一般都是通过元素节点对象（`HTMlElement`对象）来操作属性。本章介绍如何操作这些属性。
 
-## Element.attributes属性
+## Element.attributes 属性
 
-HTML元素对象有一个`attributes`属性，返回一个类似数组的动态对象，成员是该元素标签的所有属性节点对象，属性的实时变化都会反映在这个节点对象上。其他类型的节点对象，虽然也有`attributes`属性，但是返回的都是`null`，因此可以把这个属性视为元素对象独有的。
+元素对象有一个`attributes`属性，返回一个类似数组的动态对象，成员是该元素标签的所有属性节点对象，属性的实时变化都会反映在这个节点对象上。其他类型的节点对象，虽然也有`attributes`属性，但返回的都是`null`，因此可以把这个属性视为元素对象独有的。
+
+单个属性可以通过序号引用，也可以通过属性名引用。
 
 ```javascript
+// HTML 代码如下
+// <body bgcolor="yellow" onload="">
 document.body.attributes[0]
 document.body.attributes.bgcolor
 document.body.attributes['ONLOAD']
 ```
 
-注意，上面代码中，第一行`attributes[0]`返回的是属性节点对象，后两行都返回属性值。
+注意，上面代码的三种方法，返回的都是属性节点对象，而不是属性值。
 
 属性节点对象有`name`和`value`属性，对应该属性的属性名和属性值，等同于`nodeName`属性和`nodeValue`属性。
 
@@ -62,9 +66,9 @@ if (para.hasAttributes()) {
 }
 ```
 
-## 元素节点对象的属性
+## 元素的标准属性
 
-HTML元素节点的标准属性（即在标准中定义的属性），会自动成为元素节点对象的属性。
+HTML 元素的标准属性（即在标准中定义的属性），会自动成为元素节点对象的属性。
 
 ```javascript
 var a = document.getElementById('test');
@@ -83,7 +87,7 @@ img.src = 'http://www.example.com/image.jpg';
 
 上面的写法，会立刻替换掉`img`对象的`src`属性，即会显示另外一张图片。
 
-这样修改HTML属性，常常用于添加表单的属性。
+这种修改属性的方法，常常用于添加表单的属性。
 
 ```javascript
 var f = document.forms[0];
@@ -93,16 +97,16 @@ f.method = 'POST';
 
 上面代码为表单添加提交网址和提交方法。
 
-注意，这种用法虽然可以读写HTML属性，但是无法删除属性，`delete`运算符在这里不会生效。
+注意，这种用法虽然可以读写属性，但是无法删除属性，`delete`运算符在这里不会生效。
 
-HTML元素的属性名是大小写不敏感的，但是JavaScript对象的属性名是大小写敏感的。转换规则是，转为JavaScript属性名时，一律采用小写。如果属性名包括多个单词，则采用骆驼拼写法，即从第二个单词开始，每个单词的首字母采用大写，比如`onClick`。
+HTML 元素的属性名是大小写不敏感的，但是 JavaScript 对象的属性名是大小写敏感的。转换规则是，转为 JavaScript 属性名时，一律采用小写。如果属性名包括多个单词，则采用骆驼拼写法，即从第二个单词开始，每个单词的首字母采用大写，比如`onClick`。
 
-有些HTML属性名是JavaScript的保留字，转为JavaScript属性时，必须改名。主要是以下两个。
+有些 HTML 属性名是 JavaScript 的保留字，转为 JavaScript 属性时，必须改名。主要是以下两个。
 
 - `for`属性改为`htmlFor`
 - `class`属性改为`className`
 
-另外，HTML属性值一般都是字符串，但是JavaScript属性会自动转换类型。比如，将字符串`true`转为布尔值，将`onClick`的值转为一个函数，将`style`属性的值转为一个`CSSStyleDeclaration`对象。
+另外，HTML 属性值一般都是字符串，但是 JavaScript 属性会自动转换类型。比如，将字符串`true`转为布尔值，将`onClick`的值转为一个函数，将`style`属性的值转为一个`CSSStyleDeclaration`对象。因此，可以对这些属性赋予各种类型的值。
 
 ## 属性操作的标准方法
 
@@ -115,15 +119,15 @@ HTML元素的属性名是大小写不敏感的，但是JavaScript对象的属性
 - `hasAttribute()`
 - `removeAttribute()`
 
-其中，前两个读写属性的方法，与前一部分HTML标签对象的属性读写，有三点差异。
+这有几点注意。
 
 （1）适用性
 
-`getAttribute()`和`setAttribute()`对所有属性（包括用户自定义的属性）都适用；HTML标签对象的属性，只适用于标准属性。
+这四个方法对所有属性（包括用户自定义的属性）都适用。
 
 （2）返回值
 
-`getAttribute()`只返回字符串，不会返回其他类型的值。HTML标签对象的属性会返回各种类型的值，包括字符串、数值、布尔值或对象。
+`getAttribute()`只返回字符串，不会返回其他类型的值。
 
 （3）属性名
 
@@ -175,23 +179,23 @@ if (d.hasAttribute('align')) {
 }
 ```
 
-上面代码检查`div`节点是否含有`align`属性。如果有，则设置为“居中对齐”。
+上面代码检查`div`节点是否含有`align`属性。如果有，则设置为居中对齐。
 
 ### Element.removeAttribute()
 
 `Element.removeAttribute`方法用于从当前元素节点移除属性。
 
 ```javascript
-// HTML代码为
+// HTML 代码为
 // <div id="div1" align="left" width="200px">
 document.getElementById('div1').removeAttribute('align');
 // 现在的HTML代码为
 // <div id="div1" width="200px">
 ```
 
-## dataset属性
+## dataset 属性
 
-有时，需要在HTML元素上附加数据，供JavaScript脚本使用。一种解决方法是自定义属性。
+有时，需要在HTML元素上附加数据，供 JavaScript 脚本使用。一种解决方法是自定义属性。
 
 ```html
 <div id="mydiv" foo="bar">
@@ -205,7 +209,7 @@ n.getAttribute('foo') // bar
 n.setAttribute('foo', 'baz')
 ```
 
-这种方法虽然可以达到目的，但是会使得HTML元素的属性不符合标准，导致网页的HTML代码通不过校验。
+这种方法虽然可以达到目的，但是会使得 HTML 元素的属性不符合标准，导致网页代码通不过校验。
 
 更好的解决方法是，使用标准提供的`data-*`属性。
 
@@ -213,7 +217,7 @@ n.setAttribute('foo', 'baz')
 <div id="mydiv" data-foo="bar">
 ```
 
-然后，使用元素节点对象的`dataset`属性，它指向一个对象，可以用来操作HTML元素标签的`data-*`属性。
+然后，使用元素节点对象的`dataset`属性，它指向一个对象，可以用来操作 HTML 元素标签的`data-*`属性。
 
 ```javascript
 var n = document.getElementById('mydiv');

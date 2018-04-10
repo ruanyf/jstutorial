@@ -18,7 +18,7 @@ p.nodeType // 1
 
 `Element`对象继承了`Node`接口，因此`Node`的属性和方法在`Element`对象都存在。此外，不同的 HTML 元素对应的元素节点是不一样的，浏览器使用不同的构造函数，生成不同的元素节点，比如`<a>`元素的节点对象由`HTMLAnchorElement`构造函数生成，`<button>`元素的节点对象由`HTMLButtonElement`构造函数生成。因此，元素节点不是一种对象，而是一组对象，这些对象除了继承`Element`的属性和方法，还有各自构造函数的属性和方法。
 
-## 属性
+## 实例属性
 
 ### 元素特性的相关属性
 
@@ -75,6 +75,187 @@ btn.accessKey // "h"
 // HTML 代码如下
 // <html lang="en">
 document.documentElement.lang // "en"
+```
+
+**（7）Element.tabIndex**
+
+`Element.tabIndex`属性返回一个整数，表示当前元素在 Tab 键遍历时的顺序。该属性可读写。
+
+`tabIndex`属性值如果是负值（通常是`-1`），则 Tab 键不会遍历到该元素。如果是正整数，则按照顺序，从小到大遍历。如果两个元素的`tabIndex`属性的正整数值相同，则按照出现的顺序遍历。遍历完所有`tabIndex`为正整数的元素以后，再遍历所有`tabIndex`等于`0`、或者属性值是非法值、或者没有`tabIndex`属性的元素，顺序为它们在网页中出现的顺序。
+
+**（8）Element.title**
+
+`Element.title`属性用来读写当前元素的 HTML 属性`title`。该属性通常用来指定，鼠标悬浮时弹出的文字提示框。
+
+### 元素状态的相关属性
+
+**（1）Element.hidden**
+
+`Element.hidden`属性返回一个布尔值，表示当前元素的`hidden`属性，用来控制当前元素是否可见。该属性可读写。
+
+```javascript
+var btn = document.getElementById('btn');
+var mydiv = document.getElementById('mydiv');
+
+btn.addEventListener('click', function () {
+  mydiv.hidden = !mydiv.hidden;
+}, false);
+```
+
+注意，该属性与 CSS 设置是互相独立的。CSS 对这个元素可见性的设置，`Element.hidden`并不能反映出来。也就是说，这个属性并不难用来判断当前元素的实际可见性。
+
+CSS 的设置高于`Element.hidden`。如果 CSS 指定了该元素不可见（`display: none`）或可见（`display: hidden`），那么`Element.hidden`并不能改变该元素实际的可见性。换言之，这个属性只在 CSS 没有明确设定当前元素的可见性时才有效。
+
+**（2）Element.contentEditable，Element.isContentEditable**
+
+HTML 元素可以设置`contentEditable`属性，使得元素的内容可以编辑。
+
+```html
+<div contenteditable>123</div>
+```
+
+上面代码中，`<div>`元素有`contenteditable`属性，因此用户可以在网页上编辑这个区块的内容。
+
+`Element.contentEditable`属性返回一个字符串，表示是否设置了`contenteditable`属性，有三种可能的值。
+
+- `"true"`：元素内容可编辑
+- `"false"`：元素内容不可编辑
+- `"inherit"`：元素是否可编辑，继承了父元素的设置
+
+`Element.isContentEditable`属性返回一个布尔值，同样表示是否设置了`contenteditable`属性。
+
+这两个属性都是只读属性。
+
+### Element.attributes
+
+`Element.attributes`属性返回一个类似数组的对象，成员是当前元素节点的所有属性节点，详见《Attr 对象》一章。
+
+```javascript
+var p = document.querySelector('p');
+var attrs = p.attributes;
+
+for (var i = attrs.length - 1; i >= 0; i--) {
+  console.log(attrs[i].name + '->' + attrs[i].value);
+}
+```
+
+上面代码遍历`p`元素的所有属性。
+
+### Element.className，Element.classList
+
+`className`属性用来读写当前元素节点的`class`属性。它的值是一个字符串，每个`class`之间用空格分割。
+
+`classList`属性返回一个类似数组的对象，当前元素节点的每个`class`就是这个对象的一个成员。
+
+```javascript
+// HTML 代码 <div class="one two three" id="myDiv"></div>
+var div = document.getElementById('myDiv');
+
+div.className
+// "one two three"
+
+div.classList
+// {
+//   0: "one"
+//   1: "two"
+//   2: "three"
+//   length: 3
+// }
+```
+
+上面代码中，`className`属性返回一个空格分隔的字符串，而`classList`属性指向一个类似数组的对象，该对象的`length`属性（只读）返回当前元素的`class`数量。
+
+`classList`对象有下列方法。
+
+- `add()`：增加一个 class。
+- `remove()`：移除一个 class。
+- `contains()`：检查当前元素是否包含某个 class。
+- `toggle()`：将某个 class 移入或移出当前元素。
+- `item()`：返回指定索引位置的 class。
+- `toString()`：将 class 的列表转为字符串。
+
+```javascript
+var div = document.getElementById('myDiv');
+
+div.classList.add('myCssClass');
+div.classList.add('foo', 'bar');
+div.classList.remove('myCssClass');
+div.classList.toggle('myCssClass'); // 如果 myCssClass 不存在就加入，否则移除
+div.classList.contains('myCssClass'); // 返回 true 或者 false
+div.classList.item(0); // 返回第一个 Class
+div.classList.toString();
+```
+
+下面比较一下，`className`和`classList`在添加和删除某个 class 时的写法。
+
+```javascript
+var foo = document.getElementById('foo');
+
+// 添加class
+foo.className += 'bold';
+foo.classList.add('bold');
+
+// 删除class
+foo.classList.remove('bold');
+foo.className = foo.className.replace(/^bold$/, '');
+```
+
+`toggle`方法可以接受一个布尔值，作为第二个参数。如果为`true`，则添加该属性；如果为`false`，则去除该属性。
+
+```javascript
+el.classList.toggle('abc', boolValue);
+
+// 等同于
+if (boolValue) {
+  el.classList.add('abc');
+} else {
+  el.classList.remove('abc');
+}
+```
+
+### Element.dataset
+
+网页元素可以自定义`data-`属性，用来添加数据。
+
+```html
+<div data-timestamp="1522907809292"></div>
+```
+
+上面代码中，`<div>`元素有一个自定义的`data-timestamp`属性，用来为该元素添加一个时间戳。
+
+`Element.dataset`属性返回一个对象，可以从这个对象读写`data-`属性。
+
+```javascript
+// <article
+//   id="foo"
+//   data-columns="3"
+//   data-index-number="12314"
+//   data-parent="cars">
+//   ...
+// </article>
+var article = document.getElementById('foo');
+foo.dataset.columns // "3"
+foo.dataset.indexNumber // "12314"
+foo.dataset.parent // "cars"
+```
+
+注意，`dataset`上面的各个属性返回都是字符串。
+
+HTML 代码中，`data-`属性的属性名，只能包含英文字母、数字、连词线（`-`）、点（`.`）、冒号（`:`）和下划线（`_`）。它们转成 JavaScript 对应的`dataset`属性名，规则如下。
+
+- 开头的`data-`会省略。
+- 如果连词线后面跟了一个英文字母，那么连词线会取消，该字母变成大写。
+- 其他字符不变。
+
+因此，`data-abc-def`对应`dataset.abcDef`，`data-abc-1`对应`dataset["abc-1"]`。
+
+除了使用`dataset`读写`data-`属性，也可以使用`Element.getAttribute()`和`Element.setAttribute()`，通过完整的属性名读写这些属性。
+
+```javascript
+var mydiv = document.getElementById('mydiv');
+
+mydiv.dataset.foo = 'bar';
+mydiv.getAttribute('data-foo') // "bar"
 ```
 
 ### Element.innerHTML
@@ -152,177 +333,6 @@ div.outerHTML = '<p>test</p>';
 
 上面代码中，`div`元素没有父节点，设置`outerHTML`属性会报错。
 
-### Element.className，Element.classList
-
-`className`属性用来读写当前元素节点的`class`属性。它的值是一个字符串，每个`class`之间用空格分割。
-
-`classList`属性返回一个类似数组的对象，当前元素节点的每个`class`就是这个对象的一个成员。
-
-```javascript
-// HTML 代码 <div class="one two three" id="myDiv"></div>
-var div = document.getElementById('myDiv');
-
-div.className
-// "one two three"
-
-div.classList
-// {
-//   0: "one"
-//   1: "two"
-//   2: "three"
-//   length: 3
-// }
-```
-
-上面代码中，`className`属性返回一个空格分隔的字符串，而`classList`属性指向一个类似数组的对象，该对象的`length`属性（只读）返回当前元素的`class`数量。
-
-`classList`对象有下列方法。
-
-- `add()`：增加一个 class。
-- `remove()`：移除一个 class。
-- `contains()`：检查当前元素是否包含某个 class。
-- `toggle()`：将某个 class 移入或移出当前元素。
-- `item()`：返回指定索引位置的 class。
-- `toString()`：将 class 的列表转为字符串。
-
-```javascript
-var div = document.getElementById('myDiv');
-
-div.classList.add('myCssClass');
-div.classList.add('foo', 'bar');
-div.classList.remove('myCssClass');
-div.classList.toggle('myCssClass'); // 如果 myCssClass 不存在就加入，否则移除
-div.classList.contains('myCssClass'); // 返回 true 或者 false
-div.classList.item(0); // 返回第一个 Class
-div.classList.toString();
-```
-
-下面比较一下，`className`和`classList`在添加和删除某个 class 时的写法。
-
-```javascript
-var foo = document.getElementById('foo');
-
-// 添加class
-foo.className += 'bold';
-foo.classList.add('bold');
-
-// 删除class
-foo.classList.remove('bold');
-foo.className = foo.className.replace(/^bold$/, '');
-```
-
-`toggle`方法可以接受一个布尔值，作为第二个参数。如果为`true`，则添加该属性；如果为`false`，则去除该属性。
-
-```javascript
-el.classList.toggle('abc', boolValue);
-
-// 等同于
-if (boolValue) {
-  el.classList.add('abc');
-} else {
-  el.classList.remove('abc');
-}
-```
-
-### Element.attributes
-
-`Element.attributes`属性返回一个类似数组的对象，成员是当前元素节点的所有属性节点，详见《Attr 对象》一章。
-
-```javascript
-var p = document.querySelector('p');
-var attrs = p.attributes;
-
-for (var i = attrs.length - 1; i >= 0; i--) {
-  console.log(attrs[i].name + '->' + attrs[i].value);
-}
-```
-
-上面代码遍历`p`元素的所有属性。
-
-### Element.dataset
-
-网页元素可以自定义`data-`属性，用来添加数据。
-
-```html
-<div data-timestamp="1522907809292"></div>
-```
-
-上面代码中，`<div>`元素有一个自定义的`data-timestamp`属性，用来为该元素添加一个时间戳。
-
-`Element.dataset`属性返回一个对象，可以从这个对象读写`data-`属性。
-
-```javascript
-// <article
-//   id="foo"
-//   data-columns="3"
-//   data-index-number="12314"
-//   data-parent="cars">
-//   ...
-// </article>
-var article = document.getElementById('foo');
-foo.dataset.columns // "3"
-foo.dataset.indexNumber // "12314"
-foo.dataset.parent // "cars"
-```
-
-注意，`dataset`上面的各个属性返回都是字符串。
-
-HTML 代码中，`data-`属性的属性名，只能包含英文字母、数字、连词线（`-`）、点（`.`）、冒号（`:`）和下划线（`_`）。它们转成 JavaScript 对应的`dataset`属性名，规则如下。
-
-- 开头的`data-`会省略。
-- 如果连词线后面跟了一个英文字母，那么连词线会取消，该字母变成大写。
-- 其他字符不变。
-
-因此，`data-abc-def`对应`dataset.abcDef`，`data-abc-1`对应`dataset["abc-1"]`。
-
-除了使用`dataset`读写`data-`属性，也可以使用`Element.getAttribute()`和`Element.setAttribute()`，通过完整的属性名读写这些属性。
-
-```javascript
-var mydiv = document.getElementById('mydiv');
-
-mydiv.dataset.foo = 'bar';
-mydiv.getAttribute('data-foo') // "bar"
-```
-
-### 元素状态的相关属性
-
-**（1）Element.hidden**
-
-`Element.hidden`属性返回一个布尔值，表示当前元素的`hidden`属性，用来控制当前元素是否可见。该属性可读写。
-
-```javascript
-var btn = document.getElementById('btn');
-var mydiv = document.getElementById('mydiv');
-
-btn.addEventListener('click', function () {
-  mydiv.hidden = !mydiv.hidden;
-}, false);
-```
-
-注意，该属性与 CSS 设置是互相独立的。CSS 对这个元素可见性的设置，`Element.hidden`并不能反映出来。也就是说，这个属性并不难用来判断当前元素的实际可见性。
-
-CSS 的设置高于`Element.hidden`。如果 CSS 指定了该元素不可见（`display: none`）或可见（`display: hidden`），那么`Element.hidden`并不能改变该元素实际的可见性。换言之，这个属性只在 CSS 没有明确设定当前元素的可见性时才有效。
-
-**（2）Element.contentEditable，Element.isContentEditable**
-
-HTML 元素可以设置`contentEditable`属性，使得元素的内容可以编辑。
-
-```html
-<div contenteditable>123</div>
-```
-
-上面代码中，`<div>`元素有`contenteditable`属性，因此用户可以在网页上编辑这个区块的内容。
-
-`Element.contentEditable`属性返回一个字符串，表示是否设置了`contenteditable`属性，有三种可能的值。
-
-- `"true"`：元素内容可编辑
-- `"false"`：元素内容不可编辑
-- `"inherit"`：元素是否可编辑，继承了父元素的设置
-
-`Element.isContentEditable`属性返回一个布尔值，同样表示是否设置了`contenteditable`属性。
-
-这两个属性都是只读属性。
-
 ### Element.clientHeight，Element.clientWidth
 
 `Element.clientHeight`属性返回一个整数值，表示元素节点的 CSS 高度（单位像素），只对块级元素生效，对于行内元素返回`0`。如果块级元素没有设置 CSS 高度，则返回实际高度。
@@ -384,167 +394,9 @@ document.documentElement.scrollTop
 
 这两个属性都可读写，设置该属性的值，会导致浏览器将当前元素自动滚动到相应的位置。
 
-### Element.offsetHeight，Element.offsetWidth
-
-`Element.offsetHeight`属性返回元素的垂直高度，`Element.offsetWidth`属性返回水平宽度。`offsetHeight`可以理解成元素左下角距离左上角的位移，`offsetWidth`是元素右上角距离左上角的位移。它们的单位为像素，都是只读。
-
-这两个属性值包括`Padding`和`Border`、以及滚动条。这也意味着，如果不存在内容溢出，`Element.offsetHeight`只比`Element.clientHeight`多了边框的高度。
-
-整张网页的高度，可以在`document.documentElement`和`document.body`上读取。
-
-```javascript
-// 网页总高度
-document.documentElement.offsetHeight
-document.body.offsetHeight
-
-// 网页总宽度
-document.documentElement.offsetWidth
-document.body.offsetWidth
-```
-
-### Element.offsetLeft，Element.offsetTop
-
-`Element.offsetLeft`返回当前元素左上角相对于`Element.offsetParent`节点的水平位移，`Element.offsetTop`返回垂直位移，单位为像素。通常，这两个值是指相对于父节点的位移。
-
-下面的代码可以算出元素左上角相对于整张网页的坐标。
-
-```javascript
-function getElementPosition(e) {
-  var x = 0;
-  var y = 0;
-  while (e !== null)  {
-    x += e.offsetLeft;
-    y += e.offsetTop;
-    e = e.offsetParent;
-  }
-  return {x: x, y: y};
-}
-```
-
-注意，上面的代码假定所有元素都适合它的容器，不存在内容溢出。
-
-### Element.style
-
-每个元素节点都有`style`用来读写该元素的行内样式信息，具体介绍参见《CSS操作》一节。
-
-### 总结
-
-整张网页的高度和宽度，可以从`document.documentElement`（即`<html>`元素）或`<body>`元素上读取。
-
-```javascript
-// 网页总高度
-document.documentElement.offsetHeight
-document.documentElement.scrollHeight
-document.body.offsetHeight
-document.body.scrollHeight
-
-// 网页总宽度
-document.documentElement.offsetWidth
-document.documentElement.scrollWidth
-document.body.offsetWidth
-document.body.scrollWidth
-```
-
-由于`<html>`和`<body>`的宽度可能设得不一样，因此从`<body>`上取值会更保险一点。
-
-视口的高度和宽度（包括滚动条），有两种方法可以获得。
-
-```javascript
-// 视口高度
-window.innerHeight // 包括滚动条
-document.documentElement.clientHeight // 不包括滚动条
-
-// 视口宽度
-window.innerWidth // 包括滚动条
-document.documentElement.clientWidth // 不包括滚动条
-```
-
-某个网页元素距离视口左上角的坐标，使用`Element.getBoundingClientRect`方法读取。
-
-```javascript
-// 网页元素左上角的视口横坐标
-Element.getBoundingClientRect().left
-
-// 网页元素左上角的视口纵坐标
-Element.getBoundingClientRect().top
-```
-
-某个网页元素距离网页左上角的坐标，使用视口坐标加上网页滚动距离。
-
-```javascript
-// 网页元素左上角的网页横坐标
-Element.getBoundingClientRect().left + document.documentElement.scrollLeft
-
-// 网页元素左上角的网页纵坐标
-Element.getBoundingClientRect().top + document.documentElement.scrollTop
-```
-
-网页目前滚动的距离，可以从`document.documentElement`节点上得到。
-
-```javascript
-// 网页滚动的水平距离
-document.documentElement.scrollLeft
-
-// 网页滚动的垂直距离
-document.documentElement.scrollTop
-```
-
-网页元素本身的高度和宽度（不含overflow溢出的部分），通过`offsetHeight`和`offsetWidth`属性（包括`Padding`和`Border`）或`Element.getBoundingClientRect`方法获取。
-
-```javascript
-// 网页元素的高度
-Element.offsetHeight
-
-// 网页元素的宽度
-Element.offsetWidth
-```
-
-## 相关节点的属性
-
-以下属性返回元素节点的相关节点。
-
-### Element.children，Element.childElementCount
-
-`Element.children`属性返回一个`HTMLCollection`对象，包括当前元素节点的所有子元素。它是一个类似数组的动态对象（实时反映网页元素的变化）。如果当前元素没有子元素，则返回的对象包含零个成员。
-
-```javascript
-// para是一个p元素节点
-if (para.children.length) {
-  var children = para.children;
-    for (var i = 0; i < children.length; i++) {
-      // ...
-    }
-}
-```
-
-这个属性与`Node.childNodes`属性的区别是，它只包括HTML元素类型的子节点，不包括其他类型的子节点。
-
-`Element.childElementCount`属性返回当前元素节点包含的子HTML元素节点的个数，与`Element.children.length`的值相同。注意，该属性只计算HTML元素类型的子节点。
-
-### Element.firstElementChild，Element.lastElementChild
-
-`Element.firstElementChild`属性返回第一个HTML元素类型的子节点，`Element.lastElementChild`返回最后一个HTML元素类型的子节点。
-
-如果没有HTML类型的子节点，这两个属性返回`null`。
-
-### Element.nextElementSibling，Element.previousElementSibling
-
-`Element.nextElementSibling`属性返回当前元素节点的后一个同级元素节点，如果没有则返回`null`。
-
-```javascript
-// HTML 代码如下
-// <div id="div-01">Here is div-01</div>
-// <div id="div-02">Here is div-02</div>
-var el = document.getElementById('div-01');
-el.nextElementSibling
-// <div id="div-02">Here is div-02</div>
-```
-
-`Element.previousElementSibling`属性返回当前元素节点的前一个同级元素节点，如果没有则返回`null`。
-
 ### Element.offsetParent
 
-`Element.offsetParent`属性返回当前 HTML 元素的最靠近的、并且 CSS 的`position`属性不等于`static`的上层元素。
+`Element.offsetParent`属性返回最靠近当前元素的、并且 CSS 的`position`属性不等于`static`的上层元素。
 
 ```html
 <div style="position: absolute;">
@@ -571,6 +423,79 @@ el.nextElementSibling
 上面代码中，`span`元素的`offsetParent`属性是`null`。
 
 如果某个元素的所有上层节点的`position`属性都是`static`，则`Element.offsetParent`属性指向`<body>`元素。
+
+### Element.offsetHeight，Element.offsetWidth
+
+`Element.offsetHeight`属性返回一个整数，表示元素的 CSS 垂直高度（单位像素），包括元素本身的高度、padding 和 border，以及垂直滚动条的高度（如果存在滚动条）。
+
+`Element.offsetWidth`属性表示元素的 CSS 水平宽度（单位像素），其他都与`Element.offsetHeight`一致。
+
+这两个属性都是只读属性，只比`Element.clientHeight`和`Element.clientWidth`多了边框的高度或宽度。如果元素的 CSS 设为不可见（比如`display: none;`），则返回`0`。
+
+### Element.offsetLeft，Element.offsetTop
+
+`Element.offsetLeft`返回当前元素左上角相对于`Element.offsetParent`节点的水平位移，`Element.offsetTop`返回垂直位移，单位为像素。通常，这两个值是指相对于父节点的位移。
+
+下面的代码可以算出元素左上角相对于整张网页的坐标。
+
+```javascript
+function getElementPosition(e) {
+  var x = 0;
+  var y = 0;
+  while (e !== null)  {
+    x += e.offsetLeft;
+    y += e.offsetTop;
+    e = e.offsetParent;
+  }
+  return {x: x, y: y};
+}
+```
+
+### Element.style
+
+每个元素节点都有`style`用来读写该元素的行内样式信息，具体介绍参见《CSS 操作》一章。
+
+### Element.children，Element.childElementCount
+
+`Element.children`属性返回一个类似数组的对象（`HTMLCollection`实例），包括当前元素节点的所有子元素。如果当前元素没有子元素，则返回的对象包含零个成员。
+
+```javascript
+if (para.children.length) {
+  var children = para.children;
+    for (var i = 0; i < children.length; i++) {
+      // ...
+    }
+}
+```
+
+上面代码遍历了`para`元素的所有子元素。
+
+这个属性与`Node.childNodes`属性的区别是，它只包括元素类型的子节点，不包括其他类型的子节点。
+
+`Element.childElementCount`属性返回当前元素节点包含的子元素节点的个数，与`Element.children.length`的值相同。
+
+### Element.firstElementChild，Element.lastElementChild
+
+`Element.firstElementChild`属性返回当前元素的第一个元素子节点，`Element.lastElementChild`返回最后一个元素子节点。
+
+如果没有元素子节点，这两个属性返回`null`。
+
+### Element.nextElementSibling，Element.previousElementSibling
+
+`Element.nextElementSibling`属性返回当前元素节点的后一个同级元素节点，如果没有则返回`null`。
+
+```javascript
+// HTML 代码如下
+// <div id="div-01">Here is div-01</div>
+// <div id="div-02">Here is div-02</div>
+var el = document.getElementById('div-01');
+el.nextElementSibling
+// <div id="div-02">Here is div-02</div>
+```
+
+`Element.previousElementSibling`属性返回当前元素节点的前一个同级元素节点，如果没有则返回`null`。
+
+## 实例方法
 
 ### 属性相关方法
 
@@ -947,13 +872,31 @@ el.remove();
 
 上面代码将`el`节点从 DOM 树里面移除。
 
-### Element.focus()
+### Element.focus()，Element.blur()
 
 `Element.focus`方法用于将当前页面的焦点，转移到指定元素上。
 
 ```javascript
 document.getElementById('my-span').focus();
 ```
+
+该方法可以接受一个对象作为参数。参数对象的`preventScroll`属性是一个布尔值，指定是否将当前元素停留在原始位置，而不是滚动到可见区域。
+
+```javascript
+function getFocus() {
+  document.getElementById('btn').focus({preventScroll:false});
+}
+```
+
+上面代码会让`btn`元素获得焦点，并滚动到可见区域。
+
+最后，从`document.activeElement`属性可以得到当前获得焦点的元素。
+
+`Element.blur`方法用于将焦点从当前元素移除。
+
+### Element.click()
+
+`Element.click`方法用于在当前元素上模拟一次鼠标点击，相当于触发了`click`事件。
 
 ## 参考链接
 

@@ -154,7 +154,7 @@ window.onhashchange = checkMessage;
 function checkMessage() {
   var message = window.location.hash;
   // ...
-}r
+}
 ```
 
 同样的，子窗口也可以改变父窗口的片段标识符。
