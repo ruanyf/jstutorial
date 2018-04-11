@@ -184,42 +184,44 @@ style.setProperty('border', '1px solid blue');
 
 上面代码执行后，`myDiv`元素就会出现蓝色的边框。
 
-## CSS模块的侦测
+## CSS 模块的侦测
 
-CSS 的规格发展太快，新的模块层出不穷。不同浏览器的不同版本，对CSS模块的支持情况都不一样。有时候，需要知道当前浏览器是否支持某个模块，这就叫做“CSS模块的侦测”。
+CSS 的规格发展太快，新的模块层出不穷。不同浏览器的不同版本，对 CSS 模块的支持情况都不一样。有时候，需要知道当前浏览器是否支持某个模块，这就叫做“CSS模块的侦测”。
 
-一个比较普遍适用的方法是，判断某个DOM元素的`style`对象的某个属性值是否为字符串。
+一个比较普遍适用的方法是，判断元素的`style`对象的某个属性值是否为字符串。
 
 ```javascript
 typeof element.style.animationName === 'string';
 typeof element.style.transform === 'string';
 ```
 
-如果该CSS属性确实存在，会返回一个字符串。即使该属性实际上并未设置，也会返回一个空字符串。如果该属性不存在，则会返回`undefined`。
+如果该 CSS 属性确实存在，会返回一个字符串。即使该属性实际上并未设置，也会返回一个空字符串。如果该属性不存在，则会返回`undefined`。
 
 ```javascript
 document.body.style['maxWidth'] // ""
 document.body.style['maximumWidth'] // undefined
 ```
 
-需要注意的是，不管CSS属性名带不带连词线，`style`对象都会显示该属性存在。
+上面代码说明，这个浏览器支持`max-width`属性，但是不支持`maximum-width`属性。
+
+注意，不管 CSS 属性名的写法带不带连词线，`style`属性上都能反映出该属性是否存在。
 
 ```javascript
 document.body.style['backgroundColor'] // ""
 document.body.style['background-color'] // ""
 ```
 
-所有浏览器都能用这个方法，但是使用的时候，需要把不同浏览器的CSS规则前缀也考虑进去。
+另外，使用的时候，需要把不同浏览器的 CSS 前缀也考虑进去。
 
 ```javascript
-var content = document.getElementById("content");
+var content = document.getElementById('content');
 typeof content.style['webkitAnimation'] === 'string'
 ```
 
 这种侦测方法可以写成一个函数。
 
 ```javascript
-function isPropertySupported(property){
+function isPropertySupported(property) {
   if (property in document.body.style) return true;
   var prefixes = ['Moz', 'Webkit', 'O', 'ms', 'Khtml'];
   var prefProperty = property.charAt(0).toUpperCase() + property.substr(1);
@@ -235,29 +237,46 @@ isPropertySupported('background-clip')
 // true
 ```
 
-此外，部分浏览器（Firefox 22+, Chrome 28+, Opera 12.1+）目前部署了supports API，可以返回一个布尔值，表示是否支持某条CSS规则。但是，这个API还没有成为标准。
+## CSS 对象
 
-```javascript
-CSS.supports('transform-origin', '5px');
-CSS.supports('(display: table-cell) and (display: list-item)');
+浏览器原生提供 CSS 对象，为 JavaScript 操作 CSS 提供一些工具方法。
+
+这个对象目前有两个静态方法。
+
+### CSS.escape()
+
+`CSS.escape`方法用于转义 CSS 选择器里面的特殊字符。
+
+```html
+<div id="foo#bar">
 ```
 
-### setProperty()，getPropertyValue()，removeProperty()
+上面代码中，该元素的`id`属性包含一个`#`号，该字符在 CSS 选择器里面有特殊含义。不能直接写成`document.querySelector('#foo#bar')`，只能写成`document.querySelector('#foo\\#bar')`。这里必须使用双斜杠的原因是，单引号字符串本身会转义一次斜杠。
 
-Style对象的以下三个方法，用来读写行内CSS规则。
-
-- `setProperty(propertyName,value)`：设置某个CSS属性。
-- `getPropertyValue(propertyName)`：读取某个CSS属性。
-- `removeProperty(propertyName)`：删除某个CSS属性。
-
-这三个方法的第一个参数，都是CSS属性名，且不用改写连词线。
+`CSS.escape`方法就用来转义那些特殊字符。
 
 ```javascript
-var divStyle = document.querySelector('div').style;
+document.querySelector('#' + CSS.escape('foo#bar'))
+```
 
-divStyle.setProperty('background-color','red');
-divStyle.getPropertyValue('background-color');
-divStyle.removeProperty('background-color');
+### CSS.supports()
+
+`CSS.supports`方法返回一个布尔值，表示当前环境是否支持某一句 CSS 规则。
+
+它的参数有两种写法，一种是第一个参数是属性名，第二个参数是属性值；另一种是整个参数就是一行完整的 CSS 语句。
+
+```javascript
+// 第一种写法
+CSS.supports('transform-origin', '5px') // true
+
+// 第二种写法
+CSS.supports('display: table-cell') // true
+```
+
+注意，第二种写法的参数结尾不能带有分号，否则结果不准确。
+
+```javascript
+CSS.supports('display: table-cell;') // false
 ```
 
 ## window.getComputedStyle()
