@@ -281,16 +281,21 @@ CSS.supports('display: table-cell;') // false
 
 ## window.getComputedStyle()
 
-行内样式（inline style）具有最高的优先级，改变行内样式，通常会立即反映出来。但是，网页元素最终的样式是综合各种规则计算出来的。因此，如果想得到元素现有的样式，只读取行内样式是不够的，我们需要得到浏览器最终计算出来的那个样式规则。
+行内样式（inline style）具有最高的优先级，改变行内样式，通常会立即反映出来。但是，网页元素最终的样式是综合各种规则计算出来的。因此，如果想得到元素实际的样式，只读取行内样式是不够的，需要得到浏览器最终计算出来的样式规则。
 
-`window.getComputedStyle`方法，就用来返回这个规则。它接受一个DOM节点对象作为参数，返回一个包含该节点最终样式信息的对象。所谓“最终样式信息”，指的是各种CSS规则叠加后的结果。
+`window.getComputedStyle`方法，就用来返回浏览器计算后得到的最终规则。它接受一个节点对象作为参数，返回一个 CSSStyleDeclaration  实例，包含了指定节点的最终样式信息。所谓“最终样式信息”，指的是各种 CSS 规则叠加后的结果。
 
 ```javascript
 var div = document.querySelector('div');
-window.getComputedStyle(div).backgroundColor
+var styleObj = window.getComputedStyle(div);
+styleObj.backgroundColor
 ```
 
-`getComputedStyle`方法还可以接受第二个参数，表示指定节点的伪元素（比如`:before`、`:after`、`:first-line`、`:first-letter`等）。
+上面代码中，得到的背景色就是`div`元素真正的背景色。
+
+注意，CSSStyleDeclaration 实例是一个活的对象，任何对于样式的修改，会实时反映到这个实例上面。另外，这个实例是只读的。
+
+`getComputedStyle`方法还可以接受第二个参数，表示当前元素的伪元素（比如`:before`、`:after`、`:first-line`、`:first-letter`等）。
 
 ```javascript
 var result = window.getComputedStyle(div, ':before');
@@ -300,31 +305,33 @@ var result = window.getComputedStyle(div, ':before');
 
 ```javascript
 var elem = document.getElementById('elem-container');
-var hValue = window.getComputedStyle(elem, null)
-  .getPropertyValue('height');
+var styleObj = window.getComputedStyle(elem, null)
+var height = styleObj.height;
+// 等同于
+var height = styleObj['height'];
+var height = styleObj.getPropertyValue('height');
 ```
 
-上面代码得到的`height`属性，是浏览器最终渲染出来的高度，比其他方法得到的高度有更大的可靠性。
+上面代码得到的`height`属性，是浏览器最终渲染出来的高度，比其他方法得到的高度更可靠。由于`styleObj`是 CSSStyleDeclaration 实例，所以可以使用各种 CSSStyleDeclaration 的实例属性和方法。
 
 有几点需要注意。
 
-- 返回的CSS值都是绝对单位，比如，长度都是像素单位（返回值包括`px`后缀），颜色是`rgb(#, #, #)`或`rgba(#, #, #, #)`格式。
-- CSS规则的简写形式无效，比如，想读取`margin`属性的值，不能直接读，只能读`marginLeft`、`marginTop`等属性。
-- 如果一个元素不是绝对定位，`top`和`left`属性总是返回`auto`。
-- 该方法返回的样式对象的`cssText`属性无效，返回`undefined`。
-- 该方法返回的样式对象是只读的，如果想设置样式，应该使用元素节点的`style`属性。
+-  CSSStyleDeclaration 实例返回的 CSS 值都是绝对单位。比如，长度都是像素单位（返回值包括`px`后缀），颜色是`rgb(#, #, #)`或`rgba(#, #, #, #)`格式。
+- CSS 规则的简写形式无效。比如，想读取`margin`属性的值，不能直接读，只能读`marginLeft`、`marginTop`等属性；再比如，`font`属性也是不能直接读的，只能读`font-size`等单个属性。
+- 如果读取 CSS 原始的属性名，要用方括号运算符，比如`styleObj['z-index']`；如果读取骆驼拼写法的 CSS 属性名，可以直接读取`styleObj.zIndex`。
+- 该方法返回的 CSSStyleDeclaration 实例的`cssText`属性无效，返回`undefined`。
 
-## CSS伪元素
+## CSS 伪元素
 
-CSS伪元素是通过CSS向DOM添加的元素，主要方法是通过`:before`和`:after`选择器生成伪元素，然后用`content`属性指定伪元素的内容。
+CSS 伪元素是通过 CSS 向 DOM 添加的元素，主要是通过`:before`和`:after`选择器生成，然后用`content`属性指定伪元素的内容。
 
-以如下HTML代码为例。
+下面是一段 HTML 代码。
 
 ```html
 <div id="test">Test content</div>
 ```
 
-CSS添加伪元素的写法如下。
+CSS 添加伪元素`:before`的写法如下。
 
 ```css
 #test:before {
@@ -333,7 +340,7 @@ CSS添加伪元素的写法如下。
 }
 ```
 
-DOM节点的`style`对象无法读写伪元素的样式，这时就要用到`window`对象的`getComputedStyle`方法（详见下面介绍）。JavaScript获取伪元素，可以使用下面的方法。
+节点元素的`style`对象无法读写伪元素的样式，这时就要用到`window.getComputedStyle()`。JavaScript 获取伪元素，可以使用下面的方法。
 
 ```javascript
 var test = document.querySelector('#test');
@@ -342,7 +349,7 @@ var result = window.getComputedStyle(test, ':before').content;
 var color = window.getComputedStyle(test, ':before').color;
 ```
 
-此外，也可以使用window.getComputedStyle对象的getPropertyValue方法，获取伪元素的属性。
+此外，也可以使用 CSSStyleDeclaration 实例的`getPropertyValue`方法，获取伪元素的属性。
 
 ```javascript
 var result = window.getComputedStyle(test, ':before')
@@ -351,69 +358,68 @@ var color = window.getComputedStyle(test, ':before')
   .getPropertyValue('color');
 ```
 
-## StyleSheet对象
+## StyleSheet 接口
 
-### 获取样式表
+### 概述
 
-`StyleSheet`对象代表网页的一张样式表，它包括`<link>`节点加载的样式表和`<style>`节点内嵌的样式表。
+`StyleSheet`接口代表网页的一张样式表，包括`<link>`元素加载的样式表和`<style>`元素内嵌的样式表。
 
-`document`对象的`styleSheets`属性，可以返回当前页面的所有`StyleSheet`对象（即所有样式表）。它是一个类似数组的对象。
+`document`对象的`styleSheets`属性，可以返回当前页面的所有`StyleSheet`实例（即所有样式表）。它是一个类似数组的对象。
 
 ```javascript
 var sheets = document.styleSheets;
 var sheet = document.styleSheets[0];
 ```
 
-### 属性
+### 实例属性
 
-StyleSheet对象有以下属性。
+`StyleSheet`实例有以下属性。
 
-**（1）media属性**
+**（1）StyleSheet.disabled**
 
-media属性表示这个样式表是用于屏幕（screen），还是用于打印（print），或两者都适用（all）。该属性只读，默认值是screen。
+`StyleSheet.disabled`返回一个布尔值，表示该样式表是否处于禁用状态。手动设置`disabled`属性为`true`，等同于在`<link>`元素里面，将这张样式表设为`alternate stylesheet`，即该样式表将不会生效。
+
+注意，`disabled`属性只能在 JavaScript 脚本中设置，不能在 HTML 语句中设置。
+
+**（2）Stylesheet.href**
+
+`Stylesheet.href`返回样式表的网址。对于内嵌样式表，该属性返回`null`。该属性只读。
+
+```javascript
+document.styleSheets[0].href
+```
+
+**（3）StyleSheet.media**
+
+`StyleSheet.media`属性返回一个类似数组的对象（`MediaList`实例），成员是表示适用媒介的字符串。表示当前样式表是用于屏幕（screen），还是用于打印（print）或手持设备（handheld），或各种媒介都适用（all）。该属性只读，默认值是`screen`。
 
 ```javascript
 document.styleSheets[0].media.mediaText
 // "all"
 ```
 
-**（2）disabled属性**
-
-`disabled`属性用于打开或关闭一张样式表。
+`MediaList`实例的`appendMedium`方法，用于增加媒介；`deleteMedium`方法用于删除媒介。
 
 ```javascript
-document.querySelector('#linkElement').disabled = true;
-// 或者
-document.querySelector('#linkElement').disabled = 'disabled';
+document.styleSheets[0].media.appendMedium('handheld');
+document.styleSheets[0].media.deleteMedium('print');
 ```
 
-一旦样式表设置了`disabled`属性，这张样式表就将失效。
+**（4）StyleSheet.title**
 
-注意，`disabled`属性只能在JavaScript脚本中设置，不能在HTML语句中设置。
+`StyleSheet.title`属性返回样式表的`title`属性。
 
-**（3）href属性**
+**（5）StyleSheet.type**
 
-`href`属性是只读属性，返回`StyleSheet`对象连接的样式表地址。对于内嵌的`<style>`节点，该属性等于`null`。
-
-```javascript
-document.styleSheets[0].href
-```
-
-**（4）title属性**
-
-`title`属性返回`StyleSheet`对象的`title`值。
-
-**（5）type属性**
-
-`type`属性返回`StyleSheet`对象的`type`值，通常是`text/css`。
+`StyleSheet.type`属性返回样式表的`type`属性，通常是`text/css`。
 
 ```javascript
 document.styleSheets[0].type  // "text/css"
 ```
 
-**（6）parentStyleSheet属性**
+**（6）StyleSheet.parentStyleSheet**
 
-CSS的`@import`命令允许在样式表中加载其他样式表。`parentStyleSheet`属性返回包含了当前样式表的那张样式表。如果当前样式表是顶层样式表，则该属性返回`null`。
+CSS 的`@import`命令允许在样式表中加载其他样式表。`StyleSheet.parentStyleSheet`属性返回包含了当前样式表的那张样式表。如果当前样式表是顶层样式表，则该属性返回`null`。
 
 ```javascript
 if (stylesheet.parentStyleSheet) {
@@ -423,20 +429,19 @@ if (stylesheet.parentStyleSheet) {
 }
 ```
 
-**（7）ownerNode属性**
+**（7）StyleSheet.ownerNode**
 
-`ownerNode`属性返回`StyleSheet`对象所在的DOM节点，通常是`<link>`或`<style>`。对于那些由其他样式表引用的样式表，该属性为`null`。
+`StyleSheet.ownerNode`属性返回`StyleSheet`对象所在的 DOM 节点，通常是`<link>`或`<style>`。对于那些由其他样式表引用的样式表，该属性为`null`。
 
 ```javascript
 // HTML代码为
 // <link rel="StyleSheet" href="example.css" type="text/css" />
-
 document.styleSheets[0].ownerNode // [object HTMLLinkElement]
 ```
 
-**（8）cssRules属性**
+**（8）StyleSheet.cssRules**
 
-`cssRules`属性指向一个类似数组的对象，里面每一个成员就是当前样式表的一条CSS规则。使用该规则的`cssText`属性，可以得到CSS规则对应的字符串。
+`StyleSheet.cssRules`属性指向一个类似数组的对象（`CSSRuleList`实例），里面每一个成员就是当前样式表的一条 CSS 规则。使用该规则的`cssText`属性，可以得到 CSS 规则对应的字符串。
 
 ```javascript
 var sheet = document.querySelector('#styleElement').sheet;
@@ -448,45 +453,64 @@ sheet.cssRules[1].cssText
 // "p { line-height: 1.4em; color: blue; }"
 ```
 
-每条CSS规则还有一个`style`属性，指向一个对象，用来读写具体的CSS命令。
+每条 CSS 规则还有一个`style`属性，指向一个对象，用来读写具体的 CSS 命令。
 
 ```javascript
 styleSheet.cssRules[0].style.color = 'red';
 styleSheet.cssRules[1].style.color = 'purple';
 ```
 
-### insertRule()，deleteRule()
+**（9）StyleSheet.ownerRule**
 
-`insertRule`方法用于在当前样式表的`cssRules`对象插入CSS规则，`deleteRule`方法用于删除`cssRules`对象的CSS规则。
+有些样式表是通过`@import`规则输入的，它的`ownerRule`属性会返回一个`CSSRule`实例，代表那行`@import`规则。如果当前样式表不是通过`@import`引入的，`ownerRule`属性返回`null`。
+
+### 实例方法
+
+**（1）CSSStyleSheet.insertRule()**
+
+`CSSStyleSheet.insertRule`方法用于在当前样式表的插入一个新的 CSS 规则。
 
 ```javascript
 var sheet = document.querySelector('#styleElement').sheet;
-sheet.insertRule('#block { color:white }', 0);
-sheet.insertRule('p { color:red }',1);
-sheet.deleteRule(1);
+sheet.insertRule('#block { color: white }', 0);
+sheet.insertRule('p { color: red }', 1);
 ```
 
-`insertRule`方法的第一个参数是表示CSS规则的字符串，第二个参数是该规则在`cssRules`对象的插入位置。`deleteRule`方法的参数是该条规则在`cssRules`对象中的位置。
+该方法可以接受两个参数，第一个参数是表示 CSS 规则的字符串，这里只能有一条规则，否则会报错。第二个参数是该规则在样式表的插入位置（从0开始），该参数可选，默认为0（即默认插在样式表的头部）。注意，如果插入位置大于现有规则的数目，会报错。
 
-### 添加样式表
+该方法的返回值是新插入规则的位置序号。
 
-添加样式表有两种方式。一种是添加一张内置样式表，即在文档中添加一个`<style>`节点。
+注意，浏览器对脚本在样式表里面插入规则有很多[限制](https://drafts.csswg.org/cssom/#insert-a-css-rule)。所以，这个方法最好放在`try...catch`里使用。
+
+**（2）CSSStyleSheet.deleteRule()**
+
+`CSSStyleSheet.deleteRule`方法用来在样式表里面移除一条规则，它的参数是该条规则在`cssRules`对象中的位置。该方法没有返回值。
 
 ```javascript
-var style = document.createElement('style');
-
-style.setAttribute('media', 'screen');
-// 或者
-style.setAttribute("media", "@media only screen and (max-width : 1024px)");
-
-style.innerHTML = 'body{color:red}';
-// 或者
-sheet.insertRule("header { float: left; opacity: 0.8; }", 1);
-
-document.head.appendChild(style);
+document.styleSheets[0].deleteRule(1);
 ```
 
-另一种是添加外部样式表，即在文档中添加一个`<link>`节点，然后将`href`属性指向外部样式表的URL。
+## 实例：添加样式表
+
+网页添加样式表有两种方式。一种是添加一张内置样式表，即在文档中添加一个`<style>`节点。
+
+```javascript
+// 写法一
+var style = document.createElement('style');
+style.setAttribute('media', 'screen');
+style.innerHTML = 'body{color:red}';
+document.head.appendChild(style);
+
+// 写法二
+var style = (function () {
+  var style = document.createElement('style');
+  document.head.appendChild(style);
+  return style;
+})();
+style.sheet.insertRule('.foo{color:red;}', 0);
+```
+
+另一种是添加外部样式表，即在文档中添加一个`<link>`节点，然后将`href`属性指向外部样式表的 URL。
 
 ```javascript
 var linkElm = document.createElement('link');
@@ -497,7 +521,7 @@ linkElm.setAttribute('href', 'reset-min.css');
 document.head.appendChild(linkElm);
 ```
 
-## CSS规则
+## CSS 规则
 
 一条CSS规则包括两个部分：CSS选择器和样式声明。下面就是一条典型的CSS规则。
 
