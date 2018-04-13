@@ -369,6 +369,15 @@ var color = window.getComputedStyle(test, ':before')
 ```javascript
 var sheets = document.styleSheets;
 var sheet = document.styleSheets[0];
+sheet instanceof StyleSheet // true
+```
+
+如果是`<style>`元素嵌入的样式表，还有另一种获取`StyleSheet`实例的方法，就是这个节点元素的`sheet`属性。
+
+```javascript
+// HTML 代码为 <style id="myStyle"></style>
+var myStyleSheet = document.getElementById('myStyle').sheet;
+myStyleSheet instanceof StyleSheet // true
 ```
 
 ### 实例属性
@@ -520,6 +529,32 @@ linkElm.setAttribute('href', 'reset-min.css');
 
 document.head.appendChild(linkElm);
 ```
+
+## CSSRuleList 接口
+
+CSSRuleList 接口是一个类似数组的对象，表示一组 CSS 规则，成员都是 CSSRule 实例。
+
+获取 CSSRuleList 实例，一般是通过`StyleSheet.cssRules`属性。
+
+```javascript
+// HTML 代码如下
+// <style id="myStyle">
+//   h1 { color: red; }
+//   p { color: blue; }
+// </style>
+var myStyleSheet = document.getElementById('myStyle').sheet;
+var crl = myStyleSheet.cssRules;
+crl instanceof CSSRuleList // true
+```
+
+CSSRuleList 实例里面，每一条规则（CSSRule 实例）可以通过`rules.item(index)`或者`rules[index]`拿到。CSS 规则的条数通过`rules.length`拿到。还是用上面的例子。
+
+```javascript
+crl[0] instanceof CSSRule // true
+crl.length // 2
+```
+
+注意，添加规则和删除规则不能在 CSSRuleList 实例操作，而要在它的父元素 StyleSheet 实例上，通过`StyleSheet.insertRule()`和`StyleSheet.deleteRule()`操作。
 
 ## CSS 规则
 
