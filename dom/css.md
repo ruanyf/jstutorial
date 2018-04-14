@@ -8,7 +8,7 @@ modifiedOn: 2014-01-31
 
 CSS 与 JavaScript 是两个有着明确分工的领域，前者负责页面的视觉效果，后者负责与用户的行为互动。但是，它们毕竟同属网页开发的前端，因此不可避免有着交叉和互相配合。本节介绍如果通过 JavaScript 操作 CSS。
 
-## HTML 的 style 属性
+## HTML 元素的 style 属性
 
 操作 CSS 样式最简单的方法，就是使用网页元素节点的`getAttribute`方法、`setAttribute`方法和`removeAttribute`方法，直接读写或删除网页元素的`style`属性。
 
@@ -29,13 +29,13 @@ div.setAttribute(
 
 ### 简介
 
-CSSStyleDeclaration 接口用来操作元素的行内样式，三种地方部署了这个接口。
+CSSStyleDeclaration 接口用来操作元素的样式。三个地方部署了这个接口。
 
 - 元素节点的`style`属性（`Element.style`）
-- 样式表的`cssRule.style`属性
+- `CSSStyle`实例的`style`属性
 - `window.getComputedStyle()`的返回值
 
-CSSStyleDeclaration 接口可以直接读写 CSS 的样式属性。
+CSSStyleDeclaration 接口可以直接读写 CSS 的样式属性，不过，连词号需要变成骆驼拼写法。
 
 ```javascript
 var divStyle = document.querySelector('div').style;
@@ -62,7 +62,7 @@ divStyle.width // 100px
 
 **（1）CSSStyleDeclaration.cssText**
 
-`CSSStyleDeclaration.cssText`属性，可以读写元素的整个行内样式。
+`CSSStyleDeclaration.cssText`属性用来读写当前规则的所有样式声明文本。
 
 ```javascript
 var divStyle = document.querySelector('div').style;
@@ -75,9 +75,15 @@ divStyle.cssText = 'background-color: red;'
 
 注意，`cssText`的属性值不用改写 CSS 属性名。
 
+删除一个元素的所有行内样式，最简便的方法就是设置`cssText`为空字符串。
+
+```javascript
+divStyle.cssText = '';
+```
+
 **（2）CSSStyleDeclaration.length**
 
-`CSSStyleDeclaration.length`属性返回一个整数值，表示该 CSSStyleDeclaration 实例包含的样式规则的数目。该属性只读。
+`CSSStyleDeclaration.length`属性返回一个整数值，表示当前规则包含多少条样式声明。
 
 ```javascript
 // HTML 代码如下
@@ -93,7 +99,9 @@ divStyles.length // 3
 
 **（3）CSSStyleDeclaration.parentRule**
 
-`CSSStyleDeclaration.parentRule`属性返回当前样式对象所属的 CSSRule 实例（即一个选择器的样式块）。该属性只读，且只在使用 CSSRule 接口时有意义。
+`CSSStyleDeclaration.parentRule`属性返回当前规则所属的那个样式块（CSSRule 实例）。如果不存在所属的样式块，该属性返回`null`。
+
+该属性只读，且只在使用 CSSRule 接口时有意义。
 
 ```javascript
 var declaration = document.styleSheets[0].rules[0].style;
@@ -105,7 +113,7 @@ declaration.parentRule === document.styleSheets[0].rules[0]
 
 **（1）CSSStyleDeclaration.getPropertyPriority()**
 
-`CSSStyleDeclaration.getPropertyPriority`方法接受 CSS 样式属性名作为参数，返回一个字符串，表示该属性有没有设置`important`的优先级。如果有，就返回`important`，否则返回空字符串。
+`CSSStyleDeclaration.getPropertyPriority`方法接受 CSS 样式的属性名作为参数，返回一个字符串，表示有没有设置`important`优先级。如果有就返回`important`，否则返回空字符串。
 
 ```javascript
 // HTML 代码为
@@ -556,173 +564,180 @@ crl.length // 2
 
 注意，添加规则和删除规则不能在 CSSRuleList 实例操作，而要在它的父元素 StyleSheet 实例上，通过`StyleSheet.insertRule()`和`StyleSheet.deleteRule()`操作。
 
-## CSS 规则
+## CSSRule 接口
 
-一条CSS规则包括两个部分：CSS选择器和样式声明。下面就是一条典型的CSS规则。
+一条 CSS 规则包括两个部分：CSS选择器和样式声明。下面就是一条典型的 CSS 规则。
 
 ```css
 .myClass {
+  color: red;
   background-color: yellow;
 }
 ```
 
-### CSSRule接口
-
-CSS规则部署了CSSRule接口，它包括了以下属性。
-
-**（1）cssText**
-
-cssText属性返回当前规则的文本。
+JavaScript 通过 CSSRule 接口操作 CSS 规则。一般通过 CSSRuleList 接口（`StyleSheet.cssRules`）获取 CSSRule 实例。
 
 ```javascript
-// CSS代码为
-// body { background-color: darkblue; }
-
-var stylesheet = document.styleSheets[0];
-stylesheet.cssRules[0].cssText
-// body { background-color: darkblue; }
+// HTML 代码如下
+// <style id="myStyle">
+//   .myClass {
+//     color: red;
+//     background-color: yellow;
+//   }
+// </style>
+var myStyleSheet = document.getElementById('myStyle').sheet;
+var ruleList = myStyleSheet.cssRules;
+var rule = ruleList[0];
+rule instanceof CSSRule // true
 ```
 
-**（2）parentStyleSheet**
+CSSRule 实例有以下属性。
 
-parentStyleSheet属性返回定义当前规则的样式表对象。
+**（1）CSSRule.cssText**
 
-**（3）parentRule**
+`CSSRule.cssText`属性返回当前规则的文本，还是使用上面的例子。
 
-parentRule返回包含当前规则的那条CSS规则。最典型的情况，就是当前规则包含在一个@media代码块之中。如果当前规则是顶层规则，则该属性返回null。
+```javascript
+rule.cssText
+// ".myClass { color: red; background-color: yellow; }"
+```
 
-**（4）type**
+如果规则是加载（`@import`）其他样式表，`cssText`属性返回`@import 'url'`。
 
-type属性返回有一个整数值，表示当前规则的类型。
+**（2）CSSRule.parentStyleSheet**
+
+`CSSRule.parentStyleSheet`属性返回当前规则所在的样式表对象（StyleSheet 实例），还是使用上面的例子。
+
+```javascript
+rule.parentStyleSheet === myStyleSheet // true
+```
+
+**（3）CSSRule.parentRule**
+
+`CSSRule.parentRule`属性返回包含当前规则的父规则，如果不存在父规则（即当前规则是顶层规则），则返回`null`。
+
+父规则最常见的情况是，当前规则包含在`@media`规则代码块之中。
+
+```javascript
+// HTML 代码如下
+// <style id="myStyle">
+//   @supports (display: flex) {
+//     @media screen and (min-width: 900px) {
+//       article {
+//         display: flex;
+//       }
+//     }
+//  }
+// </style>
+var myStyleSheet = document.getElementById('myStyle').sheet;
+var ruleList = myStyleSheet.cssRules;
+
+var rule0 = ruleList[0];
+rule0.cssText
+// "@supports (display: flex) {
+//    @media screen and (min-width: 900px) {
+//      article { display: flex; }
+//    }
+// }"
+
+// 由于这条规则内嵌其他规则，
+// 所以它有 cssRules 属性，且该属性是 CSSRuleList 实例
+rule0.cssRules instanceof CSSRuleList // true
+
+var rule1 = rule0.cssRules[0];
+rule1.cssText
+// "@media screen and (min-width: 900px) {
+//   article { display: flex; }
+// }"
+
+var rule2 = rule1.cssRules[0];
+rule2.cssText
+// "article { display: flex; }"
+
+rule1.parentRule === rule0 // true
+rule2.parentRule === rule1 // true
+```
+
+**（4）CSSRule.type**
+
+`CSSRule.type`属性返回一个整数值，表示当前规则的类型。
 
 最常见的类型有以下几种。
 
-- 1：样式规则，部署了CSSStyleRule接口
-- 3：输入规则，部署了CSSImportRule接口
-- 4：Media规则，部署了CSSMediaRule接口
-- 5：字体规则，部署了CSSFontFaceRule接口
+- 1：普通样式规则（CSSStyleRule 实例）
+- 3：`@import`规则
+- 4：`@media`规则（CSSMediaRule 实例）
+- 5：`@font-face`规则
 
-### CSSStyleRule接口
+### CSSStyleRule 接口
 
-如果一条CSS规则是普通的样式规则，那么除了CSSRule接口，它还部署了CSSStyleRule接口。
+如果一条 CSS 规则是普通的样式规则（不含特殊的 CSS 命令），那么除了 CSSRule 接口，它还部署了 CSSStyleRule 接口。
 
-CSSRule接口有以下两个属性。
+CSSStyleRule 接口有以下两个属性。
 
-**（1）selectorText属性**
+**（1）CSSStyleRule.selectorText**
 
-selectorText属性返回当前规则的选择器。
+`CSSStyleRule.selectorText`属性返回当前规则的选择器。
 
 ```javascript
 var stylesheet = document.styleSheets[0];
 stylesheet.cssRules[0].selectorText // ".myClass"
 ```
 
-**（2）style属性**
+注意，这个属性是可写的。
 
-style属性返回一个对象，代表当前规则的样式声明，也就是选择器后面的大括号里面的部分。该对象部署了CSSStyleDeclaration接口，使用它的cssText属性，可以返回所有样式声明，格式为字符串。
+**（2）CSSStyleRule.style**
+
+`CSSStyleRule.style`属性返回一个对象（CSSStyleDeclaration 实例），代表当前规则的样式声明，也就是选择器后面的大括号里面的部分。
 
 ```javascript
-document.styleSheets[0].cssRules[0].style.cssText
-// "background-color: gray;font-size: 120%;"
+// HTML 代码为
+// <style id="myStyle">
+//   p { color: red; }
+// </style>
+var styleSheet = document.getElementById('myStyle').sheet;
+styleSheet.cssRules[0].style instanceof CSSStyleDeclaration
+// true
 ```
 
-### CSSMediaRule接口
-
-如果一条CSS规则是@media代码块，那么它除了CSSRule接口，还部署了CSSMediaRule接口。
-
-该接口主要提供一个media属性，可以返回@media代码块的media规则。
-
-### CSSStyleDeclaration对象
-
-每一条 CSS 规则的样式声明部分（大括号内部的部分），都是一个`CSSStyleDeclaration`对象，主要包括三种情况。
-
-- HTML 元素的行内样式（`<elem style="...">`）
-- `CSSStyleRule`接口的`style`属性
-- `window.getComputedStyle()`的返回结果
-
-每一条CSS属性，都是`CSSStyleDeclaration`对象的属性。不过，连词号需要变成骆驼拼写法。
+CSSStyleDeclaration 实例的`cssText`属性，可以返回所有样式声明，格式为字符串。
 
 ```javascript
-var styleObj = document.styleSheets[0].cssRules[1].style;
-styleObj.color // "red";
-styleObj.fontSize // "100%"
+styleSheet.cssRules[0].style.cssText
+// "color: red;"
+styleSheet.cssRules[0].selectorText
+// "p"
 ```
 
-除了 CSS 属性以外，`CSSStyleDeclaration`对象还包括以下属性。
+### CSSMediaRule 接口
 
-- `cssText`：当前规则的所有样式声明文本。该属性可读写，即可用来设置当前规则。
-- `length`：当前规则包含多少条声明。
-- `parentRule`：包含当前规则的那条规则，同 CSSRule 接口的`parentRule`属性。
+如果一条 CSS 规则是`@media`代码块，那么它除了 CSSRule 接口，还部署了 CSSMediaRule 接口。
 
-`CSSStyleDeclaration`对象包括以下方法。
-
-**（1）getPropertyPriority()**
-
-`getPropertyPriority`方法返回指定声明的优先级，如果有的话，就是“important”，否则就是空字符串。
+该接口主要提供`media`属性和`conditionText`属性。前者返回代表`@media`规则的一个对象（MediaList 实例），后者返回`@media`规则的生效条件。
 
 ```javascript
-var styleObj = document.styleSheets[0].cssRules[1].style;
-styleObj.getPropertyPriority('color') // ""
-```
+// HTML 代码如下
+// <style id="myStyle">
+//   @media screen and (min-width: 900px) {
+//     article { display: flex; }
+//   }
+// </style>
+var styleSheet = document.getElementById('myStyle').sheet;
+styleSheet.cssRules[0] instanceof CSSMediaRule
+// true
 
-**（2）getPropertyValue()**
+styleSheet.cssRules[0].media
+//  {
+//    0: "screen and (min-width: 900px)",
+//    appendMedium: function,
+//    deleteMedium: function,
+//    item: function,
+//    length: 1,
+//    mediaText: "screen and (min-width: 900px)"
+// }
 
-getPropertyValue方法返回指定声明的值。
-
-```javascript
-// CSS代码为
-// color:red;
-
-var styleObj = document.styleSheets[0].cssRules[1].style;
-styleObj.getPropertyValue('color') // "red"
-```
-
-**（3）item()**
-
-item方法返回指定位置的属性名。
-
-```javascript
-var styleObj = document.styleSheets[0].cssRules[1].style;
-styleObj.item(0) // "color"
-// 或者
-styleObj[0] // "color"
-```
-
-**（4）removeProperty()**
-
-removeProperty方法用于删除一条CSS属性，返回被删除的值。
-
-```javascript
-// CSS代码为
-// color:red;
-
-var styleObj = document.styleSheets[0].cssRules[1].style;
-styleObj.removeProperty('color') // "red"
-```
-
-**（5）setProperty()**
-
-setProperty方法用于设置指定的CSS属性，没有返回值。
-
-```javascript
-var styleObj = document.styleSheets[0].cssRules[1].style;
-styleObj.setProperty('color', 'green', 'important');
-```
-
-下面是遍历一条CSS规则所有属性的例子。
-
-```javascript
-var styleObj = document.styleSheets[0].cssRules[0].style;
-for (var i = styleObj.length - 1; i >= 0; i--) {
-   var nameString = styleObj[i];
-   styleObj.removeProperty(nameString);
-}
-```
-
-上面删除了一条CSS规则的所有属性，更简便的方法是设置cssText属性为空字符串。
-
-```javascript
-styleObj.cssText = '';
+styleSheet.cssRules[0].conditionText
+// "screen and (min-width: 900px)"
 ```
 
 ## window.matchMedia()
