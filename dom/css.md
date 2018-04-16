@@ -6,7 +6,7 @@ date: 2013-07-05
 modifiedOn: 2014-01-31
 ---
 
-CSS 与 JavaScript 是两个有着明确分工的领域，前者负责页面的视觉效果，后者负责与用户的行为互动。但是，它们毕竟同属网页开发的前端，因此不可避免有着交叉和互相配合。本节介绍如果通过 JavaScript 操作 CSS。
+CSS 与 JavaScript 是两个有着明确分工的领域，前者负责页面的视觉效果，后者负责与用户的行为互动。但是，它们毕竟同属网页开发的前端，因此不可避免有着交叉和互相配合。本节介绍如何通过 JavaScript 操作 CSS。
 
 ## HTML 元素的 style 属性
 
@@ -566,7 +566,9 @@ crl.length // 2
 
 ## CSSRule 接口
 
-一条 CSS 规则包括两个部分：CSS选择器和样式声明。下面就是一条典型的 CSS 规则。
+### 概述
+
+一条 CSS 规则包括两个部分：CSS 选择器和样式声明。下面就是一条典型的 CSS 规则。
 
 ```css
 .myClass {
@@ -591,7 +593,7 @@ var rule = ruleList[0];
 rule instanceof CSSRule // true
 ```
 
-CSSRule 实例有以下属性。
+### CSSRule 实例的属性
 
 **（1）CSSRule.cssText**
 
@@ -744,56 +746,45 @@ styleSheet.cssRules[0].conditionText
 
 ### 基本用法
 
-`window.matchMedia`方法用来检查CSS的[`mediaQuery`](https://developer.mozilla.org/en-US/docs/DOM/Using_media_queries_from_code)语句。各种浏览器的最新版本（包括IE 10+）都支持该方法，对于不支持该方法的老式浏览器，可以使用第三方函数库[matchMedia.js](https://github.com/paulirish/matchMedia.js/)。
-
-CSS的`mediaQuery`语句有点像`if`语句，只要显示媒介（包括浏览器和屏幕等）满足`mediaQuery`语句设定的条件，就会执行区块内部的语句。下面是`mediaQuery`语句的一个例子。
-
-```css
-@media all and (max-width: 700px) {
-  body {
-    background: #FF0;
-  }
-}
-```
-
-上面的CSS代码表示，该区块对所有媒介（media）有效，且视口的最大宽度不得超过`700`像素。如果条件满足，则`body`元素的背景设为#FF0。
-
-需要注意的是，`mediaQuery`接受两种宽度/高度的度量，一种是上例的“视口”的宽度/高度，还有一种是“设备”的宽度/高度，下面就是一个例子。
-
-```css
-@media all and (max-device-width: 700px) {
-  body {
-    background: #FF0;
-  }
-}
-```
-
-视口的宽度/高度（width/height）使用`documentElement.clientWidth/clientHeight`来衡量，单位是CSS像素；设备的宽度/高度（device-width/device-height）使用`screen.width/height`来衡量，单位是设备硬件的像素。
-
-`window.matchMedia`方法接受一个`mediaQuery`语句的字符串作为参数，返回一个[`MediaQueryList`](https://developer.mozilla.org/en-US/docs/DOM/MediaQueryList)对象。该对象有以下两个属性。
-
-- `media`：返回所查询的`mediaQuery`语句字符串。
-- `matches`：返回一个布尔值，表示当前环境是否匹配查询语句。
+`window.matchMedia`方法用来将 CSS 的[`MediaQuery`](https://developer.mozilla.org/en-US/docs/DOM/Using_media_queries_from_code)条件语句，转换成一个 MediaQueryList 实例。
 
 ```javascript
-var result = window.matchMedia('(min-width: 600px)');
-result.media // (min-width: 600px)
-result.matches // true
+var mdl = window.matchMedia('(min-width: 400px)');
+mdl instanceof MediaQueryList // true
 ```
 
-下面是另外一个例子，根据mediaQuery是否匹配当前环境，执行不同的JavaScript代码。
+注意，如果参数不是有效的`MediaQuery`条件语句，`window.matchMedia`不会报错，依然返回的一个 MediaQueryList 实例。
 
 ```javascript
-var result = window.matchMedia('(max-width: 700px)');
+window.matchMedia('bad string') instanceof MediaQueryList // true
+```
 
-if (result.matches) {
-  console.log('页面宽度小于等于700px');
+### MediaQueryList 接口的实例属性
+
+MediaQueryList 实例有三个属性。
+
+**（1）MediaQueryList.media**
+
+`MediaQueryList.media`属性返回一个字符串，表示对应的 MediaQuery 条件语句。
+
+```javascript
+var mql = window.matchMedia('(min-width: 400px)');
+mql.media // "(min-width: 400px)"
+```
+
+**（2）MediaQueryList.matches**
+
+`MediaQueryList.matches`属性返回一个布尔值，表示当前页面是否符合指定的 MediaQuery 条件语句。
+
+```javascript
+if (window.matchMedia('(min-width: 400px)').matches) {
+  /* 当前视口不小于 400 像素 */
 } else {
-  console.log('页面宽度大于700px');
+  /* 当前视口小于 400 像素 */
 }
 ```
 
-下面的例子根据`mediaQuery`是否匹配当前环境，加载相应的CSS样式表。
+下面的例子根据`mediaQuery`是否匹配当前环境，加载相应的 CSS 样式表。
 
 ```javascript
 var result = window.matchMedia("(max-width: 700px)");
@@ -808,36 +799,45 @@ if (result.matches){
 }
 ```
 
-注意，如果`window.matchMedia`无法解析`mediaQuery`参数，返回的总是`false`，而不是报错。
+**（3）MediaQueryList.onchange**
+
+如果 MediaQuery 条件语句的适配环境发生变化，会触发`change`事件。`MediaQueryList.onchange`属性用来指定`change`事件的监听函数。该函数的参数是`change`事件对象（MediaQueryListEvent 实例），该对象与 MediaQueryList 实例类似，也有`media`和`matches`属性。
 
 ```javascript
-window.matchMedia('bad string').matches
-// false
-```
+var mql = window.matchMedia('(max-width: 600px)');
 
-### 监听事件
-
-window.matchMedia方法返回的MediaQueryList对象有两个方法，用来监听事件：addListener方法和removeListener方法。如果mediaQuery查询结果发生变化，就调用指定的回调函数。
-
-```javascript
-var mql = window.matchMedia("(max-width: 700px)");
-
-// 指定回调函数
-mql.addListener(mqCallback);
-
-// 撤销回调函数
-mql.removeListener(mqCallback);
-
-function mqCallback(mql) {
-  if (mql.matches) {
-    // 宽度小于等于700像素
+mql.onchange = function(e) {
+  if (e.matches) {
+    /* 视口不超过 600 像素 */
   } else {
-    // 宽度大于700像素
+    /* 视口超过 600 像素 */
   }
 }
 ```
 
-上面代码中，回调函数的参数是MediaQueryList对象。回调函数的调用可能存在两种情况。一种是显示宽度从700像素以上变为以下，另一种是从700像素以下变为以上，所以在回调函数内部要判断一下当前的屏幕宽度。
+上面代码中，`change`事件发生后，存在两种可能。一种是显示宽度从700像素以上变为以下，另一种是从700像素以下变为以上，所以在监听函数内部要判断一下当前是哪一种情况。
+
+### MediaQueryList 接口的实例方法
+
+MediaQueryList 实例有两个方法`MediaQueryList.addListener()`和`MediaQueryList.removeListener()`，用来为`change`事件添加或撤销监听函数。
+
+```javascript
+var mql = window.matchMedia('(max-width: 600px)');
+
+// 指定监听函数
+mql.addListener(mqCallback);
+
+// 撤销监听函数
+mql.removeListener(mqCallback);
+
+function mqCallback(e) {
+  if (e.matches) {
+    /* 视口不超过 600 像素 */
+  } else {
+    /* 视口超过 600 像素 */
+  }
+}
+```
 
 ## CSS事件
 
