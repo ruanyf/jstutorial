@@ -106,7 +106,7 @@ para.addEventListener('click', function (e) {
 
 ### EventTarget.removeEventListener()
 
-`EventTarget.removeEventListener`方法用来移除`addEventListener`方法添加的事件监听函数。
+`EventTarget.removeEventListener`方法用来移除`addEventListener`方法添加的事件监听函数。该方法没有返回值。
 
 ```javascript
 div.addEventListener('click', listener, false);
@@ -115,17 +115,31 @@ div.removeEventListener('click', listener, false);
 
 `removeEventListener`方法的参数，与`addEventListener`方法完全一致。它的第一个参数“事件类型”，大小写敏感。
 
-注意，`removeEventListener`方法移除的监听函数，必须与对应的`addEventListener`方法的参数完全一致，而且必须在同一个元素节点，否则无效。
+注意，`removeEventListener`方法移除的监听函数，必须是`addEventListener`方法添加的那个监听函数，而且必须在同一个元素节点，否则无效。
+
+```javascript
+div.addEventListener('click', function (e) {}, false);
+div.removeEventListener('click', function (e) {}, false);
+```
+
+上面代码中，`removeEventListener`方法无效，因为监听函数不是同一个匿名函数。
+
+```javascript
+element.addEventListener('mousedown', handleMouseDown, true);
+element.removeEventListener("mousedown", handleMouseDown, false);
+```
+
+上面代码中，`removeEventListener`方法也是无效的，因为第三个参数不一样。
 
 ### EventTarget.dispatchEvent()
 
-`dispatchEvent`方法在当前节点上触发指定事件，从而触发监听函数的执行。该方法返回一个布尔值，只要有一个监听函数调用了`Event.preventDefault()`，则返回值为`false`，否则为`true`。
+`EventTarget.dispatchEvent`方法在当前节点上触发指定事件，从而触发监听函数的执行。该方法返回一个布尔值，只要有一个监听函数调用了`Event.preventDefault()`，则返回值为`false`，否则为`true`。
 
 ```javascript
 target.dispatchEvent(event)
 ```
 
-`dispatchEvent`方法的参数是一个`Event`对象的实例。
+`dispatchEvent`方法的参数是一个`Event`对象的实例（详见《Event 对象》章节）。
 
 ```javascript
 para.addEventListener('click', hello, false);
@@ -141,11 +155,10 @@ para.dispatchEvent(event);
 
 ```javascript
 var canceled = !cb.dispatchEvent(event);
-  if (canceled) {
-    console.log('事件取消');
-  } else {
-    console.log('事件未取消');
-  }
+if (canceled) {
+  console.log('事件取消');
+} else {
+  console.log('事件未取消');
 }
 ```
 
@@ -396,20 +409,20 @@ p.addEventListener('click', function(event) {
 });
 ```
 
-## Event对象
+## Event 对象概述
 
-事件发生以后，会生成一个事件对象，作为参数传给监听函数。浏览器原生提供一个`Event`对象，所有的事件都是这个对象的实例，或者说继承了`Event.prototype`对象。
+事件发生以后，会产生一个事件对象，作为参数传给监听函数。浏览器原生提供一个`Event`对象，所有的事件都是这个对象的实例，或者说继承了`Event.prototype`对象。
 
 `Event`对象本身就是一个构造函数，可以用来生成新的实例。
 
 ```javascript
-event = new Event(typeArg, eventInit);
+event = new Event(type, options);
 ```
 
-Event构造函数接受两个参数。第一个参数是字符串，表示事件的名称；第二个参数是一个对象，表示事件对象的配置。该参数可以有以下两个属性。
+`Event`构造函数接受两个参数。第一个参数`type`是字符串，表示事件的名称；第二个参数`options`是一个对象，表示事件对象的配置。该对象主要有下面两个属性。
 
 - `bubbles`：布尔值，可选，默认为`false`，表示事件对象是否冒泡。
-- `cancelable`：布尔值，可选，默认为`false`，表示事件是否可以被取消。
+- `cancelable`：布尔值，可选，默认为`false`，表示事件是否可以被取消，即能否用`Event.preventDefault()`取消这个事件。
 
 ```javascript
 var ev = new Event(
@@ -424,50 +437,53 @@ document.dispatchEvent(ev);
 
 上面代码新建一个`look`事件实例，然后使用`dispatchEvent`方法触发该事件。
 
-IE8及以下版本，事件对象不作为参数传递，而是通过`window`对象的`event`属性读取，并且事件对象的`target`属性叫做`srcElement`属性。所以，以前获取事件信息，往往要写成下面这样。
+注意，如果不是显式指定`bubbles`属性为`true`，生成的事件就只能在“捕获阶段”触发监听函数。
 
 ```javascript
-function myEventHandler(event) {
-  var actualEvent = event || window.event;
-  var actualTarget = actualEvent.target || actualEvent.srcElement;
-  // ...
+// HTML 代码为
+// <div><p>Hello</p></div>
+var div = document.querySelector('div');
+var p = document.querySelector('p');
+
+function callback(event) {
+  var tag = event.currentTarget.tagName;
+  console.log('Tag: ' + tag); // 没有任何输出
 }
+
+div.addEventListener('click', callback, false);
+
+var click = new Event('click');
+p.dispatchEvent(click);
 ```
 
-上面的代码只是为了说明以前的程序为什么这样写，在新代码中，这样的写法不应该再用了。
+上面代码中，`p`元素发出一个`click`事件，该事件默认不会冒泡。`div.addEventListener`方法指定在冒泡阶段监听，因此监听函数不会触发。如果写成`div.addEventListener('click', callback, true)`，那么在“捕获阶段”可以监听到这个事件。
 
-### event.bubbles，event.eventPhase
-
-以下属性与事件的阶段有关。
-
-**（1）bubbles**
-
-bubbles属性返回一个布尔值，表示当前事件是否会冒泡。该属性为只读属性，只能在新建事件时改变。除非显式声明，Event构造函数生成的事件，默认是不冒泡的。
+另一方面，如果这个事件在`div`元素上触发。
 
 ```javascript
-function goInput(e) {
-  if (!e.bubbles) {
-    passItOn(e);
-  } else {
-    doOutput(e);
-  }
-}
+div.dispatchEvent(click);
 ```
 
-上面代码根据事件是否冒泡，调用不同的函数。
+那么，不管`div`元素是在冒泡阶段监听，还是在捕获阶段监听，都会触发监听函数。因为这时`div`元素是事件的目标，不存在是否冒泡的问题，`div`元素总是会接收到事件，因此导致监听函数生效。
 
-**（2）event.eventPhase**
+## Event 对象的实例属性
 
-eventPhase属性返回一个整数值，表示事件目前所处的阶段。
+### Event.bubbles，Event.eventPhase
+
+`Event.bubbles`属性返回一个布尔值，表示当前事件是否会冒泡。该属性为只读属性，一般用来了解 Event 实例是否可以冒泡。前面说过，除非显式声明，`Event`构造函数生成的事件，默认是不冒泡的。
+
+`Event.eventPhase`属性返回一个整数常量，表示事件目前所处的阶段。该属性只读。
 
 ```javascript
 var phase = event.eventPhase;
 ```
 
+`Event.eventPhase`的返回值有四种可能。
+
 - 0，事件目前没有发生。
-- 1，事件目前处于捕获阶段，即处于从祖先节点向目标节点的传播过程中。该过程是从Window对象到Document节点，再到HTMLHtmlElement节点，直到目标节点的父节点为止。
-- 2，事件到达目标节点，即target属性指向的那个节点。
-- 3，事件处于冒泡阶段，即处于从目标节点向祖先节点的反向传播过程中。该过程是从父节点一直到Window对象。只有bubbles属性为true时，这个阶段才可能发生。
+- 1，事件目前处于捕获阶段，即处于从祖先节点向目标节点的传播过程中。
+- 2，事件到达目标节点，即`Event.target`属性指向的那个节点。
+- 3，事件处于冒泡阶段，即处于从目标节点向祖先节点的反向传播过程中。
 
 ### event.cancelable，event.defaultPrevented
 
