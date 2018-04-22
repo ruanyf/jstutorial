@@ -539,39 +539,25 @@ para.addEventListener('click', hide, false);
 
 上面代码中，如果在`para`节点的`<em>`子节点上面点击，则`e.target`指向`<em>`子节点，导致`<em>`子节点（即 World 部分）会不可见。如果点击 Hello  部分，则整个`para`都将不可见。
 
-### event.type，event.detail，event.timeStamp，event.isTrusted
+### Event.type
 
-以下属性与事件对象的其他信息相关。
-
-**（1）type**
-
-`type`属性返回一个字符串，表示事件类型，大小写敏感。
+`Event.type`属性返回一个字符串，表示事件类型。事件的类型是在生成事件的时候。该属性只读。
 
 ```javascript
-var string = event.type;
+var evt = new Event('foo');
+evt.type // "foo"
 ```
 
-**（2）detail**
+### Event.timeStamp
 
-`detail`属性返回一个数值，表示事件的某种信息。具体含义与事件类型有关，对于鼠标事件，表示鼠标按键在某个位置按下的次数，比如对于dblclick事件，detail属性的值总是2。
+`Event.timeStamp`属性返回一个毫秒时间戳，表示事件发生的时间。它是相对于网页加载成功开始计算的。
 
 ```javascript
-function giveDetails(e) {
-  this.textContent = e.detail;
-}
-
-el.onclick = giveDetails;
+var evt = new Event('foo');
+evt.timeStamp // 3683.6999999995896
 ```
 
-**（3）timeStamp**
-
-`timeStamp`属性返回一个毫秒时间戳，表示事件发生的时间。
-
-```javascript
-var number = event.timeStamp;
-```
-
-Chrome在49版以前，这个属性返回的是一个整数，单位是毫秒（millisecond），表示从Unix纪元开始的时间戳。从49版开始，该属性返回的是一个高精度时间戳，也就是说，毫秒之后还带三位小数，精确到微秒。并且，这个值不再从Unix纪元开始计算，而是从`PerformanceTiming.navigationStart`开始计算，即表示距离用户导航至该网页的时间。如果想将这个值转为Unix纪元时间戳，就要计算`event.timeStamp + performance.timing.navigationStart`。
+它的返回值有可能是整数，也有可能是小数（高精度时间戳），取决于浏览器的设置。
 
 下面是一个计算鼠标移动速度的例子，显示每秒移动的像素数量。
 
@@ -581,9 +567,11 @@ var previousY;
 var previousT;
 
 window.addEventListener('mousemove', function(event) {
-  if (!(previousX === undefined ||
-        previousY === undefined ||
-        previousT === undefined)) {
+  if (
+    previousX !== undefined &&
+    previousY !== undefined &&
+    previousT !== undefined
+  ) {
     var deltaX = event.screenX - previousX;
     var deltaY = event.screenY - previousY;
     var deltaD = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
@@ -598,15 +586,18 @@ window.addEventListener('mousemove', function(event) {
 });
 ```
 
-**（4）isTrusted**
+### Event.isTrusted
 
-`isTrusted`属性返回一个布尔值，表示该事件是否为真实用户触发。
+`Event.isTrusted`属性返回一个布尔值，表示该事件是否由真实的用户行为产生。比如，用户点击链接会产生一个`click`事件，该事件是用户产生的；`Event`构造函数生成的事件，则是脚本产生的。
 
 ```javascript
-var bool = event.isTrusted;
+var evt = new Event('foo');
+evt.isTrusted // false
 ```
 
-用户触发的事件返回`true`，脚本触发的事件返回`false`。
+上面代码中，`evt`对象是脚本产生的，所以`isTrusted`属性返回`false`。
+
+## Event 对象的实例方法
 
 ### event.preventDefault()
 
@@ -675,6 +666,20 @@ el.addEventListener('click', l2, false);
 ```
 
 上面代码在el节点上，为click事件添加了两个监听函数l1和l2。由于l1调用了stopImmediatePropagation方法，所以l2不会被调用。
+
+## UIEvent
+
+UIEvent.detail
+
+`UIEvent.detail`属性返回一个数值，表示事件的某种信息。具体含义与事件类型有关，对于鼠标事件，表示鼠标按键在某个位置按下的次数，比如对于dblclick事件，detail属性的值总是2。
+
+```javascript
+function giveDetails(e) {
+  this.textContent = e.detail;
+}
+
+el.onclick = giveDetails;
+```
 
 ## 自定义事件和事件模拟
 
