@@ -496,7 +496,7 @@ evt.cancelable  // false
 
 当`Event.cancelable`属性为`true`时，调用`Event.preventDefault()`就可以取消这个事件，阻止浏览器对该事件的默认行为。
 
-如果事件不能取消，调用`Event.preventDefault()`会报错。所以使用这个方法之前，最好用`Event.cancelable`属性判断一下是否可以取消。
+如果事件不能取消，调用`Event.preventDefault()`会没有任何效果。所以使用这个方法之前，最好用`Event.cancelable`属性判断一下是否可以取消。
 
 ```javascript
 function preventEvent(event) {
@@ -599,16 +599,15 @@ evt.isTrusted // false
 
 ## Event 对象的实例方法
 
-### event.preventDefault()
+### Event.preventDefault()
 
-`preventDefault`方法取消浏览器对当前事件的默认行为，比如点击链接后，浏览器跳转到指定页面，或者按一下空格键，页面向下滚动一段距离。该方法生效的前提是，事件对象的`cancelable`属性为`true`，如果为`false`，则调用该方法没有任何效果。
+`Event.preventDefault`方法取消浏览器对当前事件的默认行为。比如点击链接后，浏览器默认会跳转到另一个页面，使用这个方法以后，就不会跳转了；再比如，按一下空格键，页面向下滚动一段距离，使用这个方法以后也不会滚动了。该方法生效的前提是，事件对象的`cancelable`属性为`true`，如果为`false`，调用该方法没有任何效果。
 
-该方法不会阻止事件的进一步传播（`stopPropagation`方法可用于这个目的）。只要在事件的传播过程中（捕获阶段、目标阶段、冒泡阶段皆可），使用了`preventDefault`方法，该事件的默认方法就不会执行。
+注意，该方法只是取消事件对当前元素的默认影响，不会阻止事件的传播。如果要阻止传播，可以使用`stopPropagation()`或`stopImmediatePropagation()`方法。
 
 ```javascript
-// HTML代码为
+// HTML 代码为
 // <input type="checkbox" id="my-checkbox" />
-
 var cb = document.getElementById('my-checkbox');
 
 cb.addEventListener(
@@ -618,11 +617,16 @@ cb.addEventListener(
 );
 ```
 
-上面代码为点击单选框的事件，设置监听函数，取消默认行为。由于浏览器的默认行为是选中单选框，所以这段代码会导致无法选中单选框。
+上面代码中，浏览器的默认行为是单击会选中单选框，取消这个行为，就导致无法选中单选框。
 
 利用这个方法，可以为文本输入框设置校验条件。如果用户的输入不符合条件，就无法将字符输入文本框。
 
 ```javascript
+// HTML 代码为
+// <input type="text" id="my-input" />
+var input = document.getElementById('my-input');
+input.addEventListener('keypress', checkName, false);
+
 function checkName(e) {
   if (e.charCode < 97 || e.charCode > 122) {
     e.preventDefault();
@@ -630,11 +634,11 @@ function checkName(e) {
 }
 ```
 
-上面函数设为文本框的`keypress`监听函数后，将只能输入小写字母，否则输入事件的默认事件（写入文本框）将被取消。
+上面代码为文本框的`keypress`事件设定监听函数后，将只能输入小写字母，否则输入事件的默认行为（写入文本框）将被取消，导致不能向文本框输入内容。
 
-### event.stopPropagation()
+### Event.stopPropagation()
 
-`stopPropagation`方法阻止事件在 DOM 中继续传播，防止再触发定义在别的节点上的监听函数，但是不包括在当前节点上新定义的事件监听函数。
+`stopPropagation`方法阻止事件在 DOM 中继续传播，防止再触发定义在别的节点上的监听函数，但是不包括在当前节点上其他的事件监听函数。
 
 ```javascript
 function stopEvent(e) {
@@ -644,13 +648,13 @@ function stopEvent(e) {
 el.addEventListener('click', stopEvent, false);
 ```
 
-将上面函数指定为监听函数，会阻止事件进一步冒泡到el节点的父节点。
+上面代码中，`click`事件将不会进一步冒泡到`el`节点的父节点。
 
-### event.stopImmediatePropagation()
+### Event.stopImmediatePropagation()
 
-`stopImmediatePropagation`方法阻止同一个事件的其他监听函数被调用。
+`Event.stopImmediatePropagation`方法阻止同一个事件的其他监听函数被调用，不管监听函数定义在当前节点还是其他节点。也就是说，该方法阻止事件的传播，比`Event.stopPropagation()`更彻底。
 
-如果同一个节点对于同一个事件指定了多个监听函数，这些函数会根据添加的顺序依次调用。只要其中有一个监听函数调用了stopImmediatePropagation方法，其他的监听函数就不会再执行了。
+如果同一个节点对于同一个事件指定了多个监听函数，这些函数会根据添加的顺序依次调用。只要其中有一个监听函数调用了`Event.stopImmediatePropagation`方法，其他的监听函数就不会再执行了。
 
 ```javascript
 function l1(e){
@@ -665,7 +669,27 @@ el.addEventListener('click', l1, false);
 el.addEventListener('click', l2, false);
 ```
 
-上面代码在el节点上，为click事件添加了两个监听函数l1和l2。由于l1调用了stopImmediatePropagation方法，所以l2不会被调用。
+上面代码在`el`节点上，为`click`事件添加了两个监听函数`l1`和`l2`。由于`l1`调用了`event.stopImmediatePropagation`方法，所以`l2`不会被调用。
+
+### Event.composedPath()
+
+`Event.composedPath()`返回一个数组，成员是事件的最底层节点和依次冒泡经过的所有上层节点。
+
+```javascript
+// HTML 代码如下
+// <div>
+//   <p>Hello</p>
+// </div>
+var div = document.querySelector('div');
+var p = document.querySelector('p');
+
+div.addEventListener('click', function (e) {
+  console.log(e.composedPath());
+}, false);
+// [p, div, body, html, document, Window]
+```
+
+上面代码中，`click`事件的最底层节点是`p`，向上依次是`div`、`body`、`html`、`document`、`Window`。
 
 ## UIEvent
 
