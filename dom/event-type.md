@@ -95,36 +95,31 @@ test.addEventListener('mouseover', function (event) {
 
 `contextmenu`事件在一个节点上点击鼠标右键时触发，或者按下“上下文菜单”键时触发。
 
-## MouseEvent 对象
+## MouseEvent 接口概述
 
-### 概述
+`MouseEvent`接口代表了鼠标相关的事件，单击（click）、双击（dblclick）、松开鼠标键（mouseup）、按下鼠标键（mousedown）等动作，所产生的事件对象都是`MouseEvent`实例。此外，滚轮事件和拖拉事件也是`MouseEvent`实例。
 
-鼠标事件使用`MouseEvent`对象表示，它继承`UIEvent`对象和`Event`对象。浏览器提供一个`MouseEvent`构造函数，用于新建一个`MouseEvent`实例。
+`MouseEvent`接口继承了`Event`接口，所以拥有`Event`的所有属性和方法。它还有自己的属性和方法。
+
+浏览器原生提供一个`MouseEvent`构造函数，用于新建一个`MouseEvent`实例。
 
 ```javascript
-event = new MouseEvent(typeArg, mouseEventInit);
+var event = new MouseEvent(type, options);
 ```
 
-`MouseEvent`构造函数的第一个参数是事件名称（可能的值包括`click`、`mousedown`、`mouseup`、`mouseover`、`mousemove`、`mouseout`），第二个参数是一个事件初始化对象。该对象可以配置以下属性。
+`MouseEvent`构造函数接受两个参数。第一个参数是字符串，表示事件名称；第二个参数是一个事件配置对象，该参数可选。除了`Event`接口的实例配置属性，该对象可以配置以下属性，所有属性都是可选的。
 
-- screenX，设置鼠标相对于屏幕的水平坐标（但不会移动鼠标），默认为0，等同于MouseEvent.screenX属性。
-- screenY，设置鼠标相对于屏幕的垂直坐标，默认为0，等同于MouseEvent.screenY属性。
-- clientX，设置鼠标相对于窗口的水平坐标，默认为0，等同于MouseEvent.clientX属性。
-- clientY，设置鼠标相对于窗口的垂直坐标，默认为0，等同于MouseEvent.clientY属性。
-- ctrlKey，设置是否按下ctrl键，默认为false，等同于MouseEvent.ctrlKey属性。
-- shiftKey，设置是否按下shift键，默认为false，等同于MouseEvent.shiftKey属性。
-- altKey，设置是否按下alt键，默认为false，等同于MouseEvent.altKey属性。
-- metaKey，设置是否按下meta键，默认为false，等同于MouseEvent.metaKey属性。
-- button，设置按下了哪一个鼠标按键，默认为0。-1表示没有按键，0表示按下主键（通常是左键），1表示按下辅助键（通常是中间的键），2表示按下次要键（通常是右键）。
-- buttons，设置按下了鼠标哪些键，是一个3个比特位的二进制值，默认为0。1表示按下主键（通常是左键），2表示按下次要键（通常是右键），4表示按下辅助键（通常是中间的键）。
-- relatedTarget，设置一个Element节点，在mouseenter和mouseover事件时，表示鼠标刚刚离开的那个Element节点，在mouseout和mouseleave事件时，表示鼠标正在进入的那个Element节点。默认为null，等同于MouseEvent.relatedTarget属性。
-
-以下属性也是可配置的，都继承自UIEvent构造函数和Event构造函数。
-
-- bubbles，布尔值，设置事件是否冒泡，默认为false，等同于Event.bubbles属性。
-- cancelable，布尔值，设置事件是否可取消，默认为false，等同于Event.cancelable属性。
-- view，设置事件的视图，一般是window或document.defaultView，等同于Event.view属性。
-- detail，设置鼠标点击的次数，等同于Event.detail属性。
+- `screenX`：数值，鼠标相对于屏幕的水平位置（单位像素），默认值为0，设置该属性不会移动鼠标。
+- `screenY`：数值，鼠标相对于屏幕的垂直位置（单位像素），其他与`screenX`相同。
+- `clientX`：数值，鼠标相对于程序窗口的水平位置（单位像素），默认值为0，设置该属性不会移动鼠标。
+- `clientY`：数值，鼠标相对于程序窗口的垂直位置（单位像素），其他与`clientX`相同。
+- `ctrlKey`：布尔值，是否同时按下了 Ctrl 键，默认值为`false`。
+- `shiftKey`：布尔值，是否同时按下了 Shift 键，默认值为`false`。
+- `altKey`：布尔值，是否同时按下 Alt 键，默认值为`false`。
+- `metaKey`：布尔值，是否同时按下 Meta 键，默认值为`false`。
+- `button`：数值，表示按下了哪一个鼠标按键，默认值为`0`，表示按下主键（通常是鼠标的左键）或者当前事件没有定义这个属性；`1`表示按下辅助键（通常是鼠标的中间键），`2`表示按下次要键（通常是鼠标的右键）。
+- `buttons`：数值，表示按下了鼠标的哪些键，是一个三个比特位的二进制值，默认为`0`（没有按下任何键）。`1`（二进制`001`）表示按下主键（通常是左键），`2`（二进制`010`）表示按下次要键（通常是右键），`4`（二进制`100`）表示按下辅助键（通常是中间键）。因此，如果返回`3`（二进制`011`）就表示同时按下了左键和右键。
+- `relatedTarget`：节点对象，表示事件的相关节点，默认为`null`。`mouseenter`和`mouseover`事件时，表示鼠标刚刚离开的那个元素节点；`mouseout`和`mouseleave`事件时，表示鼠标正在进入的那个元素节点。
 
 下面是一个例子。
 
@@ -141,7 +136,7 @@ function simulateClick() {
 
 上面代码生成一个鼠标点击事件，并触发该事件。
 
-以下介绍MouseEvent实例的属性。
+## MouseEvent 接口的实例属性
 
 ### altKey，ctrlKey，metaKey，shiftKey
 

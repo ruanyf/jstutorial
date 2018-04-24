@@ -597,6 +597,20 @@ evt.isTrusted // false
 
 上面代码中，`evt`对象是脚本产生的，所以`isTrusted`属性返回`false`。
 
+### Event.detail
+
+`Event.detail`属性只有浏览器的 UI （用户界面）事件才具有。该属性返回一个数值，表示事件的某种信息。具体含义与事件类型相关。比如，对于`click`和`dbclick`事件，`Event.detail`是鼠标按下的次数（`1`表示单击，`2`表示双击，`3`表示三击）；对于鼠标滚轮事件，`Event.detail`是滚轮正向滚动的距离，负值就是负向滚动的距离，返回值总是3的倍数。
+
+```javascript
+// HTML 代码如下
+// <p>Hello</p>
+function giveDetails(e) {
+  console.log(e.detail);
+}
+
+document.selectQuery('p') = giveDetails;
+```
+
 ## Event 对象的实例方法
 
 ### Event.preventDefault()
@@ -690,20 +704,6 @@ div.addEventListener('click', function (e) {
 ```
 
 上面代码中，`click`事件的最底层节点是`p`，向上依次是`div`、`body`、`html`、`document`、`Window`。
-
-## UIEvent
-
-UIEvent.detail
-
-`UIEvent.detail`属性返回一个数值，表示事件的某种信息。具体含义与事件类型有关，对于鼠标事件，表示鼠标按键在某个位置按下的次数，比如对于dblclick事件，detail属性的值总是2。
-
-```javascript
-function giveDetails(e) {
-  this.textContent = e.detail;
-}
-
-el.onclick = giveDetails;
-```
 
 ## 自定义事件和事件模拟
 
