@@ -138,46 +138,39 @@ function simulateClick() {
 
 ## MouseEvent 接口的实例属性
 
-### altKey，ctrlKey，metaKey，shiftKey
+### MouseEvent.altKey，MouseEvent.ctrlKey，MouseEvent.metaKey，MouseEvent.shiftKey
 
-以下属性返回一个布尔值，表示鼠标事件发生时，是否按下某个键。
+`MouseEvent.altKey`、`MouseEvent.ctrlKey`、`MouseEvent.metaKey`、`MouseEvent.shiftKey`这四个属性都返回一个布尔值，表示事件发生时，是否按下对应的键。它们都是只读属性。
 
 - `altKey`属性：Alt 键
 - `ctrlKey`属性：Ctrl 键
-- `metaKey`属性：Meta 键（Mac键盘是一个四瓣的小花，Windows键盘是Windows键）
+- `metaKey`属性：Meta 键（Mac 键盘是一个四瓣的小花，Windows 键盘是 Windows 键）
 - `shiftKey`属性：Shift 键
 
 ```javascript
-// HTML代码为
-// <body onclick="showkey(event);">
-
-function showKey(e){
-  console.log("ALT key pressed: " + e.altKey);
-  console.log("CTRL key pressed: " + e.ctrlKey);
-  console.log("META key pressed: " + e.metaKey);
-  console.log("SHIFT key pressed: " + e.shiftKey);
+// HTML 代码如下
+// <body onclick="showKey(event)">
+function showKey(e) {
+  console.log('ALT key pressed: ' + e.altKey);
+  console.log('CTRL key pressed: ' + e.ctrlKey);
+  console.log('META key pressed: ' + e.metaKey);
+  console.log('SHIFT key pressed: ' + e.shiftKey);
 }
 ```
 
-上面代码中，点击网页会输出是否同时按下Alt键。
+上面代码中，点击网页会输出是否同时按下对应的键。
 
-### button，buttons
+### MouseEvent.button，MouseEvent.buttons
 
-以下属性返回事件的鼠标键信息。
+`MouseEvent.button`属性返回一个数值，表示事件发生时按下了鼠标的哪个键。该属性只读。
 
-**（1）button**
-
-button属性返回一个数值，表示按下了鼠标哪个键。
-
-- -1：没有按下键。
-- 0：按下主键（通常是左键）。
+- 0：按下主键（通常是左键），或者该事件没有初始化这个属性（比如`mousemove`事件）。
 - 1：按下辅助键（通常是中键或者滚轮键）。
 - 2：按下次键（通常是右键）。
 
 ```javascript
-// HTML代码为
-// <button onmouseup="whichButton(event);">点击</button>
-
+// HTML 代码为
+// <button onmouseup="whichButton(event)">点击</button>
 var whichButton = function (e) {
   switch (e.button) {
     case 0:
@@ -195,69 +188,121 @@ var whichButton = function (e) {
 }
 ```
 
-**（2）buttons**
+`MouseEvent.buttons`属性返回一个三个比特位的值，表示同时按下了哪些键。它用来处理同时按下多个鼠标键的情况。该属性只读。
 
-buttons属性返回一个3个比特位的值，表示同时按下了哪些键。它用来处理同时按下多个鼠标键的情况。
-
-- 1：二进制为001，表示按下左键。
-- 2：二进制为010，表示按下右键。
-- 4：二进制为100，表示按下中键或滚轮键。
+- 1：二进制为`001`（十进制的1），表示按下左键。
+- 2：二进制为`010`（十进制的2），表示按下右键。
+- 4：二进制为`100`（十进制的4），表示按下中键或滚轮键。
 
 同时按下多个键的时候，每个按下的键对应的比特位都会有值。比如，同时按下左键和右键，会返回3（二进制为011）。
 
-### clientX，clientY，movementX，movementY，screenX，screenY
+### MouseEvent.clientX，MouseEvent.clientY
 
-以下属性与事件的位置相关。
-
-**（1）clientX，clientY**
-
-clientX属性返回鼠标位置相对于浏览器窗口左上角的水平坐标，单位为像素，与页面是否横向滚动无关。
-
-clientY属性返回鼠标位置相对于浏览器窗口左上角的垂直坐标，单位为像素，与页面是否纵向滚动无关。
+`MouseEvent.clientX`属性返回鼠标位置相对于浏览器窗口左上角的水平坐标（单位像素），`MouseEvent.clientY`属性返回垂直坐标。这两个属性都是只读属性。
 
 ```javascript
-// HTML代码为
+// HTML 代码为
 // <body onmousedown="showCoords(event)">
-
 function showCoords(evt){
   console.log(
-    "clientX value: " + evt.clientX + "\n" +
-    "clientY value: " + evt.clientY + "\n"
+    'clientX value: ' + evt.clientX + '\n' +
+    'clientY value: ' + evt.clientY + '\n'
   );
 }
 ```
 
-**（2）movementX，movementY**
+这两个属性还分别有一个别名`MouseEvent.x`和`MouseEvent.y`。
 
-movementX属性返回一个水平位移，单位为像素，表示当前位置与上一个mousemove事件之间的水平距离。在数值上，等于currentEvent.movementX = currentEvent.screenX - previousEvent.screenX。
+### MouseEvent.movementX，MouseEvent.movementY
 
-movementY属性返回一个垂直位移，单位为像素，表示当前位置与上一个mousemove事件之间的垂直距离。在数值上，等于currentEvent.movementY = currentEvent.screenY - previousEvent.screenY。
-
-**（3）screenX，screenY**
-
-screenX属性返回鼠标位置相对于屏幕左上角的水平坐标，单位为像素。
-
-screenY属性返回鼠标位置相对于屏幕左上角的垂直坐标，单位为像素。
+`MouseEvent.movementX`属性返回当前位置与上一个`mousemove`事件之间的水平距离（单位像素）。数值上，它等于下面的计算公式。
 
 ```javascript
-// HTML代码为
-// <body onmousedown="showCoords(event)">
+currentEvent.movementX = currentEvent.screenX - previousEvent.screenX
+```
 
-function showCoords(evt){
+`MouseEvent.movementY`属性返回当前位置与上一个`mousemove`事件之间的垂直距离（单位像素）。数值上，它等于下面的计算公式。
+
+```javascript
+currentEvent.movementY = currentEvent.screenY - previousEvent.screenY。
+```
+
+这两个属性都是只读属性。
+
+### MouseEvent.screenX，MouseEvent.screenY
+
+`MouseEvent.screenX`属性返回鼠标位置相对于屏幕左上角的水平坐标（单位像素），`MouseEvent.screenY`属性返回垂直坐标。这两个属性都是只读属性。
+
+```javascript
+// HTML 代码如下
+// <body onmousedown="showCoords(event)">
+function showCoords(evt) {
   console.log(
-    "screenX value: " + evt.screenX + "\n"
-    + "screenY value: " + evt.screenY + "\n"
+    'screenX value: ' + evt.screenX + '\n'
+    'screenY value: ' + evt.screenY + '\n'
   );
 }
 ```
 
-### relatedTarget
+### MouseEvent.offsetX，MouseEvent.offsetY
 
-relatedTarget属性返回事件的次要相关节点。对于那些没有次要相关节点的事件，该属性返回null。
+`MouseEvent.offsetX`属性返回鼠标位置与目标节点左侧的`padding`边缘的水平距离（单位像素），`MouseEvent.offsetY`属性返回与目标节点上方的`padding`边缘的垂直距离。这两个属性都是只读属性。
 
-下表列出不同事件的target属性和relatedTarget属性含义。
+```javascript
+/* HTML 代码如下
+  <style>
+    p {
+      width: 100px;
+      height: 100px;
+      padding: 100px;
+    }
+  </style>
+  <p>Hello</p>
+*/
+var p = document.querySelector('p');
+p.addEventListener(
+  'click',
+  function (e) {
+    console.log(e.offsetX);
+    console.log(e.offsetY);
+  },
+  false
+);
+```
 
-|事件名称 |target属性 |relatedTarget属性 |
+上面代码中，鼠标如果在`p`元素的中心位置点击，会返回`150 150`。因此中心位置距离左侧和上方的`padding`边缘，等于`padding`的宽度（100像素）加上元素内容区域一半的宽度（50像素）。
+
+### MouseEvent.pageX，MouseEvent.pageY
+
+`MouseEvent.pageX`属性返回鼠标位置与文档左侧边缘的距离（单位像素），`MouseEvent.pageY`属性返回与文档上侧边缘的距离（单位像素）。它们的返回值都包括文档不可见的部分。这两个属性都是只读。
+
+```javascript
+/* HTML 代码如下
+  <style>
+    body {
+      height: 2000px;
+    }
+  </style>
+*/
+document.body.addEventListener(
+  'click',
+  function (e) {
+    console.log(e.pageX);
+    console.log(e.pageY);
+  },
+  false
+);
+```
+
+上面代码中，页面高度为2000像素，会产生垂直滚动条。滚动到页面底部，点击鼠标输出的`pageY`值会接近2000。
+
+### MouseEvent.relatedTarget
+
+`MouseEvent.relatedTarget`属性返回事件的相关节点。对于那些没有相关节点的事件，该属性返回`null`。该属性只读。
+
+下表列出不同事件的`target`属性值和`relatedTarget`属性值义。
+
+|事件名称 |target 属性 |relatedTarget 属性 |
 |---------|-----------|------------------|
 |focusin |接受焦点的节点 |丧失焦点的节点 |
 |focusout |丧失焦点的节点 |接受焦点的节点 |
@@ -271,51 +316,79 @@ relatedTarget属性返回事件的次要相关节点。对于那些没有次要�
 下面是一个例子。
 
 ```javascript
-// HTML代码为
-// <div id="outer" style="height:50px;width:50px;border-width:1px solid black;">
-//   <div id="inner" style="height:25px;width:25px;border:1px solid black;"></div>
-// </div>
+/*
+  HTML 代码如下
+  <div id="outer" style="height:50px;width:50px;border-width:1px solid black;">
+    <div id="inner" style="height:25px;width:25px;border:1px solid black;"></div>
+  </div>
+*/
 
-var inner = document.getElementById("inner");
-
-inner.addEventListener("mouseover", function (){
-  console.log('进入' + event.target.id + " 离开" + event.relatedTarget.id);
+var inner = document.getElementById('inner');
+inner.addEventListener('mouseover', function (event) {
+  console.log('进入' + event.target.id + ' 离开' + event.relatedTarget.id);
+}, false);
+inner.addEventListener('mouseenter', function (event) {
+  console.log('进入' + event.target.id + ' 离开' + event.relatedTarget.id);
 });
-inner.addEventListener("mouseenter", function (){
-  console.log('进入' + event.target.id + " 离开" + event.relatedTarget.id);
-});
-inner.addEventListener("mouseout", function (){
-  console.log('离开' + event.target.id + " 进入" + event.relatedTarget.id);
+inner.addEventListener('mouseout', function () {
+  console.log('离开' + event.target.id + ' 进入' + event.relatedTarget.id);
 });
 inner.addEventListener("mouseleave", function (){
-  console.log('离开' + event.target.id + " 进入" + event.relatedTarget.id);
+  console.log('离开' + event.target.id + ' 进入' + event.relatedTarget.id);
 });
 
-// 鼠标从outer进入inner，输出
+// 鼠标从 outer 进入inner，输出
 // 进入inner 离开outer
 // 进入inner 离开outer
 
-// 鼠标从inner进入outer，输出
+// 鼠标从 inner进入 outer，输出
 // 离开inner 进入outer
 // 离开inner 进入outer
 ```
 
-## wheel事件
+## MouseEvent 接口的实例方法
 
-`wheel`事件是与鼠标滚轮相关的事件，目前只有一个`wheel`事件。用户滚动鼠标的滚轮，就触发这个事件。
+### MouseEvent.getModifierState()
 
-该事件除了继承了MouseEvent、UIEvent、Event的属性，还有几个自己的属性。
-
-- deltaX：返回一个数值，表示滚轮的水平滚动量。
-- deltaY：返回一个数值，表示滚轮的垂直滚动量。
-- deltaZ：返回一个数值，表示滚轮的Z轴滚动量。
-- deltaMode：返回一个数值，表示滚动的单位，适用于上面三个属性。0表示像素，1表示行，2表示页。
-
-浏览器提供一个WheelEvent构造函数，可以用来生成滚轮事件的实例。它接受两个参数，第一个是事件名称，第二个是配置对象。
+`MouseEvent.getModifierState`方法返回一个布尔值，表示有没有按下特定的功能键。它的参数是一个表示[功能键](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/getModifierState#Modifier_keys_on_Gecko)的字符串。
 
 ```javascript
-var syntheticEvent = new WheelEvent("syntheticWheel", {"deltaX": 4, "deltaMode": 0});
+document.addEventListener('click', function (e) {
+  console.log(e.getModifierState('CapsLock'));
+}, false);
 ```
+
+上面的代码可以了解用户是否按下了大写键。
+
+## WheelEvent 接口
+
+### 概述
+
+WheelEvent 接口继承了 MouseEvent 实例，代表鼠标滚轮事件的实例对象。目前，鼠标滚轮相关的事件只有一个`wheel`事件，用户滚动鼠标的滚轮，就生成这个事件的实例。
+
+浏览器原生提供`WheelEvent()`构造函数，用来生成`WheelEvent`实例。
+
+```javascript
+var wheelEvent = new WheelEvent(type, options);
+```
+
+`WheelEvent()`构造函数可以接受两个参数，第一个是字符串，表示事件类型，对于滚轮事件来说，这个值目前只能是`wheel`。第二个参数是事件的配置对象。该对象的属性除了`Event`、`UIEvent`的配置属性以外，还可以接受以下几个属性，所有属性都是可选的。
+
+- `deltaX`：数值，表示滚轮的水平滚动量，默认值是 0.0。
+- `deltaY`：数值，表示滚轮的垂直滚动量，默认值是 0.0。
+- `deltaZ`：数值，表示滚轮的 Z 轴滚动量，默认值是 0.0。
+- `deltaMode`：数值，表示相关的滚动事件的单位，适用于上面三个属性。`0`表示滚动单位为像素，`1`表示单位为行，`2`表示单位为页，默认为`0`。
+
+### 实例属性
+
+`WheelEvent`事件实例除了具有`Event`和`MouseEvent`的实例属性和实例方法，还有一些自己的实例属性，但是没有自己的实例方法。
+
+下面的属性都是只读属性。
+
+- `WheelEvent.deltaX`：数值，表示滚轮的水平滚动量。
+- `WheelEvent.deltaY`：数值，表示滚轮的垂直滚动量。
+- `WheelEvent.deltaZ`：数值，表示滚轮的 Z 轴滚动量。
+- `WheelEvent.deltaMode`：数值，表示上面三个属性的单位，`0`是像素，`1`是行，`2`是页。
 
 ## 键盘事件
 
