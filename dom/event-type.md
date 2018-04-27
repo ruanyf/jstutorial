@@ -990,19 +990,19 @@ div.addEventListener("dragstart", function(e) {
 }, false);
 ```
 
-## 触摸事件
+## 触摸操作概述
 
 触摸API由三个对象组成。
 
-- Touch
-- TouchList
-- TouchEvent
+- Touch：一个触摸点
+- TouchList：多个触摸点的集合
+- TouchEvent：触摸引发的事件实例
 
-Touch对象表示触摸点（一根手指或者一根触摸笔），用来描述触摸动作，包括位置、大小、形状、压力、目标元素等属性。有时，触摸动作由多个触摸点（多根手指或者多根触摸笔）组成，多个触摸点的集合由TouchList对象表示。TouchEvent对象代表由触摸引发的事件，只有触摸屏才会引发这一类事件。
+Touch 对象表示触摸点（一根手指或者一根触摸笔），用来描述触摸动作，包括位置、大小、形状、压力、目标元素等属性。有时，触摸动作由多个触摸点（多根手指或者多根触摸笔）组成，多个触摸点的集合由TouchList对象表示。TouchEvent对象代表由触摸引发的事件，只有触摸屏才会引发这一类事件。
 
 很多时候，触摸事件和鼠标事件同时触发，即使这个时候并没有用到鼠标。这是为了让那些只定义鼠标事件、没有定义触摸事件的代码，在触摸屏的情况下仍然能用。如果想避免这种情况，可以用preventDefault方法阻止发出鼠标事件。
 
-### Touch对象
+## Touch对象
 
 Touch对象代表一个触摸点。触摸点可能是一根手指，也可能是一根触摸笔。它有以下属性。
 
@@ -1040,7 +1040,7 @@ force属性返回一个0到1之间的数值，表示触摸压力。0代表没有
 
 target属性返回一个Element节点，代表触摸发生的那个节点。
 
-### TouchList对象
+## TouchList对象
 
 TouchList对象是一个类似数组的对象，成员是与某个触摸事件相关的所有触摸点。比如，用户用三根手指触摸，产生的TouchList对象就有三个成员，每根手指对应一个Touch对象。
 
@@ -1048,44 +1048,102 @@ TouchList实例的length属性，返回TouchList对象的成员数量。
 
 TouchList实例的identifiedTouch方法和item方法，分别使用id属性和索引值（从0开始）作为参数，取出指定的Touch对象。
 
-### TouchEvent对象
+## TouchEvent 接口
 
-TouchEvent对象继承Event对象和UIEvent对象，表示触摸引发的事件。除了被继承的属性以外，它还有一些自己的属性。
+### 概述
 
-**（1）键盘相关属性**
+TouchEvent 接口继承了 Event 接口，表示由触摸引发的事件实例，通常来自触摸屏或轨迹板。除了被继承的属性以外，它还有一些自己的属性。
 
-以下属性都为只读属性，返回一个布尔值，表示触摸的同时，是否按下某个键。
-
-- altKey 是否按下alt键
-- ctrlKey 是否按下ctrl键
-- metaKey 是否按下meta键
-- shiftKey 是否按下shift键
-
-**（2）changedTouches**
-
-changedTouches属性返回一个TouchList对象，包含了由当前触摸事件引发的所有Touch对象（即相关的触摸点）。
-
-对于touchstart事件，它代表被激活的触摸点；对于touchmove事件，代表发生变化的触摸点；对于touchend事件，代表消失的触摸点（即不再被触碰的点）。
+浏览器原生提供`TouchEvent()`构造函数，用来生成触摸事件的实例。
 
 ```javascript
-var touches = touchEvent.changedTouches;
+new TouchEvent(type, options)
 ```
 
-**（3）targetTouches**
+`TouchEvent()`构造函数可以接受两个参数，第一个参数是字符串，表示事件类型；第二个参数是事件的配置对象，该参数是可选的，对象的所有属性也是可选的。除了`Event`接口的配置属性，该接口还有一些自己的配置属性。
 
-targetTouches属性返回一个TouchList对象，包含了触摸的目标Element节点内部，所有仍然处于活动状态的触摸点。
+- `touches`：数组，成员是一组`Touch`的实例对象，代表所有的当前处于活跃状态的触摸点，默认值是一个空数组`[]`。
+- `targetTouches`：数组，成员是一组`Touch`的实例对象，代表所有处在触摸的目标元素节点内部、且仍然处于活动状态的触摸点，默认值是一个空数组`[]`。
+- `changedTouches`：数组，成员是一组`Touch`的实例对象，代表本次触摸事件的相关触摸点，默认值是一个空数组`[]`。
+- `ctrlKey`：布尔值，表示 Ctrl 键是否同时按下，默认值为`false`。
+- `shiftKey`：布尔值，表示 Shift 键是否同时按下，默认值为`false`。
+- `altKey`：布尔值，表示 Alt 键是否同时按下，默认值为`false`。
+- `metaKey`：布尔值，表示 Meta 键（或 Windows 键）是否同时按下，默认值为`false`。
+
+### 实例属性
+
+TouchEvent 接口的实例具有`Event`实例的所有属性和方法，此外还有一些它自己的实例属性，这些属性全部都是只读。
+
+**（1）TouchEvent.altKey，TouchEvent.ctrlKey，TouchEvent.shiftKey，TouchEvent.metaKey**
+
+- `TouchEvent.altKey`：布尔值，表示触摸时是否按下了 Alt 键。
+- `TouchEvent.ctrlKey`：布尔值，表示触摸时是否按下了 Ctrl 键。
+- `TouchEvent.shiftKey`：布尔值：表示触摸时是否按下了 Shift 键。
+- `TouchEvent.metaKey`：布尔值，表示触摸时是否按下了 Meta 键（或 Windows 键）。
+
+下面是一个示例。
 
 ```javascript
-var touches = touchEvent.targetTouches;
+someElement.addEventListener('touchstart', function (e) {
+  console.log('altKey = ' + e.altKey);
+  console.log('ctrlKey = ' + e.ctrlKey);
+  console.log('metaKey = ' + e.metaKey);
+  console.log('shiftKey = ' + e.shiftKey);
+}, false);
 ```
 
-**（4）touches**
+**（2）TouchEvent.changedTouches**
 
-touches属性返回一个TouchList对象，包含了所有仍然处于活动状态的触摸点。
+`TouchEvent.changedTouches`属性返回一个`TouchList`实例，成员是一组`Touch`实例对象，表示本次触摸事件的相关触摸点。
+
+对于不同的时间，该属性的含义有所不同。
+
+- `touchstart`事件：被激活的触摸点
+- `touchmove`事件：发生变化的触摸点
+- `touchend`事件：消失的触摸点（即不再被触碰的点）
+
+下面是一个示例。
 
 ```javascript
-var touches = touchEvent.touches;
+someElement.addEventListener('touchmove', function (e) {
+  for (var i = 0; i < e.changedTouches.length; i++) {
+    console.log(e.changedTouches[i].identifier);
+  }
+}, false);
 ```
+
+**（3）TouchEvent.touches**
+
+`TouchEvent.touches`属性返回一个`TouchList`实例，成员是所有仍然处于活动状态（即触摸中）的触摸点。一般来说，一个手指就是一个触摸点。
+
+下面是一个示例。
+
+```javascript
+someElement.addEventListener('touchstart', function (e) {
+  switch (e.touches.length) {
+    // 一根手指触摸
+    case 1: handle_one_touch(e); break;
+    // 两根手指触摸
+    case 2: handle_two_touches(e); break;
+    // 三根手指触摸
+    case 3: handle_three_touches(e); break;
+    // 其他情况
+    default: console.log('Not supported'); break;
+  }
+}, false);
+```
+
+**（4）TouchEvent.targetTouches**
+
+`TouchEvent.targetTouches`属性返回一个`TouchList`实例，成员是触摸事件的目标元素节点内部、所有仍然处于活动状态（即触摸中）的触摸点。
+
+```javascript
+function touches_in_target(ev) {
+  return (ev.touches.length === ev.targetTouches.length ? true : false);
+}
+```
+
+上面代码用来判断，是否所有触摸点都在目标元素内容。
 
 ### 触摸事件的种类
 
