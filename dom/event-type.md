@@ -992,57 +992,103 @@ div.addEventListener("dragstart", function(e) {
 
 ## 触摸操作概述
 
-触摸API由三个对象组成。
+浏览器的触摸 API 由三个部分组成。
 
 - Touch：一个触摸点
 - TouchList：多个触摸点的集合
 - TouchEvent：触摸引发的事件实例
 
-Touch 对象表示触摸点（一根手指或者一根触摸笔），用来描述触摸动作，包括位置、大小、形状、压力、目标元素等属性。有时，触摸动作由多个触摸点（多根手指或者多根触摸笔）组成，多个触摸点的集合由TouchList对象表示。TouchEvent对象代表由触摸引发的事件，只有触摸屏才会引发这一类事件。
+`Touch`接口的实例对象用来触摸点（一根手指或者一根触摸笔），包括位置、大小、形状、压力、目标元素等属性。有时，触摸动作由多个触摸点（多根手指）组成，多个触摸点的集合由`TouchList`接口的实例对象表示。`TouchEvent`接口的实例对象代表由触摸引发的事件，只有触摸屏才会引发这一类事件。
 
-很多时候，触摸事件和鼠标事件同时触发，即使这个时候并没有用到鼠标。这是为了让那些只定义鼠标事件、没有定义触摸事件的代码，在触摸屏的情况下仍然能用。如果想避免这种情况，可以用preventDefault方法阻止发出鼠标事件。
+很多时候，触摸事件和鼠标事件同时触发，即使这个时候并没有用到鼠标。这是为了让那些只定义鼠标事件、没有定义触摸事件的代码，在触摸屏的情况下仍然能用。如果想避免这种情况，可以用`event.preventDefault`方法阻止发出鼠标事件。
 
-## Touch对象
+## Touch 接口
 
-Touch对象代表一个触摸点。触摸点可能是一根手指，也可能是一根触摸笔。它有以下属性。
+### Touch 接口概述
 
-**（1）identifier**
+Touch 接口代表单个触摸点。触摸点可能是一根手指，也可能是一根触摸笔。
 
-identifier属性表示Touch实例的独一无二的识别符。它在整个触摸过程中保持不变。
+浏览器原生提供`Touch`构造函数，用来生成`Touch`实例。
 
 ```javascript
-var id = touchItem.identifier;
+var touch = new Touch(touchOptions);
 ```
 
-TouchList对象的identifiedTouch方法，可以根据这个属性，从一个集合里面取出对应的Touch对象。
+`Touch`构造函数接受一个配置对象作为参数，它有以下属性。
 
-**（2）screenX，screenY，clientX，clientY，pageX，pageY**
+- `identifier`：必需，类型为整数，表示触摸点的唯一 ID。
+- `target`：必需，类型为元素节点，表示触摸点开始时所在的网页元素。
+- `clientX`：可选，类型为数值，表示触摸点相对于浏览器窗口左上角的水平距离，默认为0。
+- `clientY`：可选，类型为数值，表示触摸点相对于浏览器窗口左上角的垂直距离，默认为0。
+- `screenX`：可选，类型为数值，表示触摸点相对于屏幕左上角的水平距离，默认为0。
+- `screenY`：可选，类型为数值，表示触摸点相对于屏幕左上角的垂直距离，默认为0。
+- `pageX`：可选，类型为数值，表示触摸点相对于网页左上角的水平位置（即包括页面的滚动距离），默认为0。
+- `pageY`：可选，类型为数值，表示触摸点相对于网页左上角的垂直位置（即包括页面的滚动距离），默认为0。
+- `radiusX`：可选，类型为数值，表示触摸点周围受到影响的椭圆范围的 X 轴半径，默认为0。
+- `radiusY`：可选：类型为数值，表示触摸点周围受到影响的椭圆范围的 Y 轴半径，默认为0。
+- `rotationAngle`：可选，类型为数值，表示触摸区域的椭圆的旋转角度，单位为度数，在0到90度之间，默认值为0。
+- `force`：可选，类型为数值，范围在`0`到`1`之间，表示触摸压力。`0`代表没有压力，`1`代表硬件所能识别的最大压力，默认为`0`。
 
-screenX属性和screenY属性，分别表示触摸点相对于屏幕左上角的横坐标和纵坐标，与页面是否滚动无关。
+### Touch 接口的实例属性
 
-clientX属性和clientY属性，分别表示触摸点相对于浏览器视口左上角的横坐标和纵坐标，与页面是否滚动无关。
+**（1）Touch.identifier**
 
-pageX属性和pageY属性，分别表示触摸点相对于当前页面左上角的横坐标和纵坐标，包含了页面滚动带来的位移。
+`Touch.identifier`属性返回一个整数，表示触摸点的唯一 ID。这个值在整个触摸过程保持不变，直到触摸事件结束。
 
-**（3）radiusX，radiusY，rotationAngle**
+```javascript
+someElement.addEventListener('touchmove', function (e) {
+  for (var i = 0; i < e.changedTouches.length; i++) {
+    console.log(e.changedTouches[i].identifier);
+  }
+}, false);
+```
 
-radiusX属性和radiusY属性，分别返回触摸点周围受到影响的椭圆范围的X轴和Y轴，单位为像素。
+另外，`TouchList.item`方法可以根据这个属性，从一个集合里面取出对应的`Touch`实例。
 
-rotationAngle属性表示触摸区域的椭圆的旋转角度，单位为度数，在0到90度之间。
+**（2）Touch.screenX，Touch.screenY，Touch.clientX，Touch.clientY，pageX，pageY**
+
+`Touch.screenX`属性和`Touch.screenY`属性，分别表示触摸点相对于屏幕左上角的横坐标和纵坐标，与页面是否滚动无关。
+
+`Touch.clientX`属性和`Touch.clientY`属性，分别表示触摸点相对于浏览器视口左上角的横坐标和纵坐标，与页面是否滚动无关。
+
+`Touch.pageX`属性和`Touch.pageY`属性，分别表示触摸点相对于当前页面左上角的横坐标和纵坐标，包含了页面滚动带来的位移。
+
+**（3）Touch.radiusX，Touch.radiusY，Touch.rotationAngle**
+
+`Touch.radiusX`属性和`Touch.radiusY`属性，分别返回触摸点周围受到影响的椭圆范围的 X 轴半径和 Y 轴半径，单位为像素。乘以 2 就可以得到触摸范围的宽度和高度。
+
+`Touch.rotationAngle`属性表示触摸区域的椭圆的旋转角度，单位为度数，在`0`到`90`度之间。
 
 上面这三个属性共同定义了用户与屏幕接触的区域，对于描述手指这一类非精确的触摸，很有帮助。指尖接触屏幕，触摸范围会形成一个椭圆，这三个属性就用来描述这个椭圆区域。
 
-**（4）force**
+下面是一个示例。
 
-force属性返回一个0到1之间的数值，表示触摸压力。0代表没有压力，1代表硬件所能识别的最大压力。
+```javascript
+div.addEventListener('touchstart', rotate);
+div.addEventListener('touchmove', rotate);
+div.addEventListener('touchend', rotate);
 
-**（5）target**
+function rotate(e) {
+  var touch = e.changedTouches.item(0);
+  e.preventDefault();
 
-target属性返回一个Element节点，代表触摸发生的那个节点。
+  src.style.width = touch.radiusX * 2 + 'px';
+  src.style.height = touch.radiusY * 2 + 'px';
+  src.style.transform = 'rotate(' + touch.rotationAngle + 'deg)';
+};
+```
 
-## TouchList对象
+**（4）Touch.force**
 
-TouchList对象是一个类似数组的对象，成员是与某个触摸事件相关的所有触摸点。比如，用户用三根手指触摸，产生的TouchList对象就有三个成员，每根手指对应一个Touch对象。
+`Touch.force`属性返回一个`0`到`1`之间的数值，表示触摸压力。`0`代表没有压力，`1`代表硬件所能识别的最大压力。
+
+**（5）Touch.target**
+
+`Touch.target`属性返回一个元素节点，代表触摸发生时所在的那个元素节点。即使触摸点已经离开了这个节点，该属性依然不变。
+
+## TouchList 接口
+
+`TouchList`接口的实例是一个类似数组的对象，成员是与某个触摸事件相关的所有触摸点。比如，用户用三根手指触摸，产生的TouchList对象就有三个成员，每根手指对应一个Touch对象。
 
 TouchList实例的length属性，返回TouchList对象的成员数量。
 
