@@ -1043,8 +1043,6 @@ someElement.addEventListener('touchmove', function (e) {
 }, false);
 ```
 
-另外，`TouchList.item`方法可以根据这个属性，从一个集合里面取出对应的`Touch`实例。
-
 **（2）Touch.screenX，Touch.screenY，Touch.clientX，Touch.clientY，pageX，pageY**
 
 `Touch.screenX`属性和`Touch.screenY`属性，分别表示触摸点相对于屏幕左上角的横坐标和纵坐标，与页面是否滚动无关。
@@ -1088,11 +1086,14 @@ function rotate(e) {
 
 ## TouchList 接口
 
-`TouchList`接口的实例是一个类似数组的对象，成员是与某个触摸事件相关的所有触摸点。比如，用户用三根手指触摸，产生的TouchList对象就有三个成员，每根手指对应一个Touch对象。
+`TouchList`接口表示一组触摸点的集合。它的实例是一个类似数组的对象，成员是`Touch`的实例对象，表示所有触摸点。用户用三根手指触摸，产生的`TouchList`实例就会包含三个成员，每根手指的触摸点对应一个`Touch`实例对象。
 
-TouchList实例的length属性，返回TouchList对象的成员数量。
+它的实例主要通过触摸事件的`TouchEvent.touches`、`TouchEvent.changedTouches`、`TouchEvent.targetTouches`这几个属性获取。
 
-TouchList实例的identifiedTouch方法和item方法，分别使用id属性和索引值（从0开始）作为参数，取出指定的Touch对象。
+它的实例属性和实例方法只有两个。
+
+- `TouchList.length`：数值，表示成员数量（即触摸点的数量）。
+- `TouchList.item()`：返回指定位置的成员，它的参数是该成员的位置编号（从零开始）。
 
 ## TouchEvent 接口
 
@@ -1108,9 +1109,9 @@ new TouchEvent(type, options)
 
 `TouchEvent()`构造函数可以接受两个参数，第一个参数是字符串，表示事件类型；第二个参数是事件的配置对象，该参数是可选的，对象的所有属性也是可选的。除了`Event`接口的配置属性，该接口还有一些自己的配置属性。
 
-- `touches`：数组，成员是一组`Touch`的实例对象，代表所有的当前处于活跃状态的触摸点，默认值是一个空数组`[]`。
-- `targetTouches`：数组，成员是一组`Touch`的实例对象，代表所有处在触摸的目标元素节点内部、且仍然处于活动状态的触摸点，默认值是一个空数组`[]`。
-- `changedTouches`：数组，成员是一组`Touch`的实例对象，代表本次触摸事件的相关触摸点，默认值是一个空数组`[]`。
+- `touches`：`TouchList`实例，代表所有的当前处于活跃状态的触摸点，默认值是一个空数组`[]`。
+- `targetTouches`：`TouchList`实例，代表所有处在触摸的目标元素节点内部、且仍然处于活动状态的触摸点，默认值是一个空数组`[]`。
+- `changedTouches`：`TouchList`实例，代表本次触摸事件的相关触摸点，默认值是一个空数组`[]`。
 - `ctrlKey`：布尔值，表示 Ctrl 键是否同时按下，默认值为`false`。
 - `shiftKey`：布尔值，表示 Shift 键是否同时按下，默认值为`false`。
 - `altKey`：布尔值，表示 Alt 键是否同时按下，默认值为`false`。
@@ -1193,29 +1194,23 @@ function touches_in_target(ev) {
 
 ### 触摸事件的种类
 
-触摸引发的事件，有以下几类。可以通过TouchEvent.type属性，查看到底发生的是哪一种事件。
+触摸引发的事件，有以下几种。可以通过`TouchEvent.type`属性，查看到底发生的是哪一种事件。
 
-- touchstart：用户接触触摸屏时触发，它的target属性返回发生触摸的Element节点。
-
-- touchend：用户不再接触触摸屏时（或者移出屏幕边缘时）触发，它的target属性与touchstart事件的target属性是一致的，它的changedTouches属性返回一个TouchList对象，包含所有不再触摸的触摸点（Touch对象）。
-
-- touchmove：用户移动触摸点时触发，它的target属性与touchstart事件的target属性一致。如果触摸的半径、角度、力度发生变化，也会触发该事件。
-
-- touchcancel：触摸点取消时触发，比如在触摸区域跳出一个情态窗口（modal window）、触摸点离开了文档区域（进入浏览器菜单栏区域）、用户放置更多的触摸点（自动取消早先的触摸点）。
+- `touchstart`：用户开始触摸时触发，它的`target`属性返回发生触摸的元素节点。
+- `touchend`：用户不再接触触摸屏时（或者移出屏幕边缘时）触发，它的`target`属性与`touchstart`事件一致的，就是开始触摸时所在的元素节点。它的`changedTouches`属性返回一个`TouchList`实例，包含所有不再触摸的触摸点（即`Touch`实例对象）。
+- `touchmove`：用户移动触摸点时触发，它的`target`属性与`touchstart`事件一致。如果触摸的半径、角度、力度发生变化，也会触发该事件。
+- `touchcancel`：触摸点取消时触发，比如在触摸区域跳出一个情态窗口（modal window）、触摸点离开了文档区域（进入浏览器菜单栏）、用户的触摸点太多，超过了支持的上限（自动取消早先的触摸点）。
 
 下面是一个例子。
 
 ```javascript
-var el = document.getElementsByTagName("canvas")[0];
-el.addEventListener("touchstart", handleStart, false);
-el.addEventListener("touchmove", handleMove, false);
+var el = document.getElementsByTagName('canvas')[0];
+el.addEventListener('touchstart', handleStart, false);
+el.addEventListener('touchmove', handleMove, false);
 
 function handleStart(evt) {
-  // 阻止浏览器继续处理触摸事件，
-  // 也阻止发出鼠标事件
   evt.preventDefault();
   var touches = evt.changedTouches;
-
   for (var i = 0; i < touches.length; i++) {
     console.log(touches[i].pageX, touches[i].pageY);
   }
@@ -1224,10 +1219,8 @@ function handleStart(evt) {
 function handleMove(evt) {
   evt.preventDefault();
   var touches = evt.changedTouches;
-
   for (var i = 0; i < touches.length; i++) {
-    var id = touches[i].identifier;
-    var touch = touches.identifiedTouch(id);
+    var touch = touches[i];
     console.log(touch.pageX, touch.pageY);
   }
 }
