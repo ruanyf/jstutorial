@@ -197,7 +197,7 @@ Object.getOwnPropertyDescriptor(obj, 'foo')
 //   value: undefined,
 //   writable: false,
 //   enumerable: false,
-//   configurable: falsee
+//   configurable: false
 // }
 ```
 
