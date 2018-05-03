@@ -425,30 +425,39 @@ function numbersOnly(oToCheckField, oKeyEvent) {
 1. （重复以上过程）
 1. keyup
 
-键盘事件使用KeyboardEvent对象表示，该对象继承了UIEvent和MouseEvent对象。浏览器提供KeyboardEvent构造函数，用来新建键盘事件的实例。
+## KeyboardEvent 接口
+
+`KeyboardEvent`接口用来描述用户与键盘的互动。这个接口继承了`Event`接口，并且定义了自己的实例属性和实例方法。
+
+浏览器原生提供`KeyboardEvent`构造函数，用来新建键盘事件的实例。
 
 ```javascript
-event = new KeyboardEvent(typeArg, KeyboardEventInit);
+new KeyboardEvent(type, options)
 ```
 
-KeyboardEvent构造函数的第一个参数是一个字符串，表示事件类型，第二个参数是一个事件配置对象，可配置以下字段。
+`KeyboardEvent`构造函数接受两个参数。第一个参数是字符串，表示事件类型；第二个参数是一个事件配置对象，该参数可选。除了`Event`接口提供的属性，还可以配置以下字段，它们都是可选。
 
-- key，对应KeyboardEvent.key属性，默认为空字符串。
-- ctrlKey，对应KeyboardEvent.ctrlKey属性，默认为false。
-- shiftKey，对应KeyboardEvent.shiftKey属性，默认为false。
-- altKey，对应KeyboardEvent.altKey属性，默认为false。
-- metaKey，对应KeyboardEvent.metaKey属性，默认为false。
+- `key`：字符串，当前按下的键，默认为空字符串。
+- `code`：字符串，表示当前按下的键的字符串形式，默认为空字符串。
+- `location`：整数，当前按下的键的位置，默认为`0`。
+- `ctrlKey`：布尔值，是否按下 Ctrl 键，默认为`false`。
+- `shiftKey`：布尔值，是否按下 Shift 键，默认为`false`。
+- `altKey`：布尔值，是否按下 Alt 键，默认为`false`。
+- `metaKey`：布尔值，是否按下 Meta 键，默认为`false`。
+- `repeat`：布尔值，是否重复按键，默认为`false`。
 
-下面就是KeyboardEvent实例的属性介绍。
+## KeyboardEvent 的实例属性
 
-### altKey，ctrlKey，metaKey，shiftKey
+### KeyboardEvent.altKey，KeyboardEvent.metaKey.ctrlKey，KeyboardEvent.metaKey，KeyboardEvent.shiftKey
 
-以下属性返回一个布尔值，表示是否按下对应的键。
+以下属性都是只读属性，返回一个布尔值，表示是否按下对应的键。
 
-- altKey：alt键
-- ctrlKey：ctrl键
-- metaKey：meta键（mac系统是一个四瓣的小花，windows系统是windows键）
-- shiftKey：shift键
+- `KeyboardEvent.altKey`：是否按下 Alt 键
+- `KeyboardEvent.ctrlKey`：是否按下 Ctrl 键
+- `KeyboardEvent.metaKey`：是否按下 meta 键（Mac 系统是一个四瓣的小花，Windows 系统是 windows 键）
+- `KeyboardEvent.shiftKey`：是否按下 Shift 键
+
+下面是一个示例。
 
 ```javascript
 function showChar(e){
@@ -457,15 +466,73 @@ function showChar(e){
   console.log("Meta: " + e.metaKey);
   console.log("Meta: " + e.shiftKey);
 }
+
+document.body.addEventListener('click', showChar, false);
 ```
 
-### key，charCode
+### KeyboardEvent.code
 
-key属性返回一个字符串，表示按下的键名。如果同时按下一个控制键和一个符号键，则返回符号键的键名。比如，按下Ctrl+a，则返回a。如果无法识别键名，则返回字符串Unidentified。
+`KeyboardEvent.code`属性返回一个字符串，表示当前按下的键的字符串形式。该属性只读。
 
-主要功能键的键名（不同的浏览器可能有差异）：Backspace，Tab，Enter，Shift，Control，Alt，CapsLock，Esc，Spacebar，PageUp，PageDown，End，Home，Left，Right，Up，Down，PrintScreen，Insert，Del，Win，F1～F12，NumLock，Scroll等。
+下面是一些常用键的字符串形式，其他键请查[文档](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code#Code_values)。
 
-charCode属性返回一个数值，表示keypress事件按键的Unicode值，keydown和keyup事件不提供这个属性。注意，该属性已经从标准移除，虽然浏览器还支持，但应该尽量不使用。
+- 数字键0 - 9：返回`digital0` - `digital9`
+- 字母键A - z：返回`KeyA` - `KeyZ`
+- 功能键F1 - F12：返回 `F1` - `F12`
+- 方向键：返回`ArrowDown`、`ArrowUp`、`ArrowLeft`、`ArrowRight`
+- Alt 键：返回`AltLeft`或`AltRight`
+- Shift 键：返回`ShiftLeft`或`ShiftRight`
+- Ctrl 键：返回`ControLeft`或`ControlRight`
+
+### KeyboardEvent.key
+
+`KeyboardEvent.key`属性返回一个字符串，表示按下的键名。该属性只读。
+
+如果按下的键代表可打印字符，则返回这个字符，比如数字、字母。
+
+如果按下的键代表不可打印的特殊字符，则返回预定义的键值，比如 Backspace，Tab，Enter，Shift，Control，Alt，CapsLock，Esc，Spacebar，PageUp，PageDown，End，Home，Left，Right，Up，Down，PrintScreen，Insert，Del，Win，F1～F12，NumLock，Scroll 等。
+
+如果同时按下一个控制键和一个符号键，则返回符号键的键名。比如，按下 Ctrl + a，则返回`a`；按下 Shift + a，则返回大写的`A`。
+
+如果无法识别键名，返回字符串`Unidentified`。
+
+### KeyboardEvent.location
+
+`KeyboardEvent.location`属性返回一个整数，表示按下的键处在键盘的哪一个区域。它可能取以下值。
+
+- 0：处在键盘的主区域，或者无法判断处于哪一个区域。
+- 1：处在键盘的左侧，只适用那些有两个位置的键（比如 Ctrl 和 Shift 键）。
+- 2：处在键盘的右侧，只适用那些有两个位置的键（比如 Ctrl 和 Shift 键）。
+- 3：处在数字小键盘。
+
+### KeyboardEvent.repeat
+
+`KeyboardEvent.repeat`返回一个布尔值，代表该键是否被按着不放，以便判断是否重复这个键，即浏览器会持续触发`keydown`和`keypress`事件，直到用户松开手为止。
+
+## KeyboardEvent 的实例方法
+
+### KeyboardEvent.getModifierState()
+
+`KeyboardEvent.getModifierState()`方法返回一个布尔值，表示是否按下或激活指定的功能键。它的常用参数如下。
+
+- `Alt`：Alt 键
+- `CapsLock`：大写锁定键
+- `Control`：Ctrl 键
+- `Meta`：Meta 键
+- `NumLock`：数字键盘开关键
+- `Shift`：Shift 键
+
+```javascript
+if (
+  event.getModifierState('Control') +
+  event.getModifierState('Alt') +
+  event.getModifierState('Meta') > 1
+) {
+  return;
+}
+```
+
+上面代码表示，只要`Control`、`Alt`、`Meta`里面，同时按下任意两个或两个以上的键就返回。
 
 ## 进度事件
 
@@ -1190,9 +1257,9 @@ function touches_in_target(ev) {
 }
 ```
 
-上面代码用来判断，是否所有触摸点都在目标元素内容。
+上面代码用来判断，是否所有触摸点都在目标元素内。
 
-### 触摸事件的种类
+## 触摸事件的种类
 
 触摸引发的事件，有以下几种。可以通过`TouchEvent.type`属性，查看到底发生的是哪一种事件。
 
