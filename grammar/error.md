@@ -411,7 +411,7 @@ result
 
 上面代码中，`catch`代码块结束执行之前，会先执行`finally`代码块。
 
-`catch`代码块之中，触发转入`finally`代码快的标志，不仅有`return`语句，还有`throw`语句。
+`catch`代码块之中，触发转入`finally`代码块的标志，不仅有`return`语句，还有`throw`语句。
 
 ```javascript
 function f() {
