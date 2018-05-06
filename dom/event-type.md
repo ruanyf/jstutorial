@@ -395,29 +395,11 @@ var wheelEvent = new WheelEvent(type, options);
 
 ## 键盘事件
 
-键盘事件用来描述键盘行为，主要有keydown、keypress、keyup三个事件。
+键盘事件由用户击打键盘触发，主要有`keydown`、`keypress`、`keyup`三个事件，它们都继承了`KeyboardEvent`接口。
 
-- keydown：按下键盘时触发该事件。
-
-- keypress：只要按下的键并非Ctrl、Alt、Shift和Meta，就接着触发keypress事件。
-
-- keyup：松开键盘时触发该事件。
-
-下面是一个例子，对文本框设置keypress监听函数，只允许输入数字。
-
-```javascript
-// HTML代码为
-// <input type="text"
-//   name="myInput"
-//   onkeypress="return numbersOnly(this, event);"
-//   onpaste="return false;"
-// />
-
-function numbersOnly(oToCheckField, oKeyEvent) {
-  return oKeyEvent.charCode === 0
-    || /\d/.test(String.fromCharCode(oKeyEvent.charCode));
-}
-```
+- `keydown`：按下键盘时触发。
+- `keypress`：按下有值的键时触发，即按下 Ctrl、Alt、Shift、Meta 这样无值的键，这个事件不会触发。对于有值的键，按下时先触发`keydown`事件，再触发这个事件。
+- `keyup`：松开键盘时触发该事件。
 
 如果用户一直按键不松开，就会连续触发键盘事件，触发的顺序如下。
 
@@ -425,7 +407,7 @@ function numbersOnly(oToCheckField, oKeyEvent) {
 1. keypress
 1. keydown
 1. keypress
-1. （重复以上过程）
+1. ...（重复以上过程）
 1. keyup
 
 ## KeyboardEvent 接口
@@ -539,41 +521,37 @@ if (
 
 ## 进度事件
 
-进度事件用来描述一个事件进展的过程，比如XMLHttpRequest对象发出的HTTP请求的过程、&lt;img&gt;、&lt;audio&gt;、&lt;video&gt;、&lt;style&gt;、&lt;link&gt;加载外部资源的过程。下载和上传都会发生进度事件。
+进度事件用来描述资源加载的进度，主要由 AJAX 请求、`<img>`、`<audio>`、`<video>`、`<style>`、`<link>`等外部资源的加载触发，继承了`ProgressEvent`接口。它主要包含以下几种事件。
 
-进度事件有以下几种。
+- `abort`：外部资源中止加载时（比如用户取消）触发。如果发生错误导致中止，不会触发该事件。
+- `error`：由于错误导致外部资源无法加载时触发。
+- `load`：外部资源加载成功时触发。
+- `loadstart`：外部资源开始加载时触发。
+- `loadend`：外部资源停止加载时触发，发生顺序排在`error`、`abort`、`load`等事件的后面。
+- `progress`：外部资源加载过程中不断触发。
+- `timeout`：加载超时时触发。
 
-- abort事件：当进度事件被中止时触发。如果发生错误，导致进程中止，不会触发该事件。
+注意，除了资源下载，文件上传也存在这些事件。
 
-- error事件：由于错误导致资源无法加载时触发。
-
-- load事件：进度成功结束时触发。
-
-- loadstart事件：进度开始时触发。
-
-- loadend事件：进度停止时触发，发生顺序排在error事件\abort事件\load事件后面。
-
-- progress事件：当操作处于进度之中，由传输的数据块不断触发。
-
-- timeout事件：进度超过限时触发。
+下面是一个例子。
 
 ```javascript
-image.addEventListener('load', function(event) {
+image.addEventListener('load', function (event) {
   image.classList.add('finished');
 });
 
-image.addEventListener('error', function(event) {
+image.addEventListener('error', function (event) {
   image.style.display = 'none';
 });
 ```
 
-上面代码在图片元素加载完成后，为图片元素的class属性添加一个值“finished”。如果加载失败，就把图片元素的样式设置为不显示。
+上面代码在图片元素加载完成后，为图片元素添加一个`finished`的 Class。如果加载失败，就把图片元素的样式设置为不显示。
 
-有时候，图片加载会在脚本运行之前就完成，尤其是当脚本放置在网页底部的时候，因此有可能使得load和error事件的监听函数根本不会被执行。所以，比较可靠的方式，是用complete属性先判断一下是否加载完成。
+有时候，图片加载会在脚本运行之前就完成，尤其是当脚本放置在网页底部的时候，因此有可能`load`和`error`事件的监听函数根本不会执行。所以，比较可靠的方式，是用`complete`属性先判断一下是否加载完成。
 
 ```javascript
 function loaded() {
-  // code after image loaded
+  // ...
 }
 
 if (image.complete) {
@@ -583,35 +561,82 @@ if (image.complete) {
 }
 ```
 
-由于DOM没有提供像complete属性那样的，判断是否发生加载错误的属性，所以error事件的监听函数最好放在img元素的HTML属性中，这样才能保证发生加载错误时百分之百会执行。
+由于 DOM 的元素节点没有提供是否加载错误的属性，所以`error`事件的监听函数最好放在`<img>`元素的 HTML 代码中，这样才能保证发生加载错误时百分之百会执行。
 
 ```html
 <img src="/wrong/url" onerror="this.style.display='none';" />
 ```
 
-error事件有一个特殊的性质，就是不会冒泡。这样的设计是正确的，防止引发父元素的error事件监听函数。
+`loadend`事件的监听函数，可以用来取代`abort`事件、`load`事件、`error`事件的监听函数，因为它总是在这些事件之后发生。
 
-进度事件使用ProgressEvent对象表示。ProgressEvent实例有以下属性。
+```javascript
+req.addEventListener('loadend', loadEnd, false);
 
-- lengthComputable：返回一个布尔值，表示当前进度是否具有可计算的长度。如果为false，就表示当前进度无法测量。
+function loadEnd(e) {
+  console.log('传输结束，成功失败未知');
+}
+```
 
-- total：返回一个数值，表示当前进度的总长度。如果是通过HTTP下载某个资源，表示内容本身的长度，不含HTTP头部的长度。如果lengthComputable属性为false，则total属性就无法取得正确的值。
+`loadend`事件本身不提供关于进度结束的原因，但可以用它来做所有加载结束场景都需要做的一些操作。
 
-- loaded：返回一个数值，表示当前进度已经完成的数量。该属性除以total属性，就可以得到目前进度的百分比。
+另外，`error`事件有一个特殊的性质，就是不会冒泡。所以，子元素的`error`事件，不会触发父元素的`error`事件监听函数。
+
+## ProgressEvent 接口
+
+`ProgressEvent`接口主要用来描述外部资源加载的进度，比如 AJAX 加载、`<img>`、`<video>`、`<style>`、`<link>`等外部资源加载。进度相关的事件都继承了这个接口。
+
+浏览器原生提供了`ProgressEvent()`构造函数，用来生成事件实例。
+
+```javascript
+new ProgressEvent(type, options)
+```
+
+`ProgressEvent()`构造函数接受两个参数。第一个参数是字符串，表示事件的类型，这个参数是必须的。第二个参数是一个配置对象，表示事件的属性，该参数可选。配置对象除了可以使用`Event`接口的配置属性，还可以使用下面的属性，所有这些属性都是可选的。
+
+- `lengthComputable`：布尔值，表示加载的总量是否可以计算，默认是`false`。
+- `loaded`：整数，表示已经加载的量，默认是`0`。
+- `total`：整数，表示需要加载的总量，默认是`0`。
+
+`ProgressEvent`具有对应的实例属性。
+
+- `ProgressEvent.lengthComputable`
+- `ProgressEvent.loaded`
+- `ProgressEvent.total`
+
+如果`ProgressEvent.lengthComputable`为`false`，`ProgressEvent.total`实际上是没有意义的。
 
 下面是一个例子。
 
 ```javascript
+var p = new ProgressEvent('load', {
+  lengthComputable: true,
+  loaded: 30,
+  total: 100,
+});
+
+document.body.addEventListener('load', function (e) {
+  console.log('已经加载：' + (e.loaded / e.total) * 100 + '%');
+});
+
+document.body.dispatchEvent(p);
+// 已经加载：30%
+```
+
+上面代码先构造一个`load`事件，抛出后被监听函数捕捉到。
+
+下面是一个实际的例子。
+
+```javascript
 var xhr = new XMLHttpRequest();
 
-xhr.addEventListener("progress", updateProgress, false);
-xhr.addEventListener("load", transferComplete, false);
-xhr.addEventListener("error", transferFailed, false);
-xhr.addEventListener("abort", transferCanceled, false);
+xhr.addEventListener('progress', updateProgress, false);
+xhr.addEventListener('load', transferComplete, false);
+xhr.addEventListener('error', transferFailed, false);
+xhr.addEventListener('abort', transferCanceled, false);
 
 xhr.open();
 
-function updateProgress (e) {
+function updateProgress(e) {
   if (e.lengthComputable) {
     var percentComplete = e.loaded / e.total;
   } else {
@@ -632,42 +657,18 @@ function transferCanceled(evt) {
 }
 ```
 
-loadend事件的监听函数，可以用来取代abort事件/load事件/error事件的监听函数。
-
-```javascript
-req.addEventListener("loadend", loadEnd, false);
-
-function loadEnd(e) {
-  console.log('传输结束，成功失败未知');
-}
-```
-
-loadend事件本身不提供关于进度结束的原因，但可以用它来做所有进度结束场景都需要做的一些操作。
-
-另外，上面是下载过程的进度事件，还存在上传过程的进度事件。这时所有监听函数都要放在XMLHttpRequest.upload对象上面。
+上面是下载过程的进度事件，还存在上传过程的进度事件。这时所有监听函数都要放在`XMLHttpRequest.upload`对象上面。
 
 ```javascript
 var xhr = new XMLHttpRequest();
 
-xhr.upload.addEventListener("progress", updateProgress, false);
-xhr.upload.addEventListener("load", transferComplete, false);
-xhr.upload.addEventListener("error", transferFailed, false);
-xhr.upload.addEventListener("abort", transferCanceled, false);
+xhr.upload.addEventListener('progress', updateProgress, false);
+xhr.upload.addEventListener('load', transferComplete, false);
+xhr.upload.addEventListener('error', transferFailed, false);
+xhr.upload.addEventListener('abort', transferCanceled, false);
 
 xhr.open();
 ```
-
-浏览器提供一个ProgressEvent构造函数，用来生成进度事件的实例。
-
-```javascript
-progressEvent = new ProgressEvent(type, {
-  lengthComputable: aBooleanValue,
-  loaded: aNumber,
-  total: aNumber
-});
-```
-
-上面代码中，ProgressEvent构造函数的第一个参数是事件类型（字符串），第二个参数是配置对象，用来指定lengthComputable属性（默认值为false）、loaded属性（默认值为0）、total属性（默认值为0）。
 
 ## 拖拉事件
 
