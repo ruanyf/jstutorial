@@ -734,7 +734,7 @@ function f1() {
 }
 
 console.log(n)
-// Uncaught ReferenceError: n is not defined(
+// Uncaught ReferenceError: n is not defined
 ```
 
 上面代码中，函数`f1`内部声明的变量`n`，函数外是无法读取的。
