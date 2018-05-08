@@ -89,7 +89,7 @@ document.nodeType === Node.DOCUMENT_NODE // true
 
 ```javascript
 var node = document.documentElement.firstChild;
-if (node.nodeType !== Node.ELEMENT_NODE) {
+if (node.nodeType === Node.ELEMENT_NODE) {
   console.log('该节点是元素节点');
 }
 ```
