@@ -443,7 +443,7 @@ page.open('http://slashdot.org', function (status) {
 
 ### 抓取图片
 
-使用官方网站提供的[rasterize.js](https://github.com/ariya/phantomjs/blob/master/examples/rasterize.js)，可以抓取网络上的图片，将起保存在本地。
+使用官方网站提供的[rasterize.js](https://github.com/ariya/phantomjs/blob/master/examples/rasterize.js)，可以抓取网络上的图片，将其保存在本地。
 
 {% highlight javascript %}
 
