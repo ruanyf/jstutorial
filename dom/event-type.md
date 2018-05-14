@@ -799,9 +799,7 @@ new DragEvent(type, options)
 
 `DataTransfer`的实例对象用来读写拖拉事件中传输的数据，详见下文《DataTransfer 接口》的部分。
 
-## DataTransfer 接口
-
-### 概述
+## DataTransfer 接口概述
 
 所有拖拉事件的实例都有一个`DragEvent.dataTransfer`属性，用来读写需要传递的数据。这个属性的值是一个`DataTransfer`接口的实例。
 
@@ -819,11 +817,9 @@ var dataTrans = new DataTransfer();
 
 发生`drop`事件时，监听函数取出拖拉的数据，对其进行处理。
 
-### DataTransfer 的实例属性
+## DataTransfer 的实例属性
 
-`DataTransfer`实例对象有以下属性。
-
-**（1）DataTransfer.dropEffect**
+### DataTransfer.dropEffect
 
 `DataTransfer.dropEffect`属性用来设置放下（drop）被拖拉节点时的效果，会影响到拖拉经过相关区域时鼠标的形状。它可能取下面的值。
 
@@ -846,7 +842,7 @@ target.addEventListener('dragover', function (e) {
 
 `dropEffect`属性一般在`dragenter`和`dragover`事件的监听函数中设置，对于`dragstart`、`drag`、`dragleave`这三个事件，该属性不起作用。因为该属性只对接受被拖拉的节点的区域有效，对被拖拉的节点本身是无效的。进入目标区域后，拖拉行为会初始化成设定的效果。
 
-**（2）DataTransfer.effectAllowed**
+### DataTransfer.effectAllowed
 
 `DataTransfer.effectAllowed`属性设置本次拖拉中允许的效果。它可能取下面的值。
 
@@ -878,7 +874,7 @@ target.addEventListener('dragover', function (e) {
 
 只要`dropEffect`属性和`effectAllowed`属性之中，有一个为`none`，就无法在目标节点上完成`drop`操作。
 
-**（3）DataTransfer.files**
+### DataTransfer.files
 
 `DataTransfer.files`属性是一个 FileList 对象，包含一组本地文件，可以用来在拖拉操作中传送。如果本次拖拉不涉及文件，则该属性为空的 FileList 对象。
 
@@ -935,7 +931,7 @@ div.addEventListener('drop', function(e) {
 });
 ```
 
-**（4）DataTransfer.types**
+### DataTransfer.types
 
 `DataTransfer.types`属性是一个只读的数组，每个成员是一个字符串，里面是拖拉的数据格式（通常是 MIME 值）。比如，如果拖拉的是文字，对应的成员就是`text/plain`。
 
@@ -957,7 +953,7 @@ function doDragOver(event) {
 
 上面代码中，只有当被拖拉的节点是一个链接时，才允许在当前节点放下。
 
-**（5）DataTransfer.items**
+### DataTransfer.items
 
 `DataTransfer.items`属性返回一个类似数组的只读对象（DataTransferItemList 实例），每个成员就是本次拖拉的一个对象（DataTransferItem 实例）。如果本次拖拉不包含对象，则返回一个空对象。
 
@@ -965,78 +961,105 @@ DataTransferItemList 实例具有以下的属性和方法。
 
 - `length`：返回成员的数量
 - `add(data, type)`：增加一个指定内容和类型（比如`text/html`和`text/plain`）的字符串作为成员
-- `add(file)`：增加一个文件作为成员
+- `add(file)`：`add`方法的另一种用法，增加一个文件作为成员
 - `remove(index)`：移除指定位置的成员
 - `clear()`：移除所有的成员
 
 DataTransferItem 实例具有以下的属性和方法。
 
-- `kind`：返回成员的种类（`string`还是`file`）
-- `type`：返回成员的类型（通常是 MIME 值）
-- `getAsFile()`：如果被拖拉是文件，返回该文件，否则返回`null`
-- `getAsString(callback)`：如果被拖拉的是字符串，将该字符传入指定的回调函数处理
+- `kind`：返回成员的种类（`string`还是`file`）。
+- `type`：返回成员的类型（通常是 MIME 值）。
+- `getAsFile()`：如果被拖拉是文件，返回该文件，否则返回`null`。
+- `getAsString(callback)`：如果被拖拉的是字符串，将该字符传入指定的回调函数处理。该方法是异步的，所以需要传入回调函数。
 
-### DataTransfer 的实例方法
-
-DataTransfer对象有以下方法。
-
-**（1）setData()**
-
-setData方法用来设置事件所带有的指定类型的数据。它接受两个参数，第一个是数据类型，第二个是具体数据。如果指定的类型在现有数据中不存在，则该类型将写入types属性；如果已经存在，在该类型的现有数据将被替换。
+下面是一个例子。
 
 ```javascript
-event.dataTransfer.setData("text/plain", "Text to drag");
+div.addEventListener('drop', function (e) {
+  e.preventDefault();
+  if (e.dataTransfer.items != null) {
+    for (var i = 0; i < e.dataTransfer.items.length; i++) {
+      console.log(e.dataTransfer.items[i].kind + ': ' + e.dataTransfer.items[i].type);
+    }
+  }
+});
 ```
 
-上面代码为事件加入纯文本格式的数据。
+## DataTransfer 的实例方法
 
-如果拖拉文本框或者拖拉选中的文本，会默认将文本数据添加到dataTransfer属性，不用手动指定。
+### DataTransfer.setData()
+
+`DataTransfer.setData()`方法用来设置拖拉事件所带有的数据。该方法没有返回值。
+
+```javascript
+event.dataTransfer.setData('text/plain', 'Text to drag');
+```
+
+上面代码为当前的拖拉事件加入纯文本数据。
+
+该方法接受两个参数，都是字符串。第一个参数表示数据类型（比如`text/plain`），第二个参数是具体数据。如果指定类型的数据在`dataTransfer`属性不存在，那么这些数据将被加入，否则原有的数据将被新数据替换。
+
+如果是拖拉文本框或者拖拉选中的文本，会默认将对应的文本数据，添加到`dataTransfer`属性，不用手动指定。
 
 ```html
-<div draggable="true" ondragstart="
-  event.dataTransfer.setData('text/plain', 'bbb')">
+<div draggable="true">
   aaa
 </div>
 ```
 
-上面代码中，拖拉数据实际上是bbb，而不是aaa。
+上面代码中，拖拉这个`<div>`元素会自动带上文本数据`aaa`。
 
-下面是添加其他类型的数据。由于text/plain是最普遍支持的格式，为了保证兼容性，建议最后总是将数据保存一份纯文本的格式。
+使用`setData`方法，可以替换到原有数据。
+
+```html
+<div
+  draggable="true"
+  ondragstart="event.dataTransfer.setData('text/plain', 'bbb')"
+>
+  aaa
+</div>
+```
+
+上面代码中，拖拉数据实际上是`bbb`，而不是`aaa`。
+
+下面是添加其他类型的数据。由于`text/plain`是最普遍支持的格式，为了保证兼容性，建议最后总是保存一份纯文本格式的数据。
 
 ```javascript
 var dt = event.dataTransfer;
 
 // 添加链接
-dt.setData("text/uri-list", "http://www.example.com");
-dt.setData("text/plain", "http://www.example.com");
-// 添加HTML代码
-dt.setData("text/html", "Hello there, <strong>stranger</strong>");
-dt.setData("text/plain", "Hello there, <strong>stranger</strong>");
-// 添加图像的URL
-dt.setData("text/uri-list", imageurl);
-dt.setData("text/plain", imageurl);
+dt.setData('text/uri-list', 'http://www.example.com');
+dt.setData('text/plain', 'http://www.example.com');
+
+// 添加 HTML 代码
+dt.setData('text/html', 'Hello there, <strong>stranger</strong>');
+dt.setData('text/plain', 'Hello there, <strong>stranger</strong>');
+
+// 添加图像的 URL
+dt.setData('text/uri-list', imageurl);
+dt.setData('text/plain', imageurl);
 ```
 
 可以一次提供多种格式的数据。
 
 ```javascript
 var dt = event.dataTransfer;
-dt.setData("application/x-bookmark", bookmarkString);
-dt.setData("text/uri-list", "http://www.example.com");
-dt.setData("text/plain", "http://www.example.com");
+dt.setData('application/x-bookmark', bookmarkString);
+dt.setData('text/uri-list', 'http://www.example.com');
+dt.setData('text/plain', 'http://www.example.com');
 ```
 
-上面代码中，通过在同一个事件上面，存放三种类型的数据，使得拖拉事件可以在不同的对象上面，drop不同的值。注意，第一种格式是一个自定义格式，浏览器默认无法读取，这意味着，只有某个部署了特定代码的节点，才可能drop（读取到）这个数据。
+上面代码中，通过在同一个事件上面，存放三种类型的数据，使得拖拉事件可以在不同的对象上面，`drop`不同的值。注意，第一种格式是一个自定义格式，浏览器默认无法读取，这意味着，只有某个部署了特定代码的节点，才可能`drop`（读取到）这个数据。
 
-**（2）getData()**
+### DataTransfer.getData()
 
-getData方法接受一个字符串（表示数据类型）作为参数，返回事件所带的指定类型的数据（通常是用setData方法添加的数据）。如果指定类型的数据不存在，则返回空字符串。通常只有drop事件触发后，才能取出数据。如果取出另一个域名存放的数据，将会报错。
+`DataTransfer.getData()`方法接受一个字符串（表示数据类型）作为参数，返回事件所带的指定类型的数据（通常是用`setData`方法添加的数据）。如果指定类型的数据不存在，则返回空字符串。通常只有`drop`事件触发后，才能取出数据。
 
-下面是一个drop事件的监听函数，用来取出指定类型的数据。
+下面是一个`drop`事件的监听函数，用来取出指定类型的数据。
 
 ```javascript
-function onDrop(event){
-  var data = event.dataTransfer.getData("text/plain");
+function onDrop(event) {
+  var data = event.dataTransfer.getData('text/plain');
   event.target.textContent = data;
   event.preventDefault();
 }
@@ -1044,13 +1067,13 @@ function onDrop(event){
 
 上面代码取出拖拉事件的文本数据，将其替换成当前节点的文本内容。注意，这时还必须取消浏览器的默认行为，因为假如用户拖拉的是一个链接，浏览器默认会在当前窗口打开这个链接。
 
-getData方法返回的是一个字符串，如果其中包含多项数据，就必须手动解析。
+`getData`方法返回的是一个字符串，如果其中包含多项数据，就必须手动解析。
 
 ```javascript
-function doDrop(event){
-  var lines = event.dataTransfer.getData("text/uri-list").split("\n");
+function doDrop(event) {
+  var lines = event.dataTransfer.getData('text/uri-list').split('\n');
   for (let line of lines) {
-    let link = document.createElement("a");
+    let link = document.createElement('a');
     link.href = line;
     link.textContent = line;
     event.target.appendChild(link);
@@ -1059,53 +1082,61 @@ function doDrop(event){
 }
 ```
 
-上面代码中，getData方法返回的是一组链接，就必须自行解析。
+上面代码中，`getData`方法返回的是一组链接，就必须自行解析。
 
-类型值指定为URL，可以取出第一个有效链接。
+类型值指定为`URL`，可以取出第一个有效链接。
 
 ```javascript
-var link = event.dataTransfer.getData("URL");
+var link = event.dataTransfer.getData('URL');
 ```
 
-下面是一次性取出多种类型的数据。
+下面的例子是从多种类型的数据里面取出数据。
 
 ```javascript
-function doDrop(event){
+function doDrop(event) {
   var types = event.dataTransfer.types;
-  var supportedTypes = ["text/uri-list", "text/plain"];
-  types = supportedTypes.filter(function (value) types.includes(value));
-  if (types.length)
+  var supportedTypes = ['text/uri-list', 'text/plain'];
+  types = supportedTypes.filter(function (value) { types.includes(value) });
+  if (types.length) {
     var data = event.dataTransfer.getData(types[0]);
+  }
   event.preventDefault();
 }
 ```
 
-**（3）clearData()**
+### DataTransfer.clearData()
 
-clearData方法接受一个字符串（表示数据类型）作为参数，删除事件所带的指定类型的数据。如果没有指定类型，则删除所有数据。如果指定类型不存在，则原数据不受影响。
+`DataTransfer.clearData()`方法接受一个字符串（表示数据类型）作为参数，删除事件所带的指定类型的数据。如果没有指定类型，则删除所有数据。如果指定类型不存在，则调用该方法不会产生任何效果。
 
 ```javascript
-event.dataTransfer.clearData("text/uri-list");
+event.dataTransfer.clearData('text/uri-list');
 ```
 
-上面代码清除事件所带的 URL 数据。
+上面代码清除事件所带的`text/uri-list`类型的数据。
 
-**（4）setDragImage()**
+该方法不会移除拖拉的文件，因此调用该方法后，`DataTransfer.types`属性可能依然会返回`Files`类型（前提是存在文件拖拉）。
 
-拖动过程中（dragstart事件触发后），浏览器会显示一张图片跟随鼠标一起移动，表示被拖动的节点。这张图片是自动创造的，通常显示为被拖动节点的外观，不需要自己动手设置。setDragImage方法可以用来自定义这张图片，它接受三个参数，第一个是img图片元素或者canvas元素，如果省略或为null则使用被拖动的节点的外观，第二个和第三个参数为鼠标相对于该图片左上角的横坐标和右坐标。
+注意，该方法只能在`dragstart`事件的监听函数之中使用，因为这是拖拉操作的数据唯一可写的时机。
+
+### DataTransfer.setDragImage()
+
+拖动过程中（`dragstart`事件触发后），浏览器会显示一张图片跟随鼠标一起移动，表示被拖动的节点。这张图片是自动创造的，通常显示为被拖动节点的外观，不需要自己动手设置。
+
+`DataTransfer.setDragImage()`方法可以自定义这张图片。它接受三个参数。第一个是`<img>`节点或者`<canvas>`节点，如果省略或为`null`，则使用被拖动的节点的外观；第二个和第三个参数为鼠标相对于该图片左上角的横坐标和右坐标。
 
 下面是一个例子。
 
 ```javascript
-// HTML代码为
-// <div id="drag-with-image" class="dragdemo" draggable="true">
-     drag me
-// </div>
+/* HTML 代码如下
+ <div id="drag-with-image" class="dragdemo" draggable="true">
+   drag me
+ </div>
+*/
 
-var div = document.getElementById("drag-with-image");
-div.addEventListener("dragstart", function(e) {
-  var img = document.createElement("img");
-  img.src = "http://path/to/img";
+var div = document.getElementById('drag-with-image');
+div.addEventListener('dragstart', function (e) {
+  var img = document.createElement('img');
+  img.src = 'http://path/to/img';
   e.dataTransfer.setDragImage(img, 0, 0);
 }, false);
 ```
@@ -1346,44 +1377,44 @@ function handleMove(evt) {
 }
 ```
 
-## 表单事件
+## 表单事件的种类
 
-### Input事件，select事件，change事件
+### input 事件
 
-以下事件与表单成员的值变化有关。
+`input`事件当`<input>`、`<select>`、`<textarea>`的值发生变化时触发。对于复选框（`<input type=checkbox>`）或单选框（`<input type=radio>`），用户改变选项时，也会触发这个事件。另外，对于打开`contenteditable`属性的元素，只要值发生变化，也会触发`input`事件。
 
-**（1）input事件**
+`input`事件的一个特点，就是会连续触发，比如用户每按下一次按键，就会触发一次`input`事件。
 
-input事件当&lt;input&gt;、&lt;textarea&gt;的值发生变化时触发。此外，打开contenteditable属性的元素，只要值发生变化，也会触发input事件。
+`input`事件对象继承了`InputEvent`接口。
 
-input事件的一个特点，就是会连续触发，比如用户每次按下一次按键，就会触发一次input事件。
+### select 事件
 
-**（2）select事件**
-
-select事件当在&lt;input&gt;、&lt;textarea&gt;中选中文本时触发。
+`select`事件当在`<input>`、`<textarea>`里面选中文本时触发。
 
 ```javascript
-// HTML代码为
+// HTML 代码如下
 // <input id="test" type="text" value="Select me!" />
 
 var elem = document.getElementById('test');
-elem.addEventListener('select', function() {
-  console.log('Selection changed!');
+elem.addEventListener('select', function (e) {
+  console.log(e.type); // "select"
 }, false);
 ```
 
-**（3）Change事件**
+选中的文本可以通过`event.target`元素的`selectionDirection`、`selectionEnd`、`selectionStart`和`value`属性拿到。
 
-Change事件当&lt;input&gt;、&lt;select&gt;、&lt;textarea&gt;的值发生变化时触发。它与input事件的最大不同，就是不会连续触发，只有当全部修改完成时才会触发，而且input事件必然会引发change事件。具体来说，分成以下几种情况。
+### Change 事件
+
+`Change`事件当`<input>`、`<select>`、`<textarea>`的值发生变化时触发。它与`input`事件的最大不同，就是不会连续触发，只有当全部修改完成时才会触发，另一方面`input`事件必然伴随`change`事件。具体来说，分成以下几种情况。
 
 - 激活单选框（radio）或复选框（checkbox）时触发。
 - 用户提交时触发。比如，从下列列表（select）完成选择，在日期或文件输入框完成选择。
-- 当文本框或textarea元素的值发生改变，并且丧失焦点时触发。
+- 当文本框或`<textarea>`元素的值发生改变，并且丧失焦点时触发。
 
 下面是一个例子。
 
 ```javascript
-// HTML代码为
+// HTML 代码如下
 // <select size="1" onchange="changeEventHandler(event);">
 //   <option>chocolate</option>
 //   <option>strawberry</option>
@@ -1391,48 +1422,51 @@ Change事件当&lt;input&gt;、&lt;select&gt;、&lt;textarea&gt;的值发生变�
 // </select>
 
 function changeEventHandler(event) {
-  console.log('You like ' + event.target.value + ' ice cream.');
+  console.log(event.target.value);
 }
 ```
 
-### reset事件，submit事件
+### invalid 事件
 
-以下事件发生在表单对象上，而不是发生在表单的成员上。
+用户提交表单时，如果表单元素的值不满足校验条件，就会触发`invalid`事件。
 
-**（1）reset事件**
+```html
+<form>
+  <input type="text" required oninvalid="console.log('invalid input')" />
+  <button type="submit">提交</button>
+</form>
+```
 
-reset事件当表单重置（所有表单成员变回默认值）时触发。
+上面代码中，输入框是必填的。如果不填，用户点击按钮提交时，就会触发输入框的`invalid`事件，导致提交被取消。
 
-**（2）submit事件**
+### reset 事件，submit 事件
 
-submit事件当表单数据向服务器提交时触发。注意，submit事件的发生对象是form元素，而不是button元素（即使它的类型是submit），因为提交的是表单，而不是按钮。
+这两个事件发生在表单对象`<form>`上，而不是发生在表单的成员上。
 
-## 文档事件
+`reset`事件当表单重置（所有表单成员变回默认值）时触发。
 
-### beforeunload事件，unload事件，load事件，error事件，pageshow事件，pagehide事件
+`submit`事件当表单数据向服务器提交时触发。注意，`submit`事件的发生对象是`<form>`元素，而不是`<button>`元素，因为提交的是表单，而不是按钮。
 
-以下事件与网页的加载与卸载相关。
+## 资源事件
 
-**（1）beforeunload事件**
+### beforeunload 事件
 
-`beforeunload`事件在窗口将要关闭，或者网页（即`document`对象）将要卸载时触发。它可以用来防止用户不小心关闭网页。
+`beforeunload`事件在窗口、文档、各种资源将要卸载前触发。它可以用来防止用户不小心卸载资源。
 
-根据标准，只要在该事件的回调函数中，调用了`event.preventDefault()`，或者`event.returnValue`属性的值是一个非空的值，就会自动跳出一个确认框，让用户确认是否关闭网页。如果用户点击“取消”按钮，网页就不会关闭。`event.returnValue`属性的值，会显示在确认对话框之中。
+如果该事件对象的`returnValue`属性是一个非空字符串，那么浏览器就会弹出一个对话框，询问用户是否要卸载该资源。但是，用户指定的字符串可能无法显示，浏览器会展示预定义的字符串。如果用户点击“取消”按钮，资源就不会卸载。
 
 ```javascript
-window.addEventListener('beforeunload', function( event ) {
-  event.returnValue = '你确认要离开吗？';
-});
-
-window.addEventListener('beforeunload', function( event ) {
-  event.preventDefault();
+window.addEventListener('beforeunload', function(event) {
+  event.returnValue = '你确定离开吗？';
 });
 ```
 
-但是，浏览器的行为很不一致，Chrome就不遵守`event.preventDefault()`，还是会关闭窗口，而IE需要显式返回一个非空的字符串。而且，大多数浏览器在对话框中不显示指定文本，只显示默认文本。因此，可以采用下面的写法，取得最大的兼容性。
+上面代码中，用户如果关闭窗口，浏览器会弹出一个窗口，要求用户确认。
+
+浏览器对这个事件的行为很不一致，有的浏览器调用`event.preventDefault()`，也会弹出对话框。IE 浏览器需要显式返回一个非空的字符串，才会弹出对话框。而且，大多数浏览器在对话框中不显示指定文本，只显示默认文本。因此，可以采用下面的写法，取得最大的兼容性。
 
 ```javascript
-window.addEventListener('beforeunload', function (e) {
+window.addEventListener('beforeunload', function(e) {
   var confirmationMessage = '确认关闭窗口？';
 
   e.returnValue = confirmationMessage;
@@ -1440,13 +1474,13 @@ window.addEventListener('beforeunload', function (e) {
 });
 ```
 
-需要特别注意的是，许多手机浏览器默认忽视这个事件，而桌面浏览器也可以这样设置，所以这个事件有可能根本不生效。所以，不能依赖它来阻止用户关闭窗口。
+注意，许多手机浏览器默认忽略这个事件，桌面浏览器也有方法忽略这个事件。所以，它可能根本不会生效，不能依赖它来阻止用户关闭窗口。
 
-**（2）unload事件**
+### unload 事件
 
-unload事件在窗口关闭或者document对象将要卸载时触发，发生在window、body、frameset等对象上面。它的触发顺序排在beforeunload、pagehide事件后面。unload事件只在页面没有被浏览器缓存时才会触发，换言之，如果通过按下“前进/后退”导致页面卸载，并不会触发unload事件。
+`unload`事件在窗口关闭或者`document`对象将要卸载时触发。它的触发顺序排在`beforeunload`、`pagehide`事件后面。`unload`事件只在页面没有被浏览器缓存时才会触发，换言之，如果通过按下“前进/后退”导致页面卸载，并不会触发`unload`事件。
 
-当unload事件发生时，document对象处于一个特殊状态。所有资源依然存在，但是对用户来说都不可见，UI互动（window.open、alert、confirm方法等）全部无效。这时即使抛出错误，也不能停止文档的卸载。
+`unload`事件发生时，文档处于一个特殊状态。所有资源依然存在，但是对用户来说都不可见，UI 互动全部无效。这个事件是无法取消的，即使在监听函数里面抛出错误，也不能停止文档的卸载。
 
 ```javascript
 window.addEventListener('unload', function(event) {
@@ -1454,21 +1488,29 @@ window.addEventListener('unload', function(event) {
 });
 ```
 
-如果在window对象上定义了该事件，网页就不会被浏览器缓存。
+### load 事件
 
-**（3）load事件，error事件**
+`load`事件在页面或某个资源加载成功时触发。注意，页面或资源从浏览器缓存加载，并不会触发`load`事件。
 
-load事件在页面加载成功时触发，error事件在页面加载失败时触发。注意，页面从浏览器缓存加载，并不会触发load事件。
+```javascript
+window.addEventListener('load', function(event) {
+  console.log('所有资源都加载完成');
+});
+```
 
-这两个事件实际上属于进度事件，不仅发生在document对象，还发生在各种外部资源上面。浏览网页就是一个加载各种资源的过程，图像（image）、样式表（style sheet）、脚本（script）、视频（video）、音频（audio）、Ajax请求（XMLHttpRequest）等等。这些资源和document对象、window对象、XMLHttpRequestUpload对象，都会触发load事件和error事件。
+`error`事件是在页面或资源加载失败时触发。`abort`事件在用户取消加载时触发。
 
-**（4）pageshow事件，pagehide事件**
+这三个事件实际上属于进度事件，不仅发生在`document`对象，还发生在各种外部资源上面。浏览网页就是一个加载各种资源的过程，图像（image）、样式表（style sheet）、脚本（script）、视频（video）、音频（audio）、Ajax请求（XMLHttpRequest）等等。这些资源和`document`对象、`window`对象、XMLHttpRequestUpload 对象，都会触发`load`事件和`error`事件。
+
+## session 历史事件
+
+### pageshow 事件，pagehide 事件
 
 默认情况下，浏览器会在当前会话（session）缓存页面，当用户点击“前进/后退”按钮时，浏览器就会从缓存中加载页面。
 
-pageshow事件在页面加载时触发，包括第一次加载和从缓存加载两种情况。如果要指定页面每次加载（不管是不是从浏览器缓存）时都运行的代码，可以放在这个事件的监听函数。
+pageshow 事件在页面加载时触发，包括第一次加载和从缓存加载两种情况。如果要指定页面每次加载（不管是不是从浏览器缓存）时都运行的代码，可以放在这个事件的监听函数。
 
-第一次加载时，它的触发顺序排在load事件后面。从缓存加载时，load事件不会触发，因为网页在缓存中的样子通常是load事件的监听函数运行后的样子，所以不必重复执行。同理，如果是从缓存中加载页面，网页内初始化的JavaScript脚本（比如DOMContentLoaded事件的监听函数）也不会执行。
+第一次加载时，它的触发顺序排在`load`事件后面。从缓存加载时，`load`事件不会触发，因为网页在缓存中的样子通常是`load`事件的监听函数运行后的样子，所以不必重复执行。同理，如果是从缓存中加载页面，网页内初始化的 JavaScript 脚本（比如 DOMContentLoaded 事件的监听函数）也不会执行。
 
 ```javascript
 window.addEventListener('pageshow', function(event) {
@@ -1476,7 +1518,7 @@ window.addEventListener('pageshow', function(event) {
 });
 ```
 
-pageshow事件有一个persisted属性，返回一个布尔值。页面第一次加载时，这个属性是false；当页面从缓存加载时，这个属性是true。
+pageshow 事件有一个`persisted`属性，返回一个布尔值。页面第一次加载时，这个属性是`false`；当页面从缓存加载时，这个属性是`true`。
 
 ```javascript
 window.addEventListener('pageshow', function(event){
@@ -1486,11 +1528,33 @@ window.addEventListener('pageshow', function(event){
 });
 ```
 
-pagehide事件与pageshow事件类似，当用户通过“前进/后退”按钮，离开当前页面时触发。它与unload事件的区别在于，如果在window对象上定义unload事件的监听函数之后，页面不会保存在缓存中，而使用pagehide事件，页面会保存在缓存中。
+`pagehide`事件与`pageshow`事件类似，当用户通过“前进/后退”按钮，离开当前页面时触发。它与 unload 事件的区别在于，如果在 window 对象上定义`unload`事件的监听函数之后，页面不会保存在缓存中，而使用`pagehide`事件，页面会保存在缓存中。
 
-pagehide事件的event对象有一个persisted属性，将这个属性设为true，就表示页面要保存在缓存中；设为false，表示网页不保存在缓存中，这时如果设置了unload事件的监听函数，该函数将在pagehide事件后立即运行。
+`pagehide`事件实例也有一个`persisted`属性，将这个属性设为`true`，就表示页面要保存在缓存中；设为`false`，表示网页不保存在缓存中，这时如果设置了unload 事件的监听函数，该函数将在 pagehide 事件后立即运行。
 
-如果页面包含frame或iframe元素，则frame页面的pageshow事件和pagehide事件，都会在主页面之前触发。
+如果页面包含`<frame>`或`<iframe>`元素，则`<frame>`页面的`pageshow`事件和`pagehide`事件，都会在主页面之前触发。
+
+### popstate 事件
+
+`popstate`事件在浏览器的`history`对象的当前记录发生显式切换时触发。注意，调用`history.pushState()`或`history.replaceState()`，并不会触发`popstate`事件。该事件只在用户在`history`记录之间显式切换时触发，比如鼠标点击“后退/前进”按钮，或者在脚本中调用`history.back()`、`history.forward()`、`history.go()`时触发。
+
+该事件对象有一个`state`属性，保存`history.pushState`方法和`history.replaceState`方法为当前记录添加的`state`对象。
+
+```javascript
+window.onpopstate = function (event) {
+  console.log('state: ' + event.state);
+};
+history.pushState({page: 1}, 'title 1', '?page=1');
+history.pushState({page: 2}, 'title 2', '?page=2');
+history.replaceState({page: 3}, 'title 3', '?page=3');
+history.back(); // state: {"page":1}
+history.back(); // state: null
+history.go(2);  // state: {"page":3}
+```
+
+上面代码中，`pushState`方法向`history`添加了两条记录，然后`replaceState`方法替换掉当前记录。因此，连续两次`back`方法，会让当前条目退回到原始网址，它没有附带`state`对象，所以事件的`state`属性为`null`，然后前进两条记录，又回到`replaceState`方法添加的记录。
+
+浏览器对于页面首次加载，是否触发`popstate`事件，处理不一样，Firefox 不触发该事件。
 
 ### DOMContentLoaded事件，readystatechange事件
 
