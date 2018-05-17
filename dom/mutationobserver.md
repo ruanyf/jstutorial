@@ -62,15 +62,15 @@ observer.observe(article, options);
 
 观察器所能观察的 DOM 变动类型（即上面代码的`options`对象），有以下几种。
 
-- **childList**：子节点的变动。
+- **childList**：子节点的变动（指新增，删除或者更改）。
 - **attributes**：属性的变动。
 - **characterData**：节点内容或节点文本的变动。
-- **subtree**：所有后代节点的变动。
 
-想要观察哪一种变动类型，就在`option`对象中指定它的值为`true`。需要注意的是，如果设置观察`subtree`的变动，必须同时指定`childList`、`attributes`和`characterData`中的一种或多种。
+想要观察哪一种变动类型，就在`option`对象中指定它的值为`true`。需要注意的是，必须同时指定`childList`、`attributes`和`characterData`中的一种或多种，若未均指定将报错。
 
 除了变动类型，`options`对象还可以设定以下属性：
 
+- `subtree`：布尔值，表示是否将该观察器应用于该节点的所有后代节点。
 - `attributeOldValue`：布尔值，表示观察`attributes`变动时，是否需要记录变动前的属性值。
 - `characterDataOldValue`：布尔值，表示观察`characterData`变动时，是否需要记录变动前的值。
 - `attributeFilter`：数组，表示需要观察的特定属性（比如`['class','src']`）。

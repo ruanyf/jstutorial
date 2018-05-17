@@ -89,7 +89,7 @@ img.src // http://example.com/pic.jpg
 
 `HTMLImageElement.isMap`属性对应`<img>`元素的 HTML 属性`ismap`，返回一个布尔值，表示图像是否为服务器端的图像映射的一部分。
 
-`HTMLImageElement.useMap`属性对应<img>元素的 HTML 属性`usemap`，表示当前图像对应的`<map>`元素。
+`HTMLImageElement.useMap`属性对应`<img>`元素的 HTML 属性`usemap`，表示当前图像对应的`<map>`元素。
 
 **（5）HTMLImageElement.srcset，HTMLImageElement.sizes**
 
