@@ -56,7 +56,7 @@ r.multiline // true
 
 另一类是与修饰符无关的属性，主要是下面两个。
 
-- `RegExp.prototype.lastIndex`：返回一个数值，表示下一次开始搜索的位置。该属性可读写，但是只在设置了`g`修饰符、进行连续搜索时有意义，详细介绍请看后文。
+- `RegExp.prototype.lastIndex`：返回一个数值，表示下一次开始搜索的位置。该属性可读写，但是只在进行连续搜索时有意义，详细介绍请看后文。
 - `RegExp.prototype.source`：返回正则表达式的字符串形式（不包括反斜杠），该属性只读。
 
 ```javascript
@@ -423,6 +423,7 @@ str.split(separator, [limit])
 **（1）点字符（.)**
 
 点字符（`.`）匹配除回车（`\r`）、换行(`\n`) 、行分隔符（`\u2028`）和段分隔符（`\u2029`）以外的所有字符。
+需要注意的是，对于码点大于0xFFFF的 Unicode 字符，点字符不能识别。
 
 ```javascript
 /c.t/
