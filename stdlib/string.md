@@ -213,7 +213,7 @@ one + two + three // "33"
 'JavaScript'.substring(4) // "Script"
 ```
 
-如果第二个参数大于第一个参数，`substring`方法会自动更换两个参数的位置。
+如果第一个参数大于第二个参数，`substring`方法会自动更换两个参数的位置。
 
 ```javascript
 'JavaScript'.substring(10, 4) // "Script"

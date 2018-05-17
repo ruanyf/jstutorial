@@ -6,26 +6,27 @@ date: 2013-03-10
 modifiedOn: 2013-12-22
 ---
 
-## JavaScript代码嵌入网页的方法
+JavaScript 是浏览器的内置脚本语言。也就是说，浏览器内置了 JavaScript 引擎，并且提供各种接口，让 JavaScript 脚本可以控制浏览器的各种功能。一旦网页内嵌了 JavaScript 脚本，浏览器加载网页，就会去执行脚本，从而达到操作浏览器的目的，实现网页的各种动态效果。
 
-JavaScript代码只有嵌入网页，才能在用户浏览网页时运行。
+本章开始介绍浏览器提供的各种 JavaScript 接口。首先，介绍 JavaScript 代码嵌入网页的方法。
 
-网页中嵌入JavaScript代码，主要有四种方法。
+## 代码嵌入网页的方法
 
-- `<script>`标签：代码嵌入网页
-- `<script>`标签：加载外部脚本
-- 事件属性：代码写入HTML元素的事件处理属性，比如`onclick`或者`onmouseover`
-- URL协议：URL支持以`javascript:`协议的方式，执行JavaScript代码
+网页中嵌入 JavaScript 代码，主要有三种方法。
 
-后两种方法用得很少，常用的是前两种方法。由于内容（HTML代码）和行为代码（JavaScript）应该分离，所以第一种方法应当谨慎使用。
+- `<script>`元素直接嵌入代码。
+- `<script>`标签加载外部脚本
+- 事件属性
+- URL 协议
 
-### script标签：代码嵌入网页
+### script 元素嵌入代码
 
-通过`<script>`标签，可以直接将JavaScript代码嵌入网页。
+`<script>`元素内部可以直接写 JavaScript 代码。
 
 ```html
 <script>
-  console.log('Hello World');
+  var x = 1 + 5;
+  console.log(x);
 </script>
 ```
 
@@ -40,9 +41,9 @@ JavaScript代码只有嵌入网页，才能在用户浏览网页时运行。
 </script>
 ```
 
-由于`<script>`标签默认就是JavaScript代码。所以，嵌入JavaScript脚本时，`type`属性也可以省略。
+由于`<script>`标签默认就是 JavaScript 代码。所以，嵌入 JavaScript 脚本时，`type`属性可以省略。
 
-如果`type`属性的值，浏览器不认识，那么它不会执行其中的代码。利用这一点，可以在`<script>`标签之中嵌入任意的文本内容，然后加上一个浏览器不认识的`type`属性即可。
+如果`type`属性的值，浏览器不认识，那么它不会执行其中的代码。利用这一点，可以在`<script>`标签之中嵌入任意的文本内容，只要加上一个浏览器不认识的`type`属性即可。
 
 ```html
 <script id="mydata" type="x-custom-data">
@@ -50,27 +51,25 @@ JavaScript代码只有嵌入网页，才能在用户浏览网页时运行。
 </script>
 ```
 
-上面的代码，浏览器不会执行，也不会显示它的内容，因为不认识它的`type`属性。但是，这个`<script>`节点依然存在于DOM之中，可以使用`<script>`节点的`text`属性读出它的内容。
+上面的代码，浏览器不会执行，也不会显示它的内容，因为不认识它的`type`属性。但是，这个`<script>`节点依然存在于 DOM 之中，可以使用`<script>`节点的`text`属性读出它的内容。
 
 ```javascript
 document.getElementById('mydata').text
-// "
 //   console.log('Hello World');
-// "
 ```
 
-### script标签：加载外部脚本
+### script 元素加载外部脚本
 
 `<script>`标签也可以指定加载外部的脚本文件。
 
 ```html
-<script src="example.js"></script>
+<script src="https://www.example.com/script.js"></script>
 ```
 
-如果脚本文件使用了非英语字符，还应该注明编码。
+如果脚本文件使用了非英语字符，还应该注明字符的编码。
 
 ```html
-<script charset="utf-8" src="example.js"></script>
+<script charset="utf-8" src="https://www.example.com/script.js"></script>
 ```
 
 所加载的脚本必须是纯的 JavaScript 代码，不能有`HTML`代码和`<script>`标签。
@@ -83,7 +82,7 @@ document.getElementById('mydata').text
 </script>
 ```
 
-为了防止攻击者篡改外部脚本，`script`标签允许设置一个`integrity`属性，写入该外部脚本的Hash签名，用来验证脚本的一致性。
+为了防止攻击者篡改外部脚本，`script`标签允许设置一个`integrity`属性，写入该外部脚本的 Hash 签名，用来验证脚本的一致性。
 
 ```html
 <script src="/assets/application.js"
@@ -95,30 +94,28 @@ document.getElementById('mydata').text
 
 ### 事件属性
 
-某些HTML元素的事件属性（比如`onclick`和`onmouseover`），可以写入JavaScript代码。当指定事件发生时，就会调用这些代码。
+网页元素的事件属性（比如`onclick`和`onmouseover`），可以写入 JavaScript 代码。当指定事件发生时，就会调用这些代码。
 
 ```html
-<div onclick="alert('Hello')"></div>
+<button id="myBtn" onclick="console.log(this.id)">点击</button>
 ```
 
-上面的事件属性代码只有一个语句。如果有多个语句，用分号分隔即可。
+上面的事件属性代码只有一个语句。如果有多个语句，使用分号分隔即可。
 
-###  URL协议
+### URL 协议
 
-URL支持`javascript:`协议，调用这个URL时，就会执行JavaScript代码。
+URL 支持`javascript:`协议，即在 URL 的位置写入代码，使用这个 URL 的时候就会执行 JavaScript 代码。
 
 ```html
-<a href="javascript:alert('Hello')"></a>
+<a href="javascript:console.log('Hello')">点击</a>
 ```
 
-浏览器的地址栏也可以执行`javascipt:`协议。将`javascript:alert('Hello')`放入地址栏，按回车键，就会跳出提示框。
+浏览器的地址栏也可以执行`javascipt:`协议。将`javascript:console.log('Hello')`放入地址栏，按回车键也会执行这段代码。
 
-如果JavaScript代码返回一个字符串，浏览器就会新建一个文档，展示这个字符串的内容，原有文档的内容都会消失。
+如果 JavaScript 代码返回一个字符串，浏览器就会新建一个文档，展示这个字符串的内容，原有文档的内容都会消失。
 
 ```html
-<a href="javascript:new Date().toLocaleTimeString();">
-  What time is it?
-</a>
+<a href="javascript: new Date().toLocaleTimeString();">点击</a>
 ```
 
 上面代码中，用户点击链接以后，会打开一个新文档，里面有当前时间。
@@ -126,16 +123,21 @@ URL支持`javascript:`协议，调用这个URL时，就会执行JavaScript代码
 如果返回的不是字符串，那么浏览器不会新建文档，也不会跳转。
 
 ```javascript
-<a href="javascript:console.log(new Date().toLocaleTimeString())">
-What time is it?
-</a>
+<a href="javascript: console.log(new Date().toLocaleTimeString())">点击</a>
 ```
 
 上面代码中，用户点击链接后，网页不会跳转，只会在控制台显示当前时间。
 
-`javascript:`协议的常见用途是书签脚本Bookmarklet。由于浏览器的书签保存的是一个网址，所以`javascript:`网址也可以保存在里面，用户选择这个书签的时候，就会在当前页面执行这个脚本。为了防止书签替换掉当前文档，可以在脚本最后返回`void 0`。
+`javascript:`协议的常见用途是书签脚本 Bookmarklet。由于浏览器的书签保存的是一个网址，所以`javascript:`网址也可以保存在里面，用户选择这个书签的时候，就会在当前页面执行这个脚本。为了防止书签替换掉当前文档，可以在脚本前加上`void`，或者在脚本最后加上`void 0`。
 
-## script标签
+```html
+<a href="javascript: void new Date().toLocaleTimeString();">点击</a>
+<a href="javascript: new Date().toLocaleTimeString();void 0;">点击</a>
+```
+
+上面这两种写法，点击链接后，执行代码都不会网页跳转。
+
+## script 标签
 
 ### 工作原理
 

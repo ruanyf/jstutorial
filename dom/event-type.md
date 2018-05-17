@@ -1556,41 +1556,68 @@ history.go(2);  // state: {"page":3}
 
 浏览器对于页面首次加载，是否触发`popstate`事件，处理不一样，Firefox 不触发该事件。
 
-### DOMContentLoaded事件，readystatechange事件
+### hashchange 事件
 
-以下事件与文档状态相关。
+`hashchange`事件在 URL 的 hash 部分（即`#`号后面的部分，包括`#`号）发生变化时触发。该事件一般在`window`对象上监听。
 
-**（1）DOMContentLoaded事件**
-
-当HTML文档下载并解析完成以后，就会在document对象上触发DOMContentLoaded事件。这时，仅仅完成了HTML文档的解析（整张页面的DOM生成），所有外部资源（样式表、脚本、iframe等等）可能还没有下载结束。也就是说，这个事件比load事件，发生时间早得多。
+`hashchange`的事件实例具有两个特有属性：`oldURL`属性和`newURL`属性，分别表示变化前后的完整 URL。
 
 ```javascript
-document.addEventListener("DOMContentLoaded", function(event) {
-  console.log("DOM生成");
+// URL 是 http://www.example.com/
+window.addEventListener('hashchange', myFunction);
+
+function myFunction(e) {
+  console.log(e.oldURL);
+  console.log(e.newURL);
+}
+
+location.hash = 'part2';
+// http://www.example.com/
+// http://www.example.com/#part2
+```
+
+## 网页状态事件
+
+### DOMContentLoaded 事件
+
+网页下载并解析完成以后，浏览器就会在`document`对象上触发 DOMContentLoaded 事件。这时，仅仅完成了网页的解析（整张页面的 DOM 生成了），所有外部资源（样式表、脚本、iframe 等等）可能还没有下载结束。也就是说，这个事件比`load`事件，发生时间早得多。
+
+```javascript
+document.addEventListener('DOMContentLoaded', function (event) {
+  console.log('DOM生成');
 });
 ```
 
-注意，网页的JavaScript脚本是同步执行的，所以定义DOMContentLoaded事件的监听函数，应该放在所有脚本的最前面。否则脚本一旦发生堵塞，将推迟触发DOMContentLoaded事件。
+注意，网页的 JavaScript 脚本是同步执行的，脚本一旦发生堵塞，将推迟触发`DOMContentLoaded`事件。
 
-**（2）readystatechange事件**
+```javascript
+document.addEventListener('DOMContentLoaded', function (event) {
+  console.log('DOM 生成');
+});
 
-readystatechange事件发生在Document对象和XMLHttpRequest对象，当它们的readyState属性发生变化时触发。
+// 这段代码会推迟触发 DOMContentLoaded 事件
+for(var i = 0; i < 1000000000; i++) {
+  // ...
+}
+```
+
+### readystatechange 事件
+
+`readystatechange`事件当 Document 对象和 XMLHttpRequest 对象的`readyState`属性发生变化时触发。`document.readyState`有三个可能的值：`loading`（网页正在加载）、`interactive`（网页已经解析完成，但是外部资源仍然处在加载状态）和`complete`（网页和所有外部资源已经结束加载，`load`事件即将触发）。
 
 ```javascript
 document.onreadystatechange = function () {
-  if (document.readyState == "interactive") {
+  if (document.readyState === 'interactive') {
     // ...
   }
 }
 ```
 
-IE8不支持DOMContentLoaded事件，但是支持这个事件。因此，可以使用readystatechange事件，在低版本的IE中代替DOMContentLoaded事件。
+这个事件可以看作`DOMContentLoaded`事件的另一种实现方法。
 
-### scroll事件，resize事件
+## 窗口事件
 
-以下事件与窗口行为有关。
-
-**（1）scroll事件**
+### scroll 事件
 
 `scroll`事件在文档或文档元素滚动时触发，主要出现在用户拖动滚动条。
 
@@ -1598,14 +1625,14 @@ IE8不支持DOMContentLoaded事件，但是支持这个事件。因此，可以�
 window.addEventListener('scroll', callback);
 ```
 
-由于该事件会连续地大量触发，所以它的监听函数之中不应该有非常耗费计算的操作。推荐的做法是使用`requestAnimationFrame`或`setTimeout`控制该事件的触发频率，然后可以结合`customEvent`抛出一个新事件。
+该事件会连续地大量触发，所以它的监听函数之中不应该有非常耗费计算的操作。推荐的做法是使用`requestAnimationFrame`或`setTimeout`控制该事件的触发频率，然后可以结合`customEvent`抛出一个新事件。
 
 ```javascript
-(function() {
-  var throttle = function(type, name, obj) {
+(function () {
+  var throttle = function (type, name, obj) {
     var obj = obj || window;
     var running = false;
-    var func = function() {
+    var func = function () {
       if (running) { return; }
       running = true;
       requestAnimationFrame(function() {
@@ -1616,16 +1643,16 @@ window.addEventListener('scroll', callback);
     obj.addEventListener(type, func);
   };
 
-  // 将scroll事件重定义为optimizedScroll事件
+  // 将 scroll 事件重定义为 optimizedScroll 事件
   throttle('scroll', 'optimizedScroll');
 })();
 
 window.addEventListener('optimizedScroll', function() {
-  console.log("Resource conscious scroll callback!");
+  console.log('Resource conscious scroll callback!');
 });
 ```
 
-上面代码中，`throttle`函数用于控制事件触发频率，`requestAnimationFrame`方法保证每次页面重绘（每秒60次），只会触发一次`scroll`事件的监听函数。也就是说，上面方法将`scroll`事件的触发频率，限制在每秒60次。
+上面代码中，`throttle`函数用于控制事件触发频率，`requestAnimationFrame`方法保证每次页面重绘（每秒60次），只会触发一次`scroll`事件的监听函数。也就是说，上面方法将`scroll`事件的触发频率，限制在每秒60次。具体来说，就是`scroll`事件只要频率低于每秒60次，就会触发`optimizedScroll`事件，从而执行`optimizedScroll`事件的监听函数。
 
 改用`setTimeout`方法，可以放置更大的时间间隔。
 
@@ -1636,7 +1663,7 @@ window.addEventListener('optimizedScroll', function() {
   var scrollTimeout;
   function scrollThrottler() {
     if (!scrollTimeout) {
-      scrollTimeout = setTimeout(function() {
+      scrollTimeout = setTimeout(function () {
         scrollTimeout = null;
         actualScrollHandler();
       }, 66);
@@ -1649,7 +1676,7 @@ window.addEventListener('optimizedScroll', function() {
 }());
 ```
 
-上面代码中，`setTimeout`指定`scroll`事件的监听函数，每66毫秒触发一次（每秒15次）。
+上面代码中，每次`scroll`事件都会执行`scrollThrottler`函数。该函数里面有一个定时器`setTimeout`，每66毫秒触发一次（每秒15次）真正执行的任务`actualScrollHandler`。
 
 下面是一个更一般的`throttle`函数的写法。
 
@@ -1669,131 +1696,85 @@ window.addEventListener('scroll', throttle(callback, 1000));
 
 上面的代码将`scroll`事件的触发频率，限制在一秒一次。
 
-`lodash`函数库提供了现成的`throttle`函数，可以直接引用。
+`lodash`函数库提供了现成的`throttle`函数，可以直接使用。
 
 ```javascript
 window.addEventListener('scroll', _.throttle(callback, 1000));
 ```
 
-**（2）resize事件**
+### resize 事件
 
-resize事件在改变浏览器窗口大小时触发，发生在window、body、frameset对象上面。
+`resize`事件在改变浏览器窗口大小时触发，主要发生在`window`对象上面。
 
 ```javascript
-var resizeMethod = function(){
+var resizeMethod = function () {
   if (document.body.clientWidth < 768) {
-    console.log('移动设备');
+    console.log('移动设备的视口');
   }
 };
 
-window.addEventListener("resize", resizeMethod, true);
+window.addEventListener('resize', resizeMethod, true);
 ```
 
-该事件也会连续地大量触发，所以最好像上面的scroll事件一样，通过throttle函数控制事件触发频率。
+该事件也会连续地大量触发，所以最好像上面的`scroll`事件一样，通过`throttle`函数控制事件触发频率。
 
-### hashchange事件，popstate事件
+### fullscreenchange 事件，fullscreenerror 事件
 
-以下事件与文档的URL变化相关。
-
-**（1）hashchange事件**
-
-hashchange事件在URL的hash部分（即#号后面的部分，包括#号）发生变化时触发。如果老式浏览器不支持该属性，可以通过定期检查location.hash属性，模拟该事件，下面就是代码。
+`fullscreenchange`事件在进入或推出全屏状态时触发，该事件发生在`document`对象上面。
 
 ```javascript
-(function(window) {
-  if ( "onhashchange" in window.document.body ) { return; }
-
-  var location = window.location;
-  var oldURL = location.href;
-  var oldHash = location.hash;
-
-  // 每隔100毫秒检查一下URL的hash
-  setInterval(function() {
-    var newURL = location.href;
-    var newHash = location.hash;
-
-    if ( newHash != oldHash && typeof window.onhashchange === "function" ) {
-      window.onhashchange({
-        type: "hashchange",
-        oldURL: oldURL,
-        newURL: newURL
-      });
-
-      oldURL = newURL;
-      oldHash = newHash;
-    }
-  }, 100);
-
-})(window);
+document.addEventListener('fullscreenchange', function (event) {
+  console.log(document.fullscreenElement);
+});
 ```
 
-hashchange事件对象除了继承Event对象，还有oldURL属性和newURL属性，分别表示变化前后的URL。
+`fullscreenerror`事件在浏览器无法切换到全屏状态时触发。
 
-**（2）popstate事件**
+## 剪贴板事件
 
-popstate事件在浏览器的history对象的当前记录发生显式切换时触发。注意，调用history.pushState()或history.replaceState()，并不会触发popstate事件。该事件只在用户在history记录之间显式切换时触发，比如鼠标点击“后退/前进”按钮，或者在脚本中调用history.back()、history.forward()、history.go()时触发。
+以下三个事件属于剪贴板操作的相关事件。
 
-该事件对象有一个state属性，保存history.pushState方法和history.replaceState方法为当前记录添加的state对象。
+- `cut`：将选中的内容从文档中移除，加入剪贴板时触发。
+- `copy`：进行复制动作时触发。
+- `paste`：剪贴板内容粘贴到文档后触发。
+
+这三个事件都是`ClipboardEvent`接口的实例。`ClipboardEvent`有一个实例属性`clipboardData`，是一个 DataTransfer 对象，存放剪贴的数据。具体的 API 接口和操作方法，请参见《触摸事件》的 DataTransfer 对象部分。
 
 ```javascript
-window.onpopstate = function(event) {
-  console.log("state: " + event.state);
-};
-history.pushState({page: 1}, "title 1", "?page=1");
-history.pushState({page: 2}, "title 2", "?page=2");
-history.replaceState({page: 3}, "title 3", "?page=3");
-history.back(); // state: {"page":1}
-history.back(); // state: null
-history.go(2);  // state: {"page":3}
+document.addEventListener('copy', function (e) {
+  e.clipboardData.setData('text/plain', 'Hello, world!');
+  e.clipboardData.setData('text/html', '<b>Hello, world!</b>');
+  e.preventDefault();
+});
 ```
 
-上面代码中，pushState方法向history添加了两条记录，然后replaceState方法替换掉当前记录。因此，连续两次back方法，会让当前条目退回到原始网址，它没有附带state对象，所以事件的state属性为null，然后前进两条记录，又回到replaceState方法添加的记录。
+上面的代码使得复制进入剪贴板的，都是开发者指定的数据，而不是用户想要拷贝的数据。
 
-浏览器对于页面首次加载，是否触发popstate事件，处理不一样，Firefox不触发该事件。
+## 焦点事件
 
-### cut事件，copy事件，paste事件
+焦点事件发生在元素节点和`document`对象上面，与获得或失去焦点相关。它主要包括以下四个事件。
 
-以下三个事件属于文本操作触发的事件。
+- `focus`：元素节点获得焦点后触发，该事件不会冒泡。
+- `blur`：元素节点失去焦点后触发，该事件不会冒泡。
+- `focusin`：元素节点将要获得焦点时触发，发生在`focus`事件之前。该事件会冒泡。
+- `focusout`：元素节点将要失去焦点时触发，发生在`blur`事件之前。该事件会冒泡。
 
-- cut事件：在将选中的内容从文档中移除，加入剪贴板后触发。
+这四个事件都继承了`FocusEvent`接口。`FocusEvent`实例具有以下属性。
 
-- copy事件：在选中的内容加入剪贴板后触发。
+- `FocusEvent.target`：事件的目标节点。
+- `FocusEvent.relatedTarget`：对于`focusin`事件，返回失去焦点的节点；对于`focusout`事件，返回将要接受焦点的节点；对于`focus`和`blur`事件，返回`null`。
 
-- paste事件：在剪贴板内容被粘贴到文档后触发。
-
-这三个事件都有一个clipboardData只读属性。该属性存放剪贴的数据，是一个DataTransfer对象，具体的API接口和操作方法，请参见《触摸事件》的DataTransfer对象章节。
-
-### 焦点事件
-
-焦点事件发生在Element节点和document对象上面，与获得或失去焦点相关。它主要包括以下四个事件。
-
-- focus事件：Element节点获得焦点后触发，该事件不会冒泡。
-
-- blur事件：Element节点失去焦点后触发，该事件不会冒泡。
-
-- focusin事件：Element节点将要获得焦点时触发，发生在focus事件之前。该事件会冒泡。Firefox不支持该事件。
-
-- focusout事件：Element节点将要失去焦点时触发，发生在blur事件之前。该事件会冒泡。Firefox不支持该事件。
-
-这四个事件的事件对象，带有target属性（返回事件的目标节点）和relatedTarget属性（返回一个Element节点）。对于focusin事件，relatedTarget属性表示失去焦点的节点；对于focusout事件，表示将要接受焦点的节点；对于focus和blur事件，该属性返回null。
-
-由于focus和blur事件不会冒泡，只能在捕获阶段触发，所以addEventListener方法的第三个参数需要设为true。
+由于`focus`和`blur`事件不会冒泡，只能在捕获阶段触发，所以`addEventListener`方法的第三个参数需要设为`true`。
 
 ```javascript
-form.addEventListener("focus", function( event ) {
-  event.target.style.background = "pink";
+form.addEventListener('focus', function (event) {
+  event.target.style.background = 'pink';
 }, true);
-form.addEventListener("blur", function( event ) {
-  event.target.style.background = "";
+
+form.addEventListener('blur', function (event) {
+  event.target.style.background = '';
 }, true);
 ```
 
-上面代码设置表单的文本输入框，在接受焦点时设置背景色，在失去焦点时去除背景色。
+上面代码针对表单的文本输入框，接受焦点时设置背景色，失去焦点时去除背景色。
 
-浏览器提供一个FocusEvent构造函数，可以用它生成焦点事件的实例。
-
-```javascript
-var focusEvent = new FocusEvent(typeArg, focusEventInit);
-```
-
-上面代码中，FocusEvent构造函数的第一个参数为事件类型，第二个参数是可选的配置对象，用来配置FocusEvent对象。
