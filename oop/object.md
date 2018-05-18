@@ -43,7 +43,7 @@ var a = {};
 var b = {x: 1};
 Object.setPrototypeOf(a, b);
 
-Object.getPrototypeOf(a) === b
+Object.getPrototypeOf(a) === b // true
 a.x // 1
 ```
 
@@ -130,7 +130,7 @@ Object.create(123)
 // TypeError: Object prototype may only be an Object or null
 ```
 
-`object.create`方法生成的新对象，动态继承了原型。在原型上添加或修改任何方法，会立刻反映在新对象之上。
+`Object.create`方法生成的新对象，动态继承了原型。在原型上添加或修改任何方法，会立刻反映在新对象之上。
 
 ```javascript
 var obj1 = { p: 1 };
@@ -380,7 +380,7 @@ function inheritedPropertyNames(obj) {
 }
 ```
 
-上面代码依次获取`obj`对象的每一级原型对象“自身”的属性，从而获取`Obj`对象的“所有”属性，不管是否可遍历。
+上面代码依次获取`obj`对象的每一级原型对象“自身”的属性，从而获取`obj`对象的“所有”属性，不管是否可遍历。
 
 下面是一个例子，列出`Date`对象的所有属性。
 
