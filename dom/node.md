@@ -231,10 +231,10 @@ while (el !== null) {
 var div1 = document.getElementById('d1');
 var div2 = document.getElementById('d2');
 
-d2.nextSibling === d1 // true
+d2.previousSibling === d1 // true
 ```
 
-上面代码中，`d2.nextSibling`就是`d2`前面的同级节点`d1`。
+上面代码中，`d2.previousSibling`就是`d2`前面的同级节点`d1`。
 
 注意，该属性还包括文本节点和评论节点。因此如果当前节点前面有空格，该属性会返回一个文本节点，内容为空格。
 
