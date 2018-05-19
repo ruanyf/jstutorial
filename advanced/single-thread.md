@@ -201,7 +201,7 @@ function series(item) {
       return series(items.shift());
     });
   } else {
-    return final(results[results.length - 1]);
+    return final(results.length);
   }
 }
 
@@ -233,7 +233,7 @@ items.forEach(function(item) {
   async(item, function(result){
     results.push(result);
     if(results.length === items.length) {
-      final(results[results.length - 1]);
+      final(results.length);
     }
   })
 });
@@ -271,7 +271,7 @@ function launcher() {
       if(items.length > 0) {
         launcher();
       } else if(running == 0) {
-        final(results);
+        final(results.length);
       }
     });
     running++;
