@@ -777,7 +777,7 @@ document.appendChild(node);
 var node = document.importNode(externalNode, deep);
 ```
 
-`document.adoptNode`方法的第一个参数是外部节点，第二个参数是一个布尔值，表示对外部节点是深拷贝还是浅拷贝，默认是浅拷贝（false）。虽然第二个参数是可选的，但是建议总是保留这个参数，并设为`true`。
+`document.importNode`方法的第一个参数是外部节点，第二个参数是一个布尔值，表示对外部节点是深拷贝还是浅拷贝，默认是浅拷贝（false）。虽然第二个参数是可选的，但是建议总是保留这个参数，并设为`true`。
 
 注意，`document.importNode方法`只是拷贝外部节点，这时该节点的父节点是`null`。下一步还必须将这个节点插入当前文档树。
 
