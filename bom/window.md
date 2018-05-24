@@ -23,7 +23,7 @@ window.a // 1
 
 ### window.window，window.name
 
-`window.window`属性指向`window`对象自身。该属性自读。
+`window.window`属性指向`window`对象自身。该属性只读。
 
 ```javascript
 window.window === window // true
@@ -41,13 +41,11 @@ console.log(window.name)
 
 只要浏览器窗口不关闭，这个属性是不会消失的。举例来说，访问`a.com`时，该页面的脚本设置了`window.name`，接下来在同一个窗口里面载入了`b.com`，新页面的脚本可以读到上一个网页设置的`window.name`。页面刷新也是这种情况。一旦浏览器窗口关闭后，该属性保存的值就会消失，因为这是窗口已经不存在了。
 
-### window.location
+### window.document
 
-`window.location`指向`Location`对象，用于获取当前窗口的 URL 信息。它等同于`document.location`属性，详细介绍见《Location 对象》一章。
+`window.document`返回窗口里面页面的`document`对象。
 
-```javascript
-window.location === document.location // true
-```
+注意，这个属性有同源限制。只有来自同源的脚本才能读取这个属性。
 
 ### window.closed，window.opener
 
@@ -98,6 +96,23 @@ window.frames.length === window.length // true
 ```
 
 上面代码表示，`window.frames.length`与`window.length`应该是相等的。
+
+### window.frameElement
+
+`window.frameElement`属性主要用于当前窗口嵌在另一个网页的情况（嵌入`<object>`、`<iframe>`或`<embed>`元素），返回当前窗口所在的那个元素节点。如果当前窗口是顶层窗口，或者所嵌入的那个网页不是同源的，该属性返回`null`。
+
+```javascript
+// HTML 代码如下
+// <iframe src="about.html"></iframe>
+
+// 下面的脚本在 about.html 里面
+var frameEl = window.frameElement;
+if (frameEl) {
+  frameEl.src = 'other.html';
+}
+```
+
+上面代码中，`frameEl`变量就是`<iframe>`元素。
 
 ### window.screenX，window.screenY
 
@@ -167,22 +182,60 @@ if ((screen.width <= 800) && (screen.height <= 600)) {
 
 `screen.colorDepth`属性返回屏幕的颜色深度，一般为16（表示16-bit）或24（表示24-bit）。
 
-## navigator对象
+### window.devicePixelRatio
 
-`window`对象的`navigator`属性，指向一个包含浏览器信息的对象。
+`window.devicePixelRatio`属性返回一个数值，表示一个 CSS 像素的大小与一个物理像素的大小之间的比率。也就是说，它表示一个 CSS 像素由多少个物理像素组成。它可以用于判断用户的显示环境，如果这个比率较大，就表示用户正在使用高清屏幕，因此可以显示较大像素的图片。
 
-### navigator.userAgent
+### window.locationbar，window.menubar，window.scrollbars，window.toolbar
 
-`navigator.userAgent`属性返回浏览器的User-Agent字符串，标示浏览器的厂商和版本信息。
+这些属性返回浏览器的组件对象。
 
-下面是Chrome浏览器的`userAgent`。
+- `window.locationbar`：地址栏对象
+- `window.menubar`：菜单栏对象
+- `window.scrollbar`：窗口的滚动条对象
+- `window.toolbar`：工具栏对象
+- `window.personalbar`：用户安装的个人工具栏对象
+
+这些对象的`visible`属性是一个布尔值，表示这些组件是否可见。这些属性只读。
+
+```javascript
+window.locationbar.visible
+window.menubar.visible
+window.scrollbar.visible
+window.toolbar.visible
+window.personalbar.visible
+```
+
+### window.location，window.navigator，window.history，window.localStorage
+
+`window.location`属性指向`Location`对象，用于获取当前窗口的 URL 信息。它等同于`document.location`属性，详细介绍见《Location 对象》一章。
+
+```javascript
+window.location === document.location // true
+```
+
+`window.navigator`属性指向`Navigator`对象，用于获取环境信息，详见《Navigator 对象》一章。
+
+`window.history`属性指向`History`对象，表示浏览器的浏览历史，详见《History 对象》一章。
+
+`window.localStorage`属性指向`Storage`对象，表示当前页面在浏览器储存的数据，详见《Storage 对象》一章。
+
+## Navigator对象
+
+`window.navigator`属性指向一个包含浏览器信息的 Navigator 对象。脚本通过这个属性了解用户使用的是哪一种浏览器。
+
+### Navigator.userAgent
+
+`navigator.userAgent`属性返回浏览器的 User Agent 字符串，表示浏览器的厂商和版本信息。
+
+下面是 Chrome 浏览器的`userAgent`。
 
 ```javascript
 navigator.userAgent
 // "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.57 Safari/537.36"
 ```
 
-通过`userAgent`属性识别浏览器，不是一个好办法。因为必须考虑所有的情况（不同的浏览器，不同的版本），非常麻烦，而且无法保证未来的适用性，更何况各种上网设备层出不穷，难以穷尽。所以，现在一般不再识别浏览器了，而是使用“功能识别”方法，即逐一测试当前浏览器是否支持要用到的JavaScript功能。
+通过`userAgent`属性识别浏览器，不是一个好办法。因为必须考虑所有的情况（不同的浏览器，不同的版本），非常麻烦，而且用户可以改变这个字符串。这个字符串的格式并无统一规定，也无法保证未来的适用性，各种上网设备层出不穷，难以穷尽。所以，现在一般不再通过它识别浏览器了，而是使用“功能识别”方法，即逐一测试当前浏览器是否支持要用到的 JavaScript 功能。
 
 不过，通过`userAgent`可以大致准确地识别手机浏览器，方法就是测试是否包含`mobi`字符串。
 
@@ -202,46 +255,96 @@ if (/mobi/i.test(ua)) {
 /mobi|android|touch|mini/i.test(ua)
 ```
 
-### navigator.plugins
+### Navigator.plugins
 
-`navigator.plugins`属性返回一个类似数组的对象，成员是浏览器安装的插件，比如Flash、ActiveX等。
+`Navigator.plugins`属性返回一个类似数组的对象，成员是 Plugin 实例对象，表示浏览器安装的插件，比如 Flash、ActiveX 等。
 
-### navigator.platform
+```javascript
+var pluginsLength = navigator.plugins.length;
 
-`navigator.platform`属性返回用户的操作系统信息。
+for (var i = 0; i < pluginsLength; i++) {
+  console.log(navigator.plugins[i].name);
+  console.log(navigator.plugins[i].filename);
+  console.log(navigator.plugins[i].description);
+  console.log(navigator.plugins[i].version);
+}
+```
+
+### Navigator.platform
+
+`Navigator.platform`属性返回用户的操作系统信息，比如`MacIntel`、`Win32`、`Linux x86_64`等 。
 
 ```javascript
 navigator.platform
 // "Linux x86_64"
 ```
 
-### navigator.onLine
+### Navigator.onLine
 
-`navigator.onLine`属性返回一个布尔值，表示用户当前在线还是离线。
+`navigator.onLine`属性返回一个布尔值，表示用户当前在线还是离线（浏览器断线）。
 
 ```javascript
 navigator.onLine // true
 ```
 
-### navigator.geolocation
+有时，浏览器可以连接局域网，但是局域网不能连通外网。这时，有的浏览器的`onLine`属性会返回`true`，所以不能假定只要是`true`，用户就一定能访问互联网。不过，如果是`false`，可以断定用户一定离线。
 
-`navigator.geolocation`返回一个Geolocation对象，包含用户地理位置的信息。
-
-### navigator.javaEnabled()，navigator.cookieEnabled
-
-`javaEnabled`方法返回一个布尔值，表示浏览器是否能运行Java Applet小程序。
+用户变成在线会触发`online`事件，变成离线会触发`offline`事件，可以通过`window.ononline`和`window.onoffline`指定这两个事件的回调函数。
 
 ```javascript
-navigator.javaEnabled() // false
+window.addEventListener('offline', function(e) { console.log('offline'); });
+window.addEventListener('online', function(e) { console.log('online'); });
 ```
 
-`cookieEnabled`属性返回一个布尔值，表示浏览器是否能储存Cookie。
+### Navigator.language，Navigator.languages
+
+`Navigator.language`属性返回一个字符串，表示浏览器的首选语言。该属性只读。
+
+```javascript
+navigator.language // "en"
+```
+
+`Navigator.languages`属性返回一个数组，表示用户可以接受的语言。`Navigator.language`总是这个数组的第一个成员。HTTP 请求头信息的`Accept-Language`字段，就来自这个数组。
+
+```javascript
+navigator.languages  // ["en-US", "en", "zh-CN", "zh", "zh-TW"]
+```
+
+如果这个属性发生变化，就会在`window`对象上触发`languagechange`事件。
+
+### Navigator.geolocation
+
+`Navigator.geolocation`属性返回一个 Geolocation 对象，包含用户地理位置的信息。注意，该 API 只有在 HTTPS 协议下可用，否则调用下面方法时会报错。
+
+Geolocation 对象提供下面三个方法。
+
+- Geolocation.getCurrentPosition()：得到用户的当前位置
+- Geolocation.watchPosition()：监听用户位置变化
+- Geolocation.clearWatch()：取消`watchPosition()`方法指定的监听函数
+
+注意，调用这三个方法时，浏览器会跳出一个对话框，要求用户给予授权。
+
+### Navigator.cookieEnabled
+
+`Navigator.cookieEnabled`属性返回一个布尔值，表示浏览器的 Cookie 功能是否打开。
 
 ```javascript
 navigator.cookieEnabled // true
 ```
 
-注意，这个返回值与是否储存某个网站的Cookie无关。用户可以设置某个网站不得储存Cookie，这时`cookieEnabled`返回的还是`true`。
+注意，这个属性反映的是浏览器总的特性，与是否储存某个具体的网站的 Cookie 无关。用户可以设置某个网站不得储存 Cookie，这时`cookieEnabled`返回的还是`true`。
+
+### Navigator.javaEnabled()
+
+`Navigator.javaEnabled()`方法返回一个布尔值，表示浏览器是否能运行 Java Applet 小程序。
+
+```javascript
+navigator.javaEnabled() // false
+```
+
+### Navigator.sendBeacon()
+
+`Navigator.sendBeacon()`方法用于向服务器异步发送数据，详见《XMLHttpRequest 对象》一章。
 
 ## window对象的方法
 
