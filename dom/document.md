@@ -769,7 +769,7 @@ var node = document.adoptNode(externalNode);
 document.appendChild(node);
 ```
 
-注意，`document.adoptNode`方法只是改变了节点的归属，并没有将这个节点插入新的文档树。所有，还要再用`appendChild`方法或`insertBefore`方法，将新节点插入当前文档树。
+注意，`document.adoptNode`方法只是改变了节点的归属，并没有将这个节点插入新的文档树。所以，还要再用`appendChild`方法或`insertBefore`方法，将新节点插入当前文档树。
 
 `document.importNode`方法则是从原来所在的文档或`DocumentFragment`里面，拷贝某个节点及其子节点，让它们归属当前`document`对象。拷贝的节点对象的`ownerDocument`属性，会变成当前的`document`对象，而`parentNode`属性是`null`。
 
@@ -777,7 +777,7 @@ document.appendChild(node);
 var node = document.importNode(externalNode, deep);
 ```
 
-`document.adoptNode`方法的第一个参数是外部节点，第二个参数是一个布尔值，表示对外部节点是深拷贝还是浅拷贝，默认是浅拷贝（false）。虽然第二个参数是可选的，但是建议总是保留这个参数，并设为`true`。
+`document.importNode`方法的第一个参数是外部节点，第二个参数是一个布尔值，表示对外部节点是深拷贝还是浅拷贝，默认是浅拷贝（false）。虽然第二个参数是可选的，但是建议总是保留这个参数，并设为`true`。
 
 注意，`document.importNode方法`只是拷贝外部节点，这时该节点的父节点是`null`。下一步还必须将这个节点插入当前文档树。
 
