@@ -212,23 +212,34 @@ window.personalbar.visible
 
 ## Screen 对象
 
-`window.screen`指向一个对象包含了显示设备的信息。
+Screen 对象表示当前窗口所在的屏幕，提供显示设备的信息。`window.screen`属性指向这个对象。
 
-`screen.height`和`screen.width`两个属性，一般用来了解设备的分辨率。
+该对象有下面的属性。
+
+- `Screen.height`：浏览器窗口所在的屏幕的高度（单位像素）。除非调整显示器的分辨率，否则这个值可以看作常量，不会发生变化。显示器的分辨率与浏览器设置无关，缩放网页并不会改变分辨率。
+- `Screen.width`：浏览器窗口所在的屏幕的宽度（单位像素）。
+- `Screen.availHeight`：浏览器窗口可用的屏幕高度（单位像素）。因为部分空间可能不可用，比如系统的任务栏或者 Mac 系统屏幕底部的 Dock 区，这个属性等于`height`减去那些被系统组件的高度。
+- `Screen.availWidth`：浏览器窗口可用的屏幕宽度（单位像素）。
+- `Screen.pixelDepth`：整数，表示屏幕的色彩位数，比如`24`表示屏幕提供24位色彩。
+- `Screen.colorDepth`：`Screen.pixelDepth`的别名。严格地说，colorDepth 表示应用程序的颜色深度，pixelDepth 表示屏幕的颜色深度，绝大多数情况下，它们都是同一件事。
+- `Screen.orientation`：返回一个对象，表示屏幕的方向。该对象的`type`属性是一个字符串，表示屏幕的具体方向，`landscape-primary`表示横放，`landscape-secondary`表示颠倒的横放，`portrait-primary`表示竖放，`portrait-secondary`。
+
+下面是`Screen.orientation`的例子。
 
 ```javascript
-// 显示设备的高度，单位为像素
-screen.height // 1920
-
-// 显示设备的宽度，单位为像素
-screen.width // 1080
+window.screen.orientation
+// { angle: 0, type: "landscape-primary", onchange: null }
 ```
 
-上面代码显示，某设备的分辨率是1920x1080。
+下面的例子保证屏幕分辨率大于 1024 x 768。
 
-除非调整显示器的分辨率，否则这两个值可以看作常量，不会发生变化。显示器的分辨率与浏览器设置无关，缩放网页并不会改变分辨率。
+```javascript
+if (window.screen.width >= 1024 && window.screen.height >= 768) {
+  // 分辨率不低于 1024x768
+}
+```
 
-下面是根据屏幕分辨率，将用户导向不同网页的代码。
+下面是根据屏幕的宽度，将用户导向不同网页的代码。
 
 ```javascript
 if ((screen.width <= 800) && (screen.height <= 600)) {
@@ -237,10 +248,6 @@ if ((screen.width <= 800) && (screen.height <= 600)) {
   window.location.replace('wide.html');
 }
 ```
-
-`screen.availHeight`和`screen.availWidth`属性返回屏幕可用的高度和宽度，单位为像素。它们的值为屏幕的实际大小减去操作系统某些功能占据的空间，比如系统的任务栏。
-
-`screen.colorDepth`属性返回屏幕的颜色深度，一般为16（表示16-bit）或24（表示24-bit）。
 
 ## Navigator 对象
 
@@ -368,11 +375,107 @@ navigator.javaEnabled() // false
 
 `Navigator.sendBeacon()`方法用于向服务器异步发送数据，详见《XMLHttpRequest 对象》一章。
 
-## window对象的方法
+## window 对象的方法
+
+### window.open(), window.close()
+
+`window.open`方法用于新建另一个浏览器窗口，类似于浏览器菜单的新建窗口选项。它会返回新窗口的引用，如果无法新建窗口，则返回`null`。
+
+```javascript
+var popup = window.open('somefile.html');
+```
+
+上面代码会让浏览器弹出一个新建窗口，网址是当前域名下的`somefile.html`。
+
+`open`方法一共可以接受三个参数。
+
+```javascript
+window.open(url, windowName, [windowFeatures])
+```
+
+- `url`：字符串，表示新窗口的网址。如果省略，默认网址就是`about:blank`。
+- `windowName`：字符串，表示新窗口的名字。如果该名字的窗口已经存在，则占用该窗口，不再新建窗口。如果省略，就默认使用`_blank`，表示新建一个没有名字的窗口。
+- `windowFeatures`：字符串，内容为逗号分隔的键值对（详见下文），表示新窗口的参数，比如有没有提示栏、工具条等等。如果省略，则默认打开一个完整 UI 的新窗口。如果新建的是一个已经存在的窗口，则该参数不起作用，浏览器沿用以前窗口的参数。
+
+下面是一个例子。
+
+```javascript
+var popup = window.open(
+  'somepage.html',
+  'DefinitionsWindows',
+  'height=200,width=200,location=no,status=yes,resizable=yes,scrollbars=yes'
+);
+```
+
+上面代码表示，打开的新窗口高度和宽度都为200像素，没有地址栏和滚动条，但有状态栏，允许用户调整大小。
+
+第三个参数可以设定如下属性。
+
+- left：新窗口距离屏幕最左边的距离（单位像素）。注意，新窗口必须是可见的，不能设置在屏幕以外的位置。
+- top：新窗口距离屏幕最顶部的距离（单位像素）。
+- height：新窗口内容区域的高度（单位像素），不得小于100。
+- width：新窗口内容区域的宽度（单位像素），不得小于100。
+- outerHeight：整个浏览器窗口的高度（单位像素），不得小于100。
+- outerWidth：整个浏览器窗口的宽度（单位像素），不得小于100。
+- menubar：是否显示菜单栏。
+- toolbar：是否显示工具栏。
+- location：是否显示地址栏。
+- personalbar：是否显示用户自己安装的工具栏。
+- status：是否显示状态栏。
+- dependent：是否依赖父窗口。如果依赖，那么父窗口最小化，该窗口也最小化；父窗口关闭，该窗口也关闭。
+- minimizable：是否有最小化按钮，前提是`dialog=yes`。
+- noopener：新窗口将与父窗口切断联系，即新窗口的`window.opener`属性返回`null`，父窗口的`window.open()`方法也返回`null`。
+- resizable：新窗口是否可以调节大小。
+- scrollbars：是否允许新窗口出现滚动条。
+- dialog：新窗口标题栏是否出现最大化、最小化、恢复原始大小的控件。
+- titlebar：新窗口是否显示标题栏。
+- alwaysRaised：是否显示在所有窗口的顶部。
+- alwaysLowered：是否显示在父窗口的底下。
+- close：新窗口是否显示关闭按钮。
+
+对于那些可以打开和关闭的属性，设为`yes`或`1`或不设任何值就表示打开，比如`status=yes`、`status=1`、`status`都会得到同样的结果。如果想设为关闭，不用写`no`，而是直接省略这个属性即可。也就是说，如果在第三个参数中设置了一部分属性，其他没有被设置的`yes/no`属性都会被设成`no`，只有`titlebar`和关闭按钮除外（它们的值默认为`yes`）。
+
+另外，`open`方法的第二个参数虽然可以指定已经存在的窗口，但是不等于可以任意控制其他窗口。为了防止被不相干的窗口控制，浏览器只有在两个窗口同源，或者目标窗口被当前网页打开的情况下，才允许`open`方法指向该窗口。
+
+`window.open`方法返回新窗口的引用。
+
+```javascript
+var windowB = window.open('windowB.html', 'WindowB');
+windowB.window.name // "WindowB"
+```
+
+注意，如果新窗口和父窗口不是同源的（即不在同一个域），它们彼此不能窗口对象获取对方的内部属性。
+
+下面是另一个例子。
+
+```javascript
+var w = window.open();
+console.log('已经打开新窗口');
+w.location = 'http://example.com';
+```
+
+上面代码先打开一个新窗口，然后在该窗口弹出一个对话框，再将网址导向`example.com`。
+
+由于`open`这个方法很容易被滥用，许多浏览器默认都不允许脚本自动新建窗口。只允许在用户点击链接或按钮时，脚本做出反应，弹出新窗口。因此，有必要检查一下打开新窗口是否成功。
+
+```javascript
+var popup = window.open();
+if (popup === null) {
+  // 新建窗口失败
+}
+```
+
+`window.close`方法用于关闭当前窗口，一般只用来关闭`window.open`方法新建的窗口。
+
+```javascript
+popup.close()
+```
+
+该方法只对顶层窗口有效，`iframe`框架之中的窗口使用该方法无效。
 
 ### window.moveTo()，window.moveBy()
 
-`window.moveTo`方法用于移动浏览器窗口到指定位置。它接受两个参数，分别是窗口左上角距离屏幕左上角的水平距离和垂直距离，单位为像素。
+`window.moveTo()`方法用于移动浏览器窗口到指定位置。它接受两个参数，分别是窗口左上角距离屏幕左上角的水平距离和垂直距离，单位为像素。
 
 ```javascript
 window.moveTo(100, 200)
@@ -388,9 +491,11 @@ window.moveBy(25, 50)
 
 上面代码将窗口向右移动25像素、向下移动50像素。
 
+为了防止有人滥用这两个方法，随意移动用户的窗口，目前只有一种情况，浏览器允许用脚本移动窗口：该窗口是用`window.open`方法新建的，并且它所在的 Tab 页是当前窗口里面唯一的。除此以外的情况，使用上面两个方法都是无效的。
+
 ### window.scrollTo()，window.scroll()，window.scrollBy()
 
-`window.scrollTo`方法用于将文档滚动到指定位置。它接受两个参数，表示滚动后的窗口左上角的坐标。
+`window.scrollTo`方法用于将文档滚动到指定位置。它接受两个参数，表示滚动后位于窗口左上角的页面坐标。
 
 ```javascript
 window.scrollTo(x-coord, y-coord)
@@ -425,77 +530,11 @@ window.scrollBy(0, window.innerHeight)
 
 上面代码用于将网页向下滚动一屏。
 
-如果要滚动某个元素，可以使用下面三个属性和方法。
+如果不是要滚动整个文档，而是要滚动某个元素，可以使用下面三个属性和方法。
 
 - Element.scrollTop
 - Element.scrollLeft
 - Element.scrollIntoView()
-
-### window.open(), window.close()
-
-`window.open`方法用于新建另一个浏览器窗口，并且返回该窗口对象。
-
-```javascript
-var popup = window.open('somefile.html');
-```
-
-上面代码会让浏览器弹出一个新建窗口，网址是当前域名下的`somefile.html`。
-
-`open`方法一共可以接受四个参数。
-
-- 第一个参数：字符串，表示新窗口的网址。如果省略，默认网址就是`about:blank`。
-- 第二个参数：字符串，表示新窗口的名字。如果该名字的窗口已经存在，则跳到该窗口，不再新建窗口。如果省略，就默认使用`_blank`，表示新建一个没有名字的窗口。
-- 第三个参数：字符串，内容为逗号分隔的键值对，表示新窗口的参数，比如有没有提示栏、工具条等等。如果省略，则默认打开一个完整UI的新窗口。
-- 第四个参数：布尔值，表示第一个参数指定的网址，是否应该替换`history`对象之中的当前网址记录，默认值为`false`。显然，这个参数只有在第二个参数指向已经存在的窗口时，才有意义。
-
-下面是一个例子。
-
-```javascript
-var popup = window.open(
-  'somepage.html',
-  'DefinitionsWindows',
-  'height=200,width=200,location=no,status=yes,resizable=yes,scrollbars=yes'
-);
-```
-
-上面代码表示，打开的新窗口高度和宽度都为200像素，没有地址栏和滚动条，但有状态栏，允许用户调整大小。
-
-注意，如果在第三个参数中设置了一部分参数，其他没有被设置的`yes/no`参数都会被设成`no`，只有`titlebar`和关闭按钮除外（它们的值默认为`yes`）。
-
-另外，`open`方法的第二个参数虽然可以指定已经存在的窗口，但是不等于可以任意控制其他窗口。为了防止被不相干的窗口控制，浏览器只有在两个窗口同源，或者目标窗口被当前网页打开的情况下，才允许`open`方法指向该窗口。
-
-`open`方法返回新窗口的引用。
-
-```javascript
-var windowB = window.open('windowB.html', 'WindowB');
-windowB.window.name // "WindowB"
-```
-
-下面是另一个例子。
-
-```javascript
-var w = window.open();
-w.alert('已经打开新窗口');
-w.location = 'http://example.com';
-```
-
-上面代码先打开一个新窗口，然后在该窗口弹出一个对话框，再将网址导向`example.com`。
-
-由于`open`这个方法很容易被滥用，许多浏览器默认都不允许脚本自动新建窗口。只允许在用户点击链接或按钮，脚本做出反应，弹出新窗口。因此，有必要检查一下打开新窗口是否成功。
-
-```javascript
-if (popup === null) {
-  // 新建窗口失败
-}
-```
-
-`window.close`方法用于关闭当前窗口，一般用来关闭`window.open`方法新建的窗口。
-
-```javascript
-popup.close()
-```
-
-该方法只对顶层窗口有效，`iframe`框架之中的窗口使用该方法无效。
 
 ### window.print()
 
