@@ -377,6 +377,75 @@ navigator.javaEnabled() // false
 
 ## window 对象的方法
 
+### window.alert()，window.prompt()，window.confirm()
+
+`window.alert()`、`window.prompt()`、`window.confirm()`都是浏览器与用户互动的全局方法。它们会弹出不同的对话框，要求用户做出回应。注意，这三个方法弹出的对话框，都是浏览器统一规定的式样，无法定制。
+
+**（1）window.alert()**
+
+`window.alert()`方法弹出的对话框，只有一个“确定”按钮，往往用来通知用户某些信息。
+
+```javascript
+window.alert('Hello World');
+```
+
+用户只有点击“确定”按钮，对话框才会消失。对话框弹出期间，浏览器窗口处于冻结状态，如果不点“确定”按钮，用户什么也干不了。
+
+`window.alert()`方法的参数只能是字符串，没法使用CSS样式，但是可以用`\n`指定换行。
+
+```javascript
+alert('本条提示\n分成两行');
+```
+
+**（2）window.prompt()**
+
+`window.prompt()`方法弹出的对话框，提示文字的下方，还有一个输入框，要求用户输入信息，并有“确定”和“取消”两个按钮。它往往用来获取用户输入的数据。
+
+```javascript
+var result = prompt('您的年龄？', 25)
+```
+
+上面代码会跳出一个对话框，文字提示为“您的年龄？”，要求用户在对话框中输入自己的年龄（默认显示25）。用户填入的值，会作为返回值存入变量`result`。
+
+`window.prompt()`的返回值有两种情况，可能是字符串（有可能是空字符串），也有可能是`null`。具体分成三种情况。
+
+1. 用户输入信息，并点击“确定”，则用户输入的信息就是返回值。
+2. 用户没有输入信息，直接点击“确定”，则输入框的默认值就是返回值。
+3. 用户点击了“取消”（或者按了 ESC 按钮），则返回值是`null`。
+
+`window.prompt()`方法的第二个参数是可选的，但是最好总是提供第二个参数，作为输入框的默认值。
+
+**（3）window.confirm()**
+
+`window.confirm()`方法弹出的对话框，除了提示信息之外，只有“确定”和“取消”两个按钮，往往用来征询用户是否同意。
+
+```javascript
+var result = confirm('你最近好吗？');
+```
+
+上面代码弹出一个对话框，上面只有一行文字“你最近好吗？”，用户选择点击“确定”或“取消”。
+
+`confirm`方法返回一个布尔值，如果用户点击“确定”，返回`true`；如果用户点击“取消”，则返回`false`。
+
+```javascript
+var okay = confirm('Please confirm this message.');
+if (okay) {
+  // 用户按下“确定”
+} else {
+  // 用户按下“取消”
+}
+```
+
+`confirm`的一个用途是，用户离开当前页面时，弹出一个对话框，问用户是否真的要离开。
+
+```javascript
+window.onunload = function () {
+  return window.confirm('你确定要离开当面页面吗？');
+}
+```
+
+这三个方法都具有堵塞效应，一旦弹出对话框，整个页面就是暂停执行，等待用户做出反应。
+
 ### window.open(), window.close()
 
 `window.open`方法用于新建另一个浏览器窗口，类似于浏览器菜单的新建窗口选项。它会返回新窗口的引用，如果无法新建窗口，则返回`null`。
@@ -538,12 +607,12 @@ window.scrollBy(0, window.innerHeight)
 
 ### window.print()
 
-`print`方法会跳出打印对话框，同用户点击菜单里面的“打印”命令效果相同。
+`window.print`方法会跳出打印对话框，与用户点击菜单里面的“打印”命令效果相同。
 
-页面上的打印按钮代码如下。
+常见的打印按钮代码如下。
 
 ```javascript
-document.getElementById('printLink').onclick = function() {
+document.getElementById('printLink').onclick = function () {
   window.print();
 }
 ```
@@ -556,17 +625,17 @@ if (typeof window.print === 'function') {
 }
 ```
 
-### window.getComputedStyle()
+`<iframe>`元素里面，这个方法会被屏蔽，除非`<iframe>`的`sandbox`属性设为`allow-modals`。
 
-`getComputedStyle`方法接受一个HTML元素作为参数，返回一个包含该HTML元素的最终样式信息的对象。详见《DOM》一章的CSS章节。
+### window.getComputedStyle()，window.matchMedia()
 
-### window.matchMedia()
+`window.getComputedStyle()`方法接受一个元素节点作为参数，返回一个包含该元素的最终样式信息的对象，详见《CSS 操作》一章。
 
-`window.matchMedia`方法用来检查CSS的mediaQuery语句。详见《DOM》一章的CSS章节。
+`window.matchMedia()`方法用来检查 CSS 的`mediaQuery`语句，详见《CSS 操作》一章。
 
 ### window.focus()
 
-`focus`方法会激活指定当前窗口，使其获得焦点。
+`window.focus()`方法会激活窗口，使其获得焦点，出现在其他窗口的前面。
 
 ```javascript
 var popup = window.open('popup.html', 'Popup Window');
@@ -810,83 +879,6 @@ decodeURI('http://www.example.com/q=%E6%98%A5%E8%8A%82')
 decodeURIComponent('%E6%98%A5%E8%8A%82')
 // "春节"
 ```
-
-## alert()，prompt()，confirm()
-
-`alert()`、`prompt()`、`confirm()`都是浏览器与用户互动的全局方法。它们会弹出不同的对话框，要求用户做出回应。
-
-需要注意的是，`alert()`、`prompt()`、`confirm()`这三个方法弹出的对话框，都是浏览器统一规定的式样，是无法定制的。
-
-`alert`方法弹出的对话框，只有一个“确定”按钮，往往用来通知用户某些信息。
-
-```javascript
-// 格式
-alert(message);
-
-// 实例
-alert('Hello World');
-```
-
-用户只有点击“确定”按钮，对话框才会消失。在对话框弹出期间，浏览器窗口处于冻结状态，如果不点“确定”按钮，用户什么也干不了。
-
-`alert`方法的参数只能是字符串，没法使用CSS样式，但是可以用`\n`指定换行。
-
-```javascript
-alert('本条提示\n分成两行');
-```
-
-`prompt`方法弹出的对话框，在提示文字的下方，还有一个输入框，要求用户输入信息，并有“确定”和“取消”两个按钮。它往往用来获取用户输入的数据。
-
-```javascript
-// 格式
-var result = prompt(text[, default]);
-
-// 实例
-var result = prompt('您的年龄？', 25)
-```
-
-上面代码会跳出一个对话框，文字提示为“您的年龄？”，要求用户在对话框中输入自己的年龄（默认显示25）。
-
-`prompt`方法的返回值是一个字符串（有可能为空）或者`null`，具体分成三种情况。
-
-1. 用户输入信息，并点击“确定”，则用户输入的信息就是返回值。
-2. 用户没有输入信息，直接点击“确定”，则输入框的默认值就是返回值。
-3. 用户点击了“取消”（或者按了Esc按钮），则返回值是`null`。
-
-`prompt`方法的第二个参数是可选的，但是如果不提供的话，IE浏览器会在输入框中显示`undefined`。因此，最好总是提供第二个参数，作为输入框的默认值。
-
-`confirm`方法弹出的对话框，除了提示信息之外，只有“确定”和“取消”两个按钮，往往用来征询用户的意见。
-
-```javascript
-// 格式
-var result = confirm(message);
-
-// 实例
-var result = confirm("你最近好吗？");
-```
-
-上面代码弹出一个对话框，上面只有一行文字“你最近好吗？”，用户选择点击“确定”或“取消”。
-
-`confirm`方法返回一个布尔值，如果用户点击“确定”，则返回`true`；如果用户点击“取消”，则返回`false`。
-
-```javascript
-var okay = confirm('Please confirm this message.');
-if (okay) {
-  // 用户按下“确定”
-} else {
-  // 用户按下“取消”
-}
-```
-
-`confirm`的一个用途是，当用户离开当前页面时，弹出一个对话框，问用户是否真的要离开。
-
-```javascript
-window.onunload = function() {
-  return confirm('你确定要离开当面页面吗？');
-}
-```
-
-这三个方法都具有堵塞效应，一旦弹出对话框，整个页面就是暂停执行，等待用户做出反应。
 
 ## 参考链接
 
