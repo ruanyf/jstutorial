@@ -446,7 +446,9 @@ window.onunload = function () {
 
 这三个方法都具有堵塞效应，一旦弹出对话框，整个页面就是暂停执行，等待用户做出反应。
 
-### window.open(), window.close()
+### window.open(), window.close()，window.stop()
+
+**（1）window.open()**
 
 `window.open`方法用于新建另一个浏览器窗口，类似于浏览器菜单的新建窗口选项。它会返回新窗口的引用，如果无法新建窗口，则返回`null`。
 
@@ -534,6 +536,8 @@ if (popup === null) {
 }
 ```
 
+**（2）window.close()**
+
 `window.close`方法用于关闭当前窗口，一般只用来关闭`window.open`方法新建的窗口。
 
 ```javascript
@@ -541,6 +545,14 @@ popup.close()
 ```
 
 该方法只对顶层窗口有效，`iframe`框架之中的窗口使用该方法无效。
+
+**（3）window.stop()**
+
+`window.stop()`方法完全等同于单击浏览器的停止按钮，会停止加载图像、视频等正在或等待加载的对象。
+
+```javascript
+window.stop()
+```
 
 ### window.moveTo()，window.moveBy()
 
@@ -561,6 +573,31 @@ window.moveBy(25, 50)
 上面代码将窗口向右移动25像素、向下移动50像素。
 
 为了防止有人滥用这两个方法，随意移动用户的窗口，目前只有一种情况，浏览器允许用脚本移动窗口：该窗口是用`window.open`方法新建的，并且它所在的 Tab 页是当前窗口里面唯一的。除此以外的情况，使用上面两个方法都是无效的。
+
+### window.resizeTo()，window.resizeBy()
+
+`window.resizeTo()`方法用于缩放窗口到指定大小。
+
+它接受两个参数，第一个是缩放后的窗口宽度（`outerWidth`属性，包含滚动条、标题栏等等），第二个是缩放后的窗口高度（`outerHeight`属性）。
+
+```javascript
+window.resizeTo(
+  window.screen.availWidth / 2,
+  window.screen.availHeight / 2
+)
+```
+
+上面代码将当前窗口缩放到，屏幕可用区域的一半宽度和高度。
+
+`window.resizeBy()`方法用于缩放窗口。它与`window.resizeTo()`的区别是，它按照相对的量缩放，`window.resizeTo()`需要给出缩放后的绝对大小。
+
+它接受两个参数，第一个是水平缩放的量，第二个是垂直缩放的量，单位都是像素。
+
+```javascript
+window.resizeBy(-200, -200)
+```
+
+上面的代码将当前窗口的宽度和高度，都缩小200像素。
 
 ### window.scrollTo()，window.scroll()，window.scrollBy()
 
@@ -625,15 +662,7 @@ if (typeof window.print === 'function') {
 }
 ```
 
-`<iframe>`元素里面，这个方法会被屏蔽，除非`<iframe>`的`sandbox`属性设为`allow-modals`。
-
-### window.getComputedStyle()，window.matchMedia()
-
-`window.getComputedStyle()`方法接受一个元素节点作为参数，返回一个包含该元素的最终样式信息的对象，详见《CSS 操作》一章。
-
-`window.matchMedia()`方法用来检查 CSS 的`mediaQuery`语句，详见《CSS 操作》一章。
-
-### window.focus()
+### window.focus()，window.blur()
 
 `window.focus()`方法会激活窗口，使其获得焦点，出现在其他窗口的前面。
 
@@ -646,6 +675,8 @@ if ((popup !== null) && !popup.closed) {
 ```
 
 上面代码先检查`popup`窗口是否依然存在，确认后激活该窗口。
+
+`window.blur()`方法将焦点从窗口移除。
 
 当前窗口获得焦点时，会触发`focus`事件；当前窗口失去焦点时，会触发`blur`事件。
 
@@ -662,6 +693,12 @@ var selObj = window.getSelection();
 ```javascript
 var selectedText = selObj.toString();
 ```
+
+### window.getComputedStyle()，window.matchMedia()
+
+`window.getComputedStyle()`方法接受一个元素节点作为参数，返回一个包含该元素的最终样式信息的对象，详见《CSS 操作》一章。
+
+`window.matchMedia()`方法用来检查 CSS 的`mediaQuery`语句，详见《CSS 操作》一章。
 
 ## 多窗口操作
 
