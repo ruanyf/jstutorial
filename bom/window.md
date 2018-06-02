@@ -702,7 +702,7 @@ var selectedText = selObj.toString();
 
 ## 多窗口操作
 
-由于网页可以使用`iframe`元素，嵌入其他网页，因此一个网页之中会形成多个窗口。另一情况是，子网页之中又嵌入别的网页，形成多级窗口。
+由于网页可以使用`iframe`元素，嵌入其他网页，因此一个网页之中会形成多个窗口。如果子窗口之中又嵌入别的网页，就会形成多级窗口。
 
 ### 窗口的引用
 
@@ -715,19 +715,20 @@ var selectedText = selObj.toString();
 下面代码可以判断，当前窗口是否为顶层窗口。
 
 ```javascript
-top === self
-
-// 更好的写法
-window.top === window.self
+if (window.top === window.self) {
+  // 当前窗口是顶层窗口
+} else {
+  // 当前窗口是子窗口
+}
 ```
 
 下面的代码让父窗口的访问历史后退一次。
 
 ```javascript
-parent.history.back();
+window.parent.history.back();
 ```
 
-与这些变量对应，浏览器还提供一些特殊的窗口名，供`open`方法、`<a>`标签、`<form>`标签等引用。
+与这些变量对应，浏览器还提供一些特殊的窗口名，供`window.open()`方法、`<a>`标签、`<form>`标签等引用。
 
 - `_top`：顶层窗口
 - `_parent`：父窗口
@@ -739,27 +740,35 @@ parent.history.back();
 <a href="somepage.html" target="_top">Link</a>
 ```
 
-### iframe标签
+### iframe 元素
 
-对于`iframe`嵌入的窗口，`document.getElementById`方法可以拿到该窗口的DOM节点，然后使用`contentWindow`属性获得`iframe`节点包含的`window`对象，或者使用`contentDocument`属性获得包含的`document`对象。
+对于`iframe`嵌入的窗口，`document.getElementById`方法可以拿到该窗口的 DOM 节点，然后使用`contentWindow`属性获得`iframe`节点包含的`window`对象。
 
 ```javascript
 var frame = document.getElementById('theFrame');
 var frameWindow = frame.contentWindow;
+```
 
-// 等同于 frame.contentWindow.document
-var frameDoc = frame.contentDocument;
+上面代码中，`frame.contentWindow`可以拿到子窗口的`window`对象。然后，在满足同源限制的情况下，可以读取子窗口内部的属性。
 
-// 获取子窗口的变量和属性
-frameWindow.function()
-
+```javascript
 // 获取子窗口的标题
 frameWindow.title
 ```
 
-`iframe`元素遵守同源政策，只有当父页面与框架页面来自同一个域名，两者之间才可以用脚本通信，否则只有使用`window.postMessage`方法。
+`<iframe>`元素的`contentDocument`属性，可以拿到子窗口的`document`对象。
 
-`iframe`窗口内部，使用`window.parent`引用父窗口。如果当前页面没有父窗口，则`window.parent`属性返回自身。因此，可以通过`window.parent`是否等于`window.self`，判断当前窗口是否为`iframe`窗口。
+```javascript
+var frame = document.getElementById('theFrame');
+var frameDoc = frame.contentDocument;
+
+// 等同于
+var frameDoc = frame.contentWindow.document;
+```
+
+`<iframe>`元素遵守同源政策，只有当父窗口与子窗口在同一个域时，两者之间才可以用脚本通信，否则只有使用`window.postMessage`方法。
+
+`<iframe>`窗口内部，使用`window.parent`引用父窗口。如果当前页面没有父窗口，则`window.parent`属性返回自身。因此，可以通过`window.parent`是否等于`window.self`，判断当前窗口是否为`iframe`窗口。
 
 ```javascript
 if (window.parent !== window.self) {
@@ -767,26 +776,27 @@ if (window.parent !== window.self) {
 }
 ```
 
-`iframe`嵌入窗口的`window`对象，有一个`frameElement`属性，返回它在父窗口中的DOM节点。对于那么非嵌入的窗口，该属性等于`null`。
+`<iframe>`窗口的`window`对象，有一个`frameElement`属性，返回`<iframe>`在父窗口中的 DOM 节点。对于非嵌入的窗口，该属性等于`null`。
 
 ```javascript
 var f1Element = document.getElementById('f1');
-var fiWindow = f1Element.contentWindow;
+var f1Window = f1Element.contentWindow;
+
 f1Window.frameElement === f1Element // true
 window.frameElement === null // true
 ```
 
-### frames 属性
+### window.frames 属性
 
-`window`对象的`frames`属性返回一个类似数组的对象，成员是所有子窗口的`window`对象。可以使用这个属性，实现窗口之间的互相引用。比如，`frames[0]`返回第一个子窗口，`frames[1].frames[2]`返回第二个子窗口内部的第三个子窗口，`parent.frames[1]`返回父窗口的第二个子窗口。
+`window.frames`属性返回一个类似数组的对象，成员是所有子窗口的`window`对象。可以使用这个属性，实现窗口之间的互相引用。比如，`frames[0]`返回第一个子窗口，`frames[1].frames[2]`返回第二个子窗口内部的第三个子窗口，`parent.frames[1]`返回父窗口的第二个子窗口。
 
-需要注意的是，`window.frames`每个成员的值，是框架内的窗口（即框架的`window`对象），而不是`iframe`标签在父窗口的DOM节点。如果要获取每个框架内部的DOM树，需要使用`window.frames[0].document`的写法。
+注意，`window.frames`每个成员的值，是框架内的窗口（即框架的`window`对象），而不是`iframe`标签在父窗口的 DOM 节点。如果要获取每个框架内部的 DOM 树，需要使用`window.frames[0].document`的写法。
 
-另外，如果`iframe`元素设置了`name`或`id`属性，那么属性值会自动成为全局变量，并且可以通过`window.frames`属性引用，返回子窗口的`window`对象。
+另外，如果`<iframe>`元素设置了`name`或`id`属性，那么属性值会自动成为全局变量，并且可以通过`window.frames`属性引用，返回子窗口的`window`对象。
 
 ```javascript
-// HTML代码为<iframe id="myFrame">
-myFrame // [HTMLIFrameElement]
+// HTML 代码为 <iframe id="myFrame">
+window.myFrame // [HTMLIFrameElement]
 frames.myframe === myFrame // true
 ```
 
