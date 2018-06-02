@@ -796,7 +796,7 @@ frames.myframe === myFrame // true
 
 `window`对象可以接收以下事件。
 
-### load事件和onload属性
+### load 事件和 onload 属性
 
 `load`事件发生在文档在浏览器窗口加载完毕时。`window.onload`属性可以指定这个事件的回调函数。
 
@@ -847,7 +847,7 @@ onerror.max = 3;
 onerror.num = 0;
 ```
 
-需要注意的是，如果脚本网址与网页网址不在同一个域（比如使用了CDN），浏览器根本不会提供详细的出错信息，只会提示出错，错误类型是“Script error.”，行号为0，其他信息都没有。这是浏览器防止向外部脚本泄漏信息。一个解决方法是在脚本所在的服务器，设置`Access-Control-Allow-Origin`的HTTP头信息。
+需要注意的是，如果脚本网址与网页网址不在同一个域（比如使用了 CDN），浏览器根本不会提供详细的出错信息，只会提示出错，错误类型是“Script error.”，行号为0，其他信息都没有。这是浏览器防止向外部脚本泄漏信息。一个解决方法是在脚本所在的服务器，设置`Access-Control-Allow-Origin`的 HTTP 头信息。
 
 ```bash
 Access-Control-Allow-Origin: *
@@ -859,9 +859,29 @@ Access-Control-Allow-Origin: *
 <script crossorigin="anonymous" src="//example.com/file.js"></script>
 ```
 
-上面代码的`crossorigin="anonymous"`表示，读取文件不需要身份信息，即不需要cookie和HTTP认证信息。如果设为`crossorigin="use-credentials"`，就表示浏览器会上传cookie和HTTP认证信息，同时还需要服务器端打开HTTP头信息`Access-Control-Allow-Credentials`。
+上面代码的`crossorigin="anonymous"`表示，读取文件不需要身份信息，即不需要 cookie 和 HTTP 认证信息。如果设为`crossorigin="use-credentials"`，就表示浏览器会上传 cookie 和 HTTP 认证信息，同时还需要服务器端打开 HTTP 头信息`Access-Control-Allow-Credentials`。
 
-## URL的编码/解码方法
+### window 对象的事件监听属性
+
+除了具备元素节点都有的 GlobalEventHandlers 接口，`window`对象还具有以下的事件监听函数属性。
+
+- `window.onafterprint`：`afterprint`事件的监听函数。
+- `window.onbeforeprint`：`beforeprint`事件的监听函数。
+- `window.onbeforeunload`：`beforeunload`事件的监听函数。
+- `window.onhashchange`：`hashchange`事件的监听函数。
+- `window.onlanguagechange`: `languagechange`的监听函数。
+- `window.onmessage`：`message`事件的监听函数。
+- `window.onmessageerror`：`MessageError`事件的监听函数。
+- `window.onoffline`：`offline`事件的监听函数。
+- `window.ononline`：`online`事件的监听函数。
+- `window.onpagehide`：`pagehide`事件的监听函数。
+- `window.onpageshow`：`pageshow`事件的监听函数。
+- `window.onpopstate`：`popstate`事件的监听函数。
+- `window.onstorage`：`storage`事件的监听函数。
+- `window.onunhandledrejection`：未处理的 Promise 对象的`reject`事件的监听函数。
+- `window.onunload`：`unload`事件的监听函数。
+
+## URL 的编码和解码
 
 网页URL的合法字符分成两类。
 
