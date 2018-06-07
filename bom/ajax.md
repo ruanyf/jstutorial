@@ -6,50 +6,58 @@ date: 2013-02-16
 modifiedOn: 2014-02-27
 ---
 
-浏览器与服务器之间，采用HTTP协议通信。用户在浏览器地址栏键入一个网址，或者通过网页表单向服务器提交内容，这时浏览器就会向服务器发出HTTP请求。
+## 简介
 
-1999年，微软公司发布IE浏览器5.0版，第一次引入新功能：允许JavaScript脚本向服务器发起HTTP请求。这个功能当时并没有引起注意，直到2004年Gmail发布和2005年Google Map发布，才引起广泛重视。2005年2月，AJAX这个词第一次正式提出，指围绕这个功能进行开发的一整套做法。从此，AJAX成为脚本发起HTTP通信的代名词，W3C也在2006年发布了它的国际标准。
+浏览器与服务器之间，采用 HTTP 协议通信。用户在浏览器地址栏键入一个网址，或者通过网页表单向服务器提交内容，这时浏览器就会向服务器发出 HTTP 请求。
 
-具体来说，AJAX包括以下几个步骤。
+1999年，微软公司发布 IE 浏览器5.0版，第一次引入新功能：允许 JavaScript 脚本向服务器发起 HTTP 请求。这个功能当时并没有引起注意，直到2004年 Gmail 发布和2005年 Google Map 发布，才引起广泛重视。2005年2月，AJAX 这个词第一次正式提出，它是 Asynchronous JavaScript and XML 的缩写，指的是通过 JavaScript 的异步通信，从服务器获取 XML 文档从中提取数据，再更新当前网页的对应部分，而不用刷新整个网页。后来，AJAX 这个词就成为 JavaScript 脚本发起 HTTP 通信的代名词，也就是说，只要用脚本发起通信，就可以叫做 AJAX 通信。W3C 也在2006年发布了它的国际标准。
 
-1. 创建AJAX对象
-1. 发出HTTP请求
+具体来说，AJAX 包括以下几个步骤。
+
+1. 创建 XMLHttpRequest 实例
+1. 发出 HTTP 请求
 1. 接收服务器传回的数据
 1. 更新网页数据
 
-概括起来，就是一句话，AJAX通过原生的`XMLHttpRequest`对象发出HTTP请求，得到服务器返回的数据后，再进行处理。
+概括起来，就是一句话，AJAX 通过原生的`XMLHttpRequest`对象发出 HTTP 请求，得到服务器返回的数据后，再进行处理。现在，服务器返回的都是 JSON 格式的数据，XML 格式已经过时了，但是 AJAX 这个名字已经成了一个通用名词，字面含义已经消失了。
 
-AJAX可以是同步请求，也可以是异步请求。但是，大多数情况下，特指异步请求。因为同步的Ajax请求，对浏览器有“堵塞效应”。
+`XMLHttpRequest`对象是 AJAX 的主要接口，用于浏览器与服务器之间的通信。尽管名字里面有`XML`和`Http`，它实际上可以使用多种协议（比如`file`或`ftp`），发送任何格式的数据（包括字符串和二进制）。
 
-## XMLHttpRequest对象
-
-`XMLHttpRequest`对象用来在浏览器与服务器之间传送数据。
+`XMLHttpRequest`本身是一个构造函数，可以使用`new`命令生成实例。它没有任何参数。
 
 ```javascript
 var ajax = new XMLHttpRequest();
+```
+
+一旦新建实例，就可以使用`open()`方法发出 HTTP 请求。
+
+```javascript
 ajax.open('GET', 'http://www.example.com/page.php', true);
 ```
 
-上面代码向指定的服务器网址，发出GET请求。
+上面代码向指定的服务器网址，发出 GET 请求。
 
-然后，AJAX指定回调函数，监听通信状态（`readyState`属性）的变化。
+然后，指定回调函数，监听通信状态（`readyState`属性）的变化。
 
 ```javascript
 ajax.onreadystatechange = handleStateChange;
+
+function handleStateChange() {
+  // ...
+}
 ```
 
-一旦拿到服务器返回的数据，AJAX不会刷新整个网页，而是只更新相关部分，从而不打断用户正在做的事情。
+上面代码中，一旦`XMLHttpRequest`实例的状态发生变化，就会调用监听函数`handleStateChange`
 
-注意，AJAX只能向同源网址（协议、域名、端口都相同）发出HTTP请求，如果发出跨源请求，就会报错（详见《同源政策》和《CORS机制》两节）。
+一旦拿到服务器返回的数据，AJAX 不会刷新整个网页，而是只更新网页里面的相关部分，从而不打断用户正在做的事情。
 
-虽然名字里面有`XML`，但是实际上，XMLHttpRequest可以报送各种数据，包括字符串和二进制，而且除了HTTP，它还支持通过其他协议传送（比如File和FTP）。
+注意，AJAX 只能向同源网址（协议、域名、端口都相同）发出 HTTP 请求，如果发出跨域请求，就会报错（详见《同源政策》和《CORS 通信》两章）。
 
-下面是`XMLHttpRequest`对象的典型用法。
+下面是`XMLHttpRequest`对象简单用法的完整例子。
 
 ```javascript
 var xhr = new XMLHttpRequest();
 
-// 指定通信过程中状态改变时的回调函数
 xhr.onreadystatechange = function(){
   // 通信成功时，状态值为4
   if (xhr.readyState === 4){
@@ -65,26 +73,11 @@ xhr.onerror = function (e) {
   console.error(xhr.statusText);
 };
 
-// open方式用于指定HTTP动词、请求的网址、是否异步
 xhr.open('GET', '/endpoint', true);
-
-// 发送HTTP请求
 xhr.send(null);
 ```
 
-`open`方法的第三个参数是一个布尔值，表示是否为异步请求。如果设为`false`，就表示这个请求是同步的，下面是一个例子。
-
-```javascript
-var request = new XMLHttpRequest();
-request.open('GET', '/bar/foo.txt', false);
-request.send(null);
-
-if (request.status === 200) {
-  console.log(request.responseText);
-}
-```
-
-## XMLHttpRequest实例的属性
+## XMLHttpRequest 的实例属性
 
 ### readyState
 

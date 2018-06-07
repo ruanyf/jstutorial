@@ -424,7 +424,7 @@ document.documentElement.scrollTop
 
 ### Element.offsetHeight，Element.offsetWidth
 
-`Element.offsetHeight`属性返回一个整数，表示元素的 CSS 垂直高度（单位像素），包括元素本身的高度、padding 和 border，以及垂直滚动条的高度（如果存在滚动条）。
+`Element.offsetHeight`属性返回一个整数，表示元素的 CSS 垂直高度（单位像素），包括元素本身的高度、padding 和 border，以及水平滚动条的高度（如果存在滚动条）。
 
 `Element.offsetWidth`属性表示元素的 CSS 水平宽度（单位像素），其他都与`Element.offsetHeight`一致。
 
