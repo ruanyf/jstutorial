@@ -26,13 +26,13 @@ modifiedOn: 2014-02-27
 `XMLHttpRequest`本身是一个构造函数，可以使用`new`命令生成实例。它没有任何参数。
 
 ```javascript
-var ajax = new XMLHttpRequest();
+var xhr = new XMLHttpRequest();
 ```
 
 一旦新建实例，就可以使用`open()`方法发出 HTTP 请求。
 
 ```javascript
-ajax.open('GET', 'http://www.example.com/page.php', true);
+xhr.open('GET', 'http://www.example.com/page.php', true);
 ```
 
 上面代码向指定的服务器网址，发出 GET 请求。
@@ -79,67 +79,80 @@ xhr.send(null);
 
 ## XMLHttpRequest 的实例属性
 
-### readyState
+### XMLHttpRequest.readyState
 
-`readyState`是一个只读属性，用一个整数和对应的常量，表示XMLHttpRequest请求当前所处的状态。
+`XMLHttpRequest.readyState`返回一个整数，表示实例对象的当前状态。该属性只读。它可能返回以下值。
 
-- 0，对应常量`UNSENT`，表示XMLHttpRequest实例已经生成，但是`open()`方法还没有被调用。
-- 1，对应常量`OPENED`，表示`send()`方法还没有被调用，仍然可以使用`setRequestHeader()`，设定HTTP请求的头信息。
-- 2，对应常量`HEADERS_RECEIVED`，表示`send()`方法已经执行，并且头信息和状态码已经收到。
-- 3，对应常量`LOADING`，表示正在接收服务器传来的body部分的数据，如果`responseType`属性是`text`或者空字符串，`responseText`就会包含已经收到的部分信息。
-- 4，对应常量`DONE`，表示服务器数据已经完全接收，或者本次接收已经失败了。
+- 0，表示 XMLHttpRequest 实例已经生成，但是实例的`open()`方法还没有被调用。
+- 1，表示`open()`方法已经调用，但是实例的`send()`方法还没有调用，仍然可以使用实例的`setRequestHeader()`方法，设定 HTTP 请求的头信息。
+- 2，表示实例的`send()`方法已经调用，并且服务器返回的头信息和状态码已经收到。
+- 3，表示正在接收服务器传来的数据体（body 部分）。这时，如果实例的`responseType`属性等于`text`或者空字符串，`responseText`属性就会包含已经收到的部分信息。
+- 4，表示服务器返回的数据已经完全接收，或者本次接收已经失败。
 
-在通信过程中，每当发生状态变化的时候，`readyState`属性的值就会发生改变。这个值每一次变化，都会触发`readyStateChange`事件。
+通信过程中，每当实例对象发生状态变化，它的`readyState`属性的值就会改变。这个值每一次变化，都会触发`readyStateChange`事件。
 
 ```javascript
-if (ajax.readyState == 4) {
-  // Handle the response.
+var xhr = new XMLHttpRequest();
+
+if (xhr.readyState === 4) {
+  // 请求结束，处理服务器返回的数据
 } else {
- // Show the 'Loading...' message or do nothing.
+  // 显示提示“加载中……”
 }
 ```
 
-上面代码表示，只有`readyState`变为4时，才算确认请求已经成功，其他值都表示请求还在进行中。
+上面代码中，`xhr.readyState`等于`4`时，表明脚本发出的 HTTP 请求已经成功。其他情况，都表示 HTTP 请求还在进行中。
 
-### onreadystatechange
+### XMLHttpRequest.onreadystatechange
 
-`onreadystatechange`属性指向一个回调函数，当`readystatechange`事件发生的时候，这个回调函数就会调用，并且XMLHttpRequest实例的`readyState`属性也会发生变化。
+`XMLHttpRequest.onreadystatechange`属性指向一个监听函数。`readystatechange`事件发生时（实例的`readyState`属性变化），就会执行这个属性。
 
-另外，如果使用`abort()`方法，终止XMLHttpRequest请求，`onreadystatechange`回调函数也会被调用。
+另外，如果使用实例的`abort()`方法，终止 XMLHttpRequest 请求，也会造成`readyState`属性变化，导致调用`XMLHttpRequest.onreadystatechange`属性。
+
+下面是一个例子。
 
 ```javascript
-var xmlhttp = new XMLHttpRequest();
-xmlhttp.open( 'GET', 'http://example.com' , true );
-xmlhttp.onreadystatechange = function () {
-  if ( XMLHttpRequest.DONE != xmlhttp.readyState ) {
+var xhr = new XMLHttpRequest();
+xhr.open( 'GET', 'http://example.com' , true );
+xhr.onreadystatechange = function () {
+  if (xhr.readyState !== 4 || xhr.status !== 200) {
     return;
   }
-  if ( 200 != xmlhttp.status ) {
-    return;
-  }
-  console.log( xmlhttp.responseText );
+  console.log(xhr.responseText);
 };
-xmlhttp.send();
+xhr.send();
 ```
 
-### response
+### XMLHttpRequest.response
 
-`response`属性为只读，返回接收到的数据体（即body部分）。它的类型可以是ArrayBuffer、Blob、Document、JSON对象、或者一个字符串，这由`XMLHttpRequest.responseType`属性的值决定。
+`XMLHttpRequest.response`属性表示服务器返回的数据体（即 HTTP 回应的 body 部分）。它可能是任何数据类型，比如字符串、对象、二进制对象等等，具体的类型由`XMLHttpRequest.responseType`属性决定。该属性只读。
 
-如果本次请求没有成功或者数据不完整，该属性就会等于`null`。
+如果本次请求没有成功或者数据不完整，该属性等于`null`。但是，如果`responseType`属性等于`text`或空字符串，在请求没有结束之前（`readyState`等于3的阶段），`response`属性包含服务器已经返回的部分数据。
 
-### responseType
+```javascript
+var xhr = new XMLHttpRequest();
 
-`responseType`属性用来指定服务器返回数据（`xhr.response`）的类型。
+xhr.onreadystatechange = function () {
+  if (xhr.readyState === 4) {
+    handler(xhr.response);
+  }
+}
+```
 
-- ""：字符串（默认值）
-- "arraybuffer"：ArrayBuffer对象
-- "blob"：Blob对象
-- "document"：Document对象
-- "json"：JSON对象
-- "text"：字符串
+### XMLHttpRequest.responseType
 
-text类型适合大多数情况，而且直接处理文本也比较方便，document类型适合返回XML文档的情况，blob类型适合读取二进制数据，比如图片文件。
+`XMLHttpRequest.responseType`属性是一个字符串，表示服务器返回数据的类型。这个属性是可写的，可以在调用`open()`方法之后、调用`send()`方法之前，设置这个属性的值，告诉服务器返回指定类型的数据。如果`responseType`设为空字符串，就等同于默认值`text`。
+
+`XMLHttpRequest.responseType`属性可以等于以下值。
+
+- ""（空字符串）：等同于`text`，表示服务器返回文本数据。
+- "arraybuffer"：ArrayBuffer 对象，表示服务器返回二进制数组。
+- "blob"：Blob 对象，表示服务器返回二进制对象。
+- "document"：Document 对象，表示服务器返回一个文档对象。
+- "json"：JSON 对象。
+- "text"：字符串。
+
+上面几种类型之中，`text`类型适合大多数情况，而且直接处理文本也比较方便。`document`类型适合返回 HTML / XML 文档的情况，这意味着，对于那些打开 CORS 的网站，可以直接用 Ajax 抓取网页，然后不用解析 HTML 字符串，直接对抓取回来的数据进行 DOM 操作。`blob`类型适合读取二进制数据，比如图片文件。
 
 ```javascript
 var xhr = new XMLHttpRequest();
@@ -147,17 +160,17 @@ xhr.open('GET', '/path/to/image.png', true);
 xhr.responseType = 'blob';
 
 xhr.onload = function(e) {
-  if (this.status == 200) {
-    var blob = new Blob([this.response], {type: 'image/png'});
+  if (this.status === 200) {
+    var blob = new Blob([xhr.response], {type: 'image/png'});
     // 或者
-    var blob = oReq.response;
+    var blob = xhr.response;
   }
 };
 
 xhr.send();
 ```
 
-如果将这个属性设为ArrayBuffer，就可以按照数组的方式处理二进制数据。
+如果将这个属性设为`ArrayBuffer`，就可以按照数组的方式处理二进制数据。
 
 ```javascript
 var xhr = new XMLHttpRequest();
@@ -167,16 +180,14 @@ xhr.responseType = 'arraybuffer';
 xhr.onload = function(e) {
   var uInt8Array = new Uint8Array(this.response);
   for (var i = 0, len = binStr.length; i < len; ++i) {
-  // var byte = uInt8Array[i];
+    // var byte = uInt8Array[i];
   }
 };
 
 xhr.send();
 ```
 
-如果将这个属性设为“json”，支持JSON的浏览器（Firefox>9，chrome>30），就会自动对返回数据调用`JSON.parse()`方法。也就是说，你从xhr.response属性（注意，不是xhr.responseText属性）得到的不是文本，而是一个JSON对象。
-
-XHR2支持Ajax的返回类型为文档，即xhr.responseType="document" 。这意味着，对于那些打开CORS的网站，我们可以直接用Ajax抓取网页，然后不用解析HTML字符串，直接对XHR回应进行DOM操作。
+如果将这个属性设为`json`，浏览器就会自动对返回数据调用`JSON.parse()`方法。也就是说，从`xhr.response`属性（注意，不是`xhr.responseText`属性）得到的不是文本，而是一个 JSON 对象。
 
 ### responseText
 
