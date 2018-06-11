@@ -608,7 +608,7 @@ function giveDetails(e) {
   console.log(e.detail);
 }
 
-document.selectQuery('p') = giveDetails;
+document.querySelector('p').onclick = giveDetails;
 ```
 
 ## Event 对象的实例方法

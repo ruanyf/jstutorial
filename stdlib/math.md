@@ -72,7 +72,7 @@ Math.max() // -Infinity
 
 ### Math.floor()，Math.ceil()
 
-`Math.floor`方法小于参数值的最大整数（地板值）。
+`Math.floor`方法返回小于参数值的最大整数（地板值）。
 
 ```javascript
 Math.floor(3.2) // 3

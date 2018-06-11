@@ -345,7 +345,7 @@ for (var key in obj) {
 // undefined
 
 Object.keys(obj)  // []
-JSON.stringify(obj) // "{a:1, b:2, c:3}"
+JSON.stringify(obj) // "{}"
 ```
 
 上面代码中，`obj.x`属性的`enumerable`为`false`，所以一般的遍历操作都无法获取该属性，使得它有点像“秘密”属性，但不是真正的私有属性，还是可以直接获取它的值。
