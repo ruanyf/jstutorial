@@ -207,26 +207,45 @@ xhr.onload = function () {
 xhr.send(null);
 ```
 
-### responseXML
+### XMLHttpRequest.responseXML
 
-`responseXML`属性返回从服务器接收到的Document对象，该属性为只读。如果本次请求没有成功，或者数据不完整，或者不能被解析为XML或HTML，该属性等于`null`。
+`XMLHttpRequest.responseXML`属性返回从服务器接收到的 HTML 或 XML 文档对象，该属性为只读。如果本次请求没有成功，或者收到的数据不能被解析为 XML 或 HTML，该属性等于`null`。
 
-返回的数据会被直接解析为DOM对象。
+该属性生效的前提是 HTTP 回应的`Content-Type`头信息等于`text/xml`或`application/xml`。这要求在发送请求前，`XMLHttpRequest.responseType`属性要设为`document`。如果 HTTP 回应的`Content-Type`头信息不等于`text/xml`和`application/xml`，但是想从`responseXML`拿到数据（即把数据按照 DOM 格式解析），那么需要手动调用`XMLHttpRequest.overrideMimeType()`方法，强制进行 XML 解析。
+
+该属性得到的数据，是直接解析后的文档 DOM 树。
 
 ```javascript
-/* 返回的XML文件如下
-  <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-  <book>
-      <chapter id="1">(Re-)Introducing JavaScript</chapter>
-      <chapter id="2">JavaScript in Action</chapter>
-  </book>
-*/
+var xhr = new XMLHttpRequest();
+xhr.open('GET', '/server', true);
 
-var data = ajax.responseXML;
-var chapters = data.getElementsByTagName('chapter');
+xhr.responseType = 'document';
+xhr.overrideMimeType('text/xml');
+
+xhr.onload = function () {
+  if (xhr.readyState === 4 && xhr.status === 200) {
+    console.log(xhr.responseXML);
+  }
+};
+
+xhr.send(null);
 ```
 
-如果服务器返回的数据，没有明示`Content-Type`头信息等于`text/xml`，可以使用`overrideMimeType()`方法，指定XMLHttpRequest对象将返回的数据解析为XML。
+### XMLHttpRequest.responseURL
+
+`XMLHttpRequest.responseURL`属性是字符串，表示发送数据的服务器的网址。
+
+```javascript
+var xhr = new XMLHttpRequest();
+xhr.open('GET', 'http://example.com/test', true);
+xhr.onload = function () {
+  // 返回 http://example.com/test
+  console.log(xhr.responseURL);
+};
+xhr.send(null);
+```
+
+注意，这个属性的值与`open()`方法指定的请求网址不一定相同。如果服务器端发生跳转，这个属性返回最后实际返回数据的网址。另外，如果原始 URL 包括锚点（fragment），该属性会把锚点剥离。
 
 ### status
 
