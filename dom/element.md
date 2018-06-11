@@ -774,11 +774,7 @@ Object.keys(rect) // []
 对于盒状元素（比如`<div>`和`<p>`），该方法返回的对象中只有该元素一个成员。对于行内元素（比如`<span>`、`<a>`、`<em>`），该方法返回的对象有多少个成员，取决于该元素在页面上占据多少行。这是它和`Element.getBoundingClientRect()`方法的主要区别，后者对于行内元素总是返回一个矩形。
 
 ```html
-<span id="inline">
-Hello World
-Hello World
-Hello World
-</span>
+<span id="inline">Hello World Hello World Hello World</span>
 ```
 
 上面代码是一个行内元素`<span>`，如果它在页面上占据三行，`getClientRects`方法返回的对象就有三个成员，如果它在页面上占据一行，`getClientRects`方法返回的对象就只有一个成员。
@@ -794,6 +790,18 @@ el.getClientRects()[0].width // 105.908203125
 ```
 
 这个方法主要用于判断行内元素是否换行，以及行内元素的每一行的位置偏移。
+
+注意，如果行内元素包括换行符，那么该方法会把换行符考虑在内。
+
+```html
+<span id="inline">
+  Hello World
+  Hello World
+  Hello World
+</span>
+```
+
+上面代码中，`<span>`节点内部有三个换行符，即使 HTML 语言忽略换行符，将它们显示为一行，`getClientRects()`方法依然会返回三个成员。如果行宽设置得特别窄，上面的`<span>`元素显示为6行，那么就会返回六个成员。
 
 ### Element.insertAdjacentElement()
 
