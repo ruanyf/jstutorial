@@ -247,9 +247,9 @@ xhr.send(null);
 
 注意，这个属性的值与`open()`方法指定的请求网址不一定相同。如果服务器端发生跳转，这个属性返回最后实际返回数据的网址。另外，如果原始 URL 包括锚点（fragment），该属性会把锚点剥离。
 
-### status
+### XMLHttpRequest.status，XMLHttpRequest.statusText
 
-`status`属性为只读属性，表示本次请求所得到的HTTP状态码，它是一个整数。一般来说，如果通信成功的话，这个状态码是200。
+`XMLHttpRequest.status`属性返回一个整数，表示服务器回应的 HTTP 状态码。一般来说，如果通信成功的话，这个状态码是200；如果服务器没有返回状态码，那么这个属性默认是200。请求发出之前，该属性为`0`。该属性只读。
 
 - 200, OK，访问正常
 - 301, Moved Permanently，永久移动
@@ -264,55 +264,63 @@ xhr.send(null);
 基本上，只有2xx和304的状态码，表示服务器返回是正常状态。
 
 ```javascript
-if (ajax.readyState == 4) {
-  if ( (ajax.status >= 200 && ajax.status < 300)
-    || (ajax.status == 304) ) {
-    // Handle the response.
+if (xhr.readyState === 4) {
+  if ( (xhr.status >= 200 && xhr.status < 300)
+    || (xhr.status === 304) ) {
+    // 处理服务器的返回数据
   } else {
-    // Status error!
+    // 出错
   }
 }
 ```
 
-### statusText
+`XMLHttpRequest.statusText`属性返回一个字符串，表示服务器发送的状态提示。不同于`status`属性，该属性包含整个状态信息，比如“OK”和“Not Found”。在请求发送之前（即调用`open()`方法之前），该属性的值是空字符串；如果服务器没有返回状态提示，该属性的值默认为"“OK”。该属性为只读属性。
 
-`statusText`属性为只读属性，返回一个字符串，表示服务器发送的状态提示。不同于`status`属性，该属性包含整个状态信息，比如”200 OK“。
+### XMLHttpRequest.timeout，XMLHttpRequestEventTarget.ontimeout
 
-### timeout
+`XMLHttpRequest.timeout`属性返回一个整数，表示多少毫秒后，如果请求仍然没有得到结果，就会自动终止。如果该属性等于0，就表示没有时间限制。
 
-`timeout`属性等于一个整数，表示多少毫秒后，如果请求仍然没有得到结果，就会自动终止。如果该属性等于0，就表示没有时间限制。
+`XMLHttpRequestEventTarget.ontimeout`属性用于设置一个监听函数，如果发生 timeout 事件，就会执行这个监听函数。
+
+下面是一个例子。
 
 ```javascript
-  var xhr = new XMLHttpRequest();
-  xhr.ontimeout = function () {
-    console.error("The request for " + url + " timed out.");
-  };
-  xhr.onload = function() {
-    if (xhr.readyState === 4) {
-      if (xhr.status === 200) {
-        callback.apply(xhr, args);
-      } else {
-        console.error(xhr.statusText);
-      }
+var xhr = new XMLHttpRequest();
+var url = '/server';
+
+xhr.ontimeout = function () {
+  console.error('The request for ' + url + ' timed out.');
+};
+
+xhr.onload = function() {
+  if (xhr.readyState === 4) {
+    if (xhr.status === 200) {
+      // 处理服务器返回的数据
+    } else {
+      console.error(xhr.statusText);
     }
-  };
-  xhr.open("GET", url, true);
-  xhr.timeout = timeout;
-  xhr.send(null);
-}
+  }
+};
+
+xhr.open('GET', url, true);
+// 指定 10 秒钟超时
+xhr.timeout = 10 * 1000;
+xhr.send(null);
 ```
 
-### 事件监听接口
+### 事件监听属性
 
-XMLHttpRequest第一版，只能对`onreadystatechange`这一个事件指定回调函数。该事件对所有情况作出响应。 XMLHttpRequest第二版允许对更多的事件指定回调函数。
+XMLHttpRequest 对象可以对以下事件指定监听函数。
 
-- onloadstart 请求发出
-- onprogress 正在发送和加载数据
-- onabort 请求被中止，比如用户调用了`abort()`方法
-- onerror 请求失败
-- onload 请求成功完成
-- ontimeout 用户指定的时限到期，请求还未完成
-- onloadend 请求完成，不管成果或失败
+- XMLHttpRequest.onloadstart：loadstart 事件（HTTP 请求发出）的监听函数
+- XMLHttpRequest.onprogress：progress事件（正在发送和加载数据）的监听函数
+- XMLHttpRequest.onabort：abort 事件（请求中止，比如用户调用了`abort()`方法）的监听函数
+- XMLHttpRequest.onerror：error 事件（请求失败）的监听函数
+- XMLHttpRequest.onload：load 事件（请求成功完成）的监听函数
+- XMLHttpRequest.ontimeout：timeout 事件（用户指定的时限超过了，请求还未完成）的监听函数
+- XMLHttpRequest.onloadend：loadend 事件（请求完成，不管成功或失败）的监听函数
+
+下面是一个例子。
 
 ```javascript
 xhr.onload = function() {
@@ -321,21 +329,35 @@ xhr.onload = function() {
  // process the response.
 };
 
+xhr.onabort = function () {
+  console.log('The request was aborted');
+};
+
+xhr.onprogress = function (event) {
+  console.log(event.loaded);
+  console.log(event.total);
+};
+
 xhr.onerror = function() {
   console.log('There was an error!');
 };
 ```
 
-注意，如果发生网络错误（比如服务器无法连通），`onerror`事件无法获取报错信息，所以只能显示报错。
+`progress`事件的监听函数有一个事件对象参数，该对象有两个属性：`loaded`属性返回已经传输的数据量，`total`属性返回总的数据量。所有这些监听函数里面，只有`progress`事件的监听函数有参数，其他函数都没有参数。
 
-### withCredentials
+注意，如果发生网络错误（比如服务器无法连通），`onerror`事件无法获取报错信息。也就是说，可能没有错误对象，所以这样只能显示报错的提示。
 
-`withCredentials`属性是一个布尔值，表示跨域请求时，用户信息（比如Cookie和认证的HTTP头信息）是否会包含在请求之中，默认为`false`。即向`example.com`发出跨域请求时，不会发送`example.com`设置在本机上的Cookie（如果有的话）。
+### XMLHttpRequest.withCredentials
 
-如果你需要通过跨域AJAX发送Cookie，需要打开`withCredentials`。
+`XMLHttpRequest.withCredentials`属性是一个布尔值，表示跨域请求时，用户信息（比如 Cookie 和认证的 HTTP 头信息）是否会包含在请求之中，默认为`false`，即向`example.com`发出跨域请求时，不会发送`example.com`设置在本机上的 Cookie（如果有的话）。
+
+如果需要跨域 AJAX 请求发送Cookie，需要`withCredentials`属性设为`true`。注意，同源的请求不需要设置这个属性。
 
 ```javascript
+var xhr = new XMLHttpRequest();
+xhr.open('GET', 'http://example.com/', true);
 xhr.withCredentials = true;
+xhr.send(null);
 ```
 
 为了让这个属性生效，服务器必须显式返回`Access-Control-Allow-Credentials`这个头信息。
@@ -344,9 +366,15 @@ xhr.withCredentials = true;
 Access-Control-Allow-Credentials: true
 ```
 
-`.withCredentials`属性打开的话，不仅会发送Cookie，还会设置远程主机指定的Cookie。注意，此时你的脚本还是遵守同源政策，无法 从`document.cookie`或者HTTP回应的头信息之中，读取这些Cookie。
+`withCredentials`属性打开的话，跨域请求不仅会发送 Cookie，还会设置远程主机指定的 Cookie。反之也成立，如果`withCredentials`属性没有打开，那么跨域的 AJAX 请求即使明确要求浏览器设置 Cookie，浏览器也会忽略。
 
-## XMLHttpRequest实例的方法
+注意，脚本总是遵守同源政策，无法从`document.cookie`或者 HTTP 回应的头信息之中，读取跨域的 Cookie，`withCredentials`属性不影响这一点。
+
+### XMLHttpRequest.upload
+
+XMLHttpRequest 不仅可以发送请求，还可以发送文件，这就是 AJAX 文件上传。发送文件以后，通过`XMLHttpRequest.upload`属性可以得到一个对象，通过观察这个对象，可以得知上传的进展。主要方法就是监听这个对象的各种事件：loadstart、loadend、load、abort、error、progress、timeout。
+
+## XMLHttpRequest 的实例方法
 
 ### abort()
 
