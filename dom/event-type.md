@@ -452,7 +452,7 @@ function showChar(e){
   console.log("Meta: " + e.shiftKey);
 }
 
-document.body.addEventListener('click', showChar, false);
+document.body.addEventListener('keydown', showChar, false);
 ```
 
 ### KeyboardEvent.code
