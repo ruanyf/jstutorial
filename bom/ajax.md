@@ -376,6 +376,169 @@ XMLHttpRequest 不仅可以发送请求，还可以发送文件，这就是 AJAX
 
 ## XMLHttpRequest 的实例方法
 
+### XMLHttpRequest.open()
+
+`XMLHttpRequest.open()`方法用于指定 HTTP 请求的参数，或者说初始化 XMLHttpRequest 实例对象。它一共可以接受五个参数。
+
+```javascript
+void open(
+   string method,
+   string url,
+   optional boolean async,
+   optional string user,
+   optional string password
+);
+```
+
+- `method`：表示 HTTP 动词方法，比如`GET`、`POST`、`PUT`、`DELETE`、`HEAD`等。
+- `url`: 表示请求发送目标 URL。
+- `async`: 布尔值，表示请求是否为异步，默认为`true`。如果设为`false`，则`send()`方法只有等到收到服务器返回了结果，才会进行下一步操作。该参数可选。由于同步 AJAX 请求会造成浏览器失去响应，许多浏览器已经禁止在主线程使用，只允许 Worker 里面使用。所以，这个参数轻易不应该设为`false`。
+- `user`：表示用于认证的用户名，默认为空字符串。该参数可选。
+- `password`：表示用于认证的密码，默认为空字符串。该参数可选。
+
+注意，如果对使用过`open()`方法的 AJAX 请求，再次使用这个方法，等同于调用`abort()`，即终止请求。
+
+下面发送 POST 请求的例子。
+
+```javascript
+var xhr = new XMLHttpRequest();
+xhr.open('POST', encodeURI('someURL'));
+```
+
+### XMLHttpRequest.send()
+
+`XMLHttpRequest.send()`方法用于实际发出 HTTP 请求。它的参数是可选的，如果不带参数，就表示 HTTP 请求只包含头信息，也就是只有一个 URL，典型例子就是 GET 请求；如果带有参数，就表示除了头信息，还带有包含具体数据的信息体，典型例子就是 POST 请求。
+
+下面是 GET 请求的例子。
+
+```javascript
+var xhr = new XMLHttpRequest();
+xhr.open('GET',
+  'http://www.example.com/?id=' + encodeURIComponent(id),
+  true
+);
+xhr.send(null);
+
+// 等同于
+var data = 'id=' + encodeURIComponent(id);
+xhr.open('GET', 'http://www.example.com', true);
+xhr.send(data);
+```
+
+上面代码中，`GET`请求的参数，可以作为查询字符串附加在 URL 后面，也可以作为`send`方法的参数。
+
+下面是发送 POST 请求的例子。
+
+```javascript
+var xhr = new XMLHttpRequest();
+var data = 'email='
+  + encodeURIComponent(email)
+  + '&password='
+  + encodeURIComponent(password);
+
+xhr.open('POST', 'http://www.example.com', true);
+xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+xhr.send(data);
+```
+
+注意，所有 XMLHttpRequest 的监听事件，都必须在`send()`方法调用之前设定。
+
+`send`方法的参数就是发送的数据。多种格式的数据，都可以作为它的参数。
+
+```javascript
+void send();
+void send(ArrayBufferView data);
+void send(Blob data);
+void send(Document data);
+void send(String data);
+void send(FormData data);
+```
+
+如果发送 DOM 对象，在发送之前，数据会先被串行化。发送二进制数据，最好使用`ArrayBufferView`或`Blob`对象，这使得通过 Ajax 上传文件成为可能。
+
+下面是发送表单数据的例子。FormData类型可以用于构造表单数据。
+
+```javascript
+var formData = new FormData();
+
+formData.append('username', '张三');
+formData.append('email', 'zhangsan@example.com');
+formData.append('birthDate', 1940);
+
+var xhr = new XMLHttpRequest();
+xhr.open("POST", "/register");
+xhr.send(formData);
+```
+
+上面代码`FormData`对象构造了表单数据，然后使用`send()`方法发送。它的效果与发送下面的表单数据是一样的。
+
+```html
+<form id='registration' name='registration' action='/register'>
+  <input type='text' name='username' value='张三'>
+  <input type='email' name='email' value='zhangsan@example.com'>
+  <input type='number' name='birthDate' value='1940'>
+  <input type='submit' onclick='return sendForm(this.form);'>
+</form>
+```
+
+下面的例子是使用`FormData`对象加工表单数据，然后再发送。
+
+```javascript
+function sendForm(form) {
+  var formData = new FormData(form);
+  formData.append('csrf', 'e69a18d7db1286040586e6da1950128c');
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', form.action, true);
+  xhr.onload = function() {
+    // ...
+  };
+  xhr.send(formData);
+
+  return false;
+}
+
+var form = document.querySelector('#registration');
+sendForm(form);
+```
+
+### XMLHttpRequest.setRequestHeader()
+
+`XMLHttpRequest.setRequestHeader()`方法用于设置浏览器发送的 HTTP 请求的头信息。该方法必须在`open()`之后、`send()`之前调用。如果该方法多次调用，设定同一个字段，则每一次调用的值会被合并成一个单一的值发送。
+
+该方法接受两个参数。第一个参数是字符串，表示头信息的字段名，第二个参数是字段值。
+
+```javascript
+xhr.setRequestHeader('Content-Type', 'application/json');
+xhr.setRequestHeader('Content-Length', JSON.stringify(data).length);
+xhr.send(JSON.stringify(data));
+```
+
+上面代码首先设置头信息`Content-Type`，表示发送 JSON 格式的数据；然后设置`Content-Length`，表示数据长度；最后发送 JSON 数据。
+
+### XMLHttpRequest.overrideMimeType()
+
+`XMLHttpRequest.overrideMimeType()`方法用来指定 MIME 类型，覆盖服务器返回的真正的 MIME 类型，从而让浏览器进行不一样的处理。举例来说，服务器返回的数据类型是`text/xml`，由于种种原因浏览器解析不成功报错，这时就拿不到数据了。为了拿到原始数据，我们可以把 MIME 类型改成`text/plain`，这样浏览器就不会去自动解析，从而我们就可以拿到原始文本了。
+
+```javascript
+xhr.overrideMimeType('text/plain')
+```
+
+注意，该方法必须在`send()`方法之前调用。
+
+修改服务器返回的数据类型，不是正常情况下应该采取的方法。如果希望服务器返回指定的数据类型，可以用`responseType`属性告诉服务器，就像下面的例子。只有在服务器无法返回某种数据类型时，才使用`overrideMimeType()`方法。
+
+```javascript
+var xhr = new XMLHttpRequest();
+xhr.onload = function(e) {
+  var arraybuffer = xhr.response;
+  // ...
+}
+xhr.open('GET', url);
+xhr.responseType = 'arraybuffer';
+xhr.send();
+```
+
 ### XMLHttpRequest.getResponseHeader()
 
 `XMLHttpRequest.getResponseHeader()`方法返回 HTTP 头信息指定字段的值，如果还没有收到服务器回应或者指定字段不存在，返回`null`。该方法的参数不区分大小写。
@@ -458,237 +621,7 @@ setTimeout(function () {
 
 上面代码在发出5秒之后，终止一个 AJAX 请求。
 
-### XMLHttpRequest.open()
-
-`XMLHttpRequest.open()`方法用于指定 HTTP 请求的参数，或者说初始化 XMLHttpRequest 实例对象。它一共可以接受五个参数。
-
-```javascript
-void open(
-   string method,
-   string url,
-   optional boolean async,
-   optional string user,
-   optional string password
-);
-```
-
-- `method`：表示 HTTP 动词方法，比如`GET`、`POST`、`PUT`、`DELETE`、`HEAD`等。
-- `url`: 表示请求发送目标 URL。
-- `async`: 布尔值，表示请求是否为异步，默认为`true`。如果设为`false`，则`send()`方法只有等到收到服务器返回了结果，才会进行下一步操作。该参数可选。由于同步 AJAX 请求会造成浏览器失去响应，许多浏览器已经禁止在主线程使用，只允许 Worker 里面使用。所以，这个参数轻易不应该设为`false`。
-- `user`：表示用于认证的用户名，默认为空字符串。该参数可选。
-- `password`：表示用于认证的密码，默认为空字符串。该参数可选。
-
-注意，如果对使用过`open()`方法的 AJAX 请求，再次使用这个方法，等同于调用`abort()`，即终止请求。
-
-下面发送 POST 请求的例子。
-
-```javascript
-var xhr = new XMLHttpRequest();
-xhr.open('POST', encodeURI('someURL'));
-```
-
-### send()
-
-`send`方法用于实际发出HTTP请求。如果不带参数，就表示HTTP请求只包含头信息，也就是只有一个URL，典型例子就是GET请求；如果带有参数，就表示除了头信息，还带有包含具体数据的信息体，典型例子就是POST请求。
-
-```javascript
-ajax.open('GET'
-  , 'http://www.example.com/somepage.php?id=' + encodeURIComponent(id)
-  , true
-);
-
-// 等同于
-var data = 'id=' + encodeURIComponent(id));
-ajax.open('GET', 'http://www.example.com/somepage.php', true);
-ajax.send(data);
-```
-
-上面代码中，`GET`请求的参数，可以作为查询字符串附加在URL后面，也可以作为`send`方法的参数。
-
-下面是发送POST请求的例子。
-
-```javascript
-var data = 'email='
-  + encodeURIComponent(email)
-  + '&password='
-  + encodeURIComponent(password);
-ajax.open('POST', 'http://www.example.com/somepage.php', true);
-ajax.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-ajax.send(data);
-```
-
-如果请求是异步的（默认为异步），该方法在发出请求后会立即返回。如果请求为同步，该方法只有等到收到服务器回应后，才会返回。
-
-注意，所有XMLHttpRequest的监听事件，都必须在`send()`方法调用之前设定。
-
-`send`方法的参数就是发送的数据。多种格式的数据，都可以作为它的参数。
-
-```javascript
-void send();
-void send(ArrayBufferView data);
-void send(Blob data);
-void send(Document data);
-void send(String data);
-void send(FormData data);
-```
-
-如果发送`Document`数据，在发送之前，数据会先被串行化。
-
-发送二进制数据，最好使用`ArrayBufferView`或`Blob`对象，这使得通过Ajax上传文件成为可能。
-
-下面是一个上传`ArrayBuffer`对象的例子。
-
-```javascript
-function sendArrayBuffer() {
-  var xhr = new XMLHttpRequest();
-  var uInt8Array = new Uint8Array([1, 2, 3]);
-
-  xhr.open('POST', '/server', true);
-  xhr.onload = function(e) { ... };
-  xhr.send(uInt8Array.buffer);
-}
-```
-
-FormData类型可以用于构造表单数据。
-
-```javascript
-var formData = new FormData();
-
-formData.append('username', '张三');
-formData.append('email', 'zhangsan@example.com');
-formData.append('birthDate', 1940);
-
-var xhr = new XMLHttpRequest();
-xhr.open("POST", "/register");
-xhr.send(formData);
-```
-
-上面的代码构造了一个`formData`对象，然后使用send方法发送。它的效果与点击下面表单的submit按钮是一样的。
-
-```html
-<form id='registration' name='registration' action='/register'>
-    <input type='text' name='username' value='张三'>
-    <input type='email' name='email' value='zhangsan@example.com'>
-    <input type='number' name='birthDate' value='1940'>
-    <input type='submit' onclick='return sendForm(this.form);'>
-</form>
-```
-
-FormData也可以将现有表单构造生成。
-
-```javascript
-var formElement = document.querySelector("form");
-var request = new XMLHttpRequest();
-request.open("POST", "submitform.php");
-request.send(new FormData(formElement));
-```
-
-FormData对象还可以对现有表单添加数据，这为我们操作表单提供了极大的灵活性。
-
-```javascript
-function sendForm(form) {
-    var formData = new FormData(form);
-    formData.append('csrf', 'e69a18d7db1286040586e6da1950128c');
-
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', form.action, true);
-    xhr.onload = function(e) {
-        // ...
-    };
-    xhr.send(formData);
-
-    return false;
-}
-
-var form = document.querySelector('#registration');
-sendForm(form);
-```
-
-FormData对象也能用来模拟File控件，进行文件上传。
-
-```javascript
-function uploadFiles(url, files) {
-  var formData = new FormData();
-
-  for (var i = 0, file; file = files[i]; ++i) {
-    formData.append(file.name, file); // 可加入第三个参数，表示文件名
-  }
-
-  var xhr = new XMLHttpRequest();
-  xhr.open('POST', url, true);
-  xhr.onload = function(e) { ... };
-
-  xhr.send(formData);  // multipart/form-data
-}
-
-document.querySelector('input[type="file"]').addEventListener('change', function(e) {
-  uploadFiles('/server', this.files);
-}, false);
-```
-
-FormData也可以加入JavaScript生成的文件。
-
-```javascript
-// 添加JavaScript生成的文件
-var content = '<a id="a"><b id="b">hey!</b></a>';
-var blob = new Blob([content], { type: "text/xml"});
-formData.append("webmasterfile", blob);
-```
-
-### setRequestHeader()
-
-`setRequestHeader`方法用于设置HTTP头信息。该方法必须在`open()`之后、`send()`之前调用。如果该方法多次调用，设定同一个字段，则每一次调用的值会被合并成一个单一的值发送。
-
-```javascript
-xhr.setRequestHeader('Content-Type', 'application/json');
-xhr.setRequestHeader('Content-Length', JSON.stringify(data).length);
-xhr.send(JSON.stringify(data));
-```
-
-上面代码首先设置头信息`Content-Type`，表示发送JSON格式的数据；然后设置`Content-Length`，表示数据长度；最后发送JSON数据。
-
-### overrideMimeType()
-
-该方法用来指定服务器返回数据的MIME类型。该方法必须在`send()`之前调用。
-
-传统上，如果希望从服务器取回二进制数据，就要使用这个方法，人为将数据类型伪装成文本数据。
-
-```javascript
-var xhr = new XMLHttpRequest();
-xhr.open('GET', '/path/to/image.png', true);
-
-// 强制将MIME改为文本类型
-xhr.overrideMimeType('text/plain; charset=x-user-defined');
-
-xhr.onreadystatechange = function(e) {
-  if (this.readyState == 4 && this.status == 200) {
-    var binStr = this.responseText;
-    for (var i = 0, len = binStr.length; i < len; ++i) {
-      var c = binStr.charCodeAt(i);
-      var byte = c & 0xff;  // 去除高位字节，留下低位字节
-    }
-  }
-};
-
-xhr.send();
-```
-
-上面代码中，因为传回来的是二进制数据，首先用`xhr.overrideMimeType`方法强制改变它的MIME类型，伪装成文本数据。字符集必需指定为“x-user-defined”，如果是其他字符集，浏览器内部会强制转码，将其保存成UTF-16的形式。字符集“x-user-defined”其实也会发生转码，浏览器会在每个字节前面再加上一个字节（0xF700-0xF7ff），因此后面要对每个字符进行一次与运算（&），将高位的8个位去除，只留下低位的8个位，由此逐一读出原文件二进制数据的每个字节。
-
-这种方法很麻烦，在XMLHttpRequest版本升级以后，一般采用指定`responseType`的方法。
-
-```javascript
-var xhr = new XMLHttpRequest();
-xhr.onload = function(e) {
-  var arraybuffer = xhr.response;
-  // ...
-}
-xhr.open("GET", url);
-xhr.responseType = "arraybuffer";
-xhr.send();
-```
-
-## XMLHttpRequest实例的事件
+## XMLHttpRequest 实例的事件
 
 ### readyStateChange事件
 
