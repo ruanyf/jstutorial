@@ -376,46 +376,91 @@ XMLHttpRequest 不仅可以发送请求，还可以发送文件，这就是 AJAX
 
 ## XMLHttpRequest 的实例方法
 
-### abort()
+### XMLHttpRequest.getResponseHeader()
 
-`abort`方法用来终止已经发出的HTTP请求。
+`XMLHttpRequest.getResponseHeader()`方法返回 HTTP 头信息指定字段的值，如果还没有收到服务器回应或者指定字段不存在，返回`null`。该方法的参数不区分大小写。
 
 ```javascript
-ajax.open('GET', 'http://www.example.com/page.php', true);
-var ajaxAbortTimer = setTimeout(function() {
-  if (ajax) {
-    ajax.abort();
-    ajax = null;
+function getHeaderTime() {
+  console.log(this.getResponseHeader("Last-Modified"));
+}
+
+var xhr = new XMLHttpRequest();
+xhr.open('HEAD', 'yourpage.html');
+xhr.onload = getHeaderTime;
+xhr.send();
+```
+
+如果有多个字段同名，它们的值会被连接为一个字符串，每个字段之间使用“逗号+空格”分隔。
+
+### XMLHttpRequest.getAllResponseHeaders()
+
+`XMLHttpRequest.getAllResponseHeaders()`方法返回一个字符串，表示服务器发来的所有 HTTP 头信息。格式为字符串，每个头信息之间使用`CRLF`分隔（回车+换行），如果没有收到服务器回应，该属性为`null`。如果发生网络错误，该属性为空字符串。
+
+```javascript
+var xhr = new XMLHttpRequest();
+xhr.open('GET', 'foo.txt', true);
+xhr.send();
+
+xhr.onreadystatechange = function () {
+  if (this.readyState === 4) {
+    var headers = xhr.getAllResponseHeaders();
+  }
+}
+```
+
+上面代码用于获取服务器返回的所有头信息。它可能是下面这样的字符串。
+
+```http
+date: Fri, 08 Dec 2017 21:04:30 GMT\r\n
+content-encoding: gzip\r\n
+x-content-type-options: nosniff\r\n
+server: meinheld/0.6.1\r\n
+x-frame-options: DENY\r\n
+content-type: text/html; charset=utf-8\r\n
+connection: keep-alive\r\n
+strict-transport-security: max-age=63072000\r\n
+vary: Cookie, Accept-Encoding\r\n
+content-length: 6502\r\n
+x-xss-protection: 1; mode=block\r\n
+```
+
+然后，对这个字符串进行处理。
+
+```javascript
+var arr = headers.trim().split(/[\r\n]+/);
+var headerMap = {};
+
+arr.forEach(function (line) {
+  var parts = line.split(': ');
+  var header = parts.shift();
+  var value = parts.join(': ');
+  headerMap[header] = value;
+});
+
+headerMap['content-length'] // "6502"
+```
+
+### XMLHttpRequest.abort()
+
+`XMLHttpRequest.abort()`方法用来终止已经发出的 HTTP 请求。调用这个方法以后，`readyState`属性变为`4`，`status`属性变为`0`。
+
+```javascript
+var xhr = new XMLHttpRequest();
+xhr.open('GET', 'http://www.example.com/page.php', true);
+setTimeout(function () {
+  if (xhr) {
+    xhr.abort();
+    xhr = null;
   }
 }, 5000);
 ```
 
-上面代码在发出5秒之后，终止一个AJAX请求。
+上面代码在发出5秒之后，终止一个 AJAX 请求。
 
-### getAllResponseHeaders()
+### XMLHttpRequest.open()
 
-`getAllResponseHeaders`方法返回服务器发来的所有HTTP头信息。格式为字符串，每个头信息之间使用`CRLF`分隔，如果没有受到服务器回应，该属性返回`null`。
-
-### getResponseHeader()
-
-`getResponseHeader`方法返回HTTP头信息指定字段的值，如果还没有收到服务器回应或者指定字段不存在，则该属性为`null`。
-
-```html
-function getHeaderTime () {
-  console.log(this.getResponseHeader("Last-Modified"));
-}
-
-var oReq = new XMLHttpRequest();
-oReq.open("HEAD", "yourpage.html");
-oReq.onload = getHeaderTime;
-oReq.send();
-```
-
-如果有多个字段同名，则它们的值会被连接为一个字符串，每个字段之间使用“逗号+空格”分隔。
-
-### open()
-
-`XMLHttpRequest`对象的`open`方法用于指定发送HTTP请求的参数，它的使用格式如下，一共可以接受五个参数。
+`XMLHttpRequest.open()`方法用于指定 HTTP 请求的参数，或者说初始化 XMLHttpRequest 实例对象。它一共可以接受五个参数。
 
 ```javascript
 void open(
@@ -427,35 +472,19 @@ void open(
 );
 ```
 
-- `method`：表示HTTP动词，比如“GET”、“POST”、“PUT”和“DELETE”。
-- `url`: 表示请求发送的网址。
-- `async`: 格式为布尔值，默认为`true`，表示请求是否为异步。如果设为`false`，则`send()`方法只有等到收到服务器返回的结果，才会有返回值。
-- `user`：表示用于认证的用户名，默认为空字符串。
-- `password`：表示用于认证的密码，默认为空字符串。
+- `method`：表示 HTTP 动词方法，比如`GET`、`POST`、`PUT`、`DELETE`、`HEAD`等。
+- `url`: 表示请求发送目标 URL。
+- `async`: 布尔值，表示请求是否为异步，默认为`true`。如果设为`false`，则`send()`方法只有等到收到服务器返回了结果，才会进行下一步操作。该参数可选。由于同步 AJAX 请求会造成浏览器失去响应，许多浏览器已经禁止在主线程使用，只允许 Worker 里面使用。所以，这个参数轻易不应该设为`false`。
+- `user`：表示用于认证的用户名，默认为空字符串。该参数可选。
+- `password`：表示用于认证的密码，默认为空字符串。该参数可选。
 
-如果对使用过`open()`方法的请求，再次使用这个方法，等同于调用`abort()`。
+注意，如果对使用过`open()`方法的 AJAX 请求，再次使用这个方法，等同于调用`abort()`，即终止请求。
 
-下面发送POST请求的例子。
+下面发送 POST 请求的例子。
 
 ```javascript
+var xhr = new XMLHttpRequest();
 xhr.open('POST', encodeURI('someURL'));
-xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-xhr.onload = function() {};
-xhr.send(encodeURI('dataString'));
-```
-
-上面方法中，open方法向指定URL发出POST请求，send方法送出实际的数据。
-
-下面是一个同步AJAX请求的例子。
-
-```javascript
-var request = new XMLHttpRequest();
-request.open('GET', '/bar/foo.txt', false);
-request.send(null);
-
-if (request.status === 200) {
-  console.log(request.responseText);
-}
 ```
 
 ### send()
