@@ -343,7 +343,7 @@ xhr.onerror = function() {
 };
 ```
 
-`progress`事件的监听函数有一个事件对象参数，该对象有两个属性：`loaded`属性返回已经传输的数据量，`total`属性返回总的数据量。所有这些监听函数里面，只有`progress`事件的监听函数有参数，其他函数都没有参数。
+`progress`事件的监听函数有一个事件对象参数，该对象有三个属性：`loaded`属性返回已经传输的数据量，`total`属性返回总的数据量，`lengthComputable`属性返回一个布尔值，表示加载的进度是否可以计算。所有这些监听函数里面，只有`progress`事件的监听函数有参数，其他函数都没有参数。
 
 注意，如果发生网络错误（比如服务器无法连通），`onerror`事件无法获取报错信息。也就是说，可能没有错误对象，所以这样只能显示报错的提示。
 
@@ -623,23 +623,23 @@ setTimeout(function () {
 
 ## XMLHttpRequest 实例的事件
 
-### readyStateChange事件
+### readyStateChange 事件
 
-`readyState`属性的值发生改变，就会触发readyStateChange事件。
+`readyState`属性的值发生改变，就会触发 readyStateChange 事件。
 
-我们可以通过`onReadyStateChange`属性，指定这个事件的回调函数，对不同状态进行不同处理。尤其是当状态变为4的时候，表示通信成功，这时回调函数就可以处理服务器传送回来的数据。
+我们可以通过`onReadyStateChange`属性，指定这个事件的监听函数，对不同状态进行不同处理。尤其是当状态变为`4`的时候，表示通信成功，这时回调函数就可以处理服务器传送回来的数据。
 
-### progress事件
+### progress 事件
 
-上传文件时，XMLHTTPRequest对象的upload属性有一个progress，会不断返回上传的进度。
+上传文件时，XMLHTTPRequest 实例对象本身和实例的`upload`属性，都有一个`progress`事件，会不断返回上传的进度。
 
-假定网页上有一个progress元素。
+假定网页上有一个`<progress>`元素。
 
 ```http
 <progress min="0" max="100" value="0">0% complete</progress>
 ```
 
-文件上传时，对upload属性指定progress事件回调函数，即可获得上传的进度。
+文件上传时，对`upload`属性指定`progress`事件的监听函数，即可获得上传的进度。
 
 ```javascript
 function upload(blobOrFile) {
@@ -647,12 +647,12 @@ function upload(blobOrFile) {
   xhr.open('POST', '/server', true);
   xhr.onload = function(e) { ... };
 
-  // Listen to the upload progress.
   var progressBar = document.querySelector('progress');
-  xhr.upload.onprogress = function(e) {
+  xhr.upload.onprogress = function (e) {
     if (e.lengthComputable) {
       progressBar.value = (e.loaded / e.total) * 100;
-      progressBar.textContent = progressBar.value; // Fallback for unsupported browsers.
+      // 兼容老式浏览器
+      progressBar.textContent = progressBar.value;
     }
   };
 
@@ -662,53 +662,56 @@ function upload(blobOrFile) {
 upload(new Blob(['hello world'], {type: 'text/plain'}));
 ```
 
-### load事件、error事件、abort事件
+### load 事件、error 事件、abort 事件
 
-load事件表示服务器传来的数据接收完毕，error事件表示请求出错，abort事件表示请求被中断。
+load 事件表示服务器传来的数据接收完毕，error 事件表示请求出错，abort 事件表示请求被中断（比如用户取消请求）。
 
 ```javascript
 var xhr = new XMLHttpRequest();
 
-xhr.addEventListener("progress", updateProgress);
-xhr.addEventListener("load", transferComplete);
-xhr.addEventListener("error", transferFailed);
-xhr.addEventListener("abort", transferCanceled);
+xhr.addEventListener('progress', updateProgress);
+xhr.addEventListener('load', transferComplete);
+xhr.addEventListener('error', transferFailed);
+xhr.addEventListener('abort', transferCanceled);
 
 xhr.open();
 
 function updateProgress (oEvent) {
   if (oEvent.lengthComputable) {
     var percentComplete = oEvent.loaded / oEvent.total;
-    // ...
   } else {
-    // 回应的总数据量未知，导致无法计算百分比
+    console.log('无法计算进展');
   }
 }
 
-function transferComplete(evt) {
-  console.log("The transfer is complete.");
+function transferComplete() {
+  console.log('数据接收完毕');
 }
 
-function transferFailed(evt) {
-  console.log("An error occurred while transferring the file.");
+function transferFailed() {
+  console.log('数据接收出错');
 }
 
-function transferCanceled(evt) {
-  console.log("The transfer has been canceled by the user.");
+function transferCanceled() {
+  console.log('用户取消接收');
 }
 ```
 
-### loadend事件
+### loadend 事件
 
 `abort`、`load`和`error`这三个事件，会伴随一个`loadend`事件，表示请求结束，但不知道其是否成功。
 
 ```javascript
-req.addEventListener("loadend", loadEnd);
+xhr.addEventListener('loadend', loadEnd);
 
 function loadEnd(e) {
-  alert("请求结束（不知道是否成功）");
+  console.log('请求结束，状态未知');
 }
 ```
+
+### timeout 事件
+
+服务器超过指定时间还没有返回结果，就会触发 timeout 事件，具体的例子参见`timeout`属性那一节。
 
 ## 文件上传
 
