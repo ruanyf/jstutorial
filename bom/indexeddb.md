@@ -8,11 +8,11 @@ modifiedOn: 2013-11-09
 
 ## 概述
 
-随着浏览器的处理能力不断增强，越来越多的网站开始考虑，将大量数据储存在客户端，这样可以减少用户等待从服务器获取数据的时间。
+随着浏览器的功能不断增强，越来越多的网站开始考虑，将大量数据储存在客户端，这样可以减少从服务器获取数据，直接从本地获取数据。
 
-现有的浏览器端数据储存方案，都不适合储存大量数据：Cookie 不超过4KB，且每次请求都会发送回服务器端；LocalStorage 在 2.5MB 到 10MB 之间（各家浏览器不同）。所以，需要一种新的解决方案，这就是 IndexedDB 诞生的背景。
+现有的浏览器数据储存方案，都不适合储存大量数据：Cookie 的大小不超过4KB，且每次请求都会发送回服务器；LocalStorage 在 2.5MB 到 10MB 之间（各家浏览器不同）。所以，需要一种新的解决方案，这就是 IndexedDB 诞生的背景。
 
-通俗地说，IndexedDB 就是浏览器端数据库，可以被网页脚本程序创建和操作。它允许储存大量数据，提供查找接口，还能建立索引。这些都是 LocalStorage 所不具备的。就数据库类型而言，IndexedDB 不属于关系型数据库（不支持 SQL 查询语句），更接近 NoSQL 数据库。
+通俗地说，IndexedDB 就是浏览器提供的网页数据本地数据库，它里面的数据可以被脚本创建和操作。IndexedDB 允许储存大量数据，提供查找接口，还能建立索引。这些都是 LocalStorage 所不具备的。就数据库类型而言，IndexedDB 不属于关系型数据库（不支持 SQL 查询语句），更接近 NoSQL 数据库。
 
 IndexedDB 具有以下特点。
 
@@ -24,67 +24,59 @@ IndexedDB 具有以下特点。
 
 **（4）同域限制** IndexedDB 也受到同域限制，每一个数据库对应创建该数据库的域名。来自不同域名的网页，只能访问自身域名下的数据库，而不能访问其他域名下的数据库。
 
-**（5）储存空间大** IndexedDB 的储存空间比 LocalStorage 大得多，一般来说不少于250MB。IE的储存上限是250MB，Chrome和Opera是剩余空间的某个百分比，Firefox 则没有上限。
+**（5）储存空间大** IndexedDB 的储存空间比 LocalStorage 大得多，一般来说不少于250MB。IE 的储存上限是250MB，Chrome 和 Opera 是剩余空间的某个百分比，Firefox 则没有上限。
 
 **（6）支持二进制储存。** IndexedDB 不仅可以储存字符串，还可以储存二进制数据。
 
-下面的代码用来检查浏览器是否支持这个 API。
+## indexedDB 对象的静态方法
+
+浏览器原生提供`indexedDB`对象，作为开发者的操作接口。
+
+### indexedDB.open()
+
+`indexedDB.open()`方法用于打开数据库。它会立刻返回一个 IDBOpenDBRequest 对象，但是打开数据库操作本身是异步操作。
 
 ```javascript
-if('indexedDB' in window) {
-  // 支持
-} else {
-  // 不支持
-}
+var openRequest = window.indexedDB.open('test', 1);
 ```
 
-## indexedDB.open()
+`open()`方法的第一个参数是数据库名称，格式为字符串，不可省略；第二个参数是数据库版本，是一个大于0的正整数（0将报错），`open()`方法将打开该版本的数据库。第二个参数可省略，如果数据库已存在，将打开当前版本的数据库，如果数据库不存在，将创建该版本的数据库，默认版本为1。
 
-浏览器原生提供`indexedDB`对象，作为开发者的操作接口。`indexedDB.open`方法用于打开数据库。
+上面代码表示，打开一个名为test、版本为1的数据库。如果该数据库不存在，则会新建该数据库。如果省略第二个参数，则会自动创建版本为1的该数据库。
 
-{% highlight javascript %}
-
-var openRequest = indexedDB.open("test",1);
-
-{% endhighlight %}
-
-open方法的第一个参数是数据库名称，格式为字符串，不可省略；第二个参数是数据库版本，是一个大于0的正整数（0将报错）。上面代码表示，打开一个名为test、版本为1的数据库。如果该数据库不存在，则会新建该数据库。如果省略第二个参数，则会自动创建版本为1的该数据库。
-
-打开数据库的结果是，有可能触发4种事件。
+打开数据库是异步操作，通过各种事件通知客户端。下面是有可能触发的4种事件。
 
 - **success**：打开成功。
 - **error**：打开失败。
 - **upgradeneeded**：第一次打开该数据库，或者数据库版本发生变化。
 - **blocked**：上一次的数据库连接还未关闭。
 
-第一次打开数据库时，会先触发upgradeneeded事件，然后触发success事件。
+第一次打开数据库时，会先触发`upgradeneeded`事件，然后触发`success`事件。
 
-根据不同的需要，对上面4种事件设立回调函数。
+根据不同的需要，对上面4种事件监听函数。
 
-{% highlight javascript %}
-
-var openRequest = indexedDB.open("test",1);
+```javascript
+var openRequest = indexedDB.open('test', 1);
 var db;
 
-openRequest.onupgradeneeded = function(e) {
-    console.log("Upgrading...");
+openRequest.onupgradeneeded = function (e) {
+  console.log('Upgrading...');
 }
  
-openRequest.onsuccess = function(e) {
-    console.log("Success!");
-    db = e.target.result;
+openRequest.onsuccess = function (e) {
+  console.log('Success!');
+  db = openRequest.result;
 }
  
-openRequest.onerror = function(e) {
-    console.log("Error");
-    console.dir(e);
+openRequest.onerror = function (e) {
+  console.log('Error');
+  console.log(e);
 }
+```
 
-{% endhighlight %}
+上面代码有两个地方需要注意。首先，`open()`方法返回的是一个对象（IDBOpenDBRequest），监听函数就定义在这个对象上面。其次，`success`事件发生后，从`openRequest.result`s属性可以拿到已经打开的`IndexedDB`数据库对象。
 
-上面代码有两个地方需要注意。首先，open方法返回的是一个对象（IDBOpenDBRequest），回调函数定义在这个对象上面。其次，回调函数接受一个事件对象event作为参数，它的target.result属性就指向打开的IndexedDB数据库。
-
-## indexedDB实例对象的方法
+## indexedDB 实例对象的方法
 
 获得数据库实例以后，就可以用实例对象的方法操作数据库。
 
