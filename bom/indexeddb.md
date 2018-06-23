@@ -28,7 +28,7 @@ IndexedDB 具有以下特点。
 
 **（6）支持二进制储存。** IndexedDB 不仅可以储存字符串，还可以储存二进制数据。
 
-## indexedDB 对象的静态方法
+## indexedDB 对象
 
 浏览器原生提供`indexedDB`对象，作为开发者的操作接口。
 
@@ -42,7 +42,7 @@ var openRequest = window.indexedDB.open('test', 1);
 
 `open()`方法的第一个参数是数据库名称，格式为字符串，不可省略；第二个参数是数据库版本，是一个大于0的正整数（0将报错），`open()`方法将打开该版本的数据库。第二个参数可省略，如果数据库已存在，将打开当前版本的数据库，如果数据库不存在，将创建该版本的数据库，默认版本为1。
 
-上面代码表示，打开一个名为test、版本为1的数据库。如果该数据库不存在，则会新建该数据库。如果省略第二个参数，则会自动创建版本为1的该数据库。
+上面代码表示，打开一个名为`test`、版本为1的数据库。如果该数据库不存在，则会新建该数据库。如果省略第二个参数，则会自动创建版本为1的该数据库。
 
 打开数据库是异步操作，通过各种事件通知客户端。下面是有可能触发的4种事件。
 
@@ -62,12 +62,12 @@ var db;
 openRequest.onupgradeneeded = function (e) {
   console.log('Upgrading...');
 }
- 
+
 openRequest.onsuccess = function (e) {
   console.log('Success!');
   db = openRequest.result;
 }
- 
+
 openRequest.onerror = function (e) {
   console.log('Error');
   console.log(e);
@@ -76,9 +76,64 @@ openRequest.onerror = function (e) {
 
 上面代码有两个地方需要注意。首先，`open()`方法返回的是一个对象（IDBOpenDBRequest），监听函数就定义在这个对象上面。其次，`success`事件发生后，从`openRequest.result`s属性可以拿到已经打开的`IndexedDB`数据库对象。
 
-## indexedDB 实例对象的方法
+### indexedDB.deleteDatabase()
 
-获得数据库实例以后，就可以用实例对象的方法操作数据库。
+`deleteDatabase()`方法用于删除一个数据库，参数为数据库的名字。它会立刻返回一个`IDBOpenDBRequest`对象，然后对数据库执行异步删除。删除操作的结果会通过事件通知，`IDBOpenDBRequest`对象可以监听以下事件。
+
+- `success`：删除成功
+- `error`：删除报错
+
+```javascript
+var DBDeleteRequest = window.indexedDB.deleteDatabase('demo');
+
+DBDeleteRequest.onerror = function (event) {
+  console.log('Error');
+};
+
+DBDeleteRequest.onsuccess = function (event) {
+  console.log('success');
+};
+```
+
+调用`deleteDatabase()`方法以后，当前数据库的其他已经打开的连接都会接收到`versionchange`事件。
+
+注意，删除不存在的数据库并不会报错。
+
+### indexedDB.cmp()
+
+`cmp()`方法比较两个值是否为 indexedDB 的相同的键名。它返回一个整数，表示比较的结果：`0`表示相同，`1`表示第一个键名大于第二个键名，`-1`表示第一个键名小于第二个键名。
+
+```javascript
+window.indexedDB.cmp(1, 2) // -1
+```
+
+注意，这个方法不能用来比较任意的 JavaScript 值。如果参数是布尔值或对象，它会报错。
+
+```javascript
+window.indexedDB.cmp(1, true) // 报错
+window.indexedDB.cmp({}, {}) // 报错
+```
+
+## IDBRequest 对象
+
+IDBRequest 对象表示打开的数据库连接，`indexedDB.open()`方法和`indexedDB.deleteDatabase()`方法会返回这个对象。数据库的操作都是通过这个对象完成的。
+
+数据库操作都是异步操作，要通过 IDBRequest 对象的`readyState`属性判断是否完成。该属性的值是`pending`就表示操作正在进行，如果是`done`就表示操作完成，结果可能成功也可能失败。操作完成以后，可以通过`result`属性和`error`属性拿到操作结果，同时触发`success`事件或`error`事件。在`pending`阶段，如果读取`result`属性和`error`属性会报错。
+
+IDBRequest 对象有以下属性。
+
+- readyState：等于`pending`表示操作正在进行，等于`done`表示操作正在完成。
+- result：返回请求的结果。如果请求失败、结果不可用，读取该属性会报错。
+- error：请求失败时，返回错误对象。
+- source：返回请求的来源（比如索引对象或 ObjectStore）。
+- onsuccess：指定`success`事件的监听函数。
+- onerror：指定`error`事件的监听函数。
+- transaction：返回当前请求正在进行的事务，如果不包含事务，返回`null`。
+
+IDBOpenDBRequest 对象继承了 IDBRequest 对象，提供了两个额外的事件监听属性。
+
+- onblocked：指定`blocked`事件（`upgradeneeded`事件触发时，数据库仍然在使用）的监听函数。
+- onupgradeneeded：`upgradeneeded`事件的监听函数。
 
 ### createObjectStore方法
 
