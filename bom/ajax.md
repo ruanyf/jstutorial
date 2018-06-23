@@ -374,6 +374,35 @@ Access-Control-Allow-Credentials: true
 
 XMLHttpRequest 不仅可以发送请求，还可以发送文件，这就是 AJAX 文件上传。发送文件以后，通过`XMLHttpRequest.upload`属性可以得到一个对象，通过观察这个对象，可以得知上传的进展。主要方法就是监听这个对象的各种事件：loadstart、loadend、load、abort、error、progress、timeout。
 
+假定网页上有一个`<progress>`元素。
+
+```http
+<progress min="0" max="100" value="0">0% complete</progress>
+```
+
+文件上传时，对`upload`属性指定`progress`事件的监听函数，即可获得上传的进度。
+
+```javascript
+function upload(blobOrFile) {
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', '/server', true);
+  xhr.onload = function (e) {};
+
+  var progressBar = document.querySelector('progress');
+  xhr.upload.onprogress = function (e) {
+    if (e.lengthComputable) {
+      progressBar.value = (e.loaded / e.total) * 100;
+      // 兼容不支持 <progress> 元素的老式浏览器
+      progressBar.textContent = progressBar.value;
+    }
+  };
+
+  xhr.send(blobOrFile);
+}
+
+upload(new Blob(['hello world'], {type: 'text/plain'}));
+```
+
 ## XMLHttpRequest 的实例方法
 
 ### XMLHttpRequest.open()
@@ -456,7 +485,7 @@ void send(FormData data);
 
 如果发送 DOM 对象，在发送之前，数据会先被串行化。发送二进制数据，最好使用`ArrayBufferView`或`Blob`对象，这使得通过 Ajax 上传文件成为可能。
 
-下面是发送表单数据的例子。FormData类型可以用于构造表单数据。
+下面是发送表单数据的例子。`FormData`对象可以用于构造表单数据。
 
 ```javascript
 var formData = new FormData();
@@ -633,33 +662,20 @@ setTimeout(function () {
 
 上传文件时，XMLHTTPRequest 实例对象本身和实例的`upload`属性，都有一个`progress`事件，会不断返回上传的进度。
 
-假定网页上有一个`<progress>`元素。
-
-```http
-<progress min="0" max="100" value="0">0% complete</progress>
-```
-
-文件上传时，对`upload`属性指定`progress`事件的监听函数，即可获得上传的进度。
-
 ```javascript
-function upload(blobOrFile) {
-  var xhr = new XMLHttpRequest();
-  xhr.open('POST', '/server', true);
-  xhr.onload = function(e) { ... };
+var xhr = new XMLHttpRequest();
 
-  var progressBar = document.querySelector('progress');
-  xhr.upload.onprogress = function (e) {
-    if (e.lengthComputable) {
-      progressBar.value = (e.loaded / e.total) * 100;
-      // 兼容老式浏览器
-      progressBar.textContent = progressBar.value;
-    }
-  };
-
-  xhr.send(blobOrFile);
+function updateProgress (oEvent) {
+  if (oEvent.lengthComputable) {
+    var percentComplete = oEvent.loaded / oEvent.total;
+  } else {
+    console.log('无法计算进展');
+  }
 }
 
-upload(new Blob(['hello world'], {type: 'text/plain'}));
+xhr.addEventListener('progress', updateProgress);
+
+xhr.open();
 ```
 
 ### load 事件、error 事件、abort 事件
@@ -669,20 +685,11 @@ load 事件表示服务器传来的数据接收完毕，error 事件表示请求
 ```javascript
 var xhr = new XMLHttpRequest();
 
-xhr.addEventListener('progress', updateProgress);
 xhr.addEventListener('load', transferComplete);
 xhr.addEventListener('error', transferFailed);
 xhr.addEventListener('abort', transferCanceled);
 
 xhr.open();
-
-function updateProgress (oEvent) {
-  if (oEvent.lengthComputable) {
-    var percentComplete = oEvent.loaded / oEvent.total;
-  } else {
-    console.log('无法计算进展');
-  }
-}
 
 function transferComplete() {
   console.log('数据接收完毕');
@@ -711,27 +718,27 @@ function loadEnd(e) {
 
 ### timeout 事件
 
-服务器超过指定时间还没有返回结果，就会触发 timeout 事件，具体的例子参见`timeout`属性那一节。
+服务器超过指定时间还没有返回结果，就会触发 timeout 事件，具体的例子参见`timeout`属性一节。
 
 ## 文件上传
 
-HTML网页的`<form>`元素能够以四种格式，向服务器发送数据。
+HTML 网页的`<form>`元素能够以四种格式，向服务器发送数据。
 
-- 使用`POST`方法，将`enctype`属性设为`application/x-www-form-urlencoded`，这是默认方法。
+（1）使用`POST`方法，将`enctype`属性设为`application/x-www-form-urlencoded`，这是默认方法。
 
 ```html
 <form action="register.php" method="post" onsubmit="AJAXSubmit(this); return false;">
 </form>
 ```
 
-- 使用`POST`方法，将`enctype`属性设为`text/plain`。
+（2）使用`POST`方法，将`enctype`属性设为`text/plain`。
 
 ```html
 <form action="register.php" method="post" enctype="text/plain" onsubmit="AJAXSubmit(this); return false;">
 </form>
 ```
 
-- 使用`POST`方法，将`enctype`属性设为`multipart/form-data`。
+（3）使用`POST`方法，将`enctype`属性设为`multipart/form-data`。
 
 ```html
 <form action="register.php" method="post" enctype="multipart/form-data" onsubmit="AJAXSubmit(this); return false;">
