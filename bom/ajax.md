@@ -865,8 +865,6 @@ xhr.send(formData);
 
 {% endhighlight %}
 
-目前，各大浏览器（包括IE 10）都支持Ajax上传文件。
-
 除了使用FormData接口上传，也可以直接使用File API上传。
 
 ```javascript
