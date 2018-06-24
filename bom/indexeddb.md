@@ -135,64 +135,124 @@ IDBOpenDBRequest 对象继承了 IDBRequest 对象，提供了两个额外的事
 - onblocked：指定`blocked`事件（`upgradeneeded`事件触发时，数据库仍然在使用）的监听函数。
 - onupgradeneeded：`upgradeneeded`事件的监听函数。
 
-### createObjectStore方法
+## IDBDatabase 对象
 
-createObjectStore方法用于创建存放数据的“对象仓库”（object store），类似于传统关系型数据库的表格。
+打开数据成功以后，可以从`IDBOpenDBRequest`对象的`result`属性上面，拿到一个`IDBDatabase`对象，它表示数据库连接。后面对数据库的操作，都通过这个对象完成。
 
-{% highlight javascript %}
+```javascript
+var db;
+var DBOpenRequest = window.indexedDB.open('demo', 1);
 
-db.createObjectStore("firstOS");
+DBOpenRequest.onerror = function (event) {
+  console.log('Error');
+};
 
-{% endhighlight %}
+DBOpenRequest.onsuccess = function(event) {
+  db = DBOpenRequest.result;
+  // ...
+};
+```
 
-上面代码创建了一个名为firstOS的对象仓库，如果该对象仓库已经存在，就会抛出一个错误。为了避免出错，需要用到下文的objectStoreNames属性，检查已有哪些对象仓库。
+### 属性
 
-createObjectStore方法还可以接受第二个对象参数，用来设置“对象仓库”的属性。
+IDBDatabase 对象有以下属性。
 
-{% highlight javascript %}
+- IDBDatabase.name：字符串，数据库名称。
+- IDBDatabase.version：整数，数据库版本。数据库第一次创建时，该属性为空字符串。
+- IDBDatabase.objectStoreNames：DOMStringList 对象（字符串的集合），包含当前数据的所有 object store 的名字。
+- IDBDatabase.onabort：指定 abort 事件（事务中止）的监听函数。
+- IDBDatabase.onclose：指定 close 事件（数据库意外关闭）的监听函数。
+- IDBDatabase.onerror：指定 error 事件（访问数据库失败）的监听函数。
+- IDBDatabase.onversionchange：数据库版本变化时触发（发生`upgradeneeded`事件，或调用`indexedDB.deleteDatabase()`）。
 
-db.createObjectStore("test", { keyPath: "email" }); 
-db.createObjectStore("test2", { autoIncrement: true });
+下面是`objectStoreNames`属性的例子。该属性返回一个DOMStringList 对象，包含了当前数据库所有对象仓库的名称（即表名），可以使用 DOMStringList 对象的`contains`方法，检查数据库是否包含某个对象仓库。
 
-{% endhighlight %}
-
-上面代码中的keyPath属性表示，所存入对象的email属性用作每条记录的键名（由于键名不能重复，所以存入之前必须保证数据的email属性值都是不一样的），默认值为null；autoIncrement属性表示，是否使用自动递增的整数作为键名（第一个数据为1，第二个数据为2，以此类推），默认为false。一般来说，keyPath和autoIncrement属性只要使用一个就够了，如果两个同时使用，表示键名为递增的整数，且对象不得缺少指定属性。
-
-### objectStoreNames属性
-
-objectStoreNames属性返回一个DOMStringList对象，里面包含了当前数据库所有“对象仓库”的名称。可以使用DOMStringList对象的contains方法，检查数据库是否包含某个“对象仓库”。
-
-{% highlight javascript %}
-
-if(!db.objectStoreNames.contains("firstOS")) {
-     db.createObjectStore("firstOS");
+```javascript
+if (!db.objectStoreNames.contains('firstOS')) {
+  db.createObjectStore('firstOS');
 }
+```
 
-{% endhighlight %}
+上面代码先判断某个对象仓库是否存在，如果不存在就创建该对象仓库。
 
-上面代码先判断某个“对象仓库”是否存在，如果不存在就创建该对象仓库。
+### 方法
 
-### transaction方法
+IDBDatabase 对象有以下方法。
 
-transaction方法用于创建一个数据库事务。向数据库添加数据之前，必须先创建数据库事务。
+- IDBDatabase.close()：关闭数据库连接，实际会等所有事务完成后再关闭。
+- IDBDatabase.createObjectStore()：创建存放数据的“对象仓库”（object store），类似于传统关系型数据库的表格，返回一个 IDBObjectStore 对象。该方法只能在`versionchange`事件监听函数中调用。
+- IDBDatabase.deleteObjectStore()：删除指定的对象仓库。该方法只能在`versionchange`事件监听函数中调用。
+- IDBDatabase.transaction()：返回一个 IDBTransaction 事务对象。
 
-{% highlight javascript %}
+下面是`createObjectStore()`方法的例子。
 
-var t = db.transaction(["firstOS"],"readwrite");
+```javascript
+var request = window.indexedDB.open('demo', 2);
 
-{% endhighlight %}
+request.onupgradeneeded = function (event) {
+  var db = event.target.result;
 
-transaction方法接受两个参数：第一个参数是一个数组，里面是所涉及的对象仓库，通常是只有一个；第二个参数是一个表示操作类型的字符串。目前，操作类型只有两种：readonly（只读）和readwrite（读写）。添加数据使用readwrite，读取数据使用readonly。
+  db.onerror = function(event) {
+    console.log('error');
+  };
 
-transaction方法返回一个事务对象，该对象的objectStore方法用于获取指定的对象仓库。
+  var objectStore = db.createObjectStore('items');
 
-{% highlight javascript %}
+  // ...
+};
+```
 
-var t = db.transaction(["firstOS"],"readwrite");
+上面代码创建了一个名为`items`的对象仓库，如果该对象仓库已经存在，就会抛出一个错误。为了避免出错，需要用到下文的`objectStoreNames`属性，检查已有哪些对象仓库。
 
+`createObjectStore()`方法还可以接受第二个对象参数，用来设置对象仓库的属性。
+
+```javascript
+db.createObjectStore('test', { keyPath: 'email' });
+db.createObjectStore('test2', { autoIncrement: true });
+```
+
+上面代码中，`keyPath`属性表示，所存入对象的`email`属性用作每条记录的键名（由于键名不能重复，所以存入之前必须保证数据的`email`属性值都是不一样的），默认值为`null`；`autoIncrement`属性表示，是否使用自动递增的整数作为键名（第一个数据为1，第二个数据为2，以此类推），默认为`false`。一般来说，`keyPath`和`autoIncrement`属性只要使用一个就够了，如果两个同时使用，表示键名为递增的整数，且对象不得缺少`keyPath`指定的属性。
+
+下面是`deleteObjectStore()`方法的例子。
+
+```javascript
+var dbName = 'sampleDB';
+var dbVersion = 2;
+var request = indexedDB.open(dbName, dbVersion);
+
+request.onupgradeneeded = function(e) {
+  var db = request.result;
+  if (e.oldVersion < 1) {
+    db.createObjectStore('store1');
+  }
+
+  if (e.oldVersion < 2) {
+    db.deleteObjectStore('store1');
+    db.createObjectStore('store2');
+  }
+
+  // ...
+};
+```
+
+下面是`transaction()`方法的例子，该方法用于创建一个数据库事务，返回一个 IDBTransaction 对象。向数据库添加数据之前，必须先创建数据库事务。
+
+```javascript
+var t = db.transaction(['items'], 'readwrite');
+```
+
+`transaction()`方法接受两个参数：第一个参数是一个数组，里面是所涉及的对象仓库，通常是只有一个；第二个参数是一个表示操作类型的字符串。目前，操作类型只有两种：`readonly`（只读）和`readwrite`（读写）。添加数据使用`readwrite`，读取数据使用`readonly`。第二个参数是可选的，省略时默认为`readonly`模式。
+
+## IDBObjectStore 对象
+
+## IDBTransaction 对象
+
+`transaction()`方法返回一个事务对象，该对象的objectStore方法用于获取指定的对象仓库。
+
+```javascript
+var t = db.transaction(['firstOS'], 'readwrite');
 var store = t.objectStore("firstOS");
-
-{% endhighlight %}
+```
 
 transaction方法有三个事件，可以用来定义回调函数。
 
