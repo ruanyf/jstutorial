@@ -245,6 +245,171 @@ var t = db.transaction(['items'], 'readwrite');
 
 ## IDBObjectStore 对象
 
+IDBObjectStore 对象对应一个对象仓库（object store）。`IDBDatabase.createObjectStore()`方法返回的就是一个 IDBObjectStore 对象。
+
+### 属性
+
+IDBObjectStore 对象有以下属性。
+
+- IDBObjectStore.indexNames：返回一个类似数组的对象（DOMStringList），包含了当前对象仓库的所有索引。
+- IDBObjectStore.keyPath：返回当前对象仓库的主键。
+- IDBObjectStore.name：返回当前对象仓库的名称。
+- IDBObjectStore.transaction：返回当前对象仓库所属的事务对象。
+- IDBObjectStore.autoIncrement：布尔值，表示主键是否会自动递增。
+
+### 方法
+
+IDBObjectStore 对象有以下方法。
+
+**（1）IDBObjectStore.add()**
+
+`IDBObjectStore.add()`用于向对象仓库添加数据，返回一个 IDBRequest 对象。该方法只用于添加数据，如果键名相同会报错，因此更新数据必须使用`put()`方法。
+
+```javascript
+objectStore.add(value, key)
+```
+
+该方法接受两个参数，第一个参数是键值，第二个参数是键名，该参数可选，如果省略默认为`null`。
+
+**（2）IDBObjectStore.put()**
+
+`IDBObjectStore.put()`方法用于更新某个键名对应的键值，如果对应的键值不存在，则插入一条新的记录。该方法返回一个 IDBRequest 对象。
+
+```javascript
+objectStore.put(item, key)
+```
+
+该方法接受两个参数，第一个参数为新数据，第二个参数为键名，该参数可选，且只在自动递增时才有必要提供，因为那时主键不包含在数据值里面。
+
+**（3）IDBObjectStore.clear()**
+
+`IDBObjectStore.clear()`删除当前对象仓库的所有记录。该方法返回一个 IDBRequest 对象。
+
+```javascript
+objectStore.clear()
+```
+
+该方法不需要参数。
+
+**（4）IDBObjectStore.delete()**
+
+`IDBObjectStore.delete()`方法用于删除指定键名的记录。该方法返回一个 IDBRequest 对象。
+
+```javascript
+objectStore.delete(Key)
+```
+
+该方法的参数为主键的键名。
+
+**（5）IDBObjectStore.count()**
+
+`IDBObjectStore.count()`方法用于计算记录的数量。该方法返回一个 IDBRequest 对象。
+
+```javascript
+IDBObjectStore.count(key)
+```
+
+不带参数时，该方法返回当前对象仓库的所有记录数量。如果键名或 IDBKeyRange 对象作为参数，则返回对应的记录数量。
+
+**（6）IDBObjectStore.getKey()**
+
+`IDBObjectStore.getKey()`用于获取键名。该方法返回一个 IDBRequest 对象。
+
+```javascript
+objectStore.getKey(key)
+```
+
+该方法的参数可以是键名，也可以是 IDBKeyRange 对象。
+
+**（7）IDBObjectStore.get()**
+
+`IDBObjectStore.get()`用于获取键名对象的记录。该方法返回一个 IDBRequest 对象。
+
+```javascript
+objectStore.get(key)
+```
+
+**（8）IDBObjectStore.getAll()**
+
+`DBObjectStore.getAll()`用于获取对象仓库的记录。该方法返回一个 IDBRequest 对象。
+
+```javascript
+// 获取所有记录
+objectStore.getAll()
+
+// 获取所有符合指定键名或 IDBKeyRange 的记录
+objectStore.getAll(query)
+
+// 指定获取记录的数量
+objectStore.getAll(query, count)
+```
+
+**（9）IDBObjectStore.getAllKeys()**
+
+`IDBObjectStore.getAllKeys()`用于获取所有符合条件的键名。该方法返回一个 IDBRequest 对象。
+
+```javascript
+// 获取所有记录的键名
+objectStore.getAllKeys()
+
+// 获取所有符合条件的键名
+objectStore.getAllKeys(query)
+
+// 指定获取键名的数量
+objectStore.getAllKeys(query, count)
+```
+
+**（10）IDBObjectStore.index()**
+
+`IDBObjectStore.index()`方法返回指定名称的索引对象 IDBIndex。
+
+```javascript
+objectStore.index(name)
+```
+
+**（11）IDBObjectStore.createIndex()**
+
+`IDBObjectStore.createIndex()`方法用于新建当前数据库的一个索引。该方法只能在`VersionChange`监听函数里面调用。
+
+```javascript
+objectStore.createIndex(indexName, keyPath, objectParameters)
+```
+
+该方法可以接受三个参数。
+
+- indexName：索引名
+- keyPath：键名
+- objectParameters：配置对象（可选）
+
+第三个参数可以配置以下属性。
+
+- unique：如果设为`true`，将不允许重复的值
+- multiEntry：如果设为`true`，对于有多个值的键名，每个值将在索引里面新建一个条目，否则所有这些键名，对应一个条目。
+
+**（12）IDBObjectStore.deleteIndex()**
+
+`IDBObjectStore.deleteIndex()`方法用于删除指定的键名。该方法只能在`VersionChange`监听函数里面调用。
+
+```javascript
+objectStore.deleteIndex(indexName)
+```
+
+**（13）IDBObjectStore.openCursor()**
+
+`IDBObjectStore.openCursor()`用于获取一个指针对象。
+
+```javascript
+IDBObjectStore.openCursor()
+```
+
+**（14）IDBObjectStore.openKeyCursor()**
+
+`IDBObjectStore.openKeyCursor()`用于获取一个键名指针对象。
+
+```javascript
+IDBObjectStore.openKeyCursor()
+```
+
 ## IDBTransaction 对象
 
 `transaction()`方法返回一个事务对象，该对象的objectStore方法用于获取指定的对象仓库。
