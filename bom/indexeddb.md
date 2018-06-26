@@ -247,6 +247,15 @@ var t = db.transaction(['items'], 'readwrite');
 
 IDBObjectStore 对象对应一个对象仓库（object store）。`IDBDatabase.createObjectStore()`方法返回的就是一个 IDBObjectStore 对象。
 
+IDBDatabase 对象的`transaction()`返回一个事务对象，该对象的`objectStore()`方法返回 IDBObjectStore 对象，因此可以采用下面的链式写法。
+
+```javascript
+db.transaction(["test"], "readonly")
+  .objectStore("test")
+  .get(X)
+  .onsuccess = function (e) {}
+```
+
 ### 属性
 
 IDBObjectStore 对象有以下属性。
@@ -270,6 +279,34 @@ objectStore.add(value, key)
 ```
 
 该方法接受两个参数，第一个参数是键值，第二个参数是键名，该参数可选，如果省略默认为`null`。
+
+创建事务以后，就可以获取对象仓库，然后使用`add()`方法往里面添加数据了。
+
+```javascript
+var db;
+var DBOpenRequest = window.indexedDB.open('demo', 1);
+
+DBOpenRequest.onsuccess = function (event) {
+  db = DBOpenRequest.result;
+  var transaction = db.transaction(['items'], 'readwrite');
+
+  transaction.oncomplete = function (event) {
+    console.log('transaction success');  
+  };
+
+  transaction.onerror = function (event) {
+    console.log('tansaction error: ' + transaction.error);
+  };
+
+  var objectStore = transaction.objectStore('items');
+  var objectStoreRequest = objectStore.add({ foo: 1 });
+
+  objectStoreRequest.onsuccess = function (event) {
+    console.log('add data success');
+  };
+
+};
+```
 
 **（2）IDBObjectStore.put()**
 
@@ -367,6 +404,18 @@ objectStore.getAllKeys(query, count)
 objectStore.index(name)
 ```
 
+有了索引以后，就可以针对索引所在的属性读取数据。
+
+```javascript
+var t = db.transaction(['people'], 'readonly');
+var store = t.objectStore('people');
+var index = store.index('name');
+
+var request = index.get('foo');
+```
+
+上面代码打开对象仓库以后，先用`index()`方法指定获取`name`属性的索引，然后用`get()`方法读取某个`name`属性(`foo`)对应的数据。如果`name`属性不是对应唯一值，这时`get()`方法有可能取回多个数据对象。另外，`get()`是异步方法，读取成功以后，只能在`success`事件的监听函数中处理数据。
+
 **（11）IDBObjectStore.createIndex()**
 
 `IDBObjectStore.createIndex()`方法用于新建当前数据库的一个索引。该方法只能在`VersionChange`监听函数里面调用。
@@ -386,6 +435,27 @@ objectStore.createIndex(indexName, keyPath, objectParameters)
 - unique：如果设为`true`，将不允许重复的值
 - multiEntry：如果设为`true`，对于有多个值的键名，每个值将在索引里面新建一个条目，否则所有这些键名，对应一个条目。
 
+假定对象仓库中的数据记录都是如下的`person`类型。
+
+```javascript
+var person = {
+  name: name,
+  email: email,
+  created:new Date()
+};
+```
+
+可以指定这个对象的某个属性来建立索引。
+
+```javascript
+var store = db.createObjectStore('people', { autoIncrement: true });
+
+store.createIndex('name', 'name', { unique: false });
+store.createIndex('email', 'email', { unique: true });
+```
+
+上面代码告诉索引对象，`name`属性不是唯一值，`email`属性是唯一值。
+
 **（12）IDBObjectStore.deleteIndex()**
 
 `IDBObjectStore.deleteIndex()`方法用于删除指定的键名。该方法只能在`VersionChange`监听函数里面调用。
@@ -402,6 +472,28 @@ objectStore.deleteIndex(indexName)
 IDBObjectStore.openCursor()
 ```
 
+指针对象可以用来遍历数据。该对象也是异步的，有自己的`success`和`error`事件，可以对它们指定监听函数。
+
+```javascript
+var t = db.transaction(['test'], 'readonly');
+var store = t.objectStore('test');
+
+var cursor = store.openCursor();
+
+cursor.onsuccess = function (event) {
+  var res = event.target.result;
+  if (res) {
+    console.log('Key', res.key);
+    console.dir('Data', res.value);
+    res.continue();
+  }
+}
+```
+
+监听函数接受一个事件对象作为参数，该对象的`target.result`属性指向当前数据记录。该记录的`key`和`value`分别返回键名和键值（即实际存入的数据）。`continue()`方法将光标移到下一个数据对象，如果当前数据对象已经是最后一个数据了，则光标指向`null`。
+
+`openCursor()`方法还可以接受第二个参数，表示遍历方向，默认值为`next`，其他可能的值为`prev`、`nextunique`和`prevunique`。后两个值表示如果遇到重复值，会自动跳过。
+
 **（14）IDBObjectStore.openKeyCursor()**
 
 `IDBObjectStore.openKeyCursor()`用于获取一个键名指针对象。
@@ -412,202 +504,65 @@ IDBObjectStore.openKeyCursor()
 
 ## IDBTransaction 对象
 
-`transaction()`方法返回一个事务对象，该对象的objectStore方法用于获取指定的对象仓库。
+IDBTransaction 对象用来异步操作数据库事务，所有的读写操作都要通过这个对象进行。
+
+`IDBDatabase.transaction()`方法返回的就是一个 IDBTransaction 对象。
 
 ```javascript
-var t = db.transaction(['firstOS'], 'readwrite');
-var store = t.objectStore("firstOS");
-```
+var db;
+var DBOpenRequest = window.indexedDB.open('demo', 1);
 
-transaction方法有三个事件，可以用来定义回调函数。
+DBOpenRequest.onsuccess = function(event) {
+  db = DBOpenRequest.result;
+  var transaction = db.transaction(['demo'], 'readwrite');
 
-- **abort**：事务中断。
-- **complete**：事务完成。
-- **error**：事务出错。
+  transaction.oncomplete = function (event) {
+    console.log('transaction success');  
+  };
 
-{% highlight javascript %}
+  transaction.onerror = function (event) {
+    console.log('tansaction error: ' + transaction.error);
+  };
 
-var transaction = db.transaction(["note"], "readonly");  
+  var objectStore = transaction.objectStore('demo');
+  var objectStoreRequest = objectStore.add({ foo: 1 });
 
-transaction.oncomplete = function(event) {
-      // some code
+  objectStoreRequest.onsuccess = function (event) {
+    console.log('add data success');
+  };
+
 };
-
-{% endhighlight %}
-
-事务对象有以下方法，用于操作数据。
-
-**（1）添加数据：add方法**
-
-获取对象仓库以后，就可以用add方法往里面添加数据了。
-
-{% highlight javascript %}
-
-var store = t.objectStore("firstOS");
-
-var o = {p: 123};
-
-var request = store.add(o,1);
-
-{% endhighlight %}
-
-add方法的第一个参数是所要添加的数据，第二个参数是这条数据对应的键名（key），上面代码将对象o的键名设为1。如果在创建数据仓库时，对键名做了设置，这里也可以不指定键名。
-
-add方法是异步的，有自己的success和error事件，可以对这两个事件指定回调函数。
-
-{% highlight javascript %}
-
-var request = store.add(o,1);
-
-request.onerror = function(e) {
-     console.log("Error",e.target.error.name);
-    // error handler
-}
-
-request.onsuccess = function(e) {
-    console.log("数据添加成功！");
-}
-
-{% endhighlight %}
-
-**（2）读取数据：get方法**
-
-读取数据使用get方法，它的参数是数据的键名。
-
-{% highlight javascript %}
-
-var t = db.transaction(["test"], "readonly");
-var store = t.objectStore("test");
-
-var ob = store.get(x);
-
-{% endhighlight %}
-
-get方法也是异步的，会触发自己的success和error事件，可以对它们指定回调函数。
-
-{% highlight javascript %}
-
-var ob = store.get(x);
- 
-ob.onsuccess = function(e) {
-	// ...
-}
-
-{% endhighlight %}
-
-从创建事务到读取数据，所有操作方法也可以写成下面这样链式形式。
-
-{% highlight javascript %}
-
-db.transaction(["test"], "readonly")
-  .objectStore("test")
-  .get(X)
-  .onsuccess = function(e){}
-
-{% endhighlight %}
-
-**（3）更新记录：put方法**
-
-put方法的用法与add方法相近。
-
-{% highlight javascript %}
-
-var o = { p:456 };
-var request = store.put(o, 1);
-
-{% endhighlight %}
-
-**（4）删除记录：delete方法**
-
-删除记录使用delete方法。
-
-{% highlight javascript %}
-
-var t = db.transaction(["people"], "readwrite");
-var request = t.objectStore("people").delete(thisId);
-
-{% endhighlight %}
-
-delete方法的参数是数据的键名。另外，delete也是一个异步操作，可以为它指定回调函数。
-
-**（5）遍历数据：openCursor方法**
-
-如果想要遍历数据，就要openCursor方法，它在当前对象仓库里面建立一个读取光标（cursor）。
-
-{% highlight javascript %}
-
-var t = db.transaction(["test"], "readonly");
-var store = t.objectStore("test");
-
-var cursor = store.openCursor();
-
-{% endhighlight %}
-
-openCursor方法也是异步的，有自己的success和error事件，可以对它们指定回调函数。
-
-{% highlight javascript %}
-
-cursor.onsuccess = function(e) {
-    var res = e.target.result;
-    if(res) {
-        console.log("Key", res.key);
-        console.dir("Data", res.value);
-        res.continue();
-    }
-}
-
-{% endhighlight %}
-
-回调函数接受一个事件对象作为参数，该对象的target.result属性指向当前数据对象。当前数据对象的key和value分别返回键名和键值（即实际存入的数据）。continue方法将光标移到下一个数据对象，如果当前数据对象已经是最后一个数据了，则光标指向null。
-
-openCursor方法还可以接受第二个参数，表示遍历方向，默认值为next，其他可能的值为prev、nextunique和prevunique。后两个值表示如果遇到重复值，会自动跳过。
-
-### createIndex方法
-
-createIndex方法用于创建索引。
-
-假定对象仓库中的数据对象都是下面person类型的。
-
-{% highlight javascript %}
-
-var person = {
-    name:name,
-    email:email,
-    created:new Date()
-}
-
-{% endhighlight %}
-
-可以指定这个数据对象的某个属性来建立索引。
-
-{% highlight javascript %}
-
-var store = db.createObjectStore("people", { autoIncrement:true });
-
-store.createIndex("name","name", {unique:false});
-store.createIndex("email","email", {unique:true});
-
-{% endhighlight %}
-
-createIndex方法接受三个参数，第一个是索引名称，第二个是建立索引的属性名，第三个是参数对象，用来设置索引特性。unique表示索引所在的属性是否有唯一值，上面代码表示name属性不是唯一值，email属性是唯一值。
-
-### index方法
-
-有了索引以后，就可以针对索引所在的属性读取数据。index方法用于从对象仓库返回指定的索引。
-
-```javascript
-
-var t = db.transaction(["people"],"readonly");
-var store = t.objectStore("people");
-var index = store.index("name");
-
-var request = index.get(name);
-
 ```
 
-上面代码打开对象仓库以后，先用index方法指定索引在name属性上面，然后用get方法读取某个name属性所在的数据。如果没有指定索引的那一行代码，get方法只能按照键名读取数据，而不能按照name属性读取数据。需要注意的是，这时get方法有可能取回多个数据对象，因为name属性没有唯一值。
+事务的执行顺序是按照创建的顺序，而不是发出请求的顺序。
 
-另外，get是异步方法，读取成功以后，只能在success事件的回调函数中处理数据。
+```javascript
+var trans1 = db.transaction('foo', 'readwrite');
+var trans2 = db.transaction('foo', 'readwrite');
+var objectStore2 = trans2.objectStore('foo')
+var objectStore1 = trans1.objectStore('foo')
+objectStore2.put('2', 'key');
+objectStore1.put('1', 'key');
+```
+
+上面代码中，`key`对应的键值最终是`2`，而不是`1`。因为事务`trans1`先于`trans2`创建，所以首先执行。
+
+注意，事务有可能失败，只有监听到事务的`complete`事件，才能保证事务操作成功。
+
+IDBTransaction 对象有以下属性。
+
+- IDBTransaction.db：返回当前事务所在的数据库对象 IDBDatabase。
+- IDBTransaction.error：返回当前事务的错误。如果事务没有结束，或者事务成功结束，或者被手动终止，该方法返回`null`。
+- IDBTransaction.mode：返回当前事务的模式，默认是`readonly`（只读），另一个值是`readwrite`。
+- IDBTransaction.objectStoreNames：返回一个类似数组的对象 DOMStringList，成员是当前事务涉及的对象仓库的名字。
+- IDBTransaction.onabort：指定`abort`事件（事务中断）的监听函数。
+- IDBTransaction.oncomplete：指定`complete`事件（事务成功）的监听函数。
+- IDBTransaction.onerror：指定`error`事件（事务失败）的监听函数。
+
+IDBTransaction 对象有以下方法。 
+
+- IDBTransaction.abort()：终止当前事务，回滚所有已经进行的变更。
+- IDBTransaction.objectStore(name)：返回指定名称的对象仓库 IDBObjectStore。
 
 ## IDBKeyRange对象
 
