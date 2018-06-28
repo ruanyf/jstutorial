@@ -492,7 +492,7 @@ cursor.onsuccess = function (event) {
 
 监听函数接受一个事件对象作为参数，该对象的`target.result`属性指向当前数据记录。该记录的`key`和`value`分别返回键名和键值（即实际存入的数据）。`continue()`方法将光标移到下一个数据对象，如果当前数据对象已经是最后一个数据了，则光标指向`null`。
 
-`openCursor()`方法还可以接受第二个参数，表示遍历方向，默认值为`next`，其他可能的值为`prev`、`nextunique`和`prevunique`。后两个值表示如果遇到重复值，会自动跳过。
+`openCursor()`方法的第一个参数是主键名，或者一个 IDBKeyRange 对象。如果指定该参数，将只处理包含指定键名的记录；如果省略，将处理所有的记录。该方法还可以接受第二个参数，表示遍历方向，默认值为`next`，其他可能的值为`prev`、`nextunique`和`prevunique`。后两个值表示如果遇到重复值，会自动跳过。
 
 **（14）IDBObjectStore.openKeyCursor()**
 
@@ -563,6 +563,100 @@ IDBTransaction 对象有以下方法。
 
 - IDBTransaction.abort()：终止当前事务，回滚所有已经进行的变更。
 - IDBTransaction.objectStore(name)：返回指定名称的对象仓库 IDBObjectStore。
+
+## IDBIndex 对象
+
+IDBIndex 对象代表数据库的索引，通过这个对象可以获取数据库里面的记录。数据记录的主键默认就是带有索引，IDBIndex 对象主要用于通过除主键以外的其他键，建立索引获取对象。
+
+IDBIndex 是持久性的键值对存储。只要插入、更新或删除数据记录，引用的对象库中的记录，索引就会自动更新。
+
+`IDBObjectStore.index()`方法可以获取 IDBIndex 对象。
+
+```javascript
+var transaction = db.transaction(['contactsList'], 'readonly');
+var objectStore = transaction.objectStore('contactsList');
+var myIndex = objectStore.index('lName');
+
+myIndex.openCursor().onsuccess = function (event) {
+  var cursor = event.target.result;
+  if (cursor) {
+    var tableRow = document.createElement('tr');
+    tableRow.innerHTML =   '<td>' + cursor.value.id + '</td>'
+                         + '<td>' + cursor.value.lName + '</td>'
+                         + '<td>' + cursor.value.fName + '</td>'
+                         + '<td>' + cursor.value.jTitle + '</td>'
+                         + '<td>' + cursor.value.company + '</td>'
+                         + '<td>' + cursor.value.eMail + '</td>'
+                         + '<td>' + cursor.value.phone + '</td>'
+                         + '<td>' + cursor.value.age + '</td>';
+    tableEntry.appendChild(tableRow);
+
+    cursor.continue();
+  } else {
+    console.log('Entries all displayed.');
+  }
+};
+```
+
+IDBIndex 对象有以下属性。
+
+- IDBIndex.name：字符串，索引的名称。
+- IDBIndex.objectStore：索引所在的对象仓库。
+- IDBIndex.keyPath：索引的主键。
+- IDBIndex.multiEntry：布尔值，针对`keyPath`为数组的情况，如果设为`true`，创建数组时，每个数组成员都会有一个条目，否则每个数组都只有一个条目。
+- IDBIndex.unique：布尔值，表示创建索引时是否允许相同的键名。
+
+IDBIndex 对象有以下方法，它们都是异步的，立即返回的都是一个 IDBRequest 对象。
+
+- IDBIndex.count()：用来获取记录的数量。它可以接受键名或 KeyRange 对象作为参数，这时只返回符合键名的记录数量，否则返回所有记录的数量。
+- IDBIndex.get(key)：用来获取符合指定键名的数据记录。
+- IDBIndex.getKey(key)：用来获取指定的键名。
+- IDBIndex.getAll()：用来获取所有的数据记录。它可以接受两个参数，都是可选的，第一个参数用来指定键名，第二个参数用来指定返回记录的数量。如果省略这两个参数，则返回所有记录。由于获取成功时，浏览器必须生成所有对象，所以对性能有影响。如果数据集比较大，建议使用 IDBCursor 对象。
+- IDBIndex.getAllKeys()：该方法与`IDBIndex.getAll()`方法相似，区别是获取所有键名。
+- IDBIndex.openCursor()：用来获取一个 IDBCursor 对象，用来遍历索引里面的所有条目。
+- IDBIndex.openKeyCursor()：该方法与`IDBIndex.openCursor()`方法相似，区别是遍历所有条目的键名。
+
+## IDBCursor 对象
+
+IDBCursor 对象代表指针对象，用来遍历数据仓库（IDBObjectStroe）或索引（IDBIndex）的记录。
+
+IDBCursor 对象一般通过`IDBObjectStore.openCursor()`方法获得。
+
+```javascript
+var transaction = db.transaction(['rushAlbumList'], 'readonly');
+var objectStore = transaction.objectStore('rushAlbumList');
+
+objectStore.openCursor(null, 'next').onsuccess = function(event) {
+  var cursor = event.target.result;
+  if (cursor) {
+    var listItem = document.createElement('li');
+      listItem.innerHTML = cursor.value.albumTitle + ', ' + cursor.value.year;
+      list.appendChild(listItem);
+
+      console.log(cursor.source);
+      cursor.continue();
+    } else {
+      console.log('Entries all displayed.');
+    }
+  };
+};
+```
+
+IDBCursor 对象的属性。
+
+- IDBCursor.source：返回正在遍历的对象仓库或索引。
+- IDBCursor.direction：字符串，表示指针遍历的方向。共有四个可能的值：next（从头开始向后遍历）、nextunique（从头开始向后遍历，重复的值只遍历一次）、prev（从尾部开始向前遍历）、prevunique（从尾部开始向前遍历，重复的值只遍历一次）。该属性通过`IDBObjectStore.openCursor()`方法的第二个参数指定，一旦指定就不能改变了。
+- IDBCursor.key：返回当前记录的主键。
+- IDBCursor.value：返回当前记录的数据值。
+- IDBCursor.primaryKey：返回当前记录的主键。对于数据仓库（objectStore）来说，这个属性等同于 IDBCursor.key；对于索引，IDBCursor.key 返回索引的位置值，该属性返回数据记录的主键。
+
+IDBCursor 对象有如下方法。
+
+- IDBCursor.advance(n)：指针向前移动 n 个位置。
+- IDBCursor.continue()：指针向前移动一个位置。它可以接受一个主键作为参数，这时会跳转到这个主键。
+- IDBCursor.continuePrimaryKey()：该方法需要两个参数，第一个是`key`，第二个是`primaryKey`，将指针移到符合这两个参数的位置。
+- IDBCursor.delete()：用来删除当前位置的记录，返回一个 IDBRequest 对象。该方法不会改变指针的位置。
+- IDBCursor.update()：用来更新当前位置的记录，返回一个 IDBRequest 对象。它的参数是要写入数据库的新的值。
 
 ## IDBKeyRange对象
 
