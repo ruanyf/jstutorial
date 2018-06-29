@@ -658,21 +658,20 @@ IDBCursor 对象有如下方法。
 - IDBCursor.delete()：用来删除当前位置的记录，返回一个 IDBRequest 对象。该方法不会改变指针的位置。
 - IDBCursor.update()：用来更新当前位置的记录，返回一个 IDBRequest 对象。它的参数是要写入数据库的新的值。
 
-## IDBKeyRange对象
+## IDBKeyRange 对象
 
-索引的有用之处，还在于可以指定读取数据的范围。这需要用到浏览器原生的IDBKeyRange对象。
+IDBKeyRange 对象代表数据仓库（object store）里面的一组主键。根据这组主键，可以获取数据仓库或主键里面的一组记录。
 
-IDBKeyRange对象的作用是生成一个表示范围的Range对象。生成方法有四种：
+IDBKeyRange 可以只包含一个值，也可以指定上限和下限。它有四个静态方法，用来指定主键的范围。
 
-- **lowerBound方法**：指定范围的下限。
-- **upperBound方法**：指定范围的上限。
-- **bound方法**：指定范围的上下限。
-- **only方法**：指定范围中只有一个值。
+- `IDBKeyRange.lowerBound()`：指定下限。
+- `IDBKeyRange.upperBound()`：指定上限。
+- `IDBKeyRange.bound()`：同时指定上下限。
+- `IDBKeyRange.only()`：指定只包含一个值。
 
-下面是一些代码实例：
+下面是一些代码实例。
 
-{% highlight javascript %}
-
+```javascript
 // All keys ≤ x	
 var r1 = IDBKeyRange.upperBound(x);
 
@@ -699,33 +698,47 @@ var r8 = IDBKeyRange.bound(x, y, false, true);
 
 // The key = z	
 var r9 = IDBKeyRange.only(z);
+```
 
-{% endhighlight %}
+`IDBKeyRange.lowerBound()`、`IDBKeyRange.upperBound()`、`IDBKeyRange.bound()`这三个方法默认包括端点值，可以传入一个布尔值，修改这个属性。
 
-前三个方法（lowerBound、upperBound和bound）默认包括端点值，可以传入一个布尔值，修改这个属性。
+与之对应，IDBKeyRange 对象有四个只读属性。
 
-生成Range对象以后，将它作为参数输入openCursor方法，就可以在所设定的范围内读取数据。
+- IDBKeyRange.lower：返回下限
+- IDBKeyRange.lowerOpen：布尔值，表示下限是否为开区间（即下限是否排除在范围之外）
+- IDBKeyRange.upper：返回上限
+- IDBKeyRange.upperOpen：布尔值，表示上限是否为开区间（即上限是否排除在范围之外）
 
-{% highlight javascript %}
+IDBKeyRange 实例对象生成以后，将它作为参数输入 IDBObjectStore 或 IDBIndex 对象的`openCursor()`方法，就可以在所设定的范围内读取数据。
 
-var t = db.transaction(["people"],"readonly");
-var store = t.objectStore("people");
-var index = store.index("name");
+```javascript
+var t = db.transaction(['people'], 'readonly');
+var store = t.objectStore('people');
+var index = store.index('name');
 
 var range = IDBKeyRange.bound('B', 'D');
 
-index.openCursor(range).onsuccess = function(e) {
-        var cursor = e.target.result;
-        if(cursor) {
-            console.log(cursor.key + ":");
-            for(var field in cursor.value) {
-                console.log(cursor.value[field]);
-            }
-            cursor.continue();
-        }
-}
+index.openCursor(range).onsuccess = function (e) {
+  var cursor = e.target.result;
+  if (cursor) {
+    console.log(cursor.key + ':');
 
-{% endhighlight %}
+    for (var field in cursor.value) {
+      console.log(cursor.value[field]);
+    }
+    cursor.continue();
+  }
+}
+```
+
+IDBKeyRange 有一个实例方法`includes(key)`，返回一个布尔值，表示某个键名是否包含在当前这个键名组之内。
+
+```javascript
+var keyRangeValue = IDBKeyRange.bound('A', 'K', false, false);
+
+keyRangeValue.includes('F') // true
+keyRangeValue.includes('W') // false
+```
 
 ## 参考链接
 
