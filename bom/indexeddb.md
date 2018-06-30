@@ -12,21 +12,211 @@ modifiedOn: 2013-11-09
 
 现有的浏览器数据储存方案，都不适合储存大量数据：Cookie 的大小不超过4KB，且每次请求都会发送回服务器；LocalStorage 在 2.5MB 到 10MB 之间（各家浏览器不同）。所以，需要一种新的解决方案，这就是 IndexedDB 诞生的背景。
 
-通俗地说，IndexedDB 就是浏览器提供的网页数据本地数据库，它里面的数据可以被脚本创建和操作。IndexedDB 允许储存大量数据，提供查找接口，还能建立索引。这些都是 LocalStorage 所不具备的。就数据库类型而言，IndexedDB 不属于关系型数据库（不支持 SQL 查询语句），更接近 NoSQL 数据库。
+通俗地说，IndexedDB 就是浏览器提供的本地数据库，它可以被网页脚本创建和操作。IndexedDB 允许储存大量数据，提供查找接口，还能建立索引。这些都是 LocalStorage 所不具备的。就数据库类型而言，IndexedDB 不属于关系型数据库（不支持 SQL 查询语句），更接近 NoSQL 数据库。
 
 IndexedDB 具有以下特点。
 
-**（1）键值对储存。** IndexedDB 内部采用对象仓库（object store）存放数据。所有类型的数据都可以直接存入，包括 JavaScript 对象。在对象仓库中，数据以“键值对”的形式保存，每一个数据都有对应的键名，键名是独一无二的，不能有重复，否则会抛出一个错误。
+**（1）键值对储存。** IndexedDB 内部采用对象仓库（object store）存放数据。所有类型的数据都可以直接存入，包括 JavaScript 对象。对象仓库中，数据以“键值对”的形式保存，每一个数据都有对应的主键，主键是独一无二的，不能有重复，否则会抛出一个错误。
 
 **（2）异步。**  IndexedDB 操作时不会锁死浏览器，用户依然可以进行其他操作，这与 LocalStorage 形成对比，后者的操作是同步的。异步设计是为了防止大量数据的读写，拖慢网页的表现。
 
-**（3）支持事务。** IndexedDB 支持事务（transaction），这意味着一系列操作步骤之中，只要有一步失败，整个事务就都取消，数据库回到事务发生之前的状态，不存在只改写一部分数据的情况。
+**（3）支持事务。** IndexedDB 支持事务（transaction），这意味着一系列操作步骤之中，只要有一步失败，整个事务就都取消，数据库回滚到事务发生之前的状态，不存在只改写一部分数据的情况。
 
-**（4）同域限制** IndexedDB 也受到同域限制，每一个数据库对应创建该数据库的域名。来自不同域名的网页，只能访问自身域名下的数据库，而不能访问其他域名下的数据库。
+**（4）同源限制** IndexedDB 也受到同源限制，每一个数据库对应创建该数据库的域名。网页只能访问自身域名下的数据库，而不能访问其他域名下的数据库。
 
-**（5）储存空间大** IndexedDB 的储存空间比 LocalStorage 大得多，一般来说不少于250MB。IE 的储存上限是250MB，Chrome 和 Opera 是剩余空间的某个百分比，Firefox 则没有上限。
+**（5）储存空间大** IndexedDB 的储存空间比 LocalStorage 大得多，一般来说不少于 250MB，甚至没有上限。
 
 **（6）支持二进制储存。** IndexedDB 不仅可以储存字符串，还可以储存二进制数据。
+
+## 操作流程
+
+IndexedDB API 是一个比较复杂的 API，各种数据库操作由很多不同的对象来承担。下面介绍常用的操作。
+
+### 新建/打开数据库
+
+`indexedDB.open()`方法用来打开数据库。这时需要给出数据库的名字和版本，如果数据库不存在，则会新建。如果版本号省略，则默认为1。
+
+```javascript
+var request = window.indexedDB.open(databaseName, 1);
+```
+
+`indexedDB.open()`方法返回一个 IDBRequest 对象。这个对象通过事件，处理打开数据库的结果。
+
+（1）error 事件
+
+`error`事件表示打开失败。
+
+```javascript
+request.onerror = function (event) {
+  console.log('数据库打开报错');
+};
+```
+
+（2） upgradeneeded 事件
+
+如果指定的版本号，大于数据库的实际版本号，就会发生数据库升级事件`upgradeneeded`。
+
+```javascript
+var db;
+
+request.onupgradeneeded = function (event) {
+  db = event.target.result;
+}
+```
+
+这时通过事件对象的`target.result`属性，拿到数据库实例。
+
+新建数据库时，也会发生这个事件，因为这时版本从无到有，所以可以在这个事件里面新建表格（表格在 indexedDB 里面叫做 object store），这时也可以向数据库写入原始数据。
+
+```javascript
+request.onupgradeneeded = function(event) {
+  db = event.target.result;
+  var objectStore = db.createObjectStore('person', { keyPath: 'id' });
+}
+```
+
+上面代码中，数据库新建成功以后，新增一张叫做`person`的表格，主键是`id`。
+
+（3）success 事件
+
+`success`事件表示成功打开数据库。
+
+```javascript
+var db;
+
+request.onsuccess = function (event) {
+  db = request.result;
+  console.log('数据库打开成功');
+};
+```
+
+这时，通过`request`对象的`result`属性拿到数据库对象。
+
+### 新增数据
+
+新增数据指的是向表格写入数据，需要通过事务完成。
+
+```javascript
+function add() {
+  var request = db.transaction(['person'], 'readwrite')
+    .objectStore('person')
+    .add({ id: 1, name: '张三', age: 24, email: 'zhangsan@example.com' });
+
+  request.onsuccess = function (event) {
+    console.log('数据写入成功');
+  };
+
+  request.onerror = function (event) {
+    console.log('数据写入失败');
+  }
+}
+
+add();
+```
+
+上面代码中，写入数据需要新建一个事务，新建时必须指定表格名称和操作模式（“只读”或“读写”）。新建事务以后，通过`IDBTransaction.objectStore(name)`方法，拿到表格对象 IDBObjectStore，再通过表格对象的`add()`方法，向表格写入一条记录，这条记录必须包含主键，上例是`id`。
+
+写入操作是一个异步操作，通过监听连接对象的`success`事件和`error`事件，了解是否写入成功。
+
+### 读取数据
+
+读取数据也是通过事务完成。
+
+```javascript
+function read() {
+   var transaction = db.transaction(['person']);
+   var objectStore = transaction.objectStore('person');
+   var request = objectStore.get(1);
+
+   request.onerror = function(event) {
+     console.log('事务失败');
+   };
+
+   request.onsuccess = function( event) {
+      if (request.result) {
+        console.log('Name: ' + request.result.name);
+        console.log('Age: ' + request.result.age);
+        console.log('Email: ' + request.result.email);
+      } else {
+        console.log('未获得数据记录');
+      }
+   };
+}
+
+read();
+```
+
+上面代码中，`objectStore.get()`方法用于读取数据，参数是指定的主键。
+
+### 遍历数据
+
+遍历数据表格的所有记录，要使用指针对象 IDBCursor。
+
+```javascript
+function readAll() {
+  var objectStore = db.transaction('person').objectStore('person');
+
+   objectStore.openCursor().onsuccess = function (event) {
+     var cursor = event.target.result;
+
+     if (cursor) {
+       console.log('Id: ' + cursor.key);
+       console.log('Name: ' + cursor.value.name);
+       console.log('Age: ' + cursor.value.age);
+       console.log('Email: ' + cursor.value.email);
+       cursor.continue();
+    } else {
+      console.log('没有更多数据了！');
+    }
+  };
+}
+
+readAll();
+```
+
+上面代码中，新建指针对象的`openCursor()`方法是一个异步操作，所以要监听`success`事件。
+
+### 更新数据
+
+更新数据要使用`IDBObject.put()`方法。
+
+```javascript
+function update() {
+  var request = db.transaction(['person'], 'readwrite')
+    .objectStore('person')
+    .put({ id: 1, name: '李四', age: 35, email: 'lisi@example.com' });
+
+  request.onsuccess = function (event) {
+    console.log('数据更新成功');
+  };
+
+  request.onerror = function (event) {
+    console.log('数据更新失败');
+  }
+}
+
+update();
+```
+
+上面代码中，`put()`方法自动更新了主键为`1`的记录。
+
+### 删除数据
+
+`IDBObjectStore.delete()`用于删除记录。
+
+```javascript
+function remove() {
+  var request = db.transaction(['person'], 'readwrite')
+    .objectStore('person')
+    .delete(1);
+
+  request.onsuccess = function (event) {
+    console.log('数据删除成功');
+  };
+}
+
+remove();
+```
 
 ## indexedDB 对象
 
@@ -74,7 +264,7 @@ openRequest.onerror = function (e) {
 }
 ```
 
-上面代码有两个地方需要注意。首先，`open()`方法返回的是一个对象（IDBOpenDBRequest），监听函数就定义在这个对象上面。其次，`success`事件发生后，从`openRequest.result`s属性可以拿到已经打开的`IndexedDB`数据库对象。
+上面代码有两个地方需要注意。首先，`open()`方法返回的是一个对象（IDBOpenDBRequest），监听函数就定义在这个对象上面。其次，`success`事件发生后，从`openRequest.result`属性可以拿到已经打开的`IndexedDB`数据库对象。
 
 ### indexedDB.deleteDatabase()
 
@@ -746,3 +936,4 @@ keyRangeValue.includes('W') // false
 - Raymond Camden, [Working With IndexedDB – Part 2](http://net.tutsplus.com/tutorials/javascript-ajax/working-with-indexeddb-part-2/)
 - Tiffany Brown, [An Introduction to IndexedDB](http://dev.opera.com/articles/introduction-to-indexeddb/)
 - David Fahlander, [Breaking the Borders of IndexedDB](https://hacks.mozilla.org/2014/06/breaking-the-borders-of-indexeddb/)
+- TutorialsPoint, [HTML5 - IndexedDB](https://www.tutorialspoint.com/html5/html5_indexeddb.htm)
