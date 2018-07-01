@@ -28,6 +28,36 @@ IndexedDB 具有以下特点。
 
 **（6）支持二进制储存。** IndexedDB 不仅可以储存字符串，还可以储存二进制数据。
 
+## 基本概念
+
+### 数据库
+
+每个域名（严格的说，是协议 + 域名 + 端口）都可以新建任意多个数据库。
+
+IndexedDB 数据库有版本的概念。同一个时刻，只能有一个版本的数据库存在。如果要修改数据库结构（新增或删除表），只能通过升级数据库版本完成。
+
+### 数据仓库
+
+每个数据库包含若干个对象仓库（object store）。它类似于关系型数据库的表格。
+
+### 数据记录
+
+对象仓库保存的是数据记录。每条记录有主键和数据体两部分构成，主键必须是不同的，否则会报错。主键可以是数据记录里面的一个属性，也可以指定为一个递增的整数编号。
+
+```javascript
+{ id: 1, text: 'foo' }
+```
+
+上面的对象中，`id`属性可以当作主键。
+
+### 索引
+
+为了加速数据的检索，可以在对象仓库里面，为不同的属性建立索引。
+
+### 事务
+
+数据记录的读写和删改，都要通过事务完成。事务对象提供`error`、`abort`和`complete`三个事件，指定监听函数。
+
 ## 操作流程
 
 IndexedDB API 是一个比较复杂的 API，各种数据库操作由很多不同的对象来承担。下面介绍常用的操作。
@@ -76,6 +106,30 @@ request.onupgradeneeded = function(event) {
 ```
 
 上面代码中，数据库新建成功以后，新增一张叫做`person`的表格，主键是`id`。
+
+如果主键不是数据记录的某个属性，那么可以手动指定主键为递增的整数。
+
+```javascript
+var objectStore = db.createObjectStore(
+  'person',
+  { keyPath: 'no', autoIncrement: true }
+);
+```
+
+上面代码中，指定主键为`no`，这是一个递增的整数。
+
+这个事件里面，还可以新建索引。
+
+```javascript
+request.onupgradeneeded = function(event) {
+  db = event.target.result;
+  var objectStore = db.createObjectStore('person', { keyPath: 'id' });
+  objectStore.createIndex('name', 'name', { unique: false });
+  objectStore.createIndex('email', 'email', { unique: true });
+}
+```
+
+上面代码中，`IDBObject.createIndex()`的三个参数分别为索引名称、索引所在的属性、配置对象。
 
 （3）success 事件
 
