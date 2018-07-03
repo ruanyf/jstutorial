@@ -10,7 +10,7 @@ modifiedOn: 2013-11-09
 
 随着浏览器的功能不断增强，越来越多的网站开始考虑，将大量数据储存在客户端，这样可以减少从服务器获取数据，直接从本地获取数据。
 
-现有的浏览器数据储存方案，都不适合储存大量数据：Cookie 的大小不超过4KB，且每次请求都会发送回服务器；LocalStorage 在 2.5MB 到 10MB 之间（各家浏览器不同）。所以，需要一种新的解决方案，这就是 IndexedDB 诞生的背景。
+现有的浏览器数据储存方案，都不适合储存大量数据：Cookie 的大小不超过4KB，且每次请求都会发送回服务器；LocalStorage 在 2.5MB 到 10MB 之间（各家浏览器不同），而且不提供搜索功能，不能建立自定义的索引。所以，需要一种新的解决方案，这就是 IndexedDB 诞生的背景。
 
 通俗地说，IndexedDB 就是浏览器提供的本地数据库，它可以被网页脚本创建和操作。IndexedDB 允许储存大量数据，提供查找接口，还能建立索引。这些都是 LocalStorage 所不具备的。就数据库类型而言，IndexedDB 不属于关系型数据库（不支持 SQL 查询语句），更接近 NoSQL 数据库。
 
@@ -34,7 +34,7 @@ IndexedDB 具有以下特点。
 
 每个域名（严格的说，是协议 + 域名 + 端口）都可以新建任意多个数据库。
 
-IndexedDB 数据库有版本的概念。同一个时刻，只能有一个版本的数据库存在，不能同时存在多个版本。如果要修改数据库结构（新增或删除表），只能通过升级数据库版本完成。
+IndexedDB 数据库有版本的概念。同一个时刻，只能有一个版本的数据库存在。如果要修改数据库结构（新增或删除表、索引或者主键），只能通过升级数据库版本完成。
 
 ### 数据仓库
 
@@ -84,7 +84,22 @@ request.onerror = function (event) {
 };
 ```
 
-（2） upgradeneeded 事件
+（2）success 事件
+
+`success`事件表示成功打开数据库。
+
+```javascript
+var db;
+
+request.onsuccess = function (event) {
+  db = request.result;
+  console.log('数据库打开成功');
+};
+```
+
+这时，通过`request`对象的`result`属性拿到数据库对象。
+
+（3）upgradeneeded 事件
 
 如果指定的版本号，大于数据库的实际版本号，就会发生数据库升级事件`upgradeneeded`。
 
@@ -108,6 +123,18 @@ request.onupgradeneeded = function(event) {
 ```
 
 上面代码中，数据库新建成功以后，新增一张叫做`person`的表格，主键是`id`。
+
+更好的写法是先判断一下，这张表格是否存在，如果不存在再新建。
+
+```javascript
+request.onupgradeneeded = function (event) {
+  db = event.target.result;
+  var objectStore;
+  if (!db.objectStoreNames.contains('person')) {
+    objectStore = db.createObjectStore('person', { keyPath: 'id' });
+  }
+}
+```
 
 如果主键不是数据记录的某个属性，那么可以手动指定主键为递增的整数。
 
@@ -272,6 +299,34 @@ function remove() {
 }
 
 remove();
+```
+
+### 使用索引
+
+索引的意义在于，可以让你搜索任意字段，也就是说从任意字段拿到数据记录。如果不建立索引，默认只能搜索主键（即从主键取值）。
+
+假定新建表格的时候，对`name`字段建立了索引。
+
+```javascript
+objectStore.createIndex('name', 'name', { unique: false });
+```
+
+现在，就可以从`name`找到对应的数据记录了。
+
+```javascript
+var transaction = db.transaction(['person'], 'readonly');
+var store = transaction.objectStore('person');
+var index = store.index('name');
+var request = index.get('李四');
+
+request.onsuccess = function (e) {
+  var result = e.target.result;
+  if (result) {
+    // ...
+  } else {
+    // ...
+  }
+}
 ```
 
 ## indexedDB 对象
@@ -990,6 +1045,7 @@ keyRangeValue.includes('W') // false
 
 - Raymond Camden, [Working With IndexedDB – Part 1](http://net.tutsplus.com/tutorials/javascript-ajax/working-with-indexeddb/)
 - Raymond Camden, [Working With IndexedDB – Part 2](http://net.tutsplus.com/tutorials/javascript-ajax/working-with-indexeddb-part-2/)
+- Raymond Camden, [Working With IndexedDB - Part 3](https://code.tutsplus.com/tutorials/working-with-indexeddb-part-3--net-36220)
 - Tiffany Brown, [An Introduction to IndexedDB](http://dev.opera.com/articles/introduction-to-indexeddb/)
 - David Fahlander, [Breaking the Borders of IndexedDB](https://hacks.mozilla.org/2014/06/breaking-the-borders-of-indexeddb/)
 - TutorialsPoint, [HTML5 - IndexedDB](https://www.tutorialspoint.com/html5/html5_indexeddb.htm)
