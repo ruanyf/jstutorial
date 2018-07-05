@@ -8,75 +8,91 @@ modifiedOn: 2013-08-10
 
 ## 概述
 
-JavaScript语言采用的是单线程模型，也就是说，所有任务排成一个队列，一次只能做一件事。随着电脑计算能力的增强，尤其是多核CPU的出现，这一点带来很大的不便，无法充分发挥JavaScript的潜力。
+JavaScript 语言采用的是单线程模型，也就是说，所有任务只能在一个线程上完成，一次只能做一件事。前面的任务没做完，后面的任务只能等着。随着电脑计算能力的增强，尤其是多核 CPU 的出现，单线程带来很大的不便，无法充分发挥 JavaScript 的潜力。
 
-Web Worker的目的，就是为JavaScript创造多线程环境，允许主线程将一些任务分配给子线程。在主线程运行的同时，子线程在后台运行，两者互不干扰。等到子线程完成计算任务，再把结果返回给主线程。因此，每一个子线程就好像一个“工人”（worker），默默地完成自己的工作。这样做的好处是，一些高计算量或高延迟的工作，被worker线程负担了，所以主进程（通常是UI进程）就会很流畅，不会被阻塞或拖慢。
+Web Worker 的目的，就是为 JavaScript 创造多线程环境，允许主线程创建子线程，将一些任务分配给子线程运行。在主线程运行的同时，子线程在后台运行，两者互不干扰。等到子线程完成计算任务，再把结果返回给主线程。因此，每一个子线程就好像一个“工人”（worker），默默地完成自己的工作。这样做的好处是，一些计算密集型或高延迟的任务，被 Worker 线程负担了，主进程（通常负责 UI 交互）就会很流畅，不会被阻塞或拖慢。
 
-Worker线程分成好几种。
+Worker 线程一旦新建成功，就会始终运行，不会被主线程上的活动（比如用户点击按钮、提交表单）打断。这样有利于随时响应主线程的通信。
 
-- 普通的Worker：只能与创造它们的主进程通信。
+Worker 线程分成好几种。
+
+- 普通的 Worker：只能与创造它们的主进程通信。
 - Shared Worker：能被所有同源的进程获取（比如来自不同的浏览器窗口、iframe窗口和其他Shared worker），它们必须通过一个端口通信。
 - ServiceWorker：实际上是一个在网络应用与浏览器或网络层之间的代理层。它可以拦截网络请求，使得离线访问成为可能。
 
 Web Worker有以下几个特点：
 
-- **同域限制**。子线程加载的脚本文件，必须与主线程的脚本文件在同一个域。
+- **同源限制**。子线程加载的脚本文件，必须与主线程的脚本文件同源。
 
-- **DOM限制**。子线程所在的全局对象，与主进程不一样，它无法读取网页的DOM对象，即`document`、`window`、`parent`这些对象，子线程都无法得到。（但是，`navigator`对象和`location`对象可以获得。）
+- **DOM 限制**。子线程所在的全局对象，与主进程不一样，它无法读取网页的 DOM 对象，即`document`、`window`、`parent`这些对象，子线程都无法得到。（但是，`navigator`对象和`location`对象可以获得。）由于不在同一个上下文环境，子线程与主线程不能直接通信，必须通过消息完成。
 
-- **脚本限制**。子线程无法读取网页的全局变量和函数，也不能执行alert和confirm方法，不过可以执行setInterval和setTimeout，以及使用XMLHttpRequest对象发出AJAX请求。
+- **脚本限制**。子线程无法读取网页的全局变量和函数，也不能执行`alert`和`confirm`方法，不过可以使用 XMLHttpRequest 对象发出 AJAX 请求。
 
-- **文件限制**。子线程无法读取本地文件，即子线程无法打开本机的文件系统（file://），它所加载的脚本，必须来自网络。
+- **文件限制**。子线程无法读取本地文件，即子线程无法打开本机的文件系统（`file://`），它所加载的脚本，必须来自网络。
 
-使用之前，检查浏览器是否支持这个API。
+最后，Worker 线程很耗费资源，不应该大量新建。
 
-```javascript
-if (window.Worker) {
-  // 支持
-} else {
-  // 不支持
-}
-```
+## 基本用法
 
-## 新建和启动子线程
+### 主线程
 
-主线程采用`new`命令，调用`Worker`构造函数，可以新建一个子线程。
+主线程采用`new`命令，调用`Worker()`构造函数，新建一个子线程。
 
 ```javascript
 var worker = new Worker('work.js');
 ```
 
-Worker构造函数的参数是一个脚本文件，这个文件就是子线程所要完成的任务，上面代码中是`work.js`。由于子线程不能读取本地文件系统，所以这个脚本文件必须来自网络端。如果下载没有成功，比如出现404错误，这个子线程就会默默地失败。
+`Worker()`构造函数的参数是一个脚本文件，该文件就是子线程所要执行的任务。由于子线程不能读取本地文件，所以这个脚本必须来自网络。如果下载没有成功（比如404错误），子线程就会默默地失败。
 
-子线程新建之后，并没有启动，必需等待主线程调用`postMessage`方法，即发出信号之后才会启动。`postMessage`方法的参数，就是主线程传给子线程的信号。它可以是一个字符串，也可以是一个对象。
+子线程新建之后，并没有启动，必需等待主线程调用`worker.postMessage()`方法，发出信号之后才会启动。`worker.postMessage()`方法的参数，就是主线程传给子线程的信号。它可以是一个字符串，也可以是一个对象。
 
 ```javascript
-worker.postMessage("Hello World");
+worker.postMessage('Hello World');
 worker.postMessage({method: 'echo', args: ['Work']});
 ```
 
-只要符合父线程的同源政策，Worker线程自己也能新建Worker线程。Worker线程可以使用XMLHttpRequest进行网络I/O，但是`XMLHttpRequest`对象的`responseXML`和`channel`属性总是返回`null`。
+然后，主线程通过`worker.onmessage`指定监听函数，接收子线程发回来的消息。
 
-## 子线程的事件监听
+```javascript
+worker.onmessage = function (event) {
+	alert('Received message ' + event.data);
+	doSomething();
+}
+	
+function doSomething() {
+	// 执行任务
+	worker.postMessage('Work done!');
+}
+```
 
-在子线程内，必须有一个回调函数，监听message事件。
+确定任务完成，就可以关闭子线程。
+
+```javascript
+worker.terminate();
+```
+
+只要符合同源政策，Worker 线程自己也能新建 Worker 线程。
+
+### 子线程
+
+子线程内部，可以有一个回调函数，监听`message`事件。
 
 ```javascript
 /* File: work.js */
 
-self.addEventListener('message', function(e) {
+self.addEventListener('message', function (e) {
   self.postMessage('You said: ' + e.data);
 }, false);
 ```
 
-self代表子线程自身，self.addEventListener表示对子线程的message事件指定回调函数（直接指定onmessage属性的值也可）。回调函数的参数是一个事件对象，它的data属性包含主线程发来的信号。self.postMessage则表示，子线程向主线程发送一个信号。
+上面代码中，`self`代表子线程自身，`self.addEventListener`用来对子线程的`message`事件指定监听函数（直接指定`self.onmessage`属性的值也可）。监听函数的参数是一个事件对象，它的`data`属性包含主线程发来的值。`self.postMessage()`用来向主线程发送消息。
 
-根据主线程发来的不同的信号值，子线程可以调用不同的方法。
+根据主线程发来的不同的值，子线程可以调用不同的方法。
 
 ```javascript
 /* File: work.js */
 
-self.onmessage = function(event) {
+self.onmessage = function (event) {
   var method = event.data.method;
   var args = event.data.args;
 
