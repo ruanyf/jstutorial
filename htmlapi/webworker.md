@@ -14,12 +14,6 @@ Web Worker 的目的，就是为 JavaScript 创造多线程环境，允许主线
 
 Worker 线程一旦新建成功，就会始终运行，不会被主线程上的活动（比如用户点击按钮、提交表单）打断。这样有利于随时响应主线程的通信。
 
-Worker 线程分成好几种。
-
-- 普通的 Worker：只能与创造它们的主进程通信。
-- Shared Worker：能被所有同源的进程获取（比如来自不同的浏览器窗口、iframe窗口和其他Shared worker），它们必须通过一个端口通信。
-- ServiceWorker：实际上是一个在网络应用与浏览器或网络层之间的代理层。它可以拦截网络请求，使得离线访问成为可能。
-
 Web Worker有以下几个特点：
 
 - **同源限制**。子线程加载的脚本文件，必须与主线程的脚本文件同源。
@@ -44,7 +38,7 @@ var worker = new Worker('work.js');
 
 `Worker()`构造函数的参数是一个脚本文件，该文件就是子线程所要执行的任务。由于子线程不能读取本地文件，所以这个脚本必须来自网络。如果下载没有成功（比如404错误），子线程就会默默地失败。
 
-子线程新建之后，并没有启动，必需等待主线程调用`worker.postMessage()`方法，发出信号之后才会启动。`worker.postMessage()`方法的参数，就是主线程传给子线程的信号。它可以是一个字符串，也可以是一个对象。
+然后，主线程调用`worker.postMessage()`方法，向 Worker 发出消息。`worker.postMessage()`方法的参数，就是主线程传给子线程的信号。它可以是一个字符串，也可以是一个对象。
 
 ```javascript
 worker.postMessage('Hello World');
@@ -73,7 +67,7 @@ worker.terminate();
 
 只要符合同源政策，Worker 线程自己也能新建 Worker 线程。
 
-### 子线程
+### Worker 线程
 
 子线程内部，可以有一个回调函数，监听`message`事件。
 
@@ -85,160 +79,142 @@ self.addEventListener('message', function (e) {
 }, false);
 ```
 
-上面代码中，`self`代表子线程自身，`self.addEventListener`用来对子线程的`message`事件指定监听函数（直接指定`self.onmessage`属性的值也可）。监听函数的参数是一个事件对象，它的`data`属性包含主线程发来的值。`self.postMessage()`用来向主线程发送消息。
+上面代码中，`self`代表子线程自身，即子线程的全局对象。因此，它等同于下面两种写法。
+
+```javascript
+// 写法一
+this.addEventListener('message', function (e) {
+  this.postMessage('You said: ' + e.data);
+}, false);
+
+// 写法二
+addEventListener('message', function (e) {
+  postMessage('You said: ' + e.data);
+}, false);
+```
+
+`self.addEventListener`用来对子线程的`message`事件指定监听函数（直接指定`self.onmessage`属性的值也可）。监听函数的参数是一个事件对象，它的`data`属性包含主线程发来的值。`self.postMessage()`用来向主线程发送消息。
 
 根据主线程发来的不同的值，子线程可以调用不同的方法。
 
 ```javascript
-/* File: work.js */
-
-self.onmessage = function (event) {
-  var method = event.data.method;
-  var args = event.data.args;
-
-  var reply = doSomething(args);
-  self.postMessage({method: method, reply: reply});
-};
-```
-
-## 主线程的事件监听
-
-主线程也必须指定message事件的回调函数，监听子线程发来的信号。
-
-```javascript
-/* File: main.js */
-
-worker.addEventListener('message', function(e) {
-	console.log(e.data);
+self.addEventListener('message', function(e) {
+  var data = e.data;
+  switch (data.cmd) {
+    case 'start':
+      self.postMessage('WORKER STARTED: ' + data.msg);
+      break;
+    case 'stop':
+      self.postMessage('WORKER STOPPED: ' + data.msg +
+                       '. (buttons will no longer work)');
+      self.close(); // Terminates the worker.
+      break;
+    default:
+      self.postMessage('Unknown command: ' + data.msg);
+  };
 }, false);
 ```
 
-## 错误处理
-
-主线程可以监听子线程是否发生错误。如果发生错误，会触发主线程的error事件。
+Worker 内部如果要加载其他脚本，有一个专门的方法`importScripts()`用来在 Worker 内部加载其他脚本。
 
 ```javascript
-worker.onerror(function(event) {
-  console.log(event);
+importScripts('script1.js');
+```
+
+该方法可以同时加载多个脚本。
+
+```javascript
+importScripts('script1.js', 'script2.js');
+```
+
+### 错误处理
+
+主线程可以监听 Worker 是否发生错误。如果发生错误，Worker 会触发主线程的`error`事件。
+
+```javascript
+worker.onerror(function (event) {
+  console.log([
+    'ERROR: Line ', e.lineno, ' in ', e.filename, ': ', e.message
+  ].join(''));
 });
 
-// or
-
-worker.addEventListener('error', function(event) {
-  console.log(event);
+// 或者
+worker.addEventListener('error', function (event) {
+  // ...
 });
 ```
 
-## 关闭子线程
+### 关闭 Worker
 
-使用完毕之后，为了节省系统资源，我们必须在主线程调用terminate方法，手动关闭子线程。
+使用完毕之后，为了节省系统资源，必须在主线程调用`worker.terminate()`方法关闭 Worker。
 
 ```javascript
 worker.terminate();
 ```
 
-也可以子线程内部关闭自身。
+子线程内部也可以关闭自身。
 
 ```javascript
 self.close();
 ```
 
-## 主线程与子线程的数据通信
+### 数据通信
 
-前面说过，主线程与子线程之间的通信内容，可以是文本，也可以是对象。需要注意的是，这种通信是拷贝关系，即是传值而不是传址，子线程对通信内容的修改，不会影响到主线程。事实上，浏览器内部的运行机制是，先将通信内容串行化，然后把串行化后的字符串发给子线程，后者再将它还原。
+前面说过，主线程与 Worker 之间的通信内容，可以是文本，也可以是对象。需要注意的是，这种通信是拷贝关系，即是传值而不是传址，Worker 对通信内容的修改，不会影响到主线程。事实上，浏览器内部的运行机制是，先将通信内容串行化，然后把串行化后的字符串发给子线程，后者再将它还原。
 
-主线程与子线程之间也可以交换二进制数据，比如File、Blob、ArrayBuffer等对象，也可以在线程之间发送。
+主线程与 Worker 之间也可以交换二进制数据，比如 File、Blob、ArrayBuffer 等类型，也可以在线程之间发送。
 
-但是，用拷贝方式发送二进制数据，会造成性能问题。比如，主线程向子线程发送一个500MB文件，默认情况下浏览器会生成一个原文件的拷贝。为了解决这个问题，JavaScript允许主线程把二进制数据直接转移给子线程，但是一旦转移，主线程就无法再使用这些二进制数据了，这是为了防止出现多个线程同时修改数据的麻烦局面。这种转移数据的方法，叫做[Transferable Objects](http://www.w3.org/html/wg/drafts/html/master/infrastructure.html#transferable-objects)。
+但是，拷贝方式发送二进制数据，会造成性能问题。比如，主线程向 Worker 发送一个 500MB 文件，默认情况下浏览器会生成一个原文件的拷贝。为了解决这个问题，JavaScript 允许主线程把二进制数据直接转移给子线程，但是一旦转移，主线程就无法再使用这些二进制数据了，这是为了防止出现多个线程同时修改数据的麻烦局面。这种转移数据的方法，叫做[Transferable Objects](http://www.w3.org/html/wg/drafts/html/master/infrastructure.html#transferable-objects)。
 
-如果要使用该方法，postMessage方法的最后一个参数必须是一个数组，用来指定前面发送的哪些值可以被转移给子线程。
+如果要使用该方法，`postMessage()`方法的最后一个参数必须是一个数组，用来指定前面发送的哪些值可以被转移给子线程。
 
 ```javascript
 worker.postMessage(arrayBuffer, [arrayBuffer]);
 window.postMessage(arrayBuffer, targetOrigin, [arrayBuffer]);
 ```
 
-## 同页面的Web Worker
+## 同页面的 Web Worker
 
-通常情况下，子线程载入的是一个单独的JavaScript文件，但是也可以载入与主线程在同一个网页的代码。假设网页代码如下：
+通常情况下，Worker 载入的是一个单独的 JavaScript 脚本文件，但是也可以载入与主线程在同一个网页的代码。
 
 ```html
 <!DOCTYPE html>
-    <body>
-        <script id="worker" type="app/worker">
-
-            addEventListener('message', function() {
-                postMessage('Im reading Tech.pro');
-            }, false);
-        </script>
-    </body>
+  <body>
+    <script id="worker" type="app/worker">
+      addEventListener('message', function () {
+        postMessage('some message');
+      }, false);
+    </script>
+  </body>
 </html>
 ```
 
-我们可以读取页面中的script，用worker来处理。
+我们可以读取页面中的脚本，用 Worker 来处理。
 
 ```javascript
 var blob = new Blob([document.querySelector('#worker').textContent]);
-```
-
-这里需要把代码当作二进制对象读取，所以使用Blob接口。然后，这个二进制对象转为URL，再通过这个URL创建worker。
-
-```javascript
 var url = window.URL.createObjectURL(blob);
 var worker = new Worker(url);
+
+worker.onmessage = function (e) {
+  // e.data === 'some message'
+};
 ```
 
-部署事件监听代码。
-
-```javascript
-worker.addEventListener('message', function(e) {
-   console.log(e.data);
-}, false);
-```
-
-最后，启动worker。
-
-```javascript
-worker.postMessage('');
-```
-
-整个页面的代码如下：
-
-```html
-<!DOCTYPE html>
-<body>
-  <script id="worker" type="app/worker">
-    addEventListener('message', function() {
-      postMessage('Work done!');
-    }, false);
-   </script>
-
-  <script>
-    (function() {
-      var blob = new Blob([document.querySelector('#worker').textContent]);
-      var url = window.URL.createObjectURL(blob);
-      var worker = new Worker(url);
-
-      worker.addEventListener('message', function(e) {
-        console.log(e.data);
-      }, false);
-
-      worker.postMessage('');
-    })();
-  </script>
-</body>
-</html>
-```
-
-可以看到，主线程和子线程的代码都在同一个网页上面。
-
-上面所讲的Web Worker都是专属于某个网页的，当该网页关闭，worker就自动结束。除此之外，还有一种共享式的Web Worker，允许多个浏览器窗口共享同一个worker，只有当所有网口关闭，它才会结束。这种共享式的Worker用SharedWorker对象来建立，因为适用场合不多，这里就省略了。
+上面代码中，Worker 脚本代码需要当作二进制文件读取，所以使用 Blob 对象。然后，这个二进制对象转为 URL，再通过这个 URL 创建 Worker。这样的话，主线程和 Worker 的代码都在同一个网页上面。
 
 ## 实例：Worker 进程完成论询
 
-有时，浏览器需要论询服务器状态，以便第一时间得知状态改变。这个工作可以放在 Worker 进程里面。
+有时，浏览器需要论询服务器状态，以便第一时间得知状态改变。这个工作可以放在 Worker 里面。
 
 ```javascript
+function createWorker(f) {
+  var blob = new Blob([f.toString()]);
+  var url = window.URL.createObjectURL(blob);
+  var worker = new Worker(url);
+  return worker;
+}
+
 var pollingWorker = createWorker(function (e) {
   var cache;
 
