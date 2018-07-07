@@ -59,7 +59,7 @@ function doSomething() {
 }
 ```
 
-确定任务完成，就可以关闭子线程。
+确定任务完成，就可以关闭 Worker 线程。
 
 ```javascript
 worker.terminate();
@@ -115,7 +115,11 @@ self.addEventListener('message', function(e) {
 }, false);
 ```
 
-Worker 内部如果要加载其他脚本，有一个专门的方法`importScripts()`用来在 Worker 内部加载其他脚本。
+## 高级用法
+
+### Worker 加载脚本
+
+Worker 内部如果要加载脚本，有一个专门的方法`importScripts()`。
 
 ```javascript
 importScripts('script1.js');
@@ -162,18 +166,38 @@ self.close();
 
 前面说过，主线程与 Worker 之间的通信内容，可以是文本，也可以是对象。需要注意的是，这种通信是拷贝关系，即是传值而不是传址，Worker 对通信内容的修改，不会影响到主线程。事实上，浏览器内部的运行机制是，先将通信内容串行化，然后把串行化后的字符串发给子线程，后者再将它还原。
 
-主线程与 Worker 之间也可以交换二进制数据，比如 File、Blob、ArrayBuffer 等类型，也可以在线程之间发送。
-
-但是，拷贝方式发送二进制数据，会造成性能问题。比如，主线程向 Worker 发送一个 500MB 文件，默认情况下浏览器会生成一个原文件的拷贝。为了解决这个问题，JavaScript 允许主线程把二进制数据直接转移给子线程，但是一旦转移，主线程就无法再使用这些二进制数据了，这是为了防止出现多个线程同时修改数据的麻烦局面。这种转移数据的方法，叫做[Transferable Objects](http://www.w3.org/html/wg/drafts/html/master/infrastructure.html#transferable-objects)。
-
-如果要使用该方法，`postMessage()`方法的最后一个参数必须是一个数组，用来指定前面发送的哪些值可以被转移给子线程。
+主线程与 Worker 之间也可以交换二进制数据，比如 File、Blob、ArrayBuffer 等类型，也可以在线程之间发送。下面是一个例子，主线程的代码。
 
 ```javascript
-worker.postMessage(arrayBuffer, [arrayBuffer]);
-window.postMessage(arrayBuffer, targetOrigin, [arrayBuffer]);
+var uInt8Array = new Uint8Array(new ArrayBuffer(10));
+for (var i = 0; i < uInt8Array.length; ++i) {
+  uInt8Array[i] = i * 2; // [0, 2, 4, 6, 8,...]
+}
+worker.postMessage(uInt8Array);
 ```
 
-## 同页面的 Web Worker
+Worker 线程的代码。
+
+```javascript
+self.onmessage = function (e) {
+  var uInt8Array = e.data;
+  postMessage('Inside worker.js: uInt8Array.toString() = ' + uInt8Array.toString());
+  postMessage('Inside worker.js: uInt8Array.byteLength = ' + uInt8Array.byteLength);
+};
+```
+
+但是，拷贝方式发送二进制数据，会造成性能问题。比如，主线程向 Worker 发送一个 500MB 文件，默认情况下浏览器会生成一个原文件的拷贝。为了解决这个问题，JavaScript 允许主线程把二进制数据直接转移给子线程，但是一旦转移，主线程就无法再使用这些二进制数据了，这是为了防止出现多个线程同时修改数据的麻烦局面。这种转移数据的方法，叫做[Transferable Objects](http://www.w3.org/html/wg/drafts/html/master/infrastructure.html#transferable-objects)。这使得主线程可以快速把数据交给 Worker，对于影像处理、声音处理、3D 运算等就非常方便了，不会产生性能负担。
+
+```javascript
+// Transferable Objects 格式
+worker.postMessage(arrayBuffer, [arrayBuffer]);
+
+// 例子
+var ab = new ArrayBuffer(1);
+worker.postMessage(ab, [ab]);
+```
+
+### 同页面的 Web Worker
 
 通常情况下，Worker 载入的是一个单独的 JavaScript 脚本文件，但是也可以载入与主线程在同一个网页的代码。
 
@@ -220,15 +244,12 @@ var pollingWorker = createWorker(function (e) {
 
   function compare(new, old) { ... };
 
-  var myRequest = new Request('/my-api-endpoint');
-
   setInterval(function () {
     fetch('/my-api-endpoint').then(function (res) {
       var data = res.json();
 
-      if(!compare(res.json(), cache)) {
+      if (!compare(data, cache)) {
         cache = data;
-
         self.postMessage(data);
       }
     })
@@ -242,7 +263,120 @@ pollingWorker.onmessage = function () {
 pollingWorker.postMessage('init');
 ```
 
-## Service Worker
+## 实例： Worker 线程内部新建 Worker 线程
+
+Worker 线程内部还能新建 Worker 线程。下面的例子是将一个计算密集的任务，分配到十个 Worker。
+
+主线程代码如下。
+
+```javascript
+var worker = new Worker('worker.js');
+worker.onmessage = function (event) {
+  document.getElementById('result').textContent = event.data;
+};
+```
+
+Worker 线程代码如下。
+
+```javascript
+// worker.js
+
+// settings
+var num_workers = 10;
+var items_per_worker = 1000000;
+
+// start the workers
+var result = 0;
+var pending_workers = num_workers;
+for (var i = 0; i < num_workers; i += 1) {
+  var worker = new Worker('core.js');
+  worker.postMessage(i * items_per_worker);
+  worker.postMessage((i + 1) * items_per_worker);
+  worker.onmessage = storeResult;
+}
+
+// handle the results
+function storeResult(event) {
+  result += event.data;
+  pending_workers -= 1;
+  if (pending_workers <= 0)
+    postMessage(result); // finished!
+}
+```
+
+上面代码中，Worker 线程内部新建了10个 Worker 线程，并且依次向这10个 Worker 发送消息，告知了计算的起点和终点。计算任务脚本的代码如下。
+
+```javascript
+// core.js
+var start;
+onmessage = getStart;
+function getStart(event) {
+  start = event.data;
+  onmessage = getEnd;
+}
+
+var end;
+function getEnd(event) {
+  end = event.data;
+  onmessage = null;
+  work();
+}
+
+function work() {
+  var result = 0;
+  for (var i = start; i < end; i += 1) {
+    // perform some complex calculation here
+    result += 1;
+  }
+  postMessage(result);
+  close();
+}
+```
+
+## API
+
+### 主线程
+
+浏览器原生提供`Worker()`构造函数，用来供主线程生成 Worker 线程。
+
+```javascript
+var myWorker = new Worker(jsUrl, options);
+```
+
+`Worker()`构造函数，可以接受两个参数。第一个参数是脚本的网址（必须遵守同源政策），该参数是必需的，且只能加载 JS 脚本，否则会报错。第二个参数是配置对象，该对象可选。它的一个作用就是指定 Worker 的名称，用来区分多个 Worker 线程。
+
+```javascript
+// 主线程
+var myWorker = new Worker('worker.js', { name : 'myWorker' });
+
+// Worker 线程
+self.name // myWorker
+```
+
+`Worker()`构造函数返回一个 Worker 线程对象，用来供主线程操作 Worker。Worker 对象的属性和方法如下。
+
+- Worker.onerror：指定 error 事件的监听函数。
+- Worker.onmessage：指定 message 事件的监听函数，发送过来的数据在`Event.data`属性中。
+- Worker.onmessageerror：指定 messageerror 事件的监听函数。发送的数据无法序列化成字符串时，会触发这个事件。
+- Worker.postMessage()：向 Worker 线程发送消息。
+- Worker.terminate()：立即终止 Worker 线程。
+
+### Worker 线程
+
+Web Worker 有自己的全局对象，不是主线程的`window`，而是一个专门为 Worker 定制的全局对象。因此定义在`window`上面的对象和方法不是全部都可以使用。
+
+Worker 线程有一些自己的全局属性和方法。
+
+- self.name： Worker 的名字。该属性只读，由构造函数指定。
+- self.onmessage：指定`message`事件的监听函数。
+- self.onmessageerror：指定 messageerror 事件的监听函数。发送的数据无法序列化成字符串时，会触发这个事件。
+- self.close()：关闭 Worker 线程。
+- self.postMessage()：向产生这个 Worker 线程发送消息。
+- self.importScripts()：加载 JS 脚本。
+
+（完）
+
+## 存档：Service Worker
 
 Service worker是一个在浏览器后台运行的脚本，与网页不相干，专注于那些不需要网页或用户互动就能完成的功能。它主要用于操作离线缓存。
 
