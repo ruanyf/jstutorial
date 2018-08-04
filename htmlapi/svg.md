@@ -8,9 +8,9 @@ modifiedOn: 2013-11-27
 
 ## 概述
 
-SVG 是“可缩放矢量图”（Scalable Vector Graphics）的缩写，是一种采用 XML 格式的图像描述语法。也就是说，SVG 文件就是 XML 格式的文本文件。
+SVG 是一种基于 XML 语法的图像格式，全称是可缩放矢量图（Scalable Vector Graphics）。其他图像格式都是基于像素的，SVG 则是属于对图像的数学描述，所以它本质上是文本文件，体积较小，且不管放大多少倍都不会失真。
 
-浏览器可以加载 SVG 文件，在网页上显示出矢量图像。由于 HTML 网页本质上也是 XML 格式，所有 SVG 文件可以直接插入网页，成为 DOM 的一部分，然后用 JavaScript 和 CSS 进行操作。
+SVG 文件可以直接插入网页，成为 DOM 的一部分，然后用 JavaScript 和 CSS 进行操作。
 
 ```html
 <!DOCTYPE html>
@@ -40,34 +40,45 @@ SVG 代码也可以写在一个独立文件中，然后用`<img>`、`<object>`�
 <iframe id="iframe" src="icon.svg"></iframe>
 ```
 
-相比传统的图像文件格式（JPG 和 PNG），SVG 图像的优势是体积小，而且无论放大多少倍都不会失真。
+CSS 也可以使用 SVG 文件。
+
+```css
+.logo {
+  background: url(icon.svg);
+}
+```
+
+SVG 文件还可以转为 BASE64 编码，然后作为 Data URI 写入网页。
+
+```html
+<img src="data:image/svg+xml;base64,[data]">
+```
 
 ## 语法
 
 ### `<svg>`标签
 
-SVG 代码都放在一个顶层标签`<svg>`之中。下面是一个例子。
+SVG 代码都放在顶层标签`<svg>`之中。下面是一个例子。
 
 ```xml
 <svg width="100%" height="100%">
+  <circle id="mycircle" cx="50" cy="50" r="50" />
 </svg>
 ```
 
-`<svg>`的`width`属性和`height`属性指定了它在容器中所占据的宽度和高度。除了相对单位，也可以采用绝对单位（单位：像素）。
+`<svg>`的`width`属性和`height`属性，指定了 SVG 图像在 HTML 元素中所占据的宽度和高度。除了相对单位，也可以采用绝对单位（单位：像素）。如果不指定这两个属性，SVG 图像默认占满它所在的 HTML 元素。
+
+如果只想展示 SVG 图像的一部分，就要指定`viewbox`属性。
 
 ```xml
-<svg width="300" height="180">
+<svg width="100" height="100" viewBox="50 50 50 50">
+  <circle id="mycircle" cx="50" cy="50" r="50" />
 </svg>
 ```
 
-`<svg>`的`viewbox`属性可以指定视口，只将画布的一部分暴露出来。
+`<viewbox>`属性的值有四个数字，分别是左上角的横坐标和纵坐标、视口的宽度和高度。上面代码中，SVG 图像是100像素宽 x 100像素高，`viewBox`属性指定视口从`(50, 50)`这个点开始。所以，实际看到的是右下角的四分之一圆。
 
-```xml
-<svg width="100" height="100" viewBox="0 0 50 50">
-</svg>
-```
-
-`<viewbox>`属性的值有四个数字，分别是左上角的横坐标和纵坐标、视口的宽度和高度。注意，视口必须适配画布，也就是说，视口的宽度和高度只是定义了视口的长宽比，具体的大小是由 SVG 元素占用的空间决定的，视口会缩放自身，适配这个空间。视口的原点如果发生移动，元素占据的空间不变，那么就会产生缩放局部图像的效果。
+注意，视口必须适配所在的空间。上面代码中，视口的大小是 50 x 50，由于 SVG 图像的大小是 100 x 100，所以视口会放大去适配 SVG 图像的大小，即放大了四倍。
 
 ### `<circle>`标签
 
@@ -81,9 +92,9 @@ SVG 代码都放在一个顶层标签`<svg>`之中。下面是一个例子。
 </svg>
 ```
 
-上面的代码定义了三个圆。`<circle>`标签的`cx`、`cy`、`r`属性分别为`x`坐标、`y`坐标和半径，单位为像素。`<svg>`画布的左上角是原点`(0, 0)`。
+上面的代码定义了三个圆。`<circle>`标签的`cx`、`cy`、`r`属性分别为横坐标、纵坐标和半径，单位为像素。坐标都是相对于`<svg>`画布的左上角原点。
 
-`<circle>`标签的`class`属性，用来指定对应的 CSS 类。
+`class`属性用来指定对应的 CSS 类。
 
 ```css
 .red {
@@ -97,7 +108,7 @@ SVG 代码都放在一个顶层标签`<svg>`之中。下面是一个例子。
 }
 ```
 
-SVG 的 CSS 属性与网页元素略有不同。
+SVG 的 CSS 属性与网页元素有所不同。
 
 - fill：填充色
 - stroke：描边色
@@ -121,7 +132,7 @@ SVG 的 CSS 属性与网页元素略有不同。
 
 ```xml
 <svg width="300" height="180">
-  <polyline points="3,3 30,28 3,53" />
+  <polyline points="3,3 30,28 3,53" fill="none" stroke="black" />
 </svg>
 ```
 
