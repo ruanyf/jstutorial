@@ -68,7 +68,7 @@ SVG 代码都放在顶层标签`<svg>`之中。下面是一个例子。
 
 `<svg>`的`width`属性和`height`属性，指定了 SVG 图像在 HTML 元素中所占据的宽度和高度。除了相对单位，也可以采用绝对单位（单位：像素）。如果不指定这两个属性，SVG 图像默认占满它所在的 HTML 元素。
 
-如果只想展示 SVG 图像的一部分，就要指定`viewbox`属性。
+如果只想展示 SVG 图像的一部分，就要指定`viewBox`属性。
 
 ```xml
 <svg width="100" height="100" viewBox="50 50 50 50">
@@ -76,9 +76,11 @@ SVG 代码都放在顶层标签`<svg>`之中。下面是一个例子。
 </svg>
 ```
 
-`<viewbox>`属性的值有四个数字，分别是左上角的横坐标和纵坐标、视口的宽度和高度。上面代码中，SVG 图像是100像素宽 x 100像素高，`viewBox`属性指定视口从`(50, 50)`这个点开始。所以，实际看到的是右下角的四分之一圆。
+`<viewBox>`属性的值有四个数字，分别是左上角的横坐标和纵坐标、视口的宽度和高度。上面代码中，SVG 图像是100像素宽 x 100像素高，`viewBox`属性指定视口从`(50, 50)`这个点开始。所以，实际看到的是右下角的四分之一圆。
 
 注意，视口必须适配所在的空间。上面代码中，视口的大小是 50 x 50，由于 SVG 图像的大小是 100 x 100，所以视口会放大去适配 SVG 图像的大小，即放大了四倍。
+
+如果不指定`width`属性和`height`属性，只指定`viewBox`属性，则相当于只给定 SVG 图像的长宽比。
 
 ### `<circle>`标签
 
@@ -158,7 +160,7 @@ SVG 的 CSS 属性与网页元素有所不同。
 <svg width="300" height="180">
   <ellipse cx="60" cy="60" ry="40" rx="20" stroke="black" stroke-width="5" fill="silver"/>
 </svg>
-```
+``
 
 `<ellipse>`的`cx`属性和`cy`属性，指定了椭圆中心的横坐标和纵坐标（单位像素）；`rx`属性和`ry`属性，指定了椭圆横向轴和纵向轴的半径（单位像素）。
 
@@ -176,7 +178,7 @@ SVG 的 CSS 属性与网页元素有所不同。
 
 ### `<path>`标签
 
-`<path>`标签用于绘制路径。
+`<path>`标签用于制路径。
 
 ```xml
 <svg width="300" height="180">
@@ -197,7 +199,7 @@ SVG 的 CSS 属性与网页元素有所不同。
 
 - M：移动到（moveto）
 - L：画直线到（lineto）
-- Z：闭合路径 
+- Z：闭合路径
 
 ### `<text>`标签
 
@@ -205,63 +207,78 @@ SVG 的 CSS 属性与网页元素有所不同。
 
 ```xml
 <svg width="300" height="180">
-  <text x="250" y="25">Hello World</text>
+  <text x="50" y="25">Hello World</text>
 </svg>
 ```
 
-`<text>`的`x`属性和`y`属性，表示文本区块左上角的横坐标和纵坐标。文字的样式可以用`class`或`style`属性指定。
+`<text>`的`x`属性和`y`属性，表示文本区块基线（baseline）起点的横坐标和纵坐标。文字的样式可以用`class`或`style`属性指定。
 
-### `<defs>`标签，`<pattern>`标签
+### `<use>`标签
 
-`<defs>`标签用于自定义形状。`<pattern>`标签表示一个形状。
+`<use>`标签用于复制一个形状。
 
 ```xml
-<svg width="100%" height="100%">
-    <defs>
-        <pattern id="dots" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
-             
-            <circle fill="#bee9e8" cx="50" cy="50" r="25">
-            </circle>
-             
-        </pattern>
-    </defs>
+<svg viewBox="0 0 30 10" xmlns="http://www.w3.org/2000/svg">
+  <circle id="myCircle" cx="5" cy="5" r="4"/>
+
+  <use href="#myCircle" x="10" y="0" fill="blue" />
+  <use href="#myCircle" x="20" y="0" fill="white" stroke="blue" />
 </svg>
 ```
 
-上面代码中，`<pattern>`标签将一个圆形定义为`dots`模式。`patternUnits="userSpaceOnUse"`表示`<pattern>`的宽度和长度是实际的像素值。
-
-完成自定义形状以后，就可以使用它了。
-
-```xml
-<svg width="100%" height="100%">
-    <defs>
-        <pattern id="dots" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
-             
-            <circle fill="#bee9e8" cx="50" cy="50" r="25">
-            </circle>
-             
-        </pattern>
-    </defs>
-
-    <rect x="0" y="0" width="100%" height="100%" fill="url(#dots)"></rect>
-</svg>
-```
-
-上面代码使用`dots`模式填充一个矩形。
+`<use>`的`href`属性指定所要复制的节点，`x`属性和`y`属性是`<use>`左上角的坐标。另外，还可以指定`width`和`height`坐标。
 
 ### `<g>`标签
 
 `<g>`标签用于将多个形状组成一个组（group），方便复用。
 
 ```xml
-<svg width='300' height='180'>
-  <g transform='translate(5, 15)'>
-    <text x="0" y="0">Howdy!</text>
-    <path d="M0,50 L50,0 Q100,0 100,50"
-      fill="none" stroke-width="3" stroke="black" />
+<svg width="300" height="100">
+  <g id="myCircle">
+    <text x="25" y="20">圆形</text>
+    <circle cx="50" cy="50" r="20"/>
   </g>
+
+  <use href="#myCircle" x="100" y="0" fill="blue" />
+  <use href="#myCircle" x="200" y="0" fill="white" stroke="blue" />
 </svg>
 ```
+
+### `<defs>`标签
+
+`<defs>`标签用于自定义形状，它内部的代码不会显示，仅供引用。
+
+```xml
+<svg width="300" height="100">
+  <defs>
+    <g id="myCircle">
+      <text x="25" y="20">圆形</text>
+      <circle cx="50" cy="50" r="20"/>
+    </g>
+  </defs>
+
+  <use href="#myCircle" x="0" y="0" />
+  <use href="#myCircle" x="100" y="0" fill="blue" />
+  <use href="#myCircle" x="200" y="0" fill="white" stroke="blue" />
+</svg>
+```
+
+### `<pattern>`标签
+
+`<pattern>`标签用于自定义一个形状，该形状可以被引用来平铺一个区域。
+
+```xml
+<svg width="500" height="500">
+  <defs>
+    <pattern id="dots" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+      <circle fill="#bee9e8" cx="50" cy="50" r="35" />
+    </pattern>
+  </defs>
+  <rect x="0" y="0" width="100%" height="100%" fill="url(#dots)" />
+</svg>
+```
+
+上面代码中，`<pattern>`标签将一个圆形定义为`dots`模式。`patternUnits="userSpaceOnUse"`表示`<pattern>`的宽度和长度是实际的像素值。然后，指定这个模式去填充下面的矩形。
 
 ### `<image>`标签
 
@@ -281,12 +298,10 @@ SVG 的 CSS 属性与网页元素有所不同。
 `<animate>`标签用于产生动画效果。
 
 ```xml
-<svg width="500px" height="500px" viewBox="0 0 500 500"> 
- 
-    <rect x="0" y="0" width="100" height="100" fill="#feac5e"> 
-        <animate attributeName="x" from="0" to="500" dur="2s" repeatCount="indefinite" /> 
-    </rect> 
-     
+<svg width="500px" height="500px">
+  <rect x="0" y="0" width="100" height="100" fill="#feac5e">
+    <animate attributeName="x" from="0" to="500" dur="2s" repeatCount="indefinite" />
+  </rect>
 </svg>
 ```
 
@@ -309,15 +324,13 @@ SVG 的 CSS 属性与网页元素有所不同。
 
 ### `<animateTransform>`标签
 
-如果动画不是值的改变，而是变形，就要使用`<animateTransform>`标签。
+`<animate>`标签对 CSS 的`transform`属性不起作用，如果需要变形，就要使用`<animateTransform>`标签。
 
 ```xml
-<svg width="500px" height="500px" viewBox="0 0 500 500">
- 
-    <rect x="250" y="250" width="50" height="50" fill="#4bc0c8">
-        <animateTransform attributeName="transform" type="rotate" begin="0s" dur="10s" from="0 200 200" to="360 400 400" repeatCount="indefinite" />
-    </rect>
-     
+<svg width="500px" height="500px">
+  <rect x="250" y="250" width="50" height="50" fill="#4bc0c8">
+    <animateTransform attributeName="transform" type="rotate" begin="0s" dur="10s" from="0 200 200" to="360 400 400" repeatCount="indefinite" />
+  </rect>
 </svg>
 ```
 
@@ -378,7 +391,7 @@ var svgIframe = document.getElementById('iframe').contentDocument;
 var svgEmbed = document.getElementById('embed').getSVGDocument();
 ```
 
-如果使用`<img>`标签插入 SVG 文件，就无法获取 SVG DOM。
+注意，如果使用`<img>`标签插入 SVG 文件，就无法获取 SVG DOM。
 
 ### 读取 SVG 源码
 
@@ -431,7 +444,7 @@ img.onload = function () {
 
 下面将一张数据表格画成折线图。
 
-```
+```html
 Date |Amount
 -----|------
 2014-01-01 | $10
