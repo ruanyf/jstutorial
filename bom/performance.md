@@ -173,7 +173,7 @@ window.performance.getEntries()[0]
 
 ```
 
-上面代码返回第一个HTTP请求（即网页的HTML源码）的时间统计信息。该信息以一个高精度时间戳的对象形式返回，每个属性的单位是微秒（microsecond），即百万分之一秒。
+上面代码返回第一个HTTP请求（即网页的HTML源码）的时间统计信息。该信息以一个高精度时间戳的对象形式返回，每个属性的单位是毫秒（milliseconds)。
 
 ## performance.navigation对象
 
