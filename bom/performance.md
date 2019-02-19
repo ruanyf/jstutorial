@@ -108,12 +108,11 @@ var pageLoadTime = t.loadEventEnd - t.navigationStart;
 
 ## performance.now()
 
-performance.now方法返回当前网页自从performance.timing.navigationStart到当前时间之间的
-数（毫秒的千分之一）。也就是说，它的精度可以达到100万分之一秒。
+`performance.now()`方法返回当前网页自从`performance.timing.navigationStart`到当前时间之间的毫秒数。
 
 {% highlight javascript %}
 
-performance.now() 
+performance.now()
 // 23493457.476999998
 
 Date.now() - (performance.timing.navigationStart + performance.now())
@@ -121,9 +120,9 @@ Date.now() - (performance.timing.navigationStart + performance.now())
 
 {% endhighlight %}
 
-上面代码表示，performance.timing.navigationStart加上performance.now()，近似等于Date.now()，也就是说，Date.now()可以替代performance.now()。但是，两者返回的是毫秒，后者的精度比前者高1000倍。
+上面代码表示，performance.timing.navigationStart加上performance.now()，近似等于Date.now()，也就是说，Date.now()可以替代performance.now()。但是，由于`performance.now()`带有小数，因此精度更高。
 
-通过两次调用performance.now方法，可以得到间隔的准确时间，用来衡量某种操作的耗时。
+通过两次调用`performance.now()`方法，可以得到间隔的准确时间，用来衡量某种操作的耗时。
 
 {% highlight javascript %}
 
