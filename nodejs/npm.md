@@ -255,7 +255,7 @@ var backbone = require('backbone')
 console.log(backbone.VERSION)
 ```
 
-## 避免系统权限
+### 避免系统权限
 
 默认情况下，Npm全局模块都安装在系统目录（比如`/usr/local/lib/`），普通用户没有写入权限，需要用到`sudo`命令。这不是很方便，我们可以在没有root权限的情况下，安装全局模块。
 
