@@ -830,7 +830,7 @@ function(){ /* code */ }();
 // SyntaxError: Unexpected token (
 ```
 
-产生这个错误的原因是，`function`这个关键字即可以当作语句，也可以当作表达式。
+产生这个错误的原因是，`function`这个关键字既可以当作语句，也可以当作表达式。
 
 ```javascript
 // 语句
