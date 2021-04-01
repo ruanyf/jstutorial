@@ -251,7 +251,7 @@ http.createServer(app).listen(1337);
 app.use('/path', someMiddleware);
 ```
 
-上面代码表示，只对根目录的请求，调用某个中间件。
+上面代码表示，对所有的请求，调用某个中间件。
 
 因此，上面的代码可以写成下面的样子。
 
