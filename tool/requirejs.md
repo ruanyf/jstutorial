@@ -317,6 +317,11 @@ require(["jquery"], function($) {
 
 上面代码加载jquery模块，因为jquery的路径已经在paths参数中定义了，所以就会到事先设定的位置下载。
 
+这是个错误的说法，paths只是定义一个路径的映射关系，和具体某模块的依赖没有关系。
+这里例子中即使jquery已经在paths中定义过，但是，此模块中require中如果没有依赖'jquery'，factory中就不会有jquery。就这个例子来看，这里factory执行的时候，jquery实参为'mylibs/moduleX'这个模块定义的exports，而modulex则是undefined。
+
+
+
 **（2）baseUrl**
 
 baseUrl参数指定本地模块位置的基准目录，即本地模块的路径是相对于哪个目录的。该属性通常由require.js加载时的data-main属性指定。
