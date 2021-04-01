@@ -10,7 +10,7 @@ modifiedOn: 2013-10-04
 
 WebRTC是“网络实时通信”（Web Real Time Communication）的缩写。它最初是为了解决浏览器上视频通话而提出的，即两个浏览器之间直接进行视频和音频的通信，不经过服务器。后来发展到除了音频和视频，还可以传输文字和其他数据。
 
-Google是WebRTC的主要支持者和开发者，它最初在Gmail上推出了视频聊天，后来在2011年推出了Hangouts，语序在浏览器中打电话。它推动了WebRTC标准的确立。
+Google是WebRTC的主要支持者和开发者，它最初在Gmail上推出了视频聊天，后来在2011年推出了Hangouts，允许在浏览器中打电话。它推动了WebRTC标准的确立。
 
 WebRTC主要让浏览器具备三个作用。
 
